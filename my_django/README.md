@@ -59,7 +59,7 @@
     - Creamos una carpeta de proyecto **Frikr**
     - Dentro de esta un carpeta **venv**
     
-- [Crear un nuevo proyect](https://youtu.be/oX0SoU9OHnE?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=10)
+- [Crear un nuevo proyecto](https://youtu.be/oX0SoU9OHnE?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=10)
 	- Por norma el entorno virtual de un proyecto o entornos virtuales se deben de tener fuera de la raiz.
 	- Por ejemplo en **<root>/mis_entornos/Frikr**
     - ![instalar paquetes con pycharm](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/7eb4eb5b24cf7218212785080a8627f6/instalando-con-pycharm.png)
@@ -86,8 +86,10 @@
 	- **`DATABASES`** (diccionario) Configuramos las bd de nuestro proyecto. Por defecto es una bd sqlite3. Se pueden definir varias bds.
 	- **`AUTH_PASSWORD_VALIDATORS`** ???
 	- **`LANGUAGE_CODE`** (string)
-	- **``**
-	- **``**
-	- **``**
-	- **``**
-	- **``**
+	- **`TIME_ZONE`** (string) UTC+2
+	- **`USE_I18N`** (boolean) Internacionalización
+	- **`USE_L10N`** (boolean) Localización
+	- **`USE_TZ`** (boolean) Timezone
+	- **`STATIC_URL`** (string) Subcarpeta elementos estáticos. Puede ser un servidor de elementos estáticos.  En producción se cambiaría a un https://&lt;servidor-cdn &gt; (content delivery network)
+- [30 Nuestro primer Hello World en Django](https://youtu.be/DBFaqhjp-0M?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl)
+	- 
