@@ -32,13 +32,17 @@ class Combine:
         """concatena un array de strings con cun array de caracteres"""
         arConcated = []
         for sStr in arStr:
+            arSplit= list(sStr)
             for cChar in arChar:
-                sConcat = sStr + cChar
-                sConcat = self._string_asc(sConcat)
-                if not sConcat in arConcated:
-                    arConcated.append(sConcat)
+                if not cChar in arSplit:
+                    # print("str: {},char: {}".format(sStr,cChar))
+                    # print("-->add")
+                    sConcat = sStr + cChar
+                    sConcat = self._string_asc(sConcat)
+                    if not sConcat in arConcated:
+                        arConcated.append(sConcat)
 
-        print(arConcated)
+        #print(arConcated)
         # sys.exit()
         return arConcated
 
@@ -80,7 +84,7 @@ class Combine:
     def _string_asc(self, sString):
         # arChars = sString.split("")
         arChars = list(sString)
-        print(arChars)
+        #print(arChars)
         arChars.sort()
         sString = "".join(arChars)
         return sString
