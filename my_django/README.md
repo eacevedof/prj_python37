@@ -67,3 +67,27 @@
     - Por convenio todos los módulos y apps en python deben estar en minusculas. (**frikr**)
     - ![Como queda el arbol](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/232x203/e40af4b195b12f6230e62e5b9c91afd9/image.png)
 
+- [El archivo de configuración settings](https://www.youtube.com/watch?v=IWc1pIH9wLc&list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&index=21)
+	- <project>\frikr\settings.py
+	- **`SECRET_KEY`** Usa django para hacer el cifrado de las contraseñas de los usuarios. Deberiamos cambiarla en producción.
+	- **`DEBUG`** En producción debe estar a False
+	- **`ALLOWED_HOSTS`**  Desde donde el servidor puede recibir peticiones. Con 0.0.0.0 podría recibir desde cualquiera.
+	- **`INSTALLED_APPS`** [(tupla de apps por defecto)](https://youtu.be/IWc1pIH9wLc?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=124) Aplicaciones por la que está formado mi proyecto.
+		-  admin: Admin de django, el backend automático.
+		-  auth: Módulo de autenticación, autorización de usuarios grupos y permisos
+		-  contenttypes: orm??  Relacionado con los modelos
+		-  sessions: Gestor de las sesiones de usuarios.
+		-  messages: Se usa para pasar mensajes de una url a otra
+		-  staticfiles: Se utiliza para servir archivos estáticos. (Imágenes, .js, .css, etc)
+	- **`MIDDLEWARE_CLASSES`** (tupla) Nos ayuda a personalizar el comportamiento entre el framework (django) y nuestra app.
+	- **`ROOT_URLCONF`** (string) Donde está el enrutador del proyecto
+	- **`TEMPLATES`** (lista) Es el motor de templates de django
+	- **`WSGI_APPLICATION`** (string) Web Server Gateway Interface
+	- **`DATABASES`** (diccionario) Configuramos las bd de nuestro proyecto. Por defecto es una bd sqlite3. Se pueden definir varias bds.
+	- **`AUTH_PASSWORD_VALIDATORS`** ???
+	- **`LANGUAGE_CODE`** (string)
+	- **``**
+	- **``**
+	- **``**
+	- **``**
+	- **``**
