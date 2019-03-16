@@ -3,6 +3,7 @@ import os
 import sys
 from pprint import pprint
 
+import combnorep
 
 class Combine:
     #arFinal = []
@@ -60,12 +61,21 @@ class Combine:
         sString = "".join(arChars)
         return sString
 
+    def _get_total(self):
+        iR = 0
+        for i in range(1,self._iLen+1):
+            oC = combnorep.C(self._iLen,i)
+            iR += oC.get_combnorep()
+
+        return iR
+
 
     def run(self):
         self._get_recursive([""], self._arLetters)
         print(self._arFinal)
         #print("\n=============\n")
         print(len(self._arFinal))
+        print("must be: {}".format(self._get_total()))
 
 
 oC = Combine(["a","b","c","d","e"])

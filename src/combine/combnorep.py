@@ -17,7 +17,7 @@ class C:
         else:
             return 1
 
-    def _calculate(self):
+    def get_combnorep(self):
         # (n k) = C(n,k) = n! /((n-k)!k!)
         iResult = 0
         nf = self._get_factorial(self._n)
@@ -33,10 +33,10 @@ class C:
         r1 = self._get_factorial(self._n)
         r2 = self._get_factorial(self._k)
         print("r1: {}, r2:{}".format(r1,r2))
-        print(self._calculate())
+        print(self.get_combnorep())
 
 
-o = C(5,3)
-o.test()
+#o = C(5,1)
+#o.test()
 
 
