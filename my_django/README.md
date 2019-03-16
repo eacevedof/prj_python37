@@ -91,5 +91,4 @@
 	- **`USE_L10N`** (boolean) Localización
 	- **`USE_TZ`** (boolean) Timezone
 	- **`STATIC_URL`** (string) Subcarpeta elementos estáticos. Puede ser un servidor de elementos estáticos.  En producción se cambiaría a un https://&lt;servidor-cdn &gt; (content delivery network)
-- [30 Nuestro primer Hello World en Django](https://youtu.be/DBFaqhjp-0M?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl)
-	- 
+
