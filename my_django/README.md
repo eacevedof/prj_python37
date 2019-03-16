@@ -91,4 +91,7 @@
 	- **`USE_L10N`** (boolean) Localización
 	- **`USE_TZ`** (boolean) Timezone
 	- **`STATIC_URL`** (string) Subcarpeta elementos estáticos. Puede ser un servidor de elementos estáticos.  En producción se cambiaría a un https://&lt;servidor-cdn &gt; (content delivery network)
-
+- [Tutorial más completo y Djangogirls.org](https://tutorial.djangogirls.org/es/django_start_project/)
+	- `py manage.py migrate`  Crea la bd
+	- `python manage.py runserver` Arranca el servidor
+		- url: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
