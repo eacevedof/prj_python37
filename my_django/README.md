@@ -48,8 +48,14 @@
         execute_from_command_line(sys.argv)
     
     ```
+- [Crear un entorno virutal con pycharm](https://youtu.be/ZX4Eg63aawY?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=417)
+    - [File - settings] o **ctrl+alt+s**
+    - Creamos una carpeta de proyecto **Frikr**
+    - Dentro de esta un carpeta **venv€**
     
-    
+
+- [Crear un nuevo proyect](https://youtu.be/oX0SoU9OHnE?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=10)
+
     
 ```ssh
 $ pip install django
