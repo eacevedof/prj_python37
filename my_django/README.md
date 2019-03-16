@@ -62,7 +62,8 @@
 - [Crear un nuevo proyect](https://youtu.be/oX0SoU9OHnE?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=10)
 	- Por norma el entorno virtual de un proyecto o entornos virtuales se deben de tener fuera de la raiz.
 	- Por ejemplo en **<root>/mis_entornos/Frikr**
-    - ![instalar paquetes con pycharm](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/7eb4eb5b24cf7218212785080a8627f6/instalando-con-pycharm.png){:height="36px" width="36px"}
-
-
+    - ![instalar paquetes con pycharm](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/7eb4eb5b24cf7218212785080a8627f6/instalando-con-pycharm.png)
+    - `(venv) <project>\my_django\Frikr>py ./venv/Scripts/django-admin.py .` con el **.** startproject frikr` crea el proyecto **frikr**
+    - Por convenio todos los módulos y apps en python deben estar en minusculas. (**frikr**)
+    - ![Como queda el arbol](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/232x203/e40af4b195b12f6230e62e5b9c91afd9/image.png)
 
