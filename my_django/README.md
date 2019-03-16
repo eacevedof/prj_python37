@@ -55,7 +55,8 @@
     
 
 - [Crear un nuevo proyect](https://youtu.be/oX0SoU9OHnE?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=10)
-
+	- Por norma el entorno virtual de un proyecto o entornos virtuales se deben de tener fuera de la raiz.
+	- Por ejemplo en **<root>/mis_entornos/Frikr**
     
 ```ssh
 $ pip install django
