@@ -18,9 +18,14 @@ class C:
             return 1
 
     def _calculate(self):
-        # (m n) = C(m,n) = m! /((m-n)!n!)
+        # (n k) = C(n,k) = n! /((n-k)!k!)
         iResult = 0
+        nf = self._get_factorial(self._n)
+        kf = self._get_factorial(self._k)
+        nmk = self._n - self._k
+        nmkf = self._get_factorial(nmk)
 
+        iResult = nf / (nmkf * kf)
 
         return iResult
 
@@ -28,6 +33,7 @@ class C:
         r1 = self._get_factorial(self._n)
         r2 = self._get_factorial(self._k)
         print("r1: {}, r2:{}".format(r1,r2))
+        print(self._calculate())
 
 
 o = C(5,3)
