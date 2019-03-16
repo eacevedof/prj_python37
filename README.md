@@ -1,4 +1,8 @@
 # prj_python37
+
+### [My Django](https://github.com/eacevedof/prj_python37/tree/master/my_django)
+- Prueba de concepto de **django**
+
 ### [Python](https://platzi.com/clases/python/)
 Prueba de concepto con Python 3.7.2 y Anaconda
 
