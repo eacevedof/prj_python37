@@ -95,3 +95,4 @@
 	- `py manage.py migrate`  Crea la bd
 	- `python manage.py runserver` Arranca el servidor
 		- url: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- [Modelos](https://tutorial.djangogirls.org/es/django_models/)
