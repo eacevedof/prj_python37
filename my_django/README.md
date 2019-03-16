@@ -7,10 +7,50 @@
 - `virtualenv --python=python venv` crea la carpeta de entorno (como el container)
 - **`cd venv/Scripts`** entramos en los comandos propios del contenedor 
 - ejecutar `activate`  ejecuta el fichero activate.bat
+- el opuesto `deactivate`
+
 ```ssh
 (venv) <project>\my_django\venv\Scripts>
 ```
-
+- Dentro del entorno virtual ejecutar:
+    - `pip install Django`
+    - crea dentro de la carpeta scripts dos ficheros:
+        - `django-admin.exe`
+        - `django-admin.py` 
+- `django-admin startproject frikr` (dentro de scripts) crea el proyecto por primera vez
+    - crea una carpeta **frikr** dentro de scripts con un fichero `manage.py`
+    - dentro de **frikr**
+    ```py
+    <project>\my_django\venv\Scripts\frikr>dir /s /b
+    <project>\my_django\venv\Scripts\frikr\frikr
+    <project>\my_django\venv\Scripts\frikr\manage.py
+    <project>\my_django\venv\Scripts\frikr\frikr\settings.py
+    <project>\my_django\venv\Scripts\frikr\frikr\urls.py
+    <project>\my_django\venv\Scripts\frikr\frikr\wsgi.py
+    <project>\my_django\venv\Scripts\frikr\frikr\__init__.py
+    ```
+    
+    ```py
+    #!/usr/bin/env python
+    import os
+    import sys
+    
+    if __name__ == '__main__':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'frikr.settings')
+        try:
+            from django.core.management import execute_from_command_line
+        except ImportError as exc:
+            raise ImportError(
+                "Couldn't import Django. Are you sure it's installed and "
+                "available on your PYTHONPATH environment variable? Did you "
+                "forget to activate a virtual environment?"
+            ) from exc
+        execute_from_command_line(sys.argv)
+    
+    ```
+    
+    
+    
 ```ssh
 $ pip install django
 Collecting django
