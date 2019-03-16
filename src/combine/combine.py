@@ -2,6 +2,7 @@
 import os
 import sys
 from pprint import pprint
+import test.d as x
 
 import combnorep
 
@@ -72,7 +73,8 @@ class Combine:
 
     def run(self):
         self._get_recursive([""], self._arLetters)
-        print(self._arFinal)
+        # print(self._arFinal)
+        x.bug(self._arFinal)
         #print("\n=============\n")
         print(len(self._arFinal))
         print("must be: {}".format(self._get_total()))
