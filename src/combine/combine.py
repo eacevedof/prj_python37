@@ -44,13 +44,11 @@ class Combine:
     def _get_recursive(self, arLoop, arChars):
         if self._iLoop == self._iLen:
             arConc = self._get_crossjoin(arLoop, arChars)
-            # self._arFinal.append(arConc)
             self._addto_final(arConc)
             return
         else:
             self._iLoop += 1
             arConc = self._get_crossjoin(arLoop, arChars)
-            # self._arFinal.append(arConc)
             self._addto_final(arConc)
             self._get_recursive(arConc, arChars)
 
