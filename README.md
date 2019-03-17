@@ -6,6 +6,7 @@
 - Instalación de django por consola
 
 ### [Parte 3 - Instalación Django con Pycharm (keepcoding)](https://github.com/eacevedof/prj_python37/tree/master/keepcoding)
+- [Youtube playlist](https://www.youtube.com/playlist?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl)
 - Intento montar un proyecto Frikr. Los (videos) tutoriales no son secuenciales con lo cual es material incompleto. De aqui se puede recuperar como utilizar PyCharm y una explicación
 sobre el fichero de configuración (**settings.py**) 
 
