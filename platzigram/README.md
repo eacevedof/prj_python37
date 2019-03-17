@@ -120,5 +120,16 @@
     </p>
 </details>
 
-- En una ventana de cmd: `platzigram>.\.env\scripts\activate`
+- En una ventana de cmd: `platzigram>..\.env\scripts\activate`
 - `deactivate` es el comando opuesto
+- Instalación de Django con pip dentro de nuestro (.env)
+	- `python -m pip install --upgrade pip` Actualizamos pip
+	- `pip install django -U` -U: última version
+	- `pip freeze` Comprobamos que está instalado
+	```sh
+    (.env) <project>\platzigram>pip freeze
+    Django==2.1.7
+    pytz==2018.9
+    ``` 
+    
+    
