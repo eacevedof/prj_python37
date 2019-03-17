@@ -295,3 +295,19 @@ return HttpResponse(
     content_type="application/json"
 )
 ```
+
+```py
+def say_hi(request,name,age):
+    """hi/<str:name>/<int:age>/"""
+    # pdb.set_trace()
+    # con GET no va, pq realmente no hay nada en la url como: ?k=v&k2=v2
+    name = request.GET["nombre"]
+    age = request.GET["edad"]
+    if age<12:
+        message = "Sorry {}, you are not allowed here".format(name)
+    else:
+        message = "Hello {}!, Welcome to Platzigram".format(name)
+    return HttpResponse(message)
+```
+#### 8 Video. [Creación de la primera app](https://platzi.com/clases/1318-django/12405-creacion-de-la-primera-app/)
+

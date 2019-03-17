@@ -13,8 +13,8 @@ def hello_world(request):
 
 
 
-def hi(request):
-    """Hi."""
+def sort_integers(request):
+    """sort_integers."""
     # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
     numbers = [int(i) for i in request.GET["numbers"].split(",")]
     nsorted = sorted(numbers)
@@ -30,3 +30,15 @@ def hi(request):
         json.dumps(data,indent=4),
         content_type="application/json"
     )
+
+def say_hi(request,name,age):
+    """hi/<str:name>/<int:age>/"""
+    # pdb.set_trace()
+    # con GET no va, pq realmente no hay nada en la url como: ?k=v&k2=v2
+    name = request.GET["nombre"]
+    age = request.GET["edad"]
+    if age<12:
+        message = "Sorry {}, you are not allowed here".format(name)
+    else:
+        message = "Hello {}!, Welcome to Platzigram".format(name)
+    return HttpResponse(message)
