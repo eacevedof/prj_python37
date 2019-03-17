@@ -8,6 +8,7 @@
 <details>
 	<summary>.env (tree)</summary>
     <p>
+    
     ```ssh
     D:.
     ├───Include
@@ -115,6 +116,7 @@
     │   └───tcl8.6
     └───Scripts    
     ```
+    
     </p>
 </details>
 - `source .env/scripts/`
