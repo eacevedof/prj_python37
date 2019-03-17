@@ -47,4 +47,4 @@ __pycache__
 servidor/venv
 venv
 src/pv.egg-info
-
+.env

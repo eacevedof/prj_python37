@@ -4,7 +4,7 @@
 
 ##### Video 3 Preparación del entorno de trabajo
 - Entornos virtuales 
-- `python -m venv .env`  Crea la carpeta con el entorno virtual
+- `python -m venv .env`  Crea la carpeta del entorno virtual. Aqui se instalarán todas los paquetes necesarios para Django
 - <details>
 	<summary>.env (tree en windows)</summary>
     <p>
@@ -120,5 +120,5 @@
     </p>
 </details>
 
-- `source .env/scripts/`
-- ``
+- En una ventana de cmd: `platzigram>.\.env\scripts\activate`
+- `deactivate` es el comando opuesto
