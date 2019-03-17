@@ -221,6 +221,16 @@
 
             </p>
         </details>
-		- 
-
+	- **`python manage.py runserver`**  Arranca el servidor
+	```js
+    Performing system checks...
+    System check identified no issues (0 silenced).
+    You have 15 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
+    Run 'python manage.py migrate' to apply them.
+    March 17, 2019 - 17:09:02
+    Django version 2.1.7, using settings 'platzigram.settings'
+    Starting development server at http://127.0.0.1:8000/
+    Quit the server with CTRL-BREAK.    
+    ```
+    
     
