@@ -5,11 +5,10 @@
 ##### Video 3 Preparación del entorno de trabajo
 - Entornos virtuales 
 - `python -m venv .env`  Crea la carpeta con el entorno virtual
-<details>
+- <details>
 	<summary>.env (tree)</summary>
     <p>
-    
-    ```ssh
+    ```
     D:.
     ├───Include
     ├───Lib
