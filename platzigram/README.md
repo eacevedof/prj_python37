@@ -232,7 +232,7 @@
     Starting development server at http://127.0.0.1:8000/
     Quit the server with CTRL-BREAK.    
     ```
-    	- Si navegamos en esa dirección veremos la página de inicio de django en local.
+    - Si navegamos a esa dirección veremos la página de inicio de django en local.
     - Tocamos el fichero urls.py
     ```py
     from django.urls import path
@@ -251,3 +251,4 @@
 - [Gestión de petición (request) de Django](https://docs.djangoproject.com/en/2.1/topics/http/urls/#how-django-processes-a-request) 
 - Las funciones que reciben las peticiónes (requests) django las entiende como vistas.
 - Creamos fichero `views.py`
+- `from datetime import datetime`
