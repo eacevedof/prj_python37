@@ -6,7 +6,7 @@ from pprint import pprint
 # print(os.path.realpath(__file__)) 
 # sys.exit()
 
-CLIENT_TABLE = "./src/.clients.csv"
+CLIENT_TABLE = "./mis_tests/.clients.csv"
 #CLIENT_TABLE = ".clients.csv"
 CLIENT_SCHEMA = ["name","company","email","position"] 
 
