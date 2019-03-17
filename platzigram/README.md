@@ -232,5 +232,18 @@
     Starting development server at http://127.0.0.1:8000/
     Quit the server with CTRL-BREAK.    
     ```
-    
+    	- Si navegamos en esa dirección veremos la página de inicio de django en local.
+    - Tocamos el fichero urls.py
+    ```py
+    from django.urls import path
+    from django.http import HttpResponse
+
+    def hello_world(request):
+        return HttpResponse("Hello World")
+
+    urlpatterns = [
+    	# path(ruta-slug,<vista,función o clase que recibe la petición>)
+        path("hello-world/",hello_world)
+    ]
+    ```
     
