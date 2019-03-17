@@ -9,3 +9,8 @@ def hello_world(request):
     return HttpResponse("Oh, hi! current server time is {now}".format(
         now=datetime.now().strftime("%b $dth, %Y - %H:%M hrs")
     ))
+
+def hi(request):
+    """Hi."""
+    print(request)
+    return HttpResponse("hi")

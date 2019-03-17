@@ -252,3 +252,6 @@
 - Las funciones que reciben las peticiónes (requests) django las entiende como vistas.
 - Creamos fichero `views.py`
 - `from datetime import datetime`
+- `print(request)`  `<WSGIRequest: GET '/hi/'>`
+- [El objeto request](https://docs.djangoproject.com/en/2.1/ref/request-response/#django.http.HttpRequest)
+- 
