@@ -270,6 +270,11 @@ presionando c + enter sigue la ejecución
 	- [http://127.0.0.1:8000/hi/?numbers=10,4,50,32](http://127.0.0.1:8000/hi/?numbers=10,4,50,32)
 	- **solución:**
 	```py
-    
-    
-    ```
+def hi(request):
+    """Hi."""
+    # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
+    sNumbers = request.GET["numbers"]
+    lstNumbers = sNumbers.split(",")
+    lstNumbers = [int(sI) for sI in lstNumbers]
+    lstNumbers.sort()
+    return HttpResponse(json.dumps(lstNumbers), content_type="application/json")    ```
