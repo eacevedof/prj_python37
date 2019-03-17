@@ -267,6 +267,7 @@ presionando c + enter sigue la ejecución
 ```
 - **Tarea**
 	- Queda recibir por GET numbers=10,4,50,32 y devolverlos por json no por HTML de forma ordenada.
+	- [http://127.0.0.1/hi/?numbers=10,4,50,32](http://127.0.0.1/hi/?numbers=10,4,50,32)
 	- **solución:**
 	```py
     
