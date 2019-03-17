@@ -2,7 +2,7 @@
 
 ## [Parte 4 - Clases Django](https://platzi.com/clases/django/) 
 
-##### 3 Video. Preparación del entorno de trabajo
+#### 3 Video. Preparación del entorno de trabajo
 - Entornos virtuales 
 - `python -m venv .env`  Crea la carpeta del entorno virtual. Aqui se instalarán todas los paquetes necesarios para Django
 - <details>
@@ -133,7 +133,7 @@
     ``` 
 
 
-##### 4 Manual. Como instalar python en windows.
+#### 4 Manual. Como instalar python en windows.
 - Solo lectura
 
 ##### 5 Video. [Creación del proyecto Platzigram / Tu primer Hola, mundo en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu)
@@ -246,4 +246,8 @@
         path("hello-world/",hello_world)
     ]
     ```
-    
+
+#### 6 Video. [El objeto Request](https://platzi.com/clases/1318-django/12403-el-objeto-request2427)
+- [Gestión de petición (request) de Django](https://docs.djangoproject.com/en/2.1/topics/http/urls/#how-django-processes-a-request) 
+- Las funciones que reciben las peticiónes (requests) django las entiende como vistas.
+- Creamos fichero `views.py`
