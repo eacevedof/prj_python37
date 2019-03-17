@@ -16,8 +16,17 @@ def hello_world(request):
 def hi(request):
     """Hi."""
     # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
-
     numbers = [int(i) for i in request.GET["numbers"].split(",")]
     nsorted = sorted(numbers)
+
+    data = {
+        "status": "ok",
+        "numbers": nsorted,
+        "message": "Integers sorted susccesfully."
+    }
+
     # pdb.set_trace()
-    return HttpResponse(json.dumps(nsorted), content_type="application/json")
+    return HttpResponse(
+        json.dumps(data,indent=4),
+        content_type="application/json"
+    )

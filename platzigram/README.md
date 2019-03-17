@@ -283,9 +283,15 @@ presionando c + enter sigue la ejecución
     
 #### 7 Video. [Solución al reto - Pasando argumentos en la URL](https://platzi.com/clases/1318-django/12404-solucion-al-reto-pasando-argumentos-en-la-url/)
 ```py
-# request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
 numbers = [int(i) for i in request.GET["numbers"].split(",")]
 nsorted = sorted(numbers)
-# pdb.set_trace()
-return HttpResponse(json.dumps(nsorted), content_type="application/json")
+data = {
+    "status": "ok",
+    "numbers": nsorted,
+    "message": "Integers sorted susccesfully."
+}
+return HttpResponse(
+    json.dumps(data,indent=4),
+    content_type="application/json"
+)
 ```
