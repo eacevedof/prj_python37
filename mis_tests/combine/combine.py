@@ -80,8 +80,11 @@ class Combine:
         print("must be: {}".format(self._get_total()))
 
 
-oC = Combine(["a","b","c","d","e"])
-oC.run()
+# si se llama directamente (sin import) se ejecuta este código
+# es decir con: py combine.py
+if __name__ == "__main__":
+    oC = Combine(["a","b","c","d","e"])
+    oC.run()
 
 
 
