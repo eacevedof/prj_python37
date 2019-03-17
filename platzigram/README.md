@@ -136,7 +136,7 @@
 #### 4 Manual. Como instalar python en windows.
 - Solo lectura
 
-##### 5 Video. [Creación del proyecto Platzigram / Tu primer Hola, mundo en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu)
+#### 5 Video. [Creación del proyecto Platzigram / Tu primer Hola, mundo en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu)
 
 - Nos posicionamos en nuestro entorno virtual.
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
@@ -270,11 +270,21 @@ presionando c + enter sigue la ejecución
 	- [http://127.0.0.1:8000/hi/?numbers=10,4,50,32](http://127.0.0.1:8000/hi/?numbers=10,4,50,32)
 	- **solución:**
 	```py
-def hi(request):
+	def hi(request):
     """Hi."""
-    # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
-    sNumbers = request.GET["numbers"]
-    lstNumbers = sNumbers.split(",")
-    lstNumbers = [int(sI) for sI in lstNumbers]
-    lstNumbers.sort()
-    return HttpResponse(json.dumps(lstNumbers), content_type="application/json")    ```
+        # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
+        sNumbers = request.GET["numbers"]
+        lstNumbers = sNumbers.split(",")
+        lstNumbers = [int(sI) for sI in lstNumbers]
+        lstNumbers.sort()
+		return HttpResponse(json.dumps(lstNumbers), content_type="application/json") 
+	```
+    
+#### 7 Video. [Solución al reto - Pasando argumentos en la URL](https://platzi.com/clases/1318-django/12404-solucion-al-reto-pasando-argumentos-en-la-url/)
+```py
+# request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
+numbers = [int(i) for i in request.GET["numbers"].split(",")]
+nsorted = sorted(numbers)
+# pdb.set_trace()
+return HttpResponse(json.dumps(nsorted), content_type="application/json")
+```

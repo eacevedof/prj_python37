@@ -16,11 +16,8 @@ def hello_world(request):
 def hi(request):
     """Hi."""
     # request.GET = <QueryDict: {'numbers': ['10,4,50,32']}>
-    # print(request)
-    # pdb.set_trace() # frena la ejecución y permite interactuar con la consola
-    # return HttpResponse("hi")
-    sNumbers = request.GET["numbers"]
-    lstNumbers = sNumbers.split(",")
-    lstNumbers = [int(sI) for sI in lstNumbers]
-    lstNumbers.sort()
-    return HttpResponse(json.dumps(lstNumbers), content_type="application/json")
+
+    numbers = [int(i) for i in request.GET["numbers"].split(",")]
+    nsorted = sorted(numbers)
+    # pdb.set_trace()
+    return HttpResponse(json.dumps(nsorted), content_type="application/json")
