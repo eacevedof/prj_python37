@@ -2,7 +2,7 @@
 
 ## [Parte 4 - Clases Django](https://platzi.com/clases/django/) 
 
-##### Video 3 Preparación del entorno de trabajo
+##### 3 Video. Preparación del entorno de trabajo
 - Entornos virtuales 
 - `python -m venv .env`  Crea la carpeta del entorno virtual. Aqui se instalarán todas los paquetes necesarios para Django
 - <details>
@@ -132,4 +132,11 @@
     pytz==2018.9
     ``` 
     
+##### 4 Manual. Como instalar python en windows
+##### [5 Video. Creación del proyecto Platzigram / Tu primer Hola, mundo! en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu/)
+	- `django-admin startproject platzigram .`
+    -
+    
+
+
     
