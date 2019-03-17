@@ -254,4 +254,21 @@
 - `from datetime import datetime`
 - `print(request)`  `<WSGIRequest: GET '/hi/'>`
 - [El objeto request](https://docs.djangoproject.com/en/2.1/ref/request-response/#django.http.HttpRequest)
-- 
+- Uso del módulo **pdb**
+```py
+pdb.set_trace()
+> <project>\platzigram\views.py(18)hi()
+-> return HttpResponse("hi")
+(Pdb)
+aqui permite pedir trazas sobre el objeto request. Por ejemplo:
+request.POST
+request.GET
+presionando c + enter sigue la ejecución
+```
+- **Tarea**
+	- Queda recibir por GET numbers=10,4,50,32 y devolverlos por json no por HTML de forma ordenada.
+	- **solución:**
+	```py
+    
+    
+    ```

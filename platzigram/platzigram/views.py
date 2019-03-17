@@ -1,5 +1,6 @@
 """views.py"""
 
+import pdb
 from django.http import HttpResponse
 from datetime import datetime
 
@@ -12,5 +13,6 @@ def hello_world(request):
 
 def hi(request):
     """Hi."""
-    print(request)
+    # print(request)
+    pdb.set_trace() # frena la ejecución y permite interactuar con la consola
     return HttpResponse("hi")
