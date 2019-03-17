@@ -131,45 +131,96 @@
     Django==2.1.7
     pytz==2018.9
     ``` 
-    
+
+
 ##### 4 Manual. Como instalar python en windows.
+- Solo lectura
 
-##### [5 Video. Creación del proyecto Platzigram / Tu primer Hola, mundo! en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu/)
+##### 5 Video. [Creación del proyecto Platzigram / Tu primer Hola, mundo en Django](https://platzi.com/clases/1318-django/12402-creacion-del-proyecto-platzigram-tu-primer-hola-mu)
 
-	- Nos posicionamos en nuestro entorno virtual.
-	- `django-admin startproject platzigram .` Creación de un proyecto de Django
-    - Archivos creados dentro de platzigram/platzigram:
-    	-  urls.py: Mapea rutas a controladores
-    	```py
-        from django.contrib import admin
-        from django.urls import path
+- Nos posicionamos en nuestro entorno virtual.
+- `django-admin startproject platzigram .` Creación de un proyecto de Django
+- Archivos creados dentro de platzigram/platzigram:
+    -  urls.py: Mapea rutas a controladores
+    ```py
+    from django.contrib import admin
+    from django.urls import path
 
-        urlpatterns = [
-            path('admin/', admin.site.urls),
-        ]        
-        ```
-        - wsgi.py: Es la interfaz que se ejecuta en producción
-        ```py
-        import os
-        from django.core.wsgi import get_wsgi_application
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'platzigram.settings')
-        application = get_wsgi_application()        
-        ```
-        - manage.py: Nunca vamos a tocar pero interactuaremos con el en todo el desarrollo. Es una interfaz sobre djangoadmin. Es un comando de consola de django.
-        - settings.py: 
-        	- BASE_DIR: la ruta raíz del proyecto
-        	- SECRET_KEY: hashing de contraseñas
-			- DEBUG: muestra trazas
-			- ALLOWED_HOSTS: los hosts permitidos
-			- INSTALLED_APPS: Apps instaladas
-			- MIDDLEWARES:
-			- ROOT_URLCONF: Nuestra url raiz al proyecto
-			- TEMPLATES:
-			- WSGI_APPLICATION:
-			- DATABASES:
-			- AUTH_PASSWORD_VALIDATORS: Todas las contraseñas pasan por todos estos filtros.
-			- [Más datos](https://github.com/eacevedof/prj_python37/blob/master/keepcoding/README.md)
-    
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+    ]        
+    ```
+    - wsgi.py: Es la interfaz que se ejecuta en producción
+    ```py
+    import os
+    from django.core.wsgi import get_wsgi_application
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'platzigram.settings')
+    application = get_wsgi_application()        
+    ```
+    - manage.py: Nunca vamos a tocar pero interactuaremos con el en todo el desarrollo. Es una interfaz sobre djangoadmin. Es un comando de consola de django.
+    - settings.py: 
+        - BASE_DIR: la ruta raíz del proyecto
+        - SECRET_KEY: hashing de contraseñas
+        - DEBUG: muestra trazas
+        - ALLOWED_HOSTS: los hosts permitidos
+        - INSTALLED_APPS: Apps instaladas
+        - MIDDLEWARES:
+        - ROOT_URLCONF: Nuestra url raiz al proyecto
+        - TEMPLATES:
+        - WSGI_APPLICATION:
+        - DATABASES:
+        - AUTH_PASSWORD_VALIDATORS: Todas las contraseñas pasan por todos estos filtros.
+        - [Más datos](https://github.com/eacevedof/prj_python37/blob/master/keepcoding/README.md)
+        - <details>
+            <summary>`python manage.py`</summary>
+            <p>
 
+            ```
+            Available subcommands:
+
+            [auth]
+                changepassword
+                createsuperuser
+
+            [contenttypes]
+                remove_stale_contenttypes
+
+            [django]
+                check
+                compilemessages
+                createcachetable
+                dbshell
+                diffsettings
+                dumpdata
+                flush
+                inspectdb
+                loaddata
+                makemessages
+                makemigrations
+                migrate
+                sendtestemail
+                shell
+                showmigrations
+                sqlflush
+                sqlmigrate
+                sqlsequencereset
+                squashmigrations
+                startapp
+                startproject
+                test
+                testserver
+
+            [sessions]
+                clearsessions
+
+            [staticfiles]
+                collectstatic
+                findstatic
+                runserver           
+            ```
+
+            </p>
+        </details>
+		- 
 
     
