@@ -1,6 +1,8 @@
-# my_django
+# Frikr
 
-- [Instalación django by KeepCoding](https://youtu.be/sGYSPaXAlkg?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=475)
+Instalación de django con PyCharm
+
+- [(Video) instalación django - KeepCoding](https://youtu.be/sGYSPaXAlkg?list=PLQpe1zyko1phY_8XwZOQSdoyKf9nv7kMl&t=475)
 - `pip install virtualenvwrapper-win` wrapper para que funcione el siguiente comando, como en el mac del profesor
 - `virtualenv --python=python venv` crea la carpeta de entorno (como el container)
 - **`cd venv/Scripts`** entramos en los comandos propios del contenedor 

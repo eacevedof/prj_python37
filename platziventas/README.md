@@ -1,7 +1,7 @@
-# Clases Python Parte 1 - App. Platzi Ventas
+#Parte 1 - Aplicación CRUD consola Platzi Ventas (pv)
 
-### [Python](https://platzi.com/clases/python/)
-Prueba de concepto con Python 3.7.2 y Anaconda
+### [Curso Python - Platzi](https://platzi.com/clases/python/)
+Prueba de concepto con Python 3.7.2 
 
 - [Link interesante de instalación de Python](https://aasanchez.wordpress.com/2013/09/20/django-en-windows-y-no-morir-en-el-intento/)
 
@@ -78,7 +78,7 @@ Prueba de concepto con Python 3.7.2 y Anaconda
 
 - Slices
     - **somestring[i-origen:i-final:i-saltos],**
-    - **::  todo el string**
+    - **`::`** todo el string
     - **`my_string = 'abcdefghijklmnopqrstuvwxyz'`**
     - `my_string[0:3]`      Desde el 0 hasta el 3 no inclusivo
         - `abc`
