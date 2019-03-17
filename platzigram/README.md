@@ -6,7 +6,7 @@
 - Entornos virtuales 
 - `python -m venv .env`  Crea la carpeta con el entorno virtual
 - <details>
-	<summary>.env (tree)</summary>
+	<summary>.env (tree en windows)</summary>
     <p>
     
     ```
@@ -120,3 +120,4 @@
     </p>
 </details>
 - `source .env/scripts/`
+- 
