@@ -1,4 +1,4 @@
-#Parte 1 - Aplicación CRUD consola Platzi Ventas (pv)
+# Parte 1 - Aplicación CRUD consola Platzi Ventas (pv)
 
 ### [Curso Python - Platzi](https://platzi.com/clases/python/)
 Prueba de concepto con Python 3.7.2 

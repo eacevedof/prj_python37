@@ -17,6 +17,7 @@ sobre el fichero de configuración (**settings.py**)
 ```
 
 ### [Parte 1 - App Platzi Ventas (platziventas)](https://github.com/eacevedof/prj_python37/tree/master/platziventas)
+- [Curso Platzi](https://platzi.com/clases/python/)
 - Prueba de concepto con Python 3.7.2
 - Instalación sin Django
 - Applicación CRUD tipo consola con instalador
