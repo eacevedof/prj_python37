@@ -35,8 +35,8 @@ def say_hi(request,name,age):
     """hi/<str:name>/<int:age>/"""
     # pdb.set_trace()
     # con GET no va, pq realmente no hay nada en la url como: ?k=v&k2=v2
-    name = request.GET["nombre"]
-    age = request.GET["edad"]
+    # name = request.GET["nombre"]
+    # age = request.GET["edad"]
     if age<12:
         message = "Sorry {}, you are not allowed here".format(name)
     else:
