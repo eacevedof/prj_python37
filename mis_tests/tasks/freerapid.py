@@ -20,7 +20,7 @@ class FreeRapid:
         ]
         return arFiles
 
-    def __slug_name(self,arFiles):
+    def __rename_files(self,arFiles):
 
         for f in arFiles:
             sFile = self.mypath + f
@@ -32,6 +32,7 @@ class FreeRapid:
             sNumber = sNumber.group(1).strip()
             sNumber = sNumber.zfill(3)
             sFileNew = sNumber +"-"+ sFileNew.replace(" vídeo ","").replace(" ","-").replace(".-","-")
+            sFileNew = self.mypath+sFileNew
             # print(sIni["match"])
             #pprint(sIni.group(1))
             #print(sFileNew," ",sNumber)
@@ -40,7 +41,7 @@ class FreeRapid:
 
     def run(self):
         arFiles = self.__get_files()
-        self.__slug_name(arFiles)
+        self.__rename_files(arFiles)
         # pprint(arFiles)
 
 
