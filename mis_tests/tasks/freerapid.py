@@ -9,7 +9,7 @@ from os.path import isfile, join
 class FreeRapid:
 
     def __init__(self):
-        self.mypath = ""
+        self.mypath = "E:\\shared\\videos\\"
 
 
     def __get_files(self):
