@@ -21,5 +21,12 @@ def date(unixtime, format = '%m/%d/%Y %H:%M'):
     d = datetime.datetime.fromtimestamp(unixtime)
     return d.strftime(format)
 
-def lg(var="",sTitle=None,sType="custom"):
-    sLogdate = ""
+def lg(var,sTitle=None,sType="custom"):
+    sLogdate = date("Ymd")
+    sNow = date("Y-m-d_H:i:s")
+    if sTitle:
+        sTitle = "<< {} >>".format(sTitle)
+        sTitle = "\n"+sNow+": "+sTitle
+        print(sTitle)
+
+    pprint(var)        
