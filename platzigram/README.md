@@ -324,3 +324,11 @@ def say_hi(request,name,age):
 	- Nos interesa dos variables:
 		- **.name**  El nombre común de nuestra app
 		- **.verbose_name** El mismo nombre anterior pero en plural
+
+## Notas
+- `django-admin startproject platzigram .` Creación de un proyecto de Django
+- `(env) ~/platzigram con py manage.py startapp appposts` Creación de una app en Django
+	- **8 Video.** Tengo que recuperar la **subcarpeta** borrada platzigram
+		- Hago copia del proyecto
+		- ejecuto: **`git checkout feea6ec -- platzigram/platzigram`** donde `<hash>` es el último punto donde existía la subcarpeta platzigram.
+		- Reemplazo los ficheros con el backup.
