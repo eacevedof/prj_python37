@@ -412,14 +412,79 @@ Tu nombre es: {{ name }}
 	- View Recupera los datos y los pasa al template
 
 #### 11 Video. [La M en el MTV](https://platzi.com/clases/1318-django/12408-la-quotmquot-en-el-mtv/)
+- **settings.py** 
+	- Configurando la bd [Doc. oficial](https://docs.djangoproject.com/en/2.1/ref/databases/) 
+	- **Migraciones**. El mensaje: `You have 14 unaplied mig (...) to apply them`
+	- Detenemos el servidor http.
+	- comando: `<project>\prj_python37\platzigram>py manage.py migrate`
+	```js
+    # settings.py
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
+	# despues de ejecutar el comando:
+    Operations to perform:
+      Apply all migrations: admin, auth, contenttypes, sessions
+    Running migrations:
+      Applying contenttypes.0001_initial... OK
+      Applying auth.0001_initial... OK
+      Applying admin.0001_initial... OK
+      Applying admin.0002_logentry_remove_auto_add... OK
+      Applying admin.0003_logentry_add_action_flag_choices... OK
+      Applying contenttypes.0002_remove_content_type_name... OK
+      Applying auth.0002_alter_permission_name_max_length... OK
+      Applying auth.0003_alter_user_email_max_length... OK
+      Applying auth.0004_alter_user_username_opts... OK
+      Applying auth.0005_alter_user_last_login_null... OK
+      Applying auth.0006_require_contenttypes_0002... OK
+      Applying auth.0007_alter_validators_add_error_messages... OK
+      Applying auth.0008_alter_user_username_max_length... OK
+      Applying auth.0009_alter_user_last_name_max_length... OK
+      Applying sessions.0001_initial... OK    
+    ```
+    - ![db_django sqlite3 - SQLiteStudio](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/254x239/77c0d9fa7babde5f35cda87397a64b65/image.png)
+	- Django usa un ORM para trabjar con multiples sistemas de bd.
+	- Cramos un modelo de usuarios.
+	- [Doc. Campos](https://docs.djangoproject.com/en/2.1/ref/models/fields/)
+	```js
+    ERRORS:
+    appposts.User.first_name: (fields.E120) CharFields must define a 'max_length' attribute.
+    appposts.User.last_name: (fields.E120) CharFields must define a 'max_length' attribute.
+    appposts.User.password: (fields.E120) CharFields must define a 'max_length' attribute.
+    ```js
+    - Despues de corregir el modelo
+    ```py
+    email = models.EmailField(unique=True) 
+    password = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
 
+    bio = models.TextField(blank=True) #permite el campo vacio
+    birthdate = models.DateField(blank=True,null=True)
 
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    ```
+    - Ejecutamos comando dentro de env: `python manage.py makemigrations`.
+    ```js
+    Migrations for 'appposts':
+    appposts\migrations\0001_initial.py
+    Create model User
 
+    crea fichero en platzigram/appposts/migrations/0001_initial.py
+    se ejecuta el manage migrate
 
-
-
-
+    python manage.py migrate
+    se ha creado la tabla **appposts_user**    
+    ```
+    - ![Tabla appposts_user](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/200x276/da4d0d55a93673bc80feb7c2dc272cac/image.png)
+    - makemigrations busca los cambios en nuestros modelos
+    - migrate aplica cambios en la bd
+    
 
 
 
