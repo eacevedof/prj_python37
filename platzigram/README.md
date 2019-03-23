@@ -317,8 +317,8 @@ def say_hi(request,name,age):
 - **apps.py** aqui se de clara toda la configuración de nuestra app de modo público y hace que nuestra app sea reutilizable.  Se puede definir ciertas variables.
 - **models.py** se usa para definir los modelos de nuestros datos.
 - **test.py** archivo de pruebas
-- **views.py** 
-- La app de django no es estricta en lo que a su arbol de carpetas se refiere. Se puede adaptar y escalar según las necesidades de cada proyecto
+- **views.py**
+- La app de django no es estricta en lo que a su arbol de carpetas se refiere. Se puede adaptar y escalar según las necesidades de cada proyecto.
 - [**`<appposts>/app.py`**](https://docs.djangoproject.com/en/2.1/ref/applications/)
 	- En la doc, define que es una app, que variables recibe y como configurarla.
 	- Nos interesa dos variables:
@@ -349,7 +349,7 @@ def say_hi(request,name,age):
                 <figure><img src="{picture}"/></figure>
             """.format(**post))
 
-        return HttpResponse("<br/>".join(contents))        
+        return HttpResponse("<br/>".join(contents))
         ```
 - Se muestra el listado de posts con foto.
 
@@ -378,14 +378,32 @@ def list_posts(request):
         django.template.loaders.app_directories.Loader: <prj_python37>\.env\lib\site-packages\django\contrib\auth\templates\feed.html (Source does not exist)
         django.template.loaders.app_directories.Loader: <prj_python37>\platzigram\appposts\templates\feed.html (Source does not exist)
         ```
-- El tercer parámetro de render es un contexto, un diccionario, son las variables que se pasarán a la plantilla si es necesario.
+- El tercer parámetro de render es un [contexto](https://docs.djangoproject.com/en/2.1/ref/templates/api/#django.template.Context), un diccionario, son las variables que se pasarán a la plantilla si es necesario.
 ```py
 return render(request,"feed.html",{"name":"Eduardo A.F"})
 # en la vista
 Tu nombre es: {{ name }}
 ```
+- Instalo bootstrap en feed.html y retoco la generación de los posts
+```html
+{% for post in posts %}
+    <div class="col-lg-4 offset-lg-4">
+        <div class="media">
+            <img class="mr-3 rounded-circle" src="{{ post.user.picture }}" alt="{{ post.user.name }}">
+            <div class="media-body">
+                <h5 class="mt-0">{{ post.user.name }}</h5>
+                {{ post.timestamp }}
+            </div>
+        </div>
+        <img class="img-fluid mt-3 border rounded" src="{{ post.photo }}" alt="{{ post.title }}">
+        <h6 class="ml-1 mt-1">{{ post.title }}</h6>
+    </div>
+{% endfor %}
+```
 
-        
+- [Documentación sobre tags en los templates](https://docs.djangoproject.com/en/2.1/ref/templates/builtins/) Los `% operador % {{ mi_variable }}`
+
+#### 10 Video. []()
 
 
 

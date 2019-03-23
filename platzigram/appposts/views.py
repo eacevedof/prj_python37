@@ -10,25 +10,35 @@ from datetime import datetime
 
 posts = [
     {
-        "name": "Mont Blanc",
-        "user": "Fist User",
-        "timestamp": datetime.now().strftime("%b $dth, %Y - %H:%M hrs"),
-        "picture": "https://picsum.photos/200/200/?image=1036",
+        "title": "Mont Blanc",
+        "user": {
+            "name": "User Name 10",
+            "picture": "https://randomuser.me/api/portraits/men/10.jpg",
+        },
+        "timestamp": datetime.now().strftime("%b %dth, %Y - %H:%M hrs"),
+        "photo": "https://picsum.photos/200/200/?image=1036",
     },
     {
-        "name": "Vía Láctea",
-        "user": "Second User",
-        "timestamp": datetime.now().strftime("%b $dth, %Y - %H:%M hrs"),
-        "picture": "https://picsum.photos/200/200/?image=903",
+        "title": "Vía Láctea",
+        "user": {
+            "name": "User Name 20",
+            "picture": "https://randomuser.me/api/portraits/men/20.jpg",
+        },
+        "timestamp": datetime.now().strftime("%b %dth, %Y - %H:%M hrs"),
+        "photo": "https://picsum.photos/200/200/?image=903",
     },
     {
-        "name": "Nuevo Auditorio",
-        "user": "Third User",
-        "timestamp": datetime.now().strftime("%b $dth, %Y - %H:%M hrs"),
-        "picture": "https://picsum.photos/200/200/?image=1076",
+        "title": "Nuevo Auditorio",
+        "user": {
+            "name": "User Name 30",
+            "picture": "https://randomuser.me/api/portraits/men/30.jpg",
+        },
+        "timestamp": datetime.now().strftime("%b %dth, %Y - %H:%M hrs"),
+        "photo": "https://picsum.photos/200/200/?image=1076",
     }
 ]
 
 def list_posts(request):
     """List existing posts"""
-    return render(request,"feed.html",{"name":"Eduardo A.F","title":"Some title"})
+
+    return render(request,"feed.html",{"posts":posts})
