@@ -404,7 +404,12 @@ Tu nombre es: {{ name }}
 - [Documentación sobre tags en los templates](https://docs.djangoproject.com/en/2.1/ref/templates/builtins/) Los `% operador % {{ mi_variable }}`
 
 #### 10 Video. [Patrones de diseño](https://platzi.com/clases/1318-django/12407-patrones-de-diseno-y-django/)
-
+- MVC Model View Controller
+- Django es cercano al MVC
+- **MTV** Model Template View. es el patrón de Django y tiene similitud con MVC
+	- Model Define la estructura de los datos
+	- Template Presentación de datos
+	- View Recupera los datos y los pasa al template
 
 
 
