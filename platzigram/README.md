@@ -479,13 +479,13 @@ Tu nombre es: {{ name }}
     se ejecuta el manage migrate
 
     python manage.py migrate
-    se ha creado la tabla **appposts_user**    
+    se ha creado la tabla **appposts_user**
     ```
     - ![Tabla appposts_user](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/200x276/da4d0d55a93673bc80feb7c2dc272cac/image.png)
     - makemigrations busca los cambios en nuestros modelos
     - migrate aplica cambios en la bd
-    
 
+#### 12 Video. [El ORM de Django](https://platzi.com/clases/1318-django/12409-el-orm-de-django/)
 
 
 ## Notas
