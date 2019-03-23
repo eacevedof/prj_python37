@@ -352,7 +352,7 @@ def say_hi(request,name,age):
         return HttpResponse("<br/>".join(contents))        
         ```
 - Se muestra el listado de posts con foto.
-#### 9 Video. []()
+#### 9 Video. [Introducción al template system](https://platzi.com/clases/1318-django/12406-introduccion-al-template-system/)
 
 
 
