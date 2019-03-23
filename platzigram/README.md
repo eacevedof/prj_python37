@@ -486,7 +486,42 @@ Tu nombre es: {{ name }}
     - migrate aplica cambios en la bd
 
 #### 12 Video. [El ORM de Django](https://platzi.com/clases/1318-django/12409-el-orm-de-django/)
+- Por defecto Django agrega un id a la tabla. Por esto no hemos definido un campo identificador en el modelo.
+- Modificamos el modelo. Se crea campo **is_admin**
+- **makemigrations** genera un nuevo fichero 0002_user_is_admin.py
+- ![Nuevo campo is_admin](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/600x158/c5b3f5c56f579cf2a9554d21b569181f/image.png)
+- ![Nuevo campo en sqlite](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/226x286/9fd63243c39be16b12a71c60ed55c665/image.png)
+- Cargando el **shell de Django**
+- En (.env): **`py manage.py shell`**
+- ![shell python](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/784x68/d060e5f39142641f23268f476378407c/image.png)
+```py
+from appposts.models import User
+eaf = User.objects.create(
+	email="hola@gmail.com",
+    password = "1234567",
+    first_name = "Eduardo",
+    last_name = "A.F"
+)
+eaf.email
+eaf.id
+eaf.pk
+eaf.email = "eaf@email.com"
+eaf.save()
+eaf.created
+eaf.modified
 
+art = User()
+art.pk
+art.email = "arturo@plzi.com"
+art.first_name = "Arturo"
+art.last_name = "Mrt"
+art.password = "MSIComputer"
+art.is_admin = True
+art.save()
+
+art.delete()
+```
+- ![Dato creado](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/600x150/4160147625ee0a5944a32e37605c8816/image.png)
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
