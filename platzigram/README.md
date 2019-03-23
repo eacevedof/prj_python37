@@ -580,6 +580,7 @@ for u in users:
 ```
 
 #### 13 Doc. [Glosario](https://platzi.com/clases/1318-django/12410-glosario6134/)
+- Glosario de: ORM, Templates, Models.
 
 #### 14 Video. [Extendiendo el modelo de usuario](https://platzi.com/clases/1318-django/12411-extendiendo-el-modelo-de-usuario/)
 
