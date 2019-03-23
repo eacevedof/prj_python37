@@ -310,4 +310,4 @@ def say_hi(request,name,age):
     return HttpResponse(message)
 ```
 #### 8 Video. [Creación de la primera app](https://platzi.com/clases/1318-django/12405-creacion-de-la-primera-app/)
-
+- Se crea una nueva app dentro de: **(env) ~/platzigram** con **`py manage.py startapp appposts`** el nombre de app procuremos que sea siempre en plural.
