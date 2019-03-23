@@ -455,7 +455,7 @@ Tu nombre es: {{ name }}
     appposts.User.first_name: (fields.E120) CharFields must define a 'max_length' attribute.
     appposts.User.last_name: (fields.E120) CharFields must define a 'max_length' attribute.
     appposts.User.password: (fields.E120) CharFields must define a 'max_length' attribute.
-    ```js
+    ```
     - Despues de corregir el modelo
     ```py
     email = models.EmailField(unique=True) 
