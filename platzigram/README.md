@@ -361,7 +361,25 @@ def say_hi(request,name,age):
 	- La función (`def somefunc(request):`) procesa la entrada usando parámetros y el objeto request
 	- La función procesa una respuesta usando el objeto HttpResponse (del módulo: django.http)
 - Los templates los definimos en el archivo **<project>/platizgram/settings.py**
-- 
+- Usamos la variable **TEMPLATES** que admite diferentes backends.
+- Creamos una carpeta dentro de nuestra **app** de django (appposts).
+- en `apposts\views.py` ya no se usa `from django.http import HttpResponse`
+- se reemplaza por `from django.shortcuts import render`
+```py
+def list_posts(request):
+    """List existing posts"""
+    return render(request,"feed.html")
+```
+- Como hace Django para encontrar el template?:
+	- En la variable settings.py TEMPLATES["APPS_DIRS"]:True se le indica que busque las plantillas dentro de la subcarpeta templates.
+		- Probemos con la subcarpeta **borrame**. No, no funciona.
+		```js
+        django.template.loaders.app_directories.Loader: <prj_python37>\.env\lib\site-packages\django\contrib\admin\templates\feed.html (Source does not exist)
+        django.template.loaders.app_directories.Loader: <prj_python37>\.env\lib\site-packages\django\contrib\auth\templates\feed.html (Source does not exist)
+        django.template.loaders.app_directories.Loader: <prj_python37>\platzigram\appposts\templates\feed.html (Source does not exist)
+        ```
+
+        
 
 
 
