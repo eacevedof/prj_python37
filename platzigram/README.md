@@ -521,7 +521,65 @@ art.save()
 
 art.delete()
 ```
+
 - ![Dato creado](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/600x150/4160147625ee0a5944a32e37605c8816/image.png)
+- Creando usuarios:
+```py
+from datetime import date
+
+users = [
+    {
+        'email': 'userone@anemail.com',
+        'first_name': 'User O',
+        'last_name': 'Ne',
+        'password': '1234567',
+        'is_admin': True
+    },
+    {
+        'email': 'usertwo@anemail.com',
+        'first_name': 'Usr',
+        'last_name': 'Twoo',
+        'password': '987654321'
+    },
+    {
+        'email': 'userthree@anemail.com',
+        'first_name': 'Usuario',
+        'last_name': 'Tres',
+        'password': 'qwerty',
+        'birthdate': date(1990, 12,19)
+    },
+    {
+        'email': 'cuatro@anemail.com',
+        'first_name': 'Un Usuario',
+        'last_name': 'Cuatro',
+        'password': 'msicomputer',
+        'is_admin': True,
+        'birthdate': date(1981, 11, 6),
+        'bio': "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    }
+]
+from appposts.models import User
+for user in users:
+    obj = User(**user)
+    obj.save()
+    print(obj.pk, ':', obj.email)
+```
+- Obteniendo usuarios
+```py
+from appposts.models import User
+user = User.objects.get(email="userone@anemail.com")
+
+users = User.objects.filter(email__endswith="@anemail.com")
+users
+users = User.objects.all()
+users = User.objects.filter(email__endswith="@anemail.com").update(is_admin=True)
+users
+users = User.objects.filter(email__endswith="@anemail.com")
+for u in users:
+	print(u.email,":",u.is_admin)
+```
+
+
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
