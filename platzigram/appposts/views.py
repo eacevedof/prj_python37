@@ -29,5 +29,12 @@ posts = [
 
 def list_posts(request):
     """List existing posts"""
-    posts = [1,2,3,4]
-    return HttpResponse(str(posts))
+    contents = []
+    for post in posts:
+        contents.append("""
+            <p><strong>{name}</strong></p>
+            <p><strong>{user} - <i>{timestamp}</i></strong></p>
+            <figure><img src="{picture}"/></figure>
+        """.format(**post))
+
+    return HttpResponse("<br/>".join(contents))

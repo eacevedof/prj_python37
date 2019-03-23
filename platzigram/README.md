@@ -336,9 +336,23 @@ def say_hi(request,name,age):
     path("posts/",posts_views.list_posts),
 	AttributeError: module 'appposts.views' has no attribute 'list_posts'
     ```
-    - Configuramos `<project>/appposts/views.py`
+    - Configuramos **`<project>/appposts/views.py`**
     	- defino `list_posts(request):`
-		
+		- defino lista de posts: `posts = [...]`
+		- interesante **\*\*post**: explota el array items de forma ordenada y se concatean automaticamente en las posiciones del string
+		```py
+        contents = []
+        for post in posts:
+            contents.append("""
+                <p><strong>{name}</strong></p>
+                <p><strong>{user} - <i>{timestamp}</i></strong></p>
+                <figure><img src="{picture}"/></figure>
+            """.format(**post))
+
+        return HttpResponse("<br/>".join(contents))        
+        ```
+- Se muestra el listado de posts con foto.
+#### 9 Video. []()
 
 
 
