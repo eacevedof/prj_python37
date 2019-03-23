@@ -581,6 +581,8 @@ for u in users:
 
 #### 13 Doc. [Glosario](https://platzi.com/clases/1318-django/12410-glosario6134/)
 
+#### 14 Video. [Extendiendo el modelo de usuario](https://platzi.com/clases/1318-django/12411-extendiendo-el-modelo-de-usuario/)
+
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
 - `(env) ~/platzigram con py manage.py startapp appposts` Creación de una app en Django
