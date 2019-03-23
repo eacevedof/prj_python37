@@ -411,7 +411,7 @@ Tu nombre es: {{ name }}
 	- Template Presentación de datos
 	- View Recupera los datos y los pasa al template
 
-
+#### 11 Video. [La M en el MTV](https://platzi.com/clases/1318-django/12408-la-quotmquot-en-el-mtv/)
 
 
 
