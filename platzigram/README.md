@@ -221,7 +221,8 @@
 
             </p>
         </details>
-	- **`python manage.py runserver`**  Arranca el servidor
+	- **`python manage.py runserver`**  Arranca el servidor en:
+		- [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 	```js
     Performing system checks...
     System check identified no issues (0 silenced).
