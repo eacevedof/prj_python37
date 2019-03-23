@@ -403,7 +403,7 @@ Tu nombre es: {{ name }}
 
 - [Documentación sobre tags en los templates](https://docs.djangoproject.com/en/2.1/ref/templates/builtins/) Los `% operador % {{ mi_variable }}`
 
-#### 10 Video. []()
+#### 10 Video. [Patrones de diseño](https://platzi.com/clases/1318-django/12407-patrones-de-diseno-y-django/)
 
 
 
