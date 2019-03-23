@@ -312,3 +312,15 @@ def say_hi(request,name,age):
 ```
 #### 8 Video. [Creación de la primera app](https://platzi.com/clases/1318-django/12405-creacion-de-la-primera-app/)
 - Se crea una nueva app dentro de: **(env) ~/platzigram** con **`py manage.py startapp appposts`** el nombre de app procuremos que sea siempre en plural.
+- Crea un módulo migrations que se encarga de guardar los cambios en la bd.
+- Archivo **admin.py** se encarga de guardar los modelos en el administrador de django.
+- **apps.py** aqui se de clara toda la configuración de nuestra app de modo público y hace que nuestra app sea reutilizable.  Se puede definir ciertas variables.
+- **models.py** se usa para definir los modelos de nuestros datos.
+- **test.py** archivo de pruebas
+- **views.py** 
+- La app de django no es estricta en lo que a su arbol de carpetas se refiere. Se puede adaptar y escalar según las necesidades de cada proyecto
+- [**`<appposts>/app.py`**](https://docs.djangoproject.com/en/2.1/ref/applications/)
+	- En la doc, define que es una app, que variables recibe y como configurarla.
+	- Nos interesa dos variables:
+		- **.name**  El nombre común de nuestra app
+		- **.verbose_name** El mismo nombre anterior pero en plural
