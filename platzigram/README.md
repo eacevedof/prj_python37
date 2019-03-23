@@ -579,7 +579,7 @@ for u in users:
 	print(u.email,":",u.is_admin)
 ```
 
-
+#### 13 Doc. [Glosario](https://platzi.com/clases/1318-django/12410-glosario6134/)
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
