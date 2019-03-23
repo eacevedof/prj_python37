@@ -1,7 +1,9 @@
 """"<project>/appposts/views.py"""
 
 # imports Django
-from django.http import HttpResponse
+# from django.http import HttpResponse
+from django.shortcuts import render
+
 
 # utilities
 from datetime import datetime
@@ -29,12 +31,4 @@ posts = [
 
 def list_posts(request):
     """List existing posts"""
-    contents = []
-    for post in posts:
-        contents.append("""
-            <p><strong>{name}</strong></p>
-            <p><strong>{user} - <i>{timestamp}</i></strong></p>
-            <figure><img src="{picture}"/></figure>
-        """.format(**post))
-
-    return HttpResponse("<br/>".join(contents))
+    return render(request,"feed.html")

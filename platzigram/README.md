@@ -354,7 +354,14 @@ def say_hi(request,name,age):
 - Se muestra el listado de posts con foto.
 
 #### 9 Video. [Introducción al template system](https://platzi.com/clases/1318-django/12406-introduccion-al-template-system/)
-
+- El template system está inspirado en [jinja2](http://jinja.pocoo.org/) (a full featured template engine for Python) con lo cual comparten mucha similitud.
+- Repasando el flujo de una petición:
+	- url (se traducirá en una función)
+	- vista (que es una función definida en el fichero views.py)
+	- La función (`def somefunc(request):`) procesa la entrada usando parámetros y el objeto request
+	- La función procesa una respuesta usando el objeto HttpResponse (del módulo: django.http)
+- Los templates los definimos en el archivo **<project>/platizgram/settings.py**
+- 
 
 
 
