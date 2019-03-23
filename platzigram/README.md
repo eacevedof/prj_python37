@@ -324,6 +324,28 @@ def say_hi(request,name,age):
 	- Nos interesa dos variables:
 		- **.name**  El nombre común de nuestra app
 		- **.verbose_name** El mismo nombre anterior pero en plural
+- Despues de configurar app.py tenemos que configurar `<project>/platzigram/settings.py`
+	- En la lista **INSTALLED_APPS** agregamos
+	```py
+    # Local apps
+    "appposts", #hace referencia al módulo <project>/appposts
+    ```
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
