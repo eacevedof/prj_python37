@@ -31,4 +31,4 @@ posts = [
 
 def list_posts(request):
     """List existing posts"""
-    return render(request,"feed.html")
+    return render(request,"feed.html",{"name":"Eduardo A.F","title":"Some title"})

@@ -378,6 +378,8 @@ def list_posts(request):
         django.template.loaders.app_directories.Loader: <prj_python37>\.env\lib\site-packages\django\contrib\auth\templates\feed.html (Source does not exist)
         django.template.loaders.app_directories.Loader: <prj_python37>\platzigram\appposts\templates\feed.html (Source does not exist)
         ```
+- El tercer parámetro de render es un contexto, un diccionario, son las variables que se pasarán a la plantilla si es necesario.
+- 
 
         
 
