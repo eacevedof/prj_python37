@@ -330,8 +330,15 @@ def say_hi(request,name,age):
     # Local apps
     "appposts", #hace referencia al módulo <project>/appposts
     ```
-    
-
+- Configuramos una vista:
+	- Actualizamos **urls.py**
+	```js
+    path("posts/",posts_views.list_posts),
+	AttributeError: module 'appposts.views' has no attribute 'list_posts'
+    ```
+    - Configuramos `<project>/appposts/views.py`
+    	- defino `list_posts(request):`
+		
 
 
 
