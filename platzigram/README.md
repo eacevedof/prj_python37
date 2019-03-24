@@ -721,6 +721,9 @@ admin.site.unregister(User)
 admin.site.register(User,UserAdmin)
 ```
 
+#### 17 Video. [Creación del modelo de posts](https://platzi.com/clases/1318-django/12415-creacion-del-modelo-de-posts/)
+
+
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
 - `(env) ~/platzigram con py manage.py startapp appposts` Creación de una app en Django
