@@ -599,6 +599,7 @@ for u in users:
 - Modificamos **apps.py** (`<project>/platzigram/appusers/apps.py`) `class UsersConfig(AppConfig):`
 - Modificamos **models.py**
 	- `class Profile(models.Model):` Aqui se configuran los nuevos campos
+	- [appusers.models.py class Profile(models.Model):](https://github.com/eacevedof/prj_python37/blob/master/platzigram/appusers/models.py)
 	- La tabla asociada se llamará **appusers_profile**
 - Definimos relación 1:1 **OneToOneField**
 	```ssh
@@ -654,6 +655,23 @@ for u in users:
 	- ![tabla auth_user](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/90f79aa8eaeefab392d3ae3d06e082c2/image.png)
 
 #### 16 Video. [Explorando el dashboard de administración](https://platzi.com/clases/1318-django/12413-explorando-el-dashboard-de-administracion/)
+- Para hacer que aparezca el modelo **Profile** en el panel de administración hay que tocar el fichero [**appusers.admin.py**](https://github.com/eacevedof/prj_python37/blob/master/platzigram/appusers/admin.py)
+```py
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    """Profile admin."""
+    # esta variable configura la visualización de las columnas del grid
+    list_display = ("pk","user","phone_number","website","picture")
+    # botones de enlaces en el listado para que vaya al detalle del perfil
+    list_display_links = ("pk","user")
+    # permitir que se editen campos directamente en el grid de perfiles
+    # un campo o es un link o es editable
+    list_editable = ("phone_number","website","picture")
+    # campos por los que se desea buscar
+    search_fields = ("user__username","user__email","user__first_name","user__last_name","phone_number")
+    # filtros
+    list_filter = ("user__is_active","user__is_staff","created","modified",)
+```
 
 
 ## Notas
