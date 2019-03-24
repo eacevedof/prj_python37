@@ -721,7 +721,7 @@ admin.site.unregister(User)
 admin.site.register(User,UserAdmin)
 ```
 
-#### 17 Video. [Creación del modelo de posts](https://platzi.com/clases/1318-django/12415-creacion-del-modelo-de-posts/)
+#### 18 Video. [Creación del modelo de posts](https://platzi.com/clases/1318-django/12415-creacion-del-modelo-de-posts/)
 
 
 ## Notas
