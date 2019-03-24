@@ -672,9 +672,51 @@ class ProfileAdmin(admin.ModelAdmin):
     # filtros
     list_filter = ("user__is_active","user__is_staff","created","modified",)
 ```
+
 #### 17 Video. [Dashboard de Administración](https://platzi.com/clases/1318-django/12414-dashboard-de-administracion/)
+- Se adapta el admin.py con las siguientes lineas, estas permiten interactuar en la ficha del usuario con los campos del perfil.
+- Cuando se cree un usuario se podra ingresar datos del perfil.
+- Estos pasos están en la doc oficial de python. (link más arriba)
+```py
+    # configuración del detalle del perfil
+    fieldsets = (
+        # Profile es el texto de la barra azul
+        ("Profile",{
+            "fields":(
+                ("user","picture"),
+                # ("phone_number", "website"),
+            ),
+        }),
+        ("Extra info", {
+            "fields": (
+                ("website", "phone_number"),
+                ("biography"),
+            ),
+        }),
+        ("Metadata", {
+            "fields": (
+                ("created", "modified"),
+            ),
+        }),
+    )
 
+    readonly_fields = ("created","modified")
 
+# sirve para gestionar el perfil en el detalle del usuario
+class ProfileInline(admin.StackedInline):
+    """Profile in-line admin for users"""
+    model = Profile
+    can_delete = False
+    verbose_name_plural = "Profiles INLINE"
+
+class UserAdmin(BaseUserAdmin):
+    """Add profile admin to base user admin """
+    inlines = (ProfileInline,)
+    list_display = ("username","email","first_name","last_name","is_active","is_staff")
+
+admin.site.unregister(User)
+admin.site.register(User,UserAdmin)
+```
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
