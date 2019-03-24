@@ -583,6 +583,13 @@ for u in users:
 - Glosario de: ORM, Templates, Models.
 
 #### 14 Video. [Extendiendo el modelo de usuario](https://platzi.com/clases/1318-django/12411-extendiendo-el-modelo-de-usuario/)
+- [Doc. Extending the existing User Model](https://docs.djangoproject.com/en/2.1/topics/auth/customizing/#extending-the-existing-user-model)
+- Vamos a crear una nueva app
+- Primero borramos la bd: `rm db.sqlite3`
+- `py manage.py startapp appusers`
+	- Nos crea una app parecida a appposts
+- Modificamos **apps.py** `class UsersConfig(AppConfig):`
+- 
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
