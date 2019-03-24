@@ -700,6 +700,8 @@ class ProfileAdmin(admin.ModelAdmin):
         }),
     )
 
+    # para poder declarar los campos como metadata deben estar en readonly_fields ya que estos no
+    # se pueden modificar
     readonly_fields = ("created","modified")
 
 # sirve para gestionar el perfil en el detalle del usuario
