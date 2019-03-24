@@ -622,7 +622,7 @@ for u in users:
     ```
 - Antes de ejecutar `makemigrations` hay que instalar **pillow**
 - En (.env): `pip install pillow` Es necesario para campos tipo **imageField**
-- `migrate`
+- `migrate` crea la tabla **app_users_profile**
 	- ![tabla app_users_profile](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/810x367/3d4eaf0b1aefdd7d9dc96182b7cc4d25/image.png)
 - Se publica el modelo **Profile**
 	```py
