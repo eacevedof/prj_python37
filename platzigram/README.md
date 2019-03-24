@@ -674,7 +674,7 @@ class ProfileAdmin(admin.ModelAdmin):
 ```
 
 #### 17 Video. [Dashboard de Administración](https://platzi.com/clases/1318-django/12414-dashboard-de-administracion/)
-- Se adapta el [**admin.py**](https://github.com/eacevedof/prj_python37/blob/master/platzigram/appusers/admin.py)con las siguientes lineas, estas permiten interactuar en la ficha del usuario con los campos del perfil.
+- Se adapta el [**admin.py**](https://github.com/eacevedof/prj_python37/blob/master/platzigram/appusers/admin.py) con las siguientes lineas, estas permiten interactuar en la ficha del usuario con los campos del perfil.
 - Cuando se cree un usuario se podra ingresar datos del perfil.
 - Estos pasos están en la doc oficial de python. (link más arriba)
 - **admin.StackedInline**
