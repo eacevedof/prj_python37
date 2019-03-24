@@ -672,6 +672,8 @@ class ProfileAdmin(admin.ModelAdmin):
     # filtros
     list_filter = ("user__is_active","user__is_staff","created","modified",)
 ```
+#### 17 Video. [Dashboard de Administración](https://platzi.com/clases/1318-django/12414-dashboard-de-administracion/)
+
 
 
 ## Notas
