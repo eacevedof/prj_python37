@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # Local apps
     "appposts", #hace referencia al módulo <project>/appposts
+    "appusers",
 
 ]
 

@@ -584,12 +584,74 @@ for u in users:
 
 #### 14 Video. [Extendiendo el modelo de usuario](https://platzi.com/clases/1318-django/12411-extendiendo-el-modelo-de-usuario/)
 - [Doc. Extending the existing User Model](https://docs.djangoproject.com/en/2.1/topics/auth/customizing/#extending-the-existing-user-model)
+- Debemos añadir la siguiente info:
+	- website
+	- biography
+	- phone_number
+	- profile picture
+	- created
+	- modified
 - Vamos a crear una nueva app
 - Primero borramos la bd: `rm db.sqlite3`
 - `py manage.py startapp appusers`
 	- Nos crea una app parecida a appposts
-- Modificamos **apps.py** `class UsersConfig(AppConfig):`
-- 
+- Agrego la nueva app en **settings.py**
+- Modificamos **apps.py** (`<project>/platzigram/appusers/apps.py`) `class UsersConfig(AppConfig):`
+- Modificamos **models.py**
+	- `class Profile(models.Model):` Aqui se configuran los nuevos campos
+	- La tabla asociada se llamará **appusers_profile**
+- Definimos relación 1:1 **OneToOneField**
+	```ssh
+    Applying contenttypes.0001_initial... OK
+    Applying auth.0001_initial... OK
+    Applying admin.0001_initial... OK
+    Applying admin.0002_logentry_remove_auto_add... OK
+    Applying admin.0003_logentry_add_action_flag_choices... OK
+    Applying appposts.0001_initial... OK
+    Applying appposts.0002_user_is_admin... OK
+    Applying contenttypes.0002_remove_content_type_name... OK
+    Applying auth.0002_alter_permission_name_max_length... OK
+    Applying auth.0003_alter_user_email_max_length... OK
+    Applying auth.0004_alter_user_username_opts... OK
+    Applying auth.0005_alter_user_last_login_null... OK
+    Applying auth.0006_require_contenttypes_0002... OK
+    Applying auth.0007_alter_validators_add_error_messages... OK
+    Applying auth.0008_alter_user_username_max_length... OK
+    Applying auth.0009_alter_user_last_name_max_length... OK
+    Applying sessions.0001_initial... OK
+    ```
+- Antes de ejecutar `makemigrations` hay que instalar **pillow**
+- En (.env): `pip install pillow` Es necesario para campos tipo **imageField**
+- `migrate`
+	- ![tabla app_users_profile](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/810x367/3d4eaf0b1aefdd7d9dc96182b7cc4d25/image.png)
+- Se publica el modelo **Profile**
+	```py
+    """platzigram/appusers/admin.py"""
+    from django.contrib import admin
+    # Register your models here.
+    from .models import Profile
+    admin.site.register(Profile)
+    ```
+- **Para entrar al panel de administración**
+	- [http://localhost:8000/admin/](http://localhost:8000/admin/)
+	- Hay que configurar la ruta así: (**urls.py**)
+		```py
+        from django.urls import path
+        from django.contrib import admin
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+        ]
+        ```
+	- (.env):`python manage.py createsuperuser`
+	```js
+    Username: admin
+    Email address: admin@somedomain.com
+    Password: 1234
+    Password (again): 1234
+    Superuser created successfully.
+    ```
+    - `createsuperuser` escribe en la tabla **auth_user**
+	- ![tabla auth_user](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/90f79aa8eaeefab392d3ae3d06e082c2/image.png)
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
