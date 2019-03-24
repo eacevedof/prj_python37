@@ -653,6 +653,9 @@ for u in users:
     - `createsuperuser` escribe en la tabla **auth_user**
 	- ![tabla auth_user](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/90f79aa8eaeefab392d3ae3d06e082c2/image.png)
 
+#### 16 Video. [Explorando el dashboard de administración](https://platzi.com/clases/1318-django/12413-explorando-el-dashboard-de-administracion/)
+
+
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
 - `(env) ~/platzigram con py manage.py startapp appposts` Creación de una app en Django
