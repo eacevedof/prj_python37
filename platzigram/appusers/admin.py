@@ -1,6 +1,9 @@
 """platzigram/appusers/admin.py"""
 from django.contrib import admin
-# Register your models here.
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
+# Models
+from django.contrib.auth.models import User
 from .models import Profile
 # admin.site.register(Profile)
 
@@ -20,4 +23,43 @@ class ProfileAdmin(admin.ModelAdmin):
     # filtros
     list_filter = ("user__is_active","user__is_staff","created","modified",)
 
+    # configuración del detalle del perfil
+    fieldsets = (
+        # Profile es el texto de la barra azul
+        ("Profile",{
+            "fields":(
+                ("user","picture"),
+                # ("phone_number", "website"),
+            ),
+        }),
+        ("Extra info", {
+            "fields": (
+                ("website", "phone_number"),
+                ("biography"),
+            ),
+        }),
+        ("Metadata", {
+            "fields": (
+                ("created", "modified"),
+            ),
+        }),
+    )
 
+    readonly_fields = ("created","modified")
+
+# sirve para gestionar el perfil en el detalle del usuario
+class ProfileInline(admin.StackedInline):
+    """Profile in-line admin for users"""
+    model = Profile
+    can_delete = False
+    verbose_name_plural = "Profiles INLINE"
+
+
+class UserAdmin(BaseUserAdmin):
+    """Add profile admin to base user admin """
+    inlines = (ProfileInline,)
+    list_display = ("username","email","first_name","last_name","is_active","is_staff")
+
+
+admin.site.unregister(User)
+admin.site.register(User,UserAdmin)
