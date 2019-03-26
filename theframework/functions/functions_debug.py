@@ -32,6 +32,15 @@ def lg(var,sTitle=None,sType="custom"):
     pprint(var)
 
 
+def bugp():
+    sTagPre = "<pre function=\"pr\" style=\"border:1px solid black;background:yellow; padding:0px; color:black; font-size:12px;\">\n";
+    sTagFinPre = "</pre>\n";
+    print(sTagPre)
+    print("")
+    pprint(request.POST)
+    print(sTagFinPre)
+
+
 """
 function bug($var, $sVarName="var", $isDie=false)
 {
