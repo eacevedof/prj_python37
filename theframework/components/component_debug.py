@@ -2,6 +2,9 @@ import io
 import re
 from pprint import pprint
 
+"""
+Prueba de componente estatico para debug 
+"""
 class ComponentDebug():
 
     _isSqlOn = False
