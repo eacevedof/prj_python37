@@ -740,7 +740,14 @@ admin.site.register(User,UserAdmin)
     admin.site.register(Post)
     ```
 - Queda corregir la visualizacion de la imagén del usuario en el administrador
-- 
+	- Cuando se hace click sobre el nos lleva a la raiz del administrador
+	- Django por defecto no esta preparado para servir "la media"
+	- Para esto hay que usar un hack
+		- `] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)`
+		- Hay que editar las URLS urls.py y settings.py
+		- En settings.py se definen dos nuevas rutas, que le indicarán a Django que cada vez que se pida un archivo de **media** debe buscar en esas rutas
+- La imagen se ha subido a:
+	- `<project>/platzigram/media/users/pictures/bob-sponja.jpg`
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
@@ -749,3 +756,7 @@ admin.site.register(User,UserAdmin)
 		- Hago copia del proyecto
 		- ejecuto: **`git checkout feea6ec -- platzigram/platzigram`** donde `<hash>` es el último punto donde existía la subcarpeta platzigram.
 		- Reemplazo los ficheros con el backup.
+- Me daba este error:
+	- MEDIA_ROOT error : _getfullpathname: path should be string, bytes or os.PathLike, not tuple
+	- Tengo que tener cuidado con las `,` despues de una asignación pq aunque parezca un simple string se transforma en una tupla
+
