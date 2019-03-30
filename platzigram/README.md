@@ -750,6 +750,90 @@ admin.site.register(User,UserAdmin)
 	- `<project>/platzigram/media/users/pictures/bob-sponja.jpg`
 
 #### 19 Video. [Templates y archivos estáticos](https://platzi.com/clases/1318-django/12416-templates-y-archivos-estaticos/)
+- Vamos a juntar todos los estilos y templates
+- La barra de navegación se va a mantener mientras se navega por la app.
+- Mientras se hace login se mantiene el contenedor con el logo
+- Una **app reutilizable**. Tiene todos los componentes dentro de ella y es portable.
+- Creamos una carpeta que se comparta por todas nuestras apps.
+- Tenemos que inidcar a Django que nuestros templates estarán en dicha carpeta. (**settings.py - TEMPLATES.DIRS**)
+	- `os.path.join(BASE_DIR,"templates")` 
+- Carpeta templates:
+	```js
+    ├───templates
+    │   ├───posts
+    │   └───users    
+    ```
+- Movemos **feed.html** dentro de **posts**
+- Descomponemos feed en plantillas
+	```js
+	├───templates    
+    │   base.html
+    │   nav.html
+    ├───posts
+    │       feed.html
+    └───users
+            base.html
+    ```
+- En settings.py
+	```py
+    # ruta de donde se recuperarán las vistas
+    'DIRS': [
+        os.path.join(BASE_DIR,"templates")
+    ],    
+    ... 
+    # se configura la ruta estatica real
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR,"static"),
+    )
+    STATICFILES_FINDERS = [
+        "django.contrib.staticfiles.finders.FileSystemFinder",
+        "django.contrib.staticfiles.finders.AppDirectoriesFinder"
+    ]    
+    ```
+- En `templates.base.html`
+	```html
+        {% block head_content %}{% endblock %}
+    	{% load static %}
+    	...
+        {% include "nav.html" %}
+    <div class="container mt-5">
+        {% block container %}
+        {% endblock %}
+    </div>
+    ```
+- En `posts.feeds.html` **{% extends "base.html" %} **
+	```html
+    {% extends "base.html" %}
+    
+    {% block head_content %}
+    <title>Platzigram feed</title>
+    {% endblock %}
+
+    {% block container %}
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-lg-4 offset-lg-4">
+            	...
+            </div>
+            {% endfor %}
+        </div>
+    {% endblock %}
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
