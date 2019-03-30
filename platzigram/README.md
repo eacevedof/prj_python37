@@ -645,6 +645,7 @@ for u in users:
         ```
 	- (.env):`python manage.py createsuperuser`
 	```js
+    # datos de acceso
     Username: admin
     Email address: admin@somedomain.com
     Password: 1234
@@ -722,7 +723,16 @@ admin.site.register(User,UserAdmin)
 ```
 
 #### 18 Video. [Creación del modelo de posts](https://platzi.com/clases/1318-django/12415-creacion-del-modelo-de-posts/)
-
+- `# <modulo>.<modelo>` para evitar referencias circulares
+	- `profile = models.ForeignKey("appusers.Profile",on_delete=models.CASCADE)`
+- Una vez definido el modelo (en .env):
+	- `py manage.py makemigrations`  #crea el fichero de migracion
+	- `py manage.py migrate` #crea la tabla en la bd
+	- `py manage.py runserver`
+	- ![Tabla appposts_post](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/326x269/08875254125365aef5f6db7c57af9445/image.png)
+- Queda registrar el **modelo Posts** en el administador (reto)
+- Queda corregir la visualizacion de la imagén del usuario en el administrador
+- 
 
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
