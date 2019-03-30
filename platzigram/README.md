@@ -749,6 +749,12 @@ admin.site.register(User,UserAdmin)
 - La imagen se ha subido a:
 	- `<project>/platzigram/media/users/pictures/bob-sponja.jpg`
 
+#### 19 Video. [Templates y archivos estáticos](https://platzi.com/clases/1318-django/12416-templates-y-archivos-estaticos/)
+
+
+
+
+
 ## Notas
 - `django-admin startproject platzigram .` Creación de un proyecto de Django
 - `(env) ~/platzigram con py manage.py startapp appposts` Creación de una app en Django
