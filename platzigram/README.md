@@ -819,8 +819,8 @@ admin.site.register(User,UserAdmin)
         </div>
     {% endblock %}
     ```
-
-
+#### 20 Video. [Login](https://platzi.com/clases/1318-django/12417-login/)
+- 
 
 
 
