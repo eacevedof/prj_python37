@@ -137,6 +137,8 @@ STATICFILES_FINDERS = [
 
 
 # BASE_DIR: <project>/platzigram
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')  # <project>/platzigram/media
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")  # <project>/platzigram/media
 
-MEDIA_URL = '/media/' # midominio.com/media/
+MEDIA_URL = "/media/" # midominio.com/media/
+
+LOGIN_URL = "/users/login/"
