@@ -124,3 +124,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# BASE_DIR: <project>/platzigram
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')  # <project>/platzigram/media
+
+MEDIA_URL = '/media/' # midominio.com/media/
