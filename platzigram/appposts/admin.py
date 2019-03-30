@@ -1,3 +1,7 @@
+"""
+platzigram/appposts/admin.py
+"""
 from django.contrib import admin
-
-# Register your models here.
+# Models
+from .models import Post
+admin.site.register(Post)

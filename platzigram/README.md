@@ -732,6 +732,13 @@ admin.site.register(User,UserAdmin)
 	- `py manage.py runserver`
 	- ![Tabla appposts_post](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/326x269/08875254125365aef5f6db7c57af9445/image.png)
 - Queda registrar el **modelo Posts** en el administador (reto)
+	```py
+    #platzigram/appposts/admin.py
+    from django.contrib import admin
+    # Models
+    from .models import Post
+    admin.site.register(Post)
+    ```
 - Queda corregir la visualizacion de la imagén del usuario en el administrador
 - 
 
