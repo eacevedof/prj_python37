@@ -819,8 +819,33 @@ admin.site.register(User,UserAdmin)
         </div>
     {% endblock %}
     ```
+    
 #### 20 Video. [Login](https://platzi.com/clases/1318-django/12417-login/)
-- 
+- Vamos a implementar nuestro login y restringir el acceso al Feed
+- Como autenticar peticiones web
+	- Se usa el middleware de sesión (el filtro que tiene que pasar la petición)
+	- Este middleware nos proveera de **request.user.is_authenticated**
+	- Se usa el módulo: `django.contrib.auth`: funciones: `authenticate, login`
+	- Recibimos en request.POST las variables de acceso y las evaluamos con la función authenticate(...)
+	- Si todo ha ido bien guardamos el usuario como "logado" con la fn: login(r,u)
+- La pantalla de login está conformada por dos templates. Base y Login
+- Se retocan las rutas y se aplica alias con name="<alias>" de modo que se les  pueda tener identificadas en caso de que cambien
+	- Ejemplo en el form
+	- `<form method="post" action="{% url "login" %}">`
+- En los forms hay que usar `{% csrf_token %}`
+- Para poder hacer redirecciones se usa: `from django.shortcuts import render, redirect`
+	- En la vista: `return redirect(<alias>)`
+- Para los redirects en caso de no estar "logado" se configura en settings.py
+	- `LOGIN_URL = "/users/login/"`
+- Para hacer el redirect según la sesión se usa en la vista de posts
+	```py
+	from django.contrib.auth.decorators import login_required
+    ...
+    @login_required
+	def list_posts(request):
+    	return render(request,"posts/feed.html",{"posts":posts})
+	```
+
 
 
 
@@ -849,4 +874,8 @@ admin.site.register(User,UserAdmin)
 - Me daba este error:
 	- MEDIA_ROOT error : _getfullpathname: path should be string, bytes or os.PathLike, not tuple
 	- Tengo que tener cuidado con las `,` despues de una asignación pq aunque parezca un simple string se transforma en una tupla
+- Me daba este error:
+	- dictionary update sequence element #0 has length 1; 2 is required
+	- habia que pasar como alias de la ruta el parámetro name="alias" y no solamente "alias"
+
 

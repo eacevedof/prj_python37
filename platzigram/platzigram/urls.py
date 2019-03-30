@@ -9,15 +9,17 @@ from django.conf.urls.static import static
 from django.conf import settings
 from platzigram import views as local_views
 from appposts import views as posts_views
+from appusers import views as users_views
 
 urlpatterns = [
 
 # PUBLICO
-    path("",local_views.hello_world),
-    path("sorted/",local_views.sort_integers),
-    path("posts/",posts_views.list_posts),
+    path("", local_views.hello_world),
+    path("sorted/", local_views.sort_integers, name="sort"),
+    path("posts/", posts_views.list_posts, name="feed"),
 
 # ADMIN
     path('admin/', admin.site.urls),
+    path("users/login/", users_views.login_view, name="login"),
 
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
