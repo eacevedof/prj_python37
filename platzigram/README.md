@@ -656,6 +656,7 @@ for u in users:
 	- ![tabla auth_user](https://trello-attachments.s3.amazonaws.com/5b014dcaf4507eacfc1b4540/5c8401cf1c6b4163c9b2419b/90f79aa8eaeefab392d3ae3d06e082c2/image.png)
 
 #### 16 Video. [Explorando el dashboard de administración](https://platzi.com/clases/1318-django/12413-explorando-el-dashboard-de-administracion/)
+- Registrando el **modelo Profile** en el administrador. #registrar modelo
 - Para hacer que aparezca el modelo **Profile** en el panel de administración hay que tocar el fichero [**appusers.admin.py**](https://github.com/eacevedof/prj_python37/blob/master/platzigram/appusers/admin.py)
 ```py
 @admin.register(Profile)
