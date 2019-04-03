@@ -27,24 +27,36 @@ class Palindromo():
             self.arText.append(sText)
 
     def __is_mirror(self,sText):
+        
+        sText = sText.replace(" ","")
+        print(sText)
+        sText = sText.lower()
         iLen = len(sText)
         # cociente i resto
         cnr = divmod(iLen,2)
 
         pprint(cnr)
         pprint(cnr[0])
-        pprint(cnr[1])        
+        pprint(cnr[1])  
         if cnr[1]==0 :
             return False
 
-        iHalf = (iLen / 2)
+        iMiddle = cnr[0] + 1
+        sSideL = sText[0:iMiddle]
+        sSideR = (sText[cnr[0]:-1])[::-1]
+        pprint(sSideL)
+        pprint(sSideR)
+        return ((sSideL == sSideR),iLen)
+
 
     def check(self):
         arResult = []
         pprint(self.arText)
         for sText in self.arText:
-            print(sText)
-            self.__is_mirror(sText)
+            isPalLen = self.__is_mirror(sText)
+            arResult.append((sText,isPalLen[0],isPalLen[1]))
+
+        print(arResult)
 
 
 
