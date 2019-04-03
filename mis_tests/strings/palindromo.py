@@ -39,7 +39,7 @@ class Palindromo():
         pprint(cnr[0])
         pprint(cnr[1])  
         if cnr[1]==0 :
-            return False
+            return (False,iLen)
 
         iMiddle = cnr[0] + 1
         sSideL = sText[0:iMiddle]
@@ -59,12 +59,15 @@ class Palindromo():
         print(arResult)
 
 
-
     def add_text(self,sValue):
         self.arText.append(sValue)
+
 
 
 if __name__ == "__main__":
     o = Palindromo()
     o.add_text("Logra Casillas allí sacar gol")
+    o.add_text("A Bali su flan anal fusilaba")
+    o.add_text("No subas, abusón")
+    o.add_text("Yo dono rosas, oro no doy")
     o.check()
