@@ -26,9 +26,23 @@ class Palindromo():
         if self.arText:
             self.arText.append(sText)
 
+    def __get_cleaned(self,sText):
+        arVocals = [
+            ("á","a"),("é","e"),("í","i"),("ó","o"),("ú","u")
+        ]
+        arWhite = [" ",",","?","¡","¿","`","+","&","%","$","@","|","!","#","*","{","}",";",".","-",":",""]
+        # sText = sText.split()
+        for c in arWhite:
+            sText = sText.replace(c,"")
+        
+        for dic in arVocals:
+            sText = sText.replace(dic[0],dic[1])
+
+        return sText
+
     def __is_mirror(self,sText):
         
-        sText = sText.replace(" ","")
+        sText = self.__get_cleaned(sText)
         print(sText)
         sText = sText.lower()
         iLen = len(sText)
@@ -56,7 +70,7 @@ class Palindromo():
             isPalLen = self.__is_mirror(sText)
             arResult.append((sText,isPalLen[0],isPalLen[1]))
 
-        print(arResult)
+        pprint(arResult)
 
 
     def add_text(self,sValue):
