@@ -28,11 +28,13 @@ class Palindromo():
 
     def __is_mirror(self,sText):
         iLen = len(sText)
+        # cociente i resto
         cnr = divmod(iLen,2)
+
         pprint(cnr)
-        # pprint(cnr(0))
-        # pprint(cnr(1))        
-        if (iLen % 2)==0 :
+        pprint(cnr[0])
+        pprint(cnr[1])        
+        if cnr[1]==0 :
             return False
 
         iHalf = (iLen / 2)
