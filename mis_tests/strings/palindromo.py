@@ -27,10 +27,14 @@ class Palindromo():
             self.arText.append(sText)
 
     def __get_cleaned(self,sText):
+        """
+        Obtiene un texto y limpia los caracteres mudos dejando solo letras sin espacios
+        """
         arVocals = [
             ("á","a"),("é","e"),("í","i"),("ó","o"),("ú","u")
         ]
-        arWhite = [" ",",","?","¡","¿","`","+","&","%","$","@","|","!","#","*","{","}",";",".","-",":",""]
+        arWhite = [" ",",","?","¡","¿","`","+","&","%","$","@","|","!","#","*","{","}"
+                    ,";",".","-",":",""]
         # sText = sText.split()
         for c in arWhite:
             sText = sText.replace(c,"")
@@ -43,33 +47,33 @@ class Palindromo():
     def __is_mirror(self,sText):
         
         sText = self.__get_cleaned(sText)
-        print(sText)
+        # print("some text:",sText)
         sText = sText.lower()
         iLen = len(sText)
         # cociente i resto
         cnr = divmod(iLen,2)
 
-        pprint(cnr)
-        pprint(cnr[0])
-        pprint(cnr[1])  
+        # pprint(cnr)
+        # pprint(iLen)
+        # pprint(cnr[0])
+        # pprint(cnr[1])  
         if cnr[1]==0 :
             return (False,iLen)
 
-        iMiddle = cnr[0] + 1
+        iMiddle = cnr[0]
         sSideL = sText[0:iMiddle]
-        sSideR = (sText[cnr[0]:-1])[::-1]
-        pprint(sSideL)
-        pprint(sSideR)
+        sSideR = (sText[iMiddle+1:])[::-1]
+        # pprint(sSideL)
+        # pprint(sSideR)
         return ((sSideL == sSideR),iLen)
 
 
     def check(self):
         arResult = []
-        pprint(self.arText)
+        # pprint(self.arText)
         for sText in self.arText:
             isPalLen = self.__is_mirror(sText)
             arResult.append((sText,isPalLen[0],isPalLen[1]))
-
         pprint(arResult)
 
 
