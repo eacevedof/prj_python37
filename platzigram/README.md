@@ -853,7 +853,8 @@ admin.site.register(User,UserAdmin)
 - Se hace redirect al login en el logout.
 - Se usa el docorador **login_required** `from django.contrib.auth.decorators import login_required` para evitar que haga logout de una sesión inexistente.
 
-
+#### 22 Video. [Signup](https://platzi.com/clases/1318-django/12419-signup/)
+- 
 
 
 
