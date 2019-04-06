@@ -846,6 +846,8 @@ admin.site.register(User,UserAdmin)
     	return render(request,"posts/feed.html",{"posts":posts})
 	```
 
+#### 21 Video. [Logout](https://platzi.com/clases/1318-django/12418-logout6923/)
+- 
 
 
 
