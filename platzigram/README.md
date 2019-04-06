@@ -847,7 +847,11 @@ admin.site.register(User,UserAdmin)
 	```
 
 #### 21 Video. [Logout](https://platzi.com/clases/1318-django/12418-logout6923/)
-- 
+- Para saber como "deslogar" un usuario se puede consultar la [doc how to log a suer out](https://docs.djangoproject.com/en/2.2/_modules/django/contrib/auth/#logout)
+- Creamos la ruta `users/logout`
+- Creamos una vista en el módulo de usuarios (`appusers.views.py`): **logout_view** 
+- Se hace redirect al login en el logout.
+- Se usa el docorador **login_required** `from django.contrib.auth.decorators import login_required` para evitar que haga logout de una sesión inexistente.
 
 
 
