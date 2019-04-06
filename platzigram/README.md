@@ -854,8 +854,22 @@ admin.site.register(User,UserAdmin)
 - Se usa el docorador **login_required** `from django.contrib.auth.decorators import login_required` para evitar que haga logout de una sesión inexistente.
 
 #### 22 Video. [Signup](https://platzi.com/clases/1318-django/12419-signup/)
-- 
-
+- Comprobamos la doc oficial [creating users](https://docs.djangoproject.com/en/2.2/topics/auth/default/#creating-users)
+- Se necesita:
+	- django.contrib.auth.models 
+- El modelo de usuarios (`appusers.models.py`) extiende usando un modelo proxy
+- Django tiene señales (**signals**), que son como triggers, cada vez que se crea un usuario entonces creale un perfil.
+- Definimos una ruta `users/signup`
+- Creamos la **vista y el template signup**
+- Configuramos el método **signup_view(request)**
+- No sé, si controlando la excepción, es la única forma de comprobar que ya existe el **username** 
+```py
+# try ya que puede fallar si ya existiera el username
+try:
+    user = User.objects.create_user(username = username,password = passw)
+except IntegrityError:
+    return render(request,"users/signup.html", {"error":"Username already exists"})
+```
 
 
 
