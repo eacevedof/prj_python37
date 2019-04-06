@@ -875,14 +875,60 @@ except IntegrityError:
 - Cómo funcionan.
 - Qué nos ayudan a resolver.
 - **Definición**
-	- Es una serie de hooks y una API de bajo nivel que permiten modificar el objeto **`REQUEST`** antes de que llegue a la vista y despues de que salga de la vista.
-- 
+	- Es una serie de hooks y una API de bajo nivel que permiten modificar el objeto **`REQUEST y RESPONSE`** antes de que llegue a la vista y despues de que salga de la vista.
+- [Django doc - Writing your own middleware](https://docs.djangoproject.com/en/2.2/topics/http/middleware/#writing-your-own-middleware)
+```py
+def simple_middleware(get_response):
+    # One-time configuration and initialization.
+    def middleware(request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+        response = get_response(request)
+        # Code to be executed for each request/response after
+        # the view is called.
+        return response
+    return middleware
+```
+- También se puede usar clases para su interceptación
+- Tienen varios métodos
+- En **settings.py.MIDDLEWARE (lista)** se definen los middlewares
+	- SecurityMiddleware
+	- SessionMiddleware
+	- CommonMiddleware (debug)
+	- CsrfViewMiddleware (token)
+	- AuthenticationMiddleware (request.user o anonymous user de las vistas)
+	- MessageMiddleware (mensajes de django, te permite definir un mensaje para una petición sin necesidad de mantener un estado)
+	- XFramewOptionsMiddleware (seguridad para clickjacking)
+- Crearemos nuestro propio middleware que:
+	- Nos va a decir que si el usuario no tiene una foto de perfil o no tiene biografia no puede usar la plataforma.
+- Definimos ruta `users/me/profile`
+- Una vista **users_profile.html**
+- Un middleware **platzigram/middleware.py.ProfileCompletionMiddleware**
+```py
+"""platzigram\middleware.py"""
+import pdb
+from django.shortcuts import redirect
+from django.urls import reverse
 
+class ProfileCompletionMiddleware:
+    def __init__(self, fn_get_response):
+        self.get_response = fn_get_response
 
+    # __call__ implements function call operator.
+    # de modo que se pueda hacer un o = Foo() o(call_arg1,call_arg2...)
+    def __call__(self, request):
+        if not request.user.is_anonymous:
+            profile = request.user.profile
+            if not profile.picture or not profile.biography:
+                # si la url es update_profile o logout no se aplica el redirect
+                if request.path not in [reverse("update_profile"),reverse("logout")]:
+                    return redirect("update_profile")
 
-
-
-
+        # pdb.set_trace()
+        # get_response es una función
+        response = self.get_response(request)
+        return response
+```
 
 
 
