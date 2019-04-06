@@ -870,7 +870,13 @@ try:
 except IntegrityError:
     return render(request,"users/signup.html", {"error":"Username already exists"})
 ```
-
+#### 22 Video. [Middlewares](https://platzi.com/clases/1318-django/12420-middlewares9277/)
+- Qué son los middlewares.
+- Cómo funcionan.
+- Qué nos ayudan a resolver.
+- **Definición**
+	- Es una serie de hooks y una API de bajo nivel que permiten modificar el objeto **`REQUEST`** antes de que llegue a la vista y despues de que salga de la vista.
+- 
 
 
 
