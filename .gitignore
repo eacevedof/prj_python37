@@ -48,3 +48,4 @@ servidor/venv
 venv
 src/pv.egg-info
 .env
+.vscode

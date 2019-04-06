@@ -45,7 +45,9 @@ class Palindromo():
         return sText
 
     def __is_mirror(self,sText):
-        
+        """
+        Comprueba si las dos mitades del texto, que se limpiará, son un reflejo 
+        """
         sText = self.__get_cleaned(sText)
         # print("some text:",sText)
         sText = sText.lower()
@@ -69,6 +71,8 @@ class Palindromo():
 
 
     def check(self):
+        """
+        """
         arResult = []
         # pprint(self.arText)
         for sText in self.arText:
