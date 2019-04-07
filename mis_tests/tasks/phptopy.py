@@ -1,3 +1,7 @@
+"""
+mis_tests\tasks\phptopy.py
+Traduce en lo posible código php a python
+"""
 import io
 import sys
 from pprint import pprint
@@ -11,8 +15,8 @@ class Phptopy:
     def __init__(self):
         currpath = os.path.dirname(os.path.abspath(__file__))
         self.currpath = os.path.dirname(os.path.abspath(currpath+"/../../../"))
-        self.pathfrom = self.currpath+"\\prj_mysqlhive\\backend\\vendor\\theframework"
-        self.pathto = self.currpath+"\\prj_python37\\theframework"
+        self.pathfrom = self.currpath+"\\prj_mysqlhive\\backend\\vendor\\theframework\\components"
+        self.pathto = self.currpath+"\\prj_python37\\theframework\\translated"
         print(self.pathfrom,os.path.isdir(self.pathfrom))
 
     def __get_files(self):
@@ -33,7 +37,7 @@ class Phptopy:
             ("include_once","import"),
             ("private function ","def __"),
             ("public function ","def "),
-            ("foreach ","for "),
+            ("foreach(","for "),
             ("if(","if "),
             ("else","else:"),
             ("__construct","__init__"),
@@ -61,6 +65,11 @@ class Phptopy:
     def __get_in_lines(self,content):
         return content.split("\n")
 
+    def __get_not_emptylines(self,content):
+        arLines = self.__get_in_lines(content)
+        arFiltered = filter(lambda sLine: not re.match(r'^\s*$', sLine), arLines)
+        return "\n".join(arFiltered)
+
     def __write_file(self,filename,content):
         f = open(filename, "w")
         f.write(content)
@@ -74,9 +83,10 @@ class Phptopy:
             pprint(filename)
             sFile = self.pathfrom +"\\"+ filename
             sContent = self.__get_content(sFile)
-            sContent = sContent.strip()
+            #sContent = sContent.strip()
             # pprint(sContent)
             sContent = self.__get_intopy(sContent)
+            # sContent = self.__get_not_emptylines(sContent)
             sFileNew = self.pathto + "\\"+filename+".py"
             print("sFileNew: ",sFileNew)
             self.__write_file(sFileNew,sContent)
