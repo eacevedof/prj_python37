@@ -49,3 +49,4 @@ venv
 src/pv.egg-info
 .env
 .vscode
+theframework/translated
