@@ -52,7 +52,7 @@ class ComponentHydralogs
     def __get_over_date(arLogs,sDate)
     
         arWorkLogs = array_filter(arLogs,function (sFileName) use (sDate) 
-            arTmp = explode(".",sFileName)
+            arTmp = explode("+",sFileName)
             arTmp = arTmp[0]
             arTmp = explode("_",arTmp)
             sFileDate = end(arTmp)
@@ -64,7 +64,7 @@ class ComponentHydralogs
     def __get_by_users(arLogs,arUsers)
     
         arWorkLogs = array_filter(arLogs, function(sFileName) use (arUsers) 
-            arTmp = explode(".",sFileName)
+            arTmp = explode("+",sFileName)
             arTmp = arTmp[0]
             arTmp = explode("_",arTmp)
             sUser = arTmp[3]
@@ -75,7 +75,7 @@ class ComponentHydralogs
     
     def __get_date(sFileName)
     
-        arTmp = explode(".",sFileName)
+        arTmp = explode("+",sFileName)
         arTmp = arTmp[0]
         arTmp = explode("_",arTmp)
         sFileDate = end(arTmp)
@@ -133,17 +133,17 @@ class ComponentHydralogs
             
                 if notin_array(sFileName,arLogs))
                 
-                    iR = unlink(self.sPathLogs.DIRECTORY_SEPARATOR.sFileName)
+                    iR = unlink(self.sPathLogs.DIRECTORY_SEPARATOR+sFileName)
                     self.debug("borrado sFileName,r:iR")
                 
-                # self.load_lines(self.sPathLogs.DIRECTORY_SEPARATOR.sFileName)            
+                # self.load_lines(self.sPathLogs.DIRECTORY_SEPARATOR+sFileName)            
             
         
         else:
             self.add_error("sPathLogs:self.sPathLogs no es un dir")
     # run()
     
-    def debug(mxVar)echo "<pre>".var_export(mxVar,1)    
+    def debug(mxVar)echo "<pre>"+var_export(mxVar,1)    
     def __add_error(sMessage)self.isError = Trueself.arErrors[]=sMessage
     
     def set_path_file(value)self.sPathLogs=value
@@ -153,5 +153,5 @@ class ComponentHydralogs
     
     def is_error()return self.isError
     def get_errors()return self.arErrors
-    def show_errors()echo "<pre>".var_export(self.arErrors,1)    
+    def show_errors()echo "<pre>"+var_export(self.arErrors,1)    
 # ComponentHydralogs

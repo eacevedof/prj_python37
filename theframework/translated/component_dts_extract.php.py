@@ -55,9 +55,9 @@ class ComponentDtsExtract
                 sPath = end(sPath)
                 for arFiles as sFileName)
                 
-                    if self.in_string([".XNT"],sFileName))
+                    if self.in_string(["+XNT"],sFileName))
                     
-                        self.clean([".XNT"],sFileName)
+                        self.clean(["+XNT"],sFileName)
                         if strlen(sFileName)>(14+3))
                             sFileName = substr(sFileName,14)
                         self.arFiles[sPath][] = sFileName

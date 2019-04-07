@@ -43,7 +43,7 @@ class ComponentFile
             mxContent = var_export(mxContent,1)
         
         sPathFile = self.sPathFolderTo.self.DS
-                     .self.sFileNameTo
+                     +self.sFileNameTo
         
         if is_file(sPathFile))
             oCursor = fopen(sPathFile,"a")
@@ -74,7 +74,7 @@ class ComponentFile
         if is_array(arData))
         
             foreach (arData as arFields)
-                arLines[] = implode(sFieldSep,arFields).sLineSep
+                arLines[] = implode(sFieldSep,arFields)+sLineSep
         
         else:
             # self.add_error()

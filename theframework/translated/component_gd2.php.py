@@ -17,25 +17,25 @@ class ComponentGd2
     isError
     arErrors
     
-    # GLOBALS["config_app_dir"].GLOBALS["config_web_folder"].config_bar.GLOBALS["config_res_dir"].config_bar."products_picture".config_bar.Nom_Photo
+    # GLOBALS["config_app_dir"]+GLOBALS["config_web_folder"].config_bar+GLOBALS["config_res_dir"].config_bar+"products_picture"+config_bar+Nom_Photo
     def __init__() 
     
         if notdefined("DS"))define("DS",defined("config_bar")?config_bar:DIRECTORY_SEPARATOR)  
         self.define_resdir()
         self.isError = False
-        self.arErrors = array()
-        self.arFrom = array("pathfolder"=>PATH_RESDIR.DS."products_picture".DS,"filename"=>"")
-        self.arTmp = array()
-        self.arTo = array("pathfolder"=>PATH_RESDIR.DS."products_picture".DS,"filename"=>"")
+        self.arErrors = []
+        self.arFrom = array("pathfolder"=>PATH_RESDIR.DS+"products_picture"+DS,"filename"=>"")
+        self.arTmp = []
+        self.arTo = array("pathfolder"=>PATH_RESDIR.DS+"products_picture"+DS,"filename"=>"")
     
     
     def __define_resdir()
     
         if notdefined("PATH_RESDIR"))
-            define("PATH_RESDIR",realpath(GLOBALS["config_app_dir"].GLOBALS["config_web_folder"].DS.GLOBALS["config_res_dir"]))        
+            define("PATH_RESDIR",realpath(GLOBALS["config_app_dir"]+GLOBALS["config_web_folder"].DS+GLOBALS["config_res_dir"]))        
     
     
-    def __get_type(sFilename)return end(explode(".",trim(sFilename)))
+    def __get_type(sFilename)return end(explode("+",trim(sFilename)))
     
     def __get_image_obj(sExtension,sPathFile)
     
@@ -91,8 +91,8 @@ class ComponentGd2
     
         iW = isset(arTo["w"])?arTo["w"]:NULL
         iH = isset(arTo["h"])?arTo["h"]:NULL
-        self.arFrom["pathfile"] = self.arFrom["pathfolder"].DS.self.arFrom["filename"]
-        self.arTo["pathfile"] = self.arFrom["pathfolder"].DS.self.arFrom["filename"]
+        self.arFrom["pathfile"] = self.arFrom["pathfolder"].DS+self.arFrom["filename"]
+        self.arTo["pathfile"] = self.arFrom["pathfolder"].DS+self.arFrom["filename"]
         
         sPathFileFrom = self.arFrom["pathfile"]
         if notsPathFileFrom) self.add_error ("Ruta de origen no proporcionada")
@@ -127,12 +127,12 @@ class ComponentGd2
             
             else:
             
-                self.add_error("Ocurrio un error al guardar en blanco: arFrom:".var_export(arFrom,1)." arTo:".var_export(arTo,1))
+                self.add_error("Ocurrio un error al guardar en blanco: arFrom:"+var_export(arFrom,1)+" arTo:"+var_export(arTo,1))
                         
         
         else:
         
-            self.add_error("No hay datos de destino:".var_export(arTo,1))
+            self.add_error("No hay datos de destino:"+var_export(arTo,1))
         
         
     # resize
@@ -142,6 +142,6 @@ class ComponentGd2
     def add_to(sKey,sValue)self.arTo[sKey] = sValue
     def is_error()return self.isError
     def get_errors()return self.arErrors
-    def show_errors()echo "<pre>".var_export(self.arErrors,1)
+    def show_errors()echo "<pre>"+var_export(self.arErrors,1)
 # class ComponentGd2
 

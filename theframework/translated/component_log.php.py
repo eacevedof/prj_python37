@@ -21,7 +21,7 @@ class ComponentLog
     
         self.sPathFolder = sPathFolder 
         self.sSubfType = sSubfType        
-        self.sFileName = "app_".date("Ymd").".log"
+        self.sFileName = "app_"+date("Ymd")+"+log"
         if notsPathFolder) self.sPathFolder = __DIR__
         if notsSubfType) self.sSubfType = "debug"
         # intenta crear la carpeta de logs
@@ -31,15 +31,15 @@ class ComponentLog
     def __fix_folder()
     
         sLogFolder = self.sPathFolder.self.DS
-                        .self.sSubfType.self.DS
+                        +self.sSubfType.self.DS
         if notis_dir(sLogFolder): @mkdir(sLogFolder)
     
     
     def __merge(sContent,sTitle)
     
-        sReturn = "-- [".date("Ymd-His")."]\n"
-        if sTitle) sReturn .= sTitle.":\n"
-        if sContent) sReturn .= sContent."\n\n"
+        sReturn = "-- ["+date("Ymd-His")+"]\n"
+        if sTitle) sReturn += sTitle+":\n"
+        if sContent) sReturn += sContent+"\n\n"
         return sReturn
     
     
@@ -49,8 +49,8 @@ class ComponentLog
             mxVar = var_export(mxVar,1)
         
         sPathFile = self.sPathFolder.self.DS
-                        .self.sSubfType.self.DS
-                        .self.sFileName
+                        +self.sSubfType.self.DS
+                        +self.sFileName
         
         if is_file(sPathFile))
             oCursor = fopen(sPathFile,"a")
