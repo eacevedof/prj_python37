@@ -26,11 +26,11 @@ class Phptopy:
                 return f.read()
 
     def __get_intopy(self,content):
-        arCharsRm = ["{","}","$","private ","public ",";"]
+        arCharsRm = ["{","}","$","private ","public ",";","<?php","?>","<?"]
         arCharsRep = [
             ("/**","\"\"\""),
             ("*/","\"\"\""),
-            ("include_once","import")
+            ("include_once","import"),
             ("private function ","def __"),
             ("public function ","def "),
             ("foreach ","for "),
@@ -58,17 +58,27 @@ class Phptopy:
 
         return content
 
+    def __get_in_lines(self,content):
+        return content.split("\n")
+
     def __write_file(self,filename,content):
-        sFile = filename,
+        f = open(filename, "w")
+        f.write(content)
+        f.close()
+
 
     def __translate(self,arFiles):
         for filename in arFiles:
+            if ".php" not in filename:
+                continue
             pprint(filename)
             sFile = self.pathfrom +"\\"+ filename
             sContent = self.__get_content(sFile)
-            pprint(sContent)
+            sContent = sContent.strip()
+            # pprint(sContent)
             sContent = self.__get_intopy(sContent)
             sFileNew = self.pathto + "\\"+filename+".py"
+            print("sFileNew: ",sFileNew)
             self.__write_file(sFileNew,sContent)
 
     def run(self):
