@@ -100,8 +100,8 @@ La clave de LIKP es VBELN, que corresponde al número de entrega. (sigue sin fun
             arPks = arNopks
                 
         foreach (arPks as sPk)
-            arOns[] = "sTableAux.sPk = sTableFull.sPk"
-        sSQL .= implode("\nAND ",arOns)
+            arOns[] = "sTableAux+sPk = sTableFull+sPk"
+        sSQL += implode("\nAND ",arOns)
 
         return sSQL
     
@@ -129,10 +129,10 @@ La clave de LIKP es VBELN, que corresponde al número de entrega. (sigue sin fun
         
         
         foreach (arPks as sPk)
-            arOns[] = "sTableAux.sPk = sTableFull.sPk"
-        sSQL .= implode("\nAND ",arOns)
+            arOns[] = "sTableAux+sPk = sTableFull+sPk"
+        sSQL += implode("\nAND ",arOns)
 
-        sSQL .= "\nWHERE 1=1 \nAND sTableFull.sPk IS NULL"
+        sSQL += "\nWHERE 1=1 \nAND sTableFull+sPk IS NULL"
         
         return sSQL
     
@@ -160,8 +160,8 @@ La clave de LIKP es VBELN, que corresponde al número de entrega. (sigue sin fun
             # echo "-- =========================================\n"
             echo "-- sTable generado con component_erpaux.php\n"
             echo "-- =========================================\n"
-            echo arQ[0]."\n"
-            echo arQ[1]."\n"
+            echo arQ[0]+"\n"
+            echo arQ[1]+"\n"
         
     
     

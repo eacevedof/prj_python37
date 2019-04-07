@@ -73,7 +73,7 @@ class ComponentDtsAuxrepl
         
     def __save(sContent,sFile)
     
-        sPathFile = self.sDir."/sFile"
+        sPathFile = self.sDir+"/sFile"
         if is_file(sPathFile))
             oCursor = fopen(sPathFile,"a")
         else:
@@ -103,7 +103,7 @@ class ComponentDtsAuxrepl
         for arFiles as sFile)
         
             echo " sFile\n"
-            sContet = file_get_contents(self.sDir."/".sFile)
+            sContet = file_get_contents(self.sDir+"/"+sFile)
             sRep = sContet
             for arTables as sTableAux)
             
@@ -114,7 +114,7 @@ class ComponentDtsAuxrepl
                     sRep = str_replace(sTable,sTableAux,sRep) 
                 
             
-            self.save(sRep,"ok_".sFile)
+            self.save(sRep,"ok_"+sFile)
         
     # replace
     
@@ -136,7 +136,7 @@ class ComponentDtsAuxrepl
             if notstrstr(sFile,"erp_master_pick"))
                 continue
             
-            sFilePath = self.sDir."/".sFile
+            sFilePath = self.sDir+"/"+sFile
             isFound = 0
             echo " sFile\n\t"
 

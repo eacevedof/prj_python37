@@ -6,10 +6,10 @@ sPathRoot = dirname(__FILE__).DIRECTORY_SEPARATOR
 arSubFolders[] = get_include_path()
 arSubFolders[] = sPathRoot# ruta de components
 # subcarpetas dentro de components
-arSubFolders[] = sPathRoot."console"
-arSubFolders[] = sPathRoot."db"
-arSubFolders[] = sPathRoot."db".DIRECTORY_SEPARATOR."integration"
-arSubFolders[] = sPathRoot."motosceni"
+arSubFolders[] = sPathRoot+"console"
+arSubFolders[] = sPathRoot+"db"
+arSubFolders[] = sPathRoot+"db"+DIRECTORY_SEPARATOR+"integration"
+arSubFolders[] = sPathRoot+"motosceni"
 
 sPathInclude = implode(PATH_SEPARATOR,arSubFolders)
 set_include_path(sPathInclude)
@@ -25,7 +25,7 @@ spl_autoload_register(function(sNSClassName)
         #  (?<=...) and (?<not...) are positive and negative look-behinds (respectively) 
         #  because they look to the left of the current position rather than the right 
         sClassName = preg_replace("/(?<not^)([A-Z])/","_\\1",sClassName)
-        # print_r("classname:".sClassName)
+        # print_r("classname:"+sClassName)
         if strstr(sClassName,"Component"))
         
             sClassName = str_replace("Component","",sClassName)

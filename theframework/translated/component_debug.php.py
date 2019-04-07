@@ -20,55 +20,55 @@ class ComponentDebug
     static _isPhpInfoOn = False
     static _isIncludedOn = False
    
-    static arMessages = array()
-    static arSqls = array()
-    static arIncluded = array()
+    static arMessages = []
+    static arSqls = []
+    static arIncluded = []
    
     static function config(isSqlsOn=False, isMessagesOn=False, isPhpInfoOn=False, isIncludedOn=False)
     
-        self._isSqlsOn = isSqlsOn
-        self._isMessagesOn = isMessagesOn
-        self._isPhpInfoOn = isPhpInfoOn
-        self._isIncludedOn = isIncludedOn
+        self+_isSqlsOn = isSqlsOn
+        self+_isMessagesOn = isMessagesOn
+        self+_isPhpInfoOn = isPhpInfoOn
+        self+_isIncludedOn = isIncludedOn
     
 
     static function set_sql(sSQL,iCount=00,fTime="")
     
-        if self._isSqlsOn)
-            self.arSqls[] = array("sql"=>sSQL,"count"=>iCount,"time"=>fTime)
+        if self+_isSqlsOn)
+            self+arSqls[] = array("sql"=>sSQL,"count"=>iCount,"time"=>fTime)
     
    
     static function set_message(sMessage,sTitle="")
     
-        if self._isMessagesOn)
-            self.arMessages[] = array("Title"=>sTitle,"Message"=>sMessage)
+        if self+_isMessagesOn)
+            self+arMessages[] = array("Title"=>sTitle,"Message"=>sMessage)
     
    
-    static function get_php_info()if self._isPhpInfoOn)return phpinfo()
+    static function get_php_info()if self+_isPhpInfoOn)return phpinfo()
    
-    static function get_messages_in_array()if self._isMessagesOn) return self.arMessages
+    static function get_messages_in_array()if self+_isMessagesOn) return self+arMessages
 
-    static function get_messages_in_html_table()if self._isMessagesOn && notself.is_ajax_request(): echo self.build_html_table(self.arMessages)
+    static function get_messages_in_html_table()if self+_isMessagesOn && notself.is_ajax_request(): echo self.build_html_table(self+arMessages)
    
-    static function get_sqls_in_array()if self._isSqlsOn) return self.arSqls
+    static function get_sqls_in_array()if self+_isSqlsOn) return self+arSqls
 
     static function get_sqls_in_html_table()
      
-        if self._isSqlsOn) 
+        if self+_isSqlsOn) 
         
-            sLog = self.build_string(self.arSqls)
+            sLog = self.build_string(self+arSqls)
             self.log(sLog)            
             if notself.is_ajax_request())
-                echo self.build_html_table(self.arSqls)
+                echo self.build_html_table(self+arSqls)
         
     # get_sqls_in_html_table
     
-    static function set_messages_on(isMessagesOn)self._isMessagesOn = isMessagesOn
-    static function set_sqls_on(isSqlsOn)self._isSqlsOn = isSqlsOn
-    static function set_php_info_on(isPhpInfoOn)self._isPhpInfoOn = isPhpInfoOn
-    static function is_php_info_on()return self._isPhpInfoOn
-    static function is_sqls_on()return self._isSqlsOn
-    static function is_messages_on()return self._isMessagesOn
+    static function set_messages_on(isMessagesOn)self+_isMessagesOn = isMessagesOn
+    static function set_sqls_on(isSqlsOn)self+_isSqlsOn = isSqlsOn
+    static function set_php_info_on(isPhpInfoOn)self+_isPhpInfoOn = isPhpInfoOn
+    static function is_php_info_on()return self+_isPhpInfoOn
+    static function is_sqls_on()return self+_isSqlsOn
+    static function is_messages_on()return self+_isMessagesOn
    
     static function is_ajax_request()
     
@@ -77,17 +77,17 @@ class ComponentDebug
         return (header === "XMLHttpRequest")
      
     
-    static function build_html_tr_header(arArray=array())
+    static function build_html_tr_header(arArray=[])
     
         sHtmlTrHd = ""
         if notempty(arArray))
             
-            sHtmlTrHd .="<tr><th>Nº</th>\n"
+            sHtmlTrHd +="<tr><th>Nº</th>\n"
 
             arRow = arArray[0]
             for arRow as sTitle=>sValue)
-                sHtmlTrHd .= "<th>sTitle</th>\n"
-            sHtmlTrHd .= "</tr>\n"
+                sHtmlTrHd += "<th>sTitle</th>\n"
+            sHtmlTrHd += "</tr>\n"
         
         return sHtmlTrHd
     
@@ -107,7 +107,7 @@ class ComponentDebug
     static function build_style()
     
         sSytle = "<style type=\"text/css\">"
-        sSytle .= "table#tblDebug
+        sSytle += "table#tblDebug
         
             font-size:14pxnotimportant 
             width:1000px
@@ -168,11 +168,11 @@ class ComponentDebug
             color: white
         
         "
-        sSytle .= "</style>"
+        sSytle += "</style>"
         return sSytle
     
     
-    static function build_html_table(arArray=array())
+    static function build_html_table(arArray=[])
     
         if isset(_SESSION["componentdebug"]) && is_array(_SESSION["componentdebug"]))
         
@@ -189,9 +189,9 @@ class ComponentDebug
         sHtmlTable = ""
         if notempty(arArray))
         
-            sHtmlTable .= self.build_style()
-            sHtmlTable .= "<table id=\"tblDebug\">\n"
-            sHtmlTable .= self.build_html_tr_header(arArray)
+            sHtmlTable += self.build_style()
+            sHtmlTable += "<table id=\"tblDebug\">\n"
+            sHtmlTable += self.build_html_tr_header(arArray)
             for arArray as iRow=>arRow)
             
                 isError=0
@@ -202,8 +202,8 @@ class ComponentDebug
                     arRow["count"]="ERROR"
                 
                 sTdStyle = self.get_style_td_background(iRow,isError)
-                sHtmlTable .= "<tr>\n"
-                sHtmlTable .= "<td class=\"sTdStyle\" >iRow</td>\n"
+                sHtmlTable += "<tr>\n"
+                sHtmlTable += "<td class=\"sTdStyle\" >iRow</td>\n"
                 for arRow as sFieldValue)
                 
                     # si se aplican tags de html se mejora la visibilidad de las consultas y se puede copiar y pegar
@@ -242,16 +242,16 @@ class ComponentDebug
                             sTdStyle = "clsTrHighlight"    
                     
                     
-                    sHtmlTable .= "<td class=\"sTdStyle\">sFieldValue</td>\n"
+                    sHtmlTable += "<td class=\"sTdStyle\">sFieldValue</td>\n"
                 
-                sHtmlTable .= "</tr>\n"
+                sHtmlTable += "</tr>\n"
             
-            sHtmlTable .= "</table>\n"
+            sHtmlTable += "</table>\n"
         
         return sHtmlTable
     # build_html_table
     
-    static function build_string(arArray=array())
+    static function build_string(arArray=[])
     
         if isset(_SESSION["componentdebug"]) && is_array(_SESSION["componentdebug"]))
         
@@ -281,7 +281,7 @@ class ComponentDebug
                     sFieldValue = str_replace("\n  ","\n",sFieldValue)
                     sFieldValue = str_replace("\n ","\n",sFieldValue)
                     # sFieldValue = str_replace("\t"," ",sFieldValue)
-                    sLog .= "\n\n-- iRow =>\n".trim(sFieldValue)
+                    sLog += "\n\n-- iRow =>\n"+trim(sFieldValue)
                 # foreach arRow
             # foreach arArray
         
@@ -291,8 +291,8 @@ class ComponentDebug
     static function log(mxVar,sTitle="")
     
         sPathFolder = realpath(_SERVER["DOCUMENT_ROOT"]).DIRECTORY_SEPARATOR
-        sFileName = "componentdebug_".date("Ymd").".log"
-        sPathFile = sPathFolder.sFileName
+        sFileName = "componentdebug_"+date("Ymd")+"+log"
+        sPathFile = sPathFolder+sFileName
         # pr(sPathFile)die
         sValue = mxVar
         if notis_string(sValue): sValue = var_export(mxVar,1)

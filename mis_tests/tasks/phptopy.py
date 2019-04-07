@@ -32,30 +32,12 @@ class Phptopy:
     def __get_intopy(self,content):
         arCharsRm = ["{","}","$","private ","public ",";","<?php","?>","<?"]
         arCharsRep = [
-            ("/**","\"\"\""),
-            ("*/","\"\"\""),
-            ("= array()","= []"),
-            ("=array()","=[]"),
-            ("include_once","import"),
-            ("private function ","def __"),
-            ("public function ","def "),
-            ("foreach(","for "),
-            ("elseif","elif:"),
-            ("if(","if "),
-            ("else","else:"),
-            ("__construct","__init__"),
-            ("this->","self."),
-            ("self::","self."),
-            ("!","not"),
-            ("//","# "),
-            ("TRUE","True"),
-            ("true","True"),
-            ("FALSE","False"),
-            ("false","False"),
-            ("!===","!="),
-            ("!==","!="),
-            (")) ","): ")
-            (".$","+$")
+            ("/**","\"\"\""), ("*/","\"\"\""), ("= array()","= []"), ("=array()","=[]"),
+            ("include_once","import"), ("private function ","def __"), ("public function ","def "),
+            ("foreach(","for "), ("elseif","elif:"), ("if(","if "), ("else","else:"), ("__construct","__init__"),
+            ("this->","self."), ("self::","self."), ("!","not"), ("//","# "),
+            ("TRUE","True"), ("true","True"), ("FALSE","False"),("false","False"),("!===","!="),
+            ("!==","!="),(")) ","): "),(".$","+$"),(".=","+="),(".\"","+\""),("\".","\"+")
         ]
 
         for dic in arCharsRep:

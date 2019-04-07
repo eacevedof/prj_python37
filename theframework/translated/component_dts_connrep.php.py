@@ -53,7 +53,7 @@ class ComponentDtsConnrep
             if arMatches)
             
                 # bug(arMatches,"line:i")
-                if notself.in_string(["","",".log","sql.desa1","Restricción"],sLine))
+                if notself.in_string(["","","+log","sql.desa1","Restricción"],sLine))
                 
                     self.clean(["<DTS:Property DTS:Name=\"ObjectName\">","</DTS:Property>"],sLine)
                     self.arLines[i] = trim(sLine) 

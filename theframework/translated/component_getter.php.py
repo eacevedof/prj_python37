@@ -47,7 +47,7 @@ class ComponentGetter
             sFileName = basename(sUriImage) #  to get file name
             self.debug(sFileName)
             # self.debug(parse_url(sUriImage))
-            self.save_image(sUriImage,sPathDest.sFileName)
+            self.save_image(sUriImage,sPathDest+sFileName)
         
     
     
@@ -56,5 +56,5 @@ class ComponentGetter
         echo "ComponentGetter.go :)"
     
     
-    def debug(mxVar)echo var_export(mxVar,1)."\n"  
+    def debug(mxVar)echo var_export(mxVar,1)+"\n"  
 # ComponentGetter
