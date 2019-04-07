@@ -15,11 +15,9 @@ class Phptopy:
         self.pathto = self.currpath+"\\prj_python37\\theframework"
         print(self.pathfrom,os.path.isdir(self.pathfrom))
 
-
     def __get_files(self):
         arFiles = [
-            f
-            for f in listdir(self.mypath) if isfile(join(self.mypath, f))
+            filename for filename in listdir(self.pathfrom) if isfile(join(self.pathfrom, filename))
         ]
         return arFiles
 
@@ -32,6 +30,7 @@ class Phptopy:
         arCharsRep = [
             ("/**","\"\"\""),
             ("*/","\"\"\""),
+            ("include_once","import")
             ("private function ","def __"),
             ("public function ","def "),
             ("foreach ","for "),
@@ -62,19 +61,19 @@ class Phptopy:
     def __write_file(self,filename,content):
         sFile = filename,
 
-    def __rename_files(self,arFiles):
+    def __translate(self,arFiles):
         for filename in arFiles:
+            pprint(filename)
             sFile = self.pathfrom +"\\"+ filename
             sContent = self.__get_content(sFile)
+            pprint(sContent)
             sContent = self.__get_intopy(sContent)
             sFileNew = self.pathto + "\\"+filename+".py"
             self.__write_file(sFileNew,sContent)
 
-
-
-
     def run(self):
-        pass
+        arFiles = self.__get_files()
+        self.__translate(arFiles)
 
 
 if __name__ == "__main__":
