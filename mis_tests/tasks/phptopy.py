@@ -34,10 +34,13 @@ class Phptopy:
         arCharsRep = [
             ("/**","\"\"\""),
             ("*/","\"\"\""),
+            ("= array()","= []"),
+            ("=array()","=[]"),
             ("include_once","import"),
             ("private function ","def __"),
             ("public function ","def "),
             ("foreach(","for "),
+            ("elseif","elif:"),
             ("if(","if "),
             ("else","else:"),
             ("__construct","__init__"),
@@ -52,6 +55,7 @@ class Phptopy:
             ("!===","!="),
             ("!==","!="),
             (")) ","): ")
+            (".$","+$")
         ]
 
         for dic in arCharsRep:

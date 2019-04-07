@@ -1,3 +1,4 @@
+
 """
  * @author Eduardo Acevedo Farje.
  * @link www.eduardoaf.com
@@ -13,48 +14,71 @@
  * Al final no ha servido pq al aplicar los drop no se ejecutan bien las consultas
  """
 namespace TheFramework\Components
+
 class ComponentHydrapk 
+
     sRegexp
     sFilePath
     arLines
+    
     def __init__() 
+    
         self.sRegexp = "alter table .*"
         self.sFilePath = "C:\shared\constraints.sql"
         self.arLines = []
         # echo "<DTS:Property DTS:Name=\"ObjectName\">FATRVA - ERP_auxiliar</DTS:Property>"
+    
+    
     def __in_string(arChars=[],sString)
-        foreach(arChars as c)
+    
+        for arChars as c)
             if strstr(sString,c))
                 return True
         return False
+    
+    
     def __clean(arSubstrings=[],&sString)
+    
         sReplace = sString
-        foreach(arSubstrings as str)
+        for arSubstrings as str)
             sReplace = str_replace (str,"",sReplace)
         sString = sReplace
+    
+    
     def __load_lines()
+    
         sContent = file_get_contents(self.sFilePath)
         arContent = explode("\n",sContent)
-        foreach(arContent as i=>sLine)
+        for arContent as i=>sLine)
+        
             arMatches = []
             preg_match("/self.sRegexp/",sLine,arMatches)
             if arMatches)
+            
                 iPos1 = strpos(sLine,"alter table")
                 iPos1 += 11
                 iPos2 = strpos(sLine,"add constraint")
                 iPos2 = iPos2-iPos1
                 sLine = substr(sLine,iPos1,iPos2)
                 self.arLines[i] = trim(sLine)
-        # for        
+            
+        # foreach        
         # array_unique(self.arLines)
+    
+    
     def run()
+    
         self.load_lines()
         self.arLines = array_unique(self.arLines)
         asort(self.arLines)
         sSQLIn = implode("','",self.arLines)
         echo "'sSQLIn'"
+   
     # run()
+    
     def set_path_file(value)self.sFilePath=value
     def set_regex(value)self.sRegexp=value
+    
     def get_extracted()return self.arLines
+    
 # ComponentHydrapk

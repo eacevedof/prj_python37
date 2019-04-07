@@ -1,3 +1,4 @@
+
 """
  * @author Eduardo Acevedo Farje.
  * @link www.eduardoaf.com
@@ -8,18 +9,30 @@
  * @observations
  """
 namespace TheFramework\Components
+
 class ComponentGetter 
+
     def __init__() 
+    
+        
+    
+    
     # https:# stackoverflow.com/questions/724391/saving-image-from-php-url    
     def save_image(inPath,outPath)
+     
         # Download images from remote server
         in = fopen(inPath, "rb")
         out = fopen(outPath, "wb")
+
         while(chunk = fread(in,8192))
             fwrite(out,chunk, 8192)
+
         fclose(in)
         fclose(out)
+        
+    
     def download()
+    
         arUrls = [
             "https:# feminismandreligion.files.wordpress.com/2015/05/walk-in-closet.jpg"
             # "http:# www.bestours.es/viajes-de-empresa/wp-content/uploads/2016/08/Personal-shopper-nh-collection.jpg",
@@ -29,12 +42,19 @@ class ComponentGetter
             # "https:# trello-attachments.s3.amazonaws.com/56daeb36d2c864a40e356154/59be94d10d1afca1022534d4/e441828eaa3fa87561cf674220288a02/IMG-20170917-WA0001.jpg",
         ]
         sPathDest = "D:\\temp\\"
-        foreach(arUrls as i=>sUriImage)
+        for arUrls as i=>sUriImage)
+        
             sFileName = basename(sUriImage) #  to get file name
             self.debug(sFileName)
             # self.debug(parse_url(sUriImage))
             self.save_image(sUriImage,sPathDest.sFileName)
+        
+    
+    
     def go()
+    
         echo "ComponentGetter.go :)"
+    
+    
     def debug(mxVar)echo var_export(mxVar,1)."\n"  
 # ComponentGetter
