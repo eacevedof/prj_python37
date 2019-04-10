@@ -15,7 +15,7 @@ class Phptopy:
     def __init__(self):
         currpath = os.path.dirname(os.path.abspath(__file__))
         self.currpath = os.path.dirname(os.path.abspath(currpath+"/../../../"))
-        self.pathfrom = self.currpath+"\\prj_mysqlhive\\backend\\vendor\\theframework\\components"
+        self.pathfrom = self.currpath+"\\prj_mysqlhive\\backend\\vendor\\theframework\\components\\db"
         self.pathto = self.currpath+"\\prj_python37\\theframework\\translated"
         print(self.pathfrom,os.path.isdir(self.pathfrom))
 
