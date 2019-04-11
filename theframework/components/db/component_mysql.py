@@ -1,5 +1,4 @@
-import mysql.connector
-from pprint import pprint
+
 
 """
  * @author Eduardo Acevedo Farje.
@@ -10,19 +9,31 @@ from pprint import pprint
  * @observations
  pip install mysql-connector-python
  """
+# https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
+import datetime
+import mysql.connector
+from pprint import pprint
 
 class ComponentMysql:
+    cnx = None
 
-    arConn = []
-    isError = False
-    arErrors = []  
-    iAffected = 0
-    
-    def __init__(self,arConn=[]): 
-        self.arConn = arConn
-    
+    def __init__(self):
+        self.cnx = mysql.connector.connect(user="root",password="",host="127.0.0.1",database="db_bi")
+
     def test(self):
-        self.p([],"ComponentMysql")
+        oCursor = self.cnx.cursor(dictionary=True)
+        tplQuery = ("SELECT * FROM operation LIMIT 3")
+        oCursor.execute(tplQuery)
+        names = oCursor.fetchall()
+        # names = [i[0] for i in oCursor.fetchall()]
+        pprint(names)
+        # rowh = oCursor.fetchmany(size=2)
+        # pprint(rowh)
+        # rows = oCursor.fetchall()
+        # pprint(rows)
+        oCursor.close()
+        self.cnx.close()
+        
     
     def p(self,mxVal,sTitle=""):
         print("\n")
