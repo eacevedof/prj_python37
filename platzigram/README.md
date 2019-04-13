@@ -985,7 +985,40 @@ class ProfileCompletionMiddleware:
     </div>
 </div>
 ```
+- Se crearán elementos para evitar repeticiones innecesarias
 
+#### 26 Video. [Model forms](https://platzi.com/clases/1318-django/12422-model-forms/)
+- ModelForm es una manera más sencilla de crear formularios en Django y en el caso de nuestro proyecto, se adapta mucho mejor al modelo que ya tenemos.
+- Lo usaremos para crear el formulario de posts.
+Aprovecharemos para refinar la funcionalidad en el navbar y conectar el feed con los posts.
+- Se crea el model forms:
+```py
+# appposts\forms.py
+# Django
+from django import forms
+# models
+from appposts.models import Post
+
+class PostForm(forms.ModelForm):
+    """Post model form."""
+
+    class Meta:
+        "Form settings"
+        model = Post
+        fields = ("user","profile","title","photo")
+
+# diferencia con appusers\forms.py
+from django import forms
+
+class ProfileForm(forms.Form):
+    """Profile form."""
+    # para estas validaciones nos podemos apoyar en la configuraciÃ³n del modelo
+    website = forms.URLField(max_length=200, required=True)
+    biography = forms.CharField(max_length=500, required=False)
+    phone_number = forms.CharField(max_length=20, required=False)
+    picture = forms.ImageField()
+```
+- Model Forms está pensado para una validación directa con el modelo, un tipo de CRUD estandar.
 
 
 ## Notas

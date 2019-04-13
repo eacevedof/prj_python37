@@ -14,9 +14,10 @@ from appusers import views as users_views
 urlpatterns = [
 
 # PUBLICO
-    path("", local_views.hello_world),
+    path("", local_views.hello_world, name="home"),
     path("sorted/", local_views.sort_integers, name="sort"),
     path("posts/", posts_views.list_posts, name="feed"),
+    path("posts/new/", posts_views.create_post, name="create_post"),
 
 # ADMIN
     path('admin/', admin.site.urls),
