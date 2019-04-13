@@ -1,5 +1,9 @@
 # Platzigram
 
+#### Python 3.7 - Django 2.1.7
+- `py --version` Para versión de python
+- `(env): py manage.py --version` Para versión de Django
+
 ## [Parte 4 - Clases Django](https://platzi.com/clases/django/) 
 
 #### 3 Video. Preparación del entorno de trabajo
@@ -931,6 +935,7 @@ class ProfileCompletionMiddleware:
 ```
 
 #### 24 Video. [Formularios en Django](https://platzi.com/clases/1318-django/12421-formularios-en-django6487/)
+- [doc Froms in Django](https://docs.djangoproject.com/en/2.2/topics/forms/#django-s-role-in-forms)
 - La clase utilitaria para formularios de Django nos ayuda a resolver mucho del trabajo que se realiza de forma repetitiva. La forma de implementarla es muy similar a la implementación de la clase models.model.
 - Algunas de las clases disponibles en Django al implementar form, son:
 	- BooleanField
@@ -943,6 +948,19 @@ class ProfileCompletionMiddleware:
 	- EmailField
 	- FileField
 	- ImageField
+- Validación de campos.
+	- Se limpiara la forma original que se hizo en views.py usando "helpers"
+- Se usarán las siguientes clases: **ModelForm** y **forms.Form**
+- En la doc indica como crear un formulario
+- Se define un fichero: **forms.py** que es una clase tipo: `class NameForm(forms.Form):`
+	- Como atributos se toman los campos con sus respectivas validaciones
+	- `your_name = forms.CharField(label="Your name",max_length=100)`
+- En **views.py**
+	- En el método con parámetro **request**
+	- Se crea una instancia de la clase **forms.Form(request.POST)**
+	- Para validar solo se usa el método **form.is_valid()**
+	- [Doc. validar campos en forms](https://docs.djangoproject.com/en/2.2/ref/forms/fields/)
+	- 
 
 
 
