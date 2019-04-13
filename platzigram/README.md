@@ -930,6 +930,7 @@ class ProfileCompletionMiddleware:
         return response
 ```
 
+#### 24 Video. [Formularios en Django](https://platzi.com/clases/1318-django/12421-formularios-en-django6487/)
 
 
 
