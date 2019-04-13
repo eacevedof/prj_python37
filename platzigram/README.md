@@ -931,7 +931,18 @@ class ProfileCompletionMiddleware:
 ```
 
 #### 24 Video. [Formularios en Django](https://platzi.com/clases/1318-django/12421-formularios-en-django6487/)
-
+- La clase utilitaria para formularios de Django nos ayuda a resolver mucho del trabajo que se realiza de forma repetitiva. La forma de implementarla es muy similar a la implementación de la clase models.model.
+- Algunas de las clases disponibles en Django al implementar form, son:
+	- BooleanField
+	- CharField
+	- ChoiceField
+	- TypedChoiceField
+	- DateField
+	- DateTimeField
+	- DecimalField
+	- EmailField
+	- FileField
+	- ImageField
 
 
 
