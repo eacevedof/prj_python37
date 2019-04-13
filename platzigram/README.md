@@ -935,7 +935,7 @@ class ProfileCompletionMiddleware:
 ```
 
 #### 24 Video. [Formularios en Django](https://platzi.com/clases/1318-django/12421-formularios-en-django6487/)
-- [doc Froms in Django](https://docs.djangoproject.com/en/2.2/topics/forms/#django-s-role-in-forms)
+- [Doc. Froms in Django](https://docs.djangoproject.com/en/2.2/topics/forms/#django-s-role-in-forms)
 - La clase utilitaria para formularios de Django nos ayuda a resolver mucho del trabajo que se realiza de forma repetitiva. La forma de implementarla es muy similar a la implementación de la clase models.model.
 - Algunas de las clases disponibles en Django al implementar form, son:
 	- BooleanField
@@ -948,11 +948,10 @@ class ProfileCompletionMiddleware:
 	- EmailField
 	- FileField
 	- ImageField
-- Validación de campos.
-	- Se limpiara la forma original que se hizo en views.py usando "helpers"
+- La validación en el formulario se hará de forma más automática, usando solo la clase forms.Form y el objeto request. En forms.Form se configurarán los **filtros** del request.
 - Se usarán las siguientes clases: **ModelForm** y **forms.Form**
 - En la doc indica como crear un formulario
-- Se define un fichero: **forms.py** que es una clase tipo: `class NameForm(forms.Form):`
+- Se define un fichero: **appusers.forms.py** que es una clase tipo: `class NameForm(forms.Form):`
 	- Como atributos se toman los campos con sus respectivas validaciones
 	- `your_name = forms.CharField(label="Your name",max_length=100)`
 - En **views.py**
@@ -960,11 +959,11 @@ class ProfileCompletionMiddleware:
 	- Se crea una instancia de la clase **forms.Form(request.POST)**
 	- Para validar solo se usa el método **form.is_valid()**
 	- [Doc. validar campos en forms](https://docs.djangoproject.com/en/2.2/ref/forms/fields/)
-	- 
-
-
-
-
+	- Para configurar las validaciones nos podemos apoyar en las restricciones de configuración del módelo
+- Cuando se envia datos con **enctype="multipart/form-data"** las imágenes no llegan en **request.POST** sino en **request.FILES**
+- Otra cosa importante es que cuando recargamos no reenviamos el formulario esto es gracias al **redirect**. Esto hace que lo que recarguemos seá la última petición, que es un GET.
+- `{% load static %}`
+- `<img src="{% static 'img/default-profile.png' %}" class="rounded-circle" height="50" />`
 
 
 ## Notas
