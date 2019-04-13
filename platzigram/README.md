@@ -964,6 +964,8 @@ class ProfileCompletionMiddleware:
 - Otra cosa importante es que cuando recargamos no reenviamos el formulario esto es gracias al **redirect**. Esto hace que lo que recarguemos seá la última petición, que es un GET.
 - `{% load static %}`
 - `<img src="{% static 'img/default-profile.png' %}" class="rounded-circle" height="50" />`
+#### 25 Video. [Mostrando el form en el template](https://platzi.com/clases/1318-django/12396-mostrando-el-form-en-el-template/)
+- 
 
 
 ## Notas
