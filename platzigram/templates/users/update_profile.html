@@ -1,13 +1,67 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block head_content%}
-<title>@{{ request.user.username }} | Updating Profile</title>
+{% block head_content %}
+<title>@{{ request.user.username }}</title>
 {% endblock %}
 
 {% block container %}
-    <h1 class="mt-5">@{{ request.user.username }}</h1>
-    {% if error %}
-        <p class="alert alert-danger">{{ error }}</p>
-    {% endif %}
- 
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-6 p-4" id="profile-box">
+            <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <p class="alert alert-danger">{{ form.error }}</p>
+                {% endif %}
+
+                <div class="media">
+                {% if profile.picture %}
+                    <img src="{{ profile.picture.url }}" class="rounded-circle" height="50" />
+                {% else %}
+                    <img src="{% static 'img/default-profile.png' %}" class="rounded-circle" height="50" />
+                {% endif %}
+
+                <div class="media-body">
+                    <h5 class="ml-4">@{{ user.username }} | {{ user.get_full_name }}</h5>
+                    <p class="ml-4"><input type="file" name="picture" required="true"></p>
+                </div>
+                </div>
+
+                <hr><br>
+
+                <div class="">
+                    <label>Website</label>
+                    <input
+                        class="form-control"
+                        name="website"
+                        type="url"
+                        placeholder="Website"
+                        value="{{ profile.website }}"
+                    />
+                </div>
+
+                <div class="">
+                    <label>Biography</label>
+                    <textarea class="form-control"name="biography">{{ profile.biography }}</textarea>
+                </div>
+
+                <div class="">
+                    <label>Phone number</label>
+                    <input
+                        class="form-control"
+                        name="phone_number"
+                        type="text"
+                        placeholder="Phone number"
+                        value="{{ profile.phone_number }}"
+                    />
+                </div>
+
+                <button class="btn btn-primary btn-block mt-5" ype="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

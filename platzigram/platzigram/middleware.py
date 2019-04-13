@@ -19,12 +19,14 @@ class ProfileCompletionMiddleware:
     def __call__(self, request):
         """Code to be executed for each request before the view is called."""
         if not request.user.is_anonymous:
-            profile = request.user.profile
-            # pdb.set_trace()
-            if not profile.picture or not profile.biography:
-                # si la url es update_profile o logout no se aplica el redirect
-                if request.path not in [reverse("update_profile"),reverse("logout")]:
-                    return redirect("update_profile")
+            # esta linea evita que se redirija a la pantalla de perfil si es del staff (auth_user.is_staff)
+            if not request.user.is_staff:
+                profile = request.user.profile
+                # pdb.set_trace()
+                if not profile.picture or not profile.biography:
+                    # si la url es update_profile o logout no se aplica el redirect
+                    if request.path not in [reverse("update_profile"),reverse("logout")]:
+                        return redirect("update_profile")
 
         # pdb.set_trace()
         # get_response es una función
