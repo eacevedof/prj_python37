@@ -964,8 +964,28 @@ class ProfileCompletionMiddleware:
 - Otra cosa importante es que cuando recargamos no reenviamos el formulario esto es gracias al **redirect**. Esto hace que lo que recarguemos seá la última petición, que es un GET.
 - `{% load static %}`
 - `<img src="{% static 'img/default-profile.png' %}" class="rounded-circle" height="50" />`
+
 #### 25 Video. [Mostrando el form en el template](https://platzi.com/clases/1318-django/12396-mostrando-el-form-en-el-template/)
-- 
+- [Doc. Working with form templates](https://docs.djangoproject.com/en/2.2/topics/forms/#working-with-form-templates)
+- Se controlan los errores usando `form.<field>.errors` y `form.<field>.value`
+- Los bucles y las comprobaciones se limitan solo al metalenguaje de jinja2
+
+```py
+<div class="form-group">
+    <label>Biography</label>
+    <textarea 
+        class="form-control {% if form.biography.errors %} is-invalid {% endif %}"
+        name="biography"
+        >{% if form.biography.errors %} {{ form.biography.value }} {% else %} {{ profile.biography }}{% endif %}
+    </textarea>
+    <div class="invalid-feedback">
+        {% for error in form.biography.errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+</div>
+```
+
 
 
 ## Notas
