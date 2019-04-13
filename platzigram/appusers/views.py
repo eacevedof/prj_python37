@@ -15,6 +15,7 @@ from appusers.models import Profile
 # Forms
 from appusers.forms import ProfileForm
 
+@login_required
 def update_profile(request):
     """Update a users profile view."""
     pprint(request.FILES)

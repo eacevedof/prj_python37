@@ -16,14 +16,6 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    {% for error in form.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {% for e in error %}
-                                {{ e }}
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-
                     <input type="hidden" name="user" value="{{ user.pk}}" />
                     <input type="hidden" name="profile" value="{{ profile.pk }}" />
 
@@ -34,7 +26,7 @@
                             type="text"
                             name="title"
                             placeholder="Title"
-                            value="{% if form.title.errors %}{{ form.title.value }} {% else %} {{profile.title}} {% endif%}"
+                            value="{% if form.title.errors %}{{ form.title.value }} {% endif%}"
                         />
                         <div class="invalid-feedback">
                             {% for error in form.title.errors %}{{ error }}{% endfor %}
@@ -49,7 +41,7 @@
                             type="file"
                             name="photo"
                             placeholder="photo"
-                            value="{% if form.photo.errors %}{{ form.photo.value }} {% else %} {{profile.photo}} {% endif%}"
+                            value="{% if form.photo.errors %}{{ form.photo.value }} {% endif%}"
                         />
                         <div class="invalid-feedback">
                             {% for error in form.photo.errors %}{{ error }}{% endfor %}
