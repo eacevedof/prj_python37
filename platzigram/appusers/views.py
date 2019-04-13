@@ -1,6 +1,7 @@
 """
 platzigram/appusers/views.py
 """
+from pprint import pprint
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -12,17 +13,37 @@ from django.contrib.auth.models import User
 from appusers.models import Profile
 
 # Forms
-from users.form import ProfileForm
+from appusers.forms import ProfileForm
 
 def update_profile(request):
     """Update a users profile view."""
+    pprint(request.FILES)
     profile = request.user.profile
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            profile.website = data["website"]
+            profile.phone_number = data["phone_number"]
+            profile.biography = data["biography"]
+            profile.picture = data["picture"]
+            profile.save()
+
+            pprint("profile")
+            pprint(profile)
+
+            return redirect("update_profile")
+    else:
+        form = ProfileForm()
+
     return render(
         request=request
         ,template_name="users/update_profile.html",
         context = {
             "profile": profile,
-            "user": request.user
+            "user": request.user,
+            "form": form
         })
 
 
