@@ -1,6 +1,7 @@
 # Platzigram
 
 #### Python 3.7 - Django 2.1.7
+- `#!/usr/bin/env python` Con esto se le indica a los ficheros .py que si no se le llama al fichero con la aplicación asociada, entonces se buscará en la variable de entorno y se lanzará automáticamente.
 - `py --version` Para versión de python
 - `(env): py manage.py --version` Para versión de Django
 
