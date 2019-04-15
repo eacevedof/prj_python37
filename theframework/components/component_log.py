@@ -33,7 +33,14 @@ class ComponentLog():
         if not os.path.isdir(sLogFolder):
             os.mkdir(sLogFolder)
 
-    def __merge(sContent,sTitle)
+    def __var_export(self,mxVar):
+        if hasattr(mxVar, "__dict__"):
+            s = "{}: {}".format(mxVar, vars(mxVar))
+        else:
+            s = repr(mxVar)
+        return s
+
+    def __merge(sContent,sTitle=None):
         sNow = datetime.now().strftime("%Y%m%d-%H%i%s")
         sReturn = "-- ["+sNow+"]\n"
         if sTitle: 
@@ -42,7 +49,7 @@ class ComponentLog():
             sReturn += sContent + "\n\n"
         return sReturn
 
-    def save(mxVar,sTitle=None)
+    def save(mxVar,sTitle=None):
     
         if not isinstance(mxVar, str):
             mxVar = var_export(mxVar,1)
