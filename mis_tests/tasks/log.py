@@ -1,5 +1,4 @@
-from inspect import getmembers
-from pprint import pprint
+
 
 class Test():
     _prop_string = "string"
@@ -27,40 +26,16 @@ def dump(obj):
     
 
 def var_export(mxVar):
-    if hasattr(mxVar, "__dict__"):
-        s = "{}: {}".format(mxVar, vars(mxVar))
-    else:
-        s = repr(mxVar)
-    return s
+    from inspect import getmembers
+    from pprint import pprint
+    pprint(getmembers(mxVar))
 
 
-def var_dump(var, prefix=''):
-    """
-    You know you're a php developer when the first thing you ask for
-    when learning a new language is 'Where's var_dump?????'
-    """
-    my_type = '[' + var.__class__.__name__ + '(' + str(len(var)) + ')]:'
-    print(prefix, my_type, sep='')
-    prefix += '    '
-    for i in var:
-        if type(i) in (list, tuple, dict, set):
-            var_dump(i, prefix)
-        else:
-            if isinstance(var, dict):
-                print(prefix, i, ': (', var[i].__class__.__name__, ') ', var[i], sep='')
-            else:
-                print(prefix, '(', i.__class__.__name__, ') ', i, sep='')
+
                 
 if __name__ == "__main__":
-    # oDic = {"a":"aaaa","b":"bbbb"}
-    #s = var_export(oDic)
-    #print(s)
     o = Test()
-    var_dump(o)
-    # pprint(getmembers(o))
-    # print(repr(o))
-    # print(vars(o))
-    # pprint(vars(o))
-    # print(o)
-    # pprint(globals())
-    # pprint(locals())
+    # var_export(o)
+    s = "esto es un texto"
+    print(s.__len__())
+    # var_export(s.__len__)
