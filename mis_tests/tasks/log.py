@@ -37,5 +37,5 @@ if __name__ == "__main__":
     o = Test()
     # var_export(o)
     s = "esto es un texto"
-    print(s.__len__())
+    # print(s.__len__())
     # var_export(s.__len__)
