@@ -18,7 +18,7 @@ class TestComponentLog(unittest.TestCase):
 
     def test_save(self):
         o = Log()
-        o.save("texto de prueba")
+        o.save("texto de 11111")
         o.save("texto de prueba2 con titulo","Linea 2")
 
 #class TestComponentLog
