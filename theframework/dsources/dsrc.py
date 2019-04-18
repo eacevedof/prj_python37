@@ -1,14 +1,15 @@
 """
-/theframework/dsources/dsources.py
+/theframework/dsources/dsources.py 1.0.0
+recupera la configuracion de dsources.json
 """
 from pprint import pprint
 import json
 import os
 
 class dsrc():
-    full_path = os.path.realpath(__file__)
-    dir_path = os.path.dirname(full_path)
-    path_json = os.path.join(dir_path,"dsources.json")
+    path_ofthis = os.path.realpath(__file__)
+    path_thisdir = os.path.dirname(path_ofthis)
+    path_json = os.path.join(path_thisdir,"dsources.json")
     data = {}
 
     @staticmethod
