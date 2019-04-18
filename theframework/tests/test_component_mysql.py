@@ -11,13 +11,13 @@ from components.db.component_mysql import ComponentMysql
 
 class TestComponentMysql(unittest.TestCase):	
 
-    def test_is_connected(self):
+    def tes_is_connected(self):
         o = ComponentMysql("mysql-1")
         # assert isinstance(mx_var,dict)
         self.assertEqual(o.is_connected(),True)       
         #self.fail("TODO: Write test")
 
-    def test_is_connected_error(self):
+    def tes_is_connected_error(self):
         o = ComponentMysql("mysql-x")
         # assert isinstance(mx_var,dict)
         self.assertEqual(o.is_connected(),False)
@@ -26,7 +26,7 @@ class TestComponentMysql(unittest.TestCase):
     def test_get_rows(self):
         o = ComponentMysql("mysql-1")
         mx_var = o.get_rows()
-        # o.show_errors()
+        #o.show_errors()
         pprint(mx_var)
         assert isinstance(mx_var,list)
 
