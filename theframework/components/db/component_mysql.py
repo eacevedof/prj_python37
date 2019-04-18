@@ -1,5 +1,3 @@
-
-
 """
  * @author Eduardo Acevedo Farje.
  * @link www.eduardoaf.com
@@ -9,39 +7,80 @@
  * @observations
  pip install mysql-connector-python
  """
+import sys; sys.path.append("..")
 # https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
 import datetime
 import mysql.connector
 from pprint import pprint
+from dsources.dsrc import dsrc
 
 class ComponentMysql:
-    cnx = None
-
-    def __init__(self):
-        self.cnx = mysql.connector.connect(user="root",password="",host="127.0.0.1",database="db_bi")
-
-    def test(self):
-        oCursor = self.cnx.cursor(dictionary=True)
-        tplQuery = ("SELECT * FROM operation LIMIT 3")
-        oCursor.execute(tplQuery)
-        names = oCursor.fetchall()
-        # names = [i[0] for i in oCursor.fetchall()]
-        pprint(names)
-        # rowh = oCursor.fetchmany(size=2)
-        # pprint(rowh)
-        # rows = oCursor.fetchall()
-        # pprint(rows)
-        oCursor.close()
-        self.cnx.close()
-        
     
-    def p(self,mxVal,sTitle=""):
-        print("\n")
-        if sTitle:
-            print(sTitle+"\n:")
-        pprint(mxVal)
+    # data source, son los datos de: theframework\dsources\dsources.json
+    __dicdsrc = {}
+    __objcnx = None
+    __is_connected = False
+
+    __errors = {}
+    __is_error = False
+
+    def __init__(self,idsrc=None):
+        if idsrc:
+            self.__dicdsrc = dsrc.get_context(idsrc)
+        self.__connect()
+
+    def __connect(self):
+        if self.__dicdsrc:
+            self.__objcnx = mysql.connector.connect(
+                    user = self.__dicdsrc["user"],
+                    password = self.__dicdsrc["password"],
+                    host = self.__dicdsrc["host"],
+                    database = self.__dicdsrc["database"],
+                )
+            self.__is_connected =  self.__objcnx.is_connected()        
+
+
+    def query(self,strsql):
+        dicrows = {}
+        if isinstance(strsql,str):
+            if strsql:
+                if not self.__is_connected:
+                    self.__connect()
+                    if not self.__is_connected:
+                        self.__add_error("query","unable to connect")
+                        return {}
+                    objcursor = self.__objcnx.cursor(dictionary=True)
+                    tplquery = strsql
+                    objcursor.execute(tplquery)
+                    dicrows = objcursor.fetchall()
+    
+        return dicrows
+
+    def get_rows(self):
+        strsql = "SELECT * FROM operation LIMIT 3"
+        dicrows = self.query(strsql)
+        return dicrows
+    
+    def is_connected(self):
+        return self.__is_connected
   
-# ComponentMysql
+    def __add_error(self,key,strmsg):
+        self.__is_error = True
+        self.__errors[key] = strmsg
+        
+    def is_error(self):
+        return self.__is_error
+    
+    def get_errors(self):
+        return self.__errors
+        
+    def show_errors(self):
+        print(__name__," errors:")
+        pprint(self.__errors)
+  
+#class ComponentMysq
+
 if __name__ == "__main__":
     o = ComponentMysql()
-    o.test()
+    dicr = o.get_rows()
+    pprint(dicr)
