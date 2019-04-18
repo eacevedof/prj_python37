@@ -40,38 +40,28 @@ class ComponentLog():
 
     
     def __get_now(self):
-        strnow = (datetime.now()).strftime("%m/%d/%Y, %H:%M:%S")
+        strnow = (datetime.now()).strftime("%Y%m%d-%H%M%S")
         # strnow = datetime.datetime.strptime(data[4]+data[5],"%H:%M:%S")
         return strnow
     
 
     def save(self, mxvar, strtitle=""):
-        
         pathfile = os.path.join(
                         self.pathfolder,
                         self.strsubtype,
                         self.strfilename)
         strnow = self.__get_now()
-        pprint(strnow)
+        #pprint(strnow)
         
         strcontent = "-- [{}]\n".format(strnow)
         if strtitle:
             strcontent += strtitle+"\n"
         
         if isinstance(mxvar,str):
-            strcontent += mxvar+"\n"
-            
+            strcontent += mxvar+"\n\n"
+        
         f = open(pathfile,"a")
         f.write(strcontent)
-        f.close()
-        
-
-    def write(self):
-
-        sFile = self.pathfolder+self.DS+self.strfilename
-        print(sFile)
-        f = open(sFile, "a")
-        f.write("Now the file has more content!")
         f.close()
 
 
