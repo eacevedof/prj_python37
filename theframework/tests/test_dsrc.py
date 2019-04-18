@@ -1,5 +1,5 @@
 """
-@file: test_dsrc
+@file: test_dsrc 1.0.0
 sobre los test: https://realpython.com/python-testing/#unit-tests-vs-integration-tests
 sobre el import: https://stackoverflow.com/questions/30669474/beyond-top-level-package-error-in-relative-import
 """
@@ -10,7 +10,7 @@ from pprint import pprint
 
 from dsources.dsrc import dsrc	
 
-class  TestDsrc(unittest.TestCase):	
+class TestDsrc(unittest.TestCase):	
 
     def test_get_config(self):
         mx_var = dsrc.get_config()
