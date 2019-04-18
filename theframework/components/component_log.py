@@ -44,6 +44,14 @@ class ComponentLog():
         # strnow = datetime.datetime.strptime(data[4]+data[5],"%H:%M:%S")
         return strnow
     
+    def __obj_tostr(self,obj):
+        if str(type(obj)) == "<type 'classobj'>":
+            import inspect
+            return 
+            
+        
+        #for name, val in vars(obj):
+            #print '  .%s: %r' % (name, val)
 
     def save(self, mxvar, strtitle=""):
         pathfile = os.path.join(
