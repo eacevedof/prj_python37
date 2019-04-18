@@ -8,7 +8,7 @@ import sys; sys.path.append("..")
 import unittest
 from pprint import pprint
 
-from dsources.dsrc import dsrc	
+from dsources.dsrc import dsrc
 
 class TestDsrc(unittest.TestCase):	
 

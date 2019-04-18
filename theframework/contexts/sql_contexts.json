@@ -1,9 +1,0 @@
-[
-    {
-        "engine":"mysql",
-        "database":"mysql",
-        "user":"user",
-        "password":"password",
-        "port":""
-    }
-]
