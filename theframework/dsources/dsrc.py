@@ -44,10 +44,17 @@ class dsrc():
     @staticmethod
     def get_context(id):
         dsrc.load_config()
-        return dsrc.data[id]
+        o_dic = dsrc.data
+        if id in o_dic:
+            return o_dic[id]
+        return {}
     
     @staticmethod
     def get_value(id,val):
         dsrc.load_config()
-        return dsrc.data[id][val]
+        o_dic = dsrc.data
+        if id in o_dic:
+            if val in o_dic[id]:
+                return o_dic[id][val]
+        return {}
         
