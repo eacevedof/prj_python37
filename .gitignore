@@ -50,4 +50,5 @@ src/pv.egg-info
 .env
 .vscode
 theframework/translated
+theframework/tests/debug
 /nbproject/
