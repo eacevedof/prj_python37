@@ -1,3 +1,8 @@
+"""
+@file: test_dsrc
+sobre los test: https://realpython.com/python-testing/#unit-tests-vs-integration-tests
+sobre el import: https://stackoverflow.com/questions/30669474/beyond-top-level-package-error-in-relative-import
+"""
 import sys; sys.path.append("..")
 import unittest
 
