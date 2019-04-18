@@ -52,6 +52,10 @@ class ComponentLog():
         
         #for name, val in vars(obj):
             #print '  .%s: %r' % (name, val)
+            
+    def __dump1(self,obj):
+        # https://stackoverflow.com/questions/192109/is-there-a-built-in-function-to-print-all-the-current-properties-and-values-of-a
+        return repr(obj)+"\n"
 
     def save(self, mxvar, strtitle=""):
         pathfile = os.path.join(
@@ -74,7 +78,7 @@ class ComponentLog():
         else:
             from inspect import getmembers
             #strcontent += str(getmembers(mxvar)).replace("), (","),\n(")+"\n\n"
-            strcontent += self.__dump(mxvar)
+            strcontent += self.__dump1(mxvar)
 #        
 #        if str(type(mxvar)) == "<type 'classobj'>":
 #            strcontent += type(mxvar)+"->"+str(vars(mxvar))+"\n\n"
