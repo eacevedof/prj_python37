@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from datetime import datetime
 
 class ComponentLog():
@@ -12,6 +13,11 @@ class ComponentLog():
     pathfolder = ""
     strsubtype = ""
     strfilename = ""
+
+    path_ofthis = os.path.realpath(__file__)
+    path_thisdir = os.path.dirname(path_ofthis)
+    path_json = os.path.join(path_thisdir,"dsources.json")
+    data = {}
 
     def __init__(self, strsubtype = "", pathfolder = ""):
         self.pathfolder = pathfolder
@@ -27,16 +33,37 @@ class ComponentLog():
         self.__fix_folder()
     
     
+    def __fix_folder(self):
+        pathlogfolder = os.path.join(self.pathfolder,self.strsubtype)
+        if not os.path.isdir(pathlogfolder):
+            os.mkdir(pathlogfolder)    
+
+    
     def __get_now(self):
-        strnow = datetime.now().strftime("%Y%m%d-%H%i%s")
-        return strnow
+        strnow = (datetime.now()).strftime("%m/%d/%Y, %H:%M:%S")
+        return str(strnow)
     
 
-    def __fix_folder(self):
-        sLogFolder = self.pathfolder+self.DS+self.strsubtype+self.DS
-        if not os.path.isdir(sLogFolder):
-            os.mkdir(sLogFolder)
-
+    def save(self, mxvar, strtitle=""):
+        
+        pathfile = os.path.join(
+                        self.pathfolder,
+                        self.strsubtype,
+                        self.strfilename)
+        strnow = self.__get_now()
+        pprint(strnow)
+        
+        strcontent = "[{}]".format(strnow)
+        if strtitle:
+            strcontent += " "+strtitle+"\n"
+        
+        if isinstance(mxvar,str):
+            strcontent += mxvar
+            
+        f = open(pathfile,"a")
+        f.write(strcontent)
+        f.close()
+        
 
     def write(self):
 
