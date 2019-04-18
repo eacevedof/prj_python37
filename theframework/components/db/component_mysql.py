@@ -2,16 +2,16 @@
  * @author Eduardo Acevedo Farje.
  * @link www.eduardoaf.com
  * @name theframework.components.db.ComponentMysql
- * @file component_mysql.php v2.0.0
- * @date 02-12-2018 13:20 SPAIN
+ * @file component_mysql.py 1.0.0
+ * @date 18-04-2018 17:50 SPAIN
  * @observations
  pip install mysql-connector-python
  """
 import sys; sys.path.append("..")
-# https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
-import datetime
-import mysql.connector
 from pprint import pprint
+# https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
+# import datetime
+import mysql.connector
 from dsources.dsrc import dsrc
 
 class ComponentMysql:
@@ -34,14 +34,17 @@ class ComponentMysql:
 
     def __connect(self):
         if self.__dicdsrc:
-            self.__objcnx = mysql.connector.connect(
-                    user = self.__dicdsrc["user"],
-                    password = self.__dicdsrc["password"],
-                    host = self.__dicdsrc["host"],
-                    database = self.__dicdsrc["database"],
-                )
-            self.__is_connected =  self.__objcnx.is_connected()        
-
+            try:
+                self.__objcnx = mysql.connector.connect(
+                                user = self.__dicdsrc["user"],
+                                password = self.__dicdsrc["password"],
+                                host = self.__dicdsrc["host"],
+                                database = self.__dicdsrc["database"],
+                            )
+                self.__is_connected =  self.__objcnx.is_connected()
+            except e:
+                self.__is_connected = False
+                self.__add_error("__connect.exception",str(e))
 
     def query(self,strsql):
         """
@@ -116,30 +119,12 @@ class ComponentMysql:
             
         finally:
             self.__iaffected = iresult            
-            return iresult
-
-
-    def get_rows(self):
-        strsql = "SELECT * FROM operation LIMIT 3"
-        lstrows = self.query(strsql)
-        return lstrows
+            return iresult    
     
-    def insert(self):
-        strsql = "INSERT INTO v(i,s,f) VALUES (1,'some string',1.2)"
-        ir = self.execute(strsql)
-        return ir
-    
-    def update(self):
-        strsql = "UPDATE v SET i=88,s='updated str', f=9.89 WHERE id>3"
-        ir = self.execute(strsql)
-        return ir
-    
-    def delete(self):
-        strsql = "DELETE FROM v WHERE id>15"
-        ir = self.execute(strsql)
-        return ir
-    
-    
+    def __add_error(self,key,strmsg):
+        self.__is_error = True
+        self.__errors[key] = strmsg
+        
     def get_last_query(self):
         return {"read":self.__sqlread,"write":self.__sqlwrite}
     
@@ -148,10 +133,6 @@ class ComponentMysql:
     
     def is_connected(self):
         return self.__is_connected
-  
-    def __add_error(self,key,strmsg):
-        self.__is_error = True
-        self.__errors[key] = strmsg
         
     def is_error(self):
         return self.__is_error
@@ -167,5 +148,4 @@ class ComponentMysql:
 
 if __name__ == "__main__":
     o = ComponentMysql()
-    dicr = o.get_rows()
-    pprint(dicr)
+    pprint(o.is_connected())
