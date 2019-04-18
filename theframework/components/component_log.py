@@ -41,7 +41,8 @@ class ComponentLog():
     
     def __get_now(self):
         strnow = (datetime.now()).strftime("%m/%d/%Y, %H:%M:%S")
-        return str(strnow)
+        # strnow = datetime.datetime.strptime(data[4]+data[5],"%H:%M:%S")
+        return strnow
     
 
     def save(self, mxvar, strtitle=""):
@@ -53,12 +54,12 @@ class ComponentLog():
         strnow = self.__get_now()
         pprint(strnow)
         
-        strcontent = "[{}]".format(strnow)
+        strcontent = "-- [{}]\n".format(strnow)
         if strtitle:
-            strcontent += " "+strtitle+"\n"
+            strcontent += strtitle+"\n"
         
         if isinstance(mxvar,str):
-            strcontent += mxvar
+            strcontent += mxvar+"\n"
             
         f = open(pathfile,"a")
         f.write(strcontent)
