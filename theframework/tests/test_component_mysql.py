@@ -13,30 +13,47 @@ class TestComponentMysql(unittest.TestCase):
 
     def tes_is_connected(self):
         o = ComponentMysql("mysql-1")
-        # assert isinstance(mx_var,dict)
+        # assert isinstance(mxvar,dict)
         self.assertEqual(o.is_connected(),True)       
         #self.fail("TODO: Write test")
 
     def tes_is_connected_error(self):
         o = ComponentMysql("mysql-x")
-        # assert isinstance(mx_var,dict)
+        # assert isinstance(mxvar,dict)
         self.assertEqual(o.is_connected(),False)
         # self.fail("connection error")
         
     def tes_get_rows(self):
         o = ComponentMysql("mysql-1")
-        mx_var = o.get_rows()
+        mxvar = o.get_rows()
         #o.show_errors()
-        pprint(mx_var)
-        assert isinstance(mx_var,list)
+        pprint(mxvar)
+        assert isinstance(mxvar,list)
+        
+    def test_update(self):
+        o = ComponentMysql("mysql-1")
+        mxvar = o.update()
+        o.show_errors()
+        pprint(mxvar)
+        assert isinstance(mxvar,int)  
         
     def test_insert(self):
         o = ComponentMysql("mysql-1")
-        mx_var = o.insert()
+        mxvar = o.insert()
         o.show_errors()
-        pprint(mx_var)
-        assert isinstance(mx_var,int)
+        pprint(mxvar)
+        assert isinstance(mxvar,int)
         
+    def test_lastquery(self):
+        o = ComponentMysql("mysql-1")
+        o.update()
+        o.insert()
+        o.delete()
+        mxvar = o.get_last_query()
+        pprint(mxvar)
+        assert "read" in mxvar
+        assert mxvar["write"]
+        assert isinstance(mxvar,dict)
 #class TestComponentMysql
 
 if __name__ == "__main__":
