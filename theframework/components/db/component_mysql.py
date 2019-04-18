@@ -20,9 +20,12 @@ class ComponentMysql:
     __dicdsrc = {}
     __objcnx = None
     __is_connected = False
+    __iaffected = 0
 
     __errors = {}
     __is_error = False
+    __sqlread = ""
+    __sqlwrite = ""
 
     def __init__(self,idsrc=None):
         if idsrc:
@@ -59,6 +62,7 @@ class ComponentMysql:
                 return []
         
         strquery = strsql
+        self.__sqlread = strquery
         # lista de diccionarios
         lstrows = []        
         try:
@@ -73,6 +77,7 @@ class ComponentMysql:
             self.__add_error("query.exception",str(e))
             
         finally:
+            self.__iaffected = len(lstrows)
             return lstrows
     # def query
     
@@ -95,6 +100,7 @@ class ComponentMysql:
                 return []
         
         strquery = strsql
+        self.__sqlwrite = strquery
         
         iresult = 0
         try:
@@ -109,7 +115,9 @@ class ComponentMysql:
             self.__add_error("execute.exception",str(e))
             
         finally:
+            self.__iaffected = iresult            
             return iresult
+
 
     def get_rows(self):
         strsql = "SELECT * FROM operation LIMIT 3"
@@ -120,6 +128,23 @@ class ComponentMysql:
         strsql = "INSERT INTO v(i,s,f) VALUES (1,'some string',1.2)"
         ir = self.execute(strsql)
         return ir
+    
+    def update(self):
+        strsql = "UPDATE v SET i=88,s='updated str', f=9.89 WHERE id>3"
+        ir = self.execute(strsql)
+        return ir
+    
+    def delete(self):
+        strsql = "DELETE FROM v WHERE id>15"
+        ir = self.execute(strsql)
+        return ir
+    
+    
+    def get_last_query(self):
+        return {"read":self.__sqlread,"write":self.__sqlwrite}
+    
+    def get_affected(self):
+        return self.__iaffected
     
     def is_connected(self):
         return self.__is_connected
