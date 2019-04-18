@@ -86,4 +86,4 @@ class ComponentLog():
 
 if __name__ == "__main__":
     o = ComponentLog()
-    o.write()
+    o.save("hello world","Example")
