@@ -1,6 +1,4 @@
-import sys	
-# sys.path.append('/ufs/guido/lib/python')	
-sys.path.append("..")
+import sys; sys.path.append("..")
 import unittest
 
 from dsources.dsrc import Dsrc	
