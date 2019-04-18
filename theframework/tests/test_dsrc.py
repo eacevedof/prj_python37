@@ -15,11 +15,12 @@ class  TestDsrc(unittest.TestCase):
     def test_get_config(self):
         mx_var = Dsrc.get_config()
         pprint(mx_var)
-        assert isinstance(mx_var,str)
+        assert isinstance(mx_var,dict)
         #self.assertEqual(x, y, "Msg");	       
         #self.fail("TODO: Write test")
 
 
 if __name__ == "__main__":
     unittest.main()
-    print("Everything passed")        
+    print("Everything passed")
+    
