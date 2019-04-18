@@ -41,7 +41,8 @@ class ComponentMysql:
 
 
     def query(self,strsql):
-        dicrows = {}
+        # lista de diccionarios
+        lstrows = []
         if isinstance(strsql,str):
             if strsql:
                 if not self.__is_connected:
@@ -49,17 +50,19 @@ class ComponentMysql:
                     if not self.__is_connected:
                         self.__add_error("query","unable to connect")
                         return {}
-                    objcursor = self.__objcnx.cursor(dictionary=True)
-                    tplquery = strsql
-                    objcursor.execute(tplquery)
-                    dicrows = objcursor.fetchall()
+                    
+                objcursor = self.__objcnx.cursor(dictionary=True)
+                # pprint(objcursor);sys.exit()
+                tplquery = (strsql)
+                objcursor.execute(tplquery)
+                lstrows = objcursor.fetchall()
     
-        return dicrows
+        return lstrows
 
     def get_rows(self):
         strsql = "SELECT * FROM operation LIMIT 3"
-        dicrows = self.query(strsql)
-        return dicrows
+        lstrows = self.query(strsql)
+        return lstrows
     
     def is_connected(self):
         return self.__is_connected

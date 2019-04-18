@@ -26,9 +26,9 @@ class TestComponentMysql(unittest.TestCase):
     def test_get_rows(self):
         o = ComponentMysql("mysql-1")
         mx_var = o.get_rows()
-        o.show_errors()
+        # o.show_errors()
         pprint(mx_var)
-        assert isinstance(mx_var,dict)
+        assert isinstance(mx_var,list)
 
 #class TestComponentMysql
 
