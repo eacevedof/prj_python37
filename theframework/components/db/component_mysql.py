@@ -15,7 +15,10 @@ import mysql.connector
 from dsources.dsrc import dsrc
 
 class ComponentMysql:
-    
+    """
+    theframework.components.db.ComponentMysql 1.0.0
+    Conecta a una bd usando dsrc (datasources)
+    """
     # data source, son los datos de: theframework\dsources\dsources.json
     __dicdsrc = {}
     __objcnx = None
