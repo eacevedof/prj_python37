@@ -8,7 +8,8 @@
         "database":"db_bi",
         "user":"root",
         "password":"",
-        "port":"3306"
+        "port":"3306",
+        "is_hashed":false
     },
     {
         "id":"mysql-2",
@@ -19,6 +20,7 @@
         "database":"db_killme",
         "user":"root",
         "password":"",
-        "port":"3306"
+        "port":"3306",
+        "is_hashed":false
     }
 ]
