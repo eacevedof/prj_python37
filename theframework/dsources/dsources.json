@@ -1,0 +1,24 @@
+[
+    {
+        "id":"mysql-1",
+        "alias":"db-bi",
+        "description":"Base de datos de pruebas para informes",
+        "engine":"mysql",
+        "server":"localhost",
+        "database":"db_bi",
+        "user":"root",
+        "password":"",
+        "port":"3306"
+    },
+    {
+        "id":"mysql-2",
+        "alias":"db-kilme",
+        "description":"Base de datos de pruebas de prestashop",
+        "engine":"mysql",
+        "server":"localhost",
+        "database":"db_killme",
+        "user":"root",
+        "password":"",
+        "port":"3306"
+    }
+]
