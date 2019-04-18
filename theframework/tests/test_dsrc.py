@@ -12,10 +12,15 @@ class  TestDsrc(unittest.TestCase):
 
     def test_get_config(self):
         text = Dsrc.get_config()
-        print("hola",text)	
+        print("test_get_config",text)	
         assert isinstance(text,str)
         #self.assertEqual(x, y, "Msg");	       
         #self.fail("TODO: Write test")
+        
+    def test_loadjson(self):
+        text = Dsrc.load_config()
+        print("test_loadjson: ",text)
+        assert isinstance(text,str)
 
 
 if __name__ == "__main__":
