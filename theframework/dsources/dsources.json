@@ -22,5 +22,29 @@
         "password":"",
         "port":"3306",
         "is_hashed":false
+    },
+    {
+        "id":"mssql-1",
+        "alias":"db-tehframework-dev",
+        "description":"Base de datos de pruebas de Theframwork en SQLServer",
+        "engine":"mmsql",
+        "server":"localhost",
+        "database":"db_theframework",
+        "user":"sa",
+        "password":"1234",
+        "port":"1433",
+        "is_hashed":false
+    },
+    {
+        "id":"mongo-1",
+        "alias":"mongo-test",
+        "description":"Base de datos de pruebas mongo, prueba de concepto",
+        "engine":"mongo",
+        "server":"127.0.01",
+        "database":"db_test",
+        "user":"",
+        "password":"",
+        "port":"27018",
+        "is_hashed":false
     }
 ]
