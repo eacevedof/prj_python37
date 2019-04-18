@@ -59,15 +59,26 @@ class ComponentLog():
                         self.strsubtype,
                         self.strfilename)
         strnow = self.__get_now()
-        #pprint(strnow)
+        #pprint( type(mxvar))
+        #print(dir(mxvar))
+        ##pprint(mxvar.__type__)
         
         strcontent = "-- [{}]\n".format(strnow)
         if strtitle:
-            strcontent += strtitle+"\n"
+            strcontent += strtitle+":\n"
         
         if isinstance(mxvar,str):
             strcontent += mxvar+"\n\n"
-        
+        else:
+            from inspect import getmembers
+            strcontent += str(getmembers(mxvar)).replace("), (","),\n(")+"\n\n"
+            
+#        if type(mxvar) in (str, int, float, bool, None):
+#            strcontent += str(mxvar)+"\n\n"
+#        
+#        if str(type(mxvar)) == "<type 'classobj'>":
+#            strcontent += type(mxvar)+"->"+str(vars(mxvar))+"\n\n"
+            
         f = open(pathfile,"a")
         f.write(strcontent)
         f.close()
