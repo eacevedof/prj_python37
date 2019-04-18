@@ -23,13 +23,20 @@ class TestComponentMysql(unittest.TestCase):
         self.assertEqual(o.is_connected(),False)
         # self.fail("connection error")
         
-    def test_get_rows(self):
+    def tes_get_rows(self):
         o = ComponentMysql("mysql-1")
         mx_var = o.get_rows()
         #o.show_errors()
         pprint(mx_var)
         assert isinstance(mx_var,list)
-
+        
+    def test_insert(self):
+        o = ComponentMysql("mysql-1")
+        mx_var = o.insert()
+        o.show_errors()
+        pprint(mx_var)
+        assert isinstance(mx_var,int)
+        
 #class TestComponentMysql
 
 if __name__ == "__main__":

@@ -58,17 +58,18 @@ class ComponentMysql:
                 self.__add_error("query.try-connect","unable to connect")
                 return []
         
-        tplquery = strsql
+        strquery = strsql
         # lista de diccionarios
         lstrows = []        
         try:
             objcursor = self.__objcnx.cursor(dictionary=True)        
-            objcursor.execute(tplquery)
+            objcursor.execute(strquery)
             lstrows = objcursor.fetchall()
             #pprint(lstrows)
             
         except e:
             lstrows = []
+            self.__add_error("query.exception.sql",strquery)
             self.__add_error("query.exception",str(e))
             
         finally:
@@ -76,12 +77,49 @@ class ComponentMysql:
     # def query
     
     def execute(self,strsql):
-        pass
+        """
+        sql writer
+        """
+        if not isinstance(strsql,str):
+            self.__add_error("execute.strsql.instance","strsql not a string")
+            return []
+        
+        if not strsql:
+            self.__add_error("execute.strsql.empty","strsql is empty")
+            return []
+        
+        if not self.__is_connected:
+            self.__connect()
+            if not self.__is_connected:
+                self.__add_error("execute.try-connect","unable to connect")
+                return []
+        
+        strquery = strsql
+        
+        iresult = 0
+        try:
+            objcursor = self.__objcnx.cursor()        
+            objcursor.execute(strquery)
+            self.__objcnx.commit()
+            iresult = objcursor.rowcount
+            
+        except e:
+            iresult = -1
+            self.__add_error("exceute.exception.sql",strquery)
+            self.__add_error("execute.exception",str(e))
+            
+        finally:
+            return iresult
 
     def get_rows(self):
         strsql = "SELECT * FROM operation LIMIT 3"
         lstrows = self.query(strsql)
         return lstrows
+    
+    def insert(self):
+        strsql = "INSERT INTO v(i,s,f) VALUES (1,'some string',1.2)"
+        ir = self.execute(strsql)
+        return ir
     
     def is_connected(self):
         return self.__is_connected
