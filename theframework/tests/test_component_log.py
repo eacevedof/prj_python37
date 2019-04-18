@@ -25,6 +25,11 @@ class TestComponentLog(unittest.TestCase):
         o = Log()
         o1 = Log()
         o.save(o1,"object 1")
+        o.save(12354,"entero")
+        o.save(2.34,"flotante")
+        o.save((2,4,5,8),"tupla")
+        o.save(["a","b","c"],"list")
+        o.save({"1":1,"2":"dos"},"dict")
         
 #class TestComponentLog
 

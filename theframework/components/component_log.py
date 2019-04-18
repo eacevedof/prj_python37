@@ -44,11 +44,11 @@ class ComponentLog():
         # strnow = datetime.datetime.strptime(data[4]+data[5],"%H:%M:%S")
         return strnow
     
-    def __obj_tostr(self,obj):
-        if str(type(obj)) == "<type 'classobj'>":
-            import inspect
-            return 
-            
+    def __dump(self,obj):
+        strobj = ""
+        for attr in dir(obj):
+            strobj += "obj.%s = %r\n" % (attr, getattr(obj, attr))
+        return strobj
         
         #for name, val in vars(obj):
             #print '  .%s: %r' % (name, val)
@@ -69,12 +69,12 @@ class ComponentLog():
         
         if isinstance(mxvar,str):
             strcontent += mxvar+"\n\n"
+        elif type(mxvar) in (int, float, bool, None):
+            strcontent += str(mxvar)+"\n\n"            
         else:
             from inspect import getmembers
-            strcontent += str(getmembers(mxvar)).replace("), (","),\n(")+"\n\n"
-            
-#        if type(mxvar) in (str, int, float, bool, None):
-#            strcontent += str(mxvar)+"\n\n"
+            #strcontent += str(getmembers(mxvar)).replace("), (","),\n(")+"\n\n"
+            strcontent += self.__dump(mxvar)
 #        
 #        if str(type(mxvar)) == "<type 'classobj'>":
 #            strcontent += type(mxvar)+"->"+str(vars(mxvar))+"\n\n"
