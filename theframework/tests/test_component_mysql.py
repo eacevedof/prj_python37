@@ -52,7 +52,7 @@ class TestComponentMysql(unittest.TestCase):
         mxvar = o.get_last_query()
         pprint(mxvar)
         assert "read" in mxvar
-        assert mxvar["write"]
+        assert "write" in mxvar
         assert isinstance(mxvar,dict)
 #class TestComponentMysql
 
