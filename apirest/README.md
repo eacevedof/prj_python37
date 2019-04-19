@@ -4,9 +4,16 @@
 - `pip install pipenv` instala el m√≥dulo del entorno virutal
 - `pipenv shell` carga el entorno
     - crea un nuevo entorno virtual
-- `pip install django`
-- `pip install djangorestframework`
+- `pipenv install django`
+- `pipenv install djangorestframework`
     - se ha creado un archivo Pipfile.lock
 - `$ pipenv --venv` nos dice la ruta donde se instala el entorno virtual `.virtualenvs\apirest-wO8eG7Mj`
-- Si queremos instalar un m√≥udolo con el t√≠pico **pip install** lo hariamos con **pipenv install**
+- Si queremos instalar un mÛdolo con el tÌpico **pip install** lo hariamos con **pipenv install**
 
+```ssh 
+$ pip freeze
+Django==2.2
+djangorestframework==3.9.2
+pytz==2019.1
+sqlparse==0.3.0
+```
