@@ -14,6 +14,11 @@ class ComponentCrud():
         self.lstnumeric = []
         self.lstands = []
         self.ojbdb = objdb
+        
+    
+    def add_orderby(self,strfield,strascdesc=""):
+        if strfield:
+            self.lstorderby.append({strfield:strascdesc})
     
     
 #class ComponentCrud
