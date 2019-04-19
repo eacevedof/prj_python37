@@ -15,7 +15,8 @@ class ComponentCrud():
         self.lstands = []
         self.ojbdb = objdb
         
-    def __get_orderby():
+        
+    def __get_orderby(self):
         strorderby = ""
         if self.lstorderby:
             lstsql = []
@@ -25,7 +26,7 @@ class ComponentCrud():
                     #field AscDesc
                     lstsql.append("{} {}".format(f,dic[f]))
             
-            strorderby = lstsql.join(",")
+            strorderby = strorderby+(", ".join(lstsql))
         
         return strorderby
     
@@ -35,7 +36,7 @@ class ComponentCrud():
             self.lstorderby.append({strfield:strascdesc})
     
     def test(self):
-        return __get_orderby()
+        return self.__get_orderby()
     
 #class ComponentCrud
 
