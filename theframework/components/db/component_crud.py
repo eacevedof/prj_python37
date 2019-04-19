@@ -88,7 +88,9 @@ class ComponentCrud():
                 lstinsert.append(")")
                 self.strsql = " ".join(lstinsert)
                 pprint(self.strsql)
-        
+            # si se han proporcionado correctamente los datos campo=>valor
+        # se ha proporcionado una tabla
+    # autoinsert
         
     def get_sql(self):
         return self.strsql
