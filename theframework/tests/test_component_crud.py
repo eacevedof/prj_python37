@@ -18,7 +18,12 @@ class TestComponentCrud(unittest.TestCase):
         
     def test_orderby(self):
         o = Crud()
+        o.set_table("v")
         o.add_orderby("v","asc")
+        o.add_insert("s","some string")
+        o.add_insert("i",123)
+        o.add_insert("f",88.39)
+        o.autoinsert()
         mxvar = o.test()
         pprint(mxvar)
         assert("ORDER BY" in mxvar)

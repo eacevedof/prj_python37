@@ -4,12 +4,13 @@ from pprint import pprint
 class ComponentCrud():
     
     def __init__(self,objdb=None):
+        self.strtable = ""
         self.strsqlcomment = ""
         self.strsql = ""
         self.lstends = []
         self.lstjoins = []
         self.lstresults = []
-        self.lstinsertfvs = []
+        self.dicinsertfvs = {}
         self.lstupdatefvs = []
         self.lstpksfvs = []
         self.lstgetfields = []
@@ -51,11 +52,7 @@ class ComponentCrud():
         if strfield:
             self.lstorderbys.append({strfield:strascdesc})
     
-    def add_orderby(self,strfield,strascdesc=""):
-        if strfield:
-            self.lstorderbys.append({strfield:strascdesc})    
-    
-    def autoinsert(strtable=None,lstfieldvals=[]):
+    def autoinsert(self,strtable=None, dicfieldvals=[]):
         # limpio la consulta 
         self.strsql = "-- autoinsert"
         
@@ -66,51 +63,45 @@ class ComponentCrud():
         if not strtable:
             strtable = self.strtable
         
+        # pprint(self.dicinsertfvs)
         if strtable:
-            if not lstfieldvals:
-                lstfieldvals = self.lstinsertfvs
+            if not dicfieldvals:
+                dicfieldvals = self.dicinsertfvs
             
-            if lstfieldvals:
+            if dicfieldvals:
+                lstinsert = []
+                lstinsert.append(strsqlcomment + "INSERT INTO")
+                lstinsert.append(strtable)
+                lstinsert.append("( "+",".join(dicfieldvals.keys())+")")
+                lstinsert.append("VALUES")
+                lstinsert.append("(")
                 
-                strsql = strsqlcomment + "INSERT INTO "
-                strsql += strtable + " ( "
-
-                lstfileds = [dic.keys() for dic in lstfieldvals]
-
-                lstfileds = dic.keys() for dic in lstfieldvals
-                arfields = array_keys(lstfieldvals)
-                strsql += implode(",",arfields)
-
-                arvalues = array_values(lstfieldvals)
-                # los paso a entrecomillado
-                foreach (arvalues as i=>svalue)
-                
-                    if svalue===null)
-                        araux[] = "null"
+                lstvals = []
+                for f in dicfieldvals.keys():
+                    value = dicfieldvals[f]
+                    if value == None:
+                        lstvals.append("NULL")
                     else:
-                        araux[] = "'svalue'"
+                        lstvals.append("'{}'".format(value))
                 
-
-                strsql += ") values ("
-                strsql += implode(",",araux)
-                strsql += ")"
-                
-                self.strsql = strsql
-                # si hay bd intenta ejecutar la consulta
-                self.query("w")
-            # si se han proporcionado correctamente los datos campo=>valor
-        # se ha proporcionado una tabla
-    # autoinsert    
+                lstinsert.append(",".join(lstvals))
+                lstinsert.append(")")
+                self.strsql = " ".join(lstinsert)
+                pprint(self.strsql)
+        
+        
+    def get_sql(self):
+        return self.strsql
     
+    def add_insert(self,strfieldname,mxfieldvalue):
+        if strfieldname:
+            self.dicinsertfvs[strfieldname] = mxfieldvalue
     
     def get_result(self):
         return self.lstresults
 
     def is_distinct(self,ison=True): 
         self.isdistinct = ison
-
-    def add_orderby(sfieldname,sorder="asc"): 
-        self.lstorderby[sfieldname]=sorder
 
     def add_numeric(sfieldname): 
         self.lstnumeric.append(sfieldname)
@@ -148,6 +139,9 @@ class ComponentCrud():
     def get_error(i=0): 
         self.lsterrors[i] = None if self.lsterrors[i] else None
 
+
+    def set_table(self,strtable):
+        self.strtable = strtable
 
     def set_dbobj(odb=None): 
         self.odb=odb
