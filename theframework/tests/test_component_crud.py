@@ -15,6 +15,13 @@ class TestComponentCrud(unittest.TestCase):
         assert isinstance(o,Crud)
         # self.assertEqual(o.is_connected(),True)       
         #self.fail("TODO: Write test")
+        
+    def test_orderby(self):
+        o = Crud()
+        o.add_orderby("v","asc")
+        mxvar = o.test()
+        pprint(mxvar)
+        assert("ORDER BY" in mxvar)
 
 #class TestComponentCrud
 
