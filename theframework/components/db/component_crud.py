@@ -20,9 +20,11 @@ class ComponentCrud():
         if strfield:
             self.lstorderby.append({strfield:strascdesc})
     
+    def test(self):
+        return __get_orderby()
     
 #class ComponentCrud
 
 if __name__ == "__main__":
     o = ComponentCrud()
-    pprint(o.is_connected())
+    pprint(o.test())
