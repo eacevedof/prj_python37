@@ -119,3 +119,4 @@ sqlparse==0.3.0
 - registro los modelos en `\learnlang\theapp\admin.py`
 - en `\apirest\learnlang\settings.py` registro **rest_framework** como aplicación en **INSTALLED_APPS**
 - creo fichero `theapp\serializers.py` donde irán los traductores de objetos a json
+- configurando `theapp/views.py` son las que gestionan el CRUD
