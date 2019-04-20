@@ -121,3 +121,8 @@ sqlparse==0.3.0
 - creo fichero `theapp\serializers.py` donde irán los traductores de objetos a json
 - configurando `theapp/views.py` son las que gestionan el CRUD
 - configuro las rutas: `learnlang/urls.py`
+    ```py
+    from django.conf import settings
+    from django.conf.urls import url, include
+    ```
+    - **url(r'^api/', include('learnlang.theapp.urls')),** hace include de las rutas del módulo
