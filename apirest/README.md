@@ -126,3 +126,4 @@ sqlparse==0.3.0
     from django.conf.urls import url, include
     ```
     - **url(r'^api/', include('learnlang.theapp.urls')),** hace include de las rutas del módulo
+- creo fichero de rutas de aplicación `learnlang\theapp\urls.py`
