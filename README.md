@@ -1,5 +1,8 @@
-# prj_python37  
+﻿# prj_python37  
 ## Pruebas de concepto de python siguiendo diversos tutoriales.
+
+### [Parte 5 - Django Rest Framework PIPENV (Fazt y otros)](https://github.com/eacevedof/prj_python37/tree/master/apirest)
+- [pipenv - FAZT](https://www.youtube.com/watch?v=-XIsKyNWILo)
 
 ### [Parte 4 - App Platzi Django (platzigram)](https://github.com/eacevedof/prj_python37/tree/master/platzigram)
 - [Curso Platzi](https://platzi.com/clases/django/)

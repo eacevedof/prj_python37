@@ -6,9 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-django = "*"
 djangorestframework = "*"
-mysqlclient = "*"
+mysqlclient = "==1.4.2"
+Django = "*"
 
 [requires]
 python_version = "3.7"
