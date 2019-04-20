@@ -3,7 +3,8 @@
 from django.conf.urls import url
 from rest_framework import routers
 from learnlang.theapp.views import *
- 
+from rest_framework_swagger.views import get_swagger_view
+
 router = routers.DefaultRouter()
 router.register(r'apparray', AppArrayViewSet)
 router.register(r'appexam', AppExamViewSet)
@@ -29,6 +30,7 @@ router.register(r'versiondb', VersionDbViewSet)
 #rutas para vistas personalizadas
 urlpatterns = [
     url(r'customview', CustomView.as_view()),
+    url(r'^docs/', schema_view)
 ]
 
 urlpatterns += router.urls
