@@ -1,0 +1,4 @@
+mysqlclient==1.4.2
+# django ==
+# djangorestframework ==
+# mysqlclient == 
