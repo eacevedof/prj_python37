@@ -149,3 +149,6 @@ urlpatterns += router.urls
 ## Instalando Swagger (documentación)
 - `pipenv install --skip-lock django-rest-swagger`
 - registro swagger en settings.py
+- creo ruta de documentación en `theapp/urls.py`
+    - `from rest_framework_swagger.views import get_swagger_view`
+    - `url(r'^docs/', schema_view)`
