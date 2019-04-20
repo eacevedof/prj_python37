@@ -116,3 +116,4 @@ sqlparse==0.3.0
         Applying sessions.0001_initial... OK
         Applying theapp.0001_initial... OK
     ```
+- registro los modelos en `\learnlang\theapp\admin.py`
