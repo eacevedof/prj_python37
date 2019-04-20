@@ -60,3 +60,5 @@ sqlparse==0.3.0
     ```
 - `python manage.py inspectdb` devuelve como quedarían los modelos [más info](https://books.agiliq.com/projects/django-orm-cookbook/en/latest/existing_database.html)
 - `python manage.py inspectdb > models.py`
+- `py manage.py makemigrations theapp` genera el fichero **theapp\migrations\0001_initial.py**
+    - Es una clase tipo `class Migration(migrations.Migration):` con todos los modelos
