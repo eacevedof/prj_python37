@@ -60,6 +60,28 @@ sqlparse==0.3.0
     ```
 - `python manage.py inspectdb` devuelve como quedarían los modelos [más info](https://books.agiliq.com/projects/django-orm-cookbook/en/latest/existing_database.html)
 - `python manage.py inspectdb > models.py`
+    ```js
+    - Create model AppArray
+    - Create model AppExam
+    - Create model AppExamsSentences
+    - Create model AppExamsUsers
+    - Create model AppExamsUsersEvalh
+    - Create model AppExamsUsersEvall
+    - Create model AppSentence
+    - Create model AppSentenceImages
+    - Create model AppSentencesUsers
+    - Create model AppSentenceTags
+    - Create model AppSentenceTimes
+    - Create model AppSentenceTr
+    - Create model AppTag
+    - Create model BaseLanguage
+    - Create model BaseLanguageLang
+    - Create model BaseUser
+    - Create model BaseUserArray
+    - Create model Template
+    - Create model TemplateArray
+    - Create model VersionDb
+    ```
 - `py manage.py makemigrations theapp` genera el fichero **theapp\migrations\0001_initial.py**
     - Es una clase tipo `class Migration(migrations.Migration):` con todos los modelos
 - `py manage.py migrate` crea todas las tablas necesarias para el framework **auth y django**
