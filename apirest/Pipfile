@@ -9,6 +9,8 @@ verify_ssl = true
 djangorestframework = "*"
 mysqlclient = "==1.4.2"
 Django = "*"
+mysql-connector-python = "*"
+mysqldb = "*"
 
 [requires]
 python_version = "3.7"

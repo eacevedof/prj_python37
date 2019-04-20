@@ -1,7 +1,7 @@
 # Probando el pip install pipenv
 ## [Fazt](https://youtu.be/-XIsKyNWILo)
 
-- `pip install pipenv` instala el mÃ³dulo del entorno virutal
+- `pip install pipenv` instala el módulo del entorno virutal
 - `pipenv shell` carga el entorno
     - crea un nuevo entorno virtual
 - `pipenv install django`
@@ -11,6 +11,8 @@
 - Si queremos instalar un módolo con el típico **pip install** lo hariamos con **pipenv install**
 - `pipenv lock -r` muestra todo lo que está instalado en mi entorno virtual
 - `pipenv install -r requirements.txt` instala lo que está definido en el fichero
+- `pipenv exit` salgo del entorno virtual
+- `pipenv --rm` elimino mi entorno virtual
 
 ```ssh 
 $ pip freeze
