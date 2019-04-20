@@ -17,3 +17,4 @@ djangorestframework==3.9.2
 pytz==2019.1
 sqlparse==0.3.0
 ```
+- `django-admin startproject learnlang .` Crea el proyecto 
