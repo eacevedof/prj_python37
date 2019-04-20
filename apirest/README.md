@@ -49,3 +49,12 @@ sqlparse==0.3.0
     - Da error ( :) )
         - `ModuleNotFoundError: No module named 'MySQLdb'`
         - Lo que parece es que django usa Mysqldb ^^ [está obsoleto?](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
+- Al final la instalación hay que hacerla así:
+    - `pipenv install --skip-lock -r requirements.txt`
+    - esto no generará el fichero Pipfile.lock (no se pa q sirve tampoco)
+    - **requirements.txt**
+    ```js
+    https://download.lfd.uci.edu/pythonlibs/u2hcgva4/mysqlclient-1.4.2-cp37-cp37m-win32.whl
+    django
+    djangorestframework
+    ```
