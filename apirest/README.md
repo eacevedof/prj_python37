@@ -129,7 +129,7 @@ sqlparse==0.3.0
 - creo fichero de rutas de aplicación `learnlang\theapp\urls.py`
 - ejecuto `py manage.py runserver`
     - ...y ...voila!! funciona!! ^^ no quepo de alegría
-    - `http://127.0.0.1:8000/api/`
+    - [`http://127.0.0.1:8000/api/`](http://127.0.0.1:8000/api/)
 
 ## Definiendo vistas customizadas 
 - Nos permiten tener un mayor control del CRUD
@@ -143,7 +143,7 @@ urlpatterns = [
 
 urlpatterns += router.urls
 ```
-- `http://127.0.0.1:8000/api/customview`
+- [`http://127.0.0.1:8000/api/customview`](http://127.0.0.1:8000/api/customview)
 - La duda, de donde sale el método **as_view()** ??
 
 ## Instalando Swagger (documentación)
@@ -151,4 +151,6 @@ urlpatterns += router.urls
 - registro swagger en settings.py
 - creo ruta de documentación en `theapp/urls.py`
     - `from rest_framework_swagger.views import get_swagger_view`
+    - `schema_view = get_swagger_view(title='Pastebin API')`
     - `url(r'^docs/', schema_view)`
+    - Funciona! [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
