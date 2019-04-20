@@ -6,6 +6,7 @@ from learnlang.theapp.views import *
 from rest_framework_swagger.views import get_swagger_view
 
 router = routers.DefaultRouter()
+
 router.register(r'apparray', AppArrayViewSet)
 router.register(r'appexam', AppExamViewSet)
 router.register(r'appexamssentences', AppExamsSentencesViewSet)
@@ -28,6 +29,8 @@ router.register(r'templatearray', TemplateArrayViewSet)
 router.register(r'versiondb', VersionDbViewSet)
  
 #rutas para vistas personalizadas
+schema_view = get_swagger_view(title='Pastebin API')
+
 urlpatterns = [
     url(r'customview', CustomView.as_view()),
     url(r'^docs/', schema_view)
