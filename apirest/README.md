@@ -129,4 +129,4 @@ sqlparse==0.3.0
 - creo fichero de rutas de aplicación `learnlang\theapp\urls.py`
 - ejecuto `py manage.py runserver`
     - ...y ...voila!! funciona!! ^^ no quepo de alegría
-    - `http://127.0.0.1:8000/api/apparray/`
+    - `http://127.0.0.1:8000/api/`
