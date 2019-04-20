@@ -58,3 +58,5 @@ sqlparse==0.3.0
     django
     djangorestframework
     ```
+- `python manage.py inspectdb` devuelve como quedarían los modelos [más info](https://books.agiliq.com/projects/django-orm-cookbook/en/latest/existing_database.html)
+- `python manage.py inspectdb > models.py`
