@@ -148,3 +148,4 @@ urlpatterns += router.urls
 
 ## Instalando Swagger (documentación)
 - `pipenv install --skip-lock django-rest-swagger`
+- registro swagger en settings.py
