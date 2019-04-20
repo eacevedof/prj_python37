@@ -130,3 +130,19 @@ sqlparse==0.3.0
 - ejecuto `py manage.py runserver`
     - ...y ...voila!! funciona!! ^^ no quepo de alegría
     - `http://127.0.0.1:8000/api/`
+
+## Definiendo vistas customizadas 
+- Nos permiten tener un mayor control del CRUD
+- `from rest_framework.views import APIView, Response`
+- Se define la vista en **theapp/views.py**
+- Se define la ruta en **theapp/urls.py**
+```py
+urlpatterns = [
+    url(r'customview', CustomView.as_view()),
+]
+
+urlpatterns += router.urls
+```
+- `http://127.0.0.1:8000/api/customview`
+- La duda, de donde sale el método **as_view()** ??
+

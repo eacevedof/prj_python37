@@ -84,3 +84,13 @@ class TemplateArrayViewSet(viewsets.ModelViewSet):
 class VersionDbViewSet(viewsets.ModelViewSet):
     queryset = VersionDb.objects.all()
     serializer_class = VersionDbSerializer
+
+
+from rest_framework.views import APIView, Response
+ 
+class CustomView(APIView):
+    def get(self, request, format=None):
+        return Response("Some Get Response")
+ 
+    def post(self, request, format=None):
+        return Response("Some Post Response")

@@ -26,4 +26,9 @@ router.register(r'template', TemplateViewSet)
 router.register(r'templatearray', TemplateArrayViewSet)
 router.register(r'versiondb', VersionDbViewSet)
  
-urlpatterns = router.urls
+#rutas para vistas personalizadas
+urlpatterns = [
+    url(r'customview', CustomView.as_view()),
+]
+
+urlpatterns += router.urls
