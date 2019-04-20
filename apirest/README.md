@@ -43,3 +43,7 @@ sqlparse==0.3.0
     django
     djangorestframework
     ```
+- `python manage.py inspectdb` 
+    - Da error ( :) )
+        - `ModuleNotFoundError: No module named 'MySQLdb'`
+        - Lo que parece es que django usa Mysqldb ^^ [está obsoleto?](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
