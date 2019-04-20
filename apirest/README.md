@@ -10,7 +10,7 @@
 - `$ pipenv --venv` nos dice la ruta donde se instala el entorno virtual `.virtualenvs\apirest-wO8eG7Mj`
 - Si queremos instalar un módolo con el típico **pip install** lo hariamos con **pipenv install**
 - `pipenv lock -r` muestra todo lo que está instalado en mi entorno virtual
-- `pipenv install -r requirements.txt` instala lo que está definido en el fichero
+- `pipenv install --verbose -r requirements.txt` instala lo que está definido en el fichero
 - `pipenv exit` salgo del entorno virtual
 - `pipenv --rm` elimino mi entorno virtual
 
