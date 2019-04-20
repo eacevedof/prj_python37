@@ -117,3 +117,4 @@ sqlparse==0.3.0
         Applying theapp.0001_initial... OK
     ```
 - registro los modelos en `\learnlang\theapp\admin.py`
+- en `\apirest\learnlang\settings.py` registro **rest_framework** como aplicación en **INSTALLED_APPS**
