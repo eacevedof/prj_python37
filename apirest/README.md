@@ -32,5 +32,14 @@ sqlparse==0.3.0
         - ok
 - `pipenv install mysqlclient` 
     - Da error (lloro en silencio ~~!)
-
-`
+    - Supuestamente porque hay que hacerlo con el fichero requirements.txt ^^ [más info al final](https://pypi.org/project/mysqlclient/)
+    ```
+    NOTE: Wheels for Windows may be not released with source package. 
+    You should pin version in your requirements.txt to avoid trying to install newest source package.
+    ```
+- `pipenv install -r requirements.txt` Lo he ejecutado así y parece que va
+    ```js 
+    mysqlclient==1.4.2
+    django
+    djangorestframework
+    ```
