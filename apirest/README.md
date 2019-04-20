@@ -62,3 +62,35 @@ sqlparse==0.3.0
 - `python manage.py inspectdb > models.py`
 - `py manage.py makemigrations theapp` genera el fichero **theapp\migrations\0001_initial.py**
     - Es una clase tipo `class Migration(migrations.Migration):` con todos los modelos
+- `py manage.py migrate` crea todas las tablas necesarias para el framework **auth y django**
+    ```js
+    System check identified some issues:
+
+    WARNINGS:
+    ?: (mysql.W002) MySQL Strict Mode is not set for database connection 'default'
+    HINT: MySQL's Strict Mode fixes many data integrity problems in MySQL, such as data truncation 
+    upon insertion, by escalating warnings into errors. It is strongly recommended you activate it. 
+    See: https://docs.djangoproject.com/en/2.2/ref/databases/#mysql-sql-mode
+    
+    Operations to perform:
+        Apply all migrations: admin, auth, contenttypes, sessions, theapp
+    Running migrations:
+        Applying contenttypes.0001_initial... OK
+        Applying auth.0001_initial... OK
+        Applying admin.0001_initial... OK
+        Applying admin.0002_logentry_remove_auto_add... OK
+        Applying admin.0003_logentry_add_action_flag_choices... OK
+        Applying contenttypes.0002_remove_content_type_name... OK
+        Applying auth.0002_alter_permission_name_max_length... OK
+        Applying auth.0003_alter_user_email_max_length... OK
+        Applying auth.0004_alter_user_username_opts... OK
+        Applying auth.0005_alter_user_last_login_null... OK
+        Applying auth.0006_require_contenttypes_0002... OK
+        Applying auth.0007_alter_validators_add_error_messages... OK
+        Applying auth.0008_alter_user_username_max_length... OK
+        Applying auth.0009_alter_user_last_name_max_length... OK
+        Applying auth.0010_alter_group_name_max_length... OK
+        Applying auth.0011_update_proxy_permissions... OK
+        Applying sessions.0001_initial... OK
+        Applying theapp.0001_initial... OK
+    ```
