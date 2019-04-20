@@ -146,3 +146,5 @@ urlpatterns += router.urls
 - `http://127.0.0.1:8000/api/customview`
 - La duda, de donde sale el método **as_view()** ??
 
+## Instalando Swagger (documentación)
+- `pipenv install --skip-lock django-rest-swagger`
