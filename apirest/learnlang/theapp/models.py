@@ -34,13 +34,15 @@ class AbstractSysfields(models.Model):
 class AppArray(AbstractSysfields):
     
     id = models.AutoField(primary_key=True)
+    type = models.CharField(max_length=15, blank=False, null=True)
+    description = models.CharField(max_length=250, blank=False, null=True)
+    order_by = models.IntegerField(default=100)
+
+    code_cache = models.CharField(max_length=250, blank=True, null=True, default=u.get_uuid())
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    type = models.CharField(max_length=15, blank=True, null=True)
     module = models.CharField(max_length=25, blank=True, null=True)
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=250, blank=True, null=True)
-    order_by = models.IntegerField(default=100)
-    code_cache = models.CharField(max_length=250, blank=True, null=True, default=u.get_uuid())
+    
 
     class Meta:
         managed = False # indica si se borrara la tabla al ejecutar las migraciones
