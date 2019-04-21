@@ -9,15 +9,9 @@
 from django.db import models
 from utils import utils as u
 
-class AppArray(models.Model):
-    
-    SHIRT_SIZES = (
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-    )
-
-    processflag = models.CharField(max_length=5, blank=True, null=True,choices=SHIRT_SIZES)
+class AbstractSysfields(models.Model):
+  
+    processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, default="adm",editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, default="anonym",editable=False)
     insert_date = models.CharField(max_length=14, blank=True, null=True, default=u.get_now(),editable=False)
@@ -31,6 +25,14 @@ class AppArray(models.Model):
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
     is_enabled = models.CharField(max_length=3, blank=True, null=True,default="1")
     i = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+
+class AppArray(AbstractSysfields):
+    
     id = models.AutoField(primary_key=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
     type = models.CharField(max_length=15, blank=True, null=True)
@@ -41,7 +43,7 @@ class AppArray(models.Model):
     code_cache = models.CharField(max_length=250, blank=True, null=True, default=u.get_uuid())
 
     class Meta:
-        managed = False
+        managed = False # indica si se borrara la tabla al ejecutar las migraciones
         db_table = 'app_array'
 
     # sobreescritura
