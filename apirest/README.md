@@ -170,3 +170,8 @@ urlpatterns += router.urls
     - list_display = (...campos...)
     - list_filter = (...campos...)
     - search_fields = (...campos...)
+
+- He creado un modelo abstracto `class AbstractSysfields(models.Model):`
+    - Todos los modelos deberán implementar esta clase
+    - Esta, tiene definidos todos los campos de sistema
+
