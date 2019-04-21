@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'learnlang.theapp',
     'rest_framework_swagger',
+    'utils'
 ]
 
 MIDDLEWARE = [

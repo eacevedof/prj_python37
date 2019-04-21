@@ -154,3 +154,8 @@ urlpatterns += router.urls
     - `schema_view = get_swagger_view(title='Pastebin API')`
     - `url(r'^docs/', schema_view)`
     - Funciona! [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
+
+# Customizando modelos
+- Inserto mi módulo de utilidades
+    - Creo carpeta y ficheros
+    - lo registro en settings.py **INSTALLED_APPS**
