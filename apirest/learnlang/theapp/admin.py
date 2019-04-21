@@ -10,7 +10,8 @@ class AppArrayAdmin(admin.ModelAdmin):
         "insert_platform","insert_user","insert_date",
         "update_platform","update_user","update_date",
         "delete_platform","delete_user","delete_date",
-        "cru_csvnote","is_erpsent","is_enabled","i","code_erp"
+        "cru_csvnote","is_erpsent","is_enabled","i","code_erp",
+        "module","id_tosave","code_cache"
     )
 
     list_display = (

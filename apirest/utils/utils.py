@@ -13,7 +13,9 @@ def get_now():
     return strtoday
 
 def get_uuid():
-    return str(uuid.uuid4())
+    return str(uuid.uuid1())
+    # return str(uuid.uuid4()) este se repite
+
 
 def get_platform():
     """
