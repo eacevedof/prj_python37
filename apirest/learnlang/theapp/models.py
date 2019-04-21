@@ -7,65 +7,20 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
-
-class Template(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = '_template'
-
-
-class TemplateArray(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    type = models.CharField(max_length=15, blank=True, null=True)
-    id_tosave = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=250, blank=True, null=True)
-    order_by = models.IntegerField()
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = '_template_array'
-
+from utils import utils as u
 
 class AppArray(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
+    
+    SHIRT_SIZES = (
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+    )
+    processflag = models.CharField(max_length=5, blank=True, null=True,choices=SHIRT_SIZES)
     insert_platform = models.CharField(max_length=3, blank=True, null=True)
     insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True,default=u.get_now())
+    update_platform = models.CharField(max_length=3, blank=True, null=True,default="22")
     update_user = models.CharField(max_length=15, blank=True, null=True)
     update_date = models.CharField(max_length=14, blank=True, null=True)
     delete_platform = models.CharField(max_length=3, blank=True, null=True)
@@ -75,12 +30,13 @@ class AppArray(models.Model):
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
     type = models.CharField(max_length=15, blank=True, null=True)
     module = models.CharField(max_length=25, blank=True, null=True)
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
     description = models.CharField(max_length=250, blank=True, null=True)
-    order_by = models.IntegerField()
+    order_by = models.IntegerField(default=100)
 
     class Meta:
         managed = False
@@ -530,6 +486,56 @@ class BaseUserArray(models.Model):
         db_table = 'base_user_array'
 
 
+class Template(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_template'
+
+
+class TemplateArray(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    type = models.CharField(max_length=15, blank=True, null=True)
+    id_tosave = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
+    order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_template_array'
+        
 class VersionDb(models.Model):
     date = models.CharField(max_length=14, blank=True, null=True)
     version = models.CharField(max_length=15, blank=True, null=True)
