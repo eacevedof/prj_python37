@@ -1,8 +1,17 @@
 from django.contrib import admin
-
+from django.contrib.auth.models import Group
 from .models import *
 
-admin.site.register(AppArray)
+admin.site.site_header = "Learnlang -  Admin Pannel"
+
+class AppArrayAdmin(admin.ModelAdmin):
+    exclude = (
+        "processflag","insert_platform","insert_user","insert_date"
+    )
+
+
+
+admin.site.register(AppArray,AppArrayAdmin)
 admin.site.register(AppExam)
 admin.site.register(AppExamsSentences)
 admin.site.register(AppExamsUsers)
