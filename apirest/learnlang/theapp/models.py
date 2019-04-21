@@ -16,6 +16,7 @@ class AppArray(models.Model):
         ('M', 'Medium'),
         ('L', 'Large'),
     )
+
     processflag = models.CharField(max_length=5, blank=True, null=True,choices=SHIRT_SIZES)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, default="adm",editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, default="anonym",editable=False)
@@ -42,6 +43,10 @@ class AppArray(models.Model):
     class Meta:
         managed = False
         db_table = 'app_array'
+
+    def save(self, *args, **kwargs):
+        print("something")
+        super(AppArray,self).save(*args,**kwargs)
 
 
 class AppExam(models.Model):
