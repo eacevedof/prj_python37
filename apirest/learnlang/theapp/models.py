@@ -32,7 +32,7 @@ class AbstractSysfields(models.Model):
 
 
 class AppArray(AbstractSysfields):
-    
+
     id = models.AutoField(primary_key=True)
     type = models.CharField(max_length=15, blank=False, null=True)
     description = models.CharField(max_length=250, blank=False, null=True)
@@ -53,6 +53,13 @@ class AppArray(AbstractSysfields):
         print("something")
         super(AppArray,self).save(*args,**kwargs)
 
+    # https://books.agiliq.com/projects/django-admin-cookbook/en/latest/current_user.html
+    def save_model(self, request, obj, form, change):
+        obj.added_by = request.user
+        super().save_model(request, obj, form, change)        
+
+    # https://docs.djangoproject.com/en/dev/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model
+    # como sobreescribir para añadir operaciones extras
 
 class AppExam(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
