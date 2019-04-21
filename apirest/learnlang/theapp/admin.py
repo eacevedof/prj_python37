@@ -6,7 +6,24 @@ admin.site.site_header = "Learnlang -  Admin Pannel"
 
 class AppArrayAdmin(admin.ModelAdmin):
     exclude = (
-        "processflag","insert_platform","insert_user","insert_date"
+        "processflag",
+        "insert_platform","insert_user","insert_date",
+        "update_platform","update_user","update_date",
+        "delete_platform","delete_user","delete_date",
+        "cru_csvnote","is_erpsent","is_enabled","i","code_erp"
+    )
+
+    list_display = (
+        "insert_user","insert_date",
+        "id","description","type","order_by","code_cache"
+    )
+
+    list_filter = (
+        "description","type","module"
+    )
+
+    search_fields = (
+        "id","description","type"
     )
 
 

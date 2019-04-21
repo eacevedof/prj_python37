@@ -1,16 +1,16 @@
 # Probando el pip install pipenv
 ## [Fazt](https://youtu.be/-XIsKyNWILo)
 
-- `pip install pipenv` instala el mÛdulo del entorno virutal
+- `pip install pipenv` instala el m√≥dulo del entorno virutal
 - `pipenv shell` carga el entorno
     - crea un nuevo entorno virtual
 - `pipenv install django`
 - `pipenv install djangorestframework`
     - se ha creado un archivo Pipfile.lock
 - `$ pipenv --venv` nos dice la ruta donde se instala el entorno virtual `.virtualenvs\apirest-wO8eG7Mj`
-- Si queremos instalar un mÛdolo con el tÌpico **pip install** lo hariamos con **pipenv install**
-- `pipenv lock -r` muestra todo lo que est· instalado en mi entorno virtual
-- `pipenv install --verbose -r requirements.txt` instala lo que est· definido en el fichero
+- Si queremos instalar un m√≥dolo con el t√≠pico **pip install** lo hariamos con **pipenv install**
+- `pipenv lock -r` muestra todo lo que est√° instalado en mi entorno virtual
+- `pipenv install --verbose -r requirements.txt` instala lo que est√° definido en el fichero
 - `pipenv exit` salgo del entorno virtual
 - `pipenv --rm` elimino mi entorno virtual
 
@@ -26,7 +26,7 @@ sqlparse==0.3.0
 - `django-admin startapp theapp` Crea la app theapp
 - [creating-a-rest-apiwebservice by Fernando Rodrigues](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
 - `pip3 install mysqlclient` instala el driver
-    - Da error (que sorpresa! ¨¨)
+    - Da error (que sorpresa! ¬¨¬¨)
     - Intento [pip install mysqlclient-1.3.7-cp35-cp35m-win32.whl](https://www.pythoniza.me/instalando-mysqlclient-en-windows/)
         - error
     - [Drivers](https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient)
@@ -34,12 +34,12 @@ sqlparse==0.3.0
         - ok
 - `pipenv install mysqlclient` 
     - Da error (lloro en silencio ~~!)
-    - Supuestamente porque hay que hacerlo con el fichero requirements.txt ^^ [m·s info al final](https://pypi.org/project/mysqlclient/)
+    - Supuestamente porque hay que hacerlo con el fichero requirements.txt ^^ [m√°s info al final](https://pypi.org/project/mysqlclient/)
     ```
     NOTE: Wheels for Windows may be not released with source package. 
     You should pin version in your requirements.txt to avoid trying to install newest source package.
     ```
-- `pipenv install -r requirements.txt` Lo he ejecutado asÌ y parece que va
+- `pipenv install -r requirements.txt` Lo he ejecutado as√≠ y parece que va
     ```js 
     mysqlclient==1.4.2
     django
@@ -48,17 +48,17 @@ sqlparse==0.3.0
 - `python manage.py inspectdb` 
     - Da error ( :) )
         - `ModuleNotFoundError: No module named 'MySQLdb'`
-        - Lo que parece es que django usa Mysqldb ^^ [est· obsoleto?](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
-- Al final la instalaciÛn hay que hacerla asÌ:
+        - Lo que parece es que django usa Mysqldb ^^ [est√° obsoleto?](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
+- Al final la instalaci√≥n hay que hacerla as√≠:
     - `pipenv install --skip-lock -r requirements.txt`
-    - esto no generar· el fichero Pipfile.lock (no se pa q sirve tampoco)
+    - esto no generar√° el fichero Pipfile.lock (no se pa q sirve tampoco)
     - **requirements.txt**
     ```js
     https://download.lfd.uci.edu/pythonlibs/u2hcgva4/mysqlclient-1.4.2-cp37-cp37m-win32.whl
     django
     djangorestframework
     ```
-- `python manage.py inspectdb` devuelve como quedarÌan los modelos [m·s info](https://books.agiliq.com/projects/django-orm-cookbook/en/latest/existing_database.html)
+- `python manage.py inspectdb` devuelve como quedar√≠an los modelos [m√°s info](https://books.agiliq.com/projects/django-orm-cookbook/en/latest/existing_database.html)
 - `python manage.py inspectdb > models.py`
     ```js
     - Create model AppArray
@@ -117,18 +117,18 @@ sqlparse==0.3.0
         Applying theapp.0001_initial... OK
     ```
 - registro los modelos en `\learnlang\theapp\admin.py`
-- en `\apirest\learnlang\settings.py` registro **rest_framework** como aplicaciÛn en **INSTALLED_APPS**
-- creo fichero `theapp\serializers.py` donde ir·n los traductores de objetos a json
+- en `\apirest\learnlang\settings.py` registro **rest_framework** como aplicaci√≥n en **INSTALLED_APPS**
+- creo fichero `theapp\serializers.py` donde ir√°n los traductores de objetos a json
 - configurando `theapp/views.py` son las que gestionan el CRUD
 - configuro las rutas: `learnlang/urls.py`
     ```py
     from django.conf import settings
     from django.conf.urls import url, include
     ```
-    - **url(r'^api/', include('learnlang.theapp.urls')),** hace include de las rutas del mÛdulo
-- creo fichero de rutas de aplicaciÛn `learnlang\theapp\urls.py`
+    - **url(r'^api/', include('learnlang.theapp.urls')),** hace include de las rutas del m√≥dulo
+- creo fichero de rutas de aplicaci√≥n `learnlang\theapp\urls.py`
 - ejecuto `py manage.py runserver`
-    - ...y ...voila!! funciona!! ^^ no quepo de alegrÌa
+    - ...y ...voila!! funciona!! ^^ no quepo de alegr√≠a
     - [`http://127.0.0.1:8000/api/`](http://127.0.0.1:8000/api/)
 
 ## Definiendo vistas customizadas 
@@ -144,19 +144,19 @@ urlpatterns = [
 urlpatterns += router.urls
 ```
 - [`http://127.0.0.1:8000/api/customview`](http://127.0.0.1:8000/api/customview)
-- La duda, de donde sale el mÈtodo **as_view()** ??
+- La duda, de donde sale el m√©todo **as_view()** ??
 
-## Instalando Swagger (documentaciÛn)
+## Instalando Swagger (documentaci√≥n)
 - `pipenv install --skip-lock django-rest-swagger`
 - registro swagger en settings.py
-- creo ruta de documentaciÛn en `theapp/urls.py`
+- creo ruta de documentaci√≥n en `theapp/urls.py`
     - `from rest_framework_swagger.views import get_swagger_view`
     - `schema_view = get_swagger_view(title='Pastebin API')`
     - `url(r'^docs/', schema_view)`
     - Funciona! [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
 
 # Customizando modelos
-- Inserto mi mÛdulo de utilidades
+- Inserto mi m√≥dulo de utilidades
     - Creo carpeta y ficheros
     - lo registro en settings.py **INSTALLED_APPS**
 
@@ -165,3 +165,8 @@ urlpatterns += router.urls
     - si tengo un modelo por defecto, lo importo aqui y creo uno customizado para el administrador
     - algo como: `class AppArrayAdmin(admin.ModelAdmin):`
     - En el registro hago el mapeo `admin.site.register(AppArray,AppArrayAdmin)`
+
+- Para customizar la visualizaci√≥n del crud de un modelo en el admin hay que configurar las siguientes tuplas en admin.py
+    - list_display = (...campos...)
+    - list_filter = (...campos...)
+    - search_fields = (...campos...)
