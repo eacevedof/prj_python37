@@ -175,3 +175,5 @@ urlpatterns += router.urls
     - Todos los modelos deberán implementar esta clase
     - Esta, tiene definidos todos los campos de sistema
 
+- [PDF - doccumentacion de django 2.2](https://buildmedia.readthedocs.org/media/pdf/django/2.2.x/django.pdf)
+- [sobreescribir metodos save y delete](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model)
