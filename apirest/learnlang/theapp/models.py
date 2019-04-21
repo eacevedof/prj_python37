@@ -44,6 +44,7 @@ class AppArray(models.Model):
         managed = False
         db_table = 'app_array'
 
+    # sobreescritura
     def save(self, *args, **kwargs):
         print("something")
         super(AppArray,self).save(*args,**kwargs)
