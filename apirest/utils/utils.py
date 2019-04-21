@@ -4,7 +4,11 @@ import uuid
 
 def get_now():
     strnow = datetime.now()
-    strtoday = "{}{}{}{}{}{}".format(strnow.day,strnow.month,strnow.year,strnow.hour,strnow.minute,strnow.second)
+    strtoday = "{}{}{}{}{}{}".format(
+        strnow.year, strnow.month, strnow.day, 
+        strnow.hour, strnow.minute, strnow.second
+    )
+
     return strtoday
 
 def get_uuid():
