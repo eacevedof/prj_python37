@@ -17,18 +17,18 @@ class AppArray(models.Model):
         ('L', 'Large'),
     )
     processflag = models.CharField(max_length=5, blank=True, null=True,choices=SHIRT_SIZES)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True, default="adm")
+    insert_user = models.CharField(max_length=15, blank=True, null=True,default="anonym")
     insert_date = models.CharField(max_length=14, blank=True, null=True,default=u.get_now())
-    update_platform = models.CharField(max_length=3, blank=True, null=True,default="22")
-    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True, default="adm")
+    update_user = models.CharField(max_length=15, blank=True, null=True,default="anonym")
     update_date = models.CharField(max_length=14, blank=True, null=True)
     delete_platform = models.CharField(max_length=3, blank=True, null=True)
     delete_user = models.CharField(max_length=15, blank=True, null=True)
     delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True,default="")
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True,default="1")
     i = models.IntegerField(blank=True, null=True)
     id = models.AutoField(primary_key=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
@@ -37,6 +37,7 @@ class AppArray(models.Model):
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
     description = models.CharField(max_length=250, blank=True, null=True)
     order_by = models.IntegerField(default=100)
+    code_cache = models.CharField(max_length=250, blank=True, null=True,default=u.get_uuid())
 
     class Meta:
         managed = False
