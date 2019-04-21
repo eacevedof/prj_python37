@@ -159,3 +159,9 @@ urlpatterns += router.urls
 - Inserto mi módulo de utilidades
     - Creo carpeta y ficheros
     - lo registro en settings.py **INSTALLED_APPS**
+
+- Para cambiar el comportamiento del modelo en el formulario del administrador hay que tocar el archivo **admin.py**
+    - En este fichero se registran todos los modelos, pero no solo eso, tambien se excluyen y se reescriben.
+    - si tengo un modelo por defecto, lo importo aqui y creo uno customizado para el administrador
+    - algo como: `class AppArrayAdmin(admin.ModelAdmin):`
+    - En el registro hago el mapeo `admin.site.register(AppArray,AppArrayAdmin)`
