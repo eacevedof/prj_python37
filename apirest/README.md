@@ -306,6 +306,11 @@ class MiModeloAdmin(admin.ModelAdmin):
 - [configuración del owner](https://youtu.be/RoxEX9DFF7s?t=1748)
     - En el viewset se sobreescribe el método **perfom_create**
     - Si revisamos lo que implementa el ModelViewSet, veremos que son 6 mixins que tienen que ver con las operaciones CRUD
+    - El que nos interesa es el CreateModelMixin, que tiene el método
+    ```py
+    def perform_create(self, serializer):
+        serializer.save()
+    ```
 
 
 
