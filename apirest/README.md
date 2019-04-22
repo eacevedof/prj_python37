@@ -272,6 +272,23 @@ class UserList(generics.ListCreateAPIView):
     - **.data** - Los datos serializados para la respuesta
     - **.status** - Código de estado de la respuesta
 
+- [Routers](https://youtu.be/RoxEX9DFF7s?t=1002)
+    - Conjuntamente con los ViewSets definidos previamente 
+```py
+router = routers.SimpleRouter()
+# user como se llama el endpoint
+# UserViewSet generará todas las variantes de los verbos
+router.register(r'user', UserViewSet) 
+router.register(r'accounts', AccountViewSet)
+
+urlpatterns = [
+    # tambien podemos tener urls típicas de django
+    url(r'^forgot-password/$', ForgotPasswordFormView.as_view())
+]
+
+# se fusionan las urls de django con las del router
+urlpatterns += router.urls
+```
 
 
 
