@@ -259,14 +259,15 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-
 class UserList(generics.ListCreateAPIView):
     oqueryset = User.objects.all()
     objserializer_class = UserSerializer
     permission_classes = (IsAdminUser,)
+    # pagina de 100 en 100
     paginate_by = 100
-
-
 ```
+- Todas las vistas al final tienen que devolver un **Response**
+
+
 
 
