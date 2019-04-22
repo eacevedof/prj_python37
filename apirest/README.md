@@ -191,15 +191,19 @@ urlpatterns += router.urls
     - **.save()** - Crea o Actualiza el objeto asociado
     - **ModelSerializer** - Igual que un ModelForm (que es un model form??? ^^)
     - **HyperlinkedModelSerializer** - Añade la url al detalle del recurso
+    - **nota:** No es lo mismo un **serializer** que un **modelserializer**
 
 - [Ejemplo](https://youtu.be/RoxEX9DFF7s?t=666)
 ```py
+# Este es un SERIALIZER
 class EventSerializer(serializers.Serializer):
     description = serializers.CharField(max_length=100)
     start = serializers.DateTimeField()
     finish = serializers.DateTimeField()
 
     # en data le llega los datos del request
+    # se pueden definir validadores a nivel global (este de aqui) o de campo
+    # para una validación por campo se haría: validate_description
     def validate(self, data):
         """
         Check that the start is before the stop.
@@ -209,11 +213,18 @@ class EventSerializer(serializers.Serializer):
             raise serializers.ValidationError("finish must occur after start")
         return data
 
+# Este es un MODELSERIALIZER
+# https://youtu.be/RoxEX9DFF7s?t=727
 class AccountSerializer(serializers.ModelSerializer):
+    # Hace uso de una subclase Meta a la que se le inyecta un Modelo
+    # en este ejemplo Account
     class Meta:
         model = Account
+        # los campos que se desea mostrar
         fields = ("id","account_name","users","created")
+        # campos que el cliente no puede tocar
         read_only_fields = ("account_name")
 
 ```
+
 
