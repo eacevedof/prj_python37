@@ -11,6 +11,7 @@ from .models import *
 class AppArraySerializer(serializers.ModelSerializer):
     class Meta:
         model = AppArray
+        # __all__ muestra y acepta todos los campos de la petición
         fields = '__all__'
 
 class AppExamSerializer(serializers.ModelSerializer):
