@@ -303,5 +303,7 @@ class MiModeloAdmin(admin.ModelAdmin):
     - resources: los viewsets, que para mi son los miapp.views
 - [Serializador](https://youtu.be/RoxEX9DFF7s?t=1410)
 - [learnlang.urls configuro versiones](https://youtu.be/RoxEX9DFF7s?t=1480)
+- [configuración del owner](https://youtu.be/RoxEX9DFF7s?t=1748)
+    - En el viewset se sobreescribe el método **perfom_create**
 
 
