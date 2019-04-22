@@ -184,10 +184,12 @@ urlpatterns += router.urls
     - **.query_params** - GET
     - **.user** - Django User (django.contrib.auth.models.User)
     - **.method** - "GET", "POST", "PUT" ...
-    
+
 - [Serializadores](https://youtu.be/RoxEX9DFF7s?t=575)
-    - Se puede definir una serie de tipos Field
-    - **.is_valid()** - Valida los datos pasados
+    - Se puede definir una serie de tipos Field (char,boolean, requerido, valor por defecto, etc)
+    - **.is_valid()** - Valida los datos pasados. Estos son, los bindeados entre request y el serializador
     - **.save()** - Crea o Actualiza el objeto asociado
     - **ModelSerializer** - Igual que un ModelForm (que es un model form??? ^^)
-    - **HyperlinkedModelSerializer**
+    - **HyperlinkedModelSerializer** - Añade la url al detalle del recurso
+
+
