@@ -199,11 +199,13 @@ class EventSerializer(serializers.Serializer):
     start = serializers.DateTimeField()
     finish = serializers.DateTimeField()
 
+    # en data le llega los datos del request
     def validate(self, data):
         """
         Check that the start is before the stop.
         """
         if data["start"] > data["finish"]:
+            # esto lanzará un error 400 al cliente
             raise serializers.ValidationError("finish must occur after start")
         return data
 
