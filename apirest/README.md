@@ -176,4 +176,18 @@ urlpatterns += router.urls
     - Esta, tiene definidos todos los campos de sistema
 
 - [PDF - doccumentacion de django 2.2](https://buildmedia.readthedocs.org/media/pdf/django/2.2.x/django.pdf)
-- [sobreescribir metodos save y delete](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model)
+- [Doc Django - sobreescribir metodos save y delete](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model)
+
+## [Python Valencia - Cómo hacer API Rest con Django](https://youtu.be/RoxEX9DFF7s)
+- [Objeto Request](https://youtu.be/RoxEX9DFF7s?t=489)
+    - **.data** - POST o FILES
+    - **.query_params** - GET
+    - **.user** - Django User (django.contrib.auth.models.User)
+    - **.method** - "GET", "POST", "PUT" ...
+    
+- [Serializadores](https://youtu.be/RoxEX9DFF7s?t=575)
+    - Se puede definir una serie de tipos Field
+    - **.is_valid()** - Valida los datos pasados
+    - **.save()** - Crea o Actualiza el objeto asociado
+    - **ModelSerializer** - Igual que un ModelForm (que es un model form??? ^^)
+    - **HyperlinkedModelSerializer**
