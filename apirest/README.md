@@ -297,8 +297,11 @@ urlpatterns += router.urls
 class MiModeloAdmin(admin.ModelAdmin):
     pass
 ```
-
-
-
+- [archivos resources y serializers](https://youtu.be/RoxEX9DFF7s?t=1381)
+    - Se crea carpeta **api**
+    - dentro, dos ficheros: serializers y resources
+    - resources: los viewsets, que para mi son los miapp.views
+- [Serializador](https://youtu.be/RoxEX9DFF7s?t=1410)
+- [learnlang.urls configuro versiones](https://youtu.be/RoxEX9DFF7s?t=1480)
 
 
