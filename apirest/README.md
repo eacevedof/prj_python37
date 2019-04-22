@@ -227,7 +227,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
 ```
 - [Views](https://youtu.be/RoxEX9DFF7s?t=767)
-    - Django nos provee de muchos tipos de clases de tipo Vista. [cdrf](http://www.cdrf.co/)
+    - Django nos provee de muchos tipos de clases de tipo Vista. [Más info en cdrf.co](http://www.cdrf.co/)
     - APIView
     - ViewSet
     - ModelViewSet
@@ -235,5 +235,7 @@ class AccountSerializer(serializers.ModelSerializer):
     - RetrieveDestroyAPIView
     - Mixins
     - etc
+- con APIView y ViewSet el control es mayor sobre el tratamiento de los datos
+
 
 
