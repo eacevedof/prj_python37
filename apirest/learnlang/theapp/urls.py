@@ -1,5 +1,5 @@
 # learnlang\theapp\urls.py
-# rerouting all requests that have ‘api’ in the url to the <code>apps.core.urls
+# rerouting all requests that have ï¿½apiï¿½ in the url to the <code>apps.core.urls
 from django.conf.urls import url
 from rest_framework import routers
 from learnlang.theapp.views import *

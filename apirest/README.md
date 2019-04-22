@@ -289,6 +289,15 @@ urlpatterns = [
 # se fusionan las urls de django con las del router
 urlpatterns += router.urls
 ```
+- [Registrar modelo](https://youtu.be/RoxEX9DFF7s?t=1332)
+- Otra forma de registrar un modelo es con:
+```py
+# admin.py
+@admin.register(MiModelo)
+class MiModeloAdmin(admin.ModelAdmin):
+    pass
+```
+
 
 
 
