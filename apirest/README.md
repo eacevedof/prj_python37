@@ -268,6 +268,11 @@ class UserList(generics.ListCreateAPIView):
 ```
 - Todas las vistas al final tienen que devolver un **Response**
 
+- [Response](https://youtu.be/RoxEX9DFF7s?t=975)
+    - **.data** - Los datos serializados para la respuesta
+    - **.status** - Código de estado de la respuesta
+
+
 
 
 
