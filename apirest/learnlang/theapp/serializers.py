@@ -1,4 +1,10 @@
 # theapp/serializers.py
+
+"""
+https://youtu.be/RoxEX9DFF7s?t=578
+Los serializadores. Son como los formularios de Django
+
+"""
 from rest_framework import serializers
 from .models import *
  
