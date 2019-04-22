@@ -192,4 +192,26 @@ urlpatterns += router.urls
     - **ModelSerializer** - Igual que un ModelForm (que es un model form??? ^^)
     - **HyperlinkedModelSerializer** - Añade la url al detalle del recurso
 
+- [Ejemplo](https://youtu.be/RoxEX9DFF7s?t=666)
+```py
+class EventSerializer(serializers.Serializer):
+    description = serializers.CharField(max_length=100)
+    start = serializers.DateTimeField()
+    finish = serializers.DateTimeField()
+
+    def validate(self, data):
+        """
+        Check that the start is before the stop.
+        """
+        if data["start"] > data["finish"]:
+            raise serializers.ValidationError("finish must occur after start")
+        return data
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ("id","account_name","users","created")
+        read_only_fields = ("account_name")
+
+```
 
