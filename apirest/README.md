@@ -301,7 +301,7 @@ class MiModeloAdmin(admin.ModelAdmin):
     - Se crea carpeta **api**
     - dentro, dos ficheros: serializers y resources
     - resources: los viewsets, que para mi son los miapp.views
-- [Serializador](https://youtu.be/RoxEX9DFF7s?t=1410)
+- [Serializador de tipo ModelSerializer](https://youtu.be/RoxEX9DFF7s?t=1410)
 - [learnlang.urls configurando versiones de api](https://youtu.be/RoxEX9DFF7s?t=1480)
 - [configuración del owner](https://youtu.be/RoxEX9DFF7s?t=1748)
     - En el viewset se sobreescribe el método **perfom_create**
