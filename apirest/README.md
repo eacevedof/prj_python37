@@ -226,5 +226,14 @@ class AccountSerializer(serializers.ModelSerializer):
         read_only_fields = ("account_name")
 
 ```
+- [Views](https://youtu.be/RoxEX9DFF7s?t=767)
+    - Django nos provee de muchos tipos de clases de tipo Vista. [cdrf](http://www.cdrf.co/)
+    - APIView
+    - ViewSet
+    - ModelViewSet
+    - ListCreateAPIView
+    - RetrieveDestroyAPIView
+    - Mixins
+    - etc
 
 
