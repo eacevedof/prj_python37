@@ -310,6 +310,10 @@ class MiModeloAdmin(admin.ModelAdmin):
     ```py
     def perform_create(self, serializer):
         serializer.save()
+
+    # override
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)        
     ```
 
 
