@@ -236,6 +236,37 @@ class AccountSerializer(serializers.ModelSerializer):
     - Mixins
     - etc
 - con APIView y ViewSet el control es mayor sobre el tratamiento de los datos
+- [Ejemplos vistas](https://youtu.be/RoxEX9DFF7s?t=886)
+```py
+class UserViewSet(viewsets.ViewSet):
+    """
+    A simple ViewSet for listin or retrieving users.
+    """
+    def list(self,request):
+        # select * from auth_user
+        objqueryset = User.Objects.all()
+        # many=True devuelve muchos usuarios en el json
+        objserializer = UserSerializer(objqueryset, many=True)
+        # por defecto la respuesta siempre es 200
+        return Response(objserializer.data)
 
+    def retrieve(self, request, pk=None):
+        # devuelve todos los usuarios
+        queryset = User.objects.all()
+        # de esos usuarios obten el que tenga la pk que se ha pasado por la url
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+
+class UserList(generics.ListCreateAPIView):
+    oqueryset = User.objects.all()
+    objserializer_class = UserSerializer
+    permission_classes = (IsAdminUser,)
+    paginate_by = 100
+
+
+```
 
 
