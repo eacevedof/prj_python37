@@ -433,3 +433,8 @@ class MiModeloAdmin(admin.ModelAdmin):
     class TestApi(APITestCase):
         ....
     ```
+[Tipos de autenticaciones](https://youtu.be/RoxEX9DFF7s?t=3668)
+    - BasicAuthentication para uso con curl
+    - CustomAuthentication, la del ejemplo
+    - [TokenAuthentication](https://youtu.be/RoxEX9DFF7s?t=3692)
+        - Hay que crear la url de identificacion
