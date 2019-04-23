@@ -179,6 +179,7 @@ urlpatterns += router.urls
 - [Doc Django - sobreescribir metodos save y delete](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model)
 
 ## [Python Valencia - Cómo hacer API Rest con Django](https://youtu.be/RoxEX9DFF7s)
+#### [repo github](https://github.com/pythonvlc/intro-django-rest-framework﻿)
 - [Objeto Request](https://youtu.be/RoxEX9DFF7s?t=489)
     - **.data** - POST o FILES
     - **.query_params** - GET
