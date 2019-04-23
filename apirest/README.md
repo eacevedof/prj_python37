@@ -455,3 +455,4 @@ class MiModeloAdmin(admin.ModelAdmin):
     - Listado de todas las acciones que puede hacer un usuario
 
 [response.py](https://youtu.be/RoxEX9DFF7s?t=4145)
+    - [Ejemplo AcceptJobViewSet(ViewSet)](https://youtu.be/RoxEX9DFF7s?t=4187)
