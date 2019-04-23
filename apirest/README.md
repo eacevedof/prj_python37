@@ -369,7 +369,7 @@ class MiModeloAdmin(admin.ModelAdmin):
 
     # https://youtu.be/RoxEX9DFF7s?t=2633
     def get_queryset(self):
-        # self.request.user habria que hacerlo en un "Mayer??"
+        # self.request.user habria que hacerlo en un "Manager de Django"
         return self.queryset.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
@@ -418,3 +418,10 @@ class MiModeloAdmin(admin.ModelAdmin):
 
 
 > **Default Router** This router is similar to SimpleRouter, but additionally includes a default API root view, that returns a response containing hyperlinks to all the list views. It also generates routes for optional .json style format suffixes.
+
+[Paginación](https://youtu.be/RoxEX9DFF7s?t=3340)
+- En la respuesta GET aparece:
+    - count: los items que hay
+    - next: la url de la sig página
+    - previous: la url de la previa
+    - results: array de resultado
