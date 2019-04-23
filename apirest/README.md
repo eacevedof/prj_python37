@@ -447,5 +447,9 @@ class MiModeloAdmin(admin.ModelAdmin):
     - Se pueden usar los filtros del django admin
 
 [Excepciones](https://youtu.be/RoxEX9DFF7s?t=3977)
-    - Se puede devolver distiontos tipos de excepciones
-    
+    - Se puede devolver distintos tipos de excepciones
+
+[Estructura del proyecto](https://youtu.be/RoxEX9DFF7s?t=4099)
+
+[Un api root](https://youtu.be/RoxEX9DFF7s?t=4133)
+    - Listado de todas las acciones que puede hacer un usuario
