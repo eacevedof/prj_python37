@@ -361,6 +361,18 @@ class MiModeloAdmin(admin.ModelAdmin):
 
     ```
 - [Filtrar el los recursos por el usuario en sesion](https://youtu.be/RoxEX9DFF7s?t=2617)
+    ```py
+    class TodoViewSet(viewsets.ModelViewSet):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrDeny)
 
+    # https://youtu.be/RoxEX9DFF7s?t=2633
+    def get_queryset(self):
+        # self.request.user habria que hacerlo en un "Mayer??"
+        return self.queryset.filter(owner=self.request.user)
 
-
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+    ```
+    
