@@ -401,8 +401,13 @@ class MiModeloAdmin(admin.ModelAdmin):
 
     # registra el viewset con el verbo:viewset.metodo
     donerouter = TodoDoneViewSet.as_view({"patch":"done"})
-    # como no es un endpoint al uso, no se puede usar el SimpleRouter()
+    
     # en theapp/urls.py
+    router = SimpleRouter()
+    router.register(r'todos', viewset=TodoViewSet)
+
+    # como no es un endpoint al uso, no se puede usar el SimpleRouter()
+    # hay que incluirlo en una url separada
     urlpatterns = patterns(
         "",
         url(r"",include(router.urls)),
@@ -410,3 +415,6 @@ class MiModeloAdmin(admin.ModelAdmin):
     )
     ```
     [configurando el enrutador con done](https://youtu.be/RoxEX9DFF7s?t=2883)
+
+
+> **Default Router** This router is similar to SimpleRouter, but additionally includes a default API root view, that returns a response containing hyperlinks to all the list views. It also generates routes for optional .json style format suffixes.
