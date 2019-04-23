@@ -316,6 +316,11 @@ class MiModeloAdmin(admin.ModelAdmin):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)        
     ```
-
-
+- [HyperlinkedModelSerializer](https://youtu.be/RoxEX9DFF7s?t=2055)
+    - Esto hará que las foreign keys del modelo puedan servir un link con el endpoint del recurso foreing
+    ```py
+    class TodoSerializer(serializers.ModelSerializer):
+    # ahora sería 
+    class TodoSerializer(serializers.HyperlinkedModelSerializer):
+    ```
 
