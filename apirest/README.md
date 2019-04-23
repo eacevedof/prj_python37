@@ -360,6 +360,7 @@ class MiModeloAdmin(admin.ModelAdmin):
             serializer.save(owner=self.request.user)
 
     ```
+- [Filtrar el los recursos por el usuario en sesion](https://youtu.be/RoxEX9DFF7s?t=2617)
 
 
 
