@@ -326,5 +326,40 @@ class MiModeloAdmin(admin.ModelAdmin):
         model = Todo
         fields = ("Text","due_date","url")
     ```
-- [Permissions](https://youtu.be/RoxEX9DFF7s?t=2152)
-    - 
+- [Permissions](https://youtu.be/RoxEX9DFF7s?t=2265)
+    - Permiso de acceso a los endpoints como a los objetos 
+    - Creamos un fichero **api\permissions.py** en el creamos clases con nombres de permisos.
+    - Ejemplo
+        - 
+        - 
+    - En los resources (mis views.py) importamos los permisos
+    - En el atributo ModelViewSet.permission_classes (una tupla) asignamos (IsAuthenticated, IsOwnerOrDeny)
+    - En [settings.py](https://youtu.be/RoxEX9DFF7s?t=2286) hay un atributo:
+        - `REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"]="rest_framework.permissions.IsAuthenticated"`
+        - Indica que, con que estes autenticado ya tienes acceso a todo
+    - Forma de renderizar los datos [DEFAULT_RENDERER_CLASSES](https://youtu.be/RoxEX9DFF7s?t=2324)
+    ```py
+    # permissions.py
+    from rest_framework.permissions import BasePermission
+
+    class IsOwnerOrDeny(BasePermission):
+        def has_object_permission(self, request, view, obj):
+            return request.user == obj.owner
+
+    # resources.py
+    from rest_framework.permissions import IsAuthenticated
+    from .serializers import TodoSerializer #HyperlinkedModelSerializer
+    from .permissions import IsOwnerOrDeny 
+
+    class TodoViewSet(viewsets.ModelViewSet):
+        queryset = Todo.objects.all()
+        serializer_class = TodoSerializer
+        permission_classes = (IsAuthenticated, IsOwnerOrDeny)
+
+        def perform_create(self, serializer):
+            serializer.save(owner=self.request.user)
+
+    ```
+
+
+
