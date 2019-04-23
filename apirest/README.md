@@ -453,3 +453,5 @@ class MiModeloAdmin(admin.ModelAdmin):
 
 [Un api root](https://youtu.be/RoxEX9DFF7s?t=4133)
     - Listado de todas las acciones que puede hacer un usuario
+
+[response.py](https://youtu.be/RoxEX9DFF7s?t=4145)
