@@ -318,9 +318,12 @@ class MiModeloAdmin(admin.ModelAdmin):
     ```
 - [HyperlinkedModelSerializer](https://youtu.be/RoxEX9DFF7s?t=2055)
     - Esto hará que las foreign keys del modelo puedan servir un link con el endpoint del recurso foreing
+    - Nos provee un campo **url** que añadido al atributo (tupla) fields autogenera el endpoint
     ```py
     class TodoSerializer(serializers.ModelSerializer):
     # ahora sería 
     class TodoSerializer(serializers.HyperlinkedModelSerializer):
+        model = Todo
+        fields = ("Text","due_date","url")
     ```
 
