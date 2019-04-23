@@ -375,4 +375,5 @@ class MiModeloAdmin(admin.ModelAdmin):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
     ```
+- [Marcar la tarea como hecha, un endpoit que se sale del patrón](https://youtu.be/RoxEX9DFF7s?t=2762)
     
