@@ -376,4 +376,37 @@ class MiModeloAdmin(admin.ModelAdmin):
         serializer.save(owner=self.request.user)
     ```
 - [Marcar la tarea como hecha, un endpoit que se sale del patrón](https://youtu.be/RoxEX9DFF7s?t=2762)
-    
+    ```py
+    # models.py
+    class Todo(models.Model):
+        owner = ...
+        ..
+        done = models.BooleanField(Blank=True, null=False, default=False)
+        def mark_as_done(self):
+            self.done = True
+            self.save()
+
+        def __str__(self)...
+
+    # resources.py
+    # se crea otra clase
+    # Los viewset no proveen de metodos: list ni retrieve (detail)
+    class TodoDoneViewSet(viewsets.ViewSet):
+        # el método lo generamos aqui y lo registramos más abajo
+        def done(self, request, *args, **kwargs):
+            pk = kwargs.get("pk",0)
+            todo = get_object_or_404(Todo, pk=pk)
+            todo.mark_as_done()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # registra el viewset con el verbo:viewset.metodo
+    donerouter = TodoDoneViewSet.as_view({"patch":"done"})
+    # como no es un endpoint al uso, no se puede usar el SimpleRouter()
+    # en theapp/urls.py
+    urlpatterns = patterns(
+        "",
+        url(r"",include(router.urls)),
+        url(r"^todos/(?P<pk>[^/.]+)/done/$",donerouter, name="todo-done")
+    )
+    ```
+    [configurando el enrutador con done](https://youtu.be/RoxEX9DFF7s?t=2883)
