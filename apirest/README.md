@@ -433,8 +433,19 @@ class MiModeloAdmin(admin.ModelAdmin):
     class TestApi(APITestCase):
         ....
     ```
+
 [Tipos de autenticaciones](https://youtu.be/RoxEX9DFF7s?t=3668)
     - BasicAuthentication para uso con curl
     - CustomAuthentication, la del ejemplo
     - [TokenAuthentication](https://youtu.be/RoxEX9DFF7s?t=3692)
         - Hay que crear la url de identificacion
+
+[Throttling](https://youtu.be/RoxEX9DFF7s?t=3918)
+    - Limite de peticiones por segundo
+
+[Filtrados](https://youtu.be/RoxEX9DFF7s?t=3928)
+    - Se pueden usar los filtros del django admin
+
+[Excepciones](https://youtu.be/RoxEX9DFF7s?t=3977)
+    - Se puede devolver distiontos tipos de excepciones
+    
