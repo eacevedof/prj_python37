@@ -326,4 +326,5 @@ class MiModeloAdmin(admin.ModelAdmin):
         model = Todo
         fields = ("Text","due_date","url")
     ```
-
+- [Permissions](https://youtu.be/RoxEX9DFF7s?t=2152)
+    - 
