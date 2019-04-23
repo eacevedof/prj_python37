@@ -425,3 +425,11 @@ class MiModeloAdmin(admin.ModelAdmin):
     - next: la url de la sig página
     - previous: la url de la previa
     - results: array de resultado
+
+[Tests](https://youtu.be/RoxEX9DFF7s?t=3448)
+- Django ofrece la clase APITestCase y metodos para hacer pruebas sobre la API
+    ```py
+    from rest_framework.test import APITestCase
+    class TestApi(APITestCase):
+        ....
+    ```
