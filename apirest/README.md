@@ -461,13 +461,14 @@ class MiModeloAdmin(admin.ModelAdmin):
 ```js
 settings.py
 models.py
+utils\utils.py
 admin.py
 settings.py
 models.py
+utils\utils.py
 admin.py
 main-urls.py
-urls.py
+app urls.py
 views.py
 serializers.py
-wsgi.py
 ```
