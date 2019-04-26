@@ -1,4 +1,4 @@
-print("views.py\n")
+# print("views.py\n")
 # theapp/views.py
 from django.shortcuts import render
 
