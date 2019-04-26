@@ -1,3 +1,4 @@
+print("wsgi.py\n")
 """
 WSGI config for learnlang project.
 

@@ -1,3 +1,4 @@
+print("apps.py\n")
 from django.apps import AppConfig
 
 

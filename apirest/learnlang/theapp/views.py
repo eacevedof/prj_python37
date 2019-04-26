@@ -1,3 +1,4 @@
+print("views.py\n")
 # theapp/views.py
 from django.shortcuts import render
 
@@ -8,6 +9,10 @@ from .serializers import *
 class AppArrayViewSet(viewsets.ModelViewSet):
     queryset = AppArray.objects.all()
     serializer_class = AppArraySerializer
+
+    def perform_create(self, serializer):
+        # serializer.save(owner=self.request.user)
+        serializer.save(insert_user="xxx")
 
 class AppExamViewSet(viewsets.ModelViewSet):
     queryset = AppExam.objects.all()

@@ -1,3 +1,4 @@
+print("serializers.py\n")
 # theapp/serializers.py
 
 """

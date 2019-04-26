@@ -457,3 +457,17 @@ class MiModeloAdmin(admin.ModelAdmin):
 
 [response.py](https://youtu.be/RoxEX9DFF7s?t=4145)
     - [Ejemplo AcceptJobViewSet(ViewSet)](https://youtu.be/RoxEX9DFF7s?t=4187)
+
+```js
+settings.py
+models.py
+admin.py
+settings.py
+models.py
+admin.py
+main-urls.py
+urls.py
+views.py
+serializers.py
+wsgi.py
+```

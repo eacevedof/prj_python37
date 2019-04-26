@@ -1,3 +1,5 @@
+print("main-urls.py\n")
+# main url
 # learnlang/urls.py
 """learnlang URL Configuration
 
@@ -29,19 +31,3 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
 ]
-
-'''
-^^^
-if settings.DEBUG:
-    from django.conf.urls.static import static
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
- 
-RAISES AN ERROR
- 
-File "/Users/fernandorodrigues/Documents/projects-angular/arin.ai/project/urls.py", line 18, in 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-File "/Users/fernandorodrigues/Documents/projects-angular/arin.ai/env/lib/python3.6/site-packages/django/conf/urls/static.py", line 21, in static
-raise ImproperlyConfigured("Empty static prefix not permitted")
-django.core.exceptions.ImproperlyConfigured: Empty static prefix not permitted
-'''
