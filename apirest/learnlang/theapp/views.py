@@ -5,13 +5,16 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
+from utils import utils as u
 
 class AppArrayViewSet(viewsets.ModelViewSet):
     queryset = AppArray.objects.all()
     serializer_class = AppArraySerializer
 
+    # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
     def perform_create(self, serializer):
         # serializer.save(owner=self.request.user)
+        u.pr(self.request)
         serializer.save(insert_user="xxx")
 
 class AppExamViewSet(viewsets.ModelViewSet):
