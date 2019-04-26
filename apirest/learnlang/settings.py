@@ -1,4 +1,4 @@
-print("settings.py\n")
+# print("settings.py\n")
 """
 Django settings for learnlang project.
 
