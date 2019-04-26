@@ -1,3 +1,4 @@
+print("settings.py\n")
 """
 Django settings for learnlang project.
 
