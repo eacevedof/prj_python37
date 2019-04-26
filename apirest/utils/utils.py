@@ -3,6 +3,7 @@
 import random
 from datetime import datetime
 import uuid
+from pprint import pprint 
 
 def get_now():
     strnow = datetime.now()
@@ -39,3 +40,6 @@ def get_cruhist():
     lstactions = ["created","modified","deleted"]
     i = random.randint(0,len(lstactions)-1)
     return lstactions[i]
+
+def pr(mxvar):
+    pprint(mxvar)

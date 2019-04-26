@@ -10,6 +10,7 @@
 from django.db import models
 from utils import utils as u
 
+
 class AbstractSysfields(models.Model):
   
     processflag = models.CharField(max_length=5, blank=True, null=True)
@@ -51,11 +52,16 @@ class AppArray(AbstractSysfields):
 
     # sobreescritura
     def save(self, *args, **kwargs):
-        print("something")
+        print("AppArray.save")
+        u.pr(args)
+        u.pr(kwargs)
+        print("self._state.adding: "+str(self._state.adding))
         super(AppArray,self).save(*args,**kwargs)
 
     # https://books.agiliq.com/projects/django-admin-cookbook/en/latest/current_user.html
     def save_model(self, request, obj, form, change):
+        print("AppArray.save_model")
+        print(str(self._state.adding))        
         obj.added_by = request.user
         super().save_model(request, obj, form, change)        
 
