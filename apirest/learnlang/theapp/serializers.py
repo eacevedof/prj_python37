@@ -14,10 +14,34 @@ from .models import *
 # source code:
 # https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
 class AppArraySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = AppArray
         # __all__ muestra y acepta todos los campos de la petición
         fields = '__all__'
+
+    def createXXX(self, validated_data):
+        print("AppArraySerializer.create \n")
+        objmodel = AppArray(**validated_data)
+        return objmodel
+
+    def update(self, instance, validated_data):
+        print("AppArraySerializer.update \n")
+        """
+        user_id = self.user_id
+        print(user_id)        
+        user = self.context['request'].user
+
+        if user_id is None or user_id == '':
+            instance.players.remove(user)
+        else:
+            instance.players.remove(user_id)
+        instance.save()
+        """
+        return instance
+
+    
+    
 
 class AppExamSerializer(serializers.ModelSerializer):
     class Meta:

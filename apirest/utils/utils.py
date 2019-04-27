@@ -41,5 +41,7 @@ def get_cruhist():
     i = random.randint(0,len(lstactions)-1)
     return lstactions[i]
 
-def pr(mxvar):
+def pr(mxvar,strtitle=""):
+    if strtitle:
+        print("==["+strtitle+"]:==")
     pprint(mxvar)

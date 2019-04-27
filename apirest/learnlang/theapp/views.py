@@ -11,20 +11,14 @@ class AppArrayViewSet(viewsets.ModelViewSet):
     queryset = AppArray.objects.all()
     serializer_class = AppArraySerializer
 
-    def get_serializer_context(self):
-            context = super(AppArrayViewSet, self).get_serializer_context()
-            context.update({
-                "perrito": ['test@test.com', 'test1@test.com']
-                # extra data
-            })
-            return context
-
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
-    def perform_create(self, serializer):
-        # serializer.save(owner=self.request.user)
-        u.pr(self.request)
-        serializer.save(insert_user="xxx")
+    def create(self, request, *args, **kwargs):
+        print("AppArrayViewSet.create")
+        if request.data.get('id'):
+            return super(AppArrayViewSet, self).update(request, *args, **kwargs)
+        else:
+            return super(AppArrayViewSet, self).create(request, *args, **kwargs)
 
 class AppExamViewSet(viewsets.ModelViewSet):
     queryset = AppExam.objects.all()

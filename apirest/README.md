@@ -459,18 +459,18 @@ class MiModeloAdmin(admin.ModelAdmin):
     - [Ejemplo AcceptJobViewSet(ViewSet)](https://youtu.be/RoxEX9DFF7s?t=4187)
 
 ```js
-settings.py
-models.py
-utils\utils.py
-admin.py
-settings.py
-models.py
-utils\utils.py
-admin.py
-main-urls.py
-app urls.py
-views.py
-serializers.py
+    settings.py
+    models.py
+    utils\utils.py
+    admin.py
+    settings.py
+    models.py
+    utils\utils.py
+    admin.py
+    main-urls.py
+    app urls.py
+    views.py
+    serializers.py
 ```
 
 - [Django doc - override serializers](https://www.django-rest-framework.org/api-guide/serializers)
