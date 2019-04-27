@@ -13,7 +13,6 @@ from utils import utils as u
 
 class AbstractSysfields(models.Model):
 
-    perrito = {}
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, default=u.get_platform(),editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, default=u.get_session_user(),editable=False)
@@ -54,9 +53,9 @@ class AppArray(AbstractSysfields):
     # sobreescritura
     def save(self, *args, **kwargs):
         print("AppArray.save")
-        u.pr(args)
-        u.pr(kwargs)
-        print("self._state.adding: "+str(self._state.adding))
+        u.pr(args,"save.args")
+        u.pr(kwargs,"save.kwargs")
+        u.pr(self._state.adding,"self._state.adding")
         super(AppArray,self).save(*args,**kwargs)
 
     # https://books.agiliq.com/projects/django-admin-cookbook/en/latest/current_user.html
