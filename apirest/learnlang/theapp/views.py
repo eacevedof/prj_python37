@@ -1,4 +1,4 @@
-# print("views.py\n")
+print("views.py\n")
 # theapp/views.py
 from django.shortcuts import render
 
@@ -13,7 +13,6 @@ class AppArrayViewSet(viewsets.ModelViewSet):
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
-
 
 class AppExamViewSet(viewsets.ModelViewSet):
     queryset = AppExam.objects.all()
