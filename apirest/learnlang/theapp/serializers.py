@@ -10,14 +10,27 @@ from rest_framework import serializers
 from .models import *
 from utils import utils as u
 
+class AppSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        return super().__init__(*args, **kwargs)
+
+    def create(self, validated_data):
+        return self.Meta.model.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+
 # override serializers: 
 # https://www.django-rest-framework.org/api-guide/serializers/
 # source code:
 # https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
-class AppArraySerializer(serializers.ModelSerializer):
+class AppArraySerializer(AppSerializer):
     objuser = None
 
     def __init__(self, *args, **kwargs):
+        # super().__init__(*args,**kwargs)
         # self.objuser = kwargs["context"]["request"]
         # AppArray.objuser = self.objuser
         u.pr(self.objuser,"AppArraySerializer.__init__.objuser")
@@ -33,10 +46,13 @@ class AppArraySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        return AppArray.objects.create(**validated_data)
+        u.pr(dir(self.Meta.model),"self.Meta.model")
+        return super().create(validated_data)
+        # return AppArray.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        return super(AppArraySerializer, self).update(instance, validated_data)
+        return super().update(instance,validated_data)
+        #return super(AppArraySerializer, self).update(instance, validated_data)
 
     def createXXX(self, validated_data):
         u.pr("AppArraySerializer.create","serializers.py")
