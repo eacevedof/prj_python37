@@ -8,6 +8,7 @@ Los serializadores. Son como los formularios de Django
 """
 from rest_framework import serializers
 from .models import *
+from utils import utils as u
 
 # override serializers: 
 # https://www.django-rest-framework.org/api-guide/serializers/
@@ -21,12 +22,12 @@ class AppArraySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def createXXX(self, validated_data):
-        print("AppArraySerializer.create \n")
+        u.pr("AppArraySerializer.create","serializers.py")
         objmodel = AppArray(**validated_data)
         return objmodel
 
     def update(self, instance, validated_data):
-        print("AppArraySerializer.update \n")
+        u.pr("AppArraySerializer.update","serializers.py")
         """
         user_id = self.user_id
         print(user_id)        

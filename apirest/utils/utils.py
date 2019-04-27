@@ -43,5 +43,9 @@ def get_cruhist():
 
 def pr(mxvar,strtitle=""):
     if strtitle:
-        print("==["+strtitle+"]:==")
+        print("\n==["+strtitle+"]:==")
+    if isinstance(mxvar, str):
+        print(mxvar)
+        return
     pprint(mxvar)
+    #print("\n")
