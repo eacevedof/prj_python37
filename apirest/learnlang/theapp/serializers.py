@@ -11,15 +11,51 @@ from .models import *
 from utils import utils as u
 
 class AppSerializer(serializers.ModelSerializer):
+    objuser = None
 
     def __init__(self, *args, **kwargs):
+        self.objuser =  kwargs["context"]["request"].user
+        u.pr(self.objuser.id,"AppSerializer.self.objuser")
+        # u.pr(self.context,"AppSerializer.self.context")
         return super().__init__(*args, **kwargs)
 
     def create(self, validated_data):
-        return self.Meta.model.objects.create(**validated_data)
+        u.pr(self.context,"AppSerializer.create")
+        u.pr(validated_data,"create.validated_data")
+        self.__load_sysfields(validated_data)
+        return super().create(validated_data)
+        # return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        u.pr(self.context,"AppSerializer.update")
+        u.pr(validated_data,"update.validated_data")
+        self.__load_sysfields(validated_data,"u")
         return super().update(instance, validated_data)
+    
+    def __load_sysfields(self,validated_data, t="i"):
+        strplatform = u.get_platform()
+        strnow = u.get_now()
+
+        validated_data["processflag"] 		=  0
+        if t=="i":
+            validated_data["insert_platform"] 	=  strplatform
+            validated_data["insert_user"] 		=  self.objuser.id
+            validated_data["insert_date"] 		=  strnow
+            validated_data["is_enabled"]        =  1
+        elif t=="u":
+            validated_data["update_platform"] 	=  strplatform
+            validated_data["update_user"] 		=  self.objuser.id
+            validated_data["update_date"] 		=  strnow
+        elif t=="d":    
+            validated_data["delete_platform"] 	=  strplatform
+            validated_data["delete_user"] 		=  self.objuser.id
+            validated_data["delete_date"] 		=  strnow
+
+        validated_data["cru_csvnote"] = t
+        validated_data["is_erpsent"] = "null"
+        
+
+            
 
 
 # override serializers: 
@@ -27,32 +63,12 @@ class AppSerializer(serializers.ModelSerializer):
 # source code:
 # https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
 class AppArraySerializer(AppSerializer):
-    objuser = None
-
-    def __init__(self, *args, **kwargs):
-        # super().__init__(*args,**kwargs)
-        # self.objuser = kwargs["context"]["request"]
-        # AppArray.objuser = self.objuser
-        u.pr(self.objuser,"AppArraySerializer.__init__.objuser")
-        u.pr(args,"AppArraySerializer.__init__.args")
-        u.pr(kwargs,"AppArraySerializer.__init__.kwargs")
-        # u.pr(dir(kwargs["context"]["request"]),"kwargs[context][request]")
-      
-        return super().__init__(*args, **kwargs)
-
+    
     class Meta:
         model = AppArray
         # __all__ muestra y acepta todos los campos de la petición
         fields = '__all__'
 
-    def create(self, validated_data):
-        u.pr(dir(self.Meta.model),"self.Meta.model")
-        return super().create(validated_data)
-        # return AppArray.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        return super().update(instance,validated_data)
-        #return super(AppArraySerializer, self).update(instance, validated_data)
 
     def createXXX(self, validated_data):
         u.pr("AppArraySerializer.create","serializers.py")
