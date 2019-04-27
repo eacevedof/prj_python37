@@ -12,7 +12,8 @@ from utils import utils as u
 
 
 class AbstractSysfields(models.Model):
-  
+
+    perrito = {}
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, default=u.get_platform(),editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, default=u.get_session_user(),editable=False)
