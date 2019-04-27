@@ -11,6 +11,12 @@ class AppArrayViewSet(viewsets.ModelViewSet):
     queryset = AppArray.objects.all()
     serializer_class = AppArraySerializer
 
+    def __init__(self, *args, **kwargs):
+        # u.pr(dir(self),"AppArrayViewSet.__init__.self.request")
+        u.pr(args,"AppArrayViewSet.__init__.self.args")
+        u.pr(kwargs,"AppArrayViewSet.__init__.self.kwargs")
+        return super().__init__(*args, **kwargs)
+
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
 

@@ -23,6 +23,7 @@ class AppArraySerializer(serializers.ModelSerializer):
         u.pr(self.objuser,"AppArraySerializer.__init__.objuser")
         u.pr(args,"AppArraySerializer.__init__.args")
         u.pr(kwargs,"AppArraySerializer.__init__.kwargs")
+        # u.pr(dir(kwargs["context"]["request"]),"kwargs[context][request]")
       
         return super().__init__(*args, **kwargs)
 
@@ -31,12 +32,11 @@ class AppArraySerializer(serializers.ModelSerializer):
         # __all__ muestra y acepta todos los campos de la petición
         fields = '__all__'
 
-        def __init__(self, *args, **kwargs):
-            # self.model.objuser = self.objuser
-            u.pr(self.objuser,"AppArraySerializer.Meta.__init__.objuser")
-            u.pr(args,"AppArraySerializer.Meta.__init__.args")
-            u.pr(kwargs,"AppArraySerializer.Meta.__init__.kwargs")            
-            return super().__init__(*args, **kwargs)
+    def create(self, validated_data):
+        return AppArray.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        return super(AppArraySerializer, self).update(instance, validated_data)
 
     def createXXX(self, validated_data):
         u.pr("AppArraySerializer.create","serializers.py")
