@@ -13,12 +13,7 @@ class AppArrayViewSet(viewsets.ModelViewSet):
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
-    def create(self, request, *args, **kwargs):
-        u.pr("AppArrayViewSet.create","views.py")
-        if request.data.get('id'):
-            return super(AppArrayViewSet, self).update(request, *args, **kwargs)
-        else:
-            return super(AppArrayViewSet, self).create(request, *args, **kwargs)
+
 
 class AppExamViewSet(viewsets.ModelViewSet):
     queryset = AppExam.objects.all()

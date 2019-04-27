@@ -15,18 +15,32 @@ from utils import utils as u
 # source code:
 # https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
 class AppArraySerializer(serializers.ModelSerializer):
+    objuser = None
+
+    def __init__(self, *args, **kwargs):
+        u.pr(self.objuser,"AppArraySerializer.__init__.objuser")
+        u.pr(args,"AppArraySerializer.__init__.args")
+        u.pr(kwargs,"AppArraySerializer.__init__.kwargs")
+      
+        return super().__init__(*args, **kwargs)
 
     class Meta:
         model = AppArray
         # __all__ muestra y acepta todos los campos de la petición
         fields = '__all__'
 
+        def __init__(self, *args, **kwargs):
+                u.pr(self.objuser,"AppArraySerializer.Meta.__init__.objuser")
+                u.pr(args,"AppArraySerializer.Meta.__init__.args")
+                u.pr(kwargs,"AppArraySerializer.Meta.__init__.kwargs")            
+                return super().__init__(*args, **kwargs)
+
     def createXXX(self, validated_data):
         u.pr("AppArraySerializer.create","serializers.py")
         objmodel = AppArray(**validated_data)
         return objmodel
 
-    def update(self, instance, validated_data):
+    def updateXXX(self, instance, validated_data):
         u.pr("AppArraySerializer.update","serializers.py")
         """
         user_id = self.user_id

@@ -13,6 +13,8 @@ from utils import utils as u
 
 class AbstractSysfields(models.Model):
 
+    objuser = None
+
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, default=u.get_platform(),editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, default=u.get_session_user(),editable=False)
@@ -28,6 +30,12 @@ class AbstractSysfields(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True,default="1")
     i = models.IntegerField(blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        # u.pr(self.pk,"AbstractSysfields.__init__.pk")
+        u.pr(args,"AbstractSysfields.__init__.args")
+        u.pr(kwargs,"AbstractSysfields.__init__.kwargs")
+        return super().__init__(*args, **kwargs)
+
     class Meta:
         abstract = True
 
@@ -35,6 +43,7 @@ class AbstractSysfields(models.Model):
 
 class AppArray(AbstractSysfields):
 
+    
     id = models.AutoField(primary_key=True)
     type = models.CharField(max_length=15, blank=False, null=True)
     description = models.CharField(max_length=250, blank=False, null=True)
@@ -45,6 +54,12 @@ class AppArray(AbstractSysfields):
     module = models.CharField(max_length=25, blank=True, null=True)
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
     
+    def __init__(self, *args, **kwargs):
+        # u.pr(self.pk,"AppArray.__init__.self.pk")
+        u.pr(dir(self),"AppArray.__init__.self.pk")
+        u.pr(args,"AppArray.__init__.args")
+        u.pr(kwargs,"AppArray.__init__.kwargs")        
+        return super().__init__(*args, **kwargs)
 
     class Meta:
         managed = False # indica si se borrara la tabla al ejecutar las migraciones
@@ -52,16 +67,30 @@ class AppArray(AbstractSysfields):
 
     # sobreescritura
     def save(self, *args, **kwargs):
-        print("AppArray.save")
+        # u.pr(request,"save.request")
+        u.pr(self.objuser,"save.objuser")
+        u.pr("AppArray.save","models.py")
         u.pr(args,"save.args")
         u.pr(kwargs,"save.kwargs")
         u.pr(self._state.adding,"self._state.adding")
         super(AppArray,self).save(*args,**kwargs)
 
+    def update(self, *args, **kwargs):
+        u.pr(self.objuser,"update.objuser")
+        u.pr("AppArray.update","models.py")
+        u.pr(args,"update.args")
+        u.pr(kwargs,"update.kwargs")
+        u.pr(self._state.adding,"update.self._state.adding")
+        super(AppArray,self).save(*args,**kwargs)
+
     # https://books.agiliq.com/projects/django-admin-cookbook/en/latest/current_user.html
     def save_model(self, request, obj, form, change):
-        print("AppArray.save_model")
-        print(str(self._state.adding))        
+        u.pr("AppArray.save_model","models.py")
+        u.pr(request,"save_model.request")
+        u.pr(obj,"save_model.obj")
+        u.pr(form,"save_model.form")
+        u.pr(change,"save_model.change")
+        u.pr(self._state.adding,"self._state.adding")    
         obj.added_by = request.user
         super().save_model(request, obj, form, change)        
 
