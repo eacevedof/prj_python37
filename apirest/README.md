@@ -475,6 +475,8 @@ serializers.py
 
 - [Django doc - override serializers](https://www.django-rest-framework.org/api-guide/serializers)
 - [Django doc - serializers.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py)
+- [Rest fw cdrf.co ModelSerializer methods](http://www.cdrf.co/3.1/rest_framework.serializers/ModelSerializer.html)
 
 - [Django doc - override ViewSet actions](https://www.django-rest-framework.org/api-guide/viewsets/#viewset-actions)
 - [Django doc - viewsets.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/viewsets.py)
+- [Rest fw cdrf.co ModelViewSet methods](http://www.cdrf.co/3.1/rest_framework.viewsets/ModelViewSet.html)
