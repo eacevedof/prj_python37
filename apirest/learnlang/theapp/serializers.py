@@ -1,4 +1,4 @@
-# print("serializers.py\n")
+print("serializers.py\n")
 # theapp/serializers.py
 
 """
@@ -18,6 +18,8 @@ class AppArraySerializer(serializers.ModelSerializer):
     objuser = None
 
     def __init__(self, *args, **kwargs):
+        # self.objuser = kwargs["context"]["request"]
+        # AppArray.objuser = self.objuser
         u.pr(self.objuser,"AppArraySerializer.__init__.objuser")
         u.pr(args,"AppArraySerializer.__init__.args")
         u.pr(kwargs,"AppArraySerializer.__init__.kwargs")
@@ -30,10 +32,11 @@ class AppArraySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         def __init__(self, *args, **kwargs):
-                u.pr(self.objuser,"AppArraySerializer.Meta.__init__.objuser")
-                u.pr(args,"AppArraySerializer.Meta.__init__.args")
-                u.pr(kwargs,"AppArraySerializer.Meta.__init__.kwargs")            
-                return super().__init__(*args, **kwargs)
+            # self.model.objuser = self.objuser
+            u.pr(self.objuser,"AppArraySerializer.Meta.__init__.objuser")
+            u.pr(args,"AppArraySerializer.Meta.__init__.args")
+            u.pr(kwargs,"AppArraySerializer.Meta.__init__.kwargs")            
+            return super().__init__(*args, **kwargs)
 
     def createXXX(self, validated_data):
         u.pr("AppArraySerializer.create","serializers.py")

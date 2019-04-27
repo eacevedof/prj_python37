@@ -1,4 +1,4 @@
-# print("models.py\n")
+print("models.py\n")
 # theapp/models.py
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
@@ -56,7 +56,7 @@ class AppArray(AbstractSysfields):
     
     def __init__(self, *args, **kwargs):
         # u.pr(self.pk,"AppArray.__init__.self.pk")
-        u.pr(dir(self),"AppArray.__init__.self.pk")
+        # u.pr(dir(self),"AppArray.__init__.self")
         u.pr(args,"AppArray.__init__.args")
         u.pr(kwargs,"AppArray.__init__.kwargs")        
         return super().__init__(*args, **kwargs)
