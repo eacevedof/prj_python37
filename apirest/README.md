@@ -473,6 +473,7 @@ class MiModeloAdmin(admin.ModelAdmin):
     serializers.py
 ```
 
+- [Django doc - model](https://docs.djangoproject.com/en/2.2/_modules/django/db/models/base/#Model)
 - [Django doc - override serializers](https://www.django-rest-framework.org/api-guide/serializers)
 - [Django doc - serializers.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py)
 - [Rest fw cdrf.co ModelSerializer methods](http://www.cdrf.co/3.1/rest_framework.serializers/ModelSerializer.html)
