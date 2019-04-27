@@ -8,7 +8,11 @@ Los serializadores. Son como los formularios de Django
 """
 from rest_framework import serializers
 from .models import *
- 
+
+# override serializers: 
+# https://www.django-rest-framework.org/api-guide/serializers/
+# source code:
+# https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
 class AppArraySerializer(serializers.ModelSerializer):
     class Meta:
         model = AppArray

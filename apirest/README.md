@@ -472,3 +472,9 @@ app urls.py
 views.py
 serializers.py
 ```
+
+- [Django doc - override serializers](https://www.django-rest-framework.org/api-guide/serializers)
+- [Django doc - serializers.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py)
+
+- [Django doc - override ViewSet actions](https://www.django-rest-framework.org/api-guide/viewsets/#viewset-actions)
+- [Django doc - viewsets.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/viewsets.py)
