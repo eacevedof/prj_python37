@@ -1,4 +1,4 @@
-print("serializers.py\n")
+p("serializers.py")
 # theapp/serializers.py
 
 """
@@ -15,20 +15,20 @@ class AppSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         self.objuser =  kwargs["context"]["request"].user
-        u.pr(self.objuser.id,"AppSerializer.self.objuser")
-        # u.pr(self.context,"AppSerializer.self.context")
+        pr(self.objuser.id,"AppSerializer.self.objuser")
+        # pr(self.context,"AppSerializer.self.context")
         return super().__init__(*args, **kwargs)
 
     def create(self, validated_data):
-        u.pr(self.context,"AppSerializer.create")
-        u.pr(validated_data,"create.validated_data")
+        pr(self.context,"AppSerializer.create")
+        pr(validated_data,"create.validated_data")
         self.__load_sysfields(validated_data)
         return super().create(validated_data)
         # return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        u.pr(self.context,"AppSerializer.update")
-        u.pr(validated_data,"update.validated_data")
+        pr(self.context,"AppSerializer.update")
+        pr(validated_data,"update.validated_data")
         self.__load_sysfields(validated_data,"u")
         return super().update(instance, validated_data)
     

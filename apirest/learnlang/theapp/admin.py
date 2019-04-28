@@ -1,4 +1,4 @@
-# print("admin.py\n")
+p("admin.py")
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from utils import utils as u
@@ -10,9 +10,8 @@ class AppModelAdmin(admin.ModelAdmin):
     objuser = None
 
     def __init__(self, *args, **kwargs):
-        u.pr(args,"AppModelAdmin.__init__.args")
-        u.pr(kwargs,"AppModelAdmin.__init__.kwargs")
-     
+        pr(args,"AppModelAdmin.__init__.args")
+        pr(kwargs,"AppModelAdmin.__init__.kwargs")
         return super().__init__(*args, **kwargs)
 
 
@@ -39,11 +38,10 @@ class AppModelAdmin(admin.ModelAdmin):
         objmodel.is_erpsent = None
 
     def save_model(self, request, obj, form, change):
-        mypr("hola")
-        u.pr(request,"AppModelAdmin.save_model.request")
-        u.pr(obj,"AppModelAdmin.save_model.obj")
-        u.pr(form,"AppModelAdmin.save_model.form")
-        u.pr(change,"AppModelAdmin.save_model.change")
+        pr(request,"AppModelAdmin.save_model.request")
+        pr(obj,"AppModelAdmin.save_model.obj")
+        pr(form,"AppModelAdmin.save_model.form")
+        pr(change,"AppModelAdmin.save_model.change")
 
         # obj.update_user = request.user.id
         super().save_model(request, obj, form, change)

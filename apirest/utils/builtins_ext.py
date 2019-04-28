@@ -1,18 +1,20 @@
 import builtins
 from pprint import pprint 
 
+"""
+http://ozzmaker.com/add-colour-to-text-in-python/
+The above ANSI escape code will set the text colour to bright green. The format is;
+\033[  Escape code, this is always the same
+1 = Style, 1 for normal.
+32 = Text colour, 32 for bright green.
+40m = Background colour, 40 is for black.
+"""
+
 def bug(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
-    #  \x1b[1;33m \x1b[0;33m
-    color = "\x1b[1;33m"
-
-    background = "\x1b[0;33m"
-    reset = "\x1b[0m"
-
     if strtitle:
-        # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-        print("")
-        print(color+"==["+strtitle+"]:=="+background+reset)
+        temp = "\x1b[6;30;42m{}\033[00m" .format(strtitle)
+        print(temp)
 
     if isinstance(mxvar, str):
         print(mxvar)
@@ -27,13 +29,10 @@ def p(strtext):
 
 def pr(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
-    color = "\x1b[6;30;42m"
-    background = "\x1b[0m" # yellow
-    reset = "\x1b[0m"
     if strtitle:
         # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-        print("")
-        print(color+"==["+strtitle+"]:=="+background+reset)
+        temp = "\x1b[6;30;43m{}\033[00m" .format(strtitle)
+        print(temp)
 
     if isinstance(mxvar, str):
         print(mxvar)

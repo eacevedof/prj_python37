@@ -1,10 +1,8 @@
-# print("utils\\utils.py\n")
+p("utils\\utils.py")
 # utils\utils.py
 import random
 from datetime import datetime
 import uuid
-from pprint import pprint 
-
 
 def get_now():
     strnow = datetime.now()
