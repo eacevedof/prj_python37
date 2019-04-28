@@ -32,6 +32,7 @@ class AppSerializer(serializers.ModelSerializer):
         self.__load_sysfields(validated_data,"u")
         return super().update(instance, validated_data)
     
+    
     def __load_sysfields(self,validated_data, t="i"):
         strplatform = u.get_platform()
         strnow = u.get_now()

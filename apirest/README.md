@@ -51,6 +51,7 @@ sqlparse==0.3.0
         - Lo que parece es que django usa Mysqldb ^^ [está obsoleto?](http://fernandorodrigues.pro/creating-a-rest-apiwebservice-with-django-rest-framework-and-mysql-using-python-3/)
 - Al final la instalación hay que hacerla así:
     - `pipenv install --skip-lock -r requirements.txt`
+    - `pipenv install --skip-lock django-debug-toolbar`
     - esto no generará el fichero Pipfile.lock (no se pa q sirve tampoco)
     - **requirements.txt**
     ```js
@@ -481,3 +482,4 @@ class MiModeloAdmin(admin.ModelAdmin):
 - [Django doc - override ViewSet actions](https://www.django-rest-framework.org/api-guide/viewsets/#viewset-actions)
 - [Django doc - viewsets.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/viewsets.py)
 - [Rest fw cdrf.co ModelViewSet methods](http://www.cdrf.co/3.1/rest_framework.viewsets/ModelViewSet.html)
+

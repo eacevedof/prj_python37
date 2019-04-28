@@ -7,8 +7,13 @@ from .models import *
 from .serializers import *
 from utils import utils as u
 
-class AppArrayViewSet(viewsets.ModelViewSet):
-    queryset = AppArray.objects.all()
+class AppViewSet(viewsets.ModelViewSet):
+    pass
+
+
+class AppArrayViewSet(AppViewSet):
+    # queryset = AppArray.objects.all()
+    queryset = AppArray.objects.filter(delete_date=None,is_enabled=not None)
     serializer_class = AppArraySerializer
 
     def __init__(self, *args, **kwargs):
@@ -16,6 +21,13 @@ class AppArrayViewSet(viewsets.ModelViewSet):
         u.pr(args,"AppArrayViewSet.__init__.self.args")
         u.pr(kwargs,"AppArrayViewSet.__init__.self.kwargs")
         return super().__init__(*args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        objmodel = self.get_object()
+        u.pr(objmodel,"destroy.objmodel")
+        objmodel.is_enabled = 0
+        objmodel.save()
+        return Response(data='delete success')
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
