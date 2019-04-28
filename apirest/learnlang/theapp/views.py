@@ -8,7 +8,19 @@ from .serializers import *
 from utils import utils as u
 
 class AppViewSet(viewsets.ModelViewSet):
-    pass
+
+   def destroy(self, request, *args, **kwargs):
+        """
+        Realiza soft-delete
+        """
+        objmodel = self.get_object()
+        u.pr(objmodel,"destroy.objmodel")
+        objmodel.delete_date = u.get_now()
+        objmodel.delete_user = request.user.id 
+        objmodel.delete_platform = u.get_platform()
+        objmodel.save()
+        return Response(data='delete success')
+ 
 
 
 class AppArrayViewSet(AppViewSet):
@@ -21,13 +33,6 @@ class AppArrayViewSet(AppViewSet):
         u.pr(args,"AppArrayViewSet.__init__.self.args")
         u.pr(kwargs,"AppArrayViewSet.__init__.self.kwargs")
         return super().__init__(*args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        objmodel = self.get_object()
-        u.pr(objmodel,"destroy.objmodel")
-        objmodel.is_enabled = 0
-        objmodel.save()
-        return Response(data='delete success')
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
     # https://stackoverflow.com/questions/30650008/django-rest-framework-override-create-in-modelserializer-passing-an-extra-par
