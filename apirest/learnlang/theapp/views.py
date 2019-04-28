@@ -13,7 +13,7 @@ class AppViewSet(viewsets.ModelViewSet):
 
 class AppArrayViewSet(AppViewSet):
     # queryset = AppArray.objects.all()
-    queryset = AppArray.objects.filter(delete_date=None,is_enabled=not None)
+    queryset = AppArray.objects.filter(delete_date=None)
     serializer_class = AppArraySerializer
 
     def __init__(self, *args, **kwargs):
