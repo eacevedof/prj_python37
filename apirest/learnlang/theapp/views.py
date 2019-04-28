@@ -1,4 +1,4 @@
-print("views.py\n")
+p("views.py")
 # theapp/views.py
 from django.shortcuts import render
 
@@ -14,7 +14,7 @@ class AppViewSet(viewsets.ModelViewSet):
         Realiza soft-delete
         """
         objmodel = self.get_object()
-        u.pr(objmodel,"destroy.objmodel")
+        pr(objmodel,"destroy.objmodel")
         objmodel.delete_date = u.get_now()
         objmodel.delete_user = request.user.id 
         objmodel.delete_platform = u.get_platform()
@@ -29,9 +29,9 @@ class AppArrayViewSet(AppViewSet):
     serializer_class = AppArraySerializer
 
     def __init__(self, *args, **kwargs):
-        # u.pr(dir(self),"AppArrayViewSet.__init__.self.request")
-        u.pr(args,"AppArrayViewSet.__init__.self.args")
-        u.pr(kwargs,"AppArrayViewSet.__init__.self.kwargs")
+        # pr(dir(self),"AppArrayViewSet.__init__.self.request")
+        pr(args,"AppArrayViewSet.__init__.self.args")
+        pr(kwargs,"AppArrayViewSet.__init__.self.kwargs")
         return super().__init__(*args, **kwargs)
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
