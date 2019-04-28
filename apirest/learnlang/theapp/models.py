@@ -41,8 +41,7 @@ class AppArray(AbstractSysfields):
     type = models.CharField(max_length=15, blank=False, null=True)
     description = models.CharField(max_length=250, blank=False, null=True)
     order_by = models.IntegerField(default=100)
-
-    code_cache = models.CharField(max_length=250, blank=True, null=True, default=u.get_uuid())
+    code_cache = models.CharField(max_length=250, blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
     module = models.CharField(max_length=25, blank=True, null=True)
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
