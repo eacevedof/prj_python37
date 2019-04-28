@@ -42,8 +42,12 @@ def get_cruhist():
     return lstactions[i]
 
 def pr(mxvar,strtitle=""):
+    color: "\x1b[6;30;42m"
+    background: "\x1b[0m"
+
     if strtitle:
-        print("\n==["+strtitle+"]:==")
+        # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
+        print("\n"+color+"==["+strtitle+"]:=="+background)
     if isinstance(mxvar, str):
         print(mxvar)
         return
