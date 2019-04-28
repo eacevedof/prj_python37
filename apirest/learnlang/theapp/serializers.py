@@ -42,6 +42,7 @@ class AppSerializer(serializers.ModelSerializer):
             validated_data["insert_user"] 		=  self.objuser.id
             validated_data["insert_date"] 		=  strnow
             validated_data["is_enabled"]        =  1
+            validated_data["code_cache"]        = u.get_uuid()
         elif t=="u":
             validated_data["update_platform"] 	=  strplatform
             validated_data["update_user"] 		=  self.objuser.id
@@ -52,11 +53,10 @@ class AppSerializer(serializers.ModelSerializer):
             validated_data["delete_date"] 		=  strnow
 
         validated_data["cru_csvnote"] = t
-        validated_data["is_erpsent"] = "null"
+        validated_data["is_erpsent"] = None
         
 
             
-
 
 # override serializers: 
 # https://www.django-rest-framework.org/api-guide/serializers/
@@ -67,30 +67,7 @@ class AppArraySerializer(AppSerializer):
     class Meta:
         model = AppArray
         # __all__ muestra y acepta todos los campos de la petición
-        fields = '__all__'
-
-
-    def createXXX(self, validated_data):
-        u.pr("AppArraySerializer.create","serializers.py")
-        objmodel = AppArray(**validated_data)
-        return objmodel
-
-    def updateXXX(self, instance, validated_data):
-        u.pr("AppArraySerializer.update","serializers.py")
-        """
-        user_id = self.user_id
-        print(user_id)        
-        user = self.context['request'].user
-
-        if user_id is None or user_id == '':
-            instance.players.remove(user)
-        else:
-            instance.players.remove(user_id)
-        instance.save()
-        """
-        return instance
-
-    
+        fields = ("id","code_erp","type","module","id_tosave","description", "order_by")
     
 
 class AppExamSerializer(serializers.ModelSerializer):
