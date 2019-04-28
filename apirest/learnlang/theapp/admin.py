@@ -9,23 +9,11 @@ admin.site.site_header = "Learnlang -  Admin Pannel"
 class AppModelAdmin(admin.ModelAdmin):
     objuser = None
 
-    def __init__(self, *args, **kwargs):
-        # pr(dir(self.objuser),"AppModelAdmin.__init__.self")
-        pr(args,"AppModelAdmin.__init__.args")
-        pr(dir(args),"AppModelAdmin.__init__.args.dir")
-        pr(kwargs,"AppModelAdmin.__init__.kwargs")
-        return super().__init__(*args, **kwargs)
-
-    """
-    def __call__(self, request, *args, **kwargs):
-        pr(request,"AppModelAdmin.__call__.request")
-        return super().__call__(request, *args, **kwargs)
-    """
-
     def __load_sysfields(self, objmodel, t="i"):
         strplatform = u.get_platform()
         strnow = u.get_now()
-        user = "anonym" if self.objuser else self.objuser.id
+        # bug(self.objuser,"objuser en load")
+        user = "anonym" if not self.objuser else self.objuser.id
 
         if t=="i":
             objmodel.insert_platform 	=  strplatform
@@ -46,13 +34,15 @@ class AppModelAdmin(admin.ModelAdmin):
         objmodel.is_erpsent = None
 
     def save_model(self, request, obj, form, change):
+        # necesito el usuario para cargar sysfields
         self.objuser = request.user
+        pr(self.objuser,"self.objuser")
         pr(request,"AppModelAdmin.save_model.request")
         pr(obj,"AppModelAdmin.save_model.obj")
         pr(form,"AppModelAdmin.save_model.form")
         pr(change,"AppModelAdmin.save_model.change")
 
-
+        # indica si es insert o update
         t = "u" if change else "i"
         self.__load_sysfields(obj,t)
         # obj.update_user = request.user.id
