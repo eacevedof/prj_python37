@@ -10,7 +10,7 @@ class AppModelAdmin(admin.ModelAdmin):
     objuser = None
 
     def __init__(self, *args, **kwargs):
-        bug("h")
+        bug("h","bug")
         u.pr(args,"AppModelAdmin.__init__.args")
         u.pr(kwargs,"AppModelAdmin.__init__.kwargs")
      
