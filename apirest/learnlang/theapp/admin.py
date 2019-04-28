@@ -1,11 +1,33 @@
-# print("admin.py\n")
+print("admin.py\n")
 from django.contrib import admin
 from django.contrib.auth.models import Group
+# from .utils import utils as u
 from .models import *
 
 admin.site.site_header = "Learnlang -  Admin Pannel"
 
-class AppArrayAdmin(admin.ModelAdmin):
+class AppModelAdmin(admin.ModelAdmin):
+    objuser = None
+
+    def __init__(self, *args, **kwargs):
+        u.pr(args,"AppModelAdmin.__init__.args")
+        u.pr(kwargs,"AppModelAdmin.__init__.kwargs")
+     
+        return super().__init__(*args, **kwargs)
+
+
+ 
+
+    def save_model(self, request, obj, form, change):
+        u.pr(request,"AppModelAdmin.save_model.request")
+        u.pr(obj,"AppModelAdmin.save_model.obj")
+        u.pr(form,"AppModelAdmin.save_model.form")
+        u.pr(change,"AppModelAdmin.save_model.change")
+
+        obj.update_user = request.user.id
+        super().save_model(request, obj, form, change)
+
+class AppArrayAdmin(AppModelAdmin):
     exclude = (
         "processflag",
         "insert_platform","insert_user","insert_date",
