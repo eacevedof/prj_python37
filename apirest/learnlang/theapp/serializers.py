@@ -67,7 +67,8 @@ class AppArraySerializer(AppSerializer):
     class Meta:
         model = AppArray
         # __all__ muestra y acepta todos los campos de la petición
-        fields = ("id","code_erp","type","module","id_tosave","description", "order_by")
+        # fields = ("id","code_erp","type","module","id_tosave","description", "order_by")
+        fields = ("id","type","description","module","order_by")
     
 
 class AppExamSerializer(serializers.ModelSerializer):
