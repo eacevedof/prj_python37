@@ -155,3 +155,9 @@ if DEBUG:
         'SHOW_TEMPLATE_CONTEXT': True,
         'ENABLE_STACKTRACES': True,
     }
+
+import builtins
+def myprint(x):
+    print("xxxx"+x)
+
+builtins.bug = myprint

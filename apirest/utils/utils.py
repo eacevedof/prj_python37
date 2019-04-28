@@ -5,6 +5,7 @@ from datetime import datetime
 import uuid
 from pprint import pprint 
 
+
 def get_now():
     strnow = datetime.now()
     strtoday = "{}{:02d}{:02d}{:02d}{:02d}{:02d}".format(
@@ -42,12 +43,14 @@ def get_cruhist():
     return lstactions[i]
 
 def pr(mxvar,strtitle=""):
-    color: "\x1b[6;30;42m"
-    background: "\x1b[0m"
+    color = "\x1b[6;30;42m"
+    background = "\x1b[0m"
 
     if strtitle:
         # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-        print("\n"+color+"==["+strtitle+"]:=="+background)
+        print("")
+        print(color+"==["+strtitle+"]:=="+background)
+
     if isinstance(mxvar, str):
         print(mxvar)
         return
