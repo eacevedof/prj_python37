@@ -1,4 +1,4 @@
-# print("apps.py\n")
+p("apps.py")
 from django.apps import AppConfig
 
 
