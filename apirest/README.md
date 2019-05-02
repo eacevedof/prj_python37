@@ -496,3 +496,9 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
 - Ejecutar **runserver**:
     - `py manage.py runserver --settings=learnlang.settings.dev`
 
+# [Django admin](https://www.youtube.com/watch?v=XphJRQ3AzMU)
+- otra forma de registrar un modelo `admin.site.register(models.MiModelo)`
+    - en **admin.py** se suele hacer eso, pero tambien serviria:
+    - `@admin.register(AppArray)`
+    - [Video](https://youtu.be/XphJRQ3AzMU?t=586)
+- 

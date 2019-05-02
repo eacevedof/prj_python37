@@ -49,6 +49,8 @@ class AppModelAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+@admin.register(AppArray)
+# @admin.register(AppArrayAdmin)
 class AppArrayAdmin(AppModelAdmin):
     exclude = (
         "processflag",
@@ -60,8 +62,8 @@ class AppArrayAdmin(AppModelAdmin):
     )
 
     list_display = (
-        "insert_user","insert_date",
-        "id","description","type","order_by","code_cache"
+        "description","id","insert_user","insert_date",
+        "type","order_by","code_cache"
     )
 
     list_filter = (
@@ -74,7 +76,7 @@ class AppArrayAdmin(AppModelAdmin):
 
 
 
-admin.site.register(AppArray,AppArrayAdmin)
+# admin.site.register(AppArray,AppArrayAdmin)
 admin.site.register(AppExam)
 admin.site.register(AppExamsSentences)
 admin.site.register(AppExamsUsers)
