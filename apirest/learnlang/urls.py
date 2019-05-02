@@ -24,7 +24,7 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     # include de las rutas de la app
-    url(r'^api/v1/', include('learnlang.theapp.urls')),
+    url(r'^api/v1/', include('theapp.urls')),
     # se podría dar este caso para la sig version de la api
     # url(r'^api/v2/', include('learnlang.theapp.urls2')),    
     url(r'^api-auth/', include("rest_framework.urls", namespace="rest_framework")),
