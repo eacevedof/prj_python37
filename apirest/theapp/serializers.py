@@ -10,24 +10,24 @@ from rest_framework import serializers
 from .models import *
 from utils import utils as u
 
-class AppSerializer(serializers.ModelSerializer):
+class TheappSerializer(serializers.ModelSerializer):
     objuser = None
 
     def __init__(self, *args, **kwargs):
         self.objuser =  kwargs["context"]["request"].user
-        pr(self.objuser.id,"AppSerializer.self.objuser")
-        # pr(self.context,"AppSerializer.self.context")
+        pr(self.objuser.id,"TheappSerializer.self.objuser")
+        # pr(self.context,"TheappSerializer.self.context")
         return super().__init__(*args, **kwargs)
 
     def create(self, validated_data):
-        pr(self.context,"AppSerializer.create")
+        pr(self.context,"TheappSerializer.create")
         pr(validated_data,"create.validated_data")
         self.__load_sysfields(validated_data)
         return super().create(validated_data)
         # return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        pr(self.context,"AppSerializer.update")
+        pr(self.context,"TheappSerializer.update")
         pr(validated_data,"update.validated_data")
         self.__load_sysfields(validated_data,"u")
         return super().update(instance, validated_data)
@@ -63,7 +63,7 @@ class AppSerializer(serializers.ModelSerializer):
 # https://www.django-rest-framework.org/api-guide/serializers/
 # source code:
 # https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py
-class AppArraySerializer(AppSerializer):
+class AppArraySerializer(TheappSerializer):
     
     class Meta:
         model = AppArray
