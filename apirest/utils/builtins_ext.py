@@ -21,12 +21,22 @@ pythontypes = {
 }
 
 def obj_dump(obj):
-    strobj = ""
-    for attr in dir(obj):
-        strobj += "  obj.%s = %r\n" % (attr, getattr(obj, attr))
+    strobj = []
+    for strattr in dir(obj):
+        strkey = "obj.%s" % (strattr)
+        strval = "%s" % getattr(obj, strattr)
+        strobj.append(obj_strkval(strkey, strval))
 
-    # s(strobj)
-    return strobj
+    return "\n".join(strobj)
+
+def obj_strkval(strkey,strval):
+    strreturn = ""
+    strkey = "\033[0;95m{}\033[00m" .format(strkey)
+    strval = "\033[1;96m{}\033[00m" .format(strval)
+    strreturn = strkey + " = "+ strval
+
+    return strreturn
+
 
 def s(strtext):
     if isinstance(strtext, str):
