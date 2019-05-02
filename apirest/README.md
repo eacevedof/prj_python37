@@ -483,3 +483,4 @@ class MiModeloAdmin(admin.ModelAdmin):
 - [Django doc - viewsets.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/viewsets.py)
 - [Rest fw cdrf.co ModelViewSet methods](http://www.cdrf.co/3.1/rest_framework.viewsets/ModelViewSet.html)
 
+- [Refactorizando el proyecto - su estructura](https://www.revsys.com/tidbits/recommended-django-project-layout/)
