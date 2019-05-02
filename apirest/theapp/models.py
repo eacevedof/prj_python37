@@ -51,6 +51,18 @@ class AppArray(TheappModel):
         managed = False # indica si se borrara la tabla al ejecutar las migraciones
         db_table = 'app_array' 
 
+    def __str__(self):
+        return f'{self.description} ({self.id})'
+
+    # con property se emula un campo que se puede instanciar en admin.py
+    @property
+    def desc_id(self):
+        # split explota description por " " y almacena todos los elementos en *first (es una lista)
+        # y el último lo guarda en last
+        *first, last =  self.description.split()
+        first = " ".join(first)
+        return f'{last}, {first} ({self.id})'
+
     # https://docs.djangoproject.com/en/dev/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model
     # como sobreescribir para añadir operaciones extras
 

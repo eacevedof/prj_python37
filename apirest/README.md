@@ -502,4 +502,5 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - `@admin.register(AppArray)`
     - [Video](https://youtu.be/XphJRQ3AzMU?t=586)
 - [ordering](https://youtu.be/XphJRQ3AzMU?t=1365)
-- 
+- [@property](https://youtu.be/XphJRQ3AzMU?t=1439)
+    - [en admin](https://youtu.be/XphJRQ3AzMU?t=1611)
