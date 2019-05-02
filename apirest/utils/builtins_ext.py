@@ -42,4 +42,4 @@ def pr(mxvar,strtitle=""):
 
 builtins.bug = bug
 builtins.pr = pr
-builtins.p = p
+builtins.p = s
