@@ -1,4 +1,4 @@
-p("views.py")
+s("views.py")
 # theapp/views.py
 from django.shortcuts import render
 
@@ -14,7 +14,7 @@ class AppViewSet(viewsets.ModelViewSet):
         Realiza soft-delete
         """
         objmodel = self.get_object()
-        pr(objmodel,"destroy.objmodel")
+        pr(objmodel,"AppViewSet.destroy.objmodel")
         objmodel.delete_date = u.get_now()
         objmodel.delete_user = request.user.id 
         objmodel.delete_platform = u.get_platform()

@@ -1,4 +1,4 @@
-p("admin.py")
+s("admin.py")
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from utils import utils as u

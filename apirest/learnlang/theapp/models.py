@@ -1,4 +1,4 @@
-p("models.py")
+s("models.py")
 # theapp/models.py
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
