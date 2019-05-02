@@ -9,10 +9,23 @@ The above ANSI escape code will set the text colour to bright green. The format 
 32 = Text colour, 32 for bright green.
 40m = Background colour, 40 is for black.
 """
+pythontypes = {
+    "boolean": ("bool"),
+    "numeric": ("int","float"),
+    "string":  ("str"),
+    "structure": ("dict","list","tuple"),
+    "function": ("function"),
+    "primitives": ("bool","int","float","str")
+    # import types
+    # types.GeneratorType
+}
+
 def obj_dump(obj):
     strobj = ""
     for attr in dir(obj):
-        strobj += "obj.%s = %r\n" % (attr, getattr(obj, attr))
+        strobj += "  obj.%s = %r\n" % (attr, getattr(obj, attr))
+
+    # s(strobj)
     return strobj
 
 def s(strtext):
@@ -24,11 +37,15 @@ def pr(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
     if strtitle:
         # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-        temp = "\x1b[6;30;43m{}\033[00m" .format(strtitle)
+        temp = "\x1b[6;30;43m{}: \033[00m" .format(strtitle)
         print(temp)
 
-    if isinstance(mxvar, str):
-        print(mxvar)
+    if type(mxvar) in pythontypes["primitives"]:
+        print(str(mxvar))
+        return
+    
+    if type(mxvar) in pythontypes["structure"]:
+        pprint(mxvar)
         return
     
     mxvar = obj_dump(mxvar)
@@ -41,13 +58,16 @@ def pr(mxvar,strtitle=""):
 def bug(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
     if strtitle:
-        temp = "\x1b[6;30;42m{}\033[00m" .format(strtitle)
+        temp = "\x1b[6;30;42m{}: \033[00m" .format(strtitle)
         print(temp)
 
-    if isinstance(mxvar, str):
-        print(mxvar)
+    if type(mxvar) in pythontypes["primitives"]:
+        print(str(mxvar))
         return
     
+    if type(mxvar) in pythontypes["structure"]:
+        pprint(mxvar)
+        return    
     mxvar = obj_dump(mxvar)
     print(mxvar)
 
