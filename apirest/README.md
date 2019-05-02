@@ -504,3 +504,11 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
 - [ordering](https://youtu.be/XphJRQ3AzMU?t=1365)
 - [@property](https://youtu.be/XphJRQ3AzMU?t=1439)
     - [en admin](https://youtu.be/XphJRQ3AzMU?t=1611)
+- [editable fields](https://youtu.be/XphJRQ3AzMU?t=1865)
+
+> Nota importante
+```py
+No se porque estas 2 trazas me fastidian el guardado
+pr(obj,"AppModelAdmin.save_model.obj")
+pr(self.objuser,"TheappModelAdmin.self.objuser")
+```
