@@ -1,4 +1,4 @@
-# print("wsgi.py\n")
+s("wsgi.py")
 """
 WSGI config for learnlang project.
 
@@ -15,3 +15,4 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'learnlang.settings')
 
 application = get_wsgi_application()
+bug(application,"wsgi.py.application")
