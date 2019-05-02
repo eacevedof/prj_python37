@@ -8,7 +8,8 @@ s("models.py")
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from .managers import *
+# from .managers import *
+from .fields import *
 from utils import utils as u
 
 
@@ -28,7 +29,9 @@ class TheappModel(models.Model):
     delete_date = models.CharField(max_length=14, blank=True, null=True)
     cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    # is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    # is_enabled = models.BooleanField(default="1")
+    is_enabled = TheappBooleanField(default="1")
     i = models.IntegerField(blank=True, null=True)
 
     class Meta:
