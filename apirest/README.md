@@ -474,6 +474,7 @@ class MiModeloAdmin(admin.ModelAdmin):
     serializers.py
 ```
 
+- [Django - Entender Managers y Querysets](https://www.youtube.com/watch?v=rjUmA_pkGtw)
 - [Django doc - model](https://docs.djangoproject.com/en/2.2/_modules/django/db/models/base/#Model)
 - [Django doc - override serializers](https://www.django-rest-framework.org/api-guide/serializers)
 - [Django doc - serializers.py source code](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py)
@@ -494,3 +495,4 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
 ```
 - Ejecutar **runserver**:
     - `py manage.py runserver --settings=learnlang.settings.dev`
+
