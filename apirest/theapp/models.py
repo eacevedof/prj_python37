@@ -12,7 +12,7 @@ from .managers import *
 from utils import utils as u
 
 
-class AbstractSysfields(models.Model):
+class TheappModel(models.Model):
 
     objuser = None
 
@@ -36,7 +36,7 @@ class AbstractSysfields(models.Model):
 
 
 
-class AppArray(AbstractSysfields):
+class AppArray(TheappModel):
     
     id = models.AutoField(primary_key=True)
     type = models.CharField(max_length=15, blank=False, null=False, default="generic")

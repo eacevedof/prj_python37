@@ -6,7 +6,7 @@ from .models import *
 
 admin.site.site_header = "Learnlang -  Admin Pannel"
 
-class AppModelAdmin(admin.ModelAdmin):
+class TheappModelAdmin(admin.ModelAdmin):
     objuser = None
 
     def __load_sysfields(self, objmodel, t="i"):
@@ -51,7 +51,7 @@ class AppModelAdmin(admin.ModelAdmin):
 
 @admin.register(AppArray)
 # @admin.register(AppArrayAdmin)
-class AppArrayAdmin(AppModelAdmin):
+class AppArrayAdmin(TheappModelAdmin):
     exclude = (
         "processflag",
         "insert_platform","insert_user","insert_date",
