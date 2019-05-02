@@ -4,7 +4,7 @@ s("app.urls.py")
 # rerouting all requests that have api in the url to the <code>apps.core.urls
 from django.conf.urls import url
 from rest_framework import routers
-from learnlang.theapp.views import *
+from theapp.views import *
 from rest_framework_swagger.views import get_swagger_view
 
 router = routers.DefaultRouter()
