@@ -501,4 +501,5 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - en **admin.py** se suele hacer eso, pero tambien serviria:
     - `@admin.register(AppArray)`
     - [Video](https://youtu.be/XphJRQ3AzMU?t=586)
+- [ordering](https://youtu.be/XphJRQ3AzMU?t=1365)
 - 

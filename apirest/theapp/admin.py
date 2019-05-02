@@ -61,18 +61,19 @@ class AppArrayAdmin(TheappModelAdmin):
         "module","id_tosave","code_cache"
     )
 
+    search_fields = (
+        "id","description","type"
+    )
+
     list_display = (
         "description","id","insert_user","insert_date",
         "type","order_by","code_cache"
     )
+    ordering = ("id",)
 
     list_filter = (
         "description","type","module"
-    )
-
-    search_fields = (
-        "id","description","type"
-    )
+    )    
 
 
 
