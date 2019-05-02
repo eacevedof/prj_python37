@@ -1,4 +1,4 @@
-p("serializers.py")
+s("serializers.py")
 # theapp/serializers.py
 
 """

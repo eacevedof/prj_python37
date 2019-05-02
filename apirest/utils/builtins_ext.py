@@ -22,7 +22,7 @@ def bug(mxvar,strtitle=""):
     pprint(mxvar)
     #print("\n")
 
-def p(strtext):
+def s(strtext):
     if isinstance(strtext, str):
         temp = "\033[94m{}\033[00m" .format(strtext)
         print(temp)

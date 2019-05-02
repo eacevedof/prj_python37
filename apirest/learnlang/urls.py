@@ -1,4 +1,4 @@
-# print("main-urls.py\n")
+s("main-urls.py\n")
 # main url
 # learnlang/urls.py
 """learnlang URL Configuration
