@@ -9,18 +9,11 @@ The above ANSI escape code will set the text colour to bright green. The format 
 32 = Text colour, 32 for bright green.
 40m = Background colour, 40 is for black.
 """
-
-def bug(mxvar,strtitle=""):
-    # https://github.com/shiena/ansicolor/blob/master/README.md
-    if strtitle:
-        temp = "\x1b[6;30;42m{}\033[00m" .format(strtitle)
-        print(temp)
-
-    if isinstance(mxvar, str):
-        print(mxvar)
-        return
-    pprint(mxvar)
-    #print("\n")
+def obj_dump(obj):
+    strobj = ""
+    for attr in dir(obj):
+        strobj += "obj.%s = %r\n" % (attr, getattr(obj, attr))
+    return strobj
 
 def s(strtext):
     if isinstance(strtext, str):
@@ -37,9 +30,32 @@ def pr(mxvar,strtitle=""):
     if isinstance(mxvar, str):
         print(mxvar)
         return
-    pprint(mxvar)
+    
+    mxvar = obj_dump(mxvar)
+    print(mxvar)
+    # is an object
+    # print(repr(mxvar))
+    #pprint(mxvar)
     #print("\n")
 
+def bug(mxvar,strtitle=""):
+    # https://github.com/shiena/ansicolor/blob/master/README.md
+    if strtitle:
+        temp = "\x1b[6;30;42m{}\033[00m" .format(strtitle)
+        print(temp)
+
+    if isinstance(mxvar, str):
+        print(mxvar)
+        return
+    
+    mxvar = obj_dump(mxvar)
+    print(mxvar)
+
+    # print(repr(mxvar))
+    # pprint(mxvar)
+    #print("\n")    
+
+builtins.s = s
 builtins.bug = bug
 builtins.pr = pr
-builtins.p = s
+
