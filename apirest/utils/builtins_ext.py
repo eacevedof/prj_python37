@@ -13,28 +13,34 @@ pythontypes = {
     "boolean": ("bool"),
     "numeric": ("int","float"),
     "string":  ("str"),
-    "structure": ("dict","list","tuple"),
+    "structure": ("array","dict","list","tuple","set"), # file
     "function": ("function"),
     "primitives": ("bool","int","float","str")
     # import types
     # types.GeneratorType
 }
 
-def obj_dump(obj):
-    strobj = []
-    for strattr in dir(obj):
-        strkey = "obj.%s" % (strattr)
-        strval = "%s" % getattr(obj, strattr)
-        strobj.append(obj_strkval(strkey, strval))
-
-    return "\n".join(strobj)
-
-def obj_strkval(strkey,strval):
+def get_strkvcolored(strkey,strval):
     strreturn = ""
-    strkey = "\033[0;95m{}\033[00m" .format(strkey)
+    # strkey = "\033[0;95m{}\033[00m" .format(strkey)
+    strkey = get_strcolored(strkey,"0;95")
     strval = "\033[1;96m{}\033[00m" .format(strval)
     strreturn = strkey + " = "+ strval
 
+    return strreturn
+
+def get_strobject(obj):
+    # strobj = ["obj"]
+    strobj = []
+    for strattr in dir(obj):
+        strkey = " .%s" % (strattr)
+        strval = "%s" % getattr(obj, strattr)
+        strobj.append(get_strkvcolored(strkey, strval))
+
+    return "\n".join(strobj)
+
+def get_strcolored(strval,colcode):
+    strreturn = "\033[{}m{}\033[00m".format(colcode,strval)
     return strreturn
 
 
@@ -58,7 +64,7 @@ def pr(mxvar,strtitle=""):
         pprint(mxvar)
         return
     
-    mxvar = obj_dump(mxvar)
+    mxvar = get_strobject(mxvar)
     print(mxvar)
     # is an object
     # print(repr(mxvar))
@@ -78,7 +84,7 @@ def bug(mxvar,strtitle=""):
     if type(mxvar) in pythontypes["structure"]:
         pprint(mxvar)
         return    
-    mxvar = obj_dump(mxvar)
+    mxvar = get_strobject(mxvar)
     print(mxvar)
 
     # print(repr(mxvar))
@@ -86,6 +92,6 @@ def bug(mxvar,strtitle=""):
     #print("\n")    
 
 builtins.s = s
-builtins.bug = bug
 builtins.pr = pr
+builtins.bug = bug
 
