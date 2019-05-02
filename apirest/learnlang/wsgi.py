@@ -15,4 +15,4 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'learnlang.settings')
 
 application = get_wsgi_application()
-bug(application,"wsgi.py.application")
+# bug(application,"wsgi.py.application")
