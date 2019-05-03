@@ -53,6 +53,46 @@ class TheappBooleanField(models.BooleanField):
         return value              
 """
 
+# class CurrencyField(models.IntegerField):
+class TheappBooleanField2(models.BooleanField):    
+    description = "A field to save dollars as pennies (int) in db, but act like a float"
+
+    # get_db_prep_value() Converting query values to database values
+    def get_db_prep_value(self, value, *args, **kwargs):
+        pr("get_db_prep_value","TheappBooleanField2")
+        pr(value,"TheappBooleanField2.value")
+        if value is None:
+            return None
+        return int(round(value * 100))
+
+    # to_python() is called by deserialization and during the clean() method used from forms.
+    def to_python(self, value):
+        pr("get_db_prep_value","TheappBooleanField2")
+        pr(value,"TheappBooleanField2.to_python.value")
+        if value is None or isinstance(value, float):
+            return value
+        try:
+            return float(value) / 100
+        except (TypeError, ValueError):
+            raise ValidationError("This value must be an integer or a string represents an integer.")
+
+
+    # from_db_value when the data is loaded from the database
+    def from_db_value(self, value, expression, connection, context):
+        pr("from_db_value","TheappBooleanField2")
+        pr(value,"TheappBooleanField2.from_db_value.value")        
+        return self.to_python(value)
+
+    
+    def formfield(self, **kwargs):
+        pr("formfield","TheappBooleanField2")
+        pr(kwargs,"TheappBooleanField2.formfield.kwargs")        
+        from django.forms import FloatField
+        defaults = {'form_class': FloatField}
+        defaults.update(kwargs)
+        return super(TheappBooleanField2, self).formfield(**defaults)
+
+
 def parse_hand(hand_string):
     """Takes a string of cards and splits into a full hand."""
     p1 = re.compile('.{26}')
