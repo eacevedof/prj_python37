@@ -7,13 +7,27 @@ from django.utils.translation import gettext_lazy as _
 
 class TheappBooleanField(models.BooleanField):
 
+    def __init__(self, *args, **kwargs):
+        pr("__init__","TheappBooleanField 1")
+        kwargs['max_length'] = 3
+        super().__init__(*args, **kwargs)
+
+    # debe devolver la tupla name, path, args, kwargs
+    def deconstruct(self):
+        pr("deconstruct","TheappBooleanField 2")
+        name, path, args, kwargs = super().deconstruct()
+        return name, path, args, kwargs   
+
+    # from_db_value when the data is loaded from the database
     def from_db_value(self, value, expression, connection, context):
+        pr("from_db_value","TheappBooleanField 3")
         if value is None:
             return value
         return int(0) # return 0/1
 
+    # to_python() is called by deserialization and during the clean() method used from forms.
     def to_python(self, value):
-
+        pr("to_python","TheappBooleanField 4")
         if value in ('Y', '1', True):
             return "1"
         if value in ('N', '0', False):
@@ -21,11 +35,21 @@ class TheappBooleanField(models.BooleanField):
 
         raise ValueError("valueerror: {}".format(value))
 
+    # get_prep_value() Converting Python objects to query values
     def get_prep_value(self, value):
+        pr("get_prep_value","TheappBooleanField 5")
         if value:
             return '1'
         else:
             return '0'
+
+    # get_db_prep_value() Converting query values to database values
+    def get_db_prep_value(self, value, connection, prepared=False):
+        pr("get_db_prep_value","TheappBooleanField 6")
+        value = super().get_db_prep_value(value, connection, prepared)
+        if value is not None:
+            return connection.Database.Binary(value)
+        return value              
 
 def parse_hand(hand_string):
     """Takes a string of cards and splits into a full hand."""
@@ -87,5 +111,4 @@ class HandField(models.Field):
     def value_to_string(self, obj):
         value = self.value_from_object(obj)
         return self.get_prep_value(value)
-    
     
