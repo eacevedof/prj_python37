@@ -51,7 +51,7 @@ class TheappBooleanField(models.BooleanField):
 """
 
 # class CurrencyField(models.IntegerField):
-class TheappBooleanField2(models.NullBooleanField):    
+class TheappBooleanField2(models.BooleanField):    
 # class TheappBooleanField2(models.CharField):
     description = "A field to save dollars as pennies (int) in db, but act like a float"
 
@@ -76,8 +76,31 @@ class TheappBooleanField2(models.NullBooleanField):
    # from_db_value when the data is loaded from the database
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappBooleanField2")
-        pr(value,"TheappBooleanField2.from_db_value.value calling self.to_python")        
+        pr(value,"TheappBooleanField2.from_db_value.value calling self.to_python")
+        # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
+        # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
+
+    # to_python() is called by deserialization and during the clean() method used from forms.
+    # lo que se mostrará en el formulario
+    def to_python(self, value):
+        """
+        Convert the input value into the expected Python data type, raising
+        django.core.exceptions.ValidationError if the data can't be converted.
+        Return the converted value. Subclasses should override this.
+        """        
+        pr(value,"TheappBooleanField2.to_python.value - value to form")
+        if value is None:
+            sc("to_python: return None")
+            return None # muestra unknown
+        elif value in (1,"1",'Y', 'y',True):
+            sc("to_python: return True")
+            return True
+        elif value in (0,"0",'N', 'n', False):
+            sc("to_python: return False")
+            return False
+        else:
+            raise ValueError
 
     # get_prep_value() Converting Python objects to query values
     """
@@ -92,23 +115,6 @@ class TheappBooleanField2(models.NullBooleanField):
             return False
     """
 
-    # to_python() is called by deserialization and during the clean() method used from forms.
-    # lo que se mostrará en el formulario
-    def to_python(self, value):
-        """
-        Convert the input value into the expected Python data type, raising
-        django.core.exceptions.ValidationError if the data can't be converted.
-        Return the converted value. Subclasses should override this.
-        """        
-        pr(value,"TheappBooleanField2.to_python.value - value to form")
-        if value is None:
-            return None # muestra unknown
-        elif value in (1,"1",'Y', 'y',True):
-            return True
-        elif value in (0,"0",'N', 'n', False):
-            return False
-        else:
-            raise ValueError
     # get_db_prep_value() Converting query values to database values
     # lo que se guardará en la bd
     """    
@@ -124,10 +130,6 @@ class TheappBooleanField2(models.NullBooleanField):
         pr(newvalue,"TheappBooleanField2.get_db_prep_value.new-value")
         return newvalue
 
-    
- 
-
-    
     def formfield(self, **kwargs):
         pr("formfield","TheappBooleanField2")
         pr(kwargs,"TheappBooleanField2.formfield.kwargs")        
