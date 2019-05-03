@@ -51,15 +51,13 @@ class TheappBooleanField(models.BooleanField):
 """
 
 # class CurrencyField(models.IntegerField):
-class TheappBooleanField2(models.BooleanField):    
+class TheappBooleanField2(models.NullBooleanField):    
+# class TheappBooleanField2(models.CharField):
     description = "A field to save dollars as pennies (int) in db, but act like a float"
 
     def __init__(self, *args, **kwargs):
-        pr("__init__","TheappBooleanField2")
-        # kwargs['max_length'] = 3
-        pr(args,"__init__.args")
-        pr(kwargs,"__init__.kwargs")
-        super().__init__(*args, **kwargs)
+        kwargs['max_length'] = 1
+        super(TheappBooleanField2, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
         pr("deconstruct","TheappBooleanField2")
@@ -71,33 +69,54 @@ class TheappBooleanField2(models.BooleanField):
         pr(kwargs,"deconstruct.kwargs")
         return name, path, args, kwargs   
 
-    # get_db_prep_value() Converting query values to database values
-    def get_db_prep_value(self, value, *args, **kwargs):
-        pr("get_db_prep_value","TheappBooleanField2")
-        pr(value,"TheappBooleanField2.value")
+    # def db_type(self, connection):
+    #    pr("db_type","TheappBooleanField2")
+    #    return "boolean"
+
+    # get_prep_value() Converting Python objects to query values
+    def get_prep_value(self, value):
+        """Perform preliminary non-db specific value checks and conversions."""
+        pr(value,"TheappBooleanField2.get_prep_value.value - py obj to query value")
         if value is None:
             return None
-        
-        newvalue = int(round(value * 33))
-        pr(newvalue,"TheappBooleanField2.get_db_prep_value.new-value")
-        return newvalue
+        elif value in ('Y', 'y',True):
+            return True
+        else:
+            return False
 
     # to_python() is called by deserialization and during the clean() method used from forms.
     # lo que se mostrará en el formulario
     def to_python(self, value):
+        """
+        Convert the input value into the expected Python data type, raising
+        django.core.exceptions.ValidationError if the data can't be converted.
+        Return the converted value. Subclasses should override this.
+        """        
+        pr(value,"TheappBooleanField2.to_python.value - value to form")
+        if value is None:
+            return None
+        elif value in ('Y', 'y',True):
+            return True
+        elif value in ('N', 'n', False):
+            return False
+        else:
+            raise ValueError
+    # get_db_prep_value() Converting query values to database values
+    # lo que se guardará en la bd
+    """    
+    def get_db_prep_value(self, value, *args, **kwargs):
         pr("get_db_prep_value","TheappBooleanField2")
-        pr(value,"TheappBooleanField2.to_python.value")
-        if value is None or isinstance(value, float):
+        pr(value,"TheappBooleanField2.get_db_prep_value.value query val to db val")
+        if value is None:
             return value
-        try:
-            newvalue = float(value) / 100
-            # newvalue = "T"
-            pr(newvalue,"TheappBooleanField2.to_python.new-value")
-            return newvalue
-        except (TypeError, ValueError):
-            raise ValidationError("This value must be an integer or a string represents an integer.")
+        
+        newvalue = value
+        # newvalue = int(round(value * 33))
+        # newvalue = False
+        pr(newvalue,"TheappBooleanField2.get_db_prep_value.new-value")
+        return newvalue
 
-
+    
     # from_db_value when the data is loaded from the database
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappBooleanField2")
@@ -112,6 +131,7 @@ class TheappBooleanField2(models.BooleanField):
         defaults = {'form_class': FloatField}
         defaults.update(kwargs)
         return super(TheappBooleanField2, self).formfield(**defaults)
+    """
 
 
 def parse_hand(hand_string):
