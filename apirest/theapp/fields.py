@@ -7,10 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 class TheappBooleanField(models.BooleanField):
 
-    def __init__(self, *args, **kwargs):
-        pr("__init__","TheappBooleanField 1")
-        kwargs['max_length'] = 3
-        super().__init__(*args, **kwargs)
+
 
     # debe devolver la tupla name, path, args, kwargs
     def deconstruct(self):
@@ -57,6 +54,23 @@ class TheappBooleanField(models.BooleanField):
 class TheappBooleanField2(models.BooleanField):    
     description = "A field to save dollars as pennies (int) in db, but act like a float"
 
+    def __init__(self, *args, **kwargs):
+        pr("__init__","TheappBooleanField2")
+        # kwargs['max_length'] = 3
+        pr(args,"__init__.args")
+        pr(kwargs,"__init__.kwargs")
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        pr("deconstruct","TheappBooleanField2")
+
+        name, path, args, kwargs = super().deconstruct()
+        pr(name,"deconstruct.name")
+        pr(path,"deconstruct.path")
+        pr(args,"deconstruct.args")
+        pr(kwargs,"deconstruct.kwargs")
+        return name, path, args, kwargs   
+
     # get_db_prep_value() Converting query values to database values
     def get_db_prep_value(self, value, *args, **kwargs):
         pr("get_db_prep_value","TheappBooleanField2")
@@ -64,11 +78,12 @@ class TheappBooleanField2(models.BooleanField):
         if value is None:
             return None
         
-        newvalue = int(round(value * 100))
+        newvalue = int(round(value * 33))
         pr(newvalue,"TheappBooleanField2.get_db_prep_value.new-value")
         return newvalue
 
     # to_python() is called by deserialization and during the clean() method used from forms.
+    # lo que se mostrará en el formulario
     def to_python(self, value):
         pr("get_db_prep_value","TheappBooleanField2")
         pr(value,"TheappBooleanField2.to_python.value")
@@ -76,6 +91,7 @@ class TheappBooleanField2(models.BooleanField):
             return value
         try:
             newvalue = float(value) / 100
+            # newvalue = "T"
             pr(newvalue,"TheappBooleanField2.to_python.new-value")
             return newvalue
         except (TypeError, ValueError):
