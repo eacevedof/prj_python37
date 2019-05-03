@@ -63,7 +63,10 @@ class TheappBooleanField2(models.BooleanField):
         pr(value,"TheappBooleanField2.value")
         if value is None:
             return None
-        return int(round(value * 100))
+        
+        newvalue = int(round(value * 100))
+        pr(newvalue,"TheappBooleanField2.get_db_prep_value.new-value")
+        return newvalue
 
     # to_python() is called by deserialization and during the clean() method used from forms.
     def to_python(self, value):
@@ -72,7 +75,9 @@ class TheappBooleanField2(models.BooleanField):
         if value is None or isinstance(value, float):
             return value
         try:
-            return float(value) / 100
+            newvalue = float(value) / 100
+            pr(newvalue,"TheappBooleanField2.to_python.new-value")
+            return newvalue
         except (TypeError, ValueError):
             raise ValidationError("This value must be an integer or a string represents an integer.")
 
@@ -80,7 +85,7 @@ class TheappBooleanField2(models.BooleanField):
     # from_db_value when the data is loaded from the database
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappBooleanField2")
-        pr(value,"TheappBooleanField2.from_db_value.value")        
+        pr(value,"TheappBooleanField2.from_db_value.value calling self.to_python")        
         return self.to_python(value)
 
     
