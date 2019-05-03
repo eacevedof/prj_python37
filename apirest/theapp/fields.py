@@ -73,16 +73,24 @@ class TheappBooleanField2(models.NullBooleanField):
     #    pr("db_type","TheappBooleanField2")
     #    return "boolean"
 
+   # from_db_value when the data is loaded from the database
+    def from_db_value(self, value, expression, connection, context):
+        pr("from_db_value","TheappBooleanField2")
+        pr(value,"TheappBooleanField2.from_db_value.value calling self.to_python")        
+        return self.to_python(value)
+
     # get_prep_value() Converting Python objects to query values
+    """
     def get_prep_value(self, value):
-        """Perform preliminary non-db specific value checks and conversions."""
+        # Perform preliminary non-db specific value checks and conversions
         pr(value,"TheappBooleanField2.get_prep_value.value - py obj to query value")
         if value is None:
-            return None
-        elif value in ('Y', 'y',True):
+            return None 
+        elif value in (1,"1",'Y', 'y',True):
             return True
         else:
             return False
+    """
 
     # to_python() is called by deserialization and during the clean() method used from forms.
     # lo que se mostrará en el formulario
@@ -94,10 +102,10 @@ class TheappBooleanField2(models.NullBooleanField):
         """        
         pr(value,"TheappBooleanField2.to_python.value - value to form")
         if value is None:
-            return None
-        elif value in ('Y', 'y',True):
+            return None # muestra unknown
+        elif value in (1,"1",'Y', 'y',True):
             return True
-        elif value in ('N', 'n', False):
+        elif value in (0,"0",'N', 'n', False):
             return False
         else:
             raise ValueError
@@ -117,11 +125,7 @@ class TheappBooleanField2(models.NullBooleanField):
         return newvalue
 
     
-    # from_db_value when the data is loaded from the database
-    def from_db_value(self, value, expression, connection, context):
-        pr("from_db_value","TheappBooleanField2")
-        pr(value,"TheappBooleanField2.from_db_value.value calling self.to_python")        
-        return self.to_python(value)
+ 
 
     
     def formfield(self, **kwargs):

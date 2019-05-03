@@ -114,8 +114,12 @@ def print_format_table():
 def s(strtext):
     if is_primitive(strtext):
         strtext = str(strtext)
-        temp = get_strcolored(strtext,"94")
-        print(temp)
+        printcol(strtext,"94")
+
+def sc(strtext,colcode="7;34;47"):
+    if is_primitive(strtext):
+        strtext = str(strtext)
+        printcol(strtext,colcode)
 
 def pr(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
@@ -133,7 +137,7 @@ def pr(mxvar,strtitle=""):
         pprint(mxvar)
         return
     
-    print(get_strcolored("type:"+str(type(mxvar)),"6;30;43"))    
+    printcol("type:"+str(type(mxvar)),"6;30;43")
     mxvar = get_strobject(mxvar)
     print(mxvar)
     # is an object
@@ -163,6 +167,7 @@ def bug(mxvar,strtitle=""):
     #print("\n")    
 
 builtins.s = s
+builtins.sc = sc
 builtins.pr = pr
 builtins.bug = bug
 
