@@ -50,6 +50,10 @@ class CheckType():
         return isinstance(mxvar, tuple)
 
     @staticmethod
+    def has_dict(mxvar):
+        return hasattr(mxvar, '__dict__')
+
+    @staticmethod
     def is_primitive(mxvar):
         return (CheckType.is_bool(mxvar) or CheckType.is_int(mxvar) 
             or CheckType.is_float(mxvar) or CheckType.is_string(mxvar)
@@ -67,9 +71,21 @@ def is_primitive(mxvar):
 def is_structure(mxvar):    
     return CheckType.is_structure(mxvar)
 
+def has_dict(mxvar):
+    return CheckType.has_dict(mxvar)
+
 def get_strcolored(strval,colcode):
     strreturn = "\033[{}m{}\033[00m".format(colcode,strval)
     return strreturn
+
+def get_dictcolored(dictvar):
+    lstret = []
+    for k,v in dictvar.__dict__.items():
+        strkey = " .%s" % k
+        strval = "%s" % v
+        lstret.append(get_strkvcolored(strkey, strval))
+
+    return "\n".join(lstret)
 
 def printcol(primval,colcode="5;30;47"):
     if is_primitive(primval):
@@ -121,13 +137,13 @@ def sc(strtext,colcode="7;34;47"):
         strtext = str(strtext)
         printcol(strtext,colcode)
 
-def pr(mxvar,strtitle=""):
+def pr(mxvar, strtitle="", isjustdic=1):
     # https://github.com/shiena/ansicolor/blob/master/README.md
     if strtitle:
-        # print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-        # temp = "\x1b[6;30;43m{}: \033[00m" .format(strtitle)
-        temp = get_strcolored(strtitle,"6;30;43")
-        print(temp)
+        printcol(strtitle,"6;30;43")
+
+    if has_dict(mxvar):
+        print(get_dictcolored(mxvar))
 
     if is_primitive(mxvar):
         printcol(mxvar)
@@ -137,19 +153,22 @@ def pr(mxvar,strtitle=""):
         pprint(mxvar)
         return
     
+    if isjustdic:
+        return
+
     printcol("type:"+str(type(mxvar)),"6;30;43")
+    # ya lo devuelve con colores
     mxvar = get_strobject(mxvar)
     print(mxvar)
-    # is an object
-    # print(repr(mxvar))
-    #pprint(mxvar)
-    #print("\n")
+
 
 def bug(mxvar,strtitle=""):
     # https://github.com/shiena/ansicolor/blob/master/README.md
     if strtitle:
-        temp = "\x1b[6;30;42m{}: \033[00m" .format(strtitle)
-        print(temp)
+        printcol(strtitle,"6;30;42")
+
+    if has_dict(mxvar):
+        print(get_dictcolored(mxvar))
 
     if is_primitive(mxvar):
         printcol(mxvar)
@@ -159,12 +178,10 @@ def bug(mxvar,strtitle=""):
         pprint(mxvar)
         return
 
+    # ya lo devuelve con colores
     mxvar = get_strobject(mxvar)
     print(mxvar)
 
-    # print(repr(mxvar))
-    # pprint(mxvar)
-    #print("\n")    
 
 builtins.s = s
 builtins.sc = sc
