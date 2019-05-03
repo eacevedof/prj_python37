@@ -1,4 +1,9 @@
+import re
+
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 
 class TheappBooleanField(models.BooleanField):
 
@@ -22,6 +27,15 @@ class TheappBooleanField(models.BooleanField):
         else:
             return '0'
 
+def parse_hand(hand_string):
+    """Takes a string of cards and splits into a full hand."""
+    p1 = re.compile('.{26}')
+    p2 = re.compile('..')
+    args = [p2.findall(x) for x in p1.findall(hand_string)]
+    if len(args) != 4:
+        raise ValidationError(_("Invalid input for a Hand instance"))
+    return Hand(*args)
+
 class HandField(models.Field):
 
     description = _("String (up to %(max_length)s)")
@@ -37,4 +51,41 @@ class HandField(models.Field):
         #    kwargs['separator'] = self.separator
         return name, path, args, kwargs        
 
+    # from_db_value when the data is loaded from the database
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return value
+        return parse_hand(value)
+
+    # to_python() is called by deserialization and during the clean() method used from forms.
+    def to_python(self, value):
+        if isinstance(value, Hand):
+            return value
+
+        if value is None:
+            return value
+
+        return parse_hand(value)   
+    
+    # get_prep_value() Converting Python objects to query values
+    def get_prep_value(self, value):
+        return ''.join([''.join(l) for l in (value.north,
+                value.east, value.south, value.west)])
+
+    # get_db_prep_value() Converting query values to database values
+    def get_db_prep_value(self, value, connection, prepared=False):
+        value = super().get_db_prep_value(value, connection, prepared)
+        if value is not None:
+            return connection.Database.Binary(value)
+        return value    
+
+    # your database storage is similar in type to some other field, so you can use that other field’s logic to create the right column.
+    def get_internal_type(self):
+        return 'CharField'        
+
+    # To customize how the values are serialized by a serializer, you can override value_to_string().
+    def value_to_string(self, obj):
+        value = self.value_from_object(obj)
+        return self.get_prep_value(value)
+    
     
