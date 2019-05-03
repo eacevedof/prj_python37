@@ -31,7 +31,7 @@ class TheappModel(models.Model):
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
     # is_enabled = models.CharField(max_length=3, blank=True, null=True)
     # is_enabled = models.BooleanField(default="1")
-    is_enabled = TheappBooleanField(default="1")
+    is_enabled = TheappBooleanField2(default="1")
     i = models.IntegerField(blank=True, null=True)
 
     class Meta:
