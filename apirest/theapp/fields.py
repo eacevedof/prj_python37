@@ -44,12 +44,14 @@ class TheappBooleanField(models.BooleanField):
             return '0'
 
     # get_db_prep_value() Converting query values to database values
+"""    
     def get_db_prep_value(self, value, connection, prepared=False):
         pr("get_db_prep_value","TheappBooleanField 6")
         value = super().get_db_prep_value(value, connection, prepared)
         if value is not None:
             return connection.Database.Binary(value)
         return value              
+"""
 
 def parse_hand(hand_string):
     """Takes a string of cards and splits into a full hand."""
