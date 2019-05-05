@@ -1,4 +1,7 @@
 # Probando el pip install pipenv
+
+## [Despliegue en Heroku](https://github.com/eacevedof/prj_python37/blob/master/apirest/HEROKU.md)
+
 ## [Fazt](https://youtu.be/-XIsKyNWILo)
 
 - `pip install pipenv` instala el módulo del entorno virutal
