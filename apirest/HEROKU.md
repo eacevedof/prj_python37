@@ -3,5 +3,5 @@
 
 #### commands:
 - `heroku create prj-apirest`
-    - `heroky apps:destroy prj_apirest`
+    - `heroku apps:delete --app tfw-firstapp`
 
