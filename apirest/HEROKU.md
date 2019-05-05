@@ -5,6 +5,7 @@
 > Author : Shubham Aggarwal <br/>
 > Github username : shuboy2014 <br/>
 > Email : shubham.aggarwal2020@gmail.com <br/>
+> Publicado el 3 dic. 2016
  
 1. Setup django project name it **<your-project-name>** with application **<application-name>** 
 - In mycase it is myproject with  application myapp 
