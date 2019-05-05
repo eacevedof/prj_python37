@@ -4,4 +4,8 @@
 #### commands:
 - `heroku create prj-apirest`
     - `heroku apps:delete --app tfw-firstapp`
+- `heroku open -a <appname>`
+    - [https://prj-apirest.herokuapp.com/](https://prj-apirest.herokuapp.com/)
+
+
 
