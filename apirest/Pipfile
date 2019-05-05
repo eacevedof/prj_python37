@@ -5,12 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 
-
 [packages]
 djangorestframework = "*"
 Django = "*"
 django-rest-swagger = "*"
 django-debug-toolbar = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
