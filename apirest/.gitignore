@@ -45,6 +45,7 @@ tmtagsHistory
 ######################
 *.swp
 __pycache__
+staticfiles/
 servidor/venv
 venv
 src/pv.egg-info
