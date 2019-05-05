@@ -2,15 +2,11 @@
 > By Corey Schafer - Publicado el 19 feb. 2019
 
 #### commands:
+- `heroku login`
 - `heroku create prj-apirest --buildpack heroku/python`
     - `heroku apps:delete --app tfw-firstapp`
 - `heroku open -a <appname>`
     - [https://prj-apirest.herokuapp.com/](https://prj-apirest.herokuapp.com/)
-
-- `git subtree push --prefix apirest heroku master`
-    - Define un subdirectorio como un subrepo
-    - No lo he dejado terminar porque no se que consecuencias puede traer
-    - `https://git.heroku.com/prj-apirest.git`
 
 - `heroku git:remote -a prj-apirest`
 - `git push heroku master` 
@@ -31,6 +27,9 @@
     ! [remote rejected] master -> master (pre-receive hook declined)
     error: failed to push some refs to 'https://git.heroku.com/prj-apirest.git'    
     ```
+- `git subtree push --prefix apirest heroku master`
+    - Despues del error anterior pruebo este comando
+    - Define un subdirectorio como un subrepo
 
 ## Errores:
 
