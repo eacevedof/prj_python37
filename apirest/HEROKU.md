@@ -1,9 +1,9 @@
 
 # [this content](https://www.dropbox.com/s/68sc3ihna7qdaiu/test.py?dl=0)
 ## [Youtube video - Django application Deployment on Heroku in Windows](https://www.youtube.com/watch?v=2kvTsCskJA0)
-> Author : Shubham Aggarwal
-> Github username : shuboy2014
-> Email : shubham.aggarwal2020@gmail.com
+> Author : Shubham Aggarwal <br/>
+> Github username : shuboy2014 <br/>
+> Email : shubham.aggarwal2020@gmail.com <br/>
  
 1 . Setup django project name it <your-project-name> with application <application-name>
     In mycase it is myproject with  application myapp 
