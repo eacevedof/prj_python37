@@ -16,17 +16,17 @@ pip install dj-database-url gunicorn psycopg2 whitenoise
 #  end}
 ```
 
-3. Run command in cmd (cmd in directory where manage.py file) :
+3. Run command in cmd (cmd in directory where **manage.py** file) :
 ```js
 #{start   
 pip freeze > **requirements.txt**
 #  end}
 ```
 
-4. Create file Procfile and add content :
+4. Create file **Procfile** and add content :
 ```js
 #{start
-    web: gunicorn **<your_project_name>.wsgi**
+    web: gunicorn <your_project_name>.wsgi
 #end}     
 ```
  
