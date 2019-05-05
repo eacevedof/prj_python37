@@ -80,6 +80,10 @@
 - Sigue dando errores y al parecer hay que instalar otros programas **unicorn** y **whitenoise** tampoco es compatible con la distribución (dirtree) que tengo.
 - Más info: [https://developer.mozilla.org/es/docs/Learn/Server-side/Django/Deployment](https://developer.mozilla.org/es/docs/Learn/Server-side/Django/Deployment)
 - Lo dejo a medias... :s. Tiene que haber otra forma más sencilla de desplegar **Django**
+- He instalado unicorn y whitenoise y lo he configurado
+- He corregido algunos errores de staticfiles
+- He corregido la importación en **wsgi.py**
+- Funciona, pero, va con **Postgress** y no se como lanzar la migración :) sorpresas ~~!
 
 
 
