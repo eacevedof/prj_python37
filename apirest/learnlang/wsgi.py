@@ -1,4 +1,3 @@
-s("wsgi.py")
 """
 WSGI config for learnlang project.
 
@@ -9,10 +8,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 """
 
 import os
-
 # pruebo con esto para produccion heroku
 from utils.builtins_ext import *
 from django.core.wsgi import get_wsgi_application
+s("wsgi.py")
 # sirve archivos estaticos
 
 # si activo esto en local se fastidia, me da un error de version
