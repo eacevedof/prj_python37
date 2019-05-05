@@ -2,10 +2,11 @@
 > By Corey Schafer - Publicado el 19 feb. 2019
 
 #### commands:
-- `heroku create prj-apirest`
+- `heroku create prj-apirest --buildpack heroku/python`
     - `heroku apps:delete --app tfw-firstapp`
 - `heroku open -a <appname>`
     - [https://prj-apirest.herokuapp.com/](https://prj-apirest.herokuapp.com/)
 
+## Errores:
 
 
