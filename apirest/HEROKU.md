@@ -7,6 +7,7 @@
 - `heroku open -a <appname>`
     - [https://prj-apirest.herokuapp.com/](https://prj-apirest.herokuapp.com/)
 
+- `git subtree push --prefix apirest heroku master`
 ## Errores:
 
 
