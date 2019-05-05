@@ -60,6 +60,26 @@
     ! [remote rejected] b0a7ae04754f32c80f3ea3954fede5abbb5e223a -> master (pre-receive hook declined)
     error: failed to push some refs to 'https://git.heroku.com/prj-apirest.git'    
     ```
-## Errores:
+    - **más errores:**
+    - Este ocurre porque no es capaz de ejecutar **settings/prod.py** una vez hecho el push
+    ```
+    remote: File "/app/.heroku/python/lib/python3.6/site-packages/django/conf/__init__.py", line 66, in _setup 
+    remote: self._wrapped = Settings(settings_module) 
+    remote: File "/app/.heroku/python/lib/python3.6/site-packages/django/conf/__init__.py", line 176, in __init__ 
+    remote: raise ImproperlyConfigured("The SECRET_KEY setting must not be empty.") 
+    remote: django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty. 
+    remote: 
+    remote: ! Error while running '$ python manage.py collectstatic --noinput'. 
+    remote: See traceback above for details. 
+    remote: 
+    remote: You may need to update application code to resolve this error. 
+    remote: Or, you can disable collectstatic for this application: 
+    remote: 
+    remote: $ heroku config:set DISABLE_COLLECTSTATIC=1
+    ```
+- Sigue dando errores y al parecer hay que instalar otros programas **unicorn** y **whitenoise** tampoco es compatible con la distribución (dirtree) que tengo.
+- Lo dejo a medias... :s. Tiene que haber otra forma más sencilla de desplegar **Django**
+
+
 
 
