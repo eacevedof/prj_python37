@@ -12,6 +12,7 @@ django-rest-swagger = "*"
 django-debug-toolbar = "*"
 gunicorn = "*"
 whitenoise = "*"
+django-heroku = "*"
 
 [requires]
 python_version = "3.7"
