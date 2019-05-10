@@ -93,7 +93,9 @@ urllib3==1.24.3
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
     ```
-- 
+- Vamos a: **settings.py**
+    - `ALLOWED_HOSTS = ["<myspace>.pythonanywhere.com"]`
+
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
