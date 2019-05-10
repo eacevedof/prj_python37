@@ -6,10 +6,10 @@ if ENV=="prod":
     DATABASES = {
         "default": {
                 'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'db_learnlang',
-                'USER': 'root',
-                'PASSWORD': '',
-                'HOST': 'eduardoaf.mysql.pythonanywhere-services.com',
+                'NAME': 'dbname',
+                'USER': 'dbuser',
+                'PASSWORD': 'dbpwd',
+                'HOST': 'dbhost',
                 'PORT': '3306',
             },
     }
