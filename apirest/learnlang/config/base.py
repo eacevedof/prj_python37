@@ -127,3 +127,4 @@ USE_TZ = True
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # print(PROJECT_ROOT) #= <project>\apirest\learnlang
 STATIC_URL = '/static/'
+
