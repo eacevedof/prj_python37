@@ -113,6 +113,8 @@ urllib3==1.24.3
         - Hay que configurar la variable **STATIC_ROOT**
         - `STATIC_ROOT = '/home/<myspace>/<your-repo>/<your-django-project>/static/'`
         - hay que ejecutar en prod: **`python manage.py collectstatic`**
+            - [explicación de este comando](https://stackoverflow.com/questions/34586114/whats-the-point-of-djangos-collectstatic)
+            
         - Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
         - Sección: **Static files:**
             - `url: /static/`
