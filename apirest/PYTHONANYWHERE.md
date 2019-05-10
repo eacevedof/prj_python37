@@ -1,6 +1,6 @@
 # so
 ```js
-(<my-env>) 17:39 ~ $ cat /etc/os-release
+(<myenv>) 17:39 ~ $ cat /etc/os-release
 NAME="Ubuntu"
 VERSION="16.04.5 LTS (Xenial Xerus)"
 ID=ubuntu
@@ -17,23 +17,23 @@ UBUNTU_CODENAME=xenial
 # Pasos
 
 - hacer git clone
-- ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <my-env>`
+- ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <myenv>`
     ```
-    17:33 ~ $ mkvirtualenv --python=/usr/bin/python3.7 <my-env>
+    17:33 ~ $ mkvirtualenv --python=/usr/bin/python3.7 <myenv>
     Running virtualenv with interpreter /usr/bin/python3.7
     Using base prefix '/usr'
     /usr/local/lib/python2.7/dist-packages/virtualenv.py:1041: DeprecationWarning: 
     the imp module is deprecated in favour of importlib; 
     see the module's documentation for alternative uses
     import imp
-    New python executable in /home/<myaccount>/.virtualenvs/<my-env>/bin/python3.7
-    Also creating executable in /home/<myaccount>/.virtualenvs/<my-env>/bin/python
+    New python executable in /home/<myaccount>/.virtualenvs/<myenv>/bin/python3.7
+    Also creating executable in /home/<myaccount>/.virtualenvs/<myenv>/bin/python
     Installing setuptools, pip, wheel...done.
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<my-env>/bin/predeactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<my-env>/bin/postdeactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<my-env>/bin/preactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<my-env>/bin/postactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<my-env>/bin/get_env_details    
+    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/predeactivate
+    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/postdeactivate
+    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/preactivate
+    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/postactivate
+    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/get_env_details    
     ```
     - **the imp module is deprecated in favour of importlib; **
         - No encontré nada para esta advertencia
@@ -69,3 +69,9 @@ sqlparse==0.3.0
 uritemplate==3.0.0
 urllib3==1.24.3
 ```
+- Vamos a: `https://www.pythonanywhere.com/user/<myaccount>/webapps/#tab_id_<myaccount>_pythonanywhere_com`
+- En virtualenv configuramos la ruta:
+    - `/home/<myaccount>/.virtualenvs/<myenv>`
+
+
+
