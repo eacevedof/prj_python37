@@ -93,12 +93,15 @@ urllib3==1.24.3
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
     ```
-- Vamos a: **settings.py**
+- Vamos a: **settings.py** y configuramos **static**
     - `ALLOWED_HOSTS = ["<myspace>.pythonanywhere.com"]`
     - Hay que configurar la variable **STATIC_ROOT**
     - `STATIC_ROOT` = '/home/<myspace>/prj_python37/apirest/static/'
-    - hay que ejecutar **`python manage.py collectstatic`**
-
+    - hay que ejecutar en prod: **`python manage.py collectstatic`**
+    - Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
+    - Sección: **Static files:**
+        >> ur: /static/
+        >> directory: local-path-to-static
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
