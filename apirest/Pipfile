@@ -7,13 +7,10 @@ verify_ssl = true
 
 [packages]
 mysqlclient = "*"
-djangorestframework = "*"
 Django = "*"
-django-rest-swagger = "*"
 django-debug-toolbar = "*"
-gunicorn = "*"
-whitenoise = "*"
-django-heroku = "*"
+djangorestframework = "*"
+django-rest-swagger = "*"
 
 [requires]
 python_version = "3.7"
