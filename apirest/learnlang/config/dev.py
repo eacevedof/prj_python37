@@ -1,7 +1,7 @@
 from .base import *
 s("settings.dev.py")
 
-if DEBUG:
+if ENV=="dev" and DEBUG:
 
     def custom_show_toolbar(request):
         """ Only show the debug toolbar to users with the superuser flag. """
