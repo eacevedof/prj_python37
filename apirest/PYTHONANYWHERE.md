@@ -114,7 +114,7 @@ urllib3==1.24.3
         - `STATIC_ROOT = '/home/<myspace>/<your-repo>/<your-django-project>/static/'`
         - hay que ejecutar en prod: **`python manage.py collectstatic`**
             - [explicación de este comando](https://stackoverflow.com/questions/34586114/whats-the-point-of-djangos-collectstatic)
-            
+            - ![resultado](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/413x480/38e032a8615fb8ce9727a915d42f3384/image.png)
         - Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
         - Sección: **Static files:**
             - `url: /static/`
