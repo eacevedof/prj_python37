@@ -26,14 +26,14 @@ UBUNTU_CODENAME=xenial
     the imp module is deprecated in favour of importlib; 
     see the module's documentation for alternative uses
     import imp
-    New python executable in /home/<myaccount>/.virtualenvs/<myenv>/bin/python3.7
-    Also creating executable in /home/<myaccount>/.virtualenvs/<myenv>/bin/python
+    New python executable in /home/<myspace>/.virtualenvs/<myenv>/bin/python3.7
+    Also creating executable in /home/<myspace>/.virtualenvs/<myenv>/bin/python
     Installing setuptools, pip, wheel...done.
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/predeactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/postdeactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/preactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/postactivate
-    virtualenvwrapper.user_scripts creating /home/<myaccount>/.virtualenvs/<myenv>/bin/get_env_details    
+    virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/predeactivate
+    virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/postdeactivate
+    virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/preactivate
+    virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/postactivate
+    virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/get_env_details    
     ```
     - **the imp module is deprecated in favour of importlib; **
         - No encontré nada para esta advertencia
@@ -69,9 +69,29 @@ sqlparse==0.3.0
 uritemplate==3.0.0
 urllib3==1.24.3
 ```
-- Vamos a: `https://www.pythonanywhere.com/user/<myaccount>/webapps/#tab_id_<myaccount>_pythonanywhere_com`
+- Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
 - En virtualenv configuramos la ruta:
-    - `/home/<myaccount>/.virtualenvs/<myenv>`
+    - `/home/<myspace>/.virtualenvs/<myenv>`
+- Editar:
+    - `https://www.pythonanywhere.com/user/<myspace>/files/var/www/<myspace>_pythonanywhere_com_wsgi.py?edit`
+    - Quitamos todo lo que no sea parte del framework que estamos usando, en este caso Django.
+    - configuramos la variable **path**:
+        - `/home/<myspace>/prj_python37/apirest`
+    - configuramos **DJANGO_SETTINGS_MODULE**
+        - `learnlang.settings`
+    - guardamos y cerramos
+    ```py
+    import os
+    import sys
+
+    path = '/home/<myspace>/prj_python37/apirest'
+    if path not in sys.path:
+        sys.path.append(path)
+
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'learnlang.settings'
+    from django.core.wsgi import get_wsgi_application
+    application = get_wsgi_application()
+    ```
 
 
 
