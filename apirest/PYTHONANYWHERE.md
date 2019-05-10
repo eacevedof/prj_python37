@@ -18,7 +18,7 @@ UBUNTU_CODENAME=xenial
 
 - hacer git clone
 - ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <myenv>`
-    ```
+    ```js
     17:33 ~ $ mkvirtualenv --python=/usr/bin/python3.7 <myenv>
     Running virtualenv with interpreter /usr/bin/python3.7
     Using base prefix '/usr'
@@ -92,6 +92,22 @@ urllib3==1.24.3
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
     ```
+
+## Errores:
+- Si ejecuto: `python manage.py runserver` 
+    ```js
+    File "<frozen importlib._bootstrap>", line 677, in _load_unlocked
+    File "<frozen importlib._bootstrap_external>", line 728, in exec_module
+    File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+    File "/home/<myspace>/prj_python37/apirest/learnlang/settings.py", line 1, in <module>
+    from .config.dev import *
+    File "/home/<myspace>/prj_python37/apirest/learnlang/config/dev.py", line 1, in <module>
+    from .base import *
+    File "/home/<myspace>/prj_python37/apirest/learnlang/config/base.py", line 15, in <module>
+    import django_heroku
+    ModuleNotFoundError: No module named 'django_heroku'    
+    ```
+
 
 
 
