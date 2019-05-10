@@ -125,6 +125,12 @@ urllib3==1.24.3
 ## Mysql
 - [Cómo hacer un restore](https://help.pythonanywhere.com/pages/MySQLBackupRestore/)
 - `mysql -u yourusername -h yourusername.mysql.pythonanywhere-services.com 'yourusername$dbname'  < db-backup.sql`
+    - Esto no funciona :S
+    - Esto sí:
+        ```js
+        USE <myspace>$<mydbname>;
+        SOURCE /home/<myspace>/prj_python37/apirest/db/<mydbname>_2.0.3.sql;
+        ```
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
