@@ -3,6 +3,7 @@
 
 ### [Parte 5 - Django Rest Framework PIPENV (Fazt y otros)](https://github.com/eacevedof/prj_python37/tree/master/apirest)
 - [pipenv - FAZT](https://www.youtube.com/watch?v=-XIsKyNWILo)
+- [Despliegue en Pythonanywhere](https://github.com/eacevedof/prj_python37/blob/master/apirest/PYTHONANYWHERE.md)
 - [Despliegue en Heroku](https://github.com/eacevedof/prj_python37/blob/master/apirest/HEROKU.md)
 
 ### [Parte 4 - App Platzi Django (platzigram)](https://github.com/eacevedof/prj_python37/tree/master/platzigram)

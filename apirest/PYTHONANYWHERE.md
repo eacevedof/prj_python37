@@ -15,6 +15,7 @@ UBUNTU_CODENAME=xenial
 ```
 
 # Pasos
+#### [Video Youtube](https://youtu.be/Y4c4ickks2A)
 
 - hacer git clone
 - ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <myenv>`
@@ -92,6 +93,7 @@ urllib3==1.24.3
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
     ```
+- 
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
@@ -107,7 +109,7 @@ urllib3==1.24.3
     import django_heroku
     ModuleNotFoundError: No module named 'django_heroku'    
     ```
-
+    - Quito las dependencias de heroku y parece que esto tira :)
 
 
 
