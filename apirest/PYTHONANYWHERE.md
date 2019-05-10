@@ -116,8 +116,9 @@ urllib3==1.24.3
         - Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
         - Sección: **Static files:**
             - `url: /static/`
-            - `directory: local-path-to-static`
-    - **reload...**
+            - `directory: /home/<myspace>/<your-repo>/<your-django-project>/static/`
+    - **Reload!...**
+    - Funciona!! ^^
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
