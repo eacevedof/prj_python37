@@ -19,6 +19,18 @@ UBUNTU_CODENAME=xenial
 
 - Conectate por consola `https://www.pythonanywhere.com/user/<myspace>/consoles/`
 - `git clone <your-repo>`
+#### my-repo structure:
+```js
+<your-repo>/
+    <your-django-project>/              //django-admin startproject <your-django-project>
+        <your-django-base-config>/
+            __init__.py
+            settings.py
+            urls.py
+            wsgi.py
+        static/
+        manage.py
+```
 - ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <myenv>`
     ```js
     17:33 ~ $ mkvirtualenv --python=/usr/bin/python3.7 <myenv>
@@ -79,26 +91,26 @@ urllib3==1.24.3
     - `https://www.pythonanywhere.com/user/<myspace>/files/var/www/<myspace>_pythonanywhere_com_wsgi.py?edit`
     - Quitamos todo lo que no sea parte del framework que estamos usando, en este caso Django.
     - configuramos la variable **path**:
-        - `/home/<myspace>/prj_python37/apirest`
+        - `/home/<myspace>/<your-repo>/<your-django-project>`
     - configuramos **DJANGO_SETTINGS_MODULE**
-        - `learnlang.settings`
+        - `<your-django-base-config>.settings`
     - guardamos y cerramos
     ```py
     import os
     import sys
 
-    path = '/home/<myspace>/prj_python37/apirest'
+    path = '/home/<myspace>/<your-repo>/<your-django-project>'
     if path not in sys.path:
         sys.path.append(path)
 
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'learnlang.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = '<your-django-base-config>.settings'
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
     ```
 - Vamos a: **settings.py** y configuramos **static**
     - `ALLOWED_HOSTS = ["<myspace>.pythonanywhere.com"]`
     - Hay que configurar la variable **STATIC_ROOT**
-    - `STATIC_ROOT` = '/home/<myspace>/prj_python37/apirest/static/'
+    - `STATIC_ROOT` = '/home/<myspace>/<your-repo>/<your-django-project>/static/'
     - hay que ejecutar en prod: **`python manage.py collectstatic`**
     - Vamos a: `https://www.pythonanywhere.com/user/<myspace>/webapps/#tab_id_<myspace>_pythonanywhere_com`
     - Sección: **Static files:**
@@ -112,11 +124,11 @@ urllib3==1.24.3
     File "<frozen importlib._bootstrap>", line 677, in _load_unlocked
     File "<frozen importlib._bootstrap_external>", line 728, in exec_module
     File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-    File "/home/<myspace>/prj_python37/apirest/learnlang/settings.py", line 1, in <module>
+    File "/home/<myspace>/<your-repo>/<your-django-project>/<your-django-base-config>/settings.py", line 1, in <module>
     from .config.dev import *
-    File "/home/<myspace>/prj_python37/apirest/learnlang/config/dev.py", line 1, in <module>
+    File "/home/<myspace>/<your-repo>/<your-django-project>/<your-django-base-config>/config/dev.py", line 1, in <module>
     from .base import *
-    File "/home/<myspace>/prj_python37/apirest/learnlang/config/base.py", line 15, in <module>
+    File "/home/<myspace>/<your-repo>/<your-django-project>/<your-django-base-config>/config/base.py", line 15, in <module>
     import django_heroku
     ModuleNotFoundError: No module named 'django_heroku'    
     ```
