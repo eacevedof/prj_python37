@@ -95,6 +95,8 @@ urllib3==1.24.3
     ```
 - Vamos a: **settings.py**
     - `ALLOWED_HOSTS = ["<myspace>.pythonanywhere.com"]`
+    - Hay que configurar la variable **STATIC_ROOT**
+    - 
 
 
 ## Errores:
