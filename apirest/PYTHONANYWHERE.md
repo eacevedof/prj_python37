@@ -15,9 +15,10 @@ UBUNTU_CODENAME=xenial
 ```
 
 # Pasos
-#### [Video Youtube](https://youtu.be/Y4c4ickks2A)
+## [Youtube Video tutorial by Pretty Printed](https://youtu.be/Y4c4ickks2A)
 
-- hacer git clone
+- Conectate por consola `https://www.pythonanywhere.com/user/<myspace>/consoles/`
+- `git clone <your-repo>`
 - ejecutar `mkvirtualenv --python=/usr/bin/python3.7 <myenv>`
     ```js
     17:33 ~ $ mkvirtualenv --python=/usr/bin/python3.7 <myenv>
@@ -36,9 +37,10 @@ UBUNTU_CODENAME=xenial
     virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/postactivate
     virtualenvwrapper.user_scripts creating /home/<myspace>/.virtualenvs/<myenv>/bin/get_env_details    
     ```
-    - **the imp module is deprecated in favour of importlib; **
+    - **`the imp module is deprecated in favour of importlib;`**
         - No encontré nada para esta advertencia
 
+#### Los paquetes que necesito:
 - pip install django
 - pip install django-debug-toolbar
 - pip install djangorestframework
@@ -102,6 +104,7 @@ urllib3==1.24.3
     - Sección: **Static files:**
         >> ur: /static/
         >> directory: local-path-to-static
+    - **reload...**
 
 ## Errores:
 - Si ejecuto: `python manage.py runserver` 
