@@ -96,7 +96,7 @@ urllib3==1.24.3
 - Vamos a: **settings.py**
     - `ALLOWED_HOSTS = ["<myspace>.pythonanywhere.com"]`
     - Hay que configurar la variable **STATIC_ROOT**
-    - 
+    - `STATIC_ROOT` = '/home/<myspace>/prj_python37/apirest/static/'
 
 
 ## Errores:
