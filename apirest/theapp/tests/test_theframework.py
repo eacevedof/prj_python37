@@ -17,7 +17,7 @@ class ComponentLogTest(TestCase):
 
     def get_pathlog(self):
         from datetime import datetime
-        strfilename = "app_"+(datetime.now()).strftime("%Y%m%d-%H%M%S")+".log"
+        strfilename = "app_"+(datetime.now()).strftime("%Y%m%d")+".log"
         pathfolder = self.get_currpath()
         pathfile = os.path.join(
                         pathfolder,
@@ -27,13 +27,14 @@ class ComponentLogTest(TestCase):
 
 
     def test_logdebug(self):
-        p("test_logdebug")
+        pr("test_logdebug")
         o = ComponentLog()
         o.save("texto de 11111")
         o.save("texto de prueba2 con titulo","Linea 2")
         pathlogfile = self.get_pathlog()
+        pr(pathlogfile)
         isFile = self.is_file(pathlogfile)
-        self.assertBoolean(isFile,True)
+        self.assertEqual(isFile,True)
 
 
 """
