@@ -1,3 +1,4 @@
+# builtins_ext.py 1.0.0
 import builtins
 from pprint import pprint 
 
@@ -25,6 +26,7 @@ class CheckType():
     @staticmethod
     def is_bool(mxvar):
         return isinstance(mxvar, bool)
+
     @staticmethod
     def is_float(mxvar):
         return isinstance(mxvar, float)
@@ -32,9 +34,11 @@ class CheckType():
     @staticmethod
     def is_int(mxvar):
         return isinstance(mxvar, int)
+
     @staticmethod
     def is_float(mxvar):
         return isinstance(mxvar, float)
+
     @staticmethod
     def is_string(mxvar):
         return isinstance(mxvar, str)
@@ -45,6 +49,7 @@ class CheckType():
     @staticmethod
     def is_dict(mxvar):
         return isinstance(mxvar, dict)
+
     @staticmethod
     def is_tuple(mxvar):
         return isinstance(mxvar, tuple)
