@@ -32,8 +32,9 @@ class ComponentLogTest(TestCase):
         o.save("texto de 11111")
         o.save("texto de prueba2 con titulo","Linea 2")
         pathlogfile = self.get_pathlog()
-        pr(pathlogfile)
+        pr("is_file:"+pathlogfile)
         isFile = self.is_file(pathlogfile)
+        pr("result: "+str(isFile))
         self.assertEqual(isFile,True)
 
 
