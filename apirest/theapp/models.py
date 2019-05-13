@@ -95,6 +95,113 @@ class AppExam(models.Model):
         db_table = 'app_exam'
 
 
+class Template(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_template'
+
+
+class TemplateArray(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    type = models.CharField(max_length=15, blank=True, null=True)
+    id_tosave = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
+    order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_template_array'
+
+
+class AppArray(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    type = models.CharField(max_length=15, blank=True, null=True)
+    module = models.CharField(max_length=25, blank=True, null=True)
+    id_tosave = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
+    order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'app_array'
+
+
+class AppExam(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    code_erp = models.CharField(max_length=25, blank=True, null=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    is_notificable = models.IntegerField(blank=True, null=True)
+    is_shareable = models.PositiveIntegerField()
+    url_video = models.CharField(max_length=1000, blank=True, null=True)
+    url_document = models.CharField(max_length=1000, blank=True, null=True)
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'app_exam'
+
+
 class AppExamsSentences(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True)
@@ -211,6 +318,32 @@ class AppExamsUsersEvall(models.Model):
         db_table = 'app_exams_users_evall'
 
 
+class AppExamsUsersSchedule(models.Model):
+    processflag = models.CharField(max_length=5, blank=True, null=True)
+    insert_platform = models.CharField(max_length=3, blank=True, null=True)
+    insert_user = models.CharField(max_length=15, blank=True, null=True)
+    insert_date = models.CharField(max_length=14, blank=True, null=True)
+    update_platform = models.CharField(max_length=3, blank=True, null=True)
+    update_user = models.CharField(max_length=15, blank=True, null=True)
+    update_date = models.CharField(max_length=14, blank=True, null=True)
+    delete_platform = models.CharField(max_length=3, blank=True, null=True)
+    delete_user = models.CharField(max_length=15, blank=True, null=True)
+    delete_date = models.CharField(max_length=14, blank=True, null=True)
+    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
+    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
+    is_enabled = models.CharField(max_length=3, blank=True, null=True)
+    i = models.IntegerField(blank=True, null=True)
+    id_exams_users = models.IntegerField()
+    id_level = models.IntegerField(blank=True, null=True)
+    date_checked = models.CharField(max_length=14, blank=True, null=True)
+    date_next = models.CharField(max_length=14, blank=True, null=True)
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'app_exams_users_schedule'
+
+
 class AppSentence(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True)
@@ -291,30 +424,6 @@ class AppSentenceTags(models.Model):
         db_table = 'app_sentence_tags'
 
 
-class AppSentenceTimes(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    id_sentence = models.IntegerField()
-    date_checked = models.CharField(max_length=14, blank=True, null=True)
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'app_sentence_times'
-
-
 class AppSentenceTr(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True)
@@ -389,10 +498,77 @@ class AppTag(models.Model):
     description = models.CharField(max_length=50, blank=True, null=True)
     slug = models.CharField(max_length=100, blank=True, null=True)
     order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'app_tag'
+
+
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
+
+
+class AuthGroupPermissions(models.Model):
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group', 'permission'),)
+
+
+class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type', 'codename'),)
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.IntegerField()
+    username = models.CharField(unique=True, max_length=150)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    date_joined = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+
+class AuthUserGroups(models.Model):
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_groups'
+        unique_together = (('user', 'group'),)
+
+
+class AuthUserUserPermissions(models.Model):
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_user_permissions'
+        unique_together = (('user', 'permission'),)
 
 
 class BaseLanguage(models.Model):
@@ -415,6 +591,7 @@ class BaseLanguage(models.Model):
     description = models.CharField(max_length=250, blank=True, null=True)
     code_iso = models.CharField(max_length=10, blank=True, null=True)
     order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -440,6 +617,7 @@ class BaseLanguageLang(models.Model):
     id_language = models.IntegerField(blank=True, null=True)
     description = models.CharField(max_length=250, blank=True, null=True)
     order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -463,23 +641,15 @@ class BaseUser(models.Model):
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
-    first_name = models.CharField(max_length=100, blank=True, null=True)
-    last_name = models.CharField(max_length=100, blank=True, null=True)
-    email = models.CharField(max_length=50, blank=True, null=True)
-    bo_login = models.CharField(max_length=100, blank=True, null=True)
-    bo_password = models.CharField(max_length=250, blank=True, null=True)
-    md_login = models.CharField(max_length=100, blank=True, null=True)
-    md_password = models.CharField(max_length=250, blank=True, null=True)
-    language = models.CharField(max_length=50, blank=True, null=True)
+    id_country = models.IntegerField(blank=True, null=True)
     id_language = models.IntegerField(blank=True, null=True)
-    id_start_module = models.IntegerField(blank=True, null=True)
     path_picture = models.CharField(max_length=100, blank=True, null=True)
     id_profile = models.IntegerField(blank=True, null=True)
-    code_type = models.CharField(max_length=25, blank=True, null=True)
-    bo_tokenreset = models.CharField(max_length=250, blank=True, null=True)
-    md_tokenreset = models.CharField(max_length=250, blank=True, null=True)
+    tokenreset = models.CharField(max_length=250, blank=True, null=True)
     log_attempts = models.IntegerField(blank=True, null=True)
     rating = models.IntegerField(blank=True, null=True)
+    date_validated = models.CharField(max_length=14, blank=True, null=True)
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -506,62 +676,13 @@ class BaseUserArray(models.Model):
     id_tosave = models.CharField(max_length=25, blank=True, null=True)
     description = models.CharField(max_length=250, blank=True, null=True)
     order_by = models.IntegerField()
+    code_cache = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'base_user_array'
 
 
-class Template(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = '_template'
-
-
-class TemplateArray(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    type = models.CharField(max_length=15, blank=True, null=True)
-    id_tosave = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=250, blank=True, null=True)
-    order_by = models.IntegerField()
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = '_template_array'
-        
 class VersionDb(models.Model):
     date = models.CharField(max_length=14, blank=True, null=True)
     version = models.CharField(max_length=15, blank=True, null=True)
