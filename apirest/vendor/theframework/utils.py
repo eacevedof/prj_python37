@@ -2,6 +2,7 @@ s("theframework.utils.py")
 # utils\utils.py
 import random
 from datetime import datetime
+from pytz import timezone
 import uuid
 
 def get_now():
@@ -18,12 +19,11 @@ def get_uuid():
     # return str(uuid.uuid4()) este se repite
 
 def get_datetime(strdatetime):
-    dt_str = "08/08/2019 15:05:03 PM"
-    objdatetime = datetime.strptime(dt_str,"%m/%d/%Y %I:%M:%S %p")
-    objdatetime = datetime.strptime(dt_str,'%Y-%m-%d %H:%M:%S.%f').strftime('%m/%d/%Y')
-    # return datetime.datetime.utcnow()
-    return objdatetime
-
+    strdate = "20190102153348"
+    objdatetime = datetime.strptime(strdate,'%Y%m%d%H%M%S')#.strftime('%m/%d/%Y')
+    objdatetimeutc = timezone('UTC').localize(objdatetime)
+    # objdatetime = datetime.strptime(strdate,'%Y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')
+    return objdatetimeutc
 
 def get_platform():
     """
