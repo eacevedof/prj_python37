@@ -34,9 +34,13 @@ class DatetimeTest(TestCase):
         bug(objdatetimeutc,"objdatetimeutc")    
     
     def test_tzinfo2(self):
+        # https://stackoverflow.com/questions/79797/how-to-convert-local-time-string-to-utc
+        # import pytz, datetime
         local = pytz.timezone ("America/Los_Angeles")
+        naive = datetime.datetime.strptime ("2001-2-3 10:11:12", "%Y-%m-%d %H:%M:%S")
         local_dt = local.localize(naive, is_dst=None)
-        utc_dt = local_dt.astimezone(pytz.utc)   
+        utc_dt = local_dt.astimezone(pytz.utc)
+        utc_dt.strftime ("%Y-%m-%d %H:%M:%S")
 
 """
 py manage.py test theapp.tests.test_datetime
