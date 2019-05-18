@@ -5,7 +5,6 @@ from pytz import timezone
 
 from django.test import TestCase
 
-
 class DatetimeTest(TestCase):
     # https://www.saltycrane.com/blog/2009/05/converting-time-zones-datetime-objects-python/
 
@@ -32,7 +31,12 @@ class DatetimeTest(TestCase):
         strdate = self.strdate
         objdatetime = datetime.strptime(strdate,'%Y%m%d%H%M%S')
         objdatetimeutc = timezone('UTC').localize(objdatetime)
-        bug(objdatetimeutc,"objdatetimeutc")       
+        bug(objdatetimeutc,"objdatetimeutc")    
+    
+    def test_tzinfo2(self):
+        local = pytz.timezone ("America/Los_Angeles")
+        local_dt = local.localize(naive, is_dst=None)
+        utc_dt = local_dt.astimezone(pytz.utc)   
 
 """
 py manage.py test theapp.tests.test_datetime
