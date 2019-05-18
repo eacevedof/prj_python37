@@ -95,36 +95,6 @@ class AppExam(models.Model):
         db_table = 'app_exam'
 
 
-
-
-class AppArray(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    type = models.CharField(max_length=15, blank=True, null=True)
-    module = models.CharField(max_length=25, blank=True, null=True)
-    id_tosave = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=250, blank=True, null=True)
-    order_by = models.IntegerField()
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'app_array'
-
-
 class AppExam(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True)
