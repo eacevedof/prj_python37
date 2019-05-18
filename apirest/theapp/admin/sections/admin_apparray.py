@@ -1,5 +1,5 @@
-s("theapp.admin.models.apparrayadmin")
-from .theappmodel import TheappModelAdmin
+s("theapp.admin.sections.admin_apparray")
+from .admin_theapp import TheappModelAdmin
 
 class AppArrayAdmin(TheappModelAdmin):
     exclude = (

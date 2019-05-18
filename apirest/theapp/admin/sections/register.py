@@ -1,7 +1,7 @@
-s("theapp.admin.override.py")
+s("theapp.admin.sections.register.py")
 from django.contrib import admin
-from .theappmodel import *
-from .apparrayadmin import *
+from .admin_theapp import *
+from .admin_apparray import *
 
 admin.site.register(AppArray,AppArrayAdmin)
 admin.site.register(AppExam)
