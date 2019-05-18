@@ -2,7 +2,7 @@ s("theapp.admin.override.py")
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from vendor.theframework import utils as u
-from ..models.models import *
+from ...models.models import *
 
 class TheappModelAdmin(admin.ModelAdmin):
     objuser = None
