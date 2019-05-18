@@ -10,6 +10,34 @@ from datetime import datetime
 from time import strftime, mktime
 import time
 
+
+class TheappDatetime(models.DateTimeField):
+	
+    __metaclass__ = models.DateTimeField
+
+    def __init__(self, null=False, blank=False, **kwargs):
+        super(TheappDatetime, self).__init__(**kwargs)
+
+
+    def from_db_value(self, value, expression, connection, context):
+        pr("from_db_value","TheappDatetime")
+        pr(value)
+        # pr(value,"TheappDatetime.from_db_value.value calling self.to_python")
+        # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
+        # al formato que entiende django como booleano (True,False)      
+        return self.to_python(value)
+
+    def to_python(self, value):
+        pr("to_python","TheappDatetime")
+        pr(value)
+        super(TheappDatetime, self)
+        try:
+            return u.get_datetime(value)
+            return datetime.fromtimestamp(float(value))
+        except:
+            return value
+
+
 class UnixTimestampField(models.DateTimeField):
     
     __metaclass__ = models.DateTimeField
@@ -34,30 +62,6 @@ class UnixTimestampField(models.DateTimeField):
         if value==None:
             return None
         return time.mktime(value.timetuple())
-
-
-class TheappDatetime(models.DateTimeField):
-	
-    __metaclass__ = models.DateTimeField
-
-    def __init__(self, null=False, blank=False, **kwargs):
-        super(TheappDatetime, self).__init__(**kwargs)
-
-
-    def from_db_value(self, value, expression, connection, context):
-        # pr("from_db_value","TheappDatetime")
-        # pr(value,"TheappDatetime.from_db_value.value calling self.to_python")
-        # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
-        # al formato que entiende django como booleano (True,False)      
-        return self.to_python(value)
-
-    def to_python(self, value):
-        super(TheappDatetime, self)
-        try:
-            return u.get_datetime(value)
-            return datetime.fromtimestamp(float(value))
-        except:
-            return value
 
 
 class TheappBooleanField(models.BooleanField):    
