@@ -9,6 +9,7 @@ s("theapp.models.models.py")
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 # from .managers import *
+from datetime import datetime 
 from .fields import *
 from vendor.theframework import utils as u
 
@@ -19,7 +20,8 @@ class TheappModel(models.Model):
     processflag = models.CharField(max_length=5, blank=True, null=True)
     insert_platform = models.CharField(max_length=3, blank=True, null=True, editable=False)
     insert_user = models.CharField(max_length=15, blank=True, null=True, editable=False)
-    insert_date = models.CharField(max_length=14, blank=True, null=True, editable=False)
+    # insert_date = models.CharField(max_length=14, blank=True, null=True, editable=False)
+    insert_date = TheappDatetime(default=datetime.now, blank=True)
     update_platform = models.CharField(max_length=3, blank=True, null=True, editable=False)
     update_user = models.CharField(max_length=15, blank=True, null=True, editable=False)
     update_date = models.CharField(max_length=14, blank=True, null=True, editable=False)
