@@ -4,33 +4,64 @@ import re
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from vendor.theframework import utils as u
+
+from datetime import datetime
+from time import strftime, mktime
+import time
+
+class UnixTimestampField(models.DateTimeField):
+    
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, null=False, blank=False, **kwargs):
+        super(UnixTimestampField, self).__init__(**kwargs)
+
+    def db_type(self):
+        typ=['bigint']
+        if self.isnull:
+            typ += ['NULL']
+        return ' '.join(typ)
+
+    def to_python(self, value):
+        super(UnixTimestampField, self)
+        try:
+            return datetime.fromtimestamp(float(value))
+        except:
+            return value
+
+    def get_db_prep_value(self, value):
+        if value==None:
+            return None
+        return time.mktime(value.timetuple())
+
+    def get_prep_value(self, value):
+        if value==None:
+            return None
+        return time.mktime(value.timetuple())
+
 
 class TheappDatetime(models.DateTimeField):
-    def deconstruct(self):
-        pr("deconstruct","TheappDate")
-        name, path, args, kwargs = super().deconstruct()
-        #pr(name,"deconstruct.name")
-        #pr(path,"deconstruct.path")
-        #pr(args,"deconstruct.args")
-        pr(kwargs,"deconstruct.kwargs")
-        return name, path, args, kwargs   
+	
+    # __metaclass__ = models.SubfieldBase
+
+    def __init__(self, null=False, blank=False, **kwargs):
+        super(TheappDatetime, self).__init__(**kwargs)
+
 
     def from_db_value(self, value, expression, connection, context):
-        # pr("from_db_value","TheappDate")
-        # pr(value,"TheappDate.from_db_value.value calling self.to_python")
+        # pr("from_db_value","TheappDatetime")
+        # pr(value,"TheappDatetime.from_db_value.value calling self.to_python")
         # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
         # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
-        
+
     def to_python(self, value):
-        """
-        Convert the input value into the expected Python data type, raising
-        django.core.exceptions.ValidationError if the data can't be converted.
-        Return the converted value. Subclasses should override this.
-        """        
-        pr(value,"TheappDate.to_python.value - value to form")
-        # YYYY-MM-DD HH:MM[:ss
-        return "2019-05-18 14:03:15"
+        super(TheappDatetime, self)
+        try:
+            return datetime.fromtimestamp(float(value))
+        except:
+            return value
 
 
 class TheappBooleanField(models.BooleanField):    

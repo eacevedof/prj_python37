@@ -17,6 +17,12 @@ def get_uuid():
     return str(uuid.uuid1())
     # return str(uuid.uuid4()) este se repite
 
+def get_datetime(strdatetime):
+    dt_str = "8/8/2013 4:05:03 PM"
+    unaware_est = datetime.strptime(dt_str,"%m/%d/%Y %I:%M:%S %p")
+    return datetime.datetime.utcnow()
+    return unaware_est
+
 
 def get_platform():
     """
