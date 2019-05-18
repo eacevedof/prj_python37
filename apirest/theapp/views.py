@@ -3,7 +3,7 @@ s("views.py")
 from django.shortcuts import render
 
 from rest_framework import viewsets
-from .models import *
+from .models.models import *
 from .serializers import *
 from vendor.theframework import utils as u
 
@@ -73,10 +73,6 @@ class AppSentenceTagsViewSet(viewsets.ModelViewSet):
     queryset = AppSentenceTags.objects.all()
     serializer_class = AppSentenceTagsSerializer
 
-class AppSentenceTimesViewSet(viewsets.ModelViewSet):
-    queryset = AppSentenceTimes.objects.all()
-    serializer_class = AppSentenceTimesSerializer
-
 class AppSentenceTrViewSet(viewsets.ModelViewSet):
     queryset = AppSentenceTr.objects.all()
     serializer_class = AppSentenceTrSerializer
@@ -100,14 +96,6 @@ class BaseUserViewSet(viewsets.ModelViewSet):
 class BaseUserArrayViewSet(viewsets.ModelViewSet):
     queryset = BaseUserArray.objects.all()
     serializer_class = BaseUserArraySerializer
-
-class TemplateViewSet(viewsets.ModelViewSet):
-    queryset = Template.objects.all()
-    serializer_class = TemplateSerializer
-
-class TemplateArrayViewSet(viewsets.ModelViewSet):
-    queryset = TemplateArray.objects.all()
-    serializer_class = TemplateArraySerializer
 
 class VersionDbViewSet(viewsets.ModelViewSet):
     queryset = VersionDb.objects.all()

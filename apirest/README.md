@@ -515,3 +515,6 @@ No se porque estas 2 trazas me fastidian el guardado
 pr(obj,"AppModelAdmin.save_model.obj")
 pr(self.objuser,"TheappModelAdmin.self.objuser")
 ```
+
+## Refactor
+- Al hacer la generación de modelos. Hay que tener cuidado con los modelos Auth, estos hay que excluirlos de models.py porque dan conflicto con los de autocarga propios de Django.

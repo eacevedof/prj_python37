@@ -7,7 +7,7 @@ Los serializadores. Son como los formularios de Django
 
 """
 from rest_framework import serializers
-from .models import *
+from .models.models import *
 from vendor.theframework import utils as u
 
 class TheappSerializer(serializers.ModelSerializer):
@@ -117,10 +117,7 @@ class AppSentenceTagsSerializer(serializers.ModelSerializer):
         model = AppSentenceTags
         fields = '__all__'
         
-class AppSentenceTimesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AppSentenceTimes
-        fields = '__all__'
+
         
 class AppSentenceTrSerializer(serializers.ModelSerializer):
     class Meta:
@@ -151,17 +148,7 @@ class BaseUserArraySerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUserArray
         fields = '__all__'
-        
-class TemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Template
-        fields = '__all__'
-        
-class TemplateArraySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TemplateArray
-        fields = '__all__'
-        
+               
 class VersionDbSerializer(serializers.ModelSerializer):
     class Meta:
         model = VersionDb
