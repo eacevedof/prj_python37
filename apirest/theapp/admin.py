@@ -1,7 +1,7 @@
 s("admin.py")
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from utils import utils as u
+from vendor.theframework import utils as u
 from .models import *
 
 admin.site.site_header = "Learnlang -  Admin Pannel"

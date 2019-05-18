@@ -8,7 +8,7 @@ Los serializadores. Son como los formularios de Django
 """
 from rest_framework import serializers
 from .models import *
-from utils import utils as u
+from vendor.theframework import utils as u
 
 class TheappSerializer(serializers.ModelSerializer):
     objuser = None
