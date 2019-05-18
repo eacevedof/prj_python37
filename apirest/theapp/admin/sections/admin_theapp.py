@@ -1,4 +1,4 @@
-s("theapp.admin.models.theappmodel")
+s("theapp.admin.sections.admin_theapp")
 from django.contrib import admin
 from ...models.models import *
 from vendor.theframework import utils as u

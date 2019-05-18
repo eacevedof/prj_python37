@@ -50,6 +50,7 @@ class AppArray(TheappModel):
     
     class Meta:
         managed = False # indica si se borrara la tabla al ejecutar las migraciones
+        unique_together = ('description', 'type',)
         db_table = 'app_array' 
 
     def __str__(self):
