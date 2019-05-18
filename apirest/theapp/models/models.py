@@ -1,4 +1,4 @@
-s("models.py")
+s("theapp.models.models.py")
 # theapp/models.py
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
@@ -30,7 +30,7 @@ class TheappModel(models.Model):
     is_erpsent = models.CharField(max_length=3, blank=True, null=True)
     # is_enabled = models.CharField(max_length=3, blank=True, null=True)
     # is_enabled = models.BooleanField(default="1")
-    is_enabled = TheappBooleanField2(default="1")
+    is_enabled = TheappBooleanField(default="1")
     i = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -54,6 +54,7 @@ class AppArray(TheappModel):
         db_table = 'app_array' 
 
     def __str__(self):
+        # no todos los modelos comparten description :S
         return f'{self.description} ({self.id})'
 
     # con property se emula un campo que se puede instanciar en admin.py
@@ -85,7 +86,7 @@ class AppExam(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     is_notificable = models.IntegerField(blank=True, null=True)
     is_shareable = models.PositiveIntegerField()
     url_video = models.CharField(max_length=1000, blank=True, null=True)
@@ -255,7 +256,7 @@ class AppSentence(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     text_orig = models.CharField(max_length=500, blank=True, null=True)
     path_audio = models.CharField(max_length=500, blank=True, null=True)
     url_resource = models.CharField(max_length=500, blank=True, null=True)
@@ -284,7 +285,7 @@ class AppSentenceImages(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     id_sentence = models.IntegerField()
     path_local = models.CharField(max_length=500, blank=True, null=True)
     url_resource = models.CharField(max_length=500, blank=True, null=True)
@@ -335,7 +336,7 @@ class AppSentenceTr(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     text_tr = models.CharField(max_length=500, blank=True, null=True)
     id_language = models.IntegerField(blank=True, null=True)
     id_sentence = models.IntegerField(blank=True, null=True)
@@ -390,7 +391,7 @@ class AppTag(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     id_type = models.IntegerField(blank=True, null=True)
-    description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     slug = models.CharField(max_length=100, blank=True, null=True)
     order_by = models.IntegerField()
     code_cache = models.CharField(max_length=500, blank=True, null=True)
@@ -471,7 +472,7 @@ class BaseUser(models.Model):
     is_enabled = models.CharField(max_length=3, blank=True, null=True)
     i = models.IntegerField(blank=True, null=True)
     code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
     id_country = models.IntegerField(blank=True, null=True)
     id_language = models.IntegerField(blank=True, null=True)
     path_picture = models.CharField(max_length=100, blank=True, null=True)
