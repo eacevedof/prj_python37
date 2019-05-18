@@ -69,6 +69,7 @@ class CheckType():
         return (CheckType.is_list(mxvar) or CheckType.is_dict(mxvar) 
             or CheckType.is_tuple(mxvar)
         )
+       
 
 def is_primitive(mxvar):
     return CheckType.is_primitive(mxvar)
@@ -132,6 +133,9 @@ def print_format_table():
 
 # print_format_table()
 
+def prtype(mxvar):
+    print(type(mxvar))
+
 def s(strtext):
     if is_primitive(strtext):
         strtext = str(strtext)
@@ -191,5 +195,6 @@ def bug(mxvar,strtitle=""):
 builtins.s = s
 builtins.sc = sc
 builtins.pr = pr
+builtins.prtype = prtype
 builtins.bug = bug
 

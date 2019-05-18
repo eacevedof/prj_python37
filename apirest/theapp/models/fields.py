@@ -12,16 +12,11 @@ import time
 
 class UnixTimestampField(models.DateTimeField):
     
-    __metaclass__ = models.SubfieldBase
+    __metaclass__ = models.DateTimeField
 
     def __init__(self, null=False, blank=False, **kwargs):
         super(UnixTimestampField, self).__init__(**kwargs)
 
-    def db_type(self):
-        typ=['bigint']
-        if self.isnull:
-            typ += ['NULL']
-        return ' '.join(typ)
 
     def to_python(self, value):
         super(UnixTimestampField, self)
@@ -43,7 +38,7 @@ class UnixTimestampField(models.DateTimeField):
 
 class TheappDatetime(models.DateTimeField):
 	
-    # __metaclass__ = models.SubfieldBase
+    __metaclass__ = models.DateTimeField
 
     def __init__(self, null=False, blank=False, **kwargs):
         super(TheappDatetime, self).__init__(**kwargs)
@@ -59,6 +54,7 @@ class TheappDatetime(models.DateTimeField):
     def to_python(self, value):
         super(TheappDatetime, self)
         try:
+            return u.get_datetime(value)
             return datetime.fromtimestamp(float(value))
         except:
             return value

@@ -18,10 +18,11 @@ def get_uuid():
     # return str(uuid.uuid4()) este se repite
 
 def get_datetime(strdatetime):
-    dt_str = "8/8/2013 4:05:03 PM"
-    unaware_est = datetime.strptime(dt_str,"%m/%d/%Y %I:%M:%S %p")
-    return datetime.datetime.utcnow()
-    return unaware_est
+    dt_str = "08/08/2019 15:05:03 PM"
+    objdatetime = datetime.strptime(dt_str,"%m/%d/%Y %I:%M:%S %p")
+    objdatetime = datetime.strptime(dt_str,'%Y-%m-%d %H:%M:%S.%f').strftime('%m/%d/%Y')
+    # return datetime.datetime.utcnow()
+    return objdatetime
 
 
 def get_platform():
