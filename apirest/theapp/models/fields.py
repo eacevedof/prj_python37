@@ -10,7 +10,8 @@ from datetime import datetime
 from time import strftime, mktime
 import time
 
-
+# metodos que se pueden sobrescribir
+# https://stackoverflow.com/questions/41206176/overriding-methods-for-defining-custom-model-field-in-django
 class TheappDatetime(models.DateTimeField):
 	
     # __metaclass__ = models.DateTimeField
@@ -26,34 +27,43 @@ class TheappDatetime(models.DateTimeField):
         # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
 
+
     def to_python(self, value):
         if value is None:
-            bug(value,"to_python.u.get_datetime.value 0")
+            bug(value,"to_python.u.get_datetime.value None")
         elif isinstance(value,str):
             value = u.get_objdatetime(value)
-            bug(value,"to_python.u.get_datetime.value 1")
+            bug(value,"to_python.u.get_datetime.value object")
         else:
             value = u.get_strdatetime(value)
-            bug(value,"to_python.u.get_datetime.value 2")
+            bug(value,"to_python.u.get_datetime.value string")
         
         return value
 
     # métodos al guardar
+    def value_to_string(self, obj):
+        value = self.value_from_object(obj)
+        bug(value,"TheappDatetime.value_to_string.value X")
+        return value
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        bug(value,"TheappDatetime.get_db_prep_value.value 1")
+    def get_db_prep_value_(self, value, connection, prepared=False):
+        bug(value,"TheappDatetime.get_db_prep_value.value Y")
         # Converting query values to database values
         if value==None:
             return None
         return u.get_objdatetime(value)
 
-    def get_prep_value(self, value):
-        # Perform preliminary non-db specific value checks and conversions
-        bug(value,"TheappDatetime.get_prep_value.value 2")
-        if value is None:
-            return None 
-        else:
-            return u.get_objdatetime(value)       
+    def pre_save(self, model_instance, add):
+        #bug(model_instance,"TheappDatetime.pre_save.model_instance ")
+        bug(add,"TheappDatetime.pre_save.add")
+        bug(self.attname,"TheappDatetime.pre_save.self.attname")
+        return getattr(model_instance, self.attname)
+
+    def get_db_prep_save(self, value, connection, prepared=False):
+        bug(value,"TheappDatetime.get_db_prep_save.value W")
+        if value is not None:
+            value = u.get_objdatetime(value)
+        return self.get_db_prep_value(value, connection, prepared)
 
 
 class UnixTimestampField(models.DateTimeField):
