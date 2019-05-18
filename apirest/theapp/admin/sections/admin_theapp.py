@@ -40,10 +40,11 @@ class TheappModelAdmin(admin.ModelAdmin):
         pr(self.objuser,"TheappModelAdmin.self.objuser")
         pr(request,"AppModelAdmin.save_model.request")
         pr(form,"AppModelAdmin.save_model.form")
-        pr(change,"AppModelAdmin.save_model.change")
+        pr(change,"AppModelAdmin.save_model.change") # true
 
         # indica si es insert o update
         t = "u" if change else "i"
         self.__load_sysfields(obj,t)
         # obj.update_user = request.user.id
+        pr(obj,"AppModelAdmin.save_model.obj justo antes de guardar")
         super().save_model(request, obj, form, change)
