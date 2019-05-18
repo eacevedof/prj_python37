@@ -5,7 +5,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from utils import utils as u
+from vendor.theframework import utils as u
 
 class AppViewSet(viewsets.ModelViewSet):
 

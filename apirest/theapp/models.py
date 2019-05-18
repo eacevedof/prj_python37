@@ -10,7 +10,7 @@ s("models.py")
 from django.db import models
 # from .managers import *
 from .fields import *
-from utils import utils as u
+from vendor.theframework import utils as u
 
 
 class TheappModel(models.Model):
