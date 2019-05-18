@@ -5,9 +5,37 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+class TheappDatetime(models.DateTimeField):
+    def deconstruct(self):
+        pr("deconstruct","TheappDate")
+        name, path, args, kwargs = super().deconstruct()
+        #pr(name,"deconstruct.name")
+        #pr(path,"deconstruct.path")
+        #pr(args,"deconstruct.args")
+        pr(kwargs,"deconstruct.kwargs")
+        return name, path, args, kwargs   
+
+    def from_db_value(self, value, expression, connection, context):
+        # pr("from_db_value","TheappDate")
+        # pr(value,"TheappDate.from_db_value.value calling self.to_python")
+        # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
+        # al formato que entiende django como booleano (True,False)      
+        return self.to_python(value)
+        
+    def to_python(self, value):
+        """
+        Convert the input value into the expected Python data type, raising
+        django.core.exceptions.ValidationError if the data can't be converted.
+        Return the converted value. Subclasses should override this.
+        """        
+        pr(value,"TheappDate.to_python.value - value to form")
+        # YYYY-MM-DD HH:MM[:ss
+        return "2019-05-18 14:03:15"
+
+
 class TheappBooleanField(models.BooleanField):    
 # class TheappBooleanField(models.CharField):
-    description = "A field to save dollars as pennies (int) in db, but act like a float"
+    description = "Custom boolean"
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 1
