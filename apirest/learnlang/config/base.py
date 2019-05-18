@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from utils.builtins_ext import *
+from utils.theframework.builtins_ext import *
 s("settings.base.py")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
