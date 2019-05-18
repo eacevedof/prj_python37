@@ -12,7 +12,6 @@ from django.db import models
 from .fields import *
 from vendor.theframework import utils as u
 
-
 class TheappModel(models.Model):
 
     objuser = None
@@ -37,8 +36,7 @@ class TheappModel(models.Model):
     class Meta:
         abstract = True
 
-
-
+# @admin.register(AppArray)
 class AppArray(TheappModel):
     
     id = models.AutoField(primary_key=True)
@@ -68,31 +66,6 @@ class AppArray(TheappModel):
 
     # https://docs.djangoproject.com/en/dev/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model
     # como sobreescribir para añadir operaciones extras
-
-class AppExam(models.Model):
-    processflag = models.CharField(max_length=5, blank=True, null=True)
-    insert_platform = models.CharField(max_length=3, blank=True, null=True)
-    insert_user = models.CharField(max_length=15, blank=True, null=True)
-    insert_date = models.CharField(max_length=14, blank=True, null=True)
-    update_platform = models.CharField(max_length=3, blank=True, null=True)
-    update_user = models.CharField(max_length=15, blank=True, null=True)
-    update_date = models.CharField(max_length=14, blank=True, null=True)
-    delete_platform = models.CharField(max_length=3, blank=True, null=True)
-    delete_user = models.CharField(max_length=15, blank=True, null=True)
-    delete_date = models.CharField(max_length=14, blank=True, null=True)
-    cru_csvnote = models.CharField(max_length=500, blank=True, null=True)
-    is_erpsent = models.CharField(max_length=3, blank=True, null=True)
-    is_enabled = models.CharField(max_length=3, blank=True, null=True)
-    i = models.IntegerField(blank=True, null=True)
-    code_erp = models.CharField(max_length=25, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
-    is_notificable = models.IntegerField(blank=True, null=True)
-    is_shareable = models.PositiveIntegerField()
-    code_cache = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'app_exam'
 
 
 class AppExam(models.Model):
@@ -426,70 +399,6 @@ class AppTag(models.Model):
         db_table = 'app_tag'
 
 
-class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group'
-
-
-class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
-
-
-class AuthPermission(models.Model):
-    name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
-
-
-class AuthUser(models.Model):
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.IntegerField()
-    username = models.CharField(unique=True, max_length=150)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=150)
-    email = models.CharField(max_length=254)
-    is_staff = models.IntegerField()
-    is_active = models.IntegerField()
-    date_joined = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user'
-
-
-class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_groups'
-        unique_together = (('user', 'group'),)
-
-
-class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_user_permissions'
-        unique_together = (('user', 'permission'),)
 
 
 class BaseLanguage(models.Model):

@@ -2,7 +2,7 @@ s("admin.py")
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from vendor.theframework import utils as u
-from .models import *
+from .models.models import *
 
 admin.site.site_header = "Learnlang -  Admin Pannel"
 
@@ -102,7 +102,6 @@ admin.site.register(AppSentence)
 admin.site.register(AppSentenceImages)
 admin.site.register(AppSentencesUsers)
 admin.site.register(AppSentenceTags)
-admin.site.register(AppSentenceTimes)
 admin.site.register(AppSentenceTr)
 admin.site.register(AppTag)
 admin.site.register(BaseLanguage)
