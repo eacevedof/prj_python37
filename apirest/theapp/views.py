@@ -1,4 +1,4 @@
-s("views.py")
+s("theapp.views.py")
 # theapp/views.py
 from django.shortcuts import render
 
