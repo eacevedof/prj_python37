@@ -4,7 +4,7 @@ from .admin_theapp import TheappModelAdmin
 class AppArrayAdmin(TheappModelAdmin):
     exclude = (
         "processflag",
-        "insert_platform","insert_user",#"insert_date",
+        "insert_platform","insert_user","insert_date",
         "update_platform","update_user","update_date",
         "delete_platform","delete_user","delete_date",
         "cru_csvnote","is_erpsent","i","code_erp",
@@ -20,7 +20,7 @@ class AppArrayAdmin(TheappModelAdmin):
         "type","code_cache",
     )
 
-    list_editable = ("description","order_by","is_enabled","insert_date",)
+    list_editable = ("description","order_by","is_enabled",)
 
     # readonly_fields = ("is_enabled", )
 

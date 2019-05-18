@@ -19,10 +19,10 @@ def get_uuid():
     # return str(uuid.uuid4()) este se repite
 
 def get_datetime(strdatetime):
-    strdate = "20190102153348"
-    objdatetime = datetime.strptime(strdate,'%Y%m%d%H%M%S')#.strftime('%m/%d/%Y')
-    objdatetimeutc = timezone('UTC').localize(objdatetime)
-    # objdatetime = datetime.strptime(strdate,'%Y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')
+    # strdatetime = "20190102153348"
+    objdatetime = datetime.strptime(strdatetime,'%Y%m%d%H%M%S')#.strftime('%m/%d/%Y')
+    objdatetimeutc = timezone('UTC').localize(objdatetime).strftime('%Y-%m-%d %H:%M:%S') #en django: 2019-05-03 20:20:04
+    # objdatetimeutc = timezone('UTC').localize(objdatetime) #mostraria en django: May 3, 2019, 8:20 p.m.
     return objdatetimeutc
 
 def get_platform():

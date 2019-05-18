@@ -13,15 +13,14 @@ import time
 
 class TheappDatetime(models.DateTimeField):
 	
-    __metaclass__ = models.DateTimeField
+    # __metaclass__ = models.DateTimeField
 
-    def __init__(self, null=False, blank=False, **kwargs):
-        super(TheappDatetime, self).__init__(**kwargs)
-
+    #def __init__(self, null=False, blank=False, **kwargs):
+    #    super(TheappDatetime, self).__init__(**kwargs)
 
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappDatetime")
-        pr(value)
+        pr(value,"TheappDatetime.from_db_value.value")
         # pr(value,"TheappDatetime.from_db_value.value calling self.to_python")
         # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
         # al formato que entiende django como booleano (True,False)      
@@ -29,12 +28,13 @@ class TheappDatetime(models.DateTimeField):
 
     def to_python(self, value):
         pr("to_python","TheappDatetime")
-        pr(value)
-        super(TheappDatetime, self)
-        try:
-            return u.get_datetime(value)
-            return datetime.fromtimestamp(float(value))
-        except:
+        pr(value,"TheappDatetime.to_python.value")
+        # super(TheappDatetime, self)
+        if value is None:
+            return None 
+        else:
+            value = u.get_datetime(value)
+            bug(value,"to_python.u.get_datetime.value")
             return value
 
 
@@ -73,12 +73,12 @@ class TheappBooleanField(models.BooleanField):
         super(TheappBooleanField, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
-        pr("deconstruct","TheappBooleanField")
+        # pr("deconstruct","TheappBooleanField")
         name, path, args, kwargs = super().deconstruct()
         #pr(name,"deconstruct.name")
         #pr(path,"deconstruct.path")
         #pr(args,"deconstruct.args")
-        pr(kwargs,"deconstruct.kwargs")
+        #pr(kwargs,"deconstruct.kwargs")
         return name, path, args, kwargs   
 
     # def db_type(self, connection):
@@ -101,15 +101,15 @@ class TheappBooleanField(models.BooleanField):
         django.core.exceptions.ValidationError if the data can't be converted.
         Return the converted value. Subclasses should override this.
         """        
-        pr(value,"TheappBooleanField.to_python.value - value to form")
+        #pr(value,"TheappBooleanField.to_python.value - value to form")
         if value is None:
-            sc("to_python: return None")
+            #sc("to_python: return None")
             return None # muestra unknown
         elif value in (1,"1",'Y', 'y',True):
-            sc("to_python: return True")
+            #sc("to_python: return True")
             return True
         elif value in (0,"0",'N', 'n', False):
-            sc("to_python: return False")
+            #sc("to_python: return False")
             return False
         else:
             raise ValueError
