@@ -1,4 +1,4 @@
-s("app.urls.py")
+s("theapp.urls.py")
 # app-url
 # learnlang\theapp\urls.py
 # rerouting all requests that have api in the url to the <code>apps.core.urls
