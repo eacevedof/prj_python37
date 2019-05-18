@@ -18,12 +18,23 @@ def get_uuid():
     return str(uuid.uuid1())
     # return str(uuid.uuid4()) este se repite
 
-def get_datetime(strdatetime):
+def get_objdatetime(strdatetime):
     # strdatetime = "20190102153348"
-    objdatetime = datetime.strptime(strdatetime,'%Y%m%d%H%M%S')#.strftime('%m/%d/%Y')
-    objdatetimeutc = timezone('UTC').localize(objdatetime).strftime('%Y-%m-%d %H:%M:%S') #en django: 2019-05-03 20:20:04
+    strdatetime = strdatetime.replace(" ","").replace("-","").replace(":","")
+    if len(strdatetime)<14:
+        strdatetime += "0000"
+    objdatetimeutc = datetime.strptime(strdatetime,'%Y%m%d%H%M%S')#.strftime('%m/%d/%Y')
+    
+    # esta me parece bien para el listado pero no va bien para el form de modif ya que necesito un obj fecha
+    # objdatetimeutc = timezone('UTC').localize(objdatetime).strftime('%Y-%m-%d %H:%M:%S') #en django: 2019-05-03 20:20:04
+
     # objdatetimeutc = timezone('UTC').localize(objdatetime) #mostraria en django: May 3, 2019, 8:20 p.m.
     return objdatetimeutc
+
+def get_strdatetime(objdatetime):
+    strdatetime = objdatetime.strftime('%Y%m%d%H%M%S')
+    return strdatetime
+
 
 def get_platform():
     """

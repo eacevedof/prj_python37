@@ -27,15 +27,33 @@ class TheappDatetime(models.DateTimeField):
         return self.to_python(value)
 
     def to_python(self, value):
-        pr("to_python","TheappDatetime")
-        pr(value,"TheappDatetime.to_python.value")
-        # super(TheappDatetime, self)
+        if value is None:
+            bug(value,"to_python.u.get_datetime.value 0")
+        elif isinstance(value,str):
+            value = u.get_objdatetime(value)
+            bug(value,"to_python.u.get_datetime.value 1")
+        else:
+            value = u.get_strdatetime(value)
+            bug(value,"to_python.u.get_datetime.value 2")
+        
+        return value
+
+    # métodos al guardar
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        bug(value,"TheappDatetime.get_db_prep_value.value 1")
+        # Converting query values to database values
+        if value==None:
+            return None
+        return u.get_objdatetime(value)
+
+    def get_prep_value(self, value):
+        # Perform preliminary non-db specific value checks and conversions
+        bug(value,"TheappDatetime.get_prep_value.value 2")
         if value is None:
             return None 
         else:
-            value = u.get_datetime(value)
-            bug(value,"to_python.u.get_datetime.value")
-            return value
+            return u.get_objdatetime(value)       
 
 
 class UnixTimestampField(models.DateTimeField):
