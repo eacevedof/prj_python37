@@ -1,6 +1,6 @@
-s("apps.py")
+s("theapp.apps.py")
 from django.apps import AppConfig
 
 
 class TheappConfig(AppConfig):
-    name = 'theapp'
+    name = 'Learn Language API'
