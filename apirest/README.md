@@ -511,6 +511,13 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - [en admin](https://youtu.be/XphJRQ3AzMU?t=1611)
 - [editable fields](https://youtu.be/XphJRQ3AzMU?t=1865)
 - [list_filter](https://youtu.be/XphJRQ3AzMU?t=2189)
+    - [date_field filter](https://youtu.be/XphJRQ3AzMU?t=2445)
+- [Custom filters](https://youtu.be/XphJRQ3AzMU?t=2725)
+    - Se extiende de `admin.SimpleListFilter`
+    - Se define: title y parameter_name (lo que aparecerá en la sección de filtros)
+    - se define los métodos **lookups(self, request, model_admin)** y **queryset(self, request, queryset)**
+    - Una vez configurada la clase filtro, se inyecta en **list_filter** como si fuera un campo más.
+    
 
 > Nota importante
 ```py
