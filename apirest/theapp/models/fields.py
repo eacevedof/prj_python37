@@ -83,6 +83,17 @@ class TheappDatetime(models.DateTimeField):
         return self.get_db_prep_value(value, connection, prepared)
 
     def get_db_prep_value(self, value, connection, prepared=False):
+        # Casts dates into the format expected by the backend
+        if not prepared:
+            bug(value,"TheappDatetime.get_db_prep_value.value not prepared")
+            value = self.get_prep_value(value)
+            bug(value,"TheappDatetime.get_db_prep_value.get_prep_value.value not prepared")
+        
+        # value = connection.ops.adapt_datefield_value(value)
+        # bug(value,"TheappDatetime.get_db_prep_value.get_prep_value.value after adapt_datefield_value")
+        return value
+
+    def get_db_prep_value_(self, value, connection, prepared=False):
         bug(value,"TheappDatetime.get_db_prep_value.value Y")
         # Converting query values to database values
         if value==None:
@@ -91,11 +102,10 @@ class TheappDatetime(models.DateTimeField):
         return value
 
     def get_prep_value(self, value):
-        bug(value,"TheappDatetime.get_prep_value.value ----") 
+        bug(value,"TheappDatetime.get_prep_value.value") 
         if value is not None:
             value = u.get_strdatetime(value)  
         return value
-    
 
 
 class UnixTimestampField(models.DateTimeField):
