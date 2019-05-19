@@ -17,7 +17,7 @@ class AppArrayAdmin(TheappModelAdmin):
 
     # caja de texto
     search_fields = (
-        "id","description","type","module"
+        "id","description","type","module","insert_date"
     )
 
     # links de filtrado
@@ -47,6 +47,15 @@ class AppArrayAdmin(TheappModelAdmin):
 
     soft_delete.short_description = "Soft delete"
 
+    # crea una lista de filtros por defecto con fecha (debajo del desplegable)
+    date_hierarchy = "insert_date"
+
+    fields = (
+        ("type"),
+        ("description"),
+        ("order_by"),
+        ("is_enabled"),
+    )
 """
     def get_readonly_fields(self, request, obj=None):
         if obj: # obj is not None, so this is an edit

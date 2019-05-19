@@ -523,6 +523,13 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - se define una función (fuera de la clase modelo)
     - a esta función se le agrega la propiedad short_description (texto del desplegable)
     - esta función se incluye dentro del array de actions
+    - tambien se puede hacer con un método y este deberia pasarse entre comillas en el array actions (sin self)
+- [Date date_hierarchy](https://youtu.be/XphJRQ3AzMU?t=3617)
+    - crea una lista de filtros por defecto con fecha (debajo del desplegable)
+- [Detail View](https://youtu.be/XphJRQ3AzMU?t=3808)
+    - Es el formulario de creación o edición
+    - atributo **fields**
+    - atributo [**fieldsets**](https://youtu.be/XphJRQ3AzMU?t=4112)
 
 > Nota importante
 ```py
