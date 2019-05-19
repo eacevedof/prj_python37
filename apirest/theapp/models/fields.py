@@ -14,6 +14,32 @@ import time
 # https://stackoverflow.com/questions/41206176/overriding-methods-for-defining-custom-model-field-in-django
 class TheappDatetime(models.DateTimeField):
 	
+    """
+    on save:
+        AppModelAdmin.save_model
+        TheappDatetime.
+            pre_save
+            get_db_prep_save
+            get_prep_value
+            select_format
+            from_db_value
+            to_python
+    """
+    def get_internal_type(self):
+        pr("get_internal_type","CharField")
+        return "CharField"
+
+    # métodos de lectura del registro
+    def select_format(self, compiler, sql, params):
+        """
+        Custom format for select clauses. For example, GIS columns need to be
+        selected as AsText(table.col) on MySQL as the table.col data can't be
+        used by Django.
+        """
+        bug(sql,"sql")
+        bug(params,"params")
+        return sql, params
+
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappDatetime")
         pr(value,"TheappDatetime.from_db_value.value")
@@ -22,6 +48,13 @@ class TheappDatetime(models.DateTimeField):
         # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
 
+    def get_db_prep_value_(self, value, connection, prepared=False):
+        bug(value,"TheappDatetime.get_db_prep_value.value Y")
+        # Converting query values to database values
+        if value==None:
+            return None
+        value = u.get_objdatetime(value)
+        return value
 
     def to_python(self, value):
         if value is None:
@@ -35,28 +68,14 @@ class TheappDatetime(models.DateTimeField):
         
         return value
 
-    # métodos al guardar
-    def get_internal_type(self):
-        return "CharField"
-
-    def get_prep_value(self, value):
-        bug(value,"TheappDatetime.get_prep_value.value ----") 
-        if value is not None:
-            value = u.get_strdatetime(value)  
-        return value
-
+    # este creo que no se usa para nada
     def value_to_string(self, obj):
         value = self.value_from_object(obj)
         bug(value,"TheappDatetime.value_to_string.value X")
-        return value
+        return value    
 
-    def get_db_prep_value_(self, value, connection, prepared=False):
-        bug(value,"TheappDatetime.get_db_prep_value.value Y")
-        # Converting query values to database values
-        if value==None:
-            return None
-        return u.get_objdatetime(value)
 
+    # métodos al guardar, no afecta en nada
     def pre_save(self, model_instance, add):
         #bug(model_instance,"TheappDatetime.pre_save.model_instance ")
         bug(add,"TheappDatetime.pre_save.add")
@@ -71,18 +90,15 @@ class TheappDatetime(models.DateTimeField):
             value = u.get_objdatetime(value)
         return self.get_db_prep_value(value, connection, prepared)
 
-    def get_internal_type(self):
-        return "varchar"
+    def get_prep_value(self, value):
+        bug(value,"TheappDatetime.get_prep_value.value ----") 
+        if value is not None:
+            value = u.get_strdatetime(value)  
+        return value
+    
 
-    def select_format(self, compiler, sql, params):
-        """
-        Custom format for select clauses. For example, GIS columns need to be
-        selected as AsText(table.col) on MySQL as the table.col data can't be
-        used by Django.
-        """
-        bug(sql,"sql")
-        bug(params,"params")
-        return sql, params
+
+
 
 class UnixTimestampField(models.DateTimeField):
     
