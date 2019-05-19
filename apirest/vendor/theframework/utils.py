@@ -33,7 +33,15 @@ def get_objdatetime(strdatetime):
     return objdatetimeutc
 
 def get_strdatetime(objdatetime):
-    strdatetime = objdatetime.strftime('%Y%m%d%H%M%S')
+    #sc(str(type(objdatetime)))
+    #bug(objdatetime,"objdatetime")
+    # en los filtros viene como string: 2019-05-19 00:00:00+00:00
+    if isinstance(objdatetime,str):
+        strdatetime = objdatetime.replace(" ","").replace("-","").replace(":","")
+        strdatetime = strdatetime[0:14]
+        sc(objdatetime+" -> "+strdatetime)
+    else:
+        strdatetime = objdatetime.strftime('%Y%m%d%H%M%S')
     return strdatetime
 
 

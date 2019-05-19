@@ -507,8 +507,10 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - [Video](https://youtu.be/XphJRQ3AzMU?t=586)
 - [ordering](https://youtu.be/XphJRQ3AzMU?t=1365)
 - [@property](https://youtu.be/XphJRQ3AzMU?t=1439)
+    - Campo virtual o compuesto que realmente es una función 
     - [en admin](https://youtu.be/XphJRQ3AzMU?t=1611)
 - [editable fields](https://youtu.be/XphJRQ3AzMU?t=1865)
+- [list_filter](https://youtu.be/XphJRQ3AzMU?t=2189)
 
 > Nota importante
 ```py
