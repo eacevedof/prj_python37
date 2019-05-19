@@ -36,10 +36,13 @@ class TheappDatetime(models.DateTimeField):
         return value
 
     # métodos al guardar
+    def get_internal_type(self):
+        return "CharField"
+
     def get_prep_value(self, value):
         bug(value,"TheappDatetime.get_prep_value.value ----") 
         if value is not None:
-            value = u.get_strdatetime(value)
+            value = u.get_strdatetime(value)  
         return value
 
     def value_to_string(self, obj):
