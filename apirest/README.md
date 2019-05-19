@@ -530,6 +530,8 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - Es el formulario de creación o edición
     - atributo **fields**
     - atributo [**fieldsets**](https://youtu.be/XphJRQ3AzMU?t=4112)
+- [Custom form](https://youtu.be/XphJRQ3AzMU?t=4383)
+
 
 > Nota importante
 ```py
