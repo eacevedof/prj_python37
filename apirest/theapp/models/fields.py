@@ -7,8 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from vendor.theframework import utils as u
 
 from datetime import datetime
-from time import strftime, mktime
-import time
+
 
 # metodos que se pueden sobrescribir
 # https://stackoverflow.com/questions/41206176/overriding-methods-for-defining-custom-model-field-in-django
@@ -108,32 +107,6 @@ class TheappDatetime(models.DateTimeField):
         if value is not None:
             value = u.get_strdatetime(value)  
         return value
-
-
-class UnixTimestampField(models.DateTimeField):
-    
-    __metaclass__ = models.DateTimeField
-
-    def __init__(self, null=False, blank=False, **kwargs):
-        super(UnixTimestampField, self).__init__(**kwargs)
-
-
-    def to_python(self, value):
-        super(UnixTimestampField, self)
-        try:
-            return datetime.fromtimestamp(float(value))
-        except:
-            return value
-
-    def get_db_prep_value(self, value):
-        if value==None:
-            return None
-        return time.mktime(value.timetuple())
-
-    def get_prep_value(self, value):
-        if value==None:
-            return None
-        return time.mktime(value.timetuple())
 
 
 class TheappBooleanField(models.BooleanField):    
