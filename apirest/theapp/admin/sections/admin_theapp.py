@@ -1,7 +1,9 @@
 s("theapp.admin.sections.admin_theapp")
 from django.contrib import admin
-from ...models.models import *
 from vendor.theframework import utils as u
+
+from ...models.models import *
+
 
 class TheappModelAdmin(admin.ModelAdmin):
     objuser = None

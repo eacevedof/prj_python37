@@ -29,6 +29,12 @@ class TheappDatetime(models.DateTimeField):
         pr("get_internal_type","CharField")
         return "CharField"
 
+    # este creo que no se usa para nada
+    def value_to_string(self, obj):
+        value = self.value_from_object(obj)
+        bug(value,"TheappDatetime.value_to_string.value X")
+        return value    
+
     # métodos de lectura del registro
     def select_format(self, compiler, sql, params):
         """
@@ -68,13 +74,6 @@ class TheappDatetime(models.DateTimeField):
         
         return value
 
-    # este creo que no se usa para nada
-    def value_to_string(self, obj):
-        value = self.value_from_object(obj)
-        bug(value,"TheappDatetime.value_to_string.value X")
-        return value    
-
-
     # métodos al guardar, no afecta en nada
     def pre_save(self, model_instance, add):
         #bug(model_instance,"TheappDatetime.pre_save.model_instance ")
@@ -96,8 +95,6 @@ class TheappDatetime(models.DateTimeField):
             value = u.get_strdatetime(value)  
         return value
     
-
-
 
 
 class UnixTimestampField(models.DateTimeField):
