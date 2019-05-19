@@ -21,6 +21,7 @@ class TheappDatetime(models.DateTimeField):
             pre_save
             get_db_prep_save
             get_prep_value
+            -- read
             select_format
             from_db_value
             to_python
@@ -54,14 +55,6 @@ class TheappDatetime(models.DateTimeField):
         # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
 
-    def get_db_prep_value_(self, value, connection, prepared=False):
-        bug(value,"TheappDatetime.get_db_prep_value.value Y")
-        # Converting query values to database values
-        if value==None:
-            return None
-        value = u.get_objdatetime(value)
-        return value
-
     def to_python(self, value):
         if value is None:
             bug(value,"to_python.u.get_datetime.value None")
@@ -88,6 +81,14 @@ class TheappDatetime(models.DateTimeField):
         if value is not None:
             value = u.get_objdatetime(value)
         return self.get_db_prep_value(value, connection, prepared)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        bug(value,"TheappDatetime.get_db_prep_value.value Y")
+        # Converting query values to database values
+        if value==None:
+            return None
+        value = u.get_objdatetime(value)
+        return value
 
     def get_prep_value(self, value):
         bug(value,"TheappDatetime.get_prep_value.value ----") 
