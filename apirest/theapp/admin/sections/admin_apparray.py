@@ -29,7 +29,7 @@ class AppArrayAdmin(TheappModelAdmin):
     ordering = ("id",)
 
     list_filter = (
-        "type","module","is_enabled"
+        "type","module","is_enabled","insert_date"
     )    
 
 """
