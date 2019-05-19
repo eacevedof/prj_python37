@@ -38,15 +38,15 @@ class TheappDatetime(models.DateTimeField):
         return value    
 
     # métodos de lectura del registro
-    def select_format(self, compiler, sql, params):
+    # def select_format(self, compiler, sql, params):
         """
         Custom format for select clauses. For example, GIS columns need to be
         selected as AsText(table.col) on MySQL as the table.col data can't be
         used by Django.
         """
-        bug(sql,"sql")
-        bug(params,"params")
-        return sql, params
+      #  bug(sql,"sql")
+      #  bug(params,"params")
+      #  return sql, params
 
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappDatetime")
