@@ -14,11 +14,6 @@ import time
 # https://stackoverflow.com/questions/41206176/overriding-methods-for-defining-custom-model-field-in-django
 class TheappDatetime(models.DateTimeField):
 	
-    # __metaclass__ = models.DateTimeField
-
-    #def __init__(self, null=False, blank=False, **kwargs):
-    #    super(TheappDatetime, self).__init__(**kwargs)
-
     def from_db_value(self, value, expression, connection, context):
         pr("from_db_value","TheappDatetime")
         pr(value,"TheappDatetime.from_db_value.value")
@@ -41,6 +36,12 @@ class TheappDatetime(models.DateTimeField):
         return value
 
     # métodos al guardar
+    def get_prep_value(self, value):
+        bug(value,"TheappDatetime.get_prep_value.value ----") 
+        if value is not None:
+            value = u.get_strdatetime(value)
+        return value
+
     def value_to_string(self, obj):
         value = self.value_from_object(obj)
         bug(value,"TheappDatetime.value_to_string.value X")
@@ -57,7 +58,9 @@ class TheappDatetime(models.DateTimeField):
         #bug(model_instance,"TheappDatetime.pre_save.model_instance ")
         bug(add,"TheappDatetime.pre_save.add")
         bug(self.attname,"TheappDatetime.pre_save.self.attname")
-        return getattr(model_instance, self.attname)
+        getat = getattr(model_instance, self.attname)
+        bug(getat,"TheappDatetime.pre_save.getattr")
+        return getat
 
     def get_db_prep_save(self, value, connection, prepared=False):
         bug(value,"TheappDatetime.get_db_prep_save.value W")
@@ -65,6 +68,18 @@ class TheappDatetime(models.DateTimeField):
             value = u.get_objdatetime(value)
         return self.get_db_prep_value(value, connection, prepared)
 
+    def get_internal_type(self):
+        return "varchar"
+
+    def select_format(self, compiler, sql, params):
+        """
+        Custom format for select clauses. For example, GIS columns need to be
+        selected as AsText(table.col) on MySQL as the table.col data can't be
+        used by Django.
+        """
+        bug(sql,"sql")
+        bug(params,"params")
+        return sql, params
 
 class UnixTimestampField(models.DateTimeField):
     

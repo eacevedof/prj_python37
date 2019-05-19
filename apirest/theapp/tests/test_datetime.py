@@ -10,7 +10,7 @@ class DatetimeTest(TestCase):
 
     strdate = "20190102153348"
 
-    def test_strdate(self):
+    def tes_strdate(self):
         strdate = self.strdate
         sc("test_strdate:")
         pr(strdate,"strdate")
@@ -24,7 +24,7 @@ class DatetimeTest(TestCase):
         pr(strdatetime)
         #  self.assertEqual(1,True)
 
-    def test_tzinfo(self):
+    def tes_tzinfo(self):
         sc("test_tzinfo:")
         obj = datetime.tzinfo
         pr(obj,"datetime.tzinfo")
@@ -33,7 +33,7 @@ class DatetimeTest(TestCase):
         objdatetimeutc = timezone('UTC').localize(objdatetime)
         bug(objdatetimeutc,"objdatetimeutc")    
     
-    def test_tzinfo2(self):
+    def tes_tzinfo2(self):
         # https://stackoverflow.com/questions/79797/how-to-convert-local-time-string-to-utc
         # import pytz, datetime
         local = pytz.timezone ("America/Los_Angeles")
@@ -41,6 +41,10 @@ class DatetimeTest(TestCase):
         local_dt = local.localize(naive, is_dst=None)
         utc_dt = local_dt.astimezone(pytz.utc)
         utc_dt.strftime ("%Y-%m-%d %H:%M:%S")
+
+    def test_isoformat(self):
+        isoformat = datetime.today().isoformat()
+        bug(isoformat,"datetime.today().isoformat()")
 
 """
 py manage.py test theapp.tests.test_datetime
