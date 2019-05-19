@@ -1,10 +1,6 @@
 s("theapp.admin.sections.admin_apparray")
 from .admin_theapp import TheappModelAdmin
 
-from django.conf.locale.es import formats as es_formats
-
-es_formats.DATETIME_FORMAT = "d M Y H:i:s"
-
 class AppArrayAdmin(TheappModelAdmin):
 
     #no se mostrarán en el form de detalle

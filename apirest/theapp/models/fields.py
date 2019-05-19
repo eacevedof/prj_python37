@@ -49,36 +49,34 @@ class TheappDatetime(models.DateTimeField):
       #  return sql, params
 
     def from_db_value(self, value, expression, connection, context):
-        pr("from_db_value","TheappDatetime")
-        pr(value,"TheappDatetime.from_db_value.value")
+        # pr(value,"TheappDatetime.from_db_value.value")
         # pr(value,"TheappDatetime.from_db_value.value calling self.to_python")
         # se recupera el valor de la bd, pero con esto no es suficiente, hay que pasarlo 
         # al formato que entiende django como booleano (True,False)      
         return self.to_python(value)
 
     def to_python(self, value):
-        if value is None:
-            bug(value,"to_python.u.get_datetime.value None")
-        elif isinstance(value,str):
+        
+        if isinstance(value,str):
             value = u.get_objdatetime(value)
-            bug(value,"to_python.u.get_datetime.value object")
+            # bug(value,"to_python.u.get_datetime.value object")
         else:
             value = u.get_strdatetime(value)
-            bug(value,"to_python.u.get_datetime.value string")
+            # bug(value,"to_python.u.get_datetime.value string")
         
         return value
 
     # métodos al guardar, no afecta en nada
     def pre_save(self, model_instance, add):
         #bug(model_instance,"TheappDatetime.pre_save.model_instance ")
-        bug(add,"TheappDatetime.pre_save.add")
-        bug(self.attname,"TheappDatetime.pre_save.self.attname")
+        # bug(add,"TheappDatetime.pre_save.add")
+        # bug(self.attname,"TheappDatetime.pre_save.self.attname")
         getat = getattr(model_instance, self.attname)
         bug(getat,"TheappDatetime.pre_save.getattr")
         return getat
 
     def get_db_prep_save(self, value, connection, prepared=False):
-        bug(value,"TheappDatetime.get_db_prep_save.value W")
+        # bug(value,"TheappDatetime.get_db_prep_save.value W")
         if value is not None:
             value = u.get_objdatetime(value)
         return self.get_db_prep_value(value, connection, prepared)
@@ -86,16 +84,16 @@ class TheappDatetime(models.DateTimeField):
     def get_db_prep_value(self, value, connection, prepared=False):
         # Casts dates into the format expected by the backend
         if not prepared:
-            bug(value,"TheappDatetime.get_db_prep_value.value not prepared")
+            # bug(value,"TheappDatetime.get_db_prep_value.value not prepared")
             value = self.get_prep_value(value)
-            bug(value,"TheappDatetime.get_db_prep_value.get_prep_value.value not prepared")
+            # bug(value,"TheappDatetime.get_db_prep_value.get_prep_value.value not prepared")
         
         # value = connection.ops.adapt_datefield_value(value)
         # bug(value,"TheappDatetime.get_db_prep_value.get_prep_value.value after adapt_datefield_value")
         return value
 
     def get_db_prep_value_(self, value, connection, prepared=False):
-        bug(value,"TheappDatetime.get_db_prep_value.value Y")
+        # bug(value,"TheappDatetime.get_db_prep_value.value Y")
         # Converting query values to database values
         if value==None:
             return None
@@ -103,7 +101,7 @@ class TheappDatetime(models.DateTimeField):
         return value
 
     def get_prep_value(self, value):
-        bug(value,"TheappDatetime.get_prep_value.value") 
+        # bug(value,"TheappDatetime.get_prep_value.value") 
         if value is not None:
             value = u.get_strdatetime(value)  
         return value
