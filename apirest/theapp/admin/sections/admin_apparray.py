@@ -1,7 +1,7 @@
 s("theapp.admin.sections.admin_apparray")
 from .admin_theapp import TheappModelAdmin
 from vendor.theframework import utils as u
-
+from .admin_form import *
 
 class AppArrayAdmin(TheappModelAdmin):
 
@@ -50,12 +50,19 @@ class AppArrayAdmin(TheappModelAdmin):
     # crea una lista de filtros por defecto con fecha (debajo del desplegable)
     date_hierarchy = "insert_date"
 
+    """
     fields = (
         ("type"),
         ("description"),
         ("order_by"),
         ("is_enabled"),
     )
+    """
+
+    form = ArrayForm
+    save_as = True # boton de duplicado
+    save_on_top = True # botones arriba
+
 """
     def get_readonly_fields(self, request, obj=None):
         if obj: # obj is not None, so this is an edit
