@@ -517,7 +517,12 @@ gunicorn -w 4 -b 127.0.0.1:8001 —settings=foo.settings.dev
     - Se define: title y parameter_name (lo que aparecerá en la sección de filtros)
     - se define los métodos **lookups(self, request, model_admin)** y **queryset(self, request, queryset)**
     - Una vez configurada la clase filtro, se inyecta en **list_filter** como si fuera un campo más.
-    
+- [Search field search_fields](https://youtu.be/XphJRQ3AzMU?t=2890)
+- [actions](https://youtu.be/XphJRQ3AzMU?t=3274)
+    - Crear nueva accion en el desplegable
+    - se define una función (fuera de la clase modelo)
+    - a esta función se le agrega la propiedad short_description (texto del desplegable)
+    - esta función se incluye dentro del array de actions
 
 > Nota importante
 ```py
