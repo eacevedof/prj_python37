@@ -28,7 +28,7 @@ class TheappDatetime(models.DateTimeField):
     
     def get_internal_type(self):
         # sin este método da un error: 	'str' object has no attribute 'tzinfo'
-        pr("get_internal_type","CharField")
+        # pr("get_internal_type","CharField")
         return "CharField"
 
     # este creo que no se usa para nada
