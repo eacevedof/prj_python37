@@ -1,6 +1,10 @@
 s("theapp.admin.sections.admin_apparray")
 from .admin_theapp import TheappModelAdmin
 
+from django.conf.locale.es import formats as es_formats
+
+es_formats.DATETIME_FORMAT = "d M Y H:i:s"
+
 class AppArrayAdmin(TheappModelAdmin):
 
     #no se mostrarán en el form de detalle
@@ -18,11 +22,11 @@ class AppArrayAdmin(TheappModelAdmin):
     )
 
     list_display = (
-        "desc_id","id","description","order_by","is_enabled","insert_user","insert_date",
-        "type","code_cache",
+        "desc_id","type","id","description","order_by","is_enabled","insert_user","insert_date",
+        "code_cache",
     )
 
-    list_editable = ("description","order_by","is_enabled",)
+    list_editable = ("order_by","is_enabled",)
 
     # readonly_fields = ("is_enabled", )
 

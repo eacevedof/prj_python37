@@ -20,6 +20,7 @@ def get_uuid():
 
 def get_objdatetime(strdatetime):
     # strdatetime = "20190102153348"
+    strdatetime = str(strdatetime)
     strdatetime = strdatetime.replace(" ","").replace("-","").replace(":","")
     if len(strdatetime)<14:
         strdatetime += "0000"
