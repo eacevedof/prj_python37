@@ -6,7 +6,7 @@ class AppArrayAdmin(TheappModelAdmin):
     #no se mostrarán en el form de detalle
     exclude = (
         "processflag",
-        "insert_platform","insert_user",# "insert_date",
+        "insert_platform","insert_user","insert_date",
         "update_platform","update_user","update_date",
         "delete_platform","delete_user","delete_date",
         "cru_csvnote","is_erpsent","i","code_erp",
