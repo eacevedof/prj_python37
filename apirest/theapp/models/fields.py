@@ -26,7 +26,9 @@ class TheappDatetime(models.DateTimeField):
             from_db_value
             to_python
     """
+    
     def get_internal_type(self):
+        # sin este método da un error: 	'str' object has no attribute 'tzinfo'
         pr("get_internal_type","CharField")
         return "CharField"
 

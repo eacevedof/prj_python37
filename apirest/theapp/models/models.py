@@ -24,7 +24,7 @@ class TheappModel(models.Model):
     # insert_date = TheappDatetime(null=True, blank=True)
     # insert_date = models.DateTimeField(null=True, blank=True)
     # insert_date = UnixTimestampField()
-    # insert_date = TheappDatetime()
+    insert_date = TheappDatetime()
     update_platform = models.CharField(max_length=3, blank=True, null=True, editable=False)
     update_user = models.CharField(max_length=15, blank=True, null=True, editable=False)
     update_date = models.CharField(max_length=14, blank=True, null=True, editable=False)

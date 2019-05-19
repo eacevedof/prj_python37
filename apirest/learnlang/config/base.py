@@ -30,6 +30,7 @@ ENV = "dev"
 ALLOWED_HOSTS = ["eduardoaf.pythonanywhere.com","127.0.0.1"]
 
 # Application definition
+FORMAT_MODULE_PATH = 'learnlang.formats'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -120,8 +121,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-# USE_TZ = True
-USE_TZ = False
+USE_TZ = True
+# USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
