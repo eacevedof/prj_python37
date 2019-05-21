@@ -1,9 +1,16 @@
 # data-model.py
 class Polynomial():
-    pass
+    
+    def __init__(self,*coeffs):
+        self.coeffs = coeffs
 
-p1 = Polynomial()
-p2 = Polynomial()
+    def __repr__(self):
+        return 'Polynomial(*{!r})'.format(self.coeffs)
 
-p1.coeffs = 1,2,3
-p2.coeffs = 3,4,3
+    def __add__(self,other):
+        return Polynomial(*(x+y for x,y in zip(self.coeffs, other.coeffs)))
+
+p1 = Polynomial(1,2,3)  
+p2 = Polynomial(3,4,3)
+
+# py -i data-model
