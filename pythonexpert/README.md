@@ -1,6 +1,7 @@
 # [James Powell: So you want to be a Python expert? | PyData Seattle 2017](https://www.youtube.com/watch?v=cKPlPJyQrt4)
 
 ## [data-model])https://youtu.be/cKPlPJyQrt4?t=471)
+- [Doc python sobre data model](https://docs.python.org/3/reference/datamodel.html)
 - [data-model.py](https://github.com/eacevedof/prj_python37/blob/master/pythonexpert/datamodel/data-model.py)
 ```py
 # suma de polinomios
