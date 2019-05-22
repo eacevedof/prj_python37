@@ -16,4 +16,14 @@ p3 = p1 + p2
 ```
 - [metaclasses](https://youtu.be/cKPlPJyQrt4?t=1334)
     - Se intenta que el código falle antes de entrar en ejecución si no exite el método foo
+    ```py
+    from library import Base
+
+    assert hasattr(Base,"foo"), "you broke it you fool!"
+
+    class Derived(Base):
+
+        def bar(self):
+            return self.foo
+    ```
     
