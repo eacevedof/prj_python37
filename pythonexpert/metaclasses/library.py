@@ -1,3 +1,3 @@
 class Base:
-    def foo(self):
+    def foo_(self):
         return "foo"

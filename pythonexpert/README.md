@@ -26,4 +26,11 @@ p3 = p1 + p2
         def bar(self):
             return self.foo
     ```
-    
+    - mostraria este error
+    ```py
+    Traceback (most recent call last):
+    File "user.py", line 3, in <module>
+    assert hasattr(Base,"foo"), "you broke it you fool!"
+    AssertionError: you broke it you fool!
+    ```
+
