@@ -15,4 +15,5 @@ p2 = Polynomial(3,4,3)
 p3 = p1 + p2
 ```
 - [metaclasses](https://youtu.be/cKPlPJyQrt4?t=1334)
-    - 
+    - Se intenta que el código falle antes de entrar en ejecución si no exite el método foo
+    
