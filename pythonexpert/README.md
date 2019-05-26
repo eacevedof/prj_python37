@@ -33,4 +33,22 @@ p3 = p1 + p2
     assert hasattr(Base,"foo"), "you broke it you fool!"
     AssertionError: you broke it you fool!
     ```
+    - Otro caso, como nos aseguramos que Derived tenga el método bar?
+    ```py
+    # library.py
+    class Base:
+        def foo(self):
+            return self.bar
 
+    from library import Base
+    assert hasattr(Base,"foo"), "you broke it you fool!"
+
+    # user.py
+    class Derived(Base):
+        def bar(self):
+            return "bar"
+    ```
+    - 3 opciones.
+        - Metaclases
+        - Try Catch, esta no ayuda mucho ya que si no se usa el método foo y despues en producción si entonces dará error en tiempo de ejecución.
+        - 

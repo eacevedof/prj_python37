@@ -1,3 +1,4 @@
+# library.py
 class Base:
-    def foo_(self):
-        return "foo"
+    def foo(self):
+        return self.bar
