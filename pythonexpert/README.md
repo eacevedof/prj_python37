@@ -119,6 +119,39 @@ p3 = p1 + p2
     - Hay otras dos opciones. 
         - Metaclass
         - ???
+- [class Base(metaclass=BaseMeta):](https://youtu.be/cKPlPJyQrt4?t=2459)
+    ```py
+    # library.py
+    class BaseMeta(type):
+        def __new__(cls, name, bases, body):
+            if not 'bar' in body:
+                raise TypeError("Bad user class")
+
+            print("BaseMeta.__new__",cls,name,bases,body)
+            return super().__new__(cls,name,bases,body)
+
+    class Base(metaclass=BaseMeta):
+        def foo(self):
+            return self.bar()
+
+    λ py -i user.py BaseMeta.__new__ <class 'library.BaseMeta'> Base () {'__module__': 'library', '__qualname__': 'Base', 'foo': <function Base.foo at 0x000001D7715367B8>} BaseMeta.__new__ <class 'library.BaseMeta'> Derived (<class 'library.Base'>,) {'__module__': '__main__', '__qualname__': 'Derived', 'bar': <function Derived.bar at 0x000001D7715368C8>}    
+
+    # con esta condicion:
+    if not 'bar' in body:
+        raise TypeError("Bad user class") 
+
+    λ py -i user.py
+    Traceback (most recent call last):
+    File "user.py", line 2, in <module>
+        from library import Base
+    File "E:\xampp\htdocs\prj_python37\pythonexpert\metaclasses\library.py", line 10, in <module>
+        class Base(metaclass=BaseMeta):
+    File "E:\xampp\htdocs\prj_python37\pythonexpert\metaclasses\library.py", line 5, in __new__
+        raise TypeError("Bad user class")
+    TypeError: Bad user class
+    ```
+
+
 
 
 
