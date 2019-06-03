@@ -150,8 +150,31 @@ p3 = p1 + p2
     File "E:\xampp\htdocs\prj_python37\pythonexpert\metaclasses\library.py", line 5, in __new__
         raise TypeError("Bad user class")
     TypeError: Bad user class
+
+    # library.py
+    class BaseMeta(type):
+        def __new__(cls, name, bases, body):
+            if name!="Base" and not 'bar' in body:
+                raise TypeError("Bad user class")
+
+            print("BaseMeta.__new__",cls,name,bases,body)
+            return super().__new__(cls,name,bases,body)
+
+    class Base(metaclass=BaseMeta):
+        def foo(self):
+            return self.bar()
+
+        def __init_subclass__(self,*a,**kw):
+            print("init_subclass",a,kw)
+            return super().__init_subclass__(*a,**kw)    
+
+    λ py -i user.py
+    BaseMeta.__new__ <class 'library.BaseMeta'> Base () {'__module__': 'library', '__qualname__': 'Base', 'foo': <function Base.foo at 0x000001AC753D67B8>, '__init_subclass__': <function Base.__init_subclass__ at 0x000001AC753D6730>, '__classcell__': <cell at 0x000001AC75354CA8: empty>}
+    BaseMeta.__new__ <class 'library.BaseMeta'> Derived (<class 'library.Base'>,) {'__module__': '__main__', '__qualname__': 'Derived', 'bar': <function Derived.bar at 0x000001AC753D68C8>}
+    init_subclass () {}            
     ```
 
+[decorators](https://youtu.be/cKPlPJyQrt4?t=2846)
 
 
 
