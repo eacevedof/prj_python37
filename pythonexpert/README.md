@@ -118,7 +118,8 @@ p3 = p1 + p2
     - `__build_class__` no es la opción que se suele usar
     - Hay otras dos opciones. 
         - Metaclass
-        - ???
+        - __init_subclass__(cls,*a,**kw)
+
 - [class Base(metaclass=BaseMeta):](https://youtu.be/cKPlPJyQrt4?t=2459)
     ```py
     # library.py
@@ -150,6 +151,7 @@ p3 = p1 + p2
         raise TypeError("Bad user class")
     TypeError: Bad user class
     ```
+
 
 
 
