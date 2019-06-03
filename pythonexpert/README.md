@@ -173,7 +173,6 @@ p3 = p1 + p2
     BaseMeta.__new__ <class 'library.BaseMeta'> Derived (<class 'library.Base'>,) {'__module__': '__main__', '__qualname__': 'Derived', 'bar': <function Derived.bar at 0x000001AC753D68C8>}
     init_subclass () {}            
     ```
-
 [decorators](https://youtu.be/cKPlPJyQrt4?t=2846)
 
 
