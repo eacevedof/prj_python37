@@ -113,7 +113,15 @@ p3 = p1 + p2
     λ py -i user.py
     Check if bar method is defined
     ```
-    - 
+    - Hay que entender que este patrón existe
+    - No es la mejor opción para resolver el problema
+    - `__build_class__` no es la opción que se suele usar
+    - Hay otras dos opciones. 
+        - Metaclass
+        - ???
+
+
+
 
 
 
