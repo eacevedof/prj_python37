@@ -94,6 +94,25 @@ p3 = p1 + p2
     py -i user.py
     my buildclass-> (<function Derived at 0x0000018604EDC1E0>, 'Derived', <class 'library.Base'>) {}
     ``` 
+    - Comprueba si el método **bar()** existe en el hijo
+    ```py
+    old_bc = __build_class__
+
+    def my_bc(fun,name,base=None,**kw):
+        if base is Base:
+            print("Check if bar method is defined")
+        if base is not None:
+            # porque le pasa base
+            return old_bc(fun,name,base,**kw)
+        
+        return old_bc(fun, name, **kw)
+
+    import builtins
+    builtins.__build_class__ = my_bc
+
+    λ py -i user.py
+    Check if bar method is defined
+    ```
     - 
 
 
