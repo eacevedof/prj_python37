@@ -69,26 +69,32 @@ p3 = p1 + p2
     dis(_)
 
     >>> dis(_)
-  2           0 LOAD_BUILD_CLASS
-              2 LOAD_CONST               1 (<code object Base at 0x000001DA0CD0E540, file "<stdin>", line 2>)
-              4 LOAD_CONST               2 ('Base')
-              6 MAKE_FUNCTION            0
-              8 LOAD_CONST               2 ('Base')
-             10 CALL_FUNCTION            2
-             12 STORE_FAST               0 (Base)
-             14 LOAD_CONST               0 (None)
-             16 RETURN_VALUE
+    2           0 LOAD_BUILD_CLASS
+                2 LOAD_CONST               1 (<code object Base at 0x000001DA0CD0E540, file "<stdin>", line 2>)
+                4 LOAD_CONST               2 ('Base')
+                6 MAKE_FUNCTION            0
+                8 LOAD_CONST               2 ('Base')
+                10 CALL_FUNCTION            2
+                12 STORE_FAST               0 (Base)
+                14 LOAD_CONST               0 (None)
+                16 RETURN_VALUE
 
-Disassembly of <code object Base at 0x000001DA0CD0E540, file "<stdin>", line 2>:
-  2           0 LOAD_NAME                0 (__name__)
-              2 STORE_NAME               1 (__module__)
-              4 LOAD_CONST               0 ('_.<locals>.Base')
-              6 STORE_NAME               2 (__qualname__)
+    Disassembly of <code object Base at 0x000001DA0CD0E540, file "<stdin>", line 2>:
+    2           0 LOAD_NAME                0 (__name__)
+                2 STORE_NAME               1 (__module__)
+                4 LOAD_CONST               0 ('_.<locals>.Base')
+                6 STORE_NAME               2 (__qualname__)
 
-  3           8 LOAD_CONST               1 (None)
-             10 RETURN_VALUE
+    3           8 LOAD_CONST               1 (None)
+                10 RETURN_VALUE
     ```
     - Usando el hook `__build_class__`
+    - [def my_bc](https://youtu.be/cKPlPJyQrt4?t=2225)
+    ```py
+    py -i user.py
+    my buildclass-> (<function Derived at 0x0000018604EDC1E0>, 'Derived', <class 'library.Base'>) {}
+    ``` 
+    - 
 
 
 
