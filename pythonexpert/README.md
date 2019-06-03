@@ -52,3 +52,7 @@ p3 = p1 + p2
         - Metaclases
         - Try Catch, esta no ayuda mucho ya que si no se usa el método foo y despues en producción si entonces dará error en tiempo de ejecución.
         - 
+
+- [self.bar()](https://youtu.be/cKPlPJyQrt4?t=1779)
+    - El creador de la librearia `library.py` asume que el desarrollador que vaya a usarla va a crear el método `bar()`
+    
