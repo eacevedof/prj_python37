@@ -174,6 +174,12 @@ p3 = p1 + p2
     init_subclass () {}            
     ```
 [decorators](https://youtu.be/cKPlPJyQrt4?t=2846)
+```py
+>>> from inspect import getsource
+>>>
+>>> getsource(add)
+'def add(x,y):\n    return x + y\n'
+```
 
 
 
