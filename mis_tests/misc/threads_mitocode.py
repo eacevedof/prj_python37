@@ -6,6 +6,9 @@ import time
 import datetime
 import logging
 
+import thread_hilo1
+import thread_hilo2
+
 # https://youtu.be/3Rlh6uUuQqA?t=457
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] (%(threadName)-s) %(message)s')
 
@@ -20,8 +23,12 @@ def guardar(id_persona, data):
     return 
 
 tiempo_ini = datetime.datetime.now()
-t1 = threading.Thread(name="Hilo_1",target=consultar,args=(1,))
-t2 = threading.Thread(name="Hilo_2",target=guardar,args=(1, "Suscribete al canal",))
+# t1 = threading.Thread(target=consultar,args=(1,),name="Hilo_1")
+# t2 = threading.Thread(target=guardar,args=(1, "Suscribete al canal",)) # python aplica un nombre: Thread-1
+
+#https://youtu.be/3Rlh6uUuQqA?t=663  hilos con clases
+t1 = Hilo1("Hilo_1",1,"")
+t2 = Hilo2("Hilo_2",1,"Suscribete")
 
 t1.start()
 t2.start()
