@@ -9,6 +9,7 @@ class Hilo1(threading.Thread):
     #def __init__(self, group, target, name, args, kwargs, daemon):
     #    return super().__init__(group, target, name, args, kwargs, daemon)
     def __init__(self, nombre_hilo,id_persona,data):
+        super.__init__(self,name=nombre_hilo, target=Hilo1.run)
         self.nombre_hilo = nombre_hilo
         self.id_persona = id_persona
         self.data = data
