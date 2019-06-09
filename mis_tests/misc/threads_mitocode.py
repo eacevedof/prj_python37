@@ -15,15 +15,17 @@ def guardar(id_persona, data):
     return 
 
 tiempo_ini = datetime.datetime.now()
-#t1 = threading.Thread(name="Hilo_1",target=consultar,args=(1,))
-#t2 = threading.Thread(name="Hilo_2",target=guardar,args=(1, "Suscribete al canal",))
+t1 = threading.Thread(name="Hilo_1",target=consultar,args=(1,))
+t2 = threading.Thread(name="Hilo_2",target=guardar,args=(1, "Suscribete al canal",))
 
-#t1.start()
-#t2.start()
+t1.start()
+t2.start()
 
-#tiempo_fin = datetime.datetime.now()
+# se ejecutan a la vez, esto hace que acabe en 5 sec
+t1.join()
+t2.join()
 
-consultar(1)
-guardar(1, "Suscribete al canal")
+#consultar(1) # ejec en hilo principal
+#guardar(1, "Suscribete al canal") # ejec en hilo princ
 tiempo_fin = datetime.datetime.now()
 print("Tiempo transcurrido "+ str(tiempo_fin.second - tiempo_ini.second))
