@@ -5,9 +5,10 @@ import time
 
 def hola_mundo(nombre):
     print("Hola Mundo " + nombre)
+    time.sleep(5)
 
 if __name__ == '__main__':
     # hola_mundo("eaf")
-    thread = threading.Thread(target=hola_mundo,args=("eaf",))
-    thread.start()
-
+    mainthread = threading.Thread(target=hola_mundo,args=("eaf",))
+    mainthread.start()
+    print("Hola mundo desde el hilo principal")
