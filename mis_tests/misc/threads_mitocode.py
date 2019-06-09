@@ -10,8 +10,13 @@ import logging
 #import thread_hilo1.Hilo1 as Hilo2
 #import thread_hilo2.Hilo2 as Hilo2
 
-from . import thread_hilo1 as Hilo1
-from . import thread_hilo2 as Hilo2
+# tampoco va
+# from . import thread_hilo1 as Hilo1
+# from . import thread_hilo2 as Hilo2
+
+# importación des de la misma carpeta
+from thread_hilo1 import Hilo1
+from thread_hilo2 import Hilo2
 
 # https://youtu.be/3Rlh6uUuQqA?t=457
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] (%(threadName)-s) %(message)s')
