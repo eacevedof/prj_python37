@@ -6,11 +6,16 @@ import time
 import datetime
 import logging
 
+# https://youtu.be/3Rlh6uUuQqA?t=457
+logging.basicConfig(level=logging.INFO, format='[%(levelname)s] (%(threadName)-s) %(message)s')
+
 def consultar(id_persona):
+    logging.info("consultando para el id " + str(id_persona))
     time.sleep(2)
     return
 
 def guardar(id_persona, data):
+    logging.info("guardando para el id " + str(id_persona)+" data:"+str(data))
     time.sleep(5)
     return 
 
