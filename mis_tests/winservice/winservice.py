@@ -33,7 +33,7 @@ if __name__ == '__main__':
 """
 Usage: 'winservice.py [options] install|update|remove|start [...]|stop|restart [...]|debug [...]'
 Options for 'install' and 'update' commands only:
- --username domain\username : The Username the service is to run under
+ --username domain\\username : The Username the service is to run under
  --password password : The password for the username
  --startup [manual|auto|disabled|delayed] : How the service starts, default = manual
  --interactive : Allow the service to interact with the desktop.
@@ -46,3 +46,4 @@ Options for 'start' and 'stop' commands only:
                  and all dependent services will be stopped, each waiting
                  the specified period.
 """
+
