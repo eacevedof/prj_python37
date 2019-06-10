@@ -29,3 +29,20 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
 if __name__ == '__main__':
     win32serviceutil.HandleCommandLine(AppServerSvc)
+
+"""
+Usage: 'winservice.py [options] install|update|remove|start [...]|stop|restart [...]|debug [...]'
+Options for 'install' and 'update' commands only:
+ --username domain\username : The Username the service is to run under
+ --password password : The password for the username
+ --startup [manual|auto|disabled|delayed] : How the service starts, default = manual
+ --interactive : Allow the service to interact with the desktop.
+ --perfmonini file: .ini file to use for registering performance monitor data
+ --perfmondll file: .dll file to use when querying the service for
+   performance data, default = perfmondata.dll
+Options for 'start' and 'stop' commands only:
+ --wait seconds: Wait for the service to actually start or stop.
+                 If you specify --wait with the 'stop' option, the service
+                 and all dependent services will be stopped, each waiting
+                 the specified period.
+"""
