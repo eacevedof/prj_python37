@@ -4,3 +4,7 @@
 
 - [Driver](https://chromedriver.storage.googleapis.com/index.html?path=75.0.3770.90/)
 - [Site demo](http://newtours.demoaut.com/)
+
+#### [Cap 2 - Dropdown](https://youtu.be/lB9pypRYev4?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP&t=88)
+
+#### [Cap 3 - Localizando elementos](https://youtu.be/DXSgxIgoZ2E?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
