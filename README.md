@@ -2,7 +2,7 @@
 ## Pruebas de concepto de python siguiendo diversos tutoriales.
 
 ### [Parte 6 - Selenium - Python](https://github.com/eacevedof/prj_python37/tree/master/selenium)
-
+- [Playlist](https://www.youtube.com/watch?v=N-rdcdWmYck&list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP&index=2)
 ### [Parte 5 - Django Rest Framework PIPENV (Fazt y otros)](https://github.com/eacevedof/prj_python37/tree/master/apirest)
 - [pipenv - FAZT](https://www.youtube.com/watch?v=-XIsKyNWILo)
 - [Despliegue en Pythonanywhere](https://github.com/eacevedof/prj_python37/blob/master/apirest/PYTHONANYWHERE.md)
