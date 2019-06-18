@@ -31,3 +31,4 @@ AssertionError
 ```
 #### [Cap 7 - Unit test](https://youtu.be/k3eq4RnVCDQ?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
 - newtourtest.py
+- Ya ha pasado los test, es necesario llamar a: **def setUp(self):**
