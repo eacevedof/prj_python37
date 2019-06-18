@@ -20,3 +20,12 @@
 - instalar firepath addon en el navegador de modo que nos ayude a decifrar el xpath de un nodo
 #### [Cap 6 - Asserts](https://youtu.be/sZqxadW_E6o?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
 - asserts.py
+- vamos a usar el assert de selenium pero despues usaremos mejores herramientas 
+```py
+assert link_registration_form.text == "registration form"
+assert link_registration_form.tag_name == "p
+
+File "asserts.py", line 20, in <module>
+    assert link_registration_form.text == "registration form xxxxxxxxxxx"
+AssertionError
+```
