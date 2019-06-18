@@ -29,3 +29,5 @@ File "asserts.py", line 20, in <module>
     assert link_registration_form.text == "registration form xxxxxxxxxxx"
 AssertionError
 ```
+#### [Cap 7 - Unit test](https://youtu.be/k3eq4RnVCDQ?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
+- newtourtest.py
