@@ -16,3 +16,5 @@
 - google.py
 
 #### [Cap 5 - Utilizando FirePath](https://youtu.be/H2okGWszwo0?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
+- firepath.py
+- instalar firepath addon en el navegador de modo que nos ayude a decifrar el xpath de un nodo
