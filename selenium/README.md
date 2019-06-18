@@ -3,6 +3,7 @@
 #### [Tutorial Seleninum Capítulo 1: "Hola Mundo"](https://www.youtube.com/watch?v=N-rdcdWmYck&list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP&index=2)
 
 - [Driver](https://chromedriver.storage.googleapis.com/index.html?path=75.0.3770.90/)
+- **chromedriver.exe**
 - [Site demo](http://newtours.demoaut.com/)
 
 #### [Cap 2 - Dropdown](https://youtu.be/lB9pypRYev4?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP&t=88)
@@ -14,3 +15,4 @@
 #### [Cap 4 - Localizando por Id y Name](https://youtu.be/YLYNThOaP9w?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
 - google.py
 
+#### [Cap 5 - Utilizando FirePath](https://youtu.be/H2okGWszwo0?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
