@@ -21,6 +21,18 @@ class NewTours(unittest.TestCase):
         countryDropDown.select_by_visible_text("CONGO") 
         self.assertEquals(countryDropDown.first_selected_option.text.strip(),"CONGO")      
 
+    def test_register(self):
+        user_box = self.driver.find_element_by_name("userName")
+        pass_box = self.driver.find_element_by_name("password")
+        submit_button = self.driver.find_element_by_name("login")
+        user_box.send_keys("test")
+        pass_box.send_keys("test")
+        submit_button.click()
+        time.sleep(1)
+        link_registration_form = self.driver.find_element_by_link_text("registration form")
+        self.assertEquals(link_registration_form.text,"registration form")
+
+
     def teardown(self):
         self.driver.quit()
 
