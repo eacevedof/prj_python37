@@ -35,4 +35,10 @@ AssertionError
 
 #### [Cap 8 - Más Asserts](https://youtu.be/BXEDlUobvV8?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
 - newtourtest.py
+- test_dropdown
+- assertFalse en lugar de assertEquals
+```py
+newtourtest.py:35: DeprecationWarning: Please use assertEqual instead.
+  self.assertEquals(link_registration_form.text,"registration form")
+```
 
