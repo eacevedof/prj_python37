@@ -41,4 +41,6 @@ AssertionError
 newtourtest.py:35: DeprecationWarning: Please use assertEqual instead.
   self.assertEquals(link_registration_form.text,"registration form")
 ```
-
+#### [Cap 9 - Page Objects parte 1](https://youtu.be/cHWt_gFkU2M?list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP)
+- newtourtest.py
+- pasando lineas repetidas al setup
