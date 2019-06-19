@@ -5,12 +5,14 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from pageindex import PageIndex
 
 class NewTours(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome("chromedriver.exe")
         self.driver.get("http://newtours.demoaut.com")
+        self.page_index = PageIndex(self.driver)
         time.sleep(1)
 
     def test_dropdown(self):
@@ -24,13 +26,7 @@ class NewTours(unittest.TestCase):
         self.assertFalse(countryDropDown.first_selected_option.text.strip() == "ARGENTINA")
 
     def test_register(self):
-        user_box = self.driver.find_element_by_name("userName")
-        pass_box = self.driver.find_element_by_name("password")
-        submit_button = self.driver.find_element_by_name("login")
-        user_box.send_keys("test")
-        pass_box.send_keys("test")
-        submit_button.click()
-        time.sleep(1)
+        self.page_index.login("test","test")
         link_registration_form = self.driver.find_element_by_link_text("registration form")
         self.assertEquals(link_registration_form.text,"registration form")
 
