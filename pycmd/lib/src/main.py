@@ -1,13 +1,22 @@
+import os
+import sys
+# framework de linea de comandos
 import click
+from pprint import pprint
 
-@click.command()
-@click.option('--count', default=1, help='Number of greetings.')
-@click.option('--name', prompt='Your name',
-              help='The person to greet.')
-def hello(count, name):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for x in range(count):
-        click.echo('Hello %s!' % name)
+from src.commands import cmdregex
 
-# if __name__ == '__main__':
-    #hello()
+ROOT_PATH = os.path.dirname(__file__)
+CLIENTS_TABLE = ROOT_PATH +"/"+ ".clients.csv"
+
+@click.group()
+@click.pass_context
+def shell(context):
+    # diccionario
+    context.obj = {}
+
+# se inyecta en el grupo cli todos los comandos de clientes
+#shell.add_command(cmdregex.allfuncs)
+
+#if __name__ == "__main__":
+#    shell()

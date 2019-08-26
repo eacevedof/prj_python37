@@ -17,6 +17,6 @@ setup(
     # https://setuptools.readthedocs.io/en/latest/setuptools.html
     entry_points = '''
         [console_scripts]       
-        pycmd = src.main:hello
+        pycmd = src.main:shell
     ''',
 )
