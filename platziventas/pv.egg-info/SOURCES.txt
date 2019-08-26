@@ -1,3 +1,4 @@
+README.md
 setup.py
 pv.egg-info/PKG-INFO
 pv.egg-info/SOURCES.txt
