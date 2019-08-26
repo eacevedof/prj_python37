@@ -4,7 +4,7 @@ import sys
 import click
 from pprint import pprint
 
-from src.commands import cmdregex
+from src.commands import cmdregex as regex
 
 ROOT_PATH = os.path.dirname(__file__)
 CLIENTS_TABLE = ROOT_PATH +"/"+ ".clients.csv"
@@ -16,7 +16,7 @@ def shell(context):
     context.obj = {}
 
 # se inyecta en el grupo cli todos los comandos de clientes
-#shell.add_command(cmdregex.allfuncs)
+shell.add_command(regex.allfuncs)
 
 #if __name__ == "__main__":
 #    shell()
