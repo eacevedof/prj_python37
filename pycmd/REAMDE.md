@@ -3,6 +3,7 @@
 > La intención es crear una app de terminal instalable de modo que automatice tareas
 
 ## Historial
+- 2019-08-26: `pycmd regex matchfile`  
 
 ## Notas
 ```vb
