@@ -603,6 +603,33 @@ Prueba de concepto con Python 3.7.2
 python ./src/main.py
 mv ./src/.clients.csv.tmp ./src/.clients.csv
 ```
+## Historial
+- 2019/08/26 Retomo para hacer una app terminal y deduzco esto:
+```js
+1 - Si la app no está instalada:
+
+- Tiene que existir la sentencia 
+if __name__ == "__main__":
+   cli()
+
+se ejecutaría así:
+py <archivo.py> <comando> <opcion>
+
+ejemplo
+py pv.py clients
+
+Muestra todas las opciones
+
+$ py pv.py clients create
+
+Permite la interaccion
+
+2 - Si la app está instalada:
+    - Para esto se necesita el fichero setup.py configurado
+    - Que se haya ejecutado: pip install --editable .
+
+pv clients create
+```
 
 ## Errores
 

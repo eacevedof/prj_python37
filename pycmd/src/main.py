@@ -11,3 +11,9 @@ def hello(count, name):
 
 if __name__ == '__main__':
     hello()
+
+"""
+ejemplo llamada:
+
+py main.py --count=5 --name=juan
+"""
