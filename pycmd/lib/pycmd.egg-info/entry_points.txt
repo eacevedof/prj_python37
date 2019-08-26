@@ -1,4 +1,4 @@
 
         [console_scripts]       
-        pycmd = src.main:hello
+        pycmd = src.main:shell
     

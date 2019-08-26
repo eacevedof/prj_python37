@@ -5,6 +5,33 @@
 ## Historial
 
 ## Notas
+```vb
+1 - Si la app no está instalada:
+
+- Tiene que existir la sentencia 
+if __name__ == "__main__":
+   shell()
+
+se ejecutaría así:
+py <archivo.py> <comando> <opcion>
+
+ejemplo
+py pv.py clients
+
+Muestra todas las opciones
+
+$ py pv.py clients create
+
+Permite la interaccion
+
+2 - Si la app está instalada:
+    - Para esto se necesita el fichero setup.py configurado
+    - Que se haya ejecutado: pip install --editable .
+
+pv clients create
+```
+- Me estaba dando este error: **ModuleNotFoundError**
+    - el problema es que como src es un módulo el import tenía que ser `src.commands` y no solo `commads`
 ```js
 // Instalo
 ioedu@HPZBOOK15U MINGW64 /e/<project>/pycmd/lib (master)
