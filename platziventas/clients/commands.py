@@ -1,3 +1,4 @@
+# print("clients/commands.py")
 import os
 import sys
 from pprint import pprint

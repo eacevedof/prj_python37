@@ -19,5 +19,9 @@ def cli(context):
     context.obj = {}
     context.obj["clients_table"] = CLIENTS_TABLE
 
+# ejecución sin __name__
 
 cli.add_command(clients_commands.all)
+
+# if __name__ == "__main__":
+    # cli.add_command(clients_commands.all)
