@@ -8,7 +8,7 @@ from pathlib import Path
 import click
 
 from contextlib import contextmanager
-from src.helpers.filemanager import fopen
+from src.components.file import fopen
 
 #clic_group convierte a regex en otro decorador
 @click.group()
@@ -20,20 +20,28 @@ def regex():
     trabaja con ficheros y hace busquedas guardando el resultado en otro fichero
     """
     pass
-
-
+#def regex()
 
 @regex.command()
-@click.pass_context
-def matchfile(context):
+@click.option("-o","--opt",type=str,prompt=True,help="")
+def matchfile(opt):
+    click.clear()
+    click.echo(b'\xe2\x98\x83', nl=False)
+    click.secho(opt,fg="green",bg="blue")
     """Matchfile"""
     click.echo("find pattern")
     regex          = click.prompt("Reg. Exp", type=str, default="[\d]+love")
     pathfilefrom   = click.prompt("Path file from", type=str, default="/path/of/origin/file.ext")
     pathfileto     = click.prompt("Path file to", type=str, default="/path/of/destiny/file.ext")
 
-    with fopen(pathfilefrom) as f:
-        contents = f.read()
+    try:
+        with fopen(pathfilefrom) as f:
+            contents = f.read()
+    except NameError:
+        print("an exception NameError")
+    except Exception as e:
+        s = str(e)
+        print(s)
 
     # print(contents)
     if not os.path.isfile(pathfileto):
