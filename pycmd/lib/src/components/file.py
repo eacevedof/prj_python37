@@ -1,4 +1,4 @@
-# print("helpers/filemanager.py")
+# print("components/file.py")
 from contextlib import contextmanager
 
 @contextmanager
