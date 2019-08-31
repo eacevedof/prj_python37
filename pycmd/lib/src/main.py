@@ -4,6 +4,7 @@ import sys
 import click
 from pprint import pprint
 
+from src.components.component_log import lg
 from src.commands import cmdregex as regex
 from src.commands import cmdprueba as prueba
 from colorama import init
@@ -29,8 +30,10 @@ def print_format_table():
 @click.group()
 @click.pass_context
 def shell(context):
+    lg("shell","titulo")
+    # click.clear()
     # diccionario
-    pprint(context)
+    # pprint(context)
     context.obj = {}
     # print_format_table()
 
@@ -38,5 +41,6 @@ def shell(context):
 shell.add_command(regex.funcsgroup)
 shell.add_command(prueba.funcsgroup)
 
+# pycmd regex matchfile
 #if __name__ == "__main__":
 #    shell()

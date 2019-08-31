@@ -7,13 +7,11 @@ from pathlib import Path
 import click
 from contextlib import contextmanager
 
-#clic_group convierte a fnprueba en otro decorador
 @click.group()
-
 # pycmd fnprueba
 def fnprueba():
     """
-    trabaja con ficheros y hace busquedas guardando el resultado en otro fichero
+    Prueba
     """
     pass
 
