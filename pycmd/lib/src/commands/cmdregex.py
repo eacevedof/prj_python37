@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 
 from contextlib import contextmanager
+from src.helpers.filemanager import fopen
 
 #clic_group convierte a regex en otro decorador
 @click.group()
@@ -21,13 +22,6 @@ def regex():
     pass
 
 
-@contextmanager
-def _custom_open(filename, opt="r"):
-    f = open(filename, opt)
-    try:
-        yield f
-    finally:
-        f.close()
 
 @regex.command()
 @click.pass_context
@@ -38,7 +32,7 @@ def matchfile(context):
     pathfilefrom   = click.prompt("Path file from", type=str, default="/path/of/origin/file.ext")
     pathfileto     = click.prompt("Path file to", type=str, default="/path/of/destiny/file.ext")
 
-    with _custom_open(pathfilefrom) as f:
+    with fopen(pathfilefrom) as f:
         contents = f.read()
 
     # print(contents)
@@ -55,7 +49,7 @@ def matchfile(context):
                 print("File "+pathfileto+" was not able to create")
 
     print("trying to write")
-    with _custom_open(pathfileto,"w") as f:
+    with fopen(pathfileto,"w") as f:
         print("writing...")
         try:
             f.write(contents)

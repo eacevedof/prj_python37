@@ -7,6 +7,16 @@
 - 
 
 ## Notas
+```py
+ioedu@HPZBOOK15U MINGW64 /<project>/pycmd (master)
+$ pycmd regex matchfile
+find pattern
+Reg. Exp [[\d]+love]: abc
+Path file from [/path/of/origin/file.ext]: C:\Users\ioedu\Desktop\temp.php
+Path file to [/path/of/destiny/file.ext]: C:\Users\ioedu\Desktop\startup.txt
+trying to write
+writing...
+```
 - Creo árbol de carpetas similar a **Flutter :)**
 ```js
 pycmd/
