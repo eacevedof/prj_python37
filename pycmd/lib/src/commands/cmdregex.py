@@ -1,17 +1,20 @@
 # print("commands/cmdregex.py")
+# ejecucion: pycmd regex matchfile
 import os
 import sys
 from pprint import pprint
 from pathlib import Path
 
 import click
+
 from contextlib import contextmanager
 
-#clic_group convierte a clients en otro decorador
+#clic_group convierte a regex en otro decorador
 @click.group()
 # esto se llamaría desde 
 # pycmd regex
 def regex():
+    # esto se mostrará al ejecutar pycmd
     """
     trabaja con ficheros y hace busquedas guardando el resultado en otro fichero
     """
@@ -133,5 +136,5 @@ def update(context,client_uid):
     else:
         click.echo("Client not found")
 
-# alloptions son todos los comandos (funciones)
-allfuncs = regex
+# funcsgroup son todos los comandos (funciones)
+funcsgroup = regex

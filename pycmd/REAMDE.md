@@ -4,9 +4,21 @@
 
 ## Historial
 - 2019-08-26: `pycmd regex matchfile`  
+- 
 
 ## Notas
-```vb
+- Creo árbol de carpetas similar a **Flutter :)**
+```js
+pycmd/
+  lib/
+    src/
+      services/         -> vacio de mom
+      helpers/          -> vacio de mom
+      commands/         -> módulo con todos los comandos
+      main.py           -> frontcontroller
+    setup.py            -> pip install --editable .
+```
+```js
 1 - Si la app no está instalada:
 
 - Tiene que existir la sentencia 
