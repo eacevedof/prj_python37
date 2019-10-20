@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append("..")
+# sys.path.append("..")
 from pprint import pprint
 from components.t import go       # ModuleNotFoundError: No module named 'components'
 # from ../components/t.py import go # SyntaxError: invalid syntax
