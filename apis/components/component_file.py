@@ -1,4 +1,4 @@
-# print("components/file.py")
+# print("components/component_file.py")
 from contextlib import contextmanager
 
 @contextmanager
@@ -13,9 +13,13 @@ def fopen(pathfile, opt="r"):
 def fwrite(pathfile, strcontent):
     with fopen(pathfile,"a") as f:
         f.write(strcontent)
+#fwrite
 
 def foverwrite(pathfile, strcontent):
     with fopen(pathfile,"w") as f:
         f.write(strcontent) 
-#fwrite
+#foverwrite
 
+def get_content(pathfile)
+    return fopen(pathfile)
+# get_content
