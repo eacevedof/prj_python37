@@ -1,4 +1,4 @@
 print("t.py")
 
-def go(strin)
+def go(strin):
   print(strin)
