@@ -1,6 +1,7 @@
 
 import requests
 import json
+from pprint import pprint
 
 class ComponentRequest:
   
@@ -21,16 +22,25 @@ class ComponentRequest:
     objresp = requests.get(strurl)
     # print(objresp.content)
     dictjson = json.loads(objresp.content)
-
     print(dictjson["result"]["folders"])
+    return dictjson["result"]["folders"]
 
-  def get_folder_content(self,ifolder="8348114"):
+  def get_folder_content(self,ifolder):
     print("get_folder_content")
     strurl = "https://api.openload.co/1/file/listfolder?login={}&key={}&folder={}"
     strurl = strurl.format(self.login,self.key,ifolder)
     objresp = requests.get(strurl)
     dictjson = json.loads(objresp.content)
-    print(dictjson)
+    pprint(dictjson)
+    return dictjson
+
+  def upload(self,pathlocal,ifolder,sha1,httponly=False):
+    print("upload")
+    strurl = "https://api.openload.co/1/file/ul?login={}&key={}&folder={}&sha1={}&httponly={}"
+    strurl = strurl.format(self.login,self.key,ifolder,sha1,httponly)
+    files = {"file":open(pathlocal,"rb")}
+    r = requests.post(strurl,files=files)
+    print(r.text)
 
 if __name__=="__main__":
   o = ComponentRequest()

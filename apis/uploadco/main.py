@@ -17,5 +17,12 @@ if __name__=="__main__":
 
   objreq = ComponentRequest(login,key)
   objreq.get_list_folder()
-  objreq.get_folder_content()
+  # objreq.get_folder_content("8348096")
+  objreq.upload(
+    "C:\\Users\\ioedu\\Desktop\\temp.html",
+    "8306116",
+    "",
+    False
+  )
+  
   #print(objreq)
