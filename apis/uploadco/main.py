@@ -17,5 +17,5 @@ if __name__=="__main__":
 
   objreq = ComponentRequest(login,key)
   objreq.get_list_folder()
-  # objreq.get_folder_content()
+  objreq.get_folder_content()
   #print(objreq)

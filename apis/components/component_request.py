@@ -14,6 +14,7 @@ class ComponentRequest:
     print("run")
 
   def get_list_folder(self):
+    print("get_list_folder")
     strurl = "https://api.openload.co/1/file/listfolder?login={}&key={}"
     strurl = strurl.format(self.login,self.key,5)
     print(strurl)
@@ -24,10 +25,12 @@ class ComponentRequest:
     print(dictjson["result"]["folders"])
 
   def get_folder_content(self,ifolder="8348114"):
+    print("get_folder_content")
     strurl = "https://api.openload.co/1/file/listfolder?login={}&key={}&folder={}"
     strurl = strurl.format(self.login,self.key,ifolder)
     objresp = requests.get(strurl)
-    print(objresp.content)
+    dictjson = json.loads(objresp.content)
+    print(dictjson)
 
 if __name__=="__main__":
   o = ComponentRequest()
