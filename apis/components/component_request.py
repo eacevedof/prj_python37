@@ -53,7 +53,7 @@ class ComponentRequest:
 
     sha1_hash = sha1.hexdigest()
 
-    url = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}".format(
+    url = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}&folder=8306116".format(
         login=self.login,
         key=self.key,
         sha1=sha1_hash,
