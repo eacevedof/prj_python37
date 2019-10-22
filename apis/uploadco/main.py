@@ -21,8 +21,6 @@ if __name__=="__main__":
   objreq.upload(
     "C:\\Users\\ioedu\\Desktop\\temp.html",
     "8306116",
-    "",
-    False
   )
-  
+
   #print(objreq)

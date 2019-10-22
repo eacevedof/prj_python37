@@ -2,6 +2,7 @@
 import requests
 import json
 from pprint import pprint
+import hashlib
 
 class ComponentRequest:
   
@@ -24,6 +25,7 @@ class ComponentRequest:
     dictjson = json.loads(objresp.content)
     print(dictjson["result"]["folders"])
     return dictjson["result"]["folders"]
+  #get_list_folder
 
   def get_folder_content(self,ifolder):
     print("get_folder_content")
@@ -33,14 +35,53 @@ class ComponentRequest:
     dictjson = json.loads(objresp.content)
     pprint(dictjson)
     return dictjson
+  #get_folder_content
 
-  def upload(self,pathlocal,ifolder,sha1,httponly=False):
+  def upload(self,pathlocal,ifolder):
     print("upload")
-    strurl = "https://api.openload.co/1/file/ul?login={}&key={}&folder={}&sha1={}&httponly={}"
-    strurl = strurl.format(self.login,self.key,ifolder,sha1,httponly)
-    files = {"file":open(pathlocal,"rb")}
-    r = requests.post(strurl,files=files)
+    filepath = '/scripts/wordpress/240p.mp4'
+    filepath = pathlocal
+
+    sha1 = hashlib.sha1()
+
+    BLOCKSIZE = 65536
+    with open(filepath, 'rb') as afile:
+        buf = afile.read(BLOCKSIZE)
+        while len(buf) > 0:
+            sha1.update(buf)
+            buf = afile.read(BLOCKSIZE)
+
+    sha1_hash = sha1.hexdigest()
+
+    url = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}".format(
+        login=self.login,
+        key=self.key,
+        sha1=sha1_hash,
+    )
+
+    p = {
+        'url': url,
+        'headers': {
+            #'User-Agent': self.ua,
+        }
+    }
+    r = requests.get(url=p['url'], headers=p['headers'])
+    j = r.json()
+
+    upload_link = j['result']['url']
+
+    p = {
+        'url': upload_link,
+        'headers': {
+            # 'user-agent': self.ua,
+        },
+        'files': {
+            'file1': open(filepath, 'rb'),
+        }
+    }
+    r = requests.post(url=p['url'], headers=p['headers'], files=p['files'])
     print(r.text)
+  # upload
 
 if __name__=="__main__":
   o = ComponentRequest()
