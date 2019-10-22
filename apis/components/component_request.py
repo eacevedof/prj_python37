@@ -18,7 +18,7 @@ class ComponentRequest:
   def get_list_folder(self):
     print("get_list_folder")
     strurl = "https://api.openload.co/1/file/listfolder?login={}&key={}"
-    strurl = strurl.format(self.login,self.key,5)
+    strurl = strurl.format(self.login,self.key)
     print(strurl)
     objresp = requests.get(strurl)
     # print(objresp.content)
