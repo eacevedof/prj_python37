@@ -1,40 +1,21 @@
 import os
 import sys
-# sys.path.append("..")
-from pprint import pprint
-from components.t import go       # ModuleNotFoundError: No module named 'components'
-# from ../components/t.py import go # SyntaxError: invalid syntax
-# from apis.components.t import go  # ModuleNotFoundError: No module named 'apis'
-# from components import t          # ModuleNotFoundError: No module named 'components'
-# import components.t               # ModuleNotFoundError: No module named 'components'
-# import apis.components.t          # ModuleNotFoundError: No module named 'apis'
-# from .components.t import go      # ModuleNotFoundError: No module named '__main__.components'; '__main__' is not a package
-# import .apis.components.t.go      # SyntaxError: invalid syntax
-# from ..components.t import go     # ValueError: attempted relative import beyond top-level package
 
-"""
-E:.
-|   main.py
-|   __init__.py
-|
-+---components
-|   |   component_file.py
-|   |   component_log.py
-|   |   component_request.py
-|   |   t.py
-|   |   __init__.py
-|
-\---uploadco
-    |   main.py
-    |   README.md
-    |   __init__.py
-    |
-    \---config
-            .env
-            .env_example
-"""
+from pprint import pprint
+from components.component_file import *
+from components.component_request import ComponentRequest
+from dotenv import load_dotenv
 
 if __name__=="__main__":
-  print("file: main.py")
-  print("os.getcwd(): " + os.getcwd())
-  go("this is my uploadco.main.py file")
+  pathenvfile = os.path.dirname(os.path.abspath(__file__))+"/config/.env"
+  pathenvfile = os.path.realpath(pathenvfile)
+  # print(pathenvfile)
+  load_dotenv(pathenvfile)
+
+  login = os.getenv("API_USERNAME")
+  key = os.getenv("API_PASSWORD")
+
+  objreq = ComponentRequest(login,key)
+  objreq.get_list_folder()
+  # objreq.get_folder_content()
+  #print(objreq)
