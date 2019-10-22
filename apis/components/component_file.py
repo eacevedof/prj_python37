@@ -20,6 +20,6 @@ def foverwrite(pathfile, strcontent):
         f.write(strcontent) 
 #foverwrite
 
-def get_content(pathfile)
-    return fopen(pathfile)
+def get_content(pathfile):
+    return open(pathfile,'r').read()
 # get_content
