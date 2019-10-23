@@ -22,5 +22,5 @@ if __name__=="__main__":
     "C:\\Users\\ioedu\\Desktop\\temp.html",
     "8306116",
   )
-
+  objreq.get_account_info()
   #print(objreq)

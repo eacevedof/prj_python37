@@ -37,50 +37,38 @@ class ComponentRequest:
     return dictjson
   #get_folder_content
 
+  def get_account_info(self):
+    print("get_account_info")
+    strurl = "https://api.openload.co/1/account/info?login={login}&key={key}"
+    strurl = strurl.format(login=self.login,key=self.key)
+    objresp = requests.get(strurl)
+    dictjson = json.loads(objresp.content)
+    pprint(dictjson)
+    return dictjson
+  # get_account_info
+
   def upload(self,pathlocal,ifolder):
     print("upload")
-    filepath = '/scripts/wordpress/240p.mp4'
-    filepath = pathlocal
-
-    sha1 = hashlib.sha1()
-
+    
     BLOCKSIZE = 65536
-    with open(filepath, 'rb') as afile:
-        buf = afile.read(BLOCKSIZE)
-        while len(buf) > 0:
-            sha1.update(buf)
-            buf = afile.read(BLOCKSIZE)
+    objsha1 = hashlib.sha1()
+    with open(pathlocal, 'rb') as afile:
+      objbuf = afile.read(BLOCKSIZE)
+      while len(objbuf) > 0:
+        objsha1.update(objbuf)
+        objbuf = afile.read(BLOCKSIZE)
 
-    sha1_hash = sha1.hexdigest()
+    strsha1 = objsha1.hexdigest()
 
-    url = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}&folder=8306116".format(
-        login=self.login,
-        key=self.key,
-        sha1=sha1_hash,
-    )
+    strurl = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}&folder=8306116"
+    strurl = strurl.format(login=self.login, key=self.key, sha1=strsha1)
 
-    p = {
-        'url': url,
-        'headers': {
-            #'User-Agent': self.ua,
-        }
-    }
-    r = requests.get(url=p['url'], headers=p['headers'])
-    j = r.json()
+    response = requests.get(url=strurl, headers={})
+    json = response.json()
 
-    upload_link = j['result']['url']
-
-    p = {
-        'url': upload_link,
-        'headers': {
-            # 'user-agent': self.ua,
-        },
-        'files': {
-            'file1': open(filepath, 'rb'),
-        }
-    }
-    r = requests.post(url=p['url'], headers=p['headers'], files=p['files'])
-    print(r.text)
+    upload_link = json["result"]["url"]
+    response = requests.post(url=upload_link, headers={}, files={"file1":open(pathlocal,"rb"),})
+    print(response.text)
   # upload
 
 if __name__=="__main__":
