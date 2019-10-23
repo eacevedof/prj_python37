@@ -17,7 +17,7 @@ class ComponentRequest:
     dictjson = json.loads(objresp.content)    
     return dictjson
 
-  def get_list_folder(self):
+  def get_folder_list(self):
     print("\nget_list_folder:")
     strurl = "https://api.openload.co/1/file/listfolder?login={login}&key={key}"
     strurl = strurl.format(login=self.login,key=self.key)
@@ -25,7 +25,7 @@ class ComponentRequest:
     dictjson = self._get_content(strurl)
     print(dictjson)
     return dictjson
-  #get_list_folder
+  #get_folder_list
 
   def get_folder_content(self,ifolder):
     print("\nget_folder_content:")
