@@ -49,7 +49,7 @@ class ComponentRequest:
 
   def upload(self,pathlocal,ifolder):
     print("upload")
-    
+
     BLOCKSIZE = 65536
     objsha1 = hashlib.sha1()
     with open(pathlocal, 'rb') as afile:
@@ -63,12 +63,13 @@ class ComponentRequest:
     strurl = "https://api.openload.co/1/file/ul?login={login}&key={key}&sha1={sha1}&folder=8306116"
     strurl = strurl.format(login=self.login, key=self.key, sha1=strsha1)
 
-    response = requests.get(url=strurl, headers={})
-    json = response.json()
+    objresp = requests.get(url=strurl, headers={})
+    dicjson = objresp.json()
 
-    upload_link = json["result"]["url"]
-    response = requests.post(url=upload_link, headers={}, files={"file1":open(pathlocal,"rb"),})
-    print(response.text)
+    strurlup = dicjson["result"]["url"]
+    print(strurlup)
+    objresp = requests.post(url=strurlup, headers={}, files={"file1":open(pathlocal,"rb"),})
+    print(objresp.text)
   # upload
 
 if __name__=="__main__":
