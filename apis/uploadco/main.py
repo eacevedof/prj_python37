@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 from pprint import pprint
 from components.component_file import *
@@ -16,8 +17,23 @@ if __name__=="__main__":
   key = os.getenv("API_PASSWORD")
 
   objreq = ComponentRequest(login,key)
-  objreq.get_list_folder()
-  # objreq.get_folder_content("8348096")
+  objdict = objreq.get_folder_list()
+  folders = objdict["result"]["folders"]
+  pprint(folders)
+
+  for dic in folders:
+    foldername = dic["name"]
+    print(foldername)
+    
+    if dic["name"].find(".")==True:
+      continue
+    
+    folderid = dic["id"]
+    dicfolder = objreq.get_folder_content(folderid)
+    pprint(dicfolder)
+    sys.exit()
+    
+  
   objreq.upload(
     "C:\\Users\\ioedu\\Desktop\\temp.html",
     "8306116",
