@@ -67,9 +67,10 @@ class ComponentRequest:
     dicjson = objresp.json()
 
     strurlup = dicjson["result"]["url"]
-    print(strurlup)
+    # print(strurlup)
     objresp = requests.post(url=strurlup, headers={}, files={"file1":open(pathlocal,"rb"),})
-    print(objresp.text)
+    dictjson = json.loads(objresp.text)
+    return dictjson
   # upload
 
 if __name__=="__main__":
