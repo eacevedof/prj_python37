@@ -20,18 +20,20 @@ if __name__=="__main__":
   objdict = objreq.get_folder_list()
   folders = objdict["result"]["folders"]
   pprint(folders)
+  sys.exit()
 
   for dic in folders:
     foldername = dic["name"]
     print(foldername)
-    
+
     if dic["name"].find(".")==True:
       continue
     
     folderid = dic["id"]
     dicfolder = objreq.get_folder_content(folderid)
-    pprint(dicfolder)
-    sys.exit()
+    if dic["name"] == "gstring":
+      pprint(dicfolder)
+      sys.exit()
     
   
   objreq.upload(
