@@ -18,21 +18,22 @@ def get_connection(db_file=None):
         print(e)
 
   
-def insert_loc_folder(conn, tplparams):
+def insert_loc_folder(tplparams):
     """
     no funciona ^^ que sorpresa!
     """
     sql = ''' INSERT INTO loc_folder(fullpath,status)
               VALUES(?,?) '''
+    conn = get_connection()
     cur = conn.cursor()
     cur.execute(sql,tplparams)
+    conn.commit()
+    conn.close()
     return cur.lastrowid
 
 if __name__ == '__main__':
     strthispath = os.path.join(os.path.dirname(__file__), '..')+"\openloadco\db_openloadco.db"
     strthispath = os.path.realpath(strthispath)
     #print(strthispath)
-    objconx = get_connection(strthispath)
-    print(objconx)
-    strid = insert_loc_folder(objconx,("xx","yy",))
+    strid = insert_loc_folder(("xx","yy",))
     print(strid)
