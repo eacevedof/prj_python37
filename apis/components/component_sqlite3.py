@@ -20,10 +20,7 @@ def get_connection(db_file=None):
   
 def insert_loc_folder(conn, tplparams):
     """
-    Create a new project into the projects table
-    :param conn:
-    :param project:
-    :return: project id
+    no funciona ^^ que sorpresa!
     """
     sql = ''' INSERT INTO loc_folder(fullpath,status)
               VALUES(?,?) '''
