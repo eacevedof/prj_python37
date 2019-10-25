@@ -32,7 +32,6 @@ if __name__=="__main__":
   folders = objdict["result"]["folders"]
   pprint(folders)
 
-
   for dic in folders:
     foldername = dic["name"]
     print(foldername)

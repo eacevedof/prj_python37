@@ -22,12 +22,20 @@ class ComponentDirs:
     return files 
   # list_files
 
+  def is_file(self,path):
+    return os.path.isfile(path)
+
+  def is_dir(self,path):
+    return os.path.isdir(path)
+
   def get_folder_content(self):
     print(glob.glob(self.pathdir))
     for itemcontent in os.scandir(self.pathdir):
       pprint(itemcontent)
   # get_folder_content
 
+if __name__ == "__main__":
+  pass
 
     
         
