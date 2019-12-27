@@ -63,4 +63,12 @@ Indes of Math is: 1, test var: Test String
 	```
 	- Si bien funciona ahora la importación, no es la mejor solución
 	- Que pasaría si deseamos hacer estas rutas compatibles entre windows y mac?
-	-
+	- Tendriamos que definir una variable de entorno: **PYTHONPATH**
+	- *imprimir variables de entorno: win:SET, unix: env*
+	```s
+	# file: /Users/<my-user>/.bash_profile
+	# mac
+	export PYTHONPATH="/Users/<my-user>/desktop/my-modules"
+	```
+	- ![](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/910x446/9c1e79c745f968bef240c20278126df0/image.png)
+
