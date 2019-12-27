@@ -54,3 +54,10 @@ Indes of Math is: 1, test var: Test String
 		'E:\\programas\\python\\anaconda3\\lib\\site-packages\\Pythonwin'
 	]
 	```
+	- Que pasaria si muevo mi módulo a una ruta que no está en **sys.path**
+	- Tendriamos que agregar a la lista anterior la ruta donde se encuentra
+	```py
+	# agregando ruta a includepath :)
+	import sys
+	sys.append("<ruta-absoluta-a-la-carpeta-del-módulo>")
+	```
