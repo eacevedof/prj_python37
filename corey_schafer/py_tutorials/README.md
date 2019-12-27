@@ -61,3 +61,6 @@ Indes of Math is: 1, test var: Test String
 	import sys
 	sys.append("<ruta-absoluta-a-la-carpeta-del-módulo>")
 	```
+	- Si bien funciona ahora la importación, no es la mejor solución
+	- Que pasaría si deseamos hacer estas rutas compatibles entre windows y mac?
+	-
