@@ -181,9 +181,6 @@ p3 = p1 + p2
 >>> getsource(add)
 'def add(x,y):\n    return x + y\n'
 ```
-
-https://www.youtube.com/watch?v=WcTXxX3vYgY
-
 ## [Diferencia entre función "add1" y class "Adder"](https://youtu.be/cKPlPJyQrt4?t=4064)
 ```py
 def add1(x,y):
