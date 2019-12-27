@@ -11,4 +11,4 @@
 - Formas de importar un módulo
 - `import my_module`
 	- Se importaría todo y habria que instanciar su contenido con `my_module.<funcion o variable>`
-- `from my_module import <`
+- `from my_module import <nombre-funcion|clase|variable>`

@@ -1,6 +1,7 @@
 ﻿# prj_python37  
 ## Pruebas de concepto de python siguiendo diversos tutoriales.
 
+### [Parte 8 - Corey Schafer - 9 - Import modules][https://github.com/eacevedof/prj_python37/tree/master/corey_schafer/py_tutorials#youtube-playlist---python-tutorials]
 ### [Parte 7 - pycmd](https://github.com/eacevedof/prj_python37/tree/master/pycmd)
 ### [Parte 6 - Selenium - Python](https://github.com/eacevedof/prj_python37/tree/master/selenium)
 - [Playlist](https://www.youtube.com/watch?v=N-rdcdWmYck&list=PLjM3-neCG6qx4RFeq2X-TpWS_tJTk1qZP&index=2)
