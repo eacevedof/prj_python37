@@ -1,5 +1,5 @@
 # my_module.py
-print("my_module.py")
+print("modmain/my_module.py")
 
 test = "Test String"
 
