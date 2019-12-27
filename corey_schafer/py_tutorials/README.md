@@ -76,3 +76,13 @@ Indes of Math is: 1, test var: Test String
 		- ![](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/840x485/c2c8df61f64c113ba5744adae75764bf/image.png)	
 		- `setx PYTHONPATH "<ruta-absoluta-a-la-carpeta-del-módulo>" /M` *No lo he probado, /M usa la ruta de usuario*
 		- [Más info en stackoverflow](https://stackoverflow.com/questions/9546324/adding-directory-to-path-environment-variable-in-windows)
+- Comprobando rutas 
+```py
+# intro.py
+print("intro.py")
+import os
+courses = ["History","Math", "Physics", "CompSci"]
+
+print(os.getcwd()) # E:\projects\prj_python37\corey_schafer\py_tutorials\cap_09
+print(os.__file__) # E:\programas\python\anaconda3\lib\os.py
+```
