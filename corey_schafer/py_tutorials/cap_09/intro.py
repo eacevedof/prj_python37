@@ -1,16 +1,8 @@
 # intro.py
 print("intro.py")
-import sys
-# import my_module
-from my_module import find_index, test
-# otra forma menos recomendada es:
-# from my_module import * porque no se puede hace seguimiento de lo que se esta incluyendo
-
+import os
 courses = ["History","Math", "Physics", "CompSci"]
 
-search = "Math"
-# index = my_module.find_index(courses,search)
-index = find_index(courses,search)
-print(f"Indes of {search} is: {index}, test var: {test}")
+print(os.getcwd()) # E:\projects\prj_python37\corey_schafer\py_tutorials\cap_09
+print(os.__file__) # E:\programas\python\anaconda3\lib\os.py
 
-print(sys.path)
