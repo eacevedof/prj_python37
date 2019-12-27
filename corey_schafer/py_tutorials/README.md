@@ -92,13 +92,13 @@ cap_09
 │   __init__.py
 │
 ├───pkgmain
-│       intro.py
-│       my_module.py
-│       __init__.py
+│			intro.py
+│			my_module.py
+│			__init__.py
 │
 └───pkgtest
-		generic.py
-		__init__.py
+			generic.py
+			__init__.py
 ```
 - He intentado hacer el import entre hermanos, es decir importar generic en intro.py pero no existe esa visibilidad por defecto. Con el hack funciona pero hay una mejor solución que es usar [**setup.py**](https://stackoverflow.com/questions/6323860/sibling-package-imports)
 ```py
