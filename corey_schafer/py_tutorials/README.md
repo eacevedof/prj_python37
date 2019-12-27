@@ -63,7 +63,7 @@ Indes of Math is: 1, test var: Test String
 	```
 	- Si bien funciona ahora la importación, no es la mejor solución
 	- Que pasaría si deseamos hacer estas rutas compatibles entre windows y mac?
-	- Tendriamos que definir una variable de entorno: **PYTHONPATH**
+	- Tendriamos que definir una variable de entorno: **PYTHONPATH** [10:20](https://youtu.be/CqvZ3vGoGs0?list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU)
 	- *imprimir variables de entorno: win:SET, unix: env*
 	```s
 	# file: /Users/<my-user>/.bash_profile
