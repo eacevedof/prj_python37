@@ -184,7 +184,7 @@ p3 = p1 + p2
 
 https://www.youtube.com/watch?v=WcTXxX3vYgY
 
-
+## [Diferencia entre función "add" y class "Adder"](https://youtu.be/cKPlPJyQrt4?t=4064)
 
 
 
