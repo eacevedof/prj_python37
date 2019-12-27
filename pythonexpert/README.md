@@ -184,9 +184,34 @@ p3 = p1 + p2
 
 https://www.youtube.com/watch?v=WcTXxX3vYgY
 
-## [Diferencia entre función "add" y class "Adder"](https://youtu.be/cKPlPJyQrt4?t=4064)
+## [Diferencia entre función "add1" y class "Adder"](https://youtu.be/cKPlPJyQrt4?t=4064)
+```py
+def add1(x,y):
+  return x+y
 
+class Adder():
+  def __call__(self,x,y):
+    return x+y
 
+# con __call__ realmente se está creando una función
+add2 = Adder()
+
+type(add1) == type(add2) # function
+```
+- Si del ejemplo anterior sacamos una conclusión es que una Clase sin estado es una función
+- Una función es la forma bonita o limpia de representar una clase sin estado
+- Una función generadora no es más que una clase que implementa **__iter__** y **__next__**
+- La clase generadora no es tan facil de leer y de escribir por lo tanto tiene su [función equivalente](https://youtu.be/cKPlPJyQrt4?t=4665). *Uso de Yield*
+```py
+# función generadora de numeros uno a uno
+def compute():
+  for i in range(10):
+    sleep(.5)
+    yield 1
+
+for val in compute():
+  print(val)
+```
 
 
 
