@@ -71,4 +71,8 @@ Indes of Math is: 1, test var: Test String
 	export PYTHONPATH="/Users/<my-user>/desktop/my-modules"
 	```
 	- ![](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/910x446/9c1e79c745f968bef240c20278126df0/image.png)
-
+	- Despues de guardar reiniciamos el terminal.
+	- En windows:
+		- ![](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/840x485/c2c8df61f64c113ba5744adae75764bf/image.png)	
+		- `setx PYTHONPATH "<ruta-absoluta-a-la-carpeta-del-módulo>" /M` *No lo he probado, /M usa la ruta de usuario*
+		- [Más info en stackoverflow](https://stackoverflow.com/questions/9546324/adding-directory-to-path-environment-variable-in-windows)
