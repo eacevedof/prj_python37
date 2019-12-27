@@ -214,7 +214,7 @@ for val in compute():
 ```
 - Supongamos que tenemos una clase con unos metodos que deben de respetar un orden de llamada
 ```py
-obj = MiClase()
+obj = Api()
 obj.go_first()
 obj.go_second()
 obj.go_end()
@@ -222,7 +222,17 @@ obj.go_end()
 - Como podríamos asegurar que siempre se ejecute en ese orden?
 - Una función generadora no solo devuelve un dato por unidad de tiempo sino que permite inyectar o interactuar antes, durante y despues de la devolución
 - Entra en juego el concepto de [**corutines**](https://youtu.be/cKPlPJyQrt4?t=4894), es un trozo de código que se ejecuta de inicio a fin
-- Si lo vemos desde una perspectiva de "user code" y "library code" las co-rutinas es la interacción de ambos códigos de manera alterna.  
+- Si lo vemos desde una perspectiva de "user code" y "library code" las co-rutinas es la interacción de ambos códigos de manera alterna.
+- Generators no son más que co-rutinas que permiten el solapamiento de codigo. *La verdad que esto no lo he entendido muy bien*
+```py
+# la alternativa sería
+def api():
+  first()
+  yield
+  second()
+  yield
+  last()
+```
 
 
 
