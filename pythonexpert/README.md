@@ -233,8 +233,20 @@ def api():
   yield
   last()
 ```
-
-
+- Un **contextmanager** es una clase que implementa los siguientes métodos:
+  - __init__, __call__, __enter__, __exit__
+  - Dentro de __enter__ y __exit__ hace un next()
+  - Existe un decorator **@contextmanager** que convierte un generator en un contextmanager `from contextLib import contextmanager`
+- [Explica las 3 estructuras juntas](https://youtu.be/cKPlPJyQrt4?t=5851)
+  - [contextmanagers](https://youtu.be/cKPlPJyQrt4?t=5900)
+    - Es código que mapea acciones de configuración y ejecución interna, es decir, las acciones internas solo ocurren si las de configuración se han ejecutado.
+  - [generators](https://youtu.be/cKPlPJyQrt4?t=5914)
+    - Es básicamente una sintaxis formal que nos permite hacer cosas como forzar una ejecución ordenada y el solapamiento de código.
+    - En el caso del contextmanager obliga el solapamiento ya que tiene unas acciones de configuración que se deben ejecutar en conjunto con las acciones finales. El setup debe ejecutarse antes de las acciones finales.
+  - [decorators](https://youtu.be/cKPlPJyQrt4?t=5942)
+    - Necesitamos un adaptador del generator al modelo de datos, hemos llevado el funcionamiento del generator para que se acople con los dunder methods
+  - **Nota**
+    - Debo probar y jugar con este último ejemplo porque de vista se ve complicado.
 
 
     
