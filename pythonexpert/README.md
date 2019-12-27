@@ -56,8 +56,9 @@ p3 = p1 + p2
 - [self.bar()](https://youtu.be/cKPlPJyQrt4?t=1779)
     - El creador de la librearia `library.py` asume que el desarrollador que vaya a usarla va a crear el método `bar()`
     - No sirve el [`try catch`](https://youtu.be/cKPlPJyQrt4?t=1902)
-    - Python como lenguaje en su totalidad es orientado a protocolo, quiere decier que, desde cualquier punto del progama se puede utilizar los, hooks, protocolos y valores seguros (safety values)
+    - Python como lenguaje en su totalidad es orientado a protocolo, quiere decir que, desde cualquier punto del progama se puede utilizar los, hooks, protocolos y valores seguros (safety values)
     - En python todo se ejecuta en **`runtime`**
+    - En el siguiente ejemplo se intenta obligar a que exista el método bar en todas las clases hijas
     ```py
     def _():
         class Base:
