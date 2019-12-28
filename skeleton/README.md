@@ -46,6 +46,34 @@ setup(name='skeleton', version='1.0', packages=find_packages())
   [requires]
   python_version = "3.7"
   ```
+### Resultado de `py main.py`
+```s
+main.py
+packc.init
+moda1 imported
+moda0 imported
+moda2 imported
+packb.init
+modb1 imported
+packc.init
+modc1 imported
+class Moda1.__init__ ('x-1', 'y-2') {'k1': 'value-1'}
+class Moda0.__init__ ('x-1', 'y-2') {'k1': 'value-1'}
+l? ('x-1', 'y-2') d? {'k1': 'value-1'}
+class Moda2 ('-', '-') {'k1': 'value de moda 2'}
+PRINT SELF:
+ self.x: x-1 self.y: y-2 self.k1 value-1
+PRINT SELF:
+ self.x:  self.y:  self.k1 value de moda 2
+executing foo(<packb.modb1.ModB1 object at 0x0000026D3437D400>, tradicional)
+executing class_foo(<class 'packb.modb1.ModB1'>, metodo de clase)
+executing static_foo(metodo estatico)
+func_b1
+func_b3
+CONST_A: constante a , CONST_B: constante b , CONST_C: 1234
+{'k1': 'v1', 'k2': 'v2'} (3, 4, 5, 8)
+```
+
 
 ### Bibliografía
 - [Stackoverflow](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
