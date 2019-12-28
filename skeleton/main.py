@@ -9,8 +9,11 @@ from packc.modc1 import *
 
 m1 = Moda1("x-1","y-2",k1="value-1")
 m2 = Moda2("-","-",k1="value de moda 2")
+
 m1.printself()
+
 m2.printself()
+m2.showmodb1()
 
 func_b1()
 func_b3()
