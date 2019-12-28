@@ -2,6 +2,9 @@ print("moda0 imported")
 from pprint import pprint
 
 class Moda0:
+	x = ""
+	y = ""
+	k1 = ""
 
 	def __init__(self, *l, **d):
 		print("class Moda0.__init__",l,d)
