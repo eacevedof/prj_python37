@@ -2,7 +2,8 @@
 - Base para desarrollo de cualquier proyecto
 
 ### Configurar setup.py
-- si deseo hacerlo instalable
+- si deseo que este "proyecto" skeleton sea instalable debo configurar setup.py
+- [Más info](https://github.com/eacevedof/prj_python37/blob/master/theframework/setup.py)
 ```py
 # setup.py
 from setuptools import setup, find_packages
