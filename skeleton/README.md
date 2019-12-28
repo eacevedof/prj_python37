@@ -1,9 +1,18 @@
 ## skeleton
 - Base para desarrollo de cualquier proyecto
 
+### Configurar setup.py
+- si deseo hacerlo instalable
+```py
+from setuptools import setup, find_packages
+setup(name='skeleton', version='1.0', packages=find_packages())
+```
+
 ## Ejecución:
 - Posicionarse dentro de skeleton
-- Ejecutar: pipenv shell
+- ~~Ejecutar: pipenv shell~~~
+  - Esto se usa por si quiero instalar cosas con pip install sin que afecte a otros entornos
+  - No era este caso
   ```s
   ioedu@HPZBOOK15U MINGW64 /e/projects/prj_python37/skeleton (master)
   $ pipenv shell
@@ -35,15 +44,6 @@
   [requires]
   python_version = "3.7"
   ```
-
-
-
-### Configurar setup.py
-```py
-from setuptools import setup, find_packages
-setup(name='skeleton', version='1.0', packages=find_packages())
-```
-
 
 ### Bibliografía
 - [Stackoverflow](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)

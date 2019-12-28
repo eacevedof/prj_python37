@@ -10,7 +10,7 @@ class Moda2(Moda0):
 		self.k1 = kw["k1"]
 
 	def showmodb1(self):
-		pprint(ModB1)
+		print("showmodb1 ModB1",ModB1)
 
 if __name__ == "__main__":
 	o = Moda2("x2","y2",k1="m2")
