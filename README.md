@@ -18,6 +18,13 @@
 - **Composición**: (se compone de...)
   - Un objeto no puede existir sin el objeto contenedor.
   - Una habitación no puede exisitr sin una casa
+- Otros puntos:
+  - Interfaces son iteradores
+  - Superclase y Subclase
+  - @property
+  - @atributo.setter
+  - punteros con "copy"
+  - __atributo oculto
 
 ### [Parte 8 - Corey Schafer - 9 - Import modules](https://github.com/eacevedof/prj_python37/tree/master/corey_schafer/py_tutorials#youtube-playlist---python-tutorials)
 ### [Parte 7 - pycmd](https://github.com/eacevedof/prj_python37/tree/master/pycmd)

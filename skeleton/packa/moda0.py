@@ -3,16 +3,20 @@ from pprint import pprint
 
 class Moda0:
 
-	def __init__(self,*a,**kw):
-		print("class Moda0",a,kw)
-		self.x = a[1]
-		self.y = a[2]
-		self.k1 = kw["k1"]
-		print(self.x,self.y,self.k1)
+	def __init__(self, *l, **d):
+		print("class Moda0.__init__",l,d)
+		self.x = l[0]
+		self.y = l[1]
+		print("l?",l,"d?",d)
+		self.k1 = d["k1"]
 
+	def printself(self):
+		print("PRINT SELF:\n self.x:",self.x,"self.y:",self.y,"self.k1",self.k1)
 
 if __name__ == "__main__":
-	o = Moda0("a","x","y",k1="v1")
-	pprint(o)
+	# pass
+	o = Moda0("x","y",k1="v1")
+	o.printself()
+	# pprint(o)
 
 
