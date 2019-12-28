@@ -1,6 +1,9 @@
 ﻿# prj_python37  
 ## Pruebas de concepto de python siguiendo diversos tutoriales.
 
+### [Parte 9 - POO y UML]()
+- [Youtube - Introducción a POO con ejemplos en Python - Programación Orientada a Objetos by Programación desde cero](https://youtu.be/iliKayKaGtc)
+- ![](https://trello-attachments.s3.amazonaws.com/5c8401cf1c6b4163c9b2419b/1072x476/30b2ee7c97ab29ec9e9a38d7816901c5/image.png)
 ### [Parte 8 - Corey Schafer - 9 - Import modules](https://github.com/eacevedof/prj_python37/tree/master/corey_schafer/py_tutorials#youtube-playlist---python-tutorials)
 ### [Parte 7 - pycmd](https://github.com/eacevedof/prj_python37/tree/master/pycmd)
 ### [Parte 6 - Selenium - Python](https://github.com/eacevedof/prj_python37/tree/master/selenium)
