@@ -4,6 +4,7 @@
 ### Configurar setup.py
 - si deseo hacerlo instalable
 ```py
+# setup.py
 from setuptools import setup, find_packages
 setup(name='skeleton', version='1.0', packages=find_packages())
 ```
@@ -50,3 +51,4 @@ setup(name='skeleton', version='1.0', packages=find_packages())
 
 ### Error
 - ModuleNotFoundError: No module named 'moda0'
+  - Era pq no ponía el nombre del paquete ^^, deberia hacerlo así: `moda1.py: from packa.moda0 import Moda0`
