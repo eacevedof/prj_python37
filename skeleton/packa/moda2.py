@@ -1,6 +1,6 @@
 print("moda2 imported")
 from pprint import pprint
-from moda0 import Moda0
+from packa.moda0 import Moda0
 
 class Moda2(Moda0):
 
