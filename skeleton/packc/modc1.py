@@ -1,9 +1,10 @@
 print("modc1 imported")
 
+CONST_A = "constante a"
+CONST_B = "constante b"
+CONST_C = 1234
 
-def func_c1():
-  print("func_c1")
+CONST_TUPLA = (3,4,5,8,)
+CONST_DICTO = {"k1":"v1","k2":"v2"}
 
-def func_c2():
-  print("func_c2")
 
