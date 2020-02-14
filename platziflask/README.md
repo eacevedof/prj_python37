@@ -98,7 +98,29 @@ def hello():
     return "Hola tu ip es {}".format(userip)
 ```
 ### [9 - Templates con Jinja 2](https://platzi.com/clases/1540-flask/18447-templates-con-jinja-2/)
-- 
+```py
+# project/main.py
+from flask import ... render_template
+
+@app.route("/hello")
+def hello():
+    userip = request.cookies.get("user_ip")
+    # return "Hola tu ip es {}".format(userip)
+    return render_template("hello.html",user_ip=userip)
+```
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello</title>
+</head>
+<body>
+  <h1>Hello {{ user_ip }}</h1>
+</body>
+</html>
+```
 
 ### [10 - ]()
 - 
