@@ -10,8 +10,14 @@ def index():
     response.set_cookie("user_ip",user_ip+" :) ")
     return response
 
+todos = ["TODO 1","TODO 2","TODO 3"]
+
 @app.route("/hello")
 def hello():
     userip = request.cookies.get("user_ip")
-    # return "Hola tu ip es {}".format(userip)
-    return render_template("hello.html",user_ip=userip)
+    context = {
+        "user_ip":userip,
+        "todos":todos
+    }
+    # spread operator
+    return render_template("hello.html",**context)
