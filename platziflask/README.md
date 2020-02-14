@@ -79,3 +79,21 @@ def hello():
     return "Hola tu ip es {}".format(userip)
 ```
 ### [8 - Ciclos de Request y Response](https://platzi.com/clases/1540-flask/18446-ciclos-de-request-y-response/)
+```py
+# project/main.py
+from flask import Flask, request, make_response, redirect
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    user_ip = request.remote_addr
+    response = make_response(redirect("/hello"))
+    response.set_cookie("user_ip",user_ip+" :) ")
+    return response
+
+@app.route("/hello")
+def hello():
+    userip = request.cookies.get("user_ip")
+    return "Hola tu ip es {}".format(userip)
+````
