@@ -65,3 +65,6 @@ def hello():
 - Hay que activar el debug para que se auto refresque
 - También mostrará el error si lo hubiera
 - (env):`export FLASK_DEBUG=1`
+
+### [7 - Request y Response](https://platzi.com/clases/1540-flask/18445-request-y-response/)
+- 
