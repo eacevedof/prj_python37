@@ -10,7 +10,7 @@ def index():
     response.set_cookie("user_ip",user_ip+" :) ")
     return response
 
-todos = ["TODO 1","TODO 2","TODO 3"]
+todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
 
 @app.route("/hello")
 def hello():

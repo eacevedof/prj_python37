@@ -169,7 +169,50 @@ def hello():
 ```
 
 ### [11 - Herencia de templates](https://platzi.com/clases/1540-flask/18449-herencia-de-templates/)
-- 
+> Macro: son un conjunto de comandos que se invocan con una palabra clave, opcionalmente seguidas de parámetros que se utilizan como código literal. Los Macros son manejados por el compilador y no por el ejecutable compilado.
+- macro.html:
+```html
+{% macro render_todo(todo) %}
+    <li>descripcion: {{ todo }}</li>
+{% endmacro %}
+```
+- base.html:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %} Flask {% endblock %}</title>
+</head>
+<body>
+{% block content %}
+{% endblock %}
+</body>
+</html>
+```
+- hello.html
+```html
+{% extends "base.html" %}
+{% import "macro.html" as macros%}
+
+{% block title %} {{ super() }} | Bienvenida {% endblock %}
+
+{% block content %}
+  {% if user_ip %}
+    <h1>Hello {{ user_ip }}</h1>
+  {% else %}
+    <a href="{{ url_for("index") }}"> Ir a inicio</a>
+  {% endif %}
+
+  <ul>
+    {% for todo in todos %}
+      {{ macros.render_todo(todo) }}
+    {% endfor %}
+  </ul>
+{% endblock %}
+```
+ 
 
 ### [12 - ]()
 - 
