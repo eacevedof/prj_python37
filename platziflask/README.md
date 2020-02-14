@@ -49,3 +49,5 @@ def hello():
   * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
   ```
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/630x91/dad81f743939f0d21449746f9ad4d744/image.png)
+
+- > Cuando se entra en el shell de pipenv, al menos en mac, emula estár en otro ordenador pero con visibilidad sobre todos los recursos de la maquina
