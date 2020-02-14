@@ -59,3 +59,9 @@ def hello():
     ├── main.py
     └── requirements.txt
 ```
+### [6 - Debugging en Flask](https://platzi.com/clases/1540-flask/18444-debugging-en-flask/)
+- Cada vez que hay un cambio en el código no se propaga al servidor web de la app.
+- Hay que reiniciar el servicio
+- Hay que activar el debug para que se auto refresque
+- También mostrará el error si lo hubiera
+- (env):`export FLASK_DEBUG=1`
