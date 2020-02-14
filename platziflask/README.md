@@ -168,8 +168,9 @@ def hello():
 </body>
 ```
 
-### [11 - ]()
+### [11 - Herencia de templates](https://platzi.com/clases/1540-flask/18449-herencia-de-templates/)
 - 
+
 ### [12 - ]()
 - 
 ### []()
