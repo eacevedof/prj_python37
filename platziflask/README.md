@@ -108,6 +108,7 @@ def hello():
     # return "Hola tu ip es {}".format(userip)
     return render_template("hello.html",user_ip=userip)
 ```
+- hello.html:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -121,9 +122,25 @@ def hello():
 </body>
 </html>
 ```
+### [10 - Estructuras de control](https://platzi.com/clases/1540-flask/18448-estructuras-de-control/)
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello</title>
+</head>
+<body>
+{% if user_ip %}
+  <h1>Hello {{ user_ip }}</h1>
+{% else %}
+  <a href="{{ url_for("index") }}"> Ir a inicio</a>
+{% endif %}
+</body>
+</html>
+```
 
-### [10 - ]()
-- 
 ### [11 - ]()
 - 
 ### [12 - ]()
