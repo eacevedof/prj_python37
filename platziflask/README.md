@@ -212,10 +212,9 @@ def hello():
   </ul>
 {% endblock %}
 ```
- 
-
-### [12 - ]()
+### [12 - Include y links](https://platzi.com/clases/1540-flask/18450-include-y-links/)
 - 
+
 ### []()
 - 
 ### []()
