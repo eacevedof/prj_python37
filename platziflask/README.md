@@ -123,6 +123,19 @@ def hello():
 </html>
 ```
 ### [10 - Estructuras de control](https://platzi.com/clases/1540-flask/18448-estructuras-de-control/)
+```py
+todos = ["TODO 1","TODO 2","TODO 3"]
+
+@app.route("/hello")
+def hello():
+    userip = request.cookies.get("user_ip")
+    context = {
+        "user_ip":userip,
+        "todos":todos
+    }
+    # spread operator
+    return render_template("hello.html",**context)
+```
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -139,6 +152,20 @@ def hello():
 {% endif %}
 </body>
 </html>
+
+<body>
+{% if user_ip %}
+  <h1>Hello {{ user_ip }}</h1>
+{% else %}
+  <a href="{{ url_for("index") }}"> Ir a inicio</a>
+{% endif %}
+
+<ul>
+  {% for todo in todos %}
+    <li>{{ todo }}</li>
+  {% endfor %}
+</ul>
+</body>
 ```
 
 ### [11 - ]()
