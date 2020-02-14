@@ -6,6 +6,10 @@
   <title>Hello</title>
 </head>
 <body>
+{% if user_ip %}
   <h1>Hello {{ user_ip }}</h1>
+{% else %}
+  <a href="{{ url_for("index") }}"> Ir a inicio</a>
+{% endif %}
 </body>
 </html>
