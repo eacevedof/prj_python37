@@ -22,3 +22,5 @@ Jinja2==2.11.1
 MarkupSafe==1.1.1
 Werkzeug==1.0.0
 ```
+- Dentro del *env* nos vamos a la carpeta de nuestro proyecto, cd <carpeta-project>
+  - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/630x62/5ef40a10608154f818e43e5e202ecab3/image.png)
