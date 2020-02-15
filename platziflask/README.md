@@ -635,6 +635,8 @@ def hello():
 {% endblock %}
 ```
 - Ya importa los scripts de base() pero sigue sin funcionar la x de la alerta
+- ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/577x235/eb2176f6d1f0c21c2b1e642ce3202ed2/image.png)
+
 ### [20 - ]()
 - 
 ```py
