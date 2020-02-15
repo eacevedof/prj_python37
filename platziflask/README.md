@@ -242,7 +242,61 @@ def hello():
 </html>
 ```
 ### [13 - Uso de archivos estáticos: imágenes](https://platzi.com/clases/1540-flask/18451-uso-de-archivos-estaticos-imagenes/)
-- 
+- Crear directorio **project/static/**
+- configuro bundle.js (no tutorial)
+```s
+project
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── main.py
+    ├── requirements.txt
+    ├── static
+    │   ├── css
+    │   │   └── main.css
+    │   ├── images
+    │   │   ├── favicon.ico
+    │   │   └── logo-brain.jpg
+    │   └── js
+    │       ├── bundle.js
+    │       └── modules
+    │           └── root
+    │               └── root.js
+    └── templates
+        ├── base.html
+        ├── hello.html
+        ├── macro.html
+        └── navbar.html
+```
+```html
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="static/images/favicon.ico"/>
+  <title>{% block title %} Flask {% endblock %}</title>
+  <link rel="stylesheet" href="static/css/main.css" />
+  <script type="module" src="static/js/bundle.js" defer></script>
+</head>
+<body>
+  <header>
+    {% include "navbar.html" %}
+  </header>
+{% block content %}
+{% endblock %}
+</body>
+</html>
+<!-- navbar.html -->
+<nav>
+  <ul>
+    <li><img src="{{ url_for("static", filename="images/logo-brain.jpg") }}" alt="mi-logo"></li>
+    <li><a href="{{ url_for("index") }}">Home</a></li>
+    <li><a href="http://eduardoaf.com" target="_blank">Eduardo site</a></li>
+  </ul>
+</nav>
+<!-- /navbar.html -->
+```
 
 ### [14 - ]()
 - 

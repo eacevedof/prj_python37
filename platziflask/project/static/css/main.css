@@ -1,0 +1,8 @@
+nav > ul > li > img {
+  max-width: 30px;
+  max-height: 30px;
+}
+
+body {
+  font-family: sans-serif;
+}
