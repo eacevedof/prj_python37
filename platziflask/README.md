@@ -709,7 +709,7 @@ OK
 - Se organizará mejor el código
 - Se instalara extension de login
 - Haremos uso de app-engine para el despliegue
-### [22 - ]()
+### [22 - App Factory](https://platzi.com/clases/1540-flask/18460-app-factory/)
 - 
 ```py
 ```
