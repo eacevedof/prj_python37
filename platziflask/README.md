@@ -572,11 +572,69 @@ def hello():
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/527x436/fee65f507cbae50b3ca133acf430406c/image.png)
 
 ### [19 - Desplegar Flashes (mensajes emergentes)](https://platzi.com/clases/1540-flask/18457-desplegar-flashes-mensajes-emergentes/)
-- 
+- Mensaje de exito despues de iniciar la sesion  correctamente
 ```py
+import , url_for, flash
+@app.route("/hello",methods=["GET","POST"])
+def hello():
+    # userip = request.cookies.get("user_ip")
+    user_ip = session.get("user_ip")
+    loginform = LoginForm()
+    username = session.get("username")
+
+    context = {
+        "user_ip":user_ip,
+        "todos":todos,
+        "loginform":loginform,
+        "username":username
+    }
+
+    if loginform.validate_on_submit():
+        username = loginform.username.data
+        session["username"] = username
+        flash("Nombre de usuario registrado con exito")
+        password = loginform.password.data
+        return redirect(url_for("index"))
+
+    # spread operator
+    return render_template("hello.html",**context)
 ```
 ```html
+<!-- base.html -->
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="icon" href="static/images/favicon.ico"/>
+  <title>{% block title %} Flask {% endblock %}</title>
+  <link rel="stylesheet" href="static/css/main.css" />
+  <!--al final tengo que incluir casi todo yo pq el que trae flask da error 403 y/o no incluye js-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script type="module" src="static/js/bundle.js" defer></script>
+{% endblock %}
+
+{% block body %}
+<!-- block-body -->
+  {% block navbar %}
+    {% include "navbar.html" %}
+  {% endblock %}
+  
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" data-dism="alert" class="close">&times;</button>
+      {{ message }}
+    </div>
+  {% endfor %}
+
+  {% block content %} {% endblock %}  
+
+  {% block scripts %}{{ super() }}{% endblock%}  ->>> importante
+  
+<!-- /block-body -->  
+{% endblock %}
 ```
+- Ya importa los scripts de base() pero sigue sin funcionar la x de la alerta
 ### [20 - ]()
 - 
 ```py
