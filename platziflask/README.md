@@ -324,7 +324,9 @@ project
 def not_found(error):
     return render_template("404.html",error=error)
 ```
-
+#### Reto:
+- crear fichero 500.html
+- tratar el error con `app.errohandler(500)`
 ### [15 - ]()
 - 
 ### [16 - ]()
