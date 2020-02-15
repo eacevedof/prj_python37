@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField,SubmitField
 from wtforms.validators import DataRequired
+import unittest 
 
 app = Flask(__name__)
 
@@ -60,3 +61,13 @@ def hello():
 
     # spread operator
     return render_template("hello.html",**context)
+
+# se llamara con: flask test
+@app.cli.command()
+def test():
+    import werkzeug
+    werkzeug.cached_property = werkzeug.utils.cached_property
+    # todo lo que este en la carpeta de project/test se ejecutara
+    tests = unittest.TestLoader().discover("tests")
+    unittest.TextTestRunner().run(tests)
+
