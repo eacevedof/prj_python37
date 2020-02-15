@@ -405,8 +405,7 @@ def not_found(error):
 </div>
 <!-- /navbar.html -->
 ```
-
-### [16 - ]()
+### [16 - Configuración de Flask](https://platzi.com/clases/1540-flask/18454-configuracion-de-flask/)
 - 
 ### [17 - ]()
 - 
