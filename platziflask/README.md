@@ -710,10 +710,67 @@ OK
 - Se instalara extension de login
 - Haremos uso de app-engine para el despliegue
 ### [22 - App Factory](https://platzi.com/clases/1540-flask/18460-app-factory/)
-- 
+- Restructuramos codigo en ficheros y movemos las carpetas dentro de app
 ```py
+# project/app/config.py
+class Config:
+    SECRET_KEY = "SUPER_SECRET"
+
+# project/app/forms.py
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, PasswordField,SubmitField
+from wtforms.validators import DataRequired
+
+class LoginForm(FlaskForm):
+    username = StringField("Nombre de usuario",validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField("Enviar")
+
+# project/main.py
+from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
+import unittest 
+
+# from folder-app import __init__.py.def create_app
+from app import create_app
+from app.forms import LoginForm
+
+app = create_app()
+
+@app.errorhandler(404)
+def not_found(error):
+    ...
 ```
-```html
+- Despues del refactor:
+```s
+project
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── app
+    │   ├── __init__.py
+    │   ├── config.py
+    │   ├── forms.py
+    │   ├── static
+    │   │   ├── css
+    │   │   │   └── main.css
+    │   │   ├── images
+    │   │   │   ├── favicon.ico
+    │   │   │   └── logo-brain.jpg
+    │   │   └── js
+    │   │       ├── bundle.js
+    │   │       └── modules
+    │   │           └── root
+    │   │               └── root.js
+    │   └── templates
+    │       ├── 404.html
+    │       ├── 500.html
+    │       ├── base.html
+    │       ├── hello.html
+    │       ├── macro.html
+    │       └── navbar.html
+    ├── main.py
+    ├── requirements.txt
+    └── tests
+        └── test_base.py
 ```
 ### [23 - ]()
 - 

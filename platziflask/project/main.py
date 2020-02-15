@@ -1,24 +1,12 @@
 # project/main.py
-from flask import Flask, request, make_response, redirect, render_template, session, redirect, url_for, flash
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField,SubmitField
-from wtforms.validators import DataRequired
+from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
 import unittest 
 
-app = Flask(__name__)
+# from folder-app import __init__.py.def create_app
+from app import create_app
+from app.forms import LoginForm
 
-bootstrap = Bootstrap(app)
-
-# con esto se cifra la info de la cookie
-# esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
-app.config["SECRET_KEY"] = "super secreto"
-
-class LoginForm(FlaskForm):
-    username = StringField("Nombre de usuario",validators=[DataRequired()])
-    password = PasswordField("Password",validators=[DataRequired()])
-    submit = SubmitField("Enviar")
-
+app = create_app()
 
 @app.errorhandler(404)
 def not_found(error):
