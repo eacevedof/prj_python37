@@ -1,5 +1,5 @@
 # project/main.py
-from flask import Flask, request, make_response, redirect, render_template, session, redirect, url_for
+from flask import Flask, request, make_response, redirect, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField,SubmitField
@@ -54,6 +54,7 @@ def hello():
     if loginform.validate_on_submit():
         username = loginform.username.data
         session["username"] = username
+        flash("Nombre de usuario registrado con exito")
         password = loginform.password.data
         return redirect(url_for("index"))
 
