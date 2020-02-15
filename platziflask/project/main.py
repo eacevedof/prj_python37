@@ -1,5 +1,5 @@
 # project/main.py
-from flask import Flask, request, make_response, redirect, render_template, session
+from flask import Flask, request, make_response, redirect, render_template, session, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField,SubmitField
@@ -37,15 +37,25 @@ def index():
 
 todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
 
-@app.route("/hello")
+@app.route("/hello",methods=["GET","POST"])
 def hello():
     # userip = request.cookies.get("user_ip")
     user_ip = session.get("user_ip")
     loginform = LoginForm()
+    username = session.get("username")
+
     context = {
         "user_ip":user_ip,
         "todos":todos,
-        "loginform":loginform
+        "loginform":loginform,
+        "username":username
     }
+
+    if loginform.validate_on_submit():
+        username = loginform.username.data
+        session["username"] = username
+        password = loginform.password.data
+        return redirect(url_for("index"))
+
     # spread operator
     return render_template("hello.html",**context)
