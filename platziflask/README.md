@@ -790,10 +790,78 @@ project
 ### [23 - Uso de Blueprints](https://platzi.com/clases/1540-flask/18461-uso-de-blueprints/)
 - > Blueprints son módulos con los que se construyen las aplicaciones Flask. Los objetos Blueprints son similares a Flask, pero con la diferencia de que una aplicación sólo tendrá un objeto Flask, mientras que puede tener varios Blueprints. La ventaja de su uso es que para aplicaciones largas puedo distribuir el código en varios ficheros, en lugar de tenerlos todo en un único fichero.
 - Son módulos en forma de plugins
-
+- **Eror**
+  - > runtimeError: Your version of Flask doesn't support signals. This requires Flask 0.6+ with the blinker module installed.
+  - Señales es lo que usa flask para enviar mensajes a traves de contextos y/o librerias
+  - Hay que instalar blinker (requirments.txt)
 ```py
+# project/app/auth/__init__.py
+from flask import Blueprint
+# todas las rutas que empiecen por /auth van a ser redirigidas a este blueprint
+auth = Blueprint("auth",__name__,url_prefix="/auth")
+from . import views
+
+# project/app/auth/views.py
+from flask import render_template
+from app.forms import LoginForm
+from . import auth
+
+@auth.route("/login")
+def login():
+    context = {
+        "loginform": LoginForm()
+    }
+    return render_template("login.html",**context)
+
+# project/app/__init__.py
+from flask import Flask
+from flask_bootstrap import Bootstrap
+from .config import Config
+from .auth import auth
+
+def create_app():
+    app = Flask(__name__)
+    bootstrap = Bootstrap(app)
+    # se pasa a una clase de configuracion (config.py)
+    # app.config["SECRET_KEY"] = "SUPER SECRET KEY"
+    # con esto se cifra la info de la cookie
+    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
+    app.config.from_object(Config)
+    app.register_blueprint(auth)
+
+    return app
+
+# project/tests/test_base.py
+    def test_auth_blueprint_exists(self):
+        self.assertIn("auth",self.app.blueprints)
+
+    def test_auth_login_get(self):
+        # auth.login: blueprint de auth, ruta login
+        response = self.client.get(url_for("auth.login"))
+        self.assert200(response)
+
+    def test_auth_login_template(self):
+        # aqui no se usa response, la comunicacion entre client.get y el assertemplate
+        # se hace con signals
+        self.client.get(url_for("auth.login"))
+        self.assertTemplateUsed("login.html")
 ```
+- Instalación de linker para las señales en los test
 ```html
+<!--login.html-->
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %} ->>>>>>> importante
+{% block title %}
+  {{ super() }}
+  Login
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    {{ wtf.quick_form(loginform) }}
+  </div>
+{% endblock %}
+<!--/login.html-->
 ```
 ### [24 - ]()
 - 
