@@ -705,7 +705,7 @@ test_base.py
 Ran 5 tests in 0.079s
 OK
 ```
-### [21 - ]()
+### [21 - Planteamiento del proyecto: To Do List](https://platzi.com/clases/1540-flask/18459-planteamiento-del-proyecto-to-do-list/)
 - 
 ### [22 - ]()
 - 
