@@ -213,8 +213,34 @@ def hello():
 {% endblock %}
 ```
 ### [12 - Include y links](https://platzi.com/clases/1540-flask/18450-include-y-links/)
-- 
+- Barra de navegación
+```html
+<!-- navbar.html -->
+<nav>
+  <ul>
+    <li><a href="{{ url_for("index") }}">Home</a></li>
+    <li><a href="http://eduardoaf.com" target="_blank">Eduardo site</a></li>
+  </ul>
+</nav>
+<!-- /navbar.html -->
 
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %} Flask {% endblock %}</title>
+</head>
+<body>
+  <header>
+    {% include "navbar.html" %}
+  </header>
+{% block content %}
+{% endblock %}
+</body>
+</html>
+```
 ### [13 - ]()
 - 
 ### [14 - ]()
