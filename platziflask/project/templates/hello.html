@@ -16,14 +16,6 @@
   {% endif %}
 
   <div class="clontainer">
-<!--
-    <form action="{{ url_for("hello") }}" method="POST">
-      {{ loginform.username.label }}
-      {{ loginform.username }}
-      {{ loginform.password.label }}
-      {{ loginform.password }}
-    </form>
--->    
   {{ wtf.quick_form(loginform) }}
   </div>
 
