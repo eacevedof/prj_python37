@@ -1,7 +1,9 @@
 # project/main.py
 from flask import Flask, request, make_response, redirect, render_template, session
 from flask_bootstrap import Bootstrap
-
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, PasswordField,SubmitField
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
 
@@ -10,6 +12,11 @@ bootstrap = Bootstrap(app)
 # con esto se cifra la info de la cookie
 # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
 app.config["SECRET_KEY"] = "super secreto"
+
+class LoginForm(FlaskForm):
+    username = StringField("Nombre de usuario",validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField("Enviar")
 
 
 @app.errorhandler(404)
@@ -34,9 +41,11 @@ todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
 def hello():
     # userip = request.cookies.get("user_ip")
     user_ip = session.get("user_ip")
+    loginform = LoginForm()
     context = {
         "user_ip":user_ip,
-        "todos":todos
+        "todos":todos,
+        "loginform":loginform
     }
     # spread operator
     return render_template("hello.html",**context)
