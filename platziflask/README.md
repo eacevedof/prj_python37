@@ -327,8 +327,85 @@ def not_found(error):
 #### Reto:
 - crear fichero 500.html
 - tratar el error con `app.errohandler(500)`
-### [15 - ]()
-- 
+### [15 - Flask Bootstrap](https://platzi.com/clases/1540-flask/18453-flask-bootstrap/)
+- > Framework: es un conjunto estandarizado de conceptos, prácticas y criterios para enfocar un tipo de problemática particular que sirve como referencia, para enfrentar y resolver nuevos problemas de índole similar.
+- Las extensiones de flask nos permiten agregar funcionalidad a Flask, por ejemplo para enviar email
+- En este caso agregaremos bootstrap4.css
+- Agregamos: `flask-bootstrap4` en `requirements.txt`
+- Ejecutamos: (env):`pip install -r requirements.txt`
+- Una vez instalada la extensión hay que incializarla
+```py
+# project/main.py
+from flask import Flask, request, make_response, redirect, render_template
+from flask_bootstrap import Bootstrap
+
+app = Flask(__name__)
+
+bootstrap = Bootstrap(app)
+
+@app.errorhandler(404)
+def not_found(error):
+  ...
+```
+```html
+<!-- base.html -->
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="icon" href="static/images/favicon.ico"/>
+  <title>{% block title %} Flask {% endblock %}</title>
+  <link rel="stylesheet" href="static/css/main.css" />
+  <!--al final tengo que incluir casi todo yo pq el que trae flask da error 403 y/o no incluye js-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script type="module" src="static/js/bundle.js" defer></script>
+{% endblock %}
+
+{% block body %}
+<!-- block-body -->
+  {% block navbar %}
+    {% include "navbar.html" %}
+  {% endblock %}
+  
+  {% block content %} {% endblock %}  
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  
+<!-- /block-body -->  
+{% endblock %}
+
+<!-- navbar.html -->
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+      <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='images/logo-brain.jpg') }}"
+                 style="max-width: 48px"
+                 alt="logo-brain logo">
+        </a>          
+      </div>
+
+      <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+              <li><a href="{{ url_for('index') }}">Inicio</a></li>
+              <li><a href="https://eduardoaf.com" target="_blank">eduardoaf.com</a></li>
+          </ul>
+      </div>
+  </div>
+</div>
+<!-- /navbar.html -->
+```
+
 ### [16 - ]()
 - 
 ### [17 - ]()
