@@ -712,6 +712,21 @@ OK
 ### [22 - App Factory](https://platzi.com/clases/1540-flask/18460-app-factory/)
 - Restructuramos codigo en ficheros y movemos las carpetas dentro de app
 ```py
+# project/app/__init__.py
+from flask import Flask
+from flask_bootstrap import Bootstrap
+from .config import Config
+
+def create_app():
+    app = Flask(__name__)
+    bootstrap = Bootstrap(app)
+    # se pasa a una clase de configuracion (config.py)
+    # app.config["SECRET_KEY"] = "SUPER SECRET KEY"
+    # con esto se cifra la info de la cookie
+    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
+    app.config.from_object(Config)
+    return app
+
 # project/app/config.py
 class Config:
     SECRET_KEY = "SUPER_SECRET"
@@ -772,8 +787,10 @@ project
     └── tests
         └── test_base.py
 ```
-### [23 - ]()
-- 
+### [23 - Uso de Blueprints](https://platzi.com/clases/1540-flask/18461-uso-de-blueprints/)
+- > Blueprints son módulos con los que se construyen las aplicaciones Flask. Los objetos Blueprints son similares a Flask, pero con la diferencia de que una aplicación sólo tendrá un objeto Flask, mientras que puede tener varios Blueprints. La ventaja de su uso es que para aplicaciones largas puedo distribuir el código en varios ficheros, en lugar de tenerlos todo en un único fichero.
+- Son módulos en forma de plugins
+
 ```py
 ```
 ```html
