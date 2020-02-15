@@ -706,11 +706,9 @@ Ran 5 tests in 0.079s
 OK
 ```
 ### [21 - Planteamiento del proyecto: To Do List](https://platzi.com/clases/1540-flask/18459-planteamiento-del-proyecto-to-do-list/)
-- 
-```py
-```
-```html
-```
+- Se organizará mejor el código
+- Se instalara extension de login
+- Haremos uso de app-engine para el despliegue
 ### [22 - ]()
 - 
 ```py
