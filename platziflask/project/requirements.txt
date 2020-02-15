@@ -2,3 +2,4 @@ flask
 flask-bootstrap4
 flask-wtf
 flask-testing
+blinker
