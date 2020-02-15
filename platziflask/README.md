@@ -405,8 +405,46 @@ def not_found(error):
 </div>
 <!-- /navbar.html -->
 ```
+- **NO FUNCIONA BIEN LA EXTENSION!!!**
+
 ### [16 - Configuración de Flask](https://platzi.com/clases/1540-flask/18454-configuracion-de-flask/)
-- 
+- >SESSION: es un intercambio de información interactiva semipermanente, también conocido como diálogo, una conversación o un encuentro, entre dos o más dispositivos de comunicación, o entre un ordenador y usuario.
+-  Desactivar el debug para producción
+- `export FLASK_ENV=development`
+- Con esta variable de entorno se rescribe la de produccion (FLASK_DEBUG)
+- Objeto SESSION
+- Ejemplo cookie cifrada:
+  - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/630x528/c044ca9baa5cc57dfee333db2feb6a60/image.png)
+```py
+from flask import  ..., session
+# con esto se cifra la info de la cookie
+# esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
+app.config["SECRET_KEY"] = "super secreto"
+...
+@app.route("/")
+def index():
+    user_ip = request.remote_addr
+    response = make_response(redirect("/hello"))
+    # response.set_cookie("user_ip",user_ip+" :) ")
+    session["user_ip"] = user_ip
+    return response
+...
+@app.route("/hello")
+def hello():
+    # userip = request.cookies.get("user_ip")
+    user_ip = session.get("user_ip")
+    context = {
+        "user_ip":user_ip,
+        "todos":todos
+    }
+    # spread operator
+    return render_template("hello.html",**context)
+```
+- Aparte de session Flask cuenta con otros dos objetos:
+  - current_app
+  - g (con cada request se limpia)
+  - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/940x494/e7b03ccfc68f03adf4f75b927c1aad81/image.png)
+
 ### [17 - ]()
 - 
 ### [18 - ]()
