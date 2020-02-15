@@ -513,11 +513,64 @@ def hello():
 ### [18 - Uso de método POST en Flask-WTF](https://platzi.com/clases/1540-flask/18456-uso-de-metodo-post-en-flask-wtf/)
 - > Flask acepta peticiones GET por defecto y por ende no debemos declararla en nuestras rutas. Pero cuando necesitamos hacer una petición POST al enviar un formulario debemos declararla de la siguiente manera, como en este ejemplo: `@app.route('/platzi-post', methods=['GET', 'POST'])`
 - > Debemos declararle además de la petición que queremos, GET, ya que le estamos pasando el parámetro methods para que acepte solo y únicamente las peticiones que estamos declarando. De esta forma, al actualizar el navegador ya podremos hacer la petición POST a nuestra ruta deseada y obtener la respuesta requerida.
-
 ```py
+from flask import Flask, request, make_response, redirect, render_template, session, redirect, url_for
+...
+@app.route("/hello",methods=["GET","POST"])
+def hello():
+    # userip = request.cookies.get("user_ip")
+    user_ip = session.get("user_ip")
+    loginform = LoginForm()
+    username = session.get("username")
+
+    context = {
+        "user_ip":user_ip,
+        "todos":todos,
+        "loginform":loginform,
+        "username":username
+    }
+
+    if loginform.validate_on_submit():
+        username = loginform.username.data
+        session["username"] = username
+        password = loginform.password.data
+        return redirect(url_for("index"))
+
+    # spread operator
+    return render_template("hello.html",**context)
 ```
 ```html
+<!-- hello.html -->
+{% extends "base.html" %}
+{% import "macro.html" as macros%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} {{ super() }} | Bienvenida {% endblock %}
+
+{% block content %}
+  {% if username %}
+    <h1>Bienvenido {{ username | capitalize }}</h1>
+  {% endif %}
+  {% if user_ip %}
+    <h3>tu ip es: {{ user_ip }}</h3>
+  {% else %}
+    <a href="{{ url_for("index") }}"> Ir a inicio</a>
+  {% endif %}
+
+  <div class="clontainer">
+  {{ wtf.quick_form(loginform) }}
+  </div>
+
+  <ul>
+    {% for todo in todos %}
+      {{ macros.render_todo(todo) }}
+    {% endfor %}
+  </ul>
+{% endblock %}
+<!--/hello.html -->
 ```
+- ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/527x436/fee65f507cbae50b3ca133acf430406c/image.png)
+
 ### [19 - ]()
 - 
 ```py
