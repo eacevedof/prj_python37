@@ -241,8 +241,9 @@ def hello():
 </body>
 </html>
 ```
-### [13 - ]()
+### [13 - Uso de archivos estáticos: imágenes](https://platzi.com/clases/1540-flask/18451-uso-de-archivos-estaticos-imagenes/)
 - 
+
 ### [14 - ]()
 - 
 ### [15 - ]()
