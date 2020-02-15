@@ -445,14 +445,89 @@ def hello():
   - g (con cada request se limpia)
   - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/940x494/e7b03ccfc68f03adf4f75b927c1aad81/image.png)
 
-### [17 - ]()
-- 
+### [17 - Implementación de Flask-Bootstrap y Flask-WTF](https://platzi.com/clases/1540-flask/18455-implementacion-de-flask-bootstrap-y-flask-wtf/)
+- Instalar extension Flask-WTF  (What the forms)
+- WTF es una libreria de python que permite renderizar formularios y funciona en cualquier app de python
+- Agregamos en requirements: flask-wtf
+- instalamos y arrancamos nuevamente el servidor: flask run
+- Uso de validadores, existen también custom validadores
+```py
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, PasswordField,SubmitField
+from wtforms.validators import DataRequired
+
+class LoginForm(FlaskForm):
+    username = StringField("Nombre de usuario",validators=[DataRequired()])
+    password = PasswordField("Password",validators=[DataRequired()])
+    submit = SubmitField("Enviar")
+
+def hello():
+    # userip = request.cookies.get("user_ip")
+    user_ip = session.get("user_ip")
+    loginform = LoginForm()
+    context = {
+        "user_ip":user_ip,
+        "todos":todos,
+        "loginform":loginform
+    }
+    # spread operator
+    return render_template("hello.html",**context)
+```
+```html
+<!-- hello.html -->
+{% extends "base.html" %}
+{% import "macro.html" as macros%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} {{ super() }} | Bienvenida {% endblock %}
+
+{% block content %}
+  {% if user_ip %}
+    <h1>Hello {{ user_ip }}</h1>
+  {% else %}
+    <a href="{{ url_for("index") }}"> Ir a inicio</a>
+  {% endif %}
+
+  <div class="clontainer">
+<!--
+    <form action="{{ url_for("hello") }}" method="POST">
+      {{ loginform.username.label }}
+      {{ loginform.username }}
+      {{ loginform.password.label }}
+      {{ loginform.password }}
+    </form>
+-->    
+  {{ wtf.quick_form(loginform) }}
+  </div>
+
+  <ul>
+    {% for todo in todos %}
+      {{ macros.render_todo(todo) }}
+    {% endfor %}
+  </ul>
+{% endblock %}
+<!--/hello.html -->
+```
+- en este punto ya se ve el form pero al hacer submit muestra error **Method not allowed***
+- lo veremos en el prox capítulo
 ### [18 - ]()
 - 
+```py
+```
+```html
+```
 ### [19 - ]()
 - 
+```py
+```
+```html
+```
 ### [20 - ]()
 - 
+```py
+```
+```html
+```
 ### [21 - ]()
 - 
 ### [22 - ]()
