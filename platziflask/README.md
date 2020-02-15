@@ -301,6 +301,29 @@ project
 ### [14 - Configurar páginas de error](https://platzi.com/clases/1540-flask/18452-configurar-paginas-de-error/)
 - Tratando error 404. Not found
 - Reto para error 500
+- Creamos fichero **templates/404.html**
+```html
+<!-- 404.html -->
+{% extends "base.html" %}
+{% block title %}
+  {{ super() }}
+  404
+{% endblock %}
+
+{% block content %}
+  <h1>Lo sentimos no encontramos lo que buscabas</h1>
+  <p>
+  {{ error }}
+  </p>
+{% endblock %}
+<!--/404.html -->
+```
+```py
+...
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("404.html",error=error)
+```
 
 ### [15 - ]()
 - 
