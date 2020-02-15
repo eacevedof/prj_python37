@@ -298,8 +298,10 @@ project
 <!-- /navbar.html -->
 ```
 
-### [14 - ]()
-- 
+### [14 - Configurar páginas de error](https://platzi.com/clases/1540-flask/18452-configurar-paginas-de-error/)
+- Tratando error 404. Not found
+- Reto para error 500
+
 ### [15 - ]()
 - 
 ### [16 - ]()
