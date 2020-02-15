@@ -510,8 +510,10 @@ def hello():
 ```
 - en este punto ya se ve el form pero al hacer submit muestra error **Method not allowed***
 - lo veremos en el prox capítulo
-### [18 - ]()
-- 
+### [18 - Uso de método POST en Flask-WTF](https://platzi.com/clases/1540-flask/18456-uso-de-metodo-post-en-flask-wtf/)
+- > Flask acepta peticiones GET por defecto y por ende no debemos declararla en nuestras rutas. Pero cuando necesitamos hacer una petición POST al enviar un formulario debemos declararla de la siguiente manera, como en este ejemplo: `@app.route('/platzi-post', methods=['GET', 'POST'])`
+- > Debemos declararle además de la petición que queremos, GET, ya que le estamos pasando el parámetro methods para que acepte solo y únicamente las peticiones que estamos declarando. De esta forma, al actualizar el navegador ya podremos hacer la petición POST a nuestra ruta deseada y obtener la respuesta requerida.
+
 ```py
 ```
 ```html
