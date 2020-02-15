@@ -571,7 +571,7 @@ def hello():
 ```
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/527x436/fee65f507cbae50b3ca133acf430406c/image.png)
 
-### [19 - ]()
+### [19 - Desplegar Flashes (mensajes emergentes)](https://platzi.com/clases/1540-flask/18457-desplegar-flashes-mensajes-emergentes/)
 - 
 ```py
 ```
