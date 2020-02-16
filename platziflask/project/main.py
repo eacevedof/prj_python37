@@ -1,6 +1,9 @@
 # project/main.py
 from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
 import unittest 
+from pprint import pprint
+
+from app.services.firestore import get_users, get_todos
 
 # from folder-app import __init__.py.def create_app
 from app import create_app
@@ -24,7 +27,7 @@ def index():
     session["user_ip"] = user_ip
     return response
 
-todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
+# todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
 
 @app.route("/hello",methods=["GET","POST"])
 def hello():
@@ -33,9 +36,19 @@ def hello():
 
     context = {
         "user_ip":user_ip,
-        "todos":todos,
+        "todos":get_todos(userid=username),
         "username":username
     }
+
+    # devuelve un generator
+    genusers = get_users()
+    #pprint(users)
+    #pprint(type(users))
+
+    for objuser in genusers:
+        #objuser: <google.cloud.firestore_v1.document.DocumentSnapshot object at 0x10eaec790>
+        print(objuser.id)
+        print(objuser.to_dict()["password"])
 
     # spread operator
     return render_template("hello.html",**context)

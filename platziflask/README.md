@@ -1014,10 +1014,65 @@ def hello():
   ```
 
 ### [28 - Implementación de Firestore](https://platzi.com/clases/1540-flask/18465-implementacion-de-firestore/)
-- 
+- Instalamos firebase-admin (requirements)
+  - `pip install -r requirements.txt`
+- Parentesis: si tenemos seleccionado un proyecto en gcloud y no es el que debe ser, podemos cambiarlo con:
+  - `gcloud config list`
+  - `gcloud config set project flask-platzi-todo`
+
 ```py
+# project/app/services/firestore.py
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+credential = credentials.ApplicationDefault()
+firebase_admin.initialize_app(credential)
+
+db = firestore.client()
+
+def get_users():
+    return db.collection("users").get()
+
+def get_todos(userid):
+    return db.collection("users")\
+            .document(userid)\
+            .collection("todos").get()
+
+# project/main.py
+...
+from app.services.firestore import get_users, get_todos
+
+@app.route("/hello",methods=["GET","POST"])
+def hello():
+    user_ip = session.get("user_ip")
+    username = session.get("username")
+
+    context = {
+        "user_ip":user_ip,
+        "todos":get_todos(userid=username),
+        "username":username
+    }
+
+    # devuelve un generator
+    genusers = get_users()
+    #pprint(users)
+    #pprint(type(users))
+
+    for objuser in genusers:
+        #objuser: <google.cloud.firestore_v1.document.DocumentSnapshot object at 0x10eaec790>
+        print(objuser.id)
+        print(objuser.to_dict()["password"])
+
+    # spread operator
+    return render_template("hello.html",**context) 
 ```
 ```html
+<!-- macro.html -->
+{% macro render_todo(todo) %}
+    <li>descripcion: {{ todo.to_dict().description }}</li>
+{% endmacro %}
+<!-- /macro.html -->
 ```
 ### [29 - ]()
 - 
