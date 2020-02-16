@@ -1151,7 +1151,7 @@ def create_app():
     return app
 ```
 - El error anterior se resolvia configurando el: `@login_manager.user_loader`
-### [30 - ]()
+### [30 - Autenticación de usuarios: Logout](https://platzi.com/clases/1540-flask/18467-autenticacion-de-usuarios-logout/)
 - 
 ```py
 ```
