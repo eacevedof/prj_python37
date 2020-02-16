@@ -971,13 +971,25 @@ def hello():
 - Usaremos **google firestore**, el mongo de google.
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/970x306/bea4651d54b32a930cc7b3f67feeec27/image.png)
 
-### [26 - ]()
-- 
-```py
-```
-```html
-```
-### [27 - ]()
+### [26 - Configuración de Google Cloud SDK](https://platzi.com/clases/1540-flask/18834-configuracion-de-google-cloud-sdk/)
+- Para Windows dirígete a https://cloud.google.com/sdk/docs/quickstart-windows
+- Para MacOS dirígete a link ~https://cloud.google.com/sdk/docs/quickstart-macos~ https://cloud.google.com/sdk/docs/downloads-interactive
+  ```s
+  curl https://sdk.cloud.google.com | bash
+  exec -l $SHELL
+  gcloud init
+  ```
+  - Crea entradas en el fichero del terminal:
+  ```
+  # The next line updates PATH for the Google Cloud SDK.
+  if [ -f '/Users/<my-user>/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/<my-user>/google-cloud-sdk/path.zsh.inc'; fi
+
+  # The next line enables shell command completion for gcloud.
+  if [ -f '/Users/<my-user>/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/<my-user>/google-cloud-sdk/completion.zsh.inc'; fi
+  ```
+- Para Linux dirígete a https://cloud.google.com/sdk/docs/quickstart-linux
+- Resultado instalación: [Trello](https://trello.com/c/87odm7iZ/1-instalacion-del-sdk-en-mac)
+### [27 - Configuración de proyecto en Google Cloud Platform](https://platzi.com/clases/1540-flask/18464-configuracion-de-proyecto-en-google-cloud-platform/)
 - 
 ```py
 ```
