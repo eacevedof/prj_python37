@@ -797,15 +797,23 @@ project
 ```py
 # project/app/auth/__init__.py
 from flask import Blueprint
+
 # todas las rutas que empiecen por /auth van a ser redirigidas a este blueprint
 auth = Blueprint("auth",__name__,url_prefix="/auth")
+
+# @auth.route("/login") importo funcion login()
 from . import views
 
 # project/app/auth/views.py
 from flask import render_template
+
+# clase LoginForm con el formulario
 from app.forms import LoginForm
+
+# importo: Blueprint("auth",__name__,url_prefix="/auth")
 from . import auth
 
+# blueprint.route("auth/<ruta>")
 @auth.route("/login")
 def login():
     context = {
@@ -813,10 +821,13 @@ def login():
     }
     return render_template("login.html",**context)
 
+
 # project/app/__init__.py
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from .config import Config
+
+# importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
 from .auth import auth
 
 def create_app():
@@ -832,6 +843,13 @@ def create_app():
     return app
 
 # project/tests/test_base.py
+    # metodo obligatorio que tiene que devolver la app
+    def create_app(self):
+        app.config["TESTING"] = True
+        app.config["WTF_CSRF_ENABLED"] = False
+        return app
+    ...
+
     def test_auth_blueprint_exists(self):
         self.assertIn("auth",self.app.blueprints)
 
