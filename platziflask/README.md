@@ -885,10 +885,85 @@ def create_app():
 <!--/login.html-->
 ```
 ### [24 - Blueprints II](https://platzi.com/clases/1540-flask/18462-blueprints-ii/)
-- 
+- Ya no aceptaremos POST en hello
 ```py
+# project/app/auth/views.py
+from flask import render_template, session, redirect, flash, url_for
+
+# clase LoginForm con el formulario
+from app.forms import LoginForm
+
+# importo: Blueprint("auth",__name__,url_prefix="/auth")
+from . import auth
+
+# blueprint.route("auth/<ruta>")
+@auth.route("/login", methods=["GET","POST"])
+def login():
+
+    loginform = LoginForm()
+    context = {
+        "loginform": loginform
+    }
+
+    if loginform.validate_on_submit():
+        username = loginform.username.data
+        session["username"] = username
+        flash("Nombre de usuario registrado con exito")
+        password = loginform.password.data
+        return redirect(url_for("index"))
+        
+    return render_template("login.html",**context)
+
+# project/tests/test_base.py
+print("test_base.py")
+from flask_testing import TestCase
+from flask import current_app, url_for
+
+from main import app
+
+class MainTest(TestCase):
+    
+    # metodo obligatorio que tiene que devolver la app
+    def create_app(self):
+        app.config["TESTING"] = True
+        app.config["WTF_CSRF_ENABLED"] = False
+        return app
+    ...
+    # prueba de post
+    def test_hello_post(self):
+        response = self.client.post(url_for("hello"))
+        # espero un Not Allowed
+        self.assertTrue(response.status_code,405)
+
+    ...
+    def test_auth_login_post(self):
+        dicformdata = {
+            "username":"fake",
+            "password":"fake-passs"
+        }
+        response = self.client.post(url_for("auth.login"),data=dicformdata)
+        self.assertRedirects(response,url_for("index"))
+
+# main.py
+@app.route("/hello",methods=["GET","POST"])
+def hello():
+    user_ip = session.get("user_ip")
+    username = session.get("username")
+
+    context = {
+        "user_ip":user_ip,
+        "todos":todos,
+        "username":username
+    }
+
+    # spread operator
+    return render_template("hello.html",**context)
+
 ```
 ```html
+<!-- hello.html -->
+  se quita el form de aqui
+
 ```
 ### [25 - ]()
 - 
