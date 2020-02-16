@@ -805,6 +805,7 @@ auth = Blueprint("auth",__name__,url_prefix="/auth")
 # @auth.route("/login") importo funcion login()
 from . import views
 
+# =================================
 # project/app/auth/views.py
 from flask import render_template
 
