@@ -963,8 +963,12 @@ def hello():
 <!-- hello.html -->
   se quita el form de aqui
 ```
-### [25 - ]()
-- 
+### [25 - Base de datos y App Engine con Flask](https://platzi.com/clases/1540-flask/18463-base-de-datos-y-app-engine-con-flask/)
+- >Bases de Datos SQL: su composición esta hecha con bases de datos llenas de tablas con filas que contienen campos estructurados. No es muy flexible pero es el más usado. Una de sus desventajas es que mientras más compleja sea la base de datos más procesamiento necesitará.
+- >Base de Datos NOSQL: su composición es no estructurada, es abierta y muy flexible a diferentes tipos de datos, no necesita tantos recursos para ejecutarse, no necesitan una tabla fija como las que se encuentran en bases de datos relacionales y es altamente escalable a un bajo costo de hardware.
+- Flask no tiene un ORM como tal
+- Hay extensiones como Flask SQLAlchemy
+
 ```py
 ```
 ```html
