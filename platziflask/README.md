@@ -990,7 +990,10 @@ def hello():
 - Para Linux dirígete a https://cloud.google.com/sdk/docs/quickstart-linux
 - Resultado instalación: [Trello](https://trello.com/c/87odm7iZ/1-instalacion-del-sdk-en-mac)
 ### [27 - Configuración de proyecto en Google Cloud Platform](https://platzi.com/clases/1540-flask/18464-configuracion-de-proyecto-en-google-cloud-platform/)
-- 
+- Creamos el proyecto un proyecto en **firestore**
+- Vamos a la configuración: [flask-platzi-todo](https://console.cloud.google.com/firestore/welcome?project=flask-platzi-todo&folder=&organizationId=)
+- Usaremos **Modo Nativo**
+- ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/667x452/0a274c774dcfcf20ae633008af109d62/image.png)
 ```py
 ```
 ```html
