@@ -1074,12 +1074,83 @@ def hello():
 {% endmacro %}
 <!-- /macro.html -->
 ```
-### [29 - ]()
-- 
+### [29 - Autenticación de usuarios: Login](https://platzi.com/clases/1540-flask/18466-autenticacion-de-usuarios-login/)
+- Instalamos flask-login
+- Implementamos un login manager 
+- Proteccion de rutas con decoradores
+```
+Exception
+Exception: Missing user_loader or request_loader. 
+Refer to http://flask-login.readthedocs.io/#how-it-works for more info.
+```
+- Agregando definicion de parámetros en el comentario:
 ```py
+  """
+  ;param user_data: Userdata
+  """
 ```
-```html
+```py
+# project/app/models/user.py
+from flask_login import UserMixin
+from app.services.firestore import get_user
+
+class UserData:
+    def __init__(self,username, password):
+        self.username = username
+        self.password = password
+
+class UserModel(UserMixin):
+    def __init__(self,user_data):
+        """
+        ;param user_data: Userdata
+        """
+        self.id = user_data.username
+        self.password = user_data.password
+
+    @staticmethod
+    def query(userid):
+        userdoc = get_user(userid)
+        userdata = UserData(
+            username = userdoc.id,
+            password = userdoc.to_dict()["password"]
+        )
+
+        return UserModel(userdata)
+# firestore.py
+def get_user(userid):
+    return db.collection("users").document(userid).get()
+
+# project/app/__init__.py
+from flask import Flask
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
+from .config import Config
+# importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
+from .auth import auth
+from app.models.user import UserModel
+
+login_manager = LoginManager()
+# print(login_manager)
+login_manager.login_view = "auth.login"
+
+@login_manager.user_loader
+def load_user(username):
+    return UserModel.query(username)
+
+def create_app():
+    app = Flask(__name__)
+    bootstrap = Bootstrap(app)
+    # se pasa a una clase de configuracion (config.py)
+    # app.config["SECRET_KEY"] = "SUPER SECRET KEY"
+    # con esto se cifra la info de la cookie
+    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
+    app.config.from_object(Config)
+    login_manager.init_app(app)
+    app.register_blueprint(auth)
+
+    return app
 ```
+- El error anterior se resolvia configurando el: `@login_manager.user_loader`
 ### [30 - ]()
 - 
 ```py
