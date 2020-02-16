@@ -15,3 +15,6 @@ def get_todos(userid):
     return db.collection("users")\
             .document(userid)\
             .collection("todos").get()
+
+def get_user(userid):
+    return db.collection("users").document(userid).get()
