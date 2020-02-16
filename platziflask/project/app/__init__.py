@@ -2,6 +2,8 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from .config import Config
+
+# importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
 from .auth import auth
 
 def create_app():
