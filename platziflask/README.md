@@ -1013,7 +1013,7 @@ def hello():
   These credentials will be used by any library that requests Application Default Credentials (ADC).
   ```
 
-### [28 - ]()
+### [28 - Implementación de Firestore](https://platzi.com/clases/1540-flask/18465-implementacion-de-firestore/)
 - 
 ```py
 ```
