@@ -994,10 +994,25 @@ def hello():
 - Vamos a la configuración: [flask-platzi-todo](https://console.cloud.google.com/firestore/welcome?project=flask-platzi-todo&folder=&organizationId=)
 - Usaremos **Modo Nativo**
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/667x452/0a274c774dcfcf20ae633008af109d62/image.png)
-```py
-```
-```html
-```
+- Creamos la bd: 
+  - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/771x297/ea0ea71775af54f6b884811ae02abfde/image.png)
+- Ejecutamos: 
+  - `gcloud auth login`
+  - Nos abrira la ventana del navegador para confirmar permisos
+  ```
+  You are now logged in as [XXX@XXX.YYY].
+  Your current project is [flask-platzi-todo].  You can change this setting by running:
+  $ gcloud config set project PROJECT_ID
+  ```
+  - **API:**
+  - Para poder usar la API necesitamos otro comando:
+  - `gcloud auth application-default login`
+  - Pide permisos en el browser
+  ```
+  Credentials saved to file: [/Users/<my-user>/.config/gcloud/application_default_credentials.json]
+  These credentials will be used by any library that requests Application Default Credentials (ADC).
+  ```
+
 ### [28 - ]()
 - 
 ```py
