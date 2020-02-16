@@ -970,10 +970,7 @@ def hello():
 - Hay extensiones como Flask SQLAlchemy
 - Usaremos **google firestore**, el mongo de google.
 - ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/970x306/bea4651d54b32a930cc7b3f67feeec27/image.png)
-```py
-```
-```html
-```
+
 ### [26 - ]()
 - 
 ```py
