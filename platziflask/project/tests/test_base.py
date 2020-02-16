@@ -31,12 +31,9 @@ class MainTest(TestCase):
 
     # prueba de post
     def test_hello_post(self):
-        dicformdata = {
-            "username":"fake",
-            "password":"fake-passs"
-        }
-        response = self.client.post(url_for("hello"),data=dicformdata)
-        self.assertRedirects(response,url_for("index"))
+        response = self.client.post(url_for("hello"))
+        # espero un Not Allowed
+        self.assertTrue(response.status_code,405)
 
     def test_auth_blueprint_exists(self):
         self.assertIn("auth",self.app.blueprints)
@@ -51,3 +48,11 @@ class MainTest(TestCase):
         # se hace con signals
         self.client.get(url_for("auth.login"))
         self.assertTemplateUsed("login.html")
+
+    def test_auth_login_post(self):
+        dicformdata = {
+            "username":"fake",
+            "password":"fake-passs"
+        }
+        response = self.client.post(url_for("auth.login"),data=dicformdata)
+        self.assertRedirects(response,url_for("index"))
