@@ -944,7 +944,7 @@ class MainTest(TestCase):
         response = self.client.post(url_for("auth.login"),data=dicformdata)
         self.assertRedirects(response,url_for("index"))
 
-# main.py
+# project/main.py
 @app.route("/hello",methods=["GET","POST"])
 def hello():
     user_ip = session.get("user_ip")
@@ -958,12 +958,10 @@ def hello():
 
     # spread operator
     return render_template("hello.html",**context)
-
 ```
 ```html
 <!-- hello.html -->
   se quita el form de aqui
-
 ```
 ### [25 - ]()
 - 
