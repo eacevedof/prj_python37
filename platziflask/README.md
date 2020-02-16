@@ -968,7 +968,8 @@ def hello():
 - >Base de Datos NOSQL: su composición es no estructurada, es abierta y muy flexible a diferentes tipos de datos, no necesita tantos recursos para ejecutarse, no necesitan una tabla fija como las que se encuentran en bases de datos relacionales y es altamente escalable a un bajo costo de hardware.
 - Flask no tiene un ORM como tal
 - Hay extensiones como Flask SQLAlchemy
-
+- Usaremos **google firestore**, el mongo de google.
+- ![](https://trello-attachments.s3.amazonaws.com/5e47170d1f80943559dbb587/970x306/bea4651d54b32a930cc7b3f67feeec27/image.png)
 ```py
 ```
 ```html
