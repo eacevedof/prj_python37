@@ -795,6 +795,7 @@ project
   - Señales es lo que usa flask para enviar mensajes a traves de contextos y/o librerias
   - Hay que instalar blinker (requirments.txt)
 ```py
+# =================================
 # project/app/auth/__init__.py
 from flask import Blueprint
 
@@ -821,7 +822,7 @@ def login():
     }
     return render_template("login.html",**context)
 
-
+# =================================
 # project/app/__init__.py
 from flask import Flask
 from flask_bootstrap import Bootstrap
@@ -842,6 +843,7 @@ def create_app():
 
     return app
 
+# =================================
 # project/tests/test_base.py
     # metodo obligatorio que tiene que devolver la app
     def create_app(self):
