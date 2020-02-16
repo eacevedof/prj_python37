@@ -863,7 +863,7 @@ def create_app():
 {% endblock %}
 <!--/login.html-->
 ```
-### [24 - ]()
+### [24 - Blueprints II](https://platzi.com/clases/1540-flask/18462-blueprints-ii/)
 - 
 ```py
 ```
