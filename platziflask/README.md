@@ -1385,7 +1385,7 @@ def hello():
   </div>
 ```
 
-### [33 - ]()
+### [33 - Eliminar tareas](https://platzi.com/clases/1540-flask/18470-eliminar-tareas/)
 - 
 ```py
 ```
