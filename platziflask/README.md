@@ -1335,7 +1335,7 @@ def user_put(userdata):
 {% endblock %}
 <!--/signup.html-->
 ```
-### [32 - ]()
+### [32 - Agregar tareas](https://platzi.com/clases/1540-flask/18469-agregar-tareas/)
 - 
 ```py
 ```
