@@ -1455,8 +1455,7 @@ def delete(todoid):
 {% endmacro %}
 <!-- /macro.html -->
 ```
-### [34 - ]()
-- 
+### [34 - Editar tareas](https://platzi.com/clases/1540-flask/18471-editar-tareas/)
 ```py
 ```
 ```html
