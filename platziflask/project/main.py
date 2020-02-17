@@ -1,6 +1,6 @@
 # project/main.py
 from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 import unittest 
 from pprint import pprint
 
@@ -28,13 +28,11 @@ def index():
     session["user_ip"] = user_ip
     return response
 
-# todos = ["Comprar cafe","Enviar solicitud","Entregar video"]
-
 @app.route("/hello",methods=["GET"])
 @login_required
 def hello():
     user_ip = session.get("user_ip")
-    username = session.get("username")
+    username = current_user.id
 
     context = {
         "user_ip":user_ip,
