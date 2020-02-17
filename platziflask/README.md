@@ -1227,7 +1227,7 @@ def hello():
 </nav>
 <!-- /navbar.html -->
 ```
-### [31 - ]()
+### [31 - Signup](https://platzi.com/clases/1540-flask/18468-signup/)
 - 
 ```py
 ```
