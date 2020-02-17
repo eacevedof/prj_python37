@@ -25,5 +25,9 @@ def user_put(userdata):
 
 def put_todo(userid,description):
     todoscollection = db.collection("users").document(userid).collection("todos")
-    todoscollection.add({"description":description})
+    todoscollection.add({"description":description,"done":False})
     
+def delete_todo(userid, todoid):
+    todoref = db.document("users/{}/todos/{}".format(userid, todoid))
+    todoref.delete()
+    #todoref = db.collection("users").document(userid).collection("todos").document(todoid)
