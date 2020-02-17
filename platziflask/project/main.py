@@ -4,11 +4,11 @@ from flask_login import login_required, current_user
 import unittest 
 from pprint import pprint
 
-from app.services.firestore import get_users, get_todos, put_todo
+from app.services.firestore import get_users, get_todos, put_todo, delete_todo
 
 # from folder-app import __init__.py.def create_app
 from app import create_app
-from app.forms import LoginForm, TodoForm
+from app.forms import TodoForm,DeleteTodoForm
 
 app = create_app()
 
@@ -34,12 +34,14 @@ def hello():
     user_ip = session.get("user_ip")
     username = current_user.id
     todoform = TodoForm()
+    deleteform = DeleteTodoForm()
 
     context = {
         "user_ip":user_ip,
         "todos":get_todos(userid=username),
         "username":username,
-        "todoform":todoform
+        "todoform":todoform,
+        "deleteform":deleteform
     }
 
     if todoform.validate_on_submit():
@@ -59,3 +61,8 @@ def test():
     tests = unittest.TestLoader().discover("tests")
     unittest.TextTestRunner().run(tests)
 
+@app.route("/todos/delete/<todoid>",methods=["POST"])
+def delete(todoid):
+    userid = current_user.id
+    delete_todo(userid=userid,todoid=todoid)
+    return redirect(url_for("hello"))

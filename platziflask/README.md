@@ -1386,10 +1386,74 @@ def hello():
 ```
 
 ### [33 - Eliminar tareas](https://platzi.com/clases/1540-flask/18470-eliminar-tareas/)
-- 
 ```py
+# project/app/services/firestore.py
+def delete_todo(userid, todoid):
+    todoref = db.document("users/{}/todos/{}".format(userid, todoid))
+    todoref.delete()
+    #todoref = db.collection("users").document(userid).collection("todos").document(todoid)
+
+# project/app/forms.py
+class DeleteTodoForm(FlaskForm):
+    submit = SubmitField("Borrar")
+
+# main.py
+@app.route("/hello",methods=["GET","POST"])
+@login_required
+def hello():
+    user_ip = session.get("user_ip")
+    username = current_user.id
+    todoform = TodoForm()
+    deleteform = DeleteTodoForm()
+
+    context = {
+        "user_ip":user_ip,
+        "todos":get_todos(userid=username),
+        "username":username,
+        "todoform":todoform,
+        "deleteform":deleteform
+    }
+
+    if todoform.validate_on_submit():
+        put_todo(userid=username,description=todoform.description.data)
+        flash("tu tarea se creó con éxito")
+        return redirect(url_for("hello"))
+  
+    # spread operator
+    return render_template("hello.html",**context)
+
+@app.route("/todos/delete/<todoid>",methods=["POST"])
+def delete(todoid):
+    userid = current_user.id
+    delete_todo(userid=userid,todoid=todoid)
+    return redirect(url_for("hello"))
 ```
 ```html
+  <div class="container">
+    <h2>Crear una nueva tarea</h2>
+    {{ wtf.quick_form(todoform) }}
+    <hr/>
+    <ul class="list-group">
+      {% for todo in todos %}
+        {{ macros.render_todo(todo, deleteform) }}
+      {% endfor %}
+    </ul>    
+  </div>
+{% endblock %}
+<!--/hello.html -->
+<!-- macro.html -->
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% macro render_todo(todo,deletform) %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    descripcion: {{ todo.to_dict().description }}
+    <span class="badge badge-primary badge-pill">
+      {{ todo.to_dict().done }}
+    </span>
+    {{ wtf.quick_form(deletform, action=url_for("delete",todoid=todo.id)) }}
+  </li>
+{% endmacro %}
+<!-- /macro.html -->
 ```
 ### [34 - ]()
 - 
