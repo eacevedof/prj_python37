@@ -2,12 +2,14 @@
 from flask import render_template, session, redirect, flash, url_for
 from flask_login import login_user, login_required, logout_user
 
+from werkzeug.security import generate_password_hash
+
 # clase LoginForm con el formulario
 from app.forms import LoginForm
 
 # importo: Blueprint("auth",__name__,url_prefix="/auth")
 from . import auth
-from app.services.firestore import get_user
+from app.services.firestore import get_user, user_put
 from app.models.user import UserData, UserModel
 
 # blueprint.route("auth/<ruta>")
@@ -42,6 +44,33 @@ def login():
         "loginform": loginform
     }        
     return render_template("login.html",**context)
+
+
+@auth.route("signup",methods=["GET","POST"])
+def signup():
+    signupform = LoginForm()
+    context = {
+        "signupform":signupform
+    }
+
+    if signupform.validate_on_submit():
+        username = signupform.username.data
+        password = signupform.password.data
+
+        userdoc = get_user(username)
+        if userdoc.to_dict() is None:
+            passwordhash = generate_password_hash(password)
+            userdata = UserData(username, passwordhash)
+            user_put(userdata)
+            user = UserModel(userdata)
+            login_user(user)
+            flash("bienvenido")
+            return redirect(url_for("hello"))
+        else:
+            flash("El usuario ya existe")
+
+
+    return render_template("signup.html",**context)
 
 
 @auth.route("logout")

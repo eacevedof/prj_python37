@@ -18,3 +18,7 @@ def get_todos(userid):
 
 def get_user(userid):
     return db.collection("users").document(userid).get()
+
+def user_put(userdata):
+    userref = db.collection("users").document(userdata.username)
+    userref.set({"password":userdata.password})
