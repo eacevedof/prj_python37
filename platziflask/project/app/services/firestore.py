@@ -22,3 +22,8 @@ def get_user(userid):
 def user_put(userdata):
     userref = db.collection("users").document(userdata.username)
     userref.set({"password":userdata.password})
+
+def put_todo(userid,description):
+    todoscollection = db.collection("users").document(userid).collection("todos")
+    todoscollection.add({"description":description})
+    

@@ -4,11 +4,11 @@ from flask_login import login_required, current_user
 import unittest 
 from pprint import pprint
 
-from app.services.firestore import get_users, get_todos
+from app.services.firestore import get_users, get_todos, put_todo
 
 # from folder-app import __init__.py.def create_app
 from app import create_app
-from app.forms import LoginForm
+from app.forms import LoginForm, TodoForm
 
 app = create_app()
 
@@ -28,28 +28,25 @@ def index():
     session["user_ip"] = user_ip
     return response
 
-@app.route("/hello",methods=["GET"])
+@app.route("/hello",methods=["GET","POST"])
 @login_required
 def hello():
     user_ip = session.get("user_ip")
     username = current_user.id
+    todoform = TodoForm()
 
     context = {
         "user_ip":user_ip,
         "todos":get_todos(userid=username),
-        "username":username
+        "username":username,
+        "todoform":todoform
     }
 
-    # devuelve un generator
-    genusers = get_users()
-    #pprint(users)
-    #pprint(type(users))
-
-    for objuser in genusers:
-        #objuser: <google.cloud.firestore_v1.document.DocumentSnapshot object at 0x10eaec790>
-        print(objuser.id)
-        print(objuser.to_dict()["password"])
-
+    if todoform.validate_on_submit():
+        put_todo(userid=username,description=todoform.description.data)
+        flash("tu tarea se creó con éxito")
+        return redirect(url_for("hello"))
+  
     # spread operator
     return render_template("hello.html",**context)
 

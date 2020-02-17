@@ -1336,11 +1336,55 @@ def user_put(userdata):
 <!--/signup.html-->
 ```
 ### [32 - Agregar tareas](https://platzi.com/clases/1540-flask/18469-agregar-tareas/)
-- 
+- creacion en cascada
 ```py
+# project/app/services/firestore.py
+def put_todo(userid,description):
+    todoscollection = db.collection("users").document(userid).collection("todos")
+    todoscollection.add({"description":description})
+    
+# project/app/forms.py    
+class TodoForm(FlaskForm):
+    description = StringField("Descripcion",validators=[DataRequired()])
+    submit = SubmitField("Crear")
+
+# project/main.py
+from app.services.firestore import get_users, get_todos, put_todo
+
+# from folder-app import __init__.py.def create_app
+from app import create_app
+from app.forms import LoginForm, TodoForm
+
+@app.route("/hello",methods=["GET","POST"])
+@login_required
+def hello():
+    user_ip = session.get("user_ip")
+    username = current_user.id
+    todoform = TodoForm()
+
+    context = {
+        "user_ip":user_ip,
+        "todos":get_todos(userid=username),
+        "username":username,
+        "todoform":todoform
+    }
+
+    if todoform.validate_on_submit():
+        put_todo(userid=username,description=todoform.description.data)
+        flash("tu tarea se creó con éxito")
+        return redirect(url_for("hello"))
+  
+    # spread operator
+    return render_template("hello.html",**context)
 ```
 ```html
+<!-- hello.html -->
+ <div class="container">
+    <h2>Crear una nueva tarea</h2>
+    {{ wtf.quick_form(todoform) }}
+  </div>
 ```
+
 ### [33 - ]()
 - 
 ```py
