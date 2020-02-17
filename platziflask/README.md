@@ -1154,8 +1154,78 @@ def create_app():
 ### [30 - Autenticación de usuarios: Logout](https://platzi.com/clases/1540-flask/18467-autenticacion-de-usuarios-logout/)
 - 
 ```py
+# project/app/auth/views.py
+from flask import render_template, session, redirect, flash, url_for
+from flask_login import login_user, login_required, logout_user
+
+# clase LoginForm con el formulario
+from app.forms import LoginForm
+
+# importo: Blueprint("auth",__name__,url_prefix="/auth")
+from . import auth
+from app.services.firestore import get_user
+from app.models.user import UserData, UserModel
+
+# blueprint.route("auth/<ruta>")
+@auth.route("/login", methods=["GET","POST"])
+def login():
+
+    loginform = LoginForm()
+
+    if loginform.validate_on_submit():
+        username = loginform.username.data
+        password = loginform.password.data
+
+        userdoc = get_user(username)
+        if userdoc.to_dict() is not None:
+            passdb = userdoc.to_dict()["password"]
+
+            if passdb == password:
+                userdata = UserData(username, password)
+                #user = UserData(username, password)
+                user = UserModel(userdata)
+                login_user(user)
+                flash("Bienvenido de nuevo")
+                redirect(url_for("hello"))
+            else:
+                flash("La informacion no coincide")
+        else:
+            flash("El usuario no existe")
+
+        return redirect(url_for("index"))
+    
+    context = {
+        "loginform": loginform
+    }        
+    return render_template("login.html",**context)
+
+
+@auth.route("logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Regresa pronto")
+    return redirect(url_for("auth.login"))
+
+# project/main.py
+@app.route("/hello",methods=["GET"])
+@login_required
+def hello():
+    user_ip = session.get("user_ip")
+    username = current_user.id
 ```
 ```html
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bg-dark">
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('auth.login') }}">Login</a></li>
+        {% if current_user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('auth.logout') }}">Logout</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link text-white" href="https://eduardoaf.com" target="_blank">eduardoaf.com</a></li>
+    </ul>
+  </div>
+</nav>
+<!-- /navbar.html -->
 ```
 ### [31 - ]()
 - 

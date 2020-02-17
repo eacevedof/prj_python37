@@ -14,6 +14,9 @@
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bg-dark">
         <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('index') }}">Inicio</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('auth.login') }}">Login</a></li>
+        {% if current_user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('auth.logout') }}">Logout</a></li>
+        {% endif %}
         <li class="nav-item"><a class="nav-link text-white" href="https://eduardoaf.com" target="_blank">eduardoaf.com</a></li>
     </ul>
   </div>
