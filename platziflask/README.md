@@ -1520,9 +1520,4 @@ runtime: python37
   - si queremos cambiar de version
     - https://console.cloud.google.com/appengine/versions?project=flask-platzi-prod&serviceId=default&versionssize=50
     - `gcloud app deploy app.yaml --version`
-### [36 - ]()
-- 
-```py
-```
-```html
-```
+### [36 - Conclusiones](https://platzi.com/clases/1540-flask/18473-conclusiones/)
