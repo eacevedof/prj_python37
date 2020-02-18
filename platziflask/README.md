@@ -1457,8 +1457,43 @@ def delete(todoid):
 ```
 ### [34 - Editar tareas](https://platzi.com/clases/1540-flask/18471-editar-tareas/)
 ```py
+# project/app/forms.py
+class UpdateTodoForm(FlaskForm):
+    submit = SubmitField("Actualizar")
+# project/app/services/firestore.py
+def delete_todo(userid, todoid):
+    todoref = _get_todo_ref(userid,todoid)
+    todoref.delete()
+    #todoref = db.collection("users").document(userid).collection("todos").document(todoid)
+
+def update_todo(userid,todoid,done):
+    tododone = not bool(done)
+    todoref = _get_todo_ref(userid,todoid)
+    todoref.update({"done": tododone})
+    
+def _get_todo_ref(userid,todoid):
+    return db.document("users/{}/todos/{}".format(userid,todoid))
+
+# project/main.py
+from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
+...
+from app.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
+...
+@app.route("/todos/update/<todoid>/<int:done>",methods=["POST"])
+def update(todoid, done):
+    userid = current_user.id
+    update_todo(userid=userid,todoid=todoid,done=done)
+    return redirect(url_for("hello"))
 ```
 ```html
+<!-- macro.html -->
+    {{ wtf.quick_form(updateform, action=url_for("update",todoid=todo.id, done=todo.to_dict().done)) }}
+  </li>
+<!-- hello.html -->
+{% for todo in todos %}
+        {{ macros.render_todo(todo, deleteform, updateform) }}
+      {% endfor %}
+    </ul>    
 ```
 ### [35 - ]()
 - 

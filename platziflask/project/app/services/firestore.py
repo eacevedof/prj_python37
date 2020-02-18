@@ -28,6 +28,14 @@ def put_todo(userid,description):
     todoscollection.add({"description":description,"done":False})
     
 def delete_todo(userid, todoid):
-    todoref = db.document("users/{}/todos/{}".format(userid, todoid))
+    todoref = _get_todo_ref(userid,todoid)
     todoref.delete()
     #todoref = db.collection("users").document(userid).collection("todos").document(todoid)
+
+def update_todo(userid,todoid,done):
+    tododone = not bool(done)
+    todoref = _get_todo_ref(userid,todoid)
+    todoref.update({"done": tododone})
+    
+def _get_todo_ref(userid,todoid):
+    return db.document("users/{}/todos/{}".format(userid,todoid))
