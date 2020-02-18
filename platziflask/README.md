@@ -1496,11 +1496,30 @@ def update(todoid, done):
     </ul>    
 ```
 ### [35 - Deploy a producción con App Engine](https://platzi.com/clases/1540-flask/18472-deploy-a-produccion-con-app-engine/)
-- 
-```py
+- **App engine** es una plataforma de google cloud que va a vivir en nuestro proyecto al igual que firestore.
+- AE soporta varios lenguajes: Java, Go, etc
+- Creamos archivo app.yaml
+- Creamos un proyecto de produccion en Google Cloud
+  - **flask-platzi-prod**
+- en local: `gcloud config set project flask-platzi-prod`
+```yaml
+# app.yaml
+runtime: python37
 ```
-```html
-```
+- `gcloud app deploy app.yaml`
+- Hay que quitar los ficheros Pipfile
+- >ERROR: (gcloud.app.deploy) Error Response: [7] Access Not Configured. Cloud Build has not been used in project flask-platzi-prod before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudbuild.googleapis.com/overview?project=flask-platzi-prod then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+- Hay que habilitar el servicio de la api (que es de pago)
+  - https://console.developers.google.com/apis/library/cloudbuild.googleapis.com?project=flask-platzi-prod&pli=1
+- Creamos la bd para este nuevo proyecto:
+  - https://console.cloud.google.com/datastore/stats?project=flask-platzi-prod
+- url: [https://flask-platzi-prod.appspot.com][https://flask-platzi-prod.appspot.com)
+- Ejecutamos: `gcloud app browse`
+- **comandos**
+  - `gcloud app logs tail -s default`
+  - si queremos cambiar de version
+    - https://console.cloud.google.com/appengine/versions?project=flask-platzi-prod&serviceId=default&versionssize=50
+    - `gcloud app deploy app.yaml --version`
 ### [36 - ]()
 - 
 ```py
