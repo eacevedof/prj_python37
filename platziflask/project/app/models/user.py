@@ -15,12 +15,18 @@ class UserModel(UserMixin):
         self.id = user_data.username
         self.password = user_data.password
 
+    # se usa en: project/app/__init__.py 
+    # @login_manager.user_loader
+    # load_user(username)
     @staticmethod
     def query(userid):
         userdoc = get_user(userid)
-        userdata = UserData(
-            username = userdoc.id,
-            password = userdoc.to_dict()["password"]
-        )
+        if userdoc is not None:
+            userdata = UserData(
+                username = userdoc.id,
+                password = userdoc.to_dict()["password"]
+            )
+        else:
+            userdoc = UserData("","")
 
         return UserModel(userdata)

@@ -8,7 +8,7 @@ from app.services.firestore import get_users, get_todos, put_todo, delete_todo, 
 
 # from folder-app import __init__.py.def create_app
 from app import create_app
-from app.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
+from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
 app = create_app()
 
