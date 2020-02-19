@@ -5,7 +5,7 @@ from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash
 
 # clase LoginForm con el formulario
-from app.forms import LoginForm
+from app.forms.forms import LoginForm
 
 # importo: Blueprint("auth",__name__,url_prefix="/auth")
 from . import auth
