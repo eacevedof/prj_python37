@@ -17,16 +17,16 @@
   {% block navbar %}
     {% include "navbar.html" %}
   {% endblock %}
-  
-  {% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissable">
-      <button type="button" data-dism="alert" class="close">&times;</button>
-      {{ message }}
-    </div>
-  {% endfor %}
 
-  {% block content %} {% endblock %}  
+  {% block content %} 
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-success alert-dismissable">
+        <button type="button" data-dism="alert" class="close">&times;</button>
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endblock %}  
+
   {% block scripts %}{{ super() }}{% endblock%}
-  
 <!-- /block-body -->  
 {% endblock %}
