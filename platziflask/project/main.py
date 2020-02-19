@@ -12,21 +12,9 @@ from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
 app = create_app()
 
-@app.errorhandler(404)
-def not_found(error):
-    return render_template("404.html",error=error)
-
-@app.errorhandler(500)
-def not_found(error):
-    return render_template("500.html",error=error)
-
 @app.route("/")
 def index():
-    user_ip = request.remote_addr
-    response = make_response(redirect("/hello"))
-    # response.set_cookie("user_ip",user_ip+" :) ")
-    session["user_ip"] = user_ip
-    return response
+    return render_template("index.html")
 
 @app.route("/hello",methods=["GET","POST"])
 @login_required
@@ -54,15 +42,6 @@ def hello():
     # spread operator
     return render_template("hello.html",**context)
 
-# se llamara con: flask test
-@app.cli.command()
-def test():
-    import werkzeug
-    werkzeug.cached_property = werkzeug.utils.cached_property
-    # todo lo que este en la carpeta de project/test se ejecutara
-    tests = unittest.TestLoader().discover("tests")
-    unittest.TextTestRunner().run(tests)
-
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
     userid = current_user.id
@@ -74,3 +53,20 @@ def update(todoid, done):
     userid = current_user.id
     update_todo(userid=userid,todoid=todoid,done=done)
     return redirect(url_for("hello"))
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template("404.html",error=error)
+
+@app.errorhandler(500)
+def not_found(error):
+    return render_template("500.html",error=error)
+
+# se llamara con: flask test
+@app.cli.command()
+def test():
+    import werkzeug
+    werkzeug.cached_property = werkzeug.utils.cached_property
+    # todo lo que este en la carpeta de project/test se ejecutara
+    tests = unittest.TestLoader().discover("tests")
+    unittest.TextTestRunner().run(tests)
