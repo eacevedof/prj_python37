@@ -1,8 +1,9 @@
-nav > ul > li > img {
-  max-width: 30px;
-  max-height: 30px;
+.sec-container {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
 }
-
-body {
-  font-family: sans-serif;
+.div-item{
+  background: lightblue;
+  padding: 10px;
+  border: 1px solid red;
 }
