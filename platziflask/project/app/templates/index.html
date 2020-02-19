@@ -1,0 +1,14 @@
+<!-- hello.html -->
+{% extends "base.html" %}
+{% import "macro.html" as macros%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} {{ super() }} | Bienvenida {% endblock %}
+
+{% block content %}
+  <h1>Bienvenido {{ "xxx" | capitalize }}</h1>
+  <div class="container">
+    
+  </div>
+{% endblock %}
+<!--/hello.html -->

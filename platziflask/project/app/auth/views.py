@@ -3,17 +3,15 @@ from flask import render_template, session, redirect, flash, url_for
 from flask_login import login_user, login_required, logout_user
 
 from werkzeug.security import generate_password_hash
-
-# clase LoginForm con el formulario
 from app.forms.forms import LoginForm
 
 # importo: Blueprint("auth",__name__,url_prefix="/auth")
-from . import auth
+from . import bpauth
 from app.services.firestore import get_user, user_put
 from app.models.user import UserData, UserModel
 
 # blueprint.route("auth/<ruta>")
-@auth.route("/login", methods=["GET","POST"])
+@bpauth.route("/login", methods=["GET","POST"])
 def login():
 
     loginform = LoginForm()
@@ -46,7 +44,7 @@ def login():
     return render_template("login.html",**context)
 
 
-@auth.route("signup",methods=["GET","POST"])
+@bpauth.route("signup",methods=["GET","POST"])
 def signup():
     signupform = LoginForm()
     context = {
@@ -73,7 +71,7 @@ def signup():
     return render_template("signup.html",**context)
 
 
-@auth.route("logout")
+@bpauth.route("logout")
 @login_required
 def logout():
     logout_user()
