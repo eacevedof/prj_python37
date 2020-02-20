@@ -30,7 +30,7 @@ def login():
                 user = UserModel(userdata)
                 login_user(user)
                 flash("Bienvenido de nuevo")
-                redirect(url_for("hello"))
+                redirect(url_for("todo-list"))
             else:
                 flash("La informacion no coincide")
         else:
@@ -63,7 +63,7 @@ def signup():
             user = UserModel(userdata)
             login_user(user)
             flash("bienvenido")
-            return redirect(url_for("hello"))
+            return redirect(url_for("todo-list"))
         else:
             flash("El usuario ya existe")
 

@@ -16,9 +16,9 @@ app = create_app()
 def index():
     return render_template("index.html")
 
-@app.route("/hello",methods=["GET","POST"])
+@app.route("/todo-list",methods=["GET","POST"])
 @login_required
-def hello():
+def todo_list():
     user_ip = session.get("user_ip")
     username = current_user.id
     todoform = TodoForm()
@@ -37,22 +37,22 @@ def hello():
     if todoform.validate_on_submit():
         put_todo(userid=username,description=todoform.description.data)
         flash("tu tarea se creó con éxito")
-        return redirect(url_for("hello"))
+        return redirect(url_for("todo-list"))
   
     # spread operator
-    return render_template("hello.html",**context)
+    return render_template("todo-list.html",**context)
 
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
     userid = current_user.id
     delete_todo(userid=userid,todoid=todoid)
-    return redirect(url_for("hello"))
+    return redirect(url_for("todo-list"))
 
 @app.route("/todos/update/<todoid>/<int:done>",methods=["POST"])
 def update(todoid, done):
     userid = current_user.id
     update_todo(userid=userid,todoid=todoid,done=done)
-    return redirect(url_for("hello"))
+    return redirect(url_for("todo-list"))
 
 @app.errorhandler(404)
 def not_found(error):
