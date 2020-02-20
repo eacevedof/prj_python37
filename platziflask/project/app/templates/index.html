@@ -6,22 +6,14 @@
 {% block title %} {{ super() }} | Bienvenida {% endblock %}
 
 {% block content %}
-  <div class="container">
+<div class="div-container">
+  <div class="item header">
     <h1>Bienvenido {{ "xxx" | capitalize }}</h1>
-    <section class="sec-container">
-      <div class="div-item">contenido #1</div>
-      <div class="div-item">contenido #2</div>
-      <div class="div-item">contenido #3</div>
-      <div class="div-item">contenido #4</div>
-      <div class="div-item">contenido #5</div>
-      <div class="div-item">contenido #6</div>
-      <div class="div-item">contenido #7</div>
-      <div class="div-item">contenido #8</div>
-      <div class="div-item">contenido #9</div>
-      <div class="div-item">contenido #10</div>
-      <div class="div-item">contenido #11</div>
-      <div class="div-item">contenido #12</div>
-    </section>
   </div>
+  <div class="item contenido">contenido</div>
+  <div class="item footer">
+    <footer>footer</footer>
+  </div>
+</div>
 {% endblock %}
 <!--/hello.html -->

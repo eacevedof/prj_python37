@@ -1,9 +1,31 @@
-.sec-container {
+.div-container {
   display: grid;
-  grid-template-columns: 25% 50% 25%;
+  grid-template: 100%;
+  height: 100vh;
+  /*estos valores se podran usar asignar a posteriore a grid-area*/
+  grid-template-areas: "header"
+                       "area-contenido"
+                       "footer"
+  ;
 }
-.div-item{
-  background: lightblue;
+.item{
   padding: 10px;
-  border: 1px solid red;
+  border: 1px dashed gray;
+}
+
+.item:nth-of-type(4){
+  overflow: auto;
+  display:grid;
+  grid-template: 100%;
+}
+
+.header {
+  grid-area:header;
+}
+
+.contenido {
+  grid-area: area-contenido;
+}
+.footer {
+  grid-area: footer;
 }
