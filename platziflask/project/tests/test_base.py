@@ -23,15 +23,15 @@ class MainTest(TestCase):
     def test_index_redirect(self):
         response = self.client.get(url_for("index"))
         # self.assertTrue(response.status_code)
-        self.assertRedirects(response, url_for("hello"))
+        self.assertRedirects(response, url_for("todo-list"))
 
     def test_hello_get(self):
-        response = self.client.get(url_for("hello"))
+        response = self.client.get(url_for("todo-list"))
         self.assert200(response)
 
     # prueba de post
     def test_hello_post(self):
-        response = self.client.post(url_for("hello"))
+        response = self.client.post(url_for("todo-list"))
         # espero un Not Allowed
         self.assertTrue(response.status_code,405)
 
