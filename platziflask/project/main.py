@@ -21,9 +21,8 @@ def index():
 @app.route("/todo-list",methods=["GET","POST"])
 @login_required
 def todo_list():
-    ctrlhome = Home()
-    ctrlhome.index()    
-
+    (Home()).index()
+    
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
     userid = current_user.id
