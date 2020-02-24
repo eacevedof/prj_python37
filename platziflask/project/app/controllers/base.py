@@ -8,7 +8,7 @@ class Session:
         return session.get(strkey)
     
     def set_value(self,strkey="",mxvalue=None):
-        return session[strkey] = mxvalue
+        session[strkey]=mxvalue
 
 class Base:
 
@@ -27,3 +27,6 @@ class Base:
     def set_session(self, strkey="",mxvalue=None):
         self.session.set_value(strkey=strkey,mxvalue=mxvalue)
 
+    def get_user_id(self):
+        from flask_login import login_required, current_user
+        return current_user.id

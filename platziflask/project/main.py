@@ -10,6 +10,8 @@ from app.services.firestore import get_users, get_todos, put_todo, delete_todo, 
 from app import create_app
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
+from app.controllers.home import Home
+
 app = create_app()
 
 @app.route("/")
@@ -19,28 +21,8 @@ def index():
 @app.route("/todo-list",methods=["GET","POST"])
 @login_required
 def todo_list():
-    user_ip = session.get("user_ip")
-    username = current_user.id
-    todoform = TodoForm()
-    deleteform = DeleteTodoForm()
-    updateform = UpdateTodoForm()
-
-    context = {
-        "user_ip":user_ip,
-        "todos":get_todos(userid=username),
-        "username":username,
-        "todoform":todoform,
-        "deleteform":deleteform,
-        "updateform": updateform
-    }
-
-    if todoform.validate_on_submit():
-        put_todo(userid=username,description=todoform.description.data)
-        flash("tu tarea se creó con éxito")
-        return redirect(url_for("todo-list"))
-  
-    # spread operator
-    return render_template("todo-list.html",**context)
+    ctrlhome = Home()
+    ctrlhome.index()    
 
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
