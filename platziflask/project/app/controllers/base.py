@@ -30,3 +30,6 @@ class Base:
     def get_user_id(self):
         from flask_login import login_required, current_user
         return current_user.id
+
+    def render(self,strtpl):
+        return render_template(strtpl)

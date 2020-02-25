@@ -11,17 +11,18 @@ from app import create_app
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
 from app.controllers.home import Home
+from app.controllers.admin import Admin
 
 app = create_app()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
-
+    (Home()).index()
+    
 @app.route("/todo-list",methods=["GET","POST"])
 @login_required
 def todo_list():
-    (Home()).index()
+    return self.render("todo-list.html")
     
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
