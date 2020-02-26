@@ -1,14 +1,14 @@
 # project/main.py
-from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
-from flask_login import login_required, current_user
+# from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
+# from flask_login import login_required, current_user
 import unittest 
 from pprint import pprint
 
-from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
+# from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
 
 # from folder-app import __init__.py.def create_app
 from app import create_app
-from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
+# from app.forms.forms import DeleteTodoForm, UpdateTodoForm
 
 from app.controllers.home import Home
 from app.controllers.admin import Admin
@@ -17,12 +17,12 @@ app = create_app()
 
 @app.route("/")
 def index():
-    (Home()).index()
+    return (Home()).index()
     
 @app.route("/todo-list",methods=["GET","POST"])
 @login_required
 def todo_list():
-    return self.render("todo-list.html")
+    return (Admin()).index()
     
 @app.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
