@@ -27,8 +27,8 @@ class Admin(Base):
         }
 
         if frmtodo.validate_on_submit():
-            put_todo(userid=username,description=todoform.description.data)
-            flash("tu tarea se creó con éxito")
+            put_todo(userid=username,description=frmtodo.description.data)
+            self.set_flash("tu tarea se creó con éxito")
             return self.redirect("todo_list")
     
         # spread operator
