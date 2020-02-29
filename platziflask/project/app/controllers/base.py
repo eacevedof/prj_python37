@@ -40,3 +40,6 @@ class Base:
 
     def redirect(self,strurl):
         return redirect(url_for(strurl))
+
+    def set_flash(self,strmsg):
+        flash(strmsg)
