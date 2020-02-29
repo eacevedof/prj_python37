@@ -1,5 +1,6 @@
 from .base import Base
 
+from pprint import pprint
 from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
@@ -8,6 +9,8 @@ class Admin(Base):
         super().__init__()
         
     def index(self):
+        pprint("Admin.index()")
+
         user_ip = self.get_session("user_ip")
         username = self.get_user_id()
         frmtodo = TodoForm()
