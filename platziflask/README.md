@@ -1521,3 +1521,8 @@ runtime: python37
     - https://console.cloud.google.com/appengine/versions?project=flask-platzi-prod&serviceId=default&versionssize=50
     - `gcloud app deploy app.yaml --version`
 ### [36 - Conclusiones](https://platzi.com/clases/1540-flask/18473-conclusiones/)
+
+## Errores a tener en cuenta
+- A veces caduca la sesion en google cloud y hay que ejecutar el comando 
+- La ruta: `/Users/ioedu/.local/share/virtualenvs` puede perder los permisos y lanzar operacion no permitida
+- `flask run` puede dar error de module main not found y eso se debe a que en el virtualenv hay que setear FLASK_APP dentro de la ruta donde está main.py
