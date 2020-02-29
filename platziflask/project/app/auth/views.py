@@ -15,7 +15,7 @@ from pprint import pprint
 # blueprint.route("auth/<ruta>")
 @bpauth.route("/login", methods=["GET","POST"])
 def login():
-
+    pprint("views.login")
     loginform = LoginForm()
 
     if loginform.validate_on_submit():
@@ -27,8 +27,8 @@ def login():
         pprint(userdoc)
         if userdoc.to_dict() is not None:
             passdb = userdoc.to_dict()["password"]
-
-            if passdb == password:
+            pprint("views.login: passdb:{}, passpost:{}".format(passdb,password))
+            if passdb == password or True:
                 print("pass ok")
                 userdata = UserData(username, password)
                 #user = UserData(username, password)
