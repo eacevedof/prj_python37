@@ -1,7 +1,9 @@
 from pprint import pprint
 import sys
 
-from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
+from flask import (
+    request, make_response, redirect, render_template, session, 
+    redirect, url_for, flash)
 
 class Session:
     def get_value(self,strkey=""):
@@ -31,5 +33,10 @@ class Base:
         from flask_login import login_required, current_user
         return current_user.id
 
-    def render(self,strtpl):
-        return render_template(strtpl)
+    def render(self,strtpl,**kwargs):
+        #pprint(url_for("todo_list"))
+        #pprint(type(url_for("todo_list")))
+        return render_template(strtpl,**kwargs)
+
+    def redirect(self,strurl):
+        return redirect(url_for(strurl))
