@@ -26,7 +26,8 @@ class Admin(Base):
         if frmtodo.validate_on_submit():
             put_todo(userid=username,description=todoform.description.data)
             flash("tu tarea se creó con éxito")
-            return redirect(url_for("todo-list"))
+            return self.redirect("todo_list")
     
         # spread operator
-        return render_template("todo-list.html",**context)
+        print("Admin.index.render(todo-list.html)")
+        return self.render("todo-list.html",**context)

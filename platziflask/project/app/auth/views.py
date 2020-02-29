@@ -10,6 +10,8 @@ from . import bpauth
 from app.services.firestore import get_user, user_put
 from app.models.user import UserData, UserModel
 
+from pprint import pprint
+
 # blueprint.route("auth/<ruta>")
 @bpauth.route("/login", methods=["GET","POST"])
 def login():
@@ -19,24 +21,28 @@ def login():
     if loginform.validate_on_submit():
         username = loginform.username.data
         password = loginform.password.data
+        print("username:{},password:{}".format(username,password))
 
         userdoc = get_user(username)
+        pprint(userdoc)
         if userdoc.to_dict() is not None:
             passdb = userdoc.to_dict()["password"]
 
             if passdb == password:
+                print("pass ok")
                 userdata = UserData(username, password)
                 #user = UserData(username, password)
                 user = UserModel(userdata)
                 login_user(user)
                 flash("Bienvenido de nuevo")
-                redirect(url_for("todo-list"))
+                redirect(url_for("todo_list"))
             else:
                 flash("La informacion no coincide")
         else:
             flash("El usuario no existe")
 
-        return redirect(url_for("index"))
+        print("redirect to todo_list")
+        return redirect(url_for("todo_list"))
     
     context = {
         "loginform": loginform
@@ -63,7 +69,7 @@ def signup():
             user = UserModel(userdata)
             login_user(user)
             flash("bienvenido")
-            return redirect(url_for("todo-list"))
+            return redirect(url_for("todo_list"))
         else:
             flash("El usuario ya existe")
 
