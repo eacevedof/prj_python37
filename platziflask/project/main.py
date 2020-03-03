@@ -1,6 +1,6 @@
 # project/main.py
 # from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask_login import login_required
 import unittest 
 from pprint import pprint
 
