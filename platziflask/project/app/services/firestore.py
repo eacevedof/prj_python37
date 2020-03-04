@@ -3,12 +3,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-try:
-    app = firebase_admin.get_app()
-except ValueError as e:
-    credential = credentials.ApplicationDefault()
-    firebase_admin.initialize_app(credential)
-
+credential = credentials.ApplicationDefault()
+firebase_admin.initialize_app(credential)
 
 db = firestore.client()
 
