@@ -1,25 +1,22 @@
 # project/app/__init__.py
-from flask import Flask
-from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-
-from .config import Config
-
-# importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
-from .auth import bpauth
-from app.models.user import UserModel
-
-
 login_manager = LoginManager()
 # print(login_manager)
 login_manager.login_view = "auth.login"
 
 @login_manager.user_loader
 def load_user(username):
+    from app.models.user import UserModel
     return UserModel.query(username)
 
 
 def create_app():
+    from flask_bootstrap import Bootstrap
+    from flask import Flask
+    from .config import Config
+    # importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
+    from .auth import bpauth
+
     app = Flask(__name__)
     bootstrap = Bootstrap(app)
     # se pasa a una clase de configuracion (config.py)
