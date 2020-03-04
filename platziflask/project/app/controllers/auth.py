@@ -1,8 +1,9 @@
-from .base import Base
-
 from pprint import pprint
-# from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
+
+from flask_login import login_user
+from .base import Base
 from app.models.user import UserData, UserModel
+from app.services.firestore import get_user, user_put
 from app.forms.forms import LoginForm
 
 class Auth(Base):
@@ -10,7 +11,7 @@ class Auth(Base):
         super().__init__()
         
     def login(self):
-        pprint("views.login")
+        pprint("Auth.login()")
         frmLogin = LoginForm()
 
         if frmLogin.validate_on_submit():
@@ -44,3 +45,36 @@ class Auth(Base):
             "loginform": frmLogin
         }        
         return self.render("login.html",**context)
+
+    def signup(self):
+        from werkzeug.security import generate_password_hash
+
+        pprint("Auth.singup()")
+        signupform = LoginForm()
+        context = {
+            "signupform":signupform
+        }
+
+        if signupform.validate_on_submit():
+            username = signupform.username.data
+            password = signupform.password.data
+
+            userdoc = get_user(username)
+            if userdoc.to_dict() is None:
+                passwordhash = generate_password_hash(password)
+                userdata = UserData(username, passwordhash)
+                user_put(userdata)
+                user = UserModel(userdata)
+                login_user(user)
+                self.set_flash("bienvenido")
+                return self.redirect("todo_list")
+            else:
+                self.set_flash("El usuario ya existe")
+
+        return self.render("signup.html",**context)
+
+    def logout(self):
+        from flask_login import logout_user
+        logout_user()
+        self.set_flash("Regresa pronto")
+        return self.redirect("auth.login")
