@@ -15,36 +15,42 @@ class AuthController(BaseController):
         frmLogin = LoginForm()
 
         if frmLogin.validate_on_submit():
+            from werkzeug.security import check_password_hash,generate_password_hash
             username = frmLogin.username.data
-            password = frmLogin.password.data
-            print("username:{},password:{}".format(username,password))
+            passreq = frmLogin.password.data
+            passhash = generate_password_hash(passreq)
+            pr("username:{},password:{}".format(username,passreq),"los passwords")
+            pr(passhash,"pass-hash")
 
             userdoc = FirestoreService().get_user(username)
-            pprint(userdoc)
-            if userdoc.to_dict() is not None:
-                passdb = userdoc.to_dict()["password"]
-                pprint("views.login: passdb:{}, passpost:{}".format(passdb,password))
+            userdict = userdoc.to_dict()
+            
+            if userdict is not None:
+                passdb = userdict["password"]
+                is_passwok = check_password_hash(passdb, passreq)
+                pr(passreq,"pass db")
+                pr(is_passwok,"is_passok")
                 # bug aqui
-                if passdb == password or True:
-                    print("pass ok")
-                    userdata = UserData(username, password)
-                    #user = UserData(username, password)
+                if is_passwok or passdb==passreq:
+                    userdata = UserData(username, passreq)
                     user = UserModel(userdata)
                     login_user(user)
                     self.set_flash("Bienvenido de nuevo")
                     self.redirect("todo_list")
                 else:
+                    bug("La informacion no coincide")
                     self.set_flash("La informacion no coincide")
             else:
+                bug("El usuario no existe")
                 self.set_flash("El usuario no existe")
 
-            print("redirect to todo_list")
             return self.redirect("todo_list")
         
         context = {
             "loginform": frmLogin
         }        
         return self.render("login.html",**context)
+
 
     def signup(self):
         from werkzeug.security import generate_password_hash

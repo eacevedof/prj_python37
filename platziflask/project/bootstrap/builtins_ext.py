@@ -3,8 +3,8 @@ import sys
 import builtins
 
 from pprint import pprint 
-from colorama import init
-init()
+#from colorama import init
+#init()
 
 """
 http://ozzmaker.com/add-colour-to-text-in-python/
@@ -157,7 +157,7 @@ def pr(mxvar, strtitle="", isjustdic=1):
         print(get_dictcolored(mxvar))
 
     if is_primitive(mxvar):
-        printcol(mxvar)
+        printcol(mxvar,"0;30;47")
         return
     
     if is_structure(mxvar):
@@ -212,3 +212,6 @@ builtins.die = die
 builtins.diefalsy = diefalsy
 
 # print_format_table()
+
+if __name__ == "__main__":
+    print_format_table()
