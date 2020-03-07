@@ -12,19 +12,27 @@ class SendmailService():
         self.flaskapp = flaskapp
 
     def send(self):
+        # self.flaskapp.config["DEBUG"] = True
+        # self.flaskapp.config["TESTING"] = False
+        self.flaskapp.config["MAIL_SERVER"] = "smtp.gmail.com"
+        self.flaskapp.config["MAIL_PORT"] = 465
+        self.flaskapp.config["MAIL_USE_TLS"] = False
+        self.flaskapp.config["MAIL_USE_SSL"] = True
 
+        self.flaskapp.config["MAIL_USERNAME"] = "eacevedof@gmail.com"
+        self.flaskapp.config["MAIL_PASSWORD"] = "Lijken3333"
         self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
-        self.flaskapp.config["MAIL_MAX_EMAILS"] = None
-        self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
+        # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
+        # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
 
         #https://temp-mail.org/
         objmail = Mail(self.flaskapp)
         objmsg = Message(
-            subject="Hey there x", 
+            subject="Hey there "+datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 
             recipients=["hocet81487@remailsky.com"]
         )
         
-        objmsg.body = "testing 2"+datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+        objmsg.body = "testing "+datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         # objmsg.html = "<p>some mail<p>"
 
         retcode = True
