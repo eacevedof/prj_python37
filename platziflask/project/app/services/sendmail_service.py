@@ -13,14 +13,13 @@ class SendmailService():
 
     def send(self):
         # self.flaskapp.config["DEBUG"] = True
-        # self.flaskapp.config["TESTING"] = False
+        self.flaskapp.config["TESTING"] = False
         self.flaskapp.config["MAIL_SERVER"] = "smtp.gmail.com"
         self.flaskapp.config["MAIL_PORT"] = 465
         self.flaskapp.config["MAIL_USE_TLS"] = False
         self.flaskapp.config["MAIL_USE_SSL"] = True
 
-        self.flaskapp.config["MAIL_USERNAME"] = "eacevedof@gmail.com"
-        self.flaskapp.config["MAIL_PASSWORD"] = "Lijken3333"
+
         self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
         # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
         # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
