@@ -7,7 +7,7 @@ def load_user(username):
     from app.models.user import UserModel
     return UserModel.query(username)
 
-def create_app():
+def get_flaskapp():
     from flask_bootstrap import Bootstrap
     from flask import Flask
     from .config import Config
