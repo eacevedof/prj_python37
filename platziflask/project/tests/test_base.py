@@ -20,18 +20,26 @@ class MainTest(TestCase):
     def test_app_in_test_mode(self):
         self.assertTrue(current_app.config["TESTING"])
     
-    def test_index_redirect(self):
-        response = self.client.get(url_for("index"))
-        # self.assertTrue(response.status_code)
-        self.assertRedirects(response, url_for("todo-list"))
+    def test_auth_login_template(self):
+        # aqui no se usa response, la comunicacion entre client.get y el assertemplate
+        # se hace con signals
+        urlresolved = url_for("auth.login")
+        self.client.get(urlresolved)
+        self.assertTemplateUsed("login.html")
 
-    def test_hello_get(self):
-        response = self.client.get(url_for("todo-list"))
-        self.assert200(response)
+
+    # si no se está logado debe hacer un 302
+    def test_todo_list(self):
+        urlresolved = url_for("todo_list")
+        response = self.client.get(urlresolved)
+        #self.assert200(response)
+        self.assertRedirects(response,url_for("auth.login"))
+
 
     # prueba de post
     def test_hello_post(self):
-        response = self.client.post(url_for("todo-list"))
+        urlresolved = url_for("todo_list")
+        response = self.client.post(urlresolved)
         # espero un Not Allowed
         self.assertTrue(response.status_code,405)
 
@@ -39,20 +47,16 @@ class MainTest(TestCase):
         self.assertIn("auth",self.app.blueprints)
 
     def test_auth_login_get(self):
+        urlresolved = url_for("auth.login")
         # auth.login: blueprint de auth, ruta login
-        response = self.client.get(url_for("auth.login"))
+        response = self.client.get(urlresolved)
         self.assert200(response)
 
-    def test_auth_login_template(self):
-        # aqui no se usa response, la comunicacion entre client.get y el assertemplate
-        # se hace con signals
-        self.client.get(url_for("auth.login"))
-        self.assertTemplateUsed("login.html")
-
     def test_auth_login_post(self):
+        urlresolved = url_for("auth.login")
         dicformdata = {
             "username":"fake",
             "password":"fake-passs"
         }
-        response = self.client.post(url_for("auth.login"),data=dicformdata)
+        response = self.client.post(urlresolved,data=dicformdata)
         self.assertRedirects(response,url_for("index"))
