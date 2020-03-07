@@ -19,8 +19,7 @@ class SendmailService():
         self.flaskapp.config["MAIL_PORT"] = 465
         self.flaskapp.config["MAIL_USE_TLS"] = False
         self.flaskapp.config["MAIL_USE_SSL"] = True
-        self.flaskapp.config["MAIL_USERNAME"] = "@gmail.com"
-        self.flaskapp.config["MAIL_PASSWORD"] = ""
+ 
         self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
         # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
         # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
@@ -38,7 +37,7 @@ class SendmailService():
         self._recipients.append(strmail)
 
     def send(self):
-        _apply_config()
+        self._apply_config()
         
         #https://temp-mail.org/
         objmail = Mail(self.flaskapp)

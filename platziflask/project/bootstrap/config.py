@@ -7,6 +7,8 @@ class Config:
     MAIL_USE_SSL = True
     MAIL_USERNAME = "username@gmail.com"
     MAIL_PASSWORD = "xome paxxworld"
+    # self.flaskapp.config["MAIL_USERNAME"] = "@gmail.com"
+    # self.flaskapp.config["MAIL_PASSWORD"] = ""
 
 class ProductionConfig(Config):
     DATABASE_URI = "mysql://user@localhost/foo"
@@ -16,3 +18,5 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+
+    
