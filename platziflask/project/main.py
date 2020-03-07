@@ -2,42 +2,41 @@
 from flask_login import login_required
 import unittest 
 
-from bootstrap.builtins_ext import *
-
+from bootstrap.builtins_ext import pr
 # from app.init 
 from app import get_flaskapp
 
-from app.controllers.home import Home
-from app.controllers.admin import Admin
-from app.controllers.todos import Todos
-from app.controllers.status import Status
+from app.controllers.home_controller import HomeController
+from app.controllers.admin_controller import AdminController
+from app.controllers.todos_controller import TodosController
+from app.controllers.status_controller import StatusController
 
 flaskapp = get_flaskapp()
 
 @flaskapp.route("/")
 def index():
-    return Home().index()
+    return HomeController().index()
     
 @flaskapp.route("/todo-list",methods=["GET","POST"])
 @login_required
 def todo_list():
-    return Admin().index()
+    return AdminController().index()
     
 @flaskapp.route("/todos/delete/<todoid>",methods=["POST"])
 def delete(todoid):
-    return Todos().delete(todoid)
+    return TodosController().delete(todoid)
 
 @flaskapp.route("/todos/update/<todoid>/<int:done>",methods=["POST"])
 def update(todoid, done):
-    return Todos().update(todoid,done)
+    return TodosController().update(todoid,done)
 
 @flaskapp.errorhandler(404)
 def not_found(error):
-    return Status().error_404(error)
+    return StatusController().error_404(error)
 
 @flaskapp.errorhandler(500)
 def not_found(error):
-    return Status().error_500(error)
+    return StatusController().error_500(error)
 
 # se llamara con: flask test
 @flaskapp.cli.command()

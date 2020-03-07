@@ -1,6 +1,6 @@
-from .base import Base
+from .base_controller import BaseController
 
-class Status(Base):
+class StatusController(BaseController):
     def __init__(self):
         super().__init__()
         

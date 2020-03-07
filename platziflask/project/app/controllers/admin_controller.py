@@ -1,15 +1,14 @@
-from .base import Base
+from .base_controller import BaseController
 
-from pprint import pprint
 from app.services.firestore import  FirestoreService
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
-class Admin(Base):
+class AdminController(BaseController):
     def __init__(self):
         super().__init__()
         
     def index(self):
-        pprint("Admin.index()")
+        sc("Admin.index()")
 
         user_ip = self.get_session("user_ip")
         username = self.get_user_id()
@@ -32,5 +31,5 @@ class Admin(Base):
             return self.redirect("todo_list")
     
         # spread operator
-        print("Admin.index.render(todo-list.html)")
+        sc("Admin.index.render(todo-list.html)")
         return self.render("todo-list.html",**context)
