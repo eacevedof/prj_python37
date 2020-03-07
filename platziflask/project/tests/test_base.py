@@ -1,5 +1,6 @@
 # project/tests/test_base.py
 print("test_base.py")
+import sys
 from flask_testing import TestCase
 from flask import current_app, url_for
 
@@ -27,11 +28,27 @@ class MainTest(TestCase):
         self.client.get(urlresolved)
         self.assertTemplateUsed("login.html")
 
+    def test_auth_login_get(self):
+        urlresolved = url_for("auth.login")
+        # auth.login: blueprint de auth, ruta login
+        response = self.client.get(urlresolved)
+        self.assert200(response)
+
+    def test_auth_login_post(self):
+        urlresolved = url_for("auth.login")
+        dicformdata = {
+            "username":"fake",
+            "password":"fake-passs"
+        }
+        response = self.client.post(urlresolved,data=dicformdata)
+        self.assertRedirects(response,url_for("todo_list"))
 
     # si no se está logado debe hacer un 302
     def test_todo_list(self):
         urlresolved = url_for("todo_list")
         response = self.client.get(urlresolved)
+        #print(response)
+        #sys.exit()
         #self.assert200(response)
         self.assertRedirects(response,url_for("auth.login"))
 
@@ -46,17 +63,3 @@ class MainTest(TestCase):
     def test_auth_blueprint_exists(self):
         self.assertIn("auth",self.app.blueprints)
 
-    def test_auth_login_get(self):
-        urlresolved = url_for("auth.login")
-        # auth.login: blueprint de auth, ruta login
-        response = self.client.get(urlresolved)
-        self.assert200(response)
-
-    def test_auth_login_post(self):
-        urlresolved = url_for("auth.login")
-        dicformdata = {
-            "username":"fake",
-            "password":"fake-passs"
-        }
-        response = self.client.post(urlresolved,data=dicformdata)
-        self.assertRedirects(response,url_for("index"))
