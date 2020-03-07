@@ -6,4 +6,5 @@ from flask import Blueprint
 blueprint_auth = Blueprint("auth",__name__,url_prefix="/auth")
 
 # @auth.route("/login") importo funcion login()
-from . import views
+# from . import views
+from . import routes

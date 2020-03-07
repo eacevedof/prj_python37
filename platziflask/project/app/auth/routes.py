@@ -1,5 +1,6 @@
 # project/app/auth/views.py
-# importo: Blueprint("auth",__name__,url_prefix="/auth")
+
+#blueprint en init.py
 from . import blueprint_auth
 #from flask_login import login_required
 from app.controllers.auth import Auth
