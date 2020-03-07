@@ -1,10 +1,10 @@
 # project/tests/test_base.py
-print("test_base.py")
 import sys
 from flask_testing import TestCase
 from flask import current_app, url_for
-
 from main import flaskapp
+
+pr("","project/tests/test_base.py")
 
 class MainTest(TestCase):
     
