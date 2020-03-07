@@ -41,7 +41,7 @@ def not_found(error):
 
 @app.errorhandler(500)
 def not_found(error):
-    return (Status()).error_500(error)
+    return Status().error_500(error)
 
 # se llamara con: flask test
 @app.cli.command()

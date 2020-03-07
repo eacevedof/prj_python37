@@ -1,6 +1,7 @@
 # project/app/models/user.py
 from flask_login import UserMixin
-from app.services.firestore import get_user
+# from app.services.firestore import get_user
+from app.services.firestore import Firestore
 
 class UserData:
     def __init__(self,username, password):
@@ -20,7 +21,7 @@ class UserModel(UserMixin):
     # load_user(username)
     @staticmethod
     def query(userid):
-        userdoc = get_user(userid)
+        userdoc = Firestore().get_user(userid)
         if userdoc is not None:
             userdata = UserData(
                 username = userdoc.id,

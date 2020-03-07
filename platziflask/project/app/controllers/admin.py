@@ -1,7 +1,8 @@
 from .base import Base
 
 from pprint import pprint
-from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
+# from app.services.firestore import  get_todos, put_todo
+from app.services.firestore import  Firestore
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
 class Admin(Base):
@@ -19,7 +20,7 @@ class Admin(Base):
 
         context = {
             "user_ip":user_ip,
-            "todos":get_todos(userid=username),
+            "todos":Firestore().get_todos(userid=username),
             "username":username,
             "todoform":frmtodo,
             "deleteform":deleteform,
@@ -27,7 +28,7 @@ class Admin(Base):
         }
 
         if frmtodo.validate_on_submit():
-            put_todo(userid=username,description=frmtodo.description.data)
+            Firestore().put_todo(userid=username,description=frmtodo.description.data)
             self.set_flash("tu tarea se creó con éxito")
             return self.redirect("todo_list")
     
