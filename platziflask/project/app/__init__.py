@@ -12,7 +12,7 @@ def create_app():
     from flask import Flask
     from .config import Config
     # importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
-    from .auth import bpauth
+    from .auth import blueprint_auth
     
     login_manager.login_view = "auth.login"
     app = Flask(__name__)
@@ -23,6 +23,7 @@ def create_app():
     # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
     app.config.from_object(Config)
     login_manager.init_app(app)
-    app.register_blueprint(bpauth)
+    #app.register_blueprint(bpauth)
+    app.register_blueprint(blueprint_auth)
     Bootstrap(app)
     return app
