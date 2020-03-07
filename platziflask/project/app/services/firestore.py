@@ -12,7 +12,7 @@ if not firebase_admin._DEFAULT_APP_NAME in firebase_admin._apps:
 
 db = firestore.client()
 
-class Firestore():
+class FirestoreService():
     
     def __init__(self):
         pass

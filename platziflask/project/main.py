@@ -1,14 +1,10 @@
 # project/main.py
-# from flask import request, make_response, redirect, render_template, session, redirect, url_for, flash
 from flask_login import login_required
 import unittest 
 from pprint import pprint
 
-# from app.services.firestore import get_users, get_todos, put_todo, delete_todo, update_todo
-
 # from folder-app import __init__.py.def create_app
 from app import create_app
-# from app.forms.forms import DeleteTodoForm, UpdateTodoForm
 
 from app.controllers.home import Home
 from app.controllers.admin import Admin
