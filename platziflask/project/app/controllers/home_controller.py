@@ -5,4 +5,5 @@ class HomeController(BaseController):
         super().__init__()
         
     def index(self):
+        sc("HomeController.index")
         return self.render("index.html")

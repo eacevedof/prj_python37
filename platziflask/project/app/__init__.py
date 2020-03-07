@@ -5,6 +5,7 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(username):
+    pr(username,"load_user")
     from app.models.user_model import UserModel
     return UserModel.query(username)
 
@@ -17,6 +18,8 @@ def get_flaskapp():
     from .auth import blueprint_auth
     
     login_manager.login_view = "auth.login"
+    login_manager.login_message = "Please first login"
+    login_manager.login_message_category = "warning"
     flaskapp = Flask(__name__)
     
     # se pasa a una clase de configuracion (config.py)
