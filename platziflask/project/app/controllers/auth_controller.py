@@ -35,14 +35,14 @@ class AuthController(BaseController):
                     userdata = UserData(username, passreq)
                     user = UserModel(userdata)
                     login_user(user)
-                    self.set_flash("Bienvenido de nuevo")
+                    self.set_msg_error("Bienvenido de nuevo","info")
                     self.redirect("todo_list")
                 else:
                     bug("La informacion no coincide")
-                    self.set_flash("La informacion no coincide")
+                    self.set_msg_error("La informacion no coincide")
             else:
                 bug("El usuario no existe")
-                self.set_flash("El usuario no existe")
+                self.set_msg_error("El usuario no existe","error")
 
             return self.redirect("todo_list")
         
@@ -73,15 +73,15 @@ class AuthController(BaseController):
                 FirestoreService().user_put(userdata)
                 user = UserModel(userdata)
                 login_user(user)
-                self.set_flash("bienvenido")
+                self.set_msg_succes("Bienvenido")
                 return self.redirect("todo_list")
             else:
-                self.set_flash("El usuario ya existe")
+                self.set_msg_error("El usuario ya existe")
 
         return self.render("signup.html",**context)
 
     def logout(self):
         from flask_login import logout_user
         logout_user()
-        self.set_flash("Regresa pronto")
+        self.set_msg_succes("Regresa pronto")
         return self.redirect("auth.login")

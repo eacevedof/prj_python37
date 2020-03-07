@@ -27,7 +27,7 @@ class AdminController(BaseController):
 
         if frmtodo.validate_on_submit():
             FirestoreService().put_todo(userid=username,description=frmtodo.description.data)
-            self.set_flash("tu tarea se creó con éxito")
+            self.set_msg_succes("tu tarea se creó con éxito")
             return self.redirect("todo_list")
     
         # spread operator
