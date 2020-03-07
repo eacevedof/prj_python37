@@ -47,14 +47,10 @@ class MainTest(TestCase):
     def test_todo_list(self):
         urlresolved = url_for("todo_list")
         response = self.client.get(urlresolved)
-        #print(response)
-        #sys.exit()
-        #self.assert200(response)
-        self.assertRedirects(response,url_for("auth.login"))
-
+        self.assertRedirects(response,url_for("auth.login")+"?next=%2Ftodo-list")
 
     # prueba de post
-    def test_hello_post(self):
+    def test_todo_list_post_post(self):
         urlresolved = url_for("todo_list")
         response = self.client.post(urlresolved)
         # espero un Not Allowed
