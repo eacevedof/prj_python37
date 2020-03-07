@@ -1,6 +1,4 @@
-from pprint import pprint
-import sys
-
+s("app/controlloers/base_controller.py")
 from flask import (
     request, make_response, redirect, render_template, session, 
     redirect, url_for, flash)
@@ -12,7 +10,7 @@ class Session:
     def set_value(self,strkey="",mxvalue=None):
         session[strkey]=mxvalue
 
-class Base:
+class BaseController:
 
     def __init__(self):
         self.session = Session()
@@ -34,8 +32,6 @@ class Base:
         return current_user.id
 
     def render(self,strtpl,**kwargs):
-        #pprint(url_for("todo_list"))
-        #pprint(type(url_for("todo_list")))
         return render_template(strtpl,**kwargs)
 
     def redirect(self,strurl):

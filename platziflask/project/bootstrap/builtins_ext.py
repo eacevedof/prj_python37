@@ -143,7 +143,7 @@ def s(strtext):
         strtext = str(strtext)
         printcol(strtext,"94")
 
-def sc(strtext,colcode="7;34;47"):
+def sc(strtext,colcode="1;30;44"):
     if is_primitive(strtext):
         strtext = str(strtext)
         printcol(strtext,colcode)

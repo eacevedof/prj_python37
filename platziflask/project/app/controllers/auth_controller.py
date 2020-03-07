@@ -1,13 +1,12 @@
 from pprint import pprint
 
 from flask_login import login_user
-from .base import Base
+from .base_controller import BaseController
 from app.models.user import UserData, UserModel
-#from app.services.firestore import get_user, user_put
 from app.services.firestore import FirestoreService
 from app.forms.forms import LoginForm
 
-class Auth(Base):
+class AuthController(BaseController):
     def __init__(self):
         super().__init__()
         

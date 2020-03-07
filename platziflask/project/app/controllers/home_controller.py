@@ -1,6 +1,6 @@
-from .base import Base
+from .base_controller import BaseController
 
-class Home(Base):
+class HomeController(BaseController):
     def __init__(self):
         super().__init__()
         

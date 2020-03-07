@@ -1,8 +1,8 @@
-from .base import Base
+from .base_controller import BaseController
 
 from app.services.firestore import FirestoreService
 
-class Todos(Base):
+class TodosController(BaseController):
     def __init__(self):
         super().__init__()
         
