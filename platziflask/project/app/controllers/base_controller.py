@@ -37,5 +37,11 @@ class BaseController:
     def redirect(self,strurl):
         return redirect(url_for(strurl))
 
-    def set_flash(self,strmsg):
-        flash(strmsg)
+    def set_msg_error(self,strmsg):
+        flash(strmsg,"error")
+
+    def set_msg_succes(self,strmsg):
+        flash(strmsg,"success")
+
+    def set_warning(self,strmsg):
+        flash(strmsg,"warning")        
