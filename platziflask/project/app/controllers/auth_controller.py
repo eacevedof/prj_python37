@@ -35,14 +35,14 @@ class AuthController(BaseController):
                     userdata = UserData(username, passreq)
                     user = UserModel(userdata)
                     login_user(user)
-                    self.set_msg_error("Bienvenido de nuevo","info")
+                    self.set_msg_succes("Bienvenido de nuevo")
                     self.redirect("todo_list")
                 else:
                     bug("La informacion no coincide")
                     self.set_msg_error("La informacion no coincide")
             else:
                 bug("El usuario no existe")
-                self.set_msg_error("El usuario no existe","error")
+                self.set_msg_error("El usuario no existe")
 
             return self.redirect("todo_list")
         
