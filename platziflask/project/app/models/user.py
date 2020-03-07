@@ -1,6 +1,6 @@
 # project/app/models/user.py
 from flask_login import UserMixin
-from app.services.firestore import FirestoreService
+from app.services.firestore_service import FirestoreService
 
 class UserData:
     def __init__(self,username, password):

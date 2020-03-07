@@ -1,6 +1,6 @@
 from .base_controller import BaseController
 
-from app.services.firestore import  FirestoreService
+from app.services.firestore_service import  FirestoreService
 from app.forms.forms import TodoForm, DeleteTodoForm, UpdateTodoForm
 
 class AdminController(BaseController):
