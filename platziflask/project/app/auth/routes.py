@@ -1,4 +1,5 @@
-# project/app/auth/views.py
+# project/app/auth/routes.py
+s("project/app/auth/routes.py")
 
 #blueprint en init.py
 from . import blueprint_auth
