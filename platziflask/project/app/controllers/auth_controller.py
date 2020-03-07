@@ -2,7 +2,7 @@ from pprint import pprint
 
 from flask_login import login_user
 from .base_controller import BaseController
-from app.models.user import UserData, UserModel
+from app.models.user_model import UserData, UserModel
 from app.services.firestore_service import FirestoreService
 from app.forms.forms import LoginForm
 

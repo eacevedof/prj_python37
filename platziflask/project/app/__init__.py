@@ -1,14 +1,15 @@
 # project/app/__init__.py
-s("project/app/__init__.py")
+sc("project/app/__init__.py")
 from flask_login import LoginManager
 login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(username):
-    from app.models.user import UserModel
+    from app.models.user_model import UserModel
     return UserModel.query(username)
 
 def get_flaskapp():
+    sc("... creando flaskapp")
     from flask_bootstrap import Bootstrap
     from flask import Flask
     from .config import Config
@@ -24,7 +25,6 @@ def get_flaskapp():
     # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
     flaskapp.config.from_object(Config)
     login_manager.init_app(flaskapp)
-    #flaskapp.register_blueprint(bpauth)
     flaskapp.register_blueprint(blueprint_auth)
     Bootstrap(flaskapp)
     return flaskapp
