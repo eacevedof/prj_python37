@@ -4,35 +4,55 @@ from datetime import datetime
 
 class SendmailService():
 
-    _subject = ""
+    _recipients = []
+    _subject = "no subject - "+datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     _body = ""
     _html = ""
 
     def __init__(self, flaskapp):
         self.flaskapp = flaskapp
 
-    def send(self):
+    def _apply_config(self):
         # self.flaskapp.config["DEBUG"] = True
         self.flaskapp.config["TESTING"] = False
         self.flaskapp.config["MAIL_SERVER"] = "smtp.gmail.com"
         self.flaskapp.config["MAIL_PORT"] = 465
         self.flaskapp.config["MAIL_USE_TLS"] = False
         self.flaskapp.config["MAIL_USE_SSL"] = True
-        self.flaskapp.config["MAIL_USERNAME"] = "XXX"
-        self.flaskapp.config["MAIL_PASSWORD"] = "YYY"
+        self.flaskapp.config["MAIL_USERNAME"] = "@gmail.com"
+        self.flaskapp.config["MAIL_PASSWORD"] = ""
         self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
         # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
         # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
 
+    def set_subject(self,strsubject):
+        self._subject = strsubject
+
+    def set_body(self, strbody):
+        self._body = strbody
+
+    def set_html(self, strhtml):
+        self._html = strhtml
+
+    def add_recipient(self,strmail):
+        self._recipients.append(strmail)
+
+    def send(self):
+        _apply_config()
+        
         #https://temp-mail.org/
         objmail = Mail(self.flaskapp)
         objmsg = Message(
-            subject="Hey there "+datetime.today().strftime('%Y-%m-%d %H:%M:%S'), 
-            recipients=["hocet81487@remailsky.com"]
+            subject= self._subject,
+            recipients=self._recipients
         )
         
-        objmsg.body = "testing "+datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        # objmsg.html = "<p>some mail<p>"
+        if self._body:
+            objmsg.body = self._body
+
+        if self._html:
+            objmsg.html = self._html
+
 
         retcode = True
         try:

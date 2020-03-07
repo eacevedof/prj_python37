@@ -17,4 +17,10 @@ class MailTest(TestCase):
         is_sentok = SendmailService(flaskapp).send()
         self.assertEqual(is_sentok,True)
 
-
+    def test_send_params(self):
+        objmail = SendmailService(flaskapp)
+        objmail.set_body("some body to send")
+        objmail.set_subject("un subject")
+        objmail.add_recipient("")
+        is_sentok = objmail.send()
+        self.assertEqual(is_sentok,True)
