@@ -13,7 +13,7 @@ def get_flaskapp():
     sc("... creando flaskapp")
     from flask_bootstrap import Bootstrap
     from flask import Flask
-    from .config import Config
+    from bootstrap.config import Config
     #from auth.init import blueprint_auth
     from .auth import blueprint_auth
     
