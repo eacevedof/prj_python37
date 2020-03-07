@@ -4,15 +4,15 @@ import sys
 from flask_testing import TestCase
 from flask import current_app, url_for
 
-from main import app
+from main import flaskapp
 
 class MainTest(TestCase):
     
-    # metodo obligatorio que tiene que devolver la app
+    # metodo obligatorio que tiene que devolver la flaskapp
     def create_app(self):
-        app.config["TESTING"] = True
-        app.config["WTF_CSRF_ENABLED"] = False
-        return app
+        flaskapp.config["TESTING"] = True
+        flaskapp.config["WTF_CSRF_ENABLED"] = False
+        return flaskapp
 
     def test_app_exists(self):        
         # self.assertIsNone(current_app)
