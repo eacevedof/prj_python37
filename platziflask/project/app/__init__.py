@@ -1,4 +1,5 @@
 # project/app/__init__.py
+s("project/app/__init__.py")
 from flask_login import LoginManager
 login_manager = LoginManager()
 
@@ -15,15 +16,15 @@ def get_flaskapp():
     from .auth import blueprint_auth
     
     login_manager.login_view = "auth.login"
-    app = Flask(__name__)
+    flaskapp = Flask(__name__)
     
     # se pasa a una clase de configuracion (config.py)
-    # app.config["SECRET_KEY"] = "SUPER SECRET KEY"
+    # flaskapp.config["SECRET_KEY"] = "SUPER SECRET KEY"
     # con esto se cifra la info de la cookie
     # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
-    app.config.from_object(Config)
-    login_manager.init_app(app)
-    #app.register_blueprint(bpauth)
-    app.register_blueprint(blueprint_auth)
-    Bootstrap(app)
-    return app
+    flaskapp.config.from_object(Config)
+    login_manager.init_app(flaskapp)
+    #flaskapp.register_blueprint(bpauth)
+    flaskapp.register_blueprint(blueprint_auth)
+    Bootstrap(flaskapp)
+    return flaskapp
