@@ -3,7 +3,8 @@ from pprint import pprint
 from flask_login import login_user
 from .base import Base
 from app.models.user import UserData, UserModel
-from app.services.firestore import get_user, user_put
+#from app.services.firestore import get_user, user_put
+from app.services.firestore import Firestore
 from app.forms.forms import LoginForm
 
 class Auth(Base):
@@ -19,7 +20,7 @@ class Auth(Base):
             password = frmLogin.password.data
             print("username:{},password:{}".format(username,password))
 
-            userdoc = get_user(username)
+            userdoc = Firestore().get_user(username)
             pprint(userdoc)
             if userdoc.to_dict() is not None:
                 passdb = userdoc.to_dict()["password"]
@@ -59,11 +60,12 @@ class Auth(Base):
             username = signupform.username.data
             password = signupform.password.data
 
-            userdoc = get_user(username)
+            userdoc = Firestore().get_user(username)
+
             if userdoc.to_dict() is None:
                 passwordhash = generate_password_hash(password)
                 userdata = UserData(username, passwordhash)
-                user_put(userdata)
+                Firestore().user_put(userdata)
                 user = UserModel(userdata)
                 login_user(user)
                 self.set_flash("bienvenido")
