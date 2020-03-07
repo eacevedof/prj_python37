@@ -11,7 +11,6 @@ from app.controllers.admin import Admin
 from app.controllers.todos import Todos
 from app.controllers.status import Status
 
-
 app = create_app()
 
 @app.route("/")
