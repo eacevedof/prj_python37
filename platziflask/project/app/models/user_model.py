@@ -1,4 +1,5 @@
-# project/app/models/user.py
+# project/app/models/user_model.py
+sc("project/app/models/user_model.py")
 from flask_login import UserMixin
 from app.services.firestore_service import FirestoreService
 

@@ -1,4 +1,4 @@
-s("app/controlloers/base_controller.py")
+sc("app/controlloers/base_controller.py")
 from flask import (
     request, make_response, redirect, render_template, session, 
     redirect, url_for, flash)
