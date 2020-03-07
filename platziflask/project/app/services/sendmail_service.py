@@ -18,8 +18,8 @@ class SendmailService():
         self.flaskapp.config["MAIL_PORT"] = 465
         self.flaskapp.config["MAIL_USE_TLS"] = False
         self.flaskapp.config["MAIL_USE_SSL"] = True
-
-
+        self.flaskapp.config["MAIL_USERNAME"] = "XXX"
+        self.flaskapp.config["MAIL_PASSWORD"] = "YYY"
         self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
         # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
         # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
