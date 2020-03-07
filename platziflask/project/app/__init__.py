@@ -11,7 +11,7 @@ def create_app():
     from flask_bootstrap import Bootstrap
     from flask import Flask
     from .config import Config
-    # importo el blueprint: auth = Blueprint("auth",__name__,url_prefix="/auth")
+    #from auth.init import blueprint_auth
     from .auth import blueprint_auth
     
     login_manager.login_view = "auth.login"
