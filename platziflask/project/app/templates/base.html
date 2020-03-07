@@ -13,16 +13,16 @@
 {% endblock %}
 
 {% block body %}
-<!-- block-body -->
+<!-- base.html block-body -->
   {% block navbar %}
     {% include "navbar.html" %}
   {% endblock %}
 
   {% include "messages.html" %}
-  {% block content %} 
 
+  {% block content %} 
   {% endblock %}  
 
   {% block scripts %}{{ super() }}{% endblock%}
-<!-- /block-body -->  
+<!-- /base.html block-body -->  
 {% endblock %}

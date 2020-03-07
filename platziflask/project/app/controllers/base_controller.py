@@ -28,7 +28,7 @@ class BaseController:
         self.session.set_value(strkey=strkey,mxvalue=mxvalue)
 
     def get_user_id(self):
-        from flask_login import login_required, current_user
+        from flask_login import current_user
         return current_user.id
 
     def render(self,strtpl,**kwargs):

@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from flask_login import login_user
+from flask_login import login_user,login_required
 from .base_controller import BaseController
 from app.models.user_model import UserData, UserModel
 from app.services.firestore_service import FirestoreService
@@ -10,6 +10,8 @@ class AuthController(BaseController):
     def __init__(self):
         super().__init__()
         
+    # no va!
+    ##@login_required
     def login(self):
         pprint("Auth.login()")
         frmLogin = LoginForm()

@@ -3,7 +3,7 @@ s("project/app/auth/routes.py")
 
 #blueprint en init.py
 from . import blueprint_auth
-#from flask_login import login_required
+from flask_login import login_required
 from app.controllers.auth_controller import AuthController
 
 # blueprint.route("auth/<ruta>")
@@ -16,7 +16,7 @@ def signup():
     return AuthController().signup()
 
 @blueprint_auth.route("logout")
-#@login_required
+@login_required
 def logout():
     return AuthController().logout()
 
