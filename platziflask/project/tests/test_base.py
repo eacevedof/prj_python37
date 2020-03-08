@@ -2,7 +2,7 @@
 import sys
 from flask_testing import TestCase
 from flask import current_app, url_for
-from bootstap.main import flaskapp
+from bootstrap.main import flaskapp
 sc("project/tests/test_base.py")
 
 class MainTest(TestCase):
