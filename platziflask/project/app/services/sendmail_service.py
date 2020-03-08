@@ -2,6 +2,11 @@
 from flask_mail import Mail, Message
 from datetime import datetime
 
+# https://pythonhosted.org/Flask-Mail/
+# https://myaccount.google.com/lesssecureapps)
+# https://accounts.google.com/DisplayUnlockCaptcha
+# https://mail.google.com/mail/#settings/fwdandpop
+
 class SendmailService():
 
     _recipients = []
@@ -13,13 +18,10 @@ class SendmailService():
     def __init__(self, flaskapp):
         self.flaskapp = flaskapp
 
-    def _apply_config(self):
-       pass
-
-    def set_sender(self,strsender):
+    def set_sender(self, strsender):
         self._sender = strsender
 
-    def set_subject(self,strsubject):
+    def set_subject(self, strsubject):
         self._subject = strsubject
 
     def set_body(self, strbody):
@@ -28,27 +30,26 @@ class SendmailService():
     def set_html(self, strhtml):
         self._html = strhtml
 
-    def add_recipient(self,strmail):
+    def add_recipient(self, strmail):
         self._recipients.append(strmail)
 
     def send(self):
-        self._apply_config()
-        
         #https://temp-mail.org/
         objmail = Mail(self.flaskapp)
         
         objmsg = Message(
-            subject= self._subject,
-            sender=self._sender,
-            recipients=self._recipients
+            subject = self._subject,
+            sender = self._sender,
+            recipients = self._recipients
         )
         
-        if self._body:
+        if self._body != "":
             objmsg.body = self._body
 
-        if self._html:
+        if self._html != "":
             objmsg.html = self._html
 
+        #bug(objmsg, "objmsg")
 
         retcode = True
         try:
