@@ -26,7 +26,7 @@ def _get_config(flaskapp):
     else:
         return Config
 
-def _config_loginmngr():
+def _config_loginmngr(flaskapp):
     #bug(objloginmngr,"objloginmngr")
     objloginmngr.login_view = "auth.login"
     objloginmngr.login_message = "Please first login"
@@ -42,12 +42,12 @@ def get_flaskapp():
     
 
     flaskapp = Flask(__name__)
-    
+
     Config = _get_config(flaskapp)
     flaskapp.config.from_object(Config)
     flaskapp.register_blueprint(blueprint_auth)
     Bootstrap(flaskapp)
     # carga configuracion de LoginManager()
-    _config_loginmngr()
+    _config_loginmngr(flaskapp)
 
     return flaskapp
