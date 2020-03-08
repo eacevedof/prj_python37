@@ -5,4 +5,5 @@ from config import Config
 class ProductionConfig(Config):
     DATABASE_URI = "mysql://user@localhost/foo"
 
+
     

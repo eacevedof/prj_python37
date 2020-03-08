@@ -14,7 +14,7 @@ class SendmailService():
 
     def _apply_config(self):
         # self.flaskapp.config["DEBUG"] = True
-        self.flaskapp.config["TESTING"] = False
+        # self.flaskapp.config["TESTING"] = False
         self.flaskapp.config["MAIL_SERVER"] = "smtp.gmail.com"
         self.flaskapp.config["MAIL_PORT"] = 465
         self.flaskapp.config["MAIL_USE_TLS"] = False
