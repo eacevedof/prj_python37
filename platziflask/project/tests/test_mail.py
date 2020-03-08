@@ -1,10 +1,9 @@
-# project/tests/test_base.py
+# project/tests/test_mail.py
 from flask_testing import TestCase
 from flask import url_for
-from main import flaskapp
+from bootstrap.main import flaskapp
 from app.services.sendmail_service import SendmailService
-
-pr("","project/tests/test_base.py")
+sc("project/tests/test_mail.py")
 
 class MailTest(TestCase):
     
