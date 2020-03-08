@@ -21,12 +21,14 @@ def get_flaskapp():
     login_manager.login_message = "Please first login"
     login_manager.login_message_category = "warning"
     flaskapp = Flask(__name__)
-    
+    pr(flaskapp.config["ENV"],"flaskapp.config[ENV]")
+
     # se pasa a una clase de configuracion (config.py)
     # flaskapp.config["SECRET_KEY"] = "SUPER SECRET KEY"
     # con esto se cifra la info de la cookie
-    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale    
+    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
     flaskapp.config.from_object(Config)
+    # export FLASK_ENV=<development>
     login_manager.init_app(flaskapp)
     flaskapp.register_blueprint(blueprint_auth)
     Bootstrap(flaskapp)
