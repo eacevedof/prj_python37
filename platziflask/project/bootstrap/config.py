@@ -2,7 +2,7 @@
 sc("project/bootstrap/config.py")
 
 class Config:
-    DEBUG = False
+    DEBUG = True
     TESTING = False
 
     SECRET_KEY = "SUPER_SECRET"
@@ -10,8 +10,9 @@ class Config:
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = "username@gmail.com"
-    MAIL_PASSWORD = "xome paxxworld"
+    MAIL_USERNAME = "xxx@gmail.com"
+    MAIL_PASSWORD = "xxx"
+    MAIL_SENDER = "elsender@gmail.com"
 
     DB_NAME = "production-db"
     DB_USERNAME = "root"
@@ -27,7 +28,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-
+    
     DB_NAME = "production-db"
     DB_USERNAME = "root"
     DB_PASSWORD = "example"
