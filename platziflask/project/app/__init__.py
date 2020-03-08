@@ -26,30 +26,28 @@ def _get_config(flaskapp):
     else:
         return Config
 
-
-def get_flaskapp():
-    sc("... creando flaskapp")
-    from flask_bootstrap import Bootstrap
-    from flask import Flask
-    
-    #from auth.init import blueprint_auth
-    from .auth import blueprint_auth
-    
-    flaskapp = Flask(__name__)
-    Config = _get_config(flaskapp)    
-
-    # se pasa a una clase de configuracion (config.py)
-    # flaskapp.config["SECRET_KEY"] = "SUPER SECRET KEY"
-    # con esto se cifra la info de la cookie
-    # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
-    flaskapp.config.from_object(Config)
-
+def _config_loginmngr():
     #bug(objloginmngr,"objloginmngr")
     objloginmngr.login_view = "auth.login"
     objloginmngr.login_message = "Please first login"
     objloginmngr.login_message_category = "warning"    
     objloginmngr.init_app(flaskapp)
 
+def get_flaskapp():
+    sc("... creando flaskapp")
+    from flask import Flask
+    from flask_bootstrap import Bootstrap
+    #from auth.init import blueprint_auth
+    from .auth import blueprint_auth
+    
+
+    flaskapp = Flask(__name__)
+    
+    Config = _get_config(flaskapp)
+    flaskapp.config.from_object(Config)
     flaskapp.register_blueprint(blueprint_auth)
     Bootstrap(flaskapp)
+    # carga configuracion de LoginManager()
+    _config_loginmngr()
+
     return flaskapp
