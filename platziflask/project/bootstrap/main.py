@@ -1,5 +1,5 @@
 # project/bootstrap/main.py
-# export FLASK_APP=bootstrap/main.p
+# export FLASK_APP=bootstrap/main.py; run flask
 
 sc("project/bootstrap/main.py")
 from flask_login import login_required
