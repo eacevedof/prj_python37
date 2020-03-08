@@ -21,7 +21,28 @@ class Config:
 
     SESSION_COOKIE_SECURE = True
 
-# from config_development import DevelopmentConfig
-# from config_production import ProductionConfig
-# from config_testing import TestingConfig
+class ProductionConfig(Config):
+    DATABASE_URI = "mysql://user@localhost/foo"
+
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+    DB_NAME = "production-db"
+    DB_USERNAME = "root"
+    DB_PASSWORD = "example"
+
+    UPLOADS = "/home/username/app/app/static/images/uploads"
+
+    SESSION_COOKIE_SECURE = False
+
+
+class TestingConfig(Config):
+    DEBUG = True
+
+    DB_NAME = "development-db"
+    DB_USERNAME = "root"
+    DB_PASSWORD = "example"
+    
+    UPLOADS = "/home/username/app/app/static/images/uploads"
 

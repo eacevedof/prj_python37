@@ -9,11 +9,29 @@ def load_user(username):
     from app.models.user_model import UserModel
     return UserModel.query(username)
 
+def get_config(flaskapp):
+    # export FLASK_ENV=<development>
+    sc("... getting config")
+    from bootstrap.config import Config,DevelopmentConfig,ProductionConfig,TestingConfig
+
+    strenv = flaskapp.config["ENV"]
+
+    pr(strenv, "flaskapp.config[ENV]")
+    if strenv == "development":
+        return DevelopmentConfig
+    elif strenv == "production":
+        return ProductionConfig
+    elif strenv == "testing":
+        return TestingConfig
+    else:
+        return Config
+
+
 def get_flaskapp():
     sc("... creando flaskapp")
     from flask_bootstrap import Bootstrap
     from flask import Flask
-    from bootstrap.config import Config
+    
     #from auth.init import blueprint_auth
     from .auth import blueprint_auth
     
@@ -21,14 +39,13 @@ def get_flaskapp():
     login_manager.login_message = "Please first login"
     login_manager.login_message_category = "warning"
     flaskapp = Flask(__name__)
-    pr(flaskapp.config["ENV"],"flaskapp.config[ENV]")
+    Config = get_config(flaskapp)    
 
     # se pasa a una clase de configuracion (config.py)
     # flaskapp.config["SECRET_KEY"] = "SUPER SECRET KEY"
     # con esto se cifra la info de la cookie
     # esto habria que cambiarlo a un hash más seguro, para el ejemplo nos vale
     flaskapp.config.from_object(Config)
-    # export FLASK_ENV=<development>
     login_manager.init_app(flaskapp)
     flaskapp.register_blueprint(blueprint_auth)
     Bootstrap(flaskapp)
