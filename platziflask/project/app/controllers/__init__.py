@@ -1,1 +1,1 @@
-s("project/app/controllers/__init__.py")
+sc("project/app/controllers/__init__.py")

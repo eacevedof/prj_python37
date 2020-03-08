@@ -2,9 +2,8 @@
 import sys
 from flask_testing import TestCase
 from flask import current_app, url_for
-from main import flaskapp
-
-pr("","project/tests/test_base.py")
+from bootstap.main import flaskapp
+sc("project/tests/test_base.py")
 
 class MainTest(TestCase):
     
