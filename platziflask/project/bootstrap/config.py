@@ -3,16 +3,17 @@ sc("project/bootstrap/config.py")
 
 class Config:
     DEBUG = True
-    TESTING = False
+    TESTING = True
 
     SECRET_KEY = "SUPER_SECRET"
 
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 465
+    # MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = "xxx@gmail.com"
-    MAIL_PASSWORD = "xxx"
-    MAIL_SENDER = "elsender@gmail.com"
+    MAIL_USERNAME = "aa@gmail.com"
+    MAIL_PASSWORD = "bb"
+    # MAIL_SENDER = "elsender@gmail.com"
 
     DB_NAME = "production-db"
     DB_USERNAME = "root"
