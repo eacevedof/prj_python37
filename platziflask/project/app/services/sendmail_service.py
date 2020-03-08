@@ -8,21 +8,16 @@ class SendmailService():
     _subject = "no subject - "+datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     _body = ""
     _html = ""
+    _sender = ""
 
     def __init__(self, flaskapp):
         self.flaskapp = flaskapp
 
     def _apply_config(self):
-        # self.flaskapp.config["DEBUG"] = True
-        # self.flaskapp.config["TESTING"] = False
-        self.flaskapp.config["MAIL_SERVER"] = "smtp.gmail.com"
-        self.flaskapp.config["MAIL_PORT"] = 465
-        self.flaskapp.config["MAIL_USE_TLS"] = False
-        self.flaskapp.config["MAIL_USE_SSL"] = True
- 
-        self.flaskapp.config["MAIL_DEFAULT_SENDER"] = "elsender@unmail.com"
-        # self.flaskapp.config["MAIL_MAX_EMAILS"] = None
-        # self.flaskapp.config["MAIL_ASCII_ATTACHMENTS"] = False
+       pass
+
+    def set_sender(self,strsender):
+        self._sender = strsender
 
     def set_subject(self,strsubject):
         self._subject = strsubject
@@ -41,8 +36,10 @@ class SendmailService():
         
         #https://temp-mail.org/
         objmail = Mail(self.flaskapp)
+        
         objmsg = Message(
             subject= self._subject,
+            sender=self._sender,
             recipients=self._recipients
         )
         
