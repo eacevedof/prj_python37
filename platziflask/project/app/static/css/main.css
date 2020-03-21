@@ -1,31 +1,23 @@
+body > *{
+  margin: 0;
+  padding: 0;
+}
+
 .div-container {
   display: grid;
-  grid-template: 100%;
-  height: 100vh;
-  /*estos valores se podran usar asignar a posteriore a grid-area*/
-  grid-template-areas: "header"
-                       "area-contenido"
-                       "footer"
-  ;
-}
-.item{
-  padding: 10px;
-  border: 1px dashed gray;
+  grid-template-columns: 1fr 80fr 1fr;
+  grid-template-rows: auto;
+  align-items: stretch;
 }
 
-.item:nth-of-type(4){
-  overflow: auto;
-  display:grid;
-  grid-template: 100%;
+.div-row:hover {
+  border:1px solid green;
 }
 
-.header {
-  grid-area:header;
+.div-row2:hover {
+  border:1px solid orange;
 }
 
-.contenido {
-  grid-area: area-contenido;
-}
-.footer {
-  grid-area: footer;
+.div-container2{
+  display: grid;
 }

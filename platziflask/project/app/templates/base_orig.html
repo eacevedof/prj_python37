@@ -1,0 +1,28 @@
+<!-- base.html -->
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="icon" href="static/images/favicon.ico"/>
+  <title>{% block title %} Flask {% endblock %}</title>
+  <link rel="stylesheet" href="static/css/main.css" />
+  <!--al final tengo que incluir casi todo yo pq el que trae flask da error 403 y/o no incluye js-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script type="module" src="static/js/bundle.js" defer></script>
+{% endblock %}
+
+{% block body %}
+<!-- base.html block-body -->
+  {% block navbar %}
+    {% include "navbar.html" %}
+  {% endblock %}
+
+  {% include "messages.html" %}
+
+  {% block content %} 
+  {% endblock %}  
+
+  {% block scripts %}{{ super() }}{% endblock%}
+<!-- /base.html block-body -->  
+{% endblock %}

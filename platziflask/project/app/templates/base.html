@@ -1,28 +1,52 @@
-<!-- base.html -->
-{% extends "bootstrap/base.html" %}
-
-{% block head %}
-  {{ super() }}
-  <link rel="icon" href="static/images/favicon.ico"/>
-  <title>{% block title %} Flask {% endblock %}</title>
+<!--base.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
   <link rel="stylesheet" href="static/css/main.css" />
-  <!--al final tengo que incluir casi todo yo pq el que trae flask da error 403 y/o no incluye js-->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <script type="module" src="static/js/bundle.js" defer></script>
-{% endblock %}
+</head>
+<body>
+  <div class="div-container">
+    <div class="div-row">1</div>
+    <div class="div-row">2</div>
+    <div class="div-row">3</div>
+    <div class="div-row">4</div>
 
-{% block body %}
-<!-- base.html block-body -->
-  {% block navbar %}
-    {% include "navbar.html" %}
-  {% endblock %}
+    <div class="div-row">
+      <div class="div-container2">
+        <div class="div-row2">
+          <nav id="nav-menu-principal">
+            <a href="/">Inicio</a> |
+            <a href="/servicios">Servicios</a> |
+            <a href="/contacto">Contacto</a> 
+          </nav>
+        </div>
+        <div class="div-row2">
+          <img src="" />
+        </div>
+        <div class="div-row2">
+            más sobre nosotros
+        </div>
+        <div class="div-row2">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti aspernatur ratione ipsam libero impedit a, vero illo inventore? Doloribus eos quae exercitationem adipisci aliquam molestias ea, ex alias asperiores commodi!
+          </p>
+        </div>
+        <div class="div-row2">
+          Redes sociales
+        </div>
+        
+      </div>
+    </div>
 
-  {% include "messages.html" %}
-
-  {% block content %} 
-  {% endblock %}  
-
-  {% block scripts %}{{ super() }}{% endblock%}
-<!-- /base.html block-body -->  
-{% endblock %}
+    <div class="div-row">5</div>
+    <div class="div-row">6</div>
+    <div class="div-row">7</div>
+    <div class="div-row">8</div>
+  </div>
+</body>
+</html>
+<!--/base.html-->
