@@ -9,8 +9,19 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
+# https://docs.google.com/spreadsheets/d/1zcwVyAOYho-1ato_dnaPPiZorPSNLXgCnc6ee-8qIGY/edit#gid=1364140072
+SAMPLE_SPREADSHEET_ID = 'temp_xls'
 SAMPLE_RANGE_NAME = 'Class Data!A2:E'
+
+def two():
+    import gspread 
+    from oauth2client.service_account import ServiceAccountCredentials
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json",scope)
+    gc = gspread.authorize(credentials)
+    wks = gc.open(SAMPLE_SPREADSHEET_ID)
+    print(wks.get_worksheet(2).get_all_records())
+    # print(wks.get_allrecrods())
 
 def main():
     """Shows basic usage of the Sheets API.
@@ -52,4 +63,5 @@ def main():
             print('%s, %s' % (row[0], row[4]))
 
 if __name__ == '__main__':
-    main()
+    # main()
+    two()
