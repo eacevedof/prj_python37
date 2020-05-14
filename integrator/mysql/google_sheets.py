@@ -21,7 +21,7 @@ def mysql_check():
         database="db_tinymarket"
     )
     
-    objcursor = mydb.cursor()
+    objcursor = mydb.cursor(dictionary=True)
     sql = """
             INSERT INTO imp_products (code, description, description_full, price, price2, display) 
             VALUES (%s, %s,%s, %s,%s, %s)
@@ -33,6 +33,8 @@ def mysql_check():
     objcursor.execute(sql)
     res = objcursor.fetchall()
     print(res)
+    for row in res:
+        print(row)
 
 if __name__ == '__main__':
     # two()
