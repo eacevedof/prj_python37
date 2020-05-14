@@ -24,8 +24,8 @@ class Mysql:
 
     def execute(self, sql, tplval,w=0):
         try:
-            print(sql)
-            print(tplval)
+            # print(sql)
+            # print(tplval)
             objcursor = self._get_cursor()
             r = objcursor.execute(sql,tplval)
             if(w==0):

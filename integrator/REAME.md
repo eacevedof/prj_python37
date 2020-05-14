@@ -11,6 +11,8 @@
 - para conseguir la visualizacion entre módulos lo he hecho con:
  - `pipenv install -e .` modo edicion
   - https://realpython.com/pipenv-guide/
+  - Esto tampoco soluciona importación entre hermanos :S ya no se que hacer ^^
+  - En etls no puedo importar goggleserv
 - Para obtener las credenciales hay que hacerlo desde la consola de google
 - Se crea un proyecto
 - Se habilitan los servicios
