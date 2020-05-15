@@ -1,5 +1,6 @@
+import sys
 import mysql.connector
-import json
+# import json
 
 class Mysql:
     dicconfig = {}
@@ -7,14 +8,18 @@ class Mysql:
 
     def __init__(self, dicconfig):
         self.dicconfig = dicconfig
+        # print(self.dicconfig); sys.exit()
+
 
     def _get_cursor(self):
         # ** transforma un diccionario en kwargs
-        self.conx = mysql.connector.connect(**self.dbconfig)
+        # print(**self.dicconfig); sys.exit()
+        self.conx = mysql.connector.connect(**self.dicconfig)
         objcursor = self.conx.cursor(dictionary=True)
+        # print(objcursor); sys.exit()
         return objcursor
 
-    def query(self, sql)
+    def query(self, sql):
         if len(self.dicconfig) == 0:
             return -1
         try:
@@ -32,12 +37,13 @@ class Mysql:
                 #print("mysql connection is closed")
 
     def insert(self, dicqb):
+        #print(dicqb)#;sys.exit()
         sql = dicqb["query"]
-        tpl = dicqb["tpl"]
-        self.insert_tpl(sql, tplval)
-
+        tplvals = dicqb["tuple"]
+        self.insert_tpl(sql, tplvals)
 
     def insert_tpl(self, sql, tplval):
+        # print(sql);print(tplval);sys.exit()
         if len(self.dicconfig) == 0:
             return -1
         try:
@@ -48,10 +54,7 @@ class Mysql:
         except mysql.connector.Error as error:
             print("2 Failed insert_tpl to get record from mysql table: {}".format(error))
             return -1
-        finally:
-            if(self.conx.is_connected()):
-                objcursor.close()
-                #print("mysql connection is closed")
+       
 
     def execute(self, sql):
         if len(self.dicconfig) == 0:

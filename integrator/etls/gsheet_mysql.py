@@ -43,12 +43,14 @@ dbconfig = core.get_dbconfig(dicconxcfg,destdatabase)
 # para ir volcandolas en destino
 # @todo
 maptable = mapping["tables"][0]
+#print(maptable); sys.exit()
 mapfields = maptable["fields"]
 fromfields = list(mapfields.keys())
 tofields = list(mapfields.values())
 
 print(tofields[0])
 
+mysql = Mysql(dbconfig)
 
 insert = {"keys":[],"values":[]}
 for row in sourcedata:
@@ -57,9 +59,12 @@ for row in sourcedata:
         if field in fromfields:
             insert["keys"].append(mapfields[field])
             insert["values"].append(row[field])
-    print(insert)
-    dicsql = qb.get_insert_dict("xxx",insert["keys"],insert["values"])
-    print(dicsql)
+    # print(insert)
+    qbsql = qb.get_insert_dict(maptable["table_dest"], insert["keys"], insert["values"])
+    mysql.insert(qbsql)
+    
+    
+    #print(qbsql)
     sys.exit()
 
 
