@@ -1,0 +1,47 @@
+[
+  {
+    "id":"c1",
+    "alias":"Docker mysql", 
+    "description":"Docker mysql",
+    "type":"mysql",
+    "server":"127.0.0.1",
+    "port":"3306",
+    "schemas":[
+      {
+        "database":"db_one",
+        "user":"root",
+        "password":"1234"
+      },
+      {
+        "database":"db_two",
+        "user":"root",
+        "password":"1234"
+      },
+      {
+        "database": "sf5-expenses-api_api",
+        "user":"root",
+        "password":"1234"
+      }
+    ]
+  },
+  {
+    "id":"c2",
+    "alias":"Otro cont",
+    "description":"No dock mysql",
+    "type":"mysql",
+    "server":"127.0.0.1",
+    "port":"3350",
+    "schemas":[
+      {
+        "database":"db_xxx",
+        "user":"root",
+        "password":"1234"
+      },
+      {
+        "database":"db_yyy",
+        "user":"root",
+        "password":"1234"
+      }
+    ]
+  }
+]

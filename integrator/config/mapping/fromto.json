@@ -1,0 +1,36 @@
+[
+  {
+    "source":{
+      "type":"file",
+      "path":"%datasource%/products.json"
+    },
+    "destiny":{
+      "type":"mysql",
+      "config":"%config%/mysql.json",
+      "table":"imp_products"
+    },
+    "fields":{
+      "PRCODPRO":"code",
+      "PRDESCRI":"description",
+      "PROBSERV":"description_full",
+      "PRMONMON":"price",
+      "PRMONUSD":"price2",
+      "DISPLAY":"display",
+    }
+  },
+  {
+    "source":{
+      "type":"mysql",
+      "config":"%config%/mysql.json",
+      "table":"imp_products"
+    },
+    "destiny":{
+      "type":"mysql",
+      "config":"%config%/mysql.json",
+      "table":"app_products"
+    },
+    "rules":{
+      "PRCODPRO":"convert rule on insert"
+    }    
+  }
+]
