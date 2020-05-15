@@ -1,5 +1,6 @@
 [
   {
+    "id":"transfer-1",
     "source":{
       "context":{
         "file": "files.json",
@@ -9,21 +10,28 @@
     "destiny":{
       "context":{
         "file": "mysql.json",
-        "id": "mysql1"
-      },
-      "table":"imp_products"
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      }
     },
-    "fields":{
-      "PRCODPRO":"code",
-      "PRDESCRI":"description",
-      "PROBSERV":"description_full",
-      "PRMONMON":"price",
-      "PRMONUSD":"price2",
-      "DISPLAY":"display"
-    }
+    "tables":[
+      {
+        "table_dest": "imp_product",
+        "fields":{
+          "PRCODPRO":"code",
+          "PRDESCRI":"description",
+          "PROBSERV":"description_full",
+          "PRMONMON":"price",
+          "PRMONUSD":"price2",
+          "DISPLAY":"display"
+        }
+      }
+    ]
+     
   },
 
   {
+    "id":"transfer-2",
     "source":{
       "context":{
         "file": "mysql.json",
@@ -35,17 +43,21 @@
       "context":{
         "file": "mysql.json",
         "id": "mysql1"
-      },
-      "table":"app_product"
+      }
     }, 
-    "fields":{
-      "code":"code_erp",
-      "description":"description",
-      "description_full":"description_full",
-      "price":"price_sale",
-      "price2":"price_sale1",
-      "display":"display"
-    },
+    "tables":[
+      {
+        "table_dest": "app_product",
+        "fields":{
+          "code":"code_erp",
+          "description":"description",
+          "description_full":"description_full",
+          "price":"price_sale",
+          "price2":"price_sale1",
+          "display":"display"
+        }
+      }
+    ],    
     "rules":{
       "PRCODPRO":"convert rule on insert"
     }
