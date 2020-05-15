@@ -18,6 +18,8 @@ class Etl:
 
     helpjson = Json()
 
+    queries = []
+
     def __init__(self, mappingfile, mappingid):
         self.mapping_file = mappingfile
         self.mapping_id = mappingid
@@ -91,6 +93,10 @@ class Etl:
         self.sourcedata = self.helpjson.get_loaded()
         self.helpjson.reset()
 
+    def _run_queries(self, mysql):
+        for sql in self.queries:
+            mysql.execute(sql)        
+
     def transfer(self):
         # pprint(self.dicmapping)
         # pprint(self.dicsource)
@@ -101,5 +107,10 @@ class Etl:
         self._extract() # carga en self.sourcedata
         print("...inserting into tables")
         self._insert_by_table(objmysql)
+        print("...running extra queries")
+        self._run_queries(objmysql)
         print("proces finished!")
+
+    def add_query(self, sql):
+        self.queries.append(sql)
 
