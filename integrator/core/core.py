@@ -1,5 +1,21 @@
 import sys
 
+def is_instring(search,string):
+    return string.find(search) != -1
+
+def get_replace(tag,repl,string):
+    if(strstr(tag,strstr)):
+        return string.replace(tag,repl)
+
+def get_path(extra,path,tag):
+    newpath = path
+    if is_instring(tag, extra):
+        print(f"is_string {tag}, {extra}")
+        newpath = extra.replace(tag, path)
+    else:
+        newpath = path +"/"+ extra
+    return newpath
+
 class Core:
     REPLACES = {
         "%in%": "./data/in",
@@ -7,39 +23,38 @@ class Core:
         "%mapping%": "./config/mapping",
         "%credentials%": "./config/credentials",
     }
-
     
     @staticmethod
     def get_path_in(extra=None):
-        path = Core.REPLACES["%in%"]
+        tag = "%in%"
+        path = Core.REPLACES[tag]
         if extra is not None:
-            path = extra.replace("%in%",path)
-             
+            path = get_path(extra, path, tag)
         return path
 
     @staticmethod
     def get_path_context(extra=None):
-        path = Core.REPLACES["%contexts%"]
+        tag = "%contexts%"
+        path = Core.REPLACES[tag]
         if extra is not None:
-            path = extra.replace("%contexts%",path)
-        
+            path = get_path(extra, path, tag)
         return path
 
     @staticmethod
     def get_path_credential(extra=None):
-        path = Core.REPLACES["%credentials%"]
+        tag = "%credentials%"
+        path = Core.REPLACES[tag]
         if extra is not None:
-            path = extra.replace("%credentials%",path)
-        
+            path = get_path(extra, path, tag)
         return path
 
     @staticmethod
     def get_path_mapping(extra=None):
-        path = Core.REPLACES["%mapping%"]
+        tag = "%mapping%"
+        path = Core.REPLACES[tag]
         if extra is not None:
-            path = extra.replace("%mapping%",path)
-        
-        return path  
+            path = get_path(extra, path, tag)
+        return path
 
         
 

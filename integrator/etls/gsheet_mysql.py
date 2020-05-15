@@ -5,15 +5,19 @@ from mysqlserv.mysql import Mysql
 from fileserv.json import Json
 
 jsonhelper = Json()
-strpathctx = core.get_path_context("%contexts%/files.json")
+strpathctx = core.get_path_mapping("fromto.json")
+print(strpathctx)
+sys.exit()
+
 jsonhelper.set_pathfile(strpathctx)
 jsonhelper.load_data()
+print(jsonhelper.get_data())
+sys.exit()
+
 dictctx = jsonhelper.get_dictbykey("id","json1")
 infile = core.get_path_in(dictctx["path"]) 
 jsonhelper.set_pathfile(infile)
 products = jsonhelper.get_data()
-
-
 
 
 
