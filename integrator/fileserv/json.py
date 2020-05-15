@@ -17,5 +17,8 @@ class Json:
         self._load_data()
         return self.data
 
+    def set_pathfile(self,pathfile):
+        self.pathfile = pathfile
+
 
 
