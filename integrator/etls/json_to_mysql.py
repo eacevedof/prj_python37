@@ -39,20 +39,9 @@ dicconxcfg = jsonhelper.get_dictbykey("id","mysql1")
 dbconfig = core.get_dbconfig(dicconxcfg,destdatabase)
 # print(dbconfig); sys.exit()
 
-# segun el mapeo y los datos de origen tengo que crear las consultas insert
-# para ir volcandolas en destino
-# @todo
-maptable = mapping["tables"][0]
-#print(maptable); sys.exit()
-mapfields = maptable["fields"]
-fromfields = list(mapfields.keys())
-tofields = list(mapfields.values())
 
-print(tofields[0])
 
-def run_etl():
-    mysql = Mysql(dbconfig)
-    
+def insert_by_rows(mysql,sourcedata,tabledest,mapfields,fromfields):
     for row in sourcedata:
         insert = {"keys":[],"values":[]}
         for field in row:
@@ -60,8 +49,25 @@ def run_etl():
                 insert["keys"].append(mapfields[field])
                 insert["values"].append(row[field])
         # print(insert)
-        qbsql = qb.get_insert_dict(maptable["table_dest"], insert["keys"], insert["values"])
-        print(qbsql);
-        print("\n")
+        qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
+        # print(qbsql);print("\n")
         mysql.insert(qbsql)
+
+
+# print(tofields[0])
+def insert_by_table(mysql):
+    # segun el mapeo y los datos de origen tengo que crear las consultas insert
+    # para ir volcandolas en destino
+    # @todo esto podria permitir que unos campos del origen vayan a una tabla y otros campos a otra
+    for tablecfg in mapping["tables"]:
+        tabledest = tablecfg["table_dest"]
+        mapfields = tablecfg["fields"]
+        fromfields = list(mapfields.keys())
+        mysql.execute(f"TRUNCATE TABLE {tabledest}")
+        insert_by_rows(mysql, sourcedata,tabledest,mapfields,fromfields)
+
+
+def run_etl():
+    mysql = Mysql(dbconfig)
+    insert_by_table(mysql)
         
