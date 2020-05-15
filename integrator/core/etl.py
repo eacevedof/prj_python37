@@ -23,9 +23,13 @@ class Etl:
         self.mapping_id = mappingid
         self.helpjson = Json()
 
+        print("...loading mapping")
         self._load_mapping()
+        print("...loading source")
         self._load_source()
+        print("...loading destiny")
         self._load_destiny()
+        print("...loading dbconfig")
         self._load_dbconfig()
 
 
@@ -93,6 +97,9 @@ class Etl:
         # pprint(self.dicdestiny)
         # pprint(self.dicdbconfig)
         objmysql = Mysql(self.dicdbconfig)
+        print("...extracting")
         self._extract() # carga en self.sourcedata
+        print("...inserting into tables")
         self._insert_by_table(objmysql)
+        print("proces finished!")
 
