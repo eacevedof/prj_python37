@@ -13,7 +13,7 @@ class Json:
         with open(self.pathfile) as jfile:
             self.data = json.load(jfile)
 
-    def get_data(self):
+    def get_loaded(self):
         self.load_data()
         return self.data
 
@@ -27,4 +27,6 @@ class Json:
                     return objdict
         return None
 
+    def get_data(self):
+        return self.data
 
