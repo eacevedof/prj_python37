@@ -1,5 +1,7 @@
 import gspread 
+from core.core import Core as core
 from oauth2client.service_account import ServiceAccountCredentials
+
 
 class Sheets:
 
@@ -12,7 +14,8 @@ class Sheets:
 
     def get_data(self):
         scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        credentials = ServiceAccountCredentials.from_json_keyfile_name("./config/credentials.json",scopes)
+        pathjson = core.get_path_credential("credentials.json")
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(pathjson, scopes)
         sheet = gspread.authorize(credentials)
         wks = sheet.open(self.spread_id)
         rows = wks.get_worksheet(self.worksheet_num).get_all_records()
