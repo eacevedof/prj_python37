@@ -6,7 +6,13 @@ from fileserv.json import Json
 strpathjson = "./data/in/products.json"
 jsonhelper = Json(strpathjson)
 data = jsonhelper.get_data()
-print(data)
+
+strpathctx = "./config/context/files.json"
+jsonhelper.set_pathfile(strpathctx)
+ctxfrom = jsonhelper.get_data()
+print(ctxfrom)
+
+# print(data)
 sys.exit()
 
 
