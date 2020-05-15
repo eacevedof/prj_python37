@@ -2,38 +2,66 @@ import mysql.connector
 import json
 
 class Mysql:
-    pathconfig = ""
+    dicconfig = {}
     conx = None
 
-    def __init__(self):
-        self.pathconfig = "./config/contexts/mysql.json"
-        print(self.pathconfig)
-
-    def _get_json(self):
-        data = {}
-        with open(self.pathconfig) as f:
-            data = json.load(f)
-        return data
+    def __init__(self, dicconfig):
+        self.dicconfig = dicconfig
 
     def _get_cursor(self):
-        dbconfig = self._get_json()
         # ** transforma un diccionario en kwargs
-        self.conx = mysql.connector.connect(**dbconfig)
+        self.conx = mysql.connector.connect(**self.dbconfig)
         objcursor = self.conx.cursor(dictionary=True)
         return objcursor
 
-    def execute(self, sql, tplval,w=0):
+    def query(self, sql)
+        if len(self.dicconfig) == 0:
+            return -1
         try:
-            # print(sql)
-            # print(tplval)
             objcursor = self._get_cursor()
-            r = objcursor.execute(sql,tplval)
-            if(w==0):
-                r = objcursor.fetchall()
-                # print(r)
+            objcursor.execute(sql,tplval)
+            r = objcursor.fetchall()
+            return r
+
+        except mysql.connector.Error as error:
+            print("1 Failed query to get record from mysql table: {}".format(error))
+            return -1
+        finally:
+            if(self.conx.is_connected()):
+                objcursor.close()
+                #print("mysql connection is closed")
+
+    def insert(self, dicqb):
+        sql = dicqb["query"]
+        tpl = dicqb["tpl"]
+        self.insert_tpl(sql, tplval)
+
+
+    def insert_tpl(self, sql, tplval):
+        if len(self.dicconfig) == 0:
+            return -1
+        try:
+            objcursor = self._get_cursor()
+            r = objcursor.execute(sql, tplval)
+
             return r
         except mysql.connector.Error as error:
-            print("Failed to get record from mysql table: {}".format(error))
+            print("2 Failed insert_tpl to get record from mysql table: {}".format(error))
+            return -1
+        finally:
+            if(self.conx.is_connected()):
+                objcursor.close()
+                #print("mysql connection is closed")
+
+    def execute(self, sql):
+        if len(self.dicconfig) == 0:
+            return -1
+        try:
+            objcursor = self._get_cursor()
+            r = objcursor.execute(sql)
+            return r
+        except mysql.connector.Error as error:
+            print("3 Failed execute to get record from mysql table: {}".format(error))
             return -1
         finally:
             if(self.conx.is_connected()):

@@ -68,7 +68,7 @@ class Core:
     def get_dbconfig(dicctx, strdatabase):
         # print(dicctx); sys.exit()
         dbconfig = get_schema(dicctx["schemas"],"database",strdatabase)
-        print(dbconfig); sys.exit()
+        # print(dbconfig); sys.exit()
         config = {
             "host":       dicctx["server"],
             "port":       dicctx["port"],
