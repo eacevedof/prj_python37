@@ -10,12 +10,12 @@ jsonhelper = Json()
 pathmapping = core.get_path_mapping("fromto.json")
 jsonhelper.set_pathfile(pathmapping)
 jsonhelper.load_data()
-transconfig = jsonhelper.get_dictbykey("id","transfer-1")
-#print(transconfig); sys.exit()
+mapping = jsonhelper.get_dictbykey("id","transfer-1")
+#print(mapping); sys.exit()
 
 #obtengo el origen
-dictsource = transconfig["source"]["context"]
-destdatabase = transconfig["destiny"]["context"]["database"]
+dictsource = mapping["source"]["context"]
+destdatabase = mapping["destiny"]["context"]["database"]
 # print(dictsource); print(destdatabase); sys.exit()
 pathcontext = core.get_path_context(dictsource["file"])
 jsonhelper.set_pathfile(pathcontext)
@@ -25,10 +25,10 @@ jsonhelper.load_data()
 dicsource = jsonhelper.get_dictbykey("id","json1")
 pathsource = core.get_path_in(dicsource["path"])
 jsonhelper.set_pathfile(pathsource)
-jsonhelper.load_data()
+sourcedata = jsonhelper.get_loaded()
 #print(jsonhelper.get_data()); sys.exit()
 
-dictdestiny = transconfig["destiny"]["context"]
+dictdestiny = mapping["destiny"]["context"]
 pathdestiny = core.get_path_context(dictdestiny["file"])
 jsonhelper.set_pathfile(pathdestiny)
 jsonhelper.load_data()
@@ -37,6 +37,10 @@ dicconxcfg = jsonhelper.get_dictbykey("id","mysql1")
 # print(dicconxcfg); sys.exit()
 dbconfig = core.get_dbconfig(dicconxcfg,destdatabase)
 # print(dbconfig); sys.exit()
+
+# segun el mapeo y los datos de origen tengo que crear las consultas insert
+# para ir volcandolas en destino
+
 
 
 
