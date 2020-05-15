@@ -30,10 +30,10 @@ class Mysql:
             r = objcursor.execute(sql,tplval)
             if(w==0):
                 r = objcursor.fetchall()
-                print(r)
+                # print(r)
             return r
         except mysql.connector.Error as error:
-            print("Failed to get recor from mysql table: {}".format(error))
+            print("Failed to get record from mysql table: {}".format(error))
             return -1
         finally:
             if(self.conx.is_connected()):
