@@ -1,0 +1,9 @@
+[
+    {
+      "id":"json1",
+      "alias":"products json", 
+      "description":"Docker mysql",
+      "type":"json",
+      "path":"%in%/products.json"
+    }
+  ]
