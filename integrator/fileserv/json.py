@@ -30,3 +30,6 @@ class Json:
     def get_data(self):
         return self.data
 
+    def reset(self):
+        self.pathfile = ""
+        self.data = []

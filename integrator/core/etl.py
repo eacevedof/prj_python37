@@ -55,11 +55,44 @@ class Etl:
     def _load_dbconfig(self):
         self.dicdbconfig = core.get_dbconfig(self.dicdestiny, self.dicdestiny["database"])
 
-    def _insert_by_rows(self):
-        pass
+    def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
+        for row in self.sourcedata:
+            insert = {"keys":[],"values":[]}
+            for field in row:
+                if field in fromfields:
+                    insert["keys"].append(mapfields[field])
+                    insert["values"].append(row[field])
+            # print(insert)
+            qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
+            # print(qbsql);print("\n")
+            mysql.insert(qbsql)        
+
+    def _truncate_table(self,mysql, table):
+        sql = f"TRUNCATE TABLE {table}"
+        mysql.execute(sql)
+
+    def _insert_by_table(self, mysql):
+        for tablecfg in self.dicmapping["tables"]:
+            # pprint(tablecfg); sys.exit()
+            tabledest = tablecfg["table_dest"]
+            mapfields = tablecfg["fields"]
+            fromfields = list(mapfields.keys())
+            self._truncate_table(mysql, tabledest)
+            self._insert_by_rows(mysql, tabledest, mapfields, fromfields)
+
+    def _extract(self):
+        pathin = core.get_path_in(self.dicsource["path"])
+        self.helpjson.set_pathfile(pathin)
+        self.helpjson.load_data()
+        self.sourcedata = self.helpjson.get_loaded()
+        self.helpjson.reset()
 
     def transfer(self):
-        pprint(self.dicmapping)
-        pprint(self.dicsource)
-        pprint(self.dicdestiny)
-        pprint(self.dicdbconfig)
+        # pprint(self.dicmapping)
+        # pprint(self.dicsource)
+        # pprint(self.dicdestiny)
+        # pprint(self.dicdbconfig)
+        objmysql = Mysql(self.dicdbconfig)
+        self._extract() # carga en self.sourcedata
+        self._insert_by_table(objmysql)
+
