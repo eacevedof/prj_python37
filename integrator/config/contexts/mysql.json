@@ -1,6 +1,6 @@
 [
   {
-    "id":"c1",
+    "id":"mysql1",
     "alias":"Docker mysql", 
     "description":"Docker mysql",
     "type":"mysql",

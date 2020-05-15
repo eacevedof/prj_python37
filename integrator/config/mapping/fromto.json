@@ -1,12 +1,16 @@
 [
   {
     "source":{
-      "type":"file",
-      "path":"%datasource%/products.json"
+      "context":{
+        "file": "files.json",
+        "id": "json1"
+      }
     },
     "destiny":{
-      "type":"mysql",
-      "config":"%config%/mysql.json",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1"
+      },
       "table":"imp_products"
     },
     "fields":{
@@ -15,22 +19,35 @@
       "PROBSERV":"description_full",
       "PRMONMON":"price",
       "PRMONUSD":"price2",
-      "DISPLAY":"display",
+      "DISPLAY":"display"
     }
   },
+
   {
     "source":{
-      "type":"mysql",
-      "config":"%config%/mysql.json",
-      "table":"imp_products"
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1"
+      },
+      "table":"imp_product"
     },
     "destiny":{
-      "type":"mysql",
-      "config":"%config%/mysql.json",
-      "table":"app_products"
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1"
+      },
+      "table":"app_product"
+    }, 
+    "fields":{
+      "code":"code_erp",
+      "description":"description",
+      "description_full":"description_full",
+      "price":"price_sale",
+      "price2":"price_sale1",
+      "display":"display"
     },
     "rules":{
       "PRCODPRO":"convert rule on insert"
-    }    
+    }
   }
 ]

@@ -6,7 +6,7 @@ class Mysql:
     conx = None
 
     def __init__(self):
-        self.pathconfig = "./config/mysql.json"
+        self.pathconfig = "./config/contexts/mysql.json"
         print(self.pathconfig)
 
     def _get_json(self):
