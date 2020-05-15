@@ -1,34 +1,22 @@
 import sys
+from core.core import Core as core
 from googleserv.sheets import Sheets
 from mysqlserv.mysql import Mysql
 from fileserv.json import Json
 
-strpathjson = "./data/in/products.json"
-jsonhelper = Json(strpathjson)
-data = jsonhelper.get_data()
-
-strpathctx = "./config/context/files.json"
+jsonhelper = Json()
+strpathctx = "./config/contexts/files.json"
 jsonhelper.set_pathfile(strpathctx)
-ctxfrom = jsonhelper.get_data()
-print(ctxfrom)
+jsonhelper.load_data()
+dictctx = jsonhelper.get_dictbykey("id","json1")
+infile = core.get_path_in(dictctx["path"]) 
+jsonhelper.set_pathfile(infile);
+products = jsonhelper.get_data()
 
-# print(data)
+
+
+print(products)
 sys.exit()
-
-
-mapeo = {
-    "tables":{
-        "sheet":"imp_products"
-    },
-    "fields":{
-        "PRCODPRO":"code",
-        "PRDESCRI":"description",
-        "PROBSERV":"description_full",
-        "PRMONMON":"price",
-        "PRMONUSD":"price2",
-        "DISPLAY":"display",
-    }
-}
 
 
 def _get_mysql_field(sheetfield):
