@@ -1,5 +1,14 @@
+import sys
 from googleserv.sheets import Sheets
 from mysqlserv.mysql import Mysql
+from fileserv.json import Json
+
+strpathjson = "./data/in/products.json"
+jsonhelper = Json(strpathjson)
+data = jsonhelper.get_data()
+print(data)
+sys.exit()
+
 
 mapeo = {
     "tables":{
