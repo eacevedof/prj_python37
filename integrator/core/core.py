@@ -10,11 +10,20 @@ def get_replace(tag,repl,string):
 def get_path(extra,path,tag):
     newpath = path
     if is_instring(tag, extra):
-        print(f"is_string {tag}, {extra}")
+        # print(f"is_string {tag}, {extra}")
         newpath = extra.replace(tag, path)
     else:
         newpath = path +"/"+ extra
     return newpath
+
+def get_schema(schemas,key,val):
+    # print(f"k:{key}, v:{val}");print(schemas); sys.exit()
+    for schema in schemas:
+        for k in schema:
+            # print(k); print(schema[k]);
+            if(k==key and schema[k] == val):
+                return schema
+    return None
 
 class Core:
     REPLACES = {
@@ -56,5 +65,17 @@ class Core:
             path = get_path(extra, path, tag)
         return path
 
-        
+    def get_dbconfig(dicctx, strdatabase):
+        # print(dicctx); sys.exit()
+        dbconfig = get_schema(dicctx["schemas"],"database",strdatabase)
+        print(dbconfig); sys.exit()
+        config = {
+            "host":       dicctx["server"],
+            "port":       dicctx["port"],
+
+            "user":       dbconfig["user"],
+            "passwd":     dbconfig["password"],
+            "database":   strdatabase
+        }
+        return config
 
