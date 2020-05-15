@@ -14,7 +14,7 @@ class Sheets:
 
     def get_data(self):
         scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        pathjson = core.get_path_credential("credentials.json")
+        pathjson = core.get_path_credential("gsheets.json")
         credentials = ServiceAccountCredentials.from_json_keyfile_name(pathjson, scopes)
         sheet = gspread.authorize(credentials)
         wks = sheet.open(self.spread_id)
