@@ -40,7 +40,13 @@ dbconfig = core.get_dbconfig(dicconxcfg,destdatabase)
 
 # segun el mapeo y los datos de origen tengo que crear las consultas insert
 # para ir volcandolas en destino
+# @todo
+maptables = mapping["tables"][0]
+print(maptables)
 
+for row in sourcedata:
+    for field in row:
+        print(field)
 
 
 
