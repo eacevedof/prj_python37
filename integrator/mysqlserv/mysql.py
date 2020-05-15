@@ -14,7 +14,9 @@ class Mysql:
     def _get_cursor(self):
         # ** transforma un diccionario en kwargs
         # print(**self.dicconfig); sys.exit()
-        self.conx = mysql.connector.connect(**self.dicconfig)
+        if self.conx is None or not self.conx.is_connected(): 
+            self.conx = mysql.connector.connect(**self.dicconfig)
+        
         objcursor = self.conx.cursor(dictionary=True)
         # print(objcursor); sys.exit()
         return objcursor
@@ -31,9 +33,9 @@ class Mysql:
         except mysql.connector.Error as error:
             print("1 Failed query to get record from mysql table: {}".format(error))
             return -1
-        finally:
-            if(self.conx.is_connected()):
-                objcursor.close()
+        #finally:
+        #    if(self.conx.is_connected()):
+        #        objcursor.close()
                 #print("mysql connection is closed")
 
     def insert(self, dicqb):
@@ -66,7 +68,7 @@ class Mysql:
         except mysql.connector.Error as error:
             print("3 Failed execute to get record from mysql table: {}".format(error))
             return -1
-        finally:
-            if(self.conx.is_connected()):
-                objcursor.close()
+        # finally:
+            # if(self.conx.is_connected()):
+                # objcursor.close()
                 #print("mysql connection is closed")

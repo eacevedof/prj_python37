@@ -1,14 +1,4 @@
 print("main.py")
-from etls.gsheet_mysql import extract, transform, load
+from etls.json_to_mysql import run_etl
 
-
-print("...extracting \n")
-data = extract()
-print(data)
-
-# print("...transform process \n")
-# transform(data)
-# print("...loading")
-# load(data)
-# print("end")
-
+run_etl()
