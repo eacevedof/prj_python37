@@ -2,6 +2,7 @@ import sys
 from core.core import Core as core
 from googleserv.sheets import Sheets
 from mysqlserv.mysql import Mysql
+from mysqlserv.querybuilder import QueryBuilder as qb
 from fileserv.json import Json
 
 jsonhelper = Json()
@@ -41,15 +42,28 @@ dbconfig = core.get_dbconfig(dicconxcfg,destdatabase)
 # segun el mapeo y los datos de origen tengo que crear las consultas insert
 # para ir volcandolas en destino
 # @todo
-maptables = mapping["tables"][0]
-print(maptables)
+maptable = mapping["tables"][0]
+mapfields = maptable["fields"]
+fromfields = list(mapfields.keys())
+tofields = list(mapfields.values())
 
+print(tofields[0])
+
+
+insert = {"keys":[],"values":[]}
 for row in sourcedata:
+
     for field in row:
-        print(field)
+        if field in fromfields:
+            insert["keys"].append(mapfields[field])
+            insert["values"].append(row[field])
+    print(insert)
+    dicsql = qb.get_insert_dict("xxx",insert["keys"],insert["values"])
+    print(dicsql)
+    sys.exit()
 
 
-
+sys.exit()
 def _get_mysql_field(sheetfield):
     return mapeo["fields"][sheetfield]
 
