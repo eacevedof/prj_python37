@@ -1,4 +1,4 @@
 print("main.py")
-from etls.json_to_mysql import run_etl
+from etls.elchalan import objetl
 
-run_etl()
+objetl.transfer()

@@ -1,6 +1,6 @@
 [
   {
-    "id":"transfer-1",
+    "id":"transfer-products",
     "source":{
       "context":{
         "file": "files.json",
