@@ -16,8 +16,8 @@ class JsonDb:
         self._printattribs()
 
     def _printattribs(self):
-        print("\nobjsource"); pprint(self.objsource.get_data())
-        print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
+        # print("\nobjsource"); pprint(self.objsource.get_data())
+        # print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
         pass
 
     def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
