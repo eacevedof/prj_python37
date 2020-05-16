@@ -3,6 +3,7 @@ from pprint import pprint
 
 from core.models.mapping import Mapping
 from core.transfers.json_db import JsonDb
+from core.transfers.db_db import Dbdb
 
 class Etl:
 
@@ -19,8 +20,8 @@ class Etl:
         jsondb.transfer()
 
     def _transf_db_db(self):
-        jsondb = JsonDb(self.objsource, self.objdestiny)
-        jsondb.transfer()
+        dbdb = Dbdb(self.objsource, self.objdestiny)
+        dbdb.transfer()
 
     def transfer(self):
         if self.objsource.is_file() and self.objdestiny.is_db():

@@ -7,5 +7,5 @@ from core.etl import Etl
 
 
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
-etl1 = Etl("elchalan.json","transfer-products")
+# etl1 = Etl("elchalan.json","transfer-products")
 etl1.transfer()

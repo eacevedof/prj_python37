@@ -25,3 +25,12 @@ class QueryBuilder:
             "query": sql,
             "tuple": tplvalues
         }
+    
+    @staticmethod
+    def get_select(table,fields,conds=[]):
+        strfields = ", ".join(fields)
+        sql = f"SELECT {strfields} FROM {table} WHERE 1"
+        if conds:
+            strconds = " AND ".join(conds)
+            sql += " AND " + strconds
+        return sql
