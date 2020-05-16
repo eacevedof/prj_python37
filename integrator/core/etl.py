@@ -11,6 +11,7 @@ class Etl:
 
     def __init__(self, mappingfile, mappingid):
         self.objmapping = Mapping(mappingfile, mappingid)
+        pprint(self.objmapping.get_data())
         pass
 
     def transfer(self):
