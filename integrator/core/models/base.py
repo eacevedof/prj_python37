@@ -1,7 +1,7 @@
 from core.helpers.json import Json
 from core.core import get_row_by_keyval
 
-def Base:
+class Base:
     
     pathfile = ""
     id = ""
@@ -18,7 +18,7 @@ def Base:
         self.data = []
 
     def _id_exists(self):
-        return self.id != "":
+        return self.id != ""
 
     def _load_data(self):
         json = Json(self.pathfile)
@@ -33,8 +33,8 @@ def Base:
             return dataid
         return data
 
-    def get(self,key="")
-        if self._id_exists()
+    def get(self,key=""):
+        if self._id_exists():
             if key=="":
                 return dataid
             return dataid[key]
