@@ -11,7 +11,8 @@ class Sheets:
 
     def __init__(self, spread_id, worksheet_num=0):
         self.spread_id = spread_id
-        self.worksheet_num = worksheet_num
+        #debe ser entero no string sino da error de indice
+        self.worksheet_num = worksheet_num 
 
     def get_data(self):
         scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -20,7 +21,7 @@ class Sheets:
         sheet = gspread.authorize(credentials)
         wks = sheet.open(self.spread_id)
         rows = wks.get_worksheet(self.worksheet_num).get_all_records()
-        print(rows);sys.exit()
+        # print(rows);sys.exit()
         return rows
 
     def set_credential(self,strvalue):
