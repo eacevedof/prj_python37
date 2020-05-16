@@ -1,0 +1,9 @@
+[
+  {
+    "id":"temp-chalan",
+    "type": "google-sheets",
+    "spread_id": "temp_xls",
+    "worksheet_num": "3",
+    "credentials": "gsheets.json"
+  }
+]

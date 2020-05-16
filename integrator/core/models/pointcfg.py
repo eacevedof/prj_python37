@@ -26,8 +26,9 @@ class Pointcfg:
         pathfile = self.dicconfig["context"]["file"]
         id = self.dicconfig["context"]["id"]
         format = self.dicconfig["format"]
-        # print(f"get_context_format: {format}")
+        #print(f"get_context_format: {format}");sys.exit()
         ctx = Context(pathfile, id, format)
+        #pprint(ctx); sys.exit()
         if self.is_db():
             # print(self.dicconfig); sys.exit()
             ctx.set_database(self.dicconfig["context"]["database"])

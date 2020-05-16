@@ -2,6 +2,7 @@ import sys
 from core.core import Core as core, get_row_by_keyval
 from core.models.base import Base
 from core.helpers.json import Json
+from core.helpers.googleserv.sheets import Sheets
 
 class Context(Base):
 
@@ -10,7 +11,9 @@ class Context(Base):
 
     def __init__(self, pathfile, id, format):
         pathcontext = core.get_path_context(pathfile)
+        #print(f"pathcontext: {pathcontext}"); sys.exit()
         super().__init__(pathcontext, id)
+        #print("contructor"); sys.exit()
         self.format = format
 
     def _is_file(self):
@@ -28,6 +31,13 @@ class Context(Base):
             pathconf = core.get_path_in(self.get("path"))
             ojson = Json(pathconf)
             return ojson.get_loaded()
+        elif self._is_api():
+            # print("\nis_api():");print(self.dataid);sys.exit()
+            if self.get("type") == "google-sheets":
+                gsheets = Sheets(self.get("spread_id"),self.get("worksheet_num"))
+                gsheets.set_credential(self.get("credentials"))
+                return gsheets.get_data()
+        
         return {"msg":"this context is not a file"}
 
 
