@@ -20,8 +20,11 @@ class JsonDb:
         # print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
         pass
 
+    def _get_source_data(self):
+        return self.objsource.get_context().get_content()
+
     def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
-        for row in self.objsource.get_context().get_content():
+        for row in self._get_source_data():
             insert = {"keys":[],"values":[]}
             for field in row:
                 if field in fromfields:
