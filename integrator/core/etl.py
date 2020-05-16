@@ -4,6 +4,7 @@ from pprint import pprint
 from core.models.mapping import Mapping
 from core.transfers.json_db import JsonDb
 from core.transfers.db_db import Dbdb
+from core.transfers.api_db import Apidb
 
 class Etl:
 
@@ -27,12 +28,19 @@ class Etl:
         dbdb.queries = self.queries
         dbdb.transfer()
         
+    def _transf_api_db(self):
+        dbdb = Apidb(self.objsource, self.objdestiny)
+        dbdb.queries = self.queries
+        dbdb.transfer()
+                
 
     def transfer(self):
         if self.objsource.is_file() and self.objdestiny.is_db():
             self._transf_json_db()
         elif self.objsource.is_db() and self.objdestiny.is_db():
             self._transf_db_db()
+        elif self.objsource.is_api() and self.objdestiny.is_db():
+            self._transf_api_db()
         else:
             print("transfer type not found!")
 

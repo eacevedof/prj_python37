@@ -1,5 +1,38 @@
 [
   {
+    "id":"gsheet-to-imp-products",
+    
+    "source":{
+      "format": "api",
+      "context":{
+        "file": "gsheets.json",
+        "id": "temp-chalan"
+      }
+    },
+
+    "destiny":{
+      "format": "database",      
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "PRCODPRO":"code",
+            "PRDESCRI":"description",
+            "PROBSERV":"description_full",
+            "PRMONMON":"price",
+            "PRMONUSD":"price2",
+            "DISPLAY":"display"
+          }
+        }
+      ]      
+    }
+  },
+  {
     "id":"json-to-imp-products",
     
     "source":{

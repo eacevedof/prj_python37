@@ -1,3 +1,5 @@
+import sys
+from pprint import pprint
 from core.helpers.json import Json
 from core.core import get_row_by_keyval
 
@@ -21,12 +23,15 @@ class Base:
         return self.id != ""
 
     def _load_data(self):
+        #print(f"base. _load_data"); sys.exit()
         json = Json(self.pathfile)
         self.data = json.get_loaded()
+        # pprint(self.data); sys.exit()
 
     def _load_byid(self):
         if self._id_exists():
             self.dataid = get_row_by_keyval(self.data, "id", self.id)
+        #pprint(self.dataid); sys.exit()
 
     def get_data(self):
         if self._id_exists():
