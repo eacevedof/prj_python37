@@ -65,6 +65,7 @@ class Core:
             path = get_path(extra, path, tag)
         return path
 
+    @staticmethod
     def get_dbconfig(dicctx, strdatabase):
         # print(dicctx); sys.exit()
         dbconfig = get_row_by_keyval(dicctx["schemas"],"database",strdatabase)
