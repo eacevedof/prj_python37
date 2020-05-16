@@ -1,6 +1,6 @@
 from core.etl import Etl
 
-option = 2
+option = 1
 
 if option==1:
     etl1 = Etl("elchalan.json","json-to-imp-products")
