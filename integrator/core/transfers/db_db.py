@@ -24,8 +24,9 @@ class Dbdb:
         srctable = self.objsource.get_table()
         # print(srctable); sys.exit()
         sql = qb.get_select(srctable, fromfields)
-        
+        # print(sql); sys.exit()
         rows = srcmysql.query(sql)
+        # pprint(rows); sys.exit()
         return rows
 
     def _insert_by_rows(self,srcmysql,destmysql,tabledest,mapfields,fromfields):

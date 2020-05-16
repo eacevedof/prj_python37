@@ -26,7 +26,7 @@ class Mysql:
             return -1
         try:
             objcursor = self._get_cursor()
-            objcursor.execute(sql,tplval)
+            objcursor.execute(sql)
             r = objcursor.fetchall()
             return r
 
