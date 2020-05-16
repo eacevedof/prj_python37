@@ -73,7 +73,6 @@ class JsonDb:
             print("dest is db")
             destmysql = Mysql(destiny.get_context().get_dbconfig())
 
-        sys.exit()
         print("...inserting into tables")
         self._insert_by_table(destmysql)
         print("...running extra queries")
