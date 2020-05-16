@@ -10,6 +10,8 @@ class Etl:
     objsource = None
     objdestiny = None 
 
+    queries = []
+
     def __init__(self, mappingfile, mappingid):
         objmapping = Mapping(mappingfile, mappingid)
         self.objsource = objmapping.get_source()
@@ -17,11 +19,14 @@ class Etl:
 
     def _transf_json_db(self):
         jsondb = JsonDb(self.objsource, self.objdestiny)
+        jsondb.queries = self.queries
         jsondb.transfer()
-
+        
     def _transf_db_db(self):
         dbdb = Dbdb(self.objsource, self.objdestiny)
+        dbdb.queries = self.queries
         dbdb.transfer()
+        
 
     def transfer(self):
         if self.objsource.is_file() and self.objdestiny.is_db():
@@ -30,3 +35,6 @@ class Etl:
             self._transf_db_db()
         else:
             print("transfer type not found!")
+
+    def add_query(self, sql):
+        self.queries.append(sql)

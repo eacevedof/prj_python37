@@ -51,7 +51,6 @@ class Mysql:
         try:
             objcursor = self._get_cursor()
             r = objcursor.execute(sql, tplval)
-
             return r
         except mysql.connector.Error as error:
             print("2 Failed insert_tpl to get record from mysql table: {}".format(error))
