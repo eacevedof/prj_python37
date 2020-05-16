@@ -22,8 +22,10 @@ class Dbdb:
 
     def _get_source_data(self, srcmysql, fromfields):
         srctable = self.objsource.get_table()
+        conditions = self.objsource.get_conditions() if self.objsource.get_conditions() is not None else []
+
         # print(srctable); sys.exit()
-        sql = qb.get_select(srctable, fromfields)
+        sql = qb.get_select(srctable, fromfields, conditions)
         # print(sql); sys.exit()
         rows = srcmysql.query(sql)
         # pprint(rows); sys.exit()

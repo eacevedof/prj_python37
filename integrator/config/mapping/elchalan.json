@@ -1,6 +1,6 @@
 [
   {
-    "id":"transfer-products",
+    "id":"json-to-imp-products",
     
     "source":{
       "format": "json",
@@ -42,7 +42,10 @@
         "id": "mysql1",
         "database": "db_tinymarket"
       },
-      "table":"imp_product"
+      "table":"imp_product",
+      "conditions": [
+        "error!='1'"
+      ]
     },
     "destiny":{
       "format": "database",
