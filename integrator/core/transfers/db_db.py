@@ -26,7 +26,7 @@ class Dbdb:
 
         # print(srctable); sys.exit()
         sql = qb.get_select(srctable, fromfields, conditions)
-        # print(sql); sys.exit()
+        # print(sql); # sys.exit()
         rows = srcmysql.query(sql)
         # pprint(rows); sys.exit()
         return rows
@@ -76,7 +76,7 @@ class Dbdb:
         print("...inserting into tables"); # sys.exit()
         
         self._insert_by_table(srcmysql, destmysql)
-        sys.exit()
+        #sys.exit()
         print("...running extra queries")
         self._run_queries(destmysql)
         print("proces finished!")
