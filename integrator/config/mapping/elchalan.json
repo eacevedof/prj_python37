@@ -3,12 +3,14 @@
     "id":"transfer-products",
     "source":{
       "context":{
+        "type": "json",
         "file": "files.json",
         "id": "json1"
       }
     },
     "destiny":{
       "context":{
+        "type": "database",
         "file": "mysql.json",
         "id": "mysql1",
         "database": "db_tinymarket"
@@ -33,6 +35,7 @@
     "id":"transfer-imp-to-app",
     "source":{
       "context":{
+        "type": "database",
         "file": "mysql.json",
         "id": "mysql1"
       },
@@ -40,6 +43,7 @@
     },
     "destiny":{
       "context":{
+        "type": "database",
         "file": "mysql.json",
         "id": "mysql1"
       }
