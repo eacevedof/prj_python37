@@ -34,6 +34,7 @@
     - Los **contextos** son repositorios de ubicaciones de fuentes o destinos de datos. Rutas de ficheros y/o configuraciones de acceso en caso de bases de datos y apis
 - Una vez configurado un mapping p.e **mapping/elchalan.json** hay que crear una instancia de la clase Etl.
 ```py
+# integrator/etls/elchalan.py
 from core.etl import Etl
 
 # le indico que use el mappping: elchalan.json y que use la configuracion: transfer-products
@@ -42,9 +43,11 @@ etl1.add_query("UPDATE imp_product SET description_full=NULL WHERE description_f
 etl1.add_query("UPDATE imp_product SET description_full=NULL WHERE trim(description_full)=''")
 
 # transfer lanza la ejecución. Para este caso se moveran datos de un archivo products.json a una tabla imp_products
-# posteriormente se aplicará las queries de UPDATE
+# posteriormente se aplicará las queries de UPDATE al estar los datos en imp_products
 etl1.transfer()
 
+# despues que tenemos los datos en la tabla de importación hay que pasarlos a la tabla maestra
+# le indicamos que use el mismo archivo y que ejecute el movimiento con id: transfer-imp-to-app 
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
 etl1.transfer()
 ```
