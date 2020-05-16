@@ -25,7 +25,7 @@ class Etl:
     def transfer(self):
         if self.objsource.is_file() and self.objdestiny.is_db():
             self._transf_json_db()
-        elif self.objsource.is_db() and self.objsource.is_db():
+        elif self.objsource.is_db() and self.objdestiny.is_db():
             self._transf_db_db()
         else:
             print("transfer type not found!")
