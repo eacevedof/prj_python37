@@ -56,12 +56,12 @@ class JsonDb:
         destiny = self.objdestiny
 
         destmysql = Mysql(destiny.get_context().get_dbconfig())
-
         print("...inserting into tables")
         self._insert_by_table(destmysql)
         print("...running extra queries")
         self._run_queries(destmysql)
         print("proces finished!")
+
 
     def add_query(self, sql):
         self.queries.append(sql)
