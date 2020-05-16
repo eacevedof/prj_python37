@@ -1,10 +1,13 @@
 import sys
+from pprint import pprint
+from core.helpers.mysqlserv.querybuilder import QueryBuilder as qb
+from core.helpers.mysqlserv.mysql import Mysql
 
 class JsonDb:
     objsource = None
     objdestiny = None
 
-    helpjson = Json()
+    helpjson = None
     queries = []
 
     def __init__(self, objsource, objdestiny):
@@ -20,35 +23,8 @@ class JsonDb:
         pass
 
 
-    def _load_mapping(self):
-        pathmapping = core.get_path_mapping(self.mapping_file)
-        self.helpjson.set_pathfile(pathmapping)
-        self.helpjson.load_data()
-        self.dicmapping = self.helpjson.get_dictbykey("id",self.mapping_id)
-
-    def _load_source(self):
-        # donde esta el archivo in
-        pathsource = core.get_path_context(self.dicmapping["source"]["context"]["file"])
-        self.helpjson.set_pathfile(pathsource)
-        self.helpjson.load_data()
-        # con que conjunto de esquemas voy a trabajar
-        self.dicsource = self.helpjson.get_dictbykey("id",self.dicmapping["source"]["context"]["id"])
-
-    def _load_destiny(self):
-        # donde se volcarán los datos
-        pathdestiny = core.get_path_context(self.dicmapping["destiny"]["context"]["file"])
-        self.helpjson.set_pathfile(pathdestiny)
-        self.helpjson.load_data()
-        # con que conjunto de esquemas voy a trabajar
-        pprint(self.dicmapping["destiny"]); sys.exit()
-        self.dicdestiny = self.helpjson.get_dictbykey("id",self.dicmapping["destiny"]["context"]["id"])
-        self.dicdestiny.update({"database":self.dicmapping["destiny"]["context"]["database"]})
-
-    def _load_dbconfig(self):
-        self.dicdbconfig = core.get_dbconfig(self.dicdestiny, self.dicdestiny["database"])
-
     def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
-        for row in self.sourcedata:
+        for row in self.objsource.get_context().get_content():
             insert = {"keys":[],"values":[]}
             for field in row:
                 if field in fromfields:
@@ -64,37 +40,44 @@ class JsonDb:
         mysql.execute(sql)
 
     def _insert_by_table(self, mysql):
-        for tablecfg in self.dicmapping["tables"]:
-            # pprint(tablecfg); sys.exit()
-            tabledest = tablecfg["table_dest"]
+        for tablecfg in self.objdestiny.get_tables():
+            #pprint(tablecfg);sys.exit()
+            tabledest = tablecfg["name"]
             mapfields = tablecfg["fields"]
             fromfields = list(mapfields.keys())
             self._truncate_table(mysql, tabledest)
             self._insert_by_rows(mysql, tabledest, mapfields, fromfields)
 
-    def _extract_json(self):
-        pathin = core.get_path_in(self.dicsource["path"])
-        self.helpjson.set_pathfile(pathin)
-        self.helpjson.load_data()
-        self.sourcedata = self.helpjson.get_loaded()
-        self.helpjson.reset()
-
-    def _extract(self):
-        if self.dicsource["type"] == "json":
-            self._extract_json()
 
     def _run_queries(self, mysql):
         for sql in self.queries:
             mysql.execute(sql)        
 
     def transfer(self):
-        objmysql = Mysql(self.dicdbconfig)
-        print("...extracting")
-        self._extract() # carga en self.sourcedata
+        print("transfer....")
+        
+        print("\n source");pprint(self.objsource.dicconfig)
+        print("\n dest");pprint(self.objdestiny.dicconfig)
+        
+        source = self.objsource
+        destiny = self.objdestiny
+
+        srcmysql = None
+        destmysql = None
+
+        if source.is_db():
+            print("source is db")
+            srcmysql = Mysql(source.get_context().get_dbconfig())
+        
+        if destiny.is_db():
+            print("dest is db")
+            destmysql = Mysql(destiny.get_context().get_dbconfig())
+
+        sys.exit()
         print("...inserting into tables")
-        self._insert_by_table(objmysql)
+        self._insert_by_table(destmysql)
         print("...running extra queries")
-        self._run_queries(objmysql)
+        self._run_queries(destmysql)
         print("proces finished!")
 
     def add_query(self, sql):
