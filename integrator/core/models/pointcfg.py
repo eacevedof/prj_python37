@@ -1,3 +1,4 @@
+import sys
 from core.core import Core as core
 from core.core import get_row_by_keyval
 from core.models.context import Context
@@ -24,7 +25,11 @@ class Pointcfg:
     def get_context(self):
         pathfile = self.dicconfig["context"]["file"]
         id = self.dicconfig["context"]["id"]
-        ctx = Context(pathfile,id)
+        format = self.dicconfig["format"]
+        ctx = Context(pathfile, id, format)
+        if self.dicconfig["format"] == "database":
+            # print(self.dicconfig); sys.exit()
+            ctx.set_database(self.dicconfig["context"]["database"])
         return ctx
 
     def get_data():

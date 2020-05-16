@@ -1,16 +1,33 @@
 import sys
 
 class JsonDb:
-    objsource = None
-    objdestiny = None
+    mapping_file = ""
+    mapping_id = ""
+    
+    dicmapping = {}
+    dicsource = {}
+    dicdestiny = {}
+    dicdbconfig = {}
+    sourcedata = []
 
     helpjson = Json()
+
     queries = []
 
-    def __init__(self, objsource, objdestiny):
-        self.objsource = objsource
-        self.objdestiny = objdestiny
+    def __init__(self, mappingfile, mappingid):
+        self.mapping_file = mappingfile
+        self.mapping_id = mappingid
+        self.helpjson = Json()
 
+        print("...loading mapping")
+        self._load_mapping()
+        print("...loading source")
+        self._load_source()
+        print("...loading destiny")
+        self._load_destiny()
+        print("...loading dbconfig")
+        self._load_dbconfig()
+        self._printattribs()
 
     def _printattribs(self):
         #print("\ndicmapping"); pprint(self.dicmapping); sys.exit()
