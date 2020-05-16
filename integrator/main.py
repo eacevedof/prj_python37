@@ -1,5 +1,5 @@
 print("main.py")
-from etls.elchalan import objetl,objetl2
+from etls.elchalan import etl1
 
-objetl.transfer()
-objetl2.transfer()
+#objetl.transfer()
+#objetl2.transfer()

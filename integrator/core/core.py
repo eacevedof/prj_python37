@@ -16,13 +16,13 @@ def get_path(extra,path,tag):
         newpath = path +"/"+ extra
     return newpath
 
-def get_schema(schemas,key,val):
-    # print(f"k:{key}, v:{val}");print(schemas); sys.exit()
-    for schema in schemas:
-        for k in schema:
-            # print(k); print(schema[k]);
-            if(k==key and schema[k] == val):
-                return schema
+def get_row_by_keyval(rows,key,val):
+    # print(f"k:{key}, v:{val}");print(rows); sys.exit()
+    for row in rows:
+        for k in row:
+            # print(k); print(row[k]);
+            if(k==key and row[k] == val):
+                return row
     return None
 
 class Core:
@@ -67,7 +67,7 @@ class Core:
 
     def get_dbconfig(dicctx, strdatabase):
         # print(dicctx); sys.exit()
-        dbconfig = get_schema(dicctx["schemas"],"database",strdatabase)
+        dbconfig = get_row_by_keyval(dicctx["schemas"],"database",strdatabase)
         # print(dbconfig); sys.exit()
         config = {
             "host":       dicctx["server"],
