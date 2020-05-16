@@ -1,41 +1,43 @@
 [
   {
     "id":"transfer-products",
+    
     "source":{
+      "format": "json",
       "context":{
-        "format": "json",
         "file": "files.json",
         "id": "json1"
       }
     },
+
     "destiny":{
+      "format": "database",      
       "context":{
-        "format": "database",
         "file": "mysql.json",
         "id": "mysql1",
         "database": "db_tinymarket"
-      }
-    },
-    "tables":[
-      {
-        "table_dest": "imp_product",
-        "fields":{
-          "PRCODPRO":"code",
-          "PRDESCRI":"description",
-          "PROBSERV":"description_full",
-          "PRMONMON":"price",
-          "PRMONUSD":"price2",
-          "DISPLAY":"display"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "PRCODPRO":"code",
+            "PRDESCRI":"description",
+            "PROBSERV":"description_full",
+            "PRMONMON":"price",
+            "PRMONUSD":"price2",
+            "DISPLAY":"display"
+          }
         }
-      }
-    ]
+      ]      
+    }
   },
 
   {
     "id":"transfer-imp-to-app",
     "source":{
+      "format": "database",
       "context":{
-        "format": "database",
         "file": "mysql.json",
         "id": "mysql1",
         "database": "db_tinymarket"
@@ -43,28 +45,25 @@
       "table":"imp_product"
     },
     "destiny":{
+      "format": "database",
       "context":{
-        "format": "database",
         "file": "mysql.json",
         "id": "mysql1",
         "database": "db_tinymarket"
-      }
-    }, 
-    "tables":[
-      {
-        "table_dest": "app_product",
-        "fields":{
-          "code":"code_erp",
-          "description":"description",
-          "description_full":"description_full",
-          "price":"price_sale",
-          "price2":"price_sale1",
-          "display":"display"
+      },
+      "tables":[
+        {
+          "name": "app_product",
+          "fields":{
+            "code":"code_erp",
+            "description":"description",
+            "description_full":"description_full",
+            "price":"price_sale",
+            "price2":"price_sale1",
+            "display":"display"
+          }
         }
-      }
-    ],    
-    "rules":{
-      "PRCODPRO":"convert rule on insert"
+      ] 
     }
   }
 ]

@@ -30,15 +30,15 @@ class Base:
 
     def get_data(self):
         if self._id_exists():
-            return dataid
-        return data
+            return self.dataid
+        return self.data
 
     def get(self,key=""):
         if self._id_exists():
-            if key=="":
-                return dataid
-            return dataid[key]
+            if key in self.dataid:
+                return self.dataid[key]
+            return None
         else:
-            if key=="":
-                return data
-            return data[key]
+            if key in self.data:
+                return self.data[key]
+            return None
