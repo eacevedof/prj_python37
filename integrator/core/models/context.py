@@ -1,7 +1,9 @@
+from core.core import Core as core
 from core.models.base import Base
 
-def Context(Base):
+class Context(Base):
 
     def __init__(self, pathfile, id):
-        super(Base, self).__init__(pathfile, id)
+        pathcontext = core.get_path_context(pathfile)
+        super().__init__(pathcontext, id)
 
