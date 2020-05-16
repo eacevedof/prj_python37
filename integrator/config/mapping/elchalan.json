@@ -44,7 +44,7 @@
       },
       "table":"imp_product",
       "conditions": [
-        "error!='1'"
+        "coalesce(error,'') != '1'"
       ]
     },
     "destiny":{
