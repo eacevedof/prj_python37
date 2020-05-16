@@ -63,7 +63,9 @@
             "display":"display"
           },
           "constants":{
-            "id_user":1
+            "id_user":1,
+            "insert_user":"etl",
+            "update_user":"etl"
           }
         }
       ] 
