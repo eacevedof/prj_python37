@@ -1,7 +1,9 @@
+from core.core import Core as core
 from core.models.base import Base
 
-def Credential(Base):
+class Credential(Base):
 
     def __init__(self, pathfile):
-        super(Base, self).__init__(pathfile)
+        pathcredential = core.get_path_credential(pathfile)
+        super().__init__(pathcredential, id)
 
