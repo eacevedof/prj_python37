@@ -29,7 +29,7 @@ class Dbdb:
         # pprint(rows); sys.exit()
         return rows
 
-    def _insert_by_rows(self,srcmysql,destmysql,tabledest,mapfields,fromfields):
+    def _insert_by_rows(self,srcmysql,destmysql,tabledest,mapfields,fromfields,constants):
         for row in self._get_source_data(srcmysql,fromfields):
             insert = {"keys":[],"values":[]}
             for field in row:
@@ -37,6 +37,10 @@ class Dbdb:
                     insert["keys"].append(mapfields[field])
                     insert["values"].append(row[field])
             # print(insert)
+            for field in constants:
+                insert["keys"].append(field)
+                insert["values"].append(constants[field])
+
             qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
             print(qbsql);print("\n")
             destmysql.insert(qbsql)        
@@ -50,9 +54,10 @@ class Dbdb:
             # print(tablecfg);sys.exit()
             tabledest = tablecfg["name"]
             mapfields = tablecfg["fields"]
+            constants = tablecfg["constants"]
             fromfields = list(mapfields.keys())
             self._truncate_table(destmysql, tabledest)
-            self._insert_by_rows(srcmysql, destmysql, tabledest, mapfields, fromfields)
+            self._insert_by_rows(srcmysql, destmysql, tabledest, mapfields, fromfields, constants)
 
     def _run_queries(self, destmysql):
         for sql in self.queries:
