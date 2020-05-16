@@ -14,4 +14,4 @@ if option==2:
     etl1.transfer()
 
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
-etl1.transfer()    
+etl1.transfer()

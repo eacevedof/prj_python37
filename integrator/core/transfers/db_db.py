@@ -44,7 +44,7 @@ class Dbdb:
                 insert["values"].append(constants[field])
 
             qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
-            print(qbsql);print("\n")
+            print(qbsql);
             destmysql.insert(qbsql)        
 
     def _truncate_table(self,mysql, table):

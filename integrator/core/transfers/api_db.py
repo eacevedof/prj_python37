@@ -16,9 +16,9 @@ class Apidb:
         self._printattribs()
 
     def _printattribs(self):
-        print("\nobjsource"); pprint(self.objsource.get_data())
-        print("\nobjsource.context"); pprint(self.objsource.get_context().get_content())
-        print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
+        #print("\nobjsource"); pprint(self.objsource.get_data())
+        #print("\nobjsource.context"); pprint(self.objsource.get_context().get_content())
+        #print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
         pass
 
     def _get_source_data(self):
