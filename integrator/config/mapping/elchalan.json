@@ -3,14 +3,14 @@
     "id":"transfer-products",
     "source":{
       "context":{
-        "type": "json",
+        "format": "json",
         "file": "files.json",
         "id": "json1"
       }
     },
     "destiny":{
       "context":{
-        "type": "database",
+        "format": "database",
         "file": "mysql.json",
         "id": "mysql1",
         "database": "db_tinymarket"
@@ -35,17 +35,19 @@
     "id":"transfer-imp-to-app",
     "source":{
       "context":{
-        "type": "database",
+        "format": "database",
         "file": "mysql.json",
-        "id": "mysql1"
+        "id": "mysql1",
+        "database": "db_tinymarket"
       },
       "table":"imp_product"
     },
     "destiny":{
       "context":{
-        "type": "database",
+        "format": "database",
         "file": "mysql.json",
-        "id": "mysql1"
+        "id": "mysql1",
+        "database": "db_tinymarket"
       }
     }, 
     "tables":[
