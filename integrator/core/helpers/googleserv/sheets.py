@@ -1,3 +1,4 @@
+import sys
 import gspread 
 from core.core import Core as core
 from oauth2client.service_account import ServiceAccountCredentials
@@ -19,6 +20,7 @@ class Sheets:
         sheet = gspread.authorize(credentials)
         wks = sheet.open(self.spread_id)
         rows = wks.get_worksheet(self.worksheet_num).get_all_records()
+        print(rows);sys.exit()
         return rows
 
     def set_credential(self,strvalue):

@@ -3,7 +3,7 @@
     "id":"temp-chalan",
     "type": "google-sheets",
     "spread_id": "temp_xls",
-    "worksheet_num": "3",
+    "worksheet_num": 2,
     "credentials": "gsheets.json"
   }
 ]
