@@ -16,4 +16,10 @@ if option==2:
 
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
 etl1.add_query("UPDATE app_product SET code_cache=uuid() WHERE cod_cache IS NULL")
+etl1.add_query("""
+UPDATE app_product 
+SET code_cache = CONCAT(code_cache,'-',LPAD(id,8,0))
+WHERE 1
+AND LENGTH(code_cache)=36
+""")
 etl1.transfer()
