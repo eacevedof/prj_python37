@@ -9,9 +9,11 @@ if option==1:
     # etl1.add_query("UPDATE imp_product SET error=1")
     etl1.transfer()
 
+# hace petición a API google sheet
 if option==2:
     etl1 = Etl("elchalan.json","gsheet-to-imp-products")
     etl1.transfer()
 
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
+etl1.add_query("UPDATE app_product SET code_cache=uuid() WHERE cod_cache IS NULL")
 etl1.transfer()
