@@ -34,3 +34,17 @@ class QueryBuilder:
             strconds = " AND ".join(conds)
             sql += " AND " + strconds
         return sql
+
+    @staticmethod
+    def get_update_dict(table, dicfval, conds=[]):
+        arfields = []
+        for field in dicfval:
+            val = dicfval[field]
+            arfields.append(f"{field}='{val}'")
+        strfields = ", ".join(arfields)
+        
+        sql = f"UPDATE {table} SET ({strfields}) WHERE 1 "
+        if conds:
+            strconds = " AND ".join(conds)
+            sql += " AND " + strconds
+        return sql        
