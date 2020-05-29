@@ -32,6 +32,7 @@
       ]      
     }
   },
+
   {
     "id":"json-to-imp-products",
     
@@ -106,5 +107,35 @@
         }
       ] 
     }
+  },
+
+  {
+    "id":"products-pictures-to-db",
+    "source":{
+      "format": "folder",
+      "context":{
+        "file": "folders.json",
+        "id": "ech-prod-pictures"
+      }
+    }, 
+
+    "destiny":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "%code%.jpg|%code%.png":"url_image"
+          }
+        }
+      ]  
+    }
+
   }
+
 ]

@@ -1,4 +1,5 @@
 import sys
+import os
 from core.core import Core as core, get_row_by_keyval
 from core.models.base import Base
 from core.helpers.json import Json
@@ -26,7 +27,28 @@ class Context(Base):
     def _is_api(self):
         return self.format == "api"
 
+    def _is_folder(self):
+        return self.format == "folder"        
+
+    def _get_files(self,pathdir):
+        dir = []
+        isdir = os.path.isdir(pathdir)
+        if not isdir:
+            return dir 
+
+        obj = os.scandir(pathdir) 
+        for entry in obj : 
+            # if entry.is_dir() or entry.is_file(): 
+            if entry.is_file(): 
+                #print(entry.name)
+                dir.append(entry.name)
+        obj.close() 
+        return dir
+  
+
     def get_content(self):
+        # carga los datos del fichero o api en un array y lo devuelve
+        # en el caso de carpeta deberia devolver un scandir
         if self._is_file():
             pathconf = core.get_path_in(self.get("path"))
             ojson = Json(pathconf)
@@ -37,7 +59,9 @@ class Context(Base):
                 gsheets = Sheets(self.get("spread_id"),self.get("worksheet_num"))
                 gsheets.set_credential(self.get("credentials"))
                 return gsheets.get_data()
-        
+        elif self._is_folder():        
+            return {"files": self._get_files(self.get("path"))}
+
         return {"msg":"this context is not a file"}
 
 

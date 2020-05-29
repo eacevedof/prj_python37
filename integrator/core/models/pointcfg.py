@@ -2,6 +2,7 @@ import sys
 from core.core import Core as core
 from core.core import get_row_by_keyval
 from core.models.context import Context
+from pprint import pprint
 
 class Pointcfg:
 
@@ -28,10 +29,11 @@ class Pointcfg:
         format = self.dicconfig["format"]
         #print(f"get_context_format: {format}");sys.exit()
         ctx = Context(pathfile, id, format)
-        #pprint(ctx); sys.exit()
+        # pprint(ctx); sys.exit()
         if self.is_db():
             # print(self.dicconfig); sys.exit()
             ctx.set_database(self.dicconfig["context"]["database"])
+
         return ctx
 
     def get_data(self):
@@ -42,6 +44,9 @@ class Pointcfg:
     
     def is_file(self):
         return self.dicconfig["format"] in ["json","xml","csv","fixed","xls"]
+
+    def is_folder(self):
+        return self.dicconfig["format"] == "folder"
 
     def is_api(self):
         return self.dicconfig["format"] == "api"

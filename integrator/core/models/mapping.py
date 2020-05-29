@@ -12,11 +12,12 @@ class Mapping(Base):
 
     def get_source(self):
         dicconfig = self.get("source")
+        # print(dicconfig)
         objsource = Source(dicconfig)
         return objsource
 
     def get_destiny(self):
         dicconfig = self.get("destiny")
-        # print(dicconfig); sys.exit()
+        # print(dicconfig); sys.exit()
         objdestiny = Destiny(dicconfig)
         return objdestiny
