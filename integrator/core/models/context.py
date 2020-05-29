@@ -60,7 +60,10 @@ class Context(Base):
                 gsheets.set_credential(self.get("credentials"))
                 return gsheets.get_data()
         elif self._is_folder():        
-            return {"files": self._get_files(self.get("path"))}
+            return {
+                "pathfolder": self.get("path"),
+                "files": self._get_files(self.get("path"))
+                }
 
         return {"msg":"this context is not a file"}
 
