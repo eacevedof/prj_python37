@@ -22,11 +22,14 @@ class FolderDb:
         #print("\nobjdestiny"); pprint(self.objdestiny.get_data()); sys.exit()
         pass
 
+    # devuelve el listado de archivos en la carpeta
     def _get_source_data(self):
         return self.objsource.get_context().get_content()
 
+    def _get_tables(self):
+        return self.objdestiny.get_data()["tables"]
 
-    def _get_splitted(self,paatern):
+    def _get_fields_from_pattern(self,paatern):
         arfields = paatern.split("|")
 
         arfound = []
@@ -39,68 +42,64 @@ class FolderDb:
 
         return arfound
 
-    def _update(self,config):
+    # arfiles son los posibles archivos y las condiciones and para el update
+    def _update(self, arfiles, table, upfield):
         omysql = Mysql(self.objdestiny.get_context().get_dbconfig())
         
+        folderfiles = self._get_source_data()
 
-    def _get_fields_pattern(self):
-        allfields = self.objdestiny.get_data()["tables"][0]["fields"]
-        table = self.objdestiny.get_data()["tables"][0]["name"]
-        #pprint(allfields)
-        arkeys = list(allfields.keys())
+        arsql = []
+        for folfile in folderfiles:
+            for maybefile in arfiles:
+                maybef = maybefile["maybe"]
+                strcond = maybefile["conds"]
+                if folfile == maybef:
+                    sql = qb.get_update(table, {upfield:folfile}, [strcond])
+                    arsql.append(sql)
 
-        filenames = []
-        for pattern in arkeys:
-            files = pattern.split("|")
-            for file in files:
-                if file not in filenames:
-                    filenames.append(file)
+        omysql.execute_bulk(arsql)
+
+    def _get_sqlselect(self,tablename, arfields):
+        sql = qb.get_select(tablename, arfields)
+        return sql
         
-        for pattern in arkeys:
-            fields = self._get_splitted(pattern)
-
-
-        strfields = ", ".join(fields)
-        sql = f"SELECT {strfields} FROM {table}"
-        # print(sql)
-
+    def _get_data(self,sql):
         omysql = Mysql(self.objdestiny.get_context().get_dbconfig())
-        arcodes = omysql.query(sql)       
-        # print(arcodes)
-        
-        arfiles = self._get_source_data()
-        for diccode in arcodes:
-            strcode = diccode["code"]
-            if strcode is None:
-                continue
-            for filepattern in filenames:
-                finalname = filepattern.replace("%code%",strcode)
-                if os.path.isfile(arfiles["pathfolder"]+"/"+finalname):
-                    sql = qb.get_update_dict(table,{"url_image":finalname},[f"code='{strcode}'"])
-                    print(sql)
-                    omysql.execute(sql)
+        data = omysql.query(sql)
+        return data
 
+    def _get_pat_replaced(self, fpattern, arfields, ardata):
+        archanged=[]
 
+        for row in ardata:
+            repl = fpattern
+            conds = []
+            for field in arfields:
+                strfv = row[field]
+                repl = repl.replace(f"%{field}%",strfv)
+                conds.append(f"{field}='{strfv}'")
 
-    def _run_queries(self, mysql):
-        for sql in self.queries:
-            mysql.execute(sql)        
+            archanged.append({"maybe":repl,"conds":" AND ".join(conds)})
+
+        return archanged
+
+    def _process(self):
+        artables = self._get_tables()
+        for dictable in artables:
+            strtable = dictable["name"]
+            dicfields = dictable["fields"]
+
+            for fpattern in dicfields:
+                strupfield = dictable[fpattern]
+                arfields = self._get_fields_from_pattern(fpattern)
+                sql = self._get_sqlselect(strtable, arfields)
+                ardata = self._get_data(sql)
+                arfiles = self._get_pat_replaced(fpattern, arfields, ardata)
+                self._update(arfiles, strtable, strupfield)
 
     def transfer(self):
         print("starting transfer....")
-
-        source = self.objsource
-        destiny = self.objdestiny
-
-        #print(source)
-        #print(destiny); sys.exit()
-        arfiles = self._get_source_data()
-        print(arfiles)
-        self._get_fields_pattern()
-
-
-
-
+        self._process()
 
         sys.exit()
         print("...running extra queries")
@@ -110,5 +109,8 @@ class FolderDb:
 
     def add_query(self, sql):
         self.queries.append(sql)
+
+    def _run_queries(self, mysql):
+        mysql.execute_bulk(self.queries)          
 
     

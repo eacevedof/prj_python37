@@ -36,7 +36,7 @@ class QueryBuilder:
         return sql
 
     @staticmethod
-    def get_update_dict(table, dicfval, conds=[]):
+    def get_update(table, dicfval, conds=[]):
         arfields = []
         for field in dicfval:
             val = dicfval[field]
