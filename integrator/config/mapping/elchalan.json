@@ -97,7 +97,8 @@
             "description_full":"description_full",
             "price":"price_sale",
             "price2":"price_sale1",
-            "display":"display"
+            "display":"display",
+            "url_image":"url_image"
           },
           "constants":{
             "id_user":1,
