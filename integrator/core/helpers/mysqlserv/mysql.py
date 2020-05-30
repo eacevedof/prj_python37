@@ -71,3 +71,19 @@ class Mysql:
             # if(self.conx.is_connected()):
                 # objcursor.close()
                 #print("mysql connection is closed")
+
+    def execute_bulk(self, arsql):
+        if len(self.dicconfig) == 0:
+            return -1
+
+        arresult = []
+        try:
+            objcursor = self._get_cursor()
+            for sql in arsql:
+                r = objcursor.execute(sql)
+                arresult.append(r)
+            return arresult
+        except mysql.connector.Error as error:
+            print("4 Failed in execute_bulk. Error {}".format(error))
+            arresult.append(-1)
+            return arresult
