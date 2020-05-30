@@ -78,6 +78,7 @@ class FolderDb:
                 if os.path.isfile(arfiles["pathfolder"]+"/"+finalname):
                     sql = qb.get_update_dict(table,{"url_image":finalname},[f"code='{strcode}'"])
                     print(sql)
+                    omysql.execute(sql)
 
 
 
@@ -101,15 +102,7 @@ class FolderDb:
 
 
 
-
-
         sys.exit()
-
-        destmysql = Mysql(destiny.get_context().get_dbconfig())
-
-        
-        print("...inserting into tables")
-        self._insert_by_table(destmysql)
         print("...running extra queries")
         self._run_queries(destmysql)
         print("proces finished!")

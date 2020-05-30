@@ -43,7 +43,7 @@ class QueryBuilder:
             arfields.append(f"{field}='{val}'")
         strfields = ", ".join(arfields)
         
-        sql = f"UPDATE {table} SET ({strfields}) WHERE 1 "
+        sql = f"UPDATE {table} SET {strfields} WHERE 1 "
         if conds:
             strconds = " AND ".join(conds)
             sql += " AND " + strconds
