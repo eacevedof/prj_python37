@@ -76,14 +76,12 @@ class Mysql:
         if len(self.dicconfig) == 0:
             return -1
 
-        arresult = []
         try:
             objcursor = self._get_cursor()
             for sql in arsql:
-                r = objcursor.execute(sql)
-                arresult.append(r)
-            return arresult
+                objcursor.execute(sql)
+                #arresult.append(r)
+            return 1
         except mysql.connector.Error as error:
             print("4 Failed in execute_bulk. Error {}".format(error))
-            arresult.append(-1)
-            return arresult
+            return -1

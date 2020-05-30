@@ -55,15 +55,19 @@ class FolderDb:
         folderfiles = self._get_source_data()
 
         arsql = []
-        for folfile in folderfiles:
+        for folfile in folderfiles["files"]:
             for maybefile in arfiles:
-                maybef = maybefile["maybe"]
+                #pr(maybefile,1)
+                armaybes = maybefile["maybe"]
                 strcond = maybefile["conds"]
-                if folfile == maybef:
-                    sql = qb.get_update(table, {upfield:folfile}, [strcond])
-                    arsql.append(sql)
+                for maybef in armaybes:
+                    if folfile == maybef:
+                        sql = qb.get_update(table, {upfield:folfile}, [strcond])
+                        arsql.append(sql)
 
-        omysql.execute_bulk(arsql)
+        #pr(arsql,1)
+        r = omysql.execute_bulk(arsql)
+        # pr(r,1)
 
     def _get_sqlselect(self,tablename, arfields):
         sql = qb.get_select(tablename, arfields)
@@ -85,7 +89,9 @@ class FolderDb:
                 repl = repl.replace(f"%{field}%",strfv)
                 conds.append(f"{field}='{strfv}'")
 
-            archanged.append({"maybe":repl,"conds":" AND ".join(conds)})
+            # aqui repl seria algo como: 'PR0172.jpg|PR0172.png',
+            armaybes = repl.split("|")
+            archanged.append({"maybe":armaybes,"conds":" AND ".join(conds)})
 
         return archanged
 
@@ -103,24 +109,23 @@ class FolderDb:
                 ardata = self._get_data(sql)
                 #pr(ardata,1)
                 arfiles = self._get_pat_replaced(fpattern, arfields, ardata)
-                pr(arfiles,1)
+                # pr(arfiles,1)
                 self._update(arfiles, strtable, strupfield)
 
 
     def transfer(self):
-        print("starting transfer....")
+        print("folder_db.py: starting transfer....")
         self._process()
-
-        sys.exit()
-        print("...running extra queries")
-        self._run_queries(destmysql)
-        print("proces finished!")
+        print("folder_db.py: ...running extra queries")
+        self._run_queries()
+        print("folder_db.py: proces finished!")
 
 
     def add_query(self, sql):
         self.queries.append(sql)
 
-    def _run_queries(self, mysql):
-        mysql.execute_bulk(self.queries)          
+    def _run_queries(self):
+        omysql = Mysql(self.objdestiny.get_context().get_dbconfig())
+        omysql.execute_bulk(self.queries)
 
     
