@@ -37,7 +37,7 @@ SET code_cache = CONCAT(code_cache,'-',LPAD(id,8,0))
 WHERE 1
 AND LENGTH(code_cache)=36
 """)
-etl1.add_query("UPDATE app_product SET description_full = description WHERE description_full IS NULL")
+etl1.add_query("UPDATE app_product SET description_full = description WHERE description_full IS NULL OR description_full='null'")
 etl1.add_query("UPDATE app_product SET description = LOWER(description), description_full = LOWER(description_full)")
 etl1.transfer()
 
