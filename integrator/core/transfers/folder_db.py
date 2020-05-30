@@ -5,6 +5,12 @@ from core.helpers.mysqlserv.querybuilder import QueryBuilder as qb
 from core.helpers.mysqlserv.mysql import Mysql
 import re
 
+
+def pr(text="",exit=0):
+    print(f"folder_db.py: {text}")
+    if exit==1:
+        sys.exit()
+
 class FolderDb:
     objsource = None
     objdestiny = None
@@ -90,12 +96,16 @@ class FolderDb:
             dicfields = dictable["fields"]
 
             for fpattern in dicfields:
-                strupfield = dictable[fpattern]
+                strupfield = dicfields[fpattern]
                 arfields = self._get_fields_from_pattern(fpattern)
                 sql = self._get_sqlselect(strtable, arfields)
+                # obtengo todos los registros con los campos implicados en el patrón
                 ardata = self._get_data(sql)
+                #pr(ardata,1)
                 arfiles = self._get_pat_replaced(fpattern, arfields, ardata)
+                pr(arfiles,1)
                 self._update(arfiles, strtable, strupfield)
+
 
     def transfer(self):
         print("starting transfer....")
