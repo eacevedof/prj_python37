@@ -26,6 +26,7 @@ class Apidb:
     def _get_source_data(self):
         return self.objsource.get_context().get_content()
 
+    # guarda en fichero el json devuelto por la api de gdcos
     def _file_debug(self,idie=1):
         rows = self._get_source_data()
         strjson = json.dumps(rows)
@@ -36,8 +37,7 @@ class Apidb:
 
 
     def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
-        self._file_debug()
-
+        # self._file_debug()
         for row in self._get_source_data():
             insert = {"keys":[],"values":[]}
             for field in row:
