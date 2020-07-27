@@ -2,7 +2,7 @@
     {
       "id":"json1",
       "alias":"products json", 
-      "description":"Docker mysql",
+      "description":"Archivo auxiliar para evitar llamar a la API de gdocs",
       "type":"json",
       "path":"%in%/products.json"
     }

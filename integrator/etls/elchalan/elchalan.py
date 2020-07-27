@@ -1,7 +1,8 @@
 import sys
 from core.etl import Etl
 
-option = 1
+# 1: vuelca datos desde archivo, 2: usa gdocs
+option = 2
 
 # =============================================
 #              SOURCE a IMP TABLE
@@ -24,7 +25,7 @@ etl1.transfer()
 #              imagenes
 # =============================================
 etl1 = Etl("elchalan.json","products-pictures-to-db")
-etl1.transfer()
+#etl1.transfer()
 
 # =============================================
 #              IMP a APP

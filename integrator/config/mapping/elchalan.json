@@ -21,15 +21,15 @@
         {
           "name": "imp_product",
           "fields":{
-            "PRCODPRO":"code",
-            "PRDESCRI":"description",
-            "PROBSERV":"description_full",
-            "PRMONMON":"price",
-            "PRMONUSD":"price2",
-            "DISPLAY":"display"
+            "syscode":"code",
+            "description1":"description",
+            "description2":"description_full",
+            "price1":"price",
+            "price2":"price2",
+            "display":"display"
           }
         }
-      ]      
+      ]
     }
   },
 
@@ -55,12 +55,12 @@
         {
           "name": "imp_product",
           "fields":{
-            "PRCODPRO":"code",
-            "PRDESCRI":"description",
-            "PROBSERV":"description_full",
-            "PRMONMON":"price",
-            "PRMONUSD":"price2",
-            "DISPLAY":"display"
+            "syscode":"code",
+            "description1":"description",
+            "description2":"description_full",
+            "price1":"price",
+            "price2":"price2",
+            "display":"display"
           }
         }
       ]      
