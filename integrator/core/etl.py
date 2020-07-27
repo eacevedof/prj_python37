@@ -37,9 +37,9 @@ class Etl:
         dbdb.transfer()
         
     def _transf_api_db(self):
-        dbdb = Apidb(self.objsource, self.objdestiny)
-        dbdb.queries = self.queries
-        dbdb.transfer()
+        apidb = Apidb(self.objsource, self.objdestiny)
+        apidb.queries = self.queries
+        apidb.transfer()
 
     def _transf_folder_db(self):
         dbdb = FolderDb(self.objsource, self.objdestiny)
