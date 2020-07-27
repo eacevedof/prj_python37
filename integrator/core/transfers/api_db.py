@@ -1,7 +1,9 @@
 import sys
+import json
 from pprint import pprint
 from core.helpers.mysqlserv.querybuilder import QueryBuilder as qb
 from core.helpers.mysqlserv.mysql import Mysql
+from core.tools.tools import file_put_contents
 
 class Apidb:
     objsource = None
@@ -24,7 +26,18 @@ class Apidb:
     def _get_source_data(self):
         return self.objsource.get_context().get_content()
 
+    def _file_debug(self,idie=1):
+        rows = self._get_source_data()
+        strjson = json.dumps(rows)
+        print(strjson)
+        file_put_contents("./temp000.json",strjson)
+        if idie==1:
+            sys.exit()
+
+
     def _insert_by_rows(self,mysql,tabledest,mapfields,fromfields):
+        self._file_debug()
+
         for row in self._get_source_data():
             insert = {"keys":[],"values":[]}
             for field in row:

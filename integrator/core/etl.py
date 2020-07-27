@@ -44,7 +44,15 @@ class Etl:
     def _transf_folder_db(self):
         dbdb = FolderDb(self.objsource, self.objdestiny)
         dbdb.queries = self.queries
-        dbdb.transfer()        
+        dbdb.transfer()
+
+    def _transf_api_json():
+        # to-do
+        pass
+
+    def _transf_db_json():
+        # tod-do
+        pass
                 
 
     def transfer(self):
