@@ -2,7 +2,7 @@ import sys
 from core.etl import Etl
 
 # 1: vuelca datos desde archivo, 2: usa gdocs
-option = 2
+option = 1
 
 # =============================================
 #              SOURCE a IMP TABLE
