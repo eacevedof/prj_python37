@@ -1,0 +1,39 @@
+[
+  {
+    "id":"transfer-old-current",
+    "source":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_eduardoaf_db"
+      },
+      "table":"wp_posts",
+      "conditions": [
+        "post_type='post'"
+      ]
+    },
+    "destiny":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_eduardoaf"
+      },
+      "tables":[
+        {
+          "name": "imp_post",
+          "fields":{
+            "post_date":"publish_date",
+            "post_modified":"last_update",
+            "post_title":"title",
+            "post_content":"content",
+            "post_excerpt":"excerpt",
+            "post_status":"id_status",
+            "post_name":"slug"
+          }
+        }
+      ] 
+    }
+  }
+]
