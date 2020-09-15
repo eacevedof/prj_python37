@@ -18,6 +18,16 @@
         "password":"1234"
       },
       {
+        "database":"db_eduardoaf",
+        "user":"root",
+        "password":"1234"
+      },
+      {
+        "database":"db_eduardoaf_old",
+        "user":"root",
+        "password":"1234"
+      },      
+      {
         "database": "sf5-expenses-api_api",
         "user":"root",
         "password":"1234"

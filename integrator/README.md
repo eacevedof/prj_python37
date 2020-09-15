@@ -51,3 +51,10 @@ etl1.transfer()
 etl1 = Etl("elchalan.json","transfer-imp-to-app")
 etl1.transfer()
 ```
+- **configuración**
+- En config/contexts/mysql.json se agregan las bds origen y/o destino
+- En config/mapping/ se crea un json de mapeo de campos origen y destino **eduardoaf.json**
+- En etls se crea un namespace (carpeta) **eduardoaf** con su __init__.py
+  - En la carpeta anterior hay que crear un módulo eduardoaf.py (puede ser otro nombre) donde se llama a la clase core: **from core.etl import Etl** con el nombre de fichero del mapping.json y el id a ejecutar
+- En main.py se importa **eduardoaf.py**  `from etls.eduardoaf.eduardoaf import etl1` hay que comentar lo que no queremos que se ejecute
+- lanzamos: **py main.py**
