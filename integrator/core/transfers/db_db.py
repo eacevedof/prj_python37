@@ -1,5 +1,6 @@
 import sys
 from pprint import pprint
+from core.tools.tools import is_iterable
 from core.helpers.mysqlserv.querybuilder import QueryBuilder as qb
 from core.helpers.mysqlserv.mysql import Mysql
 
@@ -39,9 +40,11 @@ class Dbdb:
                     insert["keys"].append(mapfields[field])
                     insert["values"].append(row[field])
             # print(insert)
-            for field in constants:
-                insert["keys"].append(field)
-                insert["values"].append(constants[field])
+
+            if is_iterable(constants):
+                for field in constants:
+                    insert["keys"].append(field)
+                    insert["values"].append(constants[field])
 
             qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
             print(qbsql);
@@ -54,9 +57,11 @@ class Dbdb:
     def _insert_by_table(self, srcmysql, destmysql):
         for tablecfg in self.objdestiny.get_tables():
             # print(tablecfg);sys.exit()
-            tabledest = tablecfg["name"]
-            mapfields = tablecfg["fields"]
-            constants = tablecfg["constants"]
+            tabledest = tablecfg.get("name")
+            mapfields = tablecfg.get("fields")
+            # constants = tablecfg["constants"]
+            constants = tablecfg.get("constants")
+            # print(constants); sys.exit()
             fromfields = list(mapfields.keys())
             self._truncate_table(destmysql, tabledest)
             self._insert_by_rows(srcmysql, destmysql, tabledest, mapfields, fromfields, constants)

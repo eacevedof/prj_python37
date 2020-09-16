@@ -6,7 +6,7 @@
       "context":{
         "file": "mysql.json",
         "id": "mysql1",
-        "database": "db_eduardoaf_db"
+        "database": "db_eduardoaf_old"
       },
       "table":"wp_posts",
       "conditions": [
