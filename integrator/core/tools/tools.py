@@ -132,6 +132,10 @@ def get_dicconfig(project):
     dicproject = jsonhlp.get_dictbykey("id",project)
     return dicproject
 
+def is_iterable(mxvar):
+    from collections.abc import Iterable
+    return isinstance(mxvar, Iterable)
+
 
 class Json:
     

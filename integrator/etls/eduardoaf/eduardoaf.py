@@ -7,10 +7,25 @@ from core.etl import Etl
 # =============================================
 etl1 = Etl("eduardoaf.json","transfer-old-current")
 etl1.add_query("""
-UPDATE app_product 
-SET code_cache = CONCAT(code_cache,'-',LPAD(id,8,0))
+INSERT INTO app_post (
+    insert_user, insert_platform, publish_date, last_update, title, content, slug, excerpt, id_status, description
+)
+SELECT  
+'etl' insert_user,
+0 insert_platform,
+
+publish_date,
+last_update,
+title,
+content,
+slug,
+excerpt,
+CASE id_status WHEN 'publish' THEN 1 ELSE 0 END id_status,
+id_status
+
+FROM imp_post
 WHERE 1
-AND LENGTH(code_cache)=36
+
 """)
 
 etl1.transfer()
