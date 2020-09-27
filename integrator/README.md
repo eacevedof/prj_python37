@@ -61,7 +61,7 @@ etl1.transfer()
 - En main.py se importa **eduardoaf.py**  `from etls.eduardoaf.eduardoaf import etl1` hay que comentar lo que no queremos que se ejecute
 - lanzamos: **py main.py**
 
-#### **error** No inserta en destino
+#### **ERROR:** No se inserta en destino y no lanza ningún error
 - Parece que esto tiene que ver con el driver. Como que ha cambiado porque ahora hay que ejecutar **commit()** para que se ejecuten las consultas.
 - El test no va fino. Parece que el driver, que lleva implicito un socket hay que probarlo con un mock sino da error de socket.
 - El campo **datetime.datetime(...)** no da error al hacer el insert. Pensaba que este podía ser el problema.
