@@ -1,7 +1,7 @@
 import unittest
-import bootstrap
 
 #import datetime
+from bootstrap import decorator_warnings
 from core.helpers.mysqlserv.mysql import Mysql
 from core.tools.tools import prn
 
@@ -9,6 +9,7 @@ class MysqlTest(unittest.TestCase):
 
     _dbconf = {'host': '127.0.0.1', 'port': '3306', 'user': 'root', 'password': '1234', 'database': 'db_eduardoaf'}
 
+    @decorator_warnings
     def test_truncate(self):
         diccfg = self._dbconf
         omysql = Mysql(diccfg)
@@ -19,6 +20,7 @@ class MysqlTest(unittest.TestCase):
         omysql.execute(sql)
         omysql.commit().close()
     
+    @decorator_warnings
     def test_insert(self):
         diccfg = self._dbconf
         omysql = Mysql(diccfg)
@@ -54,5 +56,4 @@ if __name__ == "__main__":
     #o.test_truncate()
     #o.test_insert()
     #o.test_select()
-    
-    unittest.main()
+    unittest.main()    
