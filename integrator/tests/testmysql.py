@@ -1,16 +1,13 @@
-import sys
-import os
-sys.path.append(os.path.abspath('../core/helpers/mysqlserv'))
-
 import unittest
-import core.helpers.mysqlserv.mysql
-# from core.helpers.mysqlserv.mysql import Mysql
+import bootstrap 
+
+from core.helpers.mysqlserv.mysql import Mysql
 
 class MysqlTest(unittest.TestCase):
     
     def test_insert(self):
         diccfg = {'host': '127.0.0.1', 'port': '3306', 'user': 'root', 'passwd': '1234', 'database': 'db_eduardoaf'}
-        omysql = mysql.Mysql(diccfg)
+        omysql = Mysql(diccfg)
         
         sql = "TRUNCATE TABLE imp_post"
         omysql.execute(sql)
@@ -30,4 +27,6 @@ class MysqlTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+
+    
     unittest.main()
