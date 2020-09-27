@@ -7,14 +7,19 @@ import datetime
 from core.helpers.mysqlserv.mysql import Mysql
 
 class MysqlTest(unittest.TestCase):
-    
-    def test_insert(self):
-        diccfg = {'host': '127.0.0.1', 'port': '3306', 'user': 'root', 'passwd': '1234', 'database': 'db_eduardoaf'}
+
+    _dbconf = diccfg = {'host': '127.0.0.1', 'port': '3306', 'user': 'root', 'passwd': '1234', 'database': 'db_eduardoaf'}
+
+    def test_truncate(self):
+        diccfg = self._dbconf
         omysql = Mysql(diccfg)
-        
+
         sql = "TRUNCATE TABLE imp_post"
         omysql.execute(sql)
-
+    
+    def est_insert(self):
+        diccfg = self._dbconf
+        omysql = Mysql(diccfg)
         sql = "INSERT INTO imp_post (publish_date, last_update, title, content, excerpt, id_status, slug) VALUES ( %s, %s, %s, %s, %s, %s, %s )"
         omysql.insert_tpl(sql,
             (
