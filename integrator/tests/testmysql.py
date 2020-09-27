@@ -19,7 +19,7 @@ class MysqlTest(unittest.TestCase):
         prn(sql,"test_truncate")
         omysql.execute(sql)
         omysql.commit().close()
-        return self
+
     
     @decorator_warnings
     def test_insert(self):
@@ -38,7 +38,7 @@ class MysqlTest(unittest.TestCase):
         )
         omysql.commit().close()
         self.assertGreater(lastid, 0, "assert insert")
-        return self
+
 
     @decorator_warnings
     def test_select(self):
@@ -54,9 +54,11 @@ class MysqlTest(unittest.TestCase):
 
         ilen = 0 if r is None else len(r)
         self.assertGreater(ilen, 0, "assert select")
-        return self
+
 
 if __name__ == "__main__":
-    #o = MysqlTest()
-    MysqlTest().test_truncate().test_insert().test_select()
+    o = MysqlTest()
+    o.test_truncate()
+    o.test_insert()
+    o.test_select()
     # unittest.main()    
