@@ -10,10 +10,9 @@ class Mysql:
         self.dicconfig = dicconfig
         # print(self.dicconfig); sys.exit()
 
-
     def _get_cursor(self):
         # ** transforma un diccionario en kwargs
-        # print(**self.dicconfig); sys.exit()
+        # print(self.dicconfig); sys.exit()
         if self.conx is None or not self.conx.is_connected(): 
             # print("\n\n refreshing conx in get_cursor \n\n");print(self.dicconfig);
             self.conx = mysql.connector.connect(**self.dicconfig)
@@ -77,10 +76,8 @@ class Mysql:
         except mysql.connector.Error as error:
             print("3 Failed execute to get record from mysql table: {}".format(error))
             return -1
-        # finally:
-            # if(self.conx.is_connected()):
-                # objcursor.close()
-                #print("mysql connection is closed")
+        # finally:
+            # self.close()
 
     def execute_bulk(self, arsql):
         if len(self.dicconfig) == 0:
