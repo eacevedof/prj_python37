@@ -95,3 +95,8 @@ class Mysql:
         except mysql.connector.Error as error:
             print("4 Failed in execute_bulk. Error {}".format(error))
             return -1
+
+    def close(self):
+        if(self.conx.is_connected()):
+            objcursor = self._get_cursor()
+            objcursor.close()

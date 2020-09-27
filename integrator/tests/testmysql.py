@@ -1,6 +1,9 @@
 import unittest
-import bootstrap 
+import bootstrap
 
+import tracemalloc
+
+import datetime
 from core.helpers.mysqlserv.mysql import Mysql
 
 class MysqlTest(unittest.TestCase):
@@ -15,15 +18,19 @@ class MysqlTest(unittest.TestCase):
         sql = "INSERT INTO imp_post (publish_date, last_update, title, content, excerpt, id_status, slug) VALUES ( %s, %s, %s, %s, %s, %s, %s )"
         omysql.insert_tpl(sql,
             (
-                datetime.datetime(2010, 8, 14, 10, 35, 18), 
-                datetime.datetime(2010, 10, 31, 18, 50, 45), 
+                "pd", 
+                "lu", 
                 'a','b','c','d','e',
             )
         )
         
+
         sql = "SELECT * FROM imp_post WHERE title='a'"
         r = omysql.execute(sql)
-        self.assertGreater(len(r),0,"assert insert")
+        omysql.close()
+
+        ilen = 0 if r is None else len(r)
+        self.assertGreater(ilen, 0, "assert insert")
 
 
 if __name__ == "__main__":
