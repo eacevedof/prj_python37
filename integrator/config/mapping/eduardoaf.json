@@ -10,7 +10,7 @@
       },
       "table":"wp_posts",
       "conditions": [
-        "post_type='post'"
+        "post_type='post'","id!=1025"
       ]
     },
     "destiny":{
@@ -24,6 +24,7 @@
         {
           "name": "imp_post",
           "fields":{
+            "id":"code_erp",
             "post_date":"publish_date",
             "post_modified":"last_update",
             "post_title":"title",
