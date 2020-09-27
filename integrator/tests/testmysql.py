@@ -50,9 +50,9 @@ class MysqlTest(unittest.TestCase):
         self.assertGreater(ilen, 0, "assert select")
 
 if __name__ == "__main__":
-    o = MysqlTest()
-    o.test_truncate()
-    o.test_insert()
-    o.test_select()
+    #o = MysqlTest()
+    #o.test_truncate()
+    #o.test_insert()
+    #o.test_select()
     
-    #unittest.main()
+    unittest.main()
