@@ -1,9 +1,7 @@
 import unittest
 import bootstrap
 
-import tracemalloc
-
-import datetime
+#import datetime
 from core.helpers.mysqlserv.mysql import Mysql
 from core.tools.tools import prn
 
@@ -44,7 +42,8 @@ class MysqlTest(unittest.TestCase):
         sql = "SELECT * FROM imp_post WHERE title='a'"
         prn(sql,"test_select")
 
-        r = omysql.execute(sql)
+        r = omysql.query(sql)
+        prn(r, "result")
         omysql.close()
 
         ilen = 0 if r is None else len(r)
