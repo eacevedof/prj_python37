@@ -7,7 +7,7 @@ from core.tools.tools import prn
 
 class MysqlTest(unittest.TestCase):
 
-    _dbconf = {'host': '127.0.0.1', 'port': '3306', 'user': 'root', 'password': '1234', 'database': 'db_eduardoaf'}
+    _dbconf = {'host': 'localhost', 'port': '3306', 'user': 'root', 'password': '1234', 'database': 'db_eduardoaf'}
 
     @decorator_warnings
     def test_truncate(self):
@@ -19,7 +19,7 @@ class MysqlTest(unittest.TestCase):
         prn(sql,"test_truncate")
         omysql.execute(sql)
         omysql.commit().close()
-
+        
     
     @decorator_warnings
     def test_insert(self):
@@ -57,8 +57,5 @@ class MysqlTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    o = MysqlTest()
-    o.test_truncate()
-    o.test_insert()
-    o.test_select()
-    # unittest.main()    
+    # o = MysqlTest();o.test_truncate();o.test_insert();o.test_select()
+    unittest.main()    
