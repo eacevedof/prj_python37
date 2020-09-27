@@ -34,6 +34,8 @@
     - Los **contextos** son repositorios de ubicaciones de fuentes o destinos de datos. Rutas de ficheros y/o configuraciones de acceso en caso de bases de datos y apis
 - Una vez configurado un mapping p.e **mapping/elchalan.json** hay que crear una instancia de la clase Etl.
 ```py
+# ejeacución py main.py
+
 # integrator/etls/elchalan.py
 from core.etl import Etl
 
@@ -58,3 +60,5 @@ etl1.transfer()
   - En la carpeta anterior hay que crear un módulo eduardoaf.py (puede ser otro nombre) donde se llama a la clase core: **from core.etl import Etl** con el nombre de fichero del mapping.json y el id a ejecutar
 - En main.py se importa **eduardoaf.py**  `from etls.eduardoaf.eduardoaf import etl1` hay que comentar lo que no queremos que se ejecute
 - lanzamos: **py main.py**
+
+- **error** No inserta en destino

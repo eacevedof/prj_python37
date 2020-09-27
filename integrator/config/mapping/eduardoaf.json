@@ -10,7 +10,7 @@
       },
       "table":"wp_posts",
       "conditions": [
-        "post_type='post'"
+        "post_type='post'","id=47"
       ]
     },
     "destiny":{

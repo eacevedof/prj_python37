@@ -27,13 +27,13 @@ class Dbdb:
 
         # print(srctable); sys.exit()
         sql = qb.get_select(srctable, fromfields, conditions)
-        # print(sql); # sys.exit()
+        #print(sql); sys.exit()
         rows = srcmysql.query(sql)
-        # pprint(rows); sys.exit()
+        #pprint(rows); sys.exit()
         return rows
 
     def _insert_by_rows(self,srcmysql,destmysql,tabledest,mapfields,fromfields,constants):
-        for row in self._get_source_data(srcmysql,fromfields):
+        for row in self._get_source_data(srcmysql, fromfields):
             insert = {"keys":[],"values":[]}
             for field in row:
                 if field in fromfields:
@@ -46,8 +46,9 @@ class Dbdb:
                     insert["keys"].append(field)
                     insert["values"].append(constants[field])
 
+            # print(insert);sys.exit();
             qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
-            print(qbsql);
+            # print(qbsql);
             destmysql.insert(qbsql)        
 
     def _truncate_table(self,mysql, table):
