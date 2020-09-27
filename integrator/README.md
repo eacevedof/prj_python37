@@ -67,7 +67,7 @@ etl1.transfer()
 - El campo **datetime.datetime(...)** no da error al hacer el insert. Pensaba que este podía ser el problema.
 ```
 ResourceWarning: unclosed 
-  <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 63999),raddr=('127.0.0.1', 3306)>
-  fn_method(self, *args, **kwargs)
+<socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 63999),raddr=('127.0.0.1', 3306)>
+fn_method(self, *args, **kwargs)
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ```
