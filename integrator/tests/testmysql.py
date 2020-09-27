@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append(os.path.abspath('../core'))
+sys.path.append(os.path.abspath('../core/helpers/mysqlserv'))
 
 import unittest
 import core.helpers.mysqlserv.mysql
