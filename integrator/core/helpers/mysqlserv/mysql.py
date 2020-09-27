@@ -1,6 +1,6 @@
 import sys
 import mysql.connector
-# import json
+from mysql.connector import errorcode
 
 class Mysql:
     dicconfig = {}
@@ -11,15 +11,26 @@ class Mysql:
         # print(self.dicconfig); sys.exit()
 
     def _get_cursor(self):
+        # https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
         # ** transforma un diccionario en kwargs
         # print(self.dicconfig); sys.exit()
-        if self.conx is None or not self.conx.is_connected(): 
-            # print("\n\n refreshing conx in get_cursor \n\n");print(self.dicconfig);
-            self.conx = mysql.connector.connect(**self.dicconfig)
+        try:
+
+            if self.conx is None or not self.conx.is_connected(): 
+                # print("\n\n refreshing conx in get_cursor \n\n");print(self.dicconfig);
+                self.conx = mysql.connector.connect(**self.dicconfig)
         
-        objcursor = self.conx.cursor(dictionary=True)
-        # print(objcursor); sys.exit()
-        return objcursor
+            objcursor = self.conx.cursor(dictionary=True)
+            print(objcursor); sys.exit()
+            return objcursor
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
+
 
     def query(self, sql):
         if len(self.dicconfig) == 0:
