@@ -37,6 +37,7 @@ class MysqlTest(unittest.TestCase):
         )
         omysql.commit().close()
 
+    @decorator_warnings
     def test_select(self):
         diccfg = self._dbconf
         omysql = Mysql(diccfg)
