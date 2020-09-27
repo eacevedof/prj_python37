@@ -57,6 +57,6 @@ class MysqlTest(unittest.TestCase):
         return self
 
 if __name__ == "__main__":
-    o = MysqlTest()
-    o.test_truncate().test_insert().test_select()
-    unittest.main()    
+    #o = MysqlTest()
+    MysqlTest().test_truncate().test_insert().test_select()
+    # unittest.main()    
