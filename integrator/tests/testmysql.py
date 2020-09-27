@@ -19,8 +19,7 @@ class MysqlTest(unittest.TestCase):
 
         prn(sql,"test_truncate")
         omysql.execute(sql)
-        omysql.commit()
-        omysql.close()
+        omysql.commit().close()
     
     def test_insert(self):
         diccfg = self._dbconf
@@ -36,8 +35,7 @@ class MysqlTest(unittest.TestCase):
                 'a','b','c','d','e',
             )
         )
-        omysql.commit()
-        omysql.close()    
+        omysql.commit().close()
 
     def test_select(self):
         diccfg = self._dbconf
