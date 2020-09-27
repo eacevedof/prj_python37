@@ -48,12 +48,14 @@ class Dbdb:
 
             # print(insert);sys.exit();
             qbsql = qb.get_insert_dict(tabledest, insert["keys"], insert["values"])
-            # print(qbsql);
-            destmysql.insert(qbsql)        
+            id = destmysql.insert(qbsql)
+            print(f"\noquery:\n{qbsql} \nid:{id}\n");
+            #destmysql.commit().close()    
 
     def _truncate_table(self,mysql, table):
         sql = f"TRUNCATE TABLE {table}"
         mysql.execute(sql)
+        # mysql.commit().close()
 
     def _insert_by_table(self, srcmysql, destmysql):
         for tablecfg in self.objdestiny.get_tables():
@@ -69,7 +71,8 @@ class Dbdb:
 
     def _run_queries(self, destmysql):
         for sql in self.queries:
-            destmysql.execute(sql)        
+            destmysql.execute(sql)
+        # destmysql.commit().close()     
 
     def transfer(self):
         print("starting transfer....")
@@ -86,6 +89,8 @@ class Dbdb:
         print("...running extra queries")
         self._run_queries(destmysql)
         print("proces finished!")
+        srcmysql.commit().close()
+        destmysql.commit().close()
 
 
     def add_query(self, sql):
