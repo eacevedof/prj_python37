@@ -73,10 +73,10 @@ class Mysql:
         try:
             objcursor = self._get_cursor()
             objcursor.execute(sql, tplval)
-            print("\n- insert-sql:\n"); print(sql);
-            print("- tplval:\n"); print(tplval);
+            # print("\n- insert-sql:\n"); print(sql);
+            # print("- tplval:\n"); print(tplval);
             #sys.exit()
-            print(f"insert_topl ok. Lastrowid: {objcursor.lastrowid}")
+            # print(f"insert_topl ok. Lastrowid: {objcursor.lastrowid}")
             # self.conx.commit()
             return objcursor.lastrowid
 
