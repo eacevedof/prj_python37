@@ -29,6 +29,11 @@ def pd(var,title=""):
     printx(var)
     sys.exit()
 
+def prn(var, title=""):
+    if title:
+        print(f"\n - {title}:\n")
+    pprint(var)
+
 def die():
     sys.exit()
 

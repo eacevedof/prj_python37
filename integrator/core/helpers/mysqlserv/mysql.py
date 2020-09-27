@@ -15,13 +15,12 @@ class Mysql:
         # ** transforma un diccionario en kwargs
         # print(self.dicconfig); sys.exit()
         try:
-
             if self.conx is None or not self.conx.is_connected(): 
                 # print("\n\n refreshing conx in get_cursor \n\n");print(self.dicconfig);
                 self.conx = mysql.connector.connect(**self.dicconfig)
         
             objcursor = self.conx.cursor(dictionary=True)
-            print(objcursor); sys.exit()
+            #print(objcursor); sys.exit()
             return objcursor
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
