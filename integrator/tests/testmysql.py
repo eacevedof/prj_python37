@@ -28,7 +28,7 @@ class MysqlTest(unittest.TestCase):
         sql = "INSERT INTO imp_post (publish_date, last_update, title, content, excerpt, id_status, slug) VALUES ( %s, %s, %s, %s, %s, %s, %s )"
         prn(sql,"test_insert")
 
-        omysql.insert_tpl(sql,
+        lastid = omysql.insert_tpl(sql,
             (
                 "pd", 
                 "lu", 
@@ -36,6 +36,7 @@ class MysqlTest(unittest.TestCase):
             )
         )
         omysql.commit().close()
+        self.assertGreater(lastid, 0, "assert insert")
 
     @decorator_warnings
     def test_select(self):
@@ -51,6 +52,7 @@ class MysqlTest(unittest.TestCase):
 
         ilen = 0 if r is None else len(r)
         self.assertGreater(ilen, 0, "assert select")
+
 
 if __name__ == "__main__":
     #o = MysqlTest()
