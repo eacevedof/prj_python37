@@ -5,6 +5,7 @@ import tracemalloc
 
 import datetime
 from core.helpers.mysqlserv.mysql import Mysql
+from core.tools.tools import prn
 
 class MysqlTest(unittest.TestCase):
 
@@ -15,12 +16,18 @@ class MysqlTest(unittest.TestCase):
         omysql = Mysql(diccfg)
 
         sql = "TRUNCATE TABLE imp_post"
+
+        prn(sql,"test_truncate")
         omysql.execute(sql)
+        omysql.close()
     
     def test_insert(self):
         diccfg = self._dbconf
         omysql = Mysql(diccfg)
+
         sql = "INSERT INTO imp_post (publish_date, last_update, title, content, excerpt, id_status, slug) VALUES ( %s, %s, %s, %s, %s, %s, %s )"
+        prn(sql,"test_insert")
+
         omysql.insert_tpl(sql,
             (
                 "pd", 
@@ -28,18 +35,25 @@ class MysqlTest(unittest.TestCase):
                 'a','b','c','d','e',
             )
         )
-        
+        omysql.close()    
 
+    def test_select(self):
+        diccfg = self._dbconf
+        omysql = Mysql(diccfg)
+        
         sql = "SELECT * FROM imp_post WHERE title='a'"
+        prn(sql,"test_select")
+
         r = omysql.execute(sql)
         omysql.close()
 
         ilen = 0 if r is None else len(r)
-        self.assertGreater(ilen, 0, "assert insert")
-
+        self.assertGreater(ilen, 0, "assert select")
 
 if __name__ == "__main__":
     o = MysqlTest()
     o.test_truncate()
+    o.test_insert()
+    o.test_select()
     
     #unittest.main()
