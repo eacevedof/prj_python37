@@ -19,6 +19,7 @@ class MysqlTest(unittest.TestCase):
 
         prn(sql,"test_truncate")
         omysql.execute(sql)
+        omysql.commit()
         omysql.close()
     
     def test_insert(self):
@@ -35,6 +36,7 @@ class MysqlTest(unittest.TestCase):
                 'a','b','c','d','e',
             )
         )
+        omysql.commit()
         omysql.close()    
 
     def test_select(self):

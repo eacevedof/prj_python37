@@ -56,23 +56,22 @@ class Mysql:
         return self.insert_tpl(sql, tplvals)
 
     def insert_tpl(self, sql, tplval):
-
+        # https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
         #print(self.dicconfig);print("\n\nmysql.insert_tpl:\n\n");print(tplval);sys.exit();
         if len(self.dicconfig) == 0:
             return -1
         try:
             objcursor = self._get_cursor()
-
-            # execute devuelve None
             objcursor.execute(sql, tplval)
-            print("\ninsert-sql:\n");print(sql);
-            print("\ntplval:\n");print(tplval);print("\n");
+            print("\n- insert-sql:\n"); print(sql);
+            print("- tplval:\n"); print(tplval);
             #sys.exit()
-            print("insert_topl ok")
-            return "insert_topl ok"
+            print(f"insert_topl ok. Lastrowid: {objcursor.lastrowid}")
+            # self.conx.commit()
+            return objcursor.lastrowid
+
         except mysql.connector.Error as error:
             print("\n- 2 Failed insert_tpl: \n{}".format(error))
-            sys.exit()
             return -1
        
     # get from db
@@ -103,7 +102,13 @@ class Mysql:
             print("4 Failed in execute_bulk. Error {}".format(error))
             return -1
 
+    def commit(self):
+        if(self.conx.is_connected()):
+            self.conx.commit()
+        return self
+
     def close(self):
         if(self.conx.is_connected()):
             objcursor = self._get_cursor()
             objcursor.close()
+        return self
