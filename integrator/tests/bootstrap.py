@@ -15,7 +15,7 @@ import warnings
 
 def decorator_warnings(fn_method):
     def fn_final(self, *args, **kwargs):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            fn_method(self, *args, **kwargs)
+        #with warnings.catch_warnings():
+            #warnings.simplefilter("ignore")
+        fn_method(self, *args, **kwargs)
     return fn_final
