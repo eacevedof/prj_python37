@@ -64,6 +64,7 @@ etl1.transfer()
 - **error** No inserta en destino
 - Parece que esto tiene que ver con el driver. Como que ha cambiado porque ahora hay que ejecutar **commit()** para que se ejecuten las consultas.
 - El test no va fino. Parece que el driver, que lleva implicito un socket hay que probarlo con un mock sino da error de socket.
+- El campo **datetime.datetime(...)** no da error al hacer el insert. Pensaba que este podía ser el problema.
 ```
 ResourceWarning: unclosed 
   <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 63999),raddr=('127.0.0.1', 3306)>
