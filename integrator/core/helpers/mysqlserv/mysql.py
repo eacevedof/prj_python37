@@ -15,6 +15,7 @@ class Mysql:
         # ** transforma un diccionario en kwargs
         # print(**self.dicconfig); sys.exit()
         if self.conx is None or not self.conx.is_connected(): 
+            # print("\n\n refreshing conx in get_cursor \n\n");print(self.dicconfig);
             self.conx = mysql.connector.connect(**self.dicconfig)
         
         objcursor = self.conx.cursor(dictionary=True)
@@ -25,13 +26,14 @@ class Mysql:
         if len(self.dicconfig) == 0:
             return -1
         try:
+            # print(self.dicconfig); sys.exit()
             objcursor = self._get_cursor()
             objcursor.execute(sql)
             r = objcursor.fetchall()
             return r
 
         except mysql.connector.Error as error:
-            print("1 Failed query to get record from mysql table: {}".format(error))
+            print("\n - 1 Failed query to get record from mysql table: {}".format(error))
             return -1
         #finally:
         #    if(self.conx.is_connected()):
@@ -39,21 +41,29 @@ class Mysql:
                 #print("mysql connection is closed")
 
     def insert(self, dicqb):
-        #print(dicqb)#;sys.exit()
+        # print("mysql.insert:");print(self.dicconfig);print(dicqb);print("\n\n");sys.exit();
         sql = dicqb["query"]
         tplvals = dicqb["tuple"]
-        self.insert_tpl(sql, tplvals)
+        return self.insert_tpl(sql, tplvals)
 
     def insert_tpl(self, sql, tplval):
-        # print(sql);print(tplval);sys.exit()
+
+        #print(self.dicconfig);print("\n\nmysql.insert_tpl:\n\n");print(tplval);sys.exit();
         if len(self.dicconfig) == 0:
             return -1
         try:
             objcursor = self._get_cursor()
-            r = objcursor.execute(sql, tplval)
-            return r
+
+            # execute devuelve None
+            objcursor.execute(sql, tplval)
+            print("\ninsert-sql:\n");print(sql);
+            print("\ntplval:\n");print(tplval);print("\n");
+            #sys.exit()
+            print("insert_topl ok")
+            return "insert_topl ok"
         except mysql.connector.Error as error:
-            print("2 Failed insert_tpl to get record from mysql table: {}".format(error))
+            print("\n- 2 Failed insert_tpl: \n{}".format(error))
+            sys.exit()
             return -1
        
 
