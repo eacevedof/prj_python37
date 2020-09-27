@@ -3,6 +3,7 @@ import mysql.connector
 from mysql.connector import errorcode
 
 class Mysql:
+
     dicconfig = {}
     conx = None
 
@@ -30,6 +31,20 @@ class Mysql:
             else:
                 print(err)
 
+    # get from db
+    def execute(self, sql):
+        # https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-select.html
+        if len(self.dicconfig) == 0:
+            return -1
+        try:
+            objcursor = self._get_cursor()
+            r = objcursor.execute(sql)
+            return r
+        except mysql.connector.Error as error:
+            print("3 Failed execute to get record from mysql table: {}".format(error))
+            return -1
+        # finally:
+            # self.close()
 
     def query(self, sql):
         if len(self.dicconfig) == 0:
@@ -49,11 +64,6 @@ class Mysql:
         #        objcursor.close()
                 #print("mysql connection is closed")
 
-    def insert(self, dicqb):
-        # print("mysql.insert:");print(self.dicconfig);print(dicqb);print("\n\n");sys.exit();
-        sql = dicqb["query"]
-        tplvals = dicqb["tuple"]
-        return self.insert_tpl(sql, tplvals)
 
     def insert_tpl(self, sql, tplval):
         # https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
@@ -73,20 +83,13 @@ class Mysql:
         except mysql.connector.Error as error:
             print("\n- 2 Failed insert_tpl: \n{}".format(error))
             return -1
-       
-    # get from db
-    def execute(self, sql):
-        if len(self.dicconfig) == 0:
-            return -1
-        try:
-            objcursor = self._get_cursor()
-            r = objcursor.execute(sql)
-            return r
-        except mysql.connector.Error as error:
-            print("3 Failed execute to get record from mysql table: {}".format(error))
-            return -1
-        # finally:
-            # self.close()
+
+    def insert(self, dicqb):
+        # print("mysql.insert:");print(self.dicconfig);print(dicqb);print("\n\n");sys.exit();
+        sql = dicqb["query"]
+        tplvals = dicqb["tuple"]
+        return self.insert_tpl(sql, tplvals)
+
 
     def execute_bulk(self, arsql):
         if len(self.dicconfig) == 0:
