@@ -8,7 +8,7 @@ class Mysql:
 
     def __init__(self, dicconfig):
         self.dicconfig = dicconfig
-        # print(self.dicconfig); sys.exit()
+        print(self.dicconfig); sys.exit()
 
 
     def _get_cursor(self):
