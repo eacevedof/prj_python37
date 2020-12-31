@@ -1,3 +1,27 @@
+### to-do
+- debo probar si puedo mover datos entre dos bases de datos en un mismo servidor sin necesidad de pasar por el integrador. 
+  - Algo así:
+  ```sql
+  insert into db1.table_a (f1,f2,f3) 
+  select fa as f1, fb as f2, fc as f3
+  from db2.table_o 
+  where fa>10
+  ```
+- en el mapper hay que formar una condición concreta dentro de un obj json debería haber una propiedad de consulta libre.
+  - Ejemplo:
+  ```json
+    "source":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "table":"imp_product",
+      "sql": "SELECT fa as f1, count(fb) as f2 FROM table_orig WHERE 1 AND GROUP BY fa"
+    }
+  ```
+  - La consulta anterior acabaría dentro de una subquery tipo `SELECT * FROM (sql) as imp_product`
 ### Integraciones
 - Mysql - Googlesheets
   - [documentacion](https://developers.google.com/sheets/api/quickstart/python)
