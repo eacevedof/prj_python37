@@ -9,7 +9,7 @@ services:
       dockerfile: ./docker/Dockerfile
     
     volumes:
-      - ./pyprint:/usr/src/pyprint
+      - ./pyprint:/app
 
     # debug vscode
     ports:
@@ -20,8 +20,8 @@ services:
     entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
 
     privileged: true
-    devices:
-      - '/dev:/dev'
+    # devices:
+        # - '/dev:/dev'
         # read_only: true
     networks:
       - pyprintnet
