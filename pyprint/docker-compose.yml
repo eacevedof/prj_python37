@@ -22,7 +22,7 @@ services:
     privileged: true
     devices:
       - '/dev:/dev'
-    
+        # read_only: true
     networks:
       - pyprintnet
 
