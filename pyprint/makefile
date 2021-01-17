@@ -24,3 +24,6 @@ stop:
 
 remove:
 	docker rm cont-py38
+
+logs:
+	docker logs cont-py38

@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    # entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
+    
     volumes:
       - ./pyprint:/usr/src/pyprint
 
@@ -16,7 +16,8 @@ services:
        - "8080:8080"
     # mantiene el contenedor en ejecución
     # command: tail -f /dev/null toma 10 segundos en parar el contenedor
-    tty: true #toma 2 segundos en parar el contenedor
+    # tty: true #toma 2 segundos en parar el contenedor (si se tiene entrypoint este no va)
+    entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
 
     networks:
       - pyprintnet
