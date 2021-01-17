@@ -7,6 +7,7 @@ from pprint import pprint
 # https://askubuntu.com/questions/416995/how-to-list-all-available-printers-from-terminal
 # libreria en python (python-escpos)
 # https://github.com/python-escpos/python-escpos
+# https://stackoverflow.com/questions/24225647/docker-a-way-to-give-access-to-a-host-usb-or-serial-device
 
 def exec(cmd):
     process = Popen(
