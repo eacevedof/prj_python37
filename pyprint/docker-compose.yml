@@ -15,7 +15,8 @@ services:
     ports:
        - "8080:8080"
     # mantiene el contenedor en ejecución
-    command: tail -f /dev/null
+    # command: tail -f /dev/null toma 10 segundos en parar el contenedor
+    tty: true #toma 2 segundos en parar el contenedor
 
     networks:
       - pyprintnet
