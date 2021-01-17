@@ -21,3 +21,6 @@ start:
 	make ssh
 stop: 
 	docker-compose stop	
+
+remove:
+	docker rm cont-py38
