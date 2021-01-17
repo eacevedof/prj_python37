@@ -9,4 +9,10 @@ RUN pip install pipenv
 COPY ./.bashrc /root/.bashrc
 COPY ./entrypoint.sh /usr/src/entrypoint.sh
 
-RUN chmod +x /usr/src/entrypoint.sh
+WORKDIR /usr/src/pyprint
+# COPY ../pyprint/. /usr/src/pyprint # error out of context
+COPY $HOME/projects/prj_python37/pyprint/pyprint/* /usr/src/pyprint/
+
+# CMD  vs ENTRYPOINT:
+# cmd: se ejecuta al arrancar el contenedor
+CMD ["chmod +x /usr/src/entrypoint.sh","python","/usr/src/pyprint/server.py"]
