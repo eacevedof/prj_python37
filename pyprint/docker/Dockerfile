@@ -10,7 +10,7 @@ COPY ./docker/.bashrc /root/.bashrc
 COPY ./docker/entrypoint.sh /usr/src/entrypoint.sh
 
 WORKDIR /usr/src/pyprint
-COPY ./pyprint/server.py /usr/src/pyprint
+#COPY ./server.py /usr/src/pyprint
 # ADD failed: forbidden path outside the build context: ../pyprint ()
 
 #ADD $HOME/projects/prj_python37/pyprint/pyprint /usr/src/pyprint
@@ -18,4 +18,12 @@ COPY ./pyprint/server.py /usr/src/pyprint
 
 # CMD  vs ENTRYPOINT:
 # cmd: se ejecuta al arrancar el contenedor
-CMD [ "python", "/usr/src/pyprint/server.py"]
+# este comando se ejecuta por defecto al hacer un docker run, pero se puede sobrescribir si se hace un docker run <imagen> <otro comando>
+# CMD [ "python", "/usr/src/pyprint/server.py"]
+# CMD [ "tail", "-f /dev/null" ]
+#
+# ENTRYPOINT es un comando fijo y que no se "puede" sobrescribir, se debe tratar como un ejecutable
+# ENTRYPOINT ["python"]
+# significa que el comando python se mantendria como un comando fijo en ejecución cuando se levante el contendor y si se le pasa algun
+# parametro lo tomará como argumento dentro de ese comando por ejemplo: docker run hola-python hello.py. (hello.py debería estar dentro del contenedor)
+# esto puede servir para tener varias imagenes de versiones python y puedes lanzar un script en cada una por separado
