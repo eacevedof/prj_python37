@@ -8,6 +8,7 @@ RUN pip install pipenv
 
 COPY ./docker/.bashrc /root/.bashrc
 COPY ./docker/entrypoint.sh /usr/src/entrypoint.sh
+RUN chmod +x /usr/src/entrypoint.sh
 
 WORKDIR /usr/src/pyprint
 #COPY ./server.py /usr/src/pyprint
