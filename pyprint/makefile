@@ -13,8 +13,8 @@ restart:
 down:
 	docker-compose down
 
-ssh: ## bin/ash para alpine
-	docker exec --user="root" -it cont-py38 /bin/ash
+ssh: ## bin/sh para alpine
+	docker exec --user="root" -it cont-py38 /bin/sh
 
 start:
 	docker-compose start 
