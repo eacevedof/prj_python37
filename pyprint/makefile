@@ -8,7 +8,7 @@ rebuild:
 
 restart:
 	docker-compose restart
-	make ssh
+	# make ssh
 
 down:
 	docker-compose down
@@ -18,7 +18,7 @@ ssh: ## bin/sh para alpine
 
 start:
 	docker-compose start 
-	make ssh
+	#make ssh
 stop: 
 	docker-compose stop	
 
