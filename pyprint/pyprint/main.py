@@ -3,7 +3,10 @@ import ctypes
 from subprocess import PIPE, Popen
 from pprint import pprint
 
+#Common UNIX Printing System (CUPS)
 # https://askubuntu.com/questions/416995/how-to-list-all-available-printers-from-terminal
+# libreria en python (python-escpos)
+# https://github.com/python-escpos/python-escpos
 
 def exec(cmd):
     process = Popen(
@@ -17,7 +20,10 @@ def printit():
     print("printing....")
     pathfile = "./to-print.txt"
     printer = "Brother_DCP_1610W_series"
-    os.startfile(pathfile, printer)
+    # os.startfile(pathfile, printer) # error
+    cmd = f"lpr -P {printer} {pathfile}"
+    r = exec(cmd)
+    print(r)
 
 def show_printers():
     cmd = "lpstat -p | awk '{print $2}'"
