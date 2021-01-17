@@ -10,8 +10,9 @@ COPY ./.bashrc /root/.bashrc
 COPY ./entrypoint.sh /usr/src/entrypoint.sh
 
 WORKDIR /usr/src/pyprint
-# COPY ../pyprint/. /usr/src/pyprint # error out of context
-COPY $HOME/projects/prj_python37/pyprint/pyprint/* /usr/src/pyprint/
+# ADD ../pyprint /usr/src/pyprint
+# ADD failed: forbidden path outside the build context: ../pyprint ()
+ADD $HOME/projects/prj_python37/pyprint/pyprint /usr/src/pyprint
 
 # CMD  vs ENTRYPOINT:
 # cmd: se ejecuta al arrancar el contenedor
