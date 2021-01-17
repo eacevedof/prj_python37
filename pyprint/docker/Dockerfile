@@ -10,7 +10,7 @@ COPY ./docker/.bashrc /root/.bashrc
 COPY ./docker/entrypoint.sh /usr/src/entrypoint.sh
 
 WORKDIR /usr/src/pyprint
-# ADD ../pyprint /usr/src/pyprint
+COPY ./pyprint/server.py /usr/src/pyprint
 # ADD failed: forbidden path outside the build context: ../pyprint ()
 
 #ADD $HOME/projects/prj_python37/pyprint/pyprint /usr/src/pyprint
@@ -18,4 +18,4 @@ WORKDIR /usr/src/pyprint
 
 # CMD  vs ENTRYPOINT:
 # cmd: se ejecuta al arrancar el contenedor
-CMD ["chmod +x /usr/src/entrypoint.sh","python","/usr/src/pyprint/server.py"]
+CMD [ "python", "/usr/src/pyprint/server.py"]
