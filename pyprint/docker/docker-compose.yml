@@ -9,11 +9,8 @@ services:
       dockerfile: Dockerfile
     # entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
     volumes:
-      - $HOME/projects/prj_compass/python:/usr/src/python
-      - $HOME/projects/prj_compass/skynet/help:/usr/src/help
-    env_file:
-      - $HOME/projects/prj_compass/docker/common.env
-      - ./common.env
+      - $HOME/projects/prj_python/pyprint/pyprint:/usr/src/pyprint
+
     # debug vscode
     ports:
        - "8008:8008"
@@ -21,8 +18,8 @@ services:
     command: tail -f /dev/null
 
     networks:
-      - compassnet
+      - pyprintnet
 
 networks:
-  compassnet:
-      name: compassnet
+  pyprintnet:
+      name: pyprintnet
