@@ -19,6 +19,10 @@ services:
     # tty: true #toma 2 segundos en parar el contenedor (si se tiene entrypoint este no va)
     entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
 
+    privileged: true
+    devices:
+      - '/dev:/dev'
+    
     networks:
       - pyprintnet
 
