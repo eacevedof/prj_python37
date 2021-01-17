@@ -1,16 +1,18 @@
-FROM python:3.8-alpine
+FROM python:3.7
 
-WORKDIR /usr/src/python
+RUN pip install fastapi uvicorn
+
+WORKDIR /app
 
 #RUN: ejecuta comandos en el momento de la creacion de la imagen
-RUN apk add --update vim
-RUN pip install pipenv
+RUN apt-get install vim 
+# RUN pip install pipenv
 
 COPY ./docker/.bashrc /root/.bashrc
 COPY ./docker/entrypoint.sh /usr/src/entrypoint.sh
 RUN chmod +x /usr/src/entrypoint.sh
 
-WORKDIR /usr/src/pyprint
+#WORKDIR /usr/src/pyprint
 #COPY ./server.py /usr/src/pyprint
 # ADD failed: forbidden path outside the build context: ../pyprint ()
 
