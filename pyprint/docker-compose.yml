@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  python36:
+  python38:
     container_name: cont-py38
     hostname: py38
     build:
