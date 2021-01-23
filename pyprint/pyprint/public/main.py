@@ -5,10 +5,10 @@ import os
 
 pathsrc = os.path.abspath("..")
 sys.path.append(pathsrc)
-pathsrc = os.path.abspath("../src")
-print("pathsrc:"+pathsrc)
+#pathsrc = os.path.abspath("../src")
+#print("pathsrc:"+pathsrc)
 # sys.exit()
-sys.path.append(pathsrc)
+#sys.path.append(pathsrc)
 
 #sys.exit()
 """
@@ -20,14 +20,14 @@ sys.path.append(pathsrc)
 /usr/local/lib/python3.8/site-packages
 """
 
-#from src.controllers.home_controller import HomeController
+from src.controllers.home_controller import HomeController
 
 app = FastAPI()
 
 @app.get("/")
 def read_root():
-    #ctrl = HomeController()
-    #return ctrl.index()
+    ctrl = HomeController()
+    return ctrl.index()
     paths = []
     for p in sys.path:
         p = os.path.realpath(p)
