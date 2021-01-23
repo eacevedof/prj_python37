@@ -1,6 +1,3 @@
-from pprint import pprint
-pprint("fastapi")
-
 from typing import Optional
 from fastapi import FastAPI
 from src.controllers.home_controller import HomeController
