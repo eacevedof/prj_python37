@@ -8,13 +8,6 @@ app = FastAPI()
 def read_root():
     ctrl = HomeController()
     return ctrl.index()
-    paths = []
-    for p in sys.path:
-        p = os.path.realpath(p)
-        paths.append(p)
-
-    return {"hola":"Python Print","paths":paths}
-
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Optional[str] = None):
