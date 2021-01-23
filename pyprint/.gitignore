@@ -1,2 +1,3 @@
-./pyprint/.env
-./pyprint/config/*.example*
+.idea
+pyprint/.env
+pyprint/config/*.example*
