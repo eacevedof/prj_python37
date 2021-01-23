@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 from src.routes.routes import routes
 from src.controllers.home_controller import HomeController
@@ -13,6 +13,6 @@ def home():
 
 # para que llegue q hay que enviar todo con cabecer accpet application/json
 @app.get("/prueba/{slug_x}")
-def test_get(slug_x: str, perro: Optional[str] = None):
-    #return {"slug_x": slug_x, "perro": perro}
-    return (HomeController()).get_test(slug_x,perro=perro)
+def test_get(slug_x: str, request: Request):
+    return {"slug_x": slug_x, "perro": request.client.host}
+    return (HomeController()).get_test(slug_x, perro=perro)
