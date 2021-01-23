@@ -1,3 +1,4 @@
+from src.services.home_service import HomeService
 import sys
 import os
 
@@ -6,9 +7,5 @@ class HomeController:
         pass
 
     def index(self):
-        paths = []
-        for p in sys.path:
-            p = os.path.realpath(p)
-            paths.append(p)
-
-        return {"hola":"Python Print","paths":paths}
+        r = (HomeService()).get_index()
+        return r
