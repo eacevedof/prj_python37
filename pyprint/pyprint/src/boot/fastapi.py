@@ -6,6 +6,10 @@ from src.controllers.home_controller import HomeController
 
 app = FastAPI()
 
+for route in routes:
+    @app.get(routes["url"])
+
+
 @app.get("/")
 def home():
     return {"routes": routes}
