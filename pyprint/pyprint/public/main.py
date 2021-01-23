@@ -3,11 +3,7 @@ import os
 
 pathsrc = os.path.abspath("..")
 sys.path.append(pathsrc)
-#pathsrc = os.path.abspath("../src")
-#print("pathsrc:"+pathsrc)
-# sys.exit()
-#sys.path.append(pathsrc)
-#sys.exit()
+
 """
 /app/public
 /usr/local/bin
