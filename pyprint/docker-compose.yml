@@ -9,7 +9,7 @@ services:
       dockerfile: ./docker/Dockerfile
     
     volumes:
-      - ./pyprint:/app
+      - ./pyprint:/pyprint
 
     # debug vscode
     ports:
