@@ -4,11 +4,7 @@ import sys
 import os
 
 
-for p in sys.path:
-    p = os.path.realpath(p)
-    print(p)
-
-sys.exit()
+#sys.exit()
 """
 /app/public
 /usr/local/bin
@@ -27,7 +23,12 @@ app = FastAPI()
 def read_root():
     #ctrl = HomeController()
     #return ctrl.index()
-    return {"hola":"Python Print"}
+    paths = []
+    for p in sys.path:
+        p = os.path.realpath(p)
+        paths.append(p)
+
+    return {"hola":"Python Print","paths":paths}
 
 
 @app.get("/items/{item_id}")
