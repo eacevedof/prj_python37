@@ -6,9 +6,9 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    ctrl = HomeController()
-    return ctrl.index()
+    return (HomeController()).index()
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+# para que llegue q hay que enviar todo con cabecer accpet application/json
+@app.get("/prueba/{slug_x}")
+def read_item(slug_x: str, perro: Optional[str] = None):
+    return {"slug_x": slug_x, "perro": perro}
