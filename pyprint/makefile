@@ -26,4 +26,5 @@ remove:
 	docker rm cont-py38
 
 logs:
-	docker logs cont-py38
+	# docker logs cont-py38
+	docker-compose logs --tail="all"
