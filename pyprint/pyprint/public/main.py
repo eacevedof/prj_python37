@@ -19,14 +19,15 @@ sys.exit()
 """
 
 
-from ..src.controllers.home_controller import HomeController
+#from ..src.controllers.home_controller import HomeController
 
 app = FastAPI()
 
 @app.get("/")
 def read_root():
-    ctrl = HomeController()
-    return ctrl.index()
+    #ctrl = HomeController()
+    #return ctrl.index()
+    return {"hola":"Python Print"}
 
 
 @app.get("/items/{item_id}")
