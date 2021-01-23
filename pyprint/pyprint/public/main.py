@@ -1,13 +1,16 @@
 from typing import Optional
 from fastapi import FastAPI
 import sys
+import os
 
-"""
+
 for p in sys.path:
+    p = os.path.realpath(p)
     print(p)
 
 sys.exit()
-.
+"""
+/app/public
 /usr/local/bin
 /usr/local/lib/python38.zip
 /usr/local/lib/python3.8
