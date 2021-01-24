@@ -1,4 +1,5 @@
-FROM python:3.8
+# FROM python:3.8
+FROM python:3.8-slim-buster
 
 #RUN: ejecuta comandos en el momento de la creacion de la imagen
 RUN apt-get update && \
