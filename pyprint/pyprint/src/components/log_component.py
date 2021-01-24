@@ -4,7 +4,7 @@ from datetime import datetime
 
 class LogComponent:
 
-    def __init__(self, subtype: str, pathfolder:str):
+    def __init__(self, subtype: str="", pathfolder:str=""):
         self.__subtype = subtype if subtype else "debug"
         self.__pathfolder = self.__get_pathfolder(pathfolder)
         today = self.__get_today()
@@ -21,15 +21,16 @@ class LogComponent:
         today = datetime.today()
         return today.strftime("%Y%m%d")
 
-    def __get_now(self)
+    def __get_now(self):
         now = datetime.today()
         return now.strftime("%Y-%m-%d %H:%i:%s")
 
     def __fix_folder(self):
         logfolder = f"{self.__pathfolder}/{self.__subtype}/"
-        isdir = path.isdir(logfolder)
+        print(logfolder)
+        isdir = os.path.isdir(logfolder)
         if not isdir:
-            path.mkdir(logfolder, "0777")
+            os.mkdir(logfolder, int("0777"))
 
     def __var_export(self, obj, resource) :
         import sys,pprint
@@ -41,8 +42,8 @@ class LogComponent:
         return open(pathfile, 'r').read()
 
     def __get_resource(self):
-        pathfile = f"{self.pathfolder}/{self.__subtype}/{self.__filename}"
-        isfile = path.isfile(pathfile)
+        pathfile = f"{self.__pathfolder}/{self.__subtype}/{self.__filename}"
+        isfile = os.path.isfile(pathfile)
         if isfile:
             resource = open(pathfile, "a")
         else:
@@ -53,7 +54,7 @@ class LogComponent:
         hostname = socket.gethostname()
         return socket.gethostbyname(hostname)
 
-    def save(self, mxvar, title="":str):
+    def save(self, mxvar, title:str=""):
         logresouce = self.__get_resource()
         if not logresouce:
             return False

@@ -1,9 +1,12 @@
 from src.services.home_service import HomeService
 from fastapi import Request
+from src.components.log_component import LogComponent
 
 class HomeController:
 
     def index(self):
+        log = LogComponent()
+        log.save("hola", "titulo mundo")
         r = (HomeService()).get_index()
         return r
 
