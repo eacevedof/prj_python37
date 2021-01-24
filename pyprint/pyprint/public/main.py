@@ -3,4 +3,4 @@ import os
 
 pathsrc = os.path.abspath("..")
 sys.path.append(pathsrc)
-from src.boot.fastapi import app
+from src.routes.all import *
