@@ -30,7 +30,7 @@ class LogComponent:
         print(logfolder)
         isdir = os.path.isdir(logfolder)
         if not isdir:
-            os.mkdir(logfolder, int("0777"))
+            os.mkdir(logfolder, 0o777)
 
     def __var_export(self, obj, resource) :
         import sys,pprint
@@ -47,7 +47,7 @@ class LogComponent:
         if isfile:
             resource = open(pathfile, "a")
         else:
-            resource = open(pathfile, "x")
+            resource = open(pathfile, "w")
         return resource
 
     def __get_remote_ip(self):
