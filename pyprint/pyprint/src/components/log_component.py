@@ -1,4 +1,5 @@
 import os
+import socket
 from datetime import datetime
 
 class LogComponent:
@@ -20,14 +21,18 @@ class LogComponent:
         today = datetime.today()
         return today.strftime("%Y%m%d")
 
+    def __get_now(self)
+        now = datetime.today()
+        return now.strftime("%Y-%m-%d %H:%i:%s")
+
     def __fix_folder(self):
         logfolder = f"{self.__pathfolder}/{self.__subtype}/"
         isdir = path.isdir(logfolder)
         if not isdir:
             path.mkdir(logfolder, "0777")
 
-    def __var_export(self, obj, pathfile:str) :
-        import os,sys,pprint
+    def __var_export(self, obj, resource) :
+        import sys,pprint
         temp = sys.stdout             # store original stdout object for later
         sys.stdout = open(pathfile, 'w')    # redirect all prints to temp file
         pprint.pprint(obj)
@@ -35,15 +40,33 @@ class LogComponent:
         sys.stdout = temp             # restore print commands to interactive prompt
         return open(pathfile, 'r').read()
 
-    def save(self, mxvar, title="":str):
+    def __get_resource(self):
         pathfile = f"{self.pathfolder}/{self.__subtype}/{self.__filename}"
         isfile = path.isfile(pathfile)
         if isfile:
             resource = open(pathfile, "a")
         else:
             resource = open(pathfile, "x")
+        return resource
 
+    def __get_remote_ip(self):
+        hostname = socket.gethostname()
+        return socket.gethostbyname(hostname)
+
+    def save(self, mxvar, title="":str):
+        logresouce = self.__get_resource()
+        if not logresouce:
+            return False
+        logresouce.write("")
+        headline = f"-- [{self.__get_now()} - ip:{self.__get_remote_ip()}]"
+        logresouce.write(headline)
+        if title:
+            logresouce.write(f"{title}\n")
 
         if not isinstance(mxvar, str):
+            __var_export(mxvar, resource)
+        else:
+            logresouce.write(mxvar)
+        logresouce.close()
 
-
+        return True
