@@ -23,7 +23,7 @@ class LogComponent:
 
     def __get_now(self):
         now = datetime.today()
-        return now.strftime("%Y-%m-%d %H:%i:%s")
+        return now.strftime("%Y-%m-%d %H:%M:%S")
 
     def __fix_folder(self):
         logfolder = f"{self.__pathfolder}/{self.__subtype}/"
@@ -58,11 +58,11 @@ class LogComponent:
         logresouce = self.__get_resource()
         if not logresouce:
             return False
-        logresouce.write("")
-        headline = f"-- [{self.__get_now()} - ip:{self.__get_remote_ip()}]"
+        logresouce.write("\n")
+        headline = f"-- [{self.__get_now()} - ip:{self.__get_remote_ip()}]\n"
         logresouce.write(headline)
         if title:
-            logresouce.write(f"{title}\n")
+            logresouce.write(f"{title}:\n")
 
         if not isinstance(mxvar, str):
             __var_export(mxvar, resource)
