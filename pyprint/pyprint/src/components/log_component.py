@@ -58,7 +58,10 @@ class LogComponent:
         logresouce = self.__get_resource()
         if not logresouce:
             return False
-        logresouce.write("\n")
+
+        if logresouce.mode == "a":
+            logresouce.write("\n\n")
+
         headline = f"-- [{self.__get_now()} - ip:{self.__get_remote_ip()}]\n"
         logresouce.write(headline)
         if title:
