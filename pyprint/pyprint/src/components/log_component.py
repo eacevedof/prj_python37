@@ -35,11 +35,11 @@ class LogComponent:
     def __var_export(self, obj, resource) :
         import sys,pprint
         temp = sys.stdout             # store original stdout object for later
-        sys.stdout = open(pathfile, 'w')    # redirect all prints to temp file
+        sys.stdout = resource
         pprint.pprint(obj)
         sys.stdout.close()
         sys.stdout = temp             # restore print commands to interactive prompt
-        return open(pathfile, 'r').read()
+        #return open(pathfile, 'r').read()
 
     def __get_resource(self):
         pathfile = f"{self.__pathfolder}/{self.__subtype}/{self.__filename}"
@@ -68,7 +68,7 @@ class LogComponent:
             logresouce.write(f"{title}:\n")
 
         if not isinstance(mxvar, str):
-            __var_export(mxvar, resource)
+            self.__var_export(mxvar, logresouce)
         else:
             logresouce.write(mxvar)
         logresouce.close()

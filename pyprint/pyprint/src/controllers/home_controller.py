@@ -6,8 +6,8 @@ class HomeController:
 
     def index(self):
         log = LogComponent()
-        log.save("hola", "titulo mundo")
         r = (HomeService()).get_index()
+        log.save(HomeService(), "HomeService")
         return r
 
     def test(self, slug: str, request:Request):
