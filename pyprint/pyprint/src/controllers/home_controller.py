@@ -8,8 +8,8 @@ class HomeController:
         self.__log = get_log()
 
     def index(self):
-        r = (HomeService()).get_index()
         self.__log.save(HomeService(), "HomeService")
+        r = (HomeService()).get_index()
         return r
 
     def test(self, slug: str, request:Request):
