@@ -1,15 +1,15 @@
 from src.services.home_service import HomeService
 from fastapi import Request
-from src.components.log_component import LogComponent
-from src.boot.paths import PATH_LOGS
+from src.factories.log import get_log
 
 class HomeController:
 
+    def __init__(self):
+        self.__log = get_log()
+
     def index(self):
-        log = LogComponent(pathfolder=PATH_LOGS)
         r = (HomeService()).get_index()
-        r["PATH"] = PATH_LOGS
-        log.save(HomeService(), "HomeService")
+        self.__log.save(HomeService(), "HomeService")
         return r
 
     def test(self, slug: str, request:Request):
