@@ -1,4 +1,5 @@
 from src.services.home_service import HomeService
+from fastapi import Request
 
 class HomeController:
 
@@ -6,5 +7,5 @@ class HomeController:
         r = (HomeService()).get_index()
         return r
 
-    def get_test(self, slug, perro):
-        return {"slug_1": slug, "perro_1": perro}
+    def test(self, slug: str, request:Request):
+        return {"controller": "HomeController", "method": "test", "param":slug, "ip":request.client.host}
