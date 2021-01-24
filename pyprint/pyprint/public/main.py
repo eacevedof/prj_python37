@@ -1,9 +1,9 @@
 import sys
 import os
 
-from debuger import initialize_flask_server_debugger_if_needed
+from debug import debugpy_start
 
-initialize_flask_server_debugger_if_needed()
+debugpy_start()
 
 pathsrc = os.path.abspath("..")
 sys.path.append(pathsrc)
