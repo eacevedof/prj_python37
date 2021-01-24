@@ -1,7 +1,7 @@
 # debuger.py
 from os import getenv
 
-def initialize_flask_server_debugger_if_needed():
+def debugpy_start():
     #if getenv("DEBUGGER") == "True":
     if 1==1:    
         import multiprocessing
