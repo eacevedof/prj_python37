@@ -9,7 +9,7 @@ def home():
     return (HomeController()).index()
 
 # para que llegue q hay que enviar todo con cabecer accpet application/json
-@app.get("/prueba/{slug_x}")
-def test_get(slug_x: str, request: Request):
-    return {"slug_x": slug_x, "perro": request.client.host}
-    return (HomeController()).get_test(slug_x, perro=perro)
+@app.get("/prueba/{slug}")
+def test(slug: str, request: Request):
+    #return {"x":"y"}
+    return (HomeController()).test(slug=slug, request=request)
