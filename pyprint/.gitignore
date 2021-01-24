@@ -1,4 +1,5 @@
 .idea
+.vscode
 pyprint/.env
 pyprint/config/access.json
 pyprint/logs/*
