@@ -17,8 +17,9 @@ class PrintComponent:
         self.__log = get_log()
 
 
-    def get_printers():
-        cmd = "lpstat -p | awk '{print $2}'"    
+    def get_printers(self):
+        cmd = "lpstat -p | awk '{print $2}'"
+        self.__log.save(cmd,"cmd get_printers")
         r = CmdComponent.exec(cmd)
         return r
 

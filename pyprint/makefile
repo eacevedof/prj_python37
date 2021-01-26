@@ -28,3 +28,6 @@ remove:
 logs:
 	# docker logs cont-py38
 	docker-compose logs --tail="all"
+
+remlogs:
+	rm -fr pyprint/logs/*
