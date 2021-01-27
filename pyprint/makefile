@@ -14,7 +14,7 @@ down:
 	docker-compose down
 
 ssh: ## bin/sh para alpine
-	docker exec --user="root" -it cont-py38 /bin/sh
+	docker exec --user="root" -it cont-py38 /bin/bash
 
 start:
 	docker-compose start 
