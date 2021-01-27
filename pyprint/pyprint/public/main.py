@@ -6,9 +6,8 @@ import os
 
 # cuando se usa -m public.main
 #from .debug import debugpy_start
-from debug import debugpy_start
-
-debugpy_start()
+#from debug import debugpy_start
+#debugpy_start()
 
 pathsrc = os.path.abspath("..")
 sys.path.append(pathsrc)

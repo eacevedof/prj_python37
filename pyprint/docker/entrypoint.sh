@@ -1,4 +1,7 @@
 #!/bin/bash
+apt-get install -y binutils libc6
+apt-get install -y binutils libc-bin
+
 python -m pip install --upgrade pip
 
 pip install pyinstaller
