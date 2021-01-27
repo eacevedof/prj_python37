@@ -1,6 +1,7 @@
 #!/bin/bash
 python -m pip install --upgrade pip
 
+pip install pyinstaller
 pip install debugpy
 pip install fastapi
 pip install uvicorn[standard]
