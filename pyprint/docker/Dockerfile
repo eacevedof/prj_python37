@@ -11,4 +11,4 @@ COPY ./docker/.bashrc /root/.bashrc
 COPY ./docker/entrypoint.sh /usr/src/entrypoint.sh
 RUN chmod +x /usr/src/entrypoint.sh
 
-WORKDIR /pyprint
+WORKDIR /app/pyprint
