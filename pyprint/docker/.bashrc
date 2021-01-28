@@ -1,0 +1,1 @@
+alias linux='/bin/bash /app/pyinstaller-sh/linux.sh'
