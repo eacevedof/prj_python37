@@ -3,3 +3,4 @@
 pyprint/.env
 pyprint/config/access.json
 pyprint/logs/*
+compiled
