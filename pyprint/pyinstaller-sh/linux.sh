@@ -1,3 +1,4 @@
+# https://github.com/codingforentrepreneurs/30-Days-of-Python/blob/master/tutorial-reference/Day_28/src/wsgi.py
 source bin/activate
 pyinstaller src/wsgi.py -F \
 --name "cfe-os-mac" \
