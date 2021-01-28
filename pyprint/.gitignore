@@ -3,4 +3,6 @@
 pyprint/.env
 pyprint/config/access.json
 pyprint/logs/*
-compiled
+compiled/linux
+compiled/win
+compiled/mac
