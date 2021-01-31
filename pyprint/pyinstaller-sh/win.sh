@@ -12,6 +12,6 @@ pyinstaller ./pyprint/public/main.py -F \
 --workpath "./compiled/win/build" \
 --distpath "./compiled/win/dist" \
 --name "pyprint-win" \
-#--icon='icon.icns' \
 --hidden-import uvicorn \
---clean
+--clean 
+#--icon='icon.icns' \
