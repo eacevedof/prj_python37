@@ -1,8 +1,8 @@
 pyinstaller /app/pyprint/public/main.py -F \
+--log-level=WARN \
 --workpath "/app/compiled/linux/build" \
 --distpath "/app/compiled/linux/dist" \
 --name "pyprint-linux" \
-# --icon='icon.icns' \
 --hidden-import uvicorn.logging \
 --hidden-import uvicorn.loops \
 --hidden-import uvicorn.loops.auto \
