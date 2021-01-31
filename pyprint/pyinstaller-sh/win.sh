@@ -6,3 +6,11 @@ pyinstaller src/wsgi.py -F `
 --add-data "src\data\*.jpg;data" `
 --hidden-import waitress `
 --clean
+
+
+pyinstaller ./pyprint/public/main.py -F \
+--workpath "./compiled/win/build" \
+--distpath "./compiled/win/dist" \
+--name "pyprint-win" \
+#--icon='icon.icns' \
+--clean
