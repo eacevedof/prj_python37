@@ -1,5 +1,6 @@
 pyinstaller /app/pyprint/public/main.py -F \
 --log-level=WARN \
+--onefile --nowindow \
 --workpath "/app/compiled/linux/build" \
 --distpath "/app/compiled/linux/dist" \
 --name "pyprint-linux" \
@@ -14,3 +15,5 @@ pyinstaller /app/pyprint/public/main.py -F \
 --hidden-import uvicorn.lifespan \
 --hidden-import uvicorn.lifespan.on \
 --clean
+#--upx-dir=/usr/local/share/ \
+#    myscript.spec
