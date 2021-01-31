@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import uvicorn
 from fastapi import FastAPI
 
