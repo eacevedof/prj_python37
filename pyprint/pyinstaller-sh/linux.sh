@@ -1,5 +1,7 @@
 pyinstaller /app/pyprint/public/main.py -F \
---log-level=WARN \
+--log-level=ERROR \
+--log-level=TRACE \
+--log-level=DEBUG \
 --onefile --nowindow \
 --workpath "/app/compiled/linux/build" \
 --distpath "/app/compiled/linux/dist" \
@@ -17,3 +19,6 @@ pyinstaller /app/pyprint/public/main.py -F \
 --clean
 #--upx-dir=/usr/local/share/ \
 #    myscript.spec
+# pyinstaller: error: argument --log-level: invalid choice: 'WARNING' (choose from 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+
+# para ejecutar el compilado ./pyprint-linux
