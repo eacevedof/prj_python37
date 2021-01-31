@@ -1,22 +1,11 @@
-#import uvicorn
+import uvicorn
+from fastapi import FastAPI
 
-import sys
-import os
+app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"hello": "world"}
 
-# cuando se usa -m public.main
-#from .debug import debugpy_start
-#from debug import debugpy_start
-#debugpy_start()
-
-pathsrc = os.path.abspath("..")
-sys.path.append(pathsrc)
-from src.routes.all import *
-#from src.boot.fastapi import app
-
-
-
-if __name__=="__main__":
-    pass
-    #print("running uvicorn :)")
-    #uvicorn.run(app, host='0.0.0.0', port=8080, reload=True, debug=True, workers=3, log_level="info")
+if __name__ == '__main__':
+    uvicorn.run(app, host="0.0.0.0", port=58000, reload=False)
