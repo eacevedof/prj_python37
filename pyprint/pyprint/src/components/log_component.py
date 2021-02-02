@@ -1,6 +1,7 @@
 import os
 import socket
 from datetime import datetime
+import sys, pprint
 
 class LogComponent:
 
@@ -25,15 +26,24 @@ class LogComponent:
         now = datetime.today()
         return now.strftime("%Y-%m-%d %H:%M:%S")
 
+    def __get_fix_folder(self):
+        return f"{self.__pathfolder}/{self.__subtype}/"
+    
+    def __is_fix_folder(self):
+        logfolder = self.__get_fix_folder()
+        return os.path.isdir(logfolder)
+
     def __fix_folder(self):
-        logfolder = f"{self.__pathfolder}/{self.__subtype}/"
-        print(logfolder)
-        isdir = os.path.isdir(logfolder)
-        if not isdir:
-            os.mkdir(logfolder, 0o777)
+        if not self.__is_fix_folder():
+            try:
+                os.mkdir(self.__get_fix_folder(), 0o777)
+            except:
+                e = sys.exc_info()[0]
+                folder = self.__get_fix_folder()
+                print(f"fix_folder error: {e} creating {folder}")
+            
 
     def __var_export(self, obj, resource) :
-        import sys,pprint
         temp = sys.stdout             # store original stdout object for later
         sys.stdout = resource
         pprint.pprint(obj)
@@ -55,6 +65,9 @@ class LogComponent:
         return socket.gethostbyname(hostname)
 
     def save(self, mxvar, title:str=""):
+        if not self.__is_fix_folder():
+            return False
+
         logresouce = self.__get_resource()
         if not logresouce:
             return False
