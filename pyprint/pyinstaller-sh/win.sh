@@ -9,7 +9,7 @@
 #--clean
 
 
-pyinstaller ./pyprint/public/main.py -F \
+pyinstaller ../pyprint/public/main.py -F \
 --workpath "../compiled/win/build" \
 --distpath "../compiled/win/dist" \
 --onefile --nowindow \
