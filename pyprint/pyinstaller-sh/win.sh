@@ -9,10 +9,10 @@
 #--clean
 
 
-pyinstaller ../pyprint/public/main.py -F \
---workpath "../compiled/win/build" \
---distpath "../compiled/win/dist" \
---specpath "../compiled/win" \
+pyinstaller ./pyprint/public/main.py -F \
+--workpath "./compiled/win/build" \
+--distpath "./compiled/win/dist" \
+--specpath "./compiled/win" \
 --onefile --nowindow \
 --name "pyprint-win" \
 --hidden-import uvicorn.logging \
