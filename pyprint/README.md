@@ -6,9 +6,13 @@
 - **linux (Docker)**
     - Hay un alias **linux** que ejecuta `/bin/bash /app/pyinstaller-sh/linux.sh`
 - **windows**
-    - posicionandonos en la raíz (a la altura de docker-compose.yml)
+    - nos posicionandonos en la raíz (a la altura de docker-compose.yml)
     - ejecutamos: 
         - `/usr/bin/bash pyinstaller-sh/win.sh`
+- **macos**
+    - nos posicionamos en la raíz
+    - ejecutamos:
+        - `/usr/local/bin/bash pyinstaller-sh/macos.sh`
 
 ## Error
 - root@py38:/app/compiled/linux/dist# sh pyprint-linux
@@ -22,5 +26,5 @@ pyprint-linux: 1: pyprint-linux: Syntax error: "(" unexpected
     ```
 - --data me da error de binario
     - https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile
--  Can not find path /usr/lib/libSystem.B.dylib
-    - 
+-  Macos: Can not find path /usr/lib/libSystem.B.dylib
+    - ???
