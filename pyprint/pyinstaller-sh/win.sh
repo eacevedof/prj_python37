@@ -13,6 +13,8 @@ pyinstaller ./pyprint/public/main.py -F \
 --workpath "./compiled/win/build" \
 --distpath "./compiled/win/dist" \
 --specpath "./compiled/win" \
+--add-data "./pyprint/logs" \
+--add-data "./pyprint/config" \
 --onefile --nowindow \
 --name "pyprint-win" \
 --hidden-import uvicorn.logging \
