@@ -1,20 +1,25 @@
-# https://github.com/codingforentrepreneurs/30-Days-of-Python/blob/master/tutorial-reference/Day_28/src/wsgi.py
+#!&usr/local/bin/bash
+PYTHONOPTIMIZE=1
 
-source bin/activate  #activa venv
-pyinstaller src/wsgi.py -F \  #Create a one-file bundled executable.
---name "cfe-os-mac" \         #Name to assign to the bundled app and spec file (default: first script’s basename)
---icon='icon.icns' \
+pyinstaller ./pyprint/public/main.py -F \
+--workpath "./compiled/win/build" \
+--distpath "./compiled/win/dist" \
+--specpath "./compiled/win" \
+--onefile --nowindow \
+--name "pyprint-win" \
+--hidden-import uvicorn.logging \
+--hidden-import uvicorn.loops \
+--hidden-import uvicorn.loops.auto \
+--hidden-import uvicorn.protocols \
+--hidden-import uvicorn.protocols.http \
+--hidden-import uvicorn.protocols.http.auto \
+--hidden-import uvicorn.protocols.websockets \
+--hidden-import uvicorn.protocols.websockets.auto \
+--hidden-import uvicorn.lifespan \
+--hidden-import uvicorn.lifespan.on \
+--clean 
+#--upx-dir=/usr/local/share/ \
+#    myscript.spec
+# pyinstaller: error: argument --log-level: invalid choice: 'WARNING' (choose from 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
 
-#Additional binary files to be added to the executable.
---add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl' \
---add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk' \ 
-
-#Additional non-binary files or folders to be added to the executable. 
-#The path separator is platform specific, os.pathsep (which is ; on Windows and : 
-#on most unix systems) is used. This option can be used multiple times.
---add-data "src/data/*:data" \
---add-data "src/data/*.jpg:data" \
-
-#Name an import not visible in the code of the script(s). This option can be used multiple times.
---hidden-import waitress \
---clean
+# para ejecutar el compilado ./pyprint-linux
