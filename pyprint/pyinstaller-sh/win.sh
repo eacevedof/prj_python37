@@ -1,16 +1,18 @@
-.\Scripts\activate
-pyinstaller src/wsgi.py -F `
---name "pyprint-win" `
---icon='icon.ico' `
---add-data "src\data\*;data" `
---add-data "src\data\*.jpg;data" `
---hidden-import waitress `
---clean
+#!/usr/bin/bash
+#.\Scripts\activate
+#pyinstaller src/wsgi.py -F `
+#--name "pyprint-win" `
+#--icon='icon.ico' `
+#--add-data "src\data\*;data" `
+#--add-data "src\data\*.jpg;data" `
+#--hidden-import waitress `
+#--clean
 
 
 pyinstaller ./pyprint/public/main.py -F \
---workpath "./compiled/win/build" \
---distpath "./compiled/win/dist" \
+--workpath "../compiled/win/build" \
+--distpath "../compiled/win/dist" \
+--onefile --nowindow \
 --name "pyprint-win" \
 --hidden-import uvicorn.logging \
 --hidden-import uvicorn.loops \
