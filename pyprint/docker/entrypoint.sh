@@ -8,6 +8,11 @@ pip install pyinstaller
 pip install debugpy
 pip install fastapi
 pip install uvicorn[standard]
+
+# arregla max recursion del compilado
+pip uninstall pydantic
+pip install git+git://github.com/samuelcolvin/pydantic@master#egg=pydantic
+
 #pip install debugpy -t /tmp
 
 #python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn
