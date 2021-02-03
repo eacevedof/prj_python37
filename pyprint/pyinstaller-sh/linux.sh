@@ -1,3 +1,4 @@
+#!/bin/bash
 pyinstaller /app/pyprint/public/main.py -F \
 --log-level=ERROR \
 --log-level=TRACE \
