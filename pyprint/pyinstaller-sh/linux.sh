@@ -5,6 +5,7 @@ pyinstaller /app/pyprint/public/main.py -F \
 --onefile --nowindow \
 --workpath "/app/compiled/linux/build" \
 --distpath "/app/compiled/linux/dist" \
+--specpath "/app/compiled/linux" \
 --name "pyprint-linux" \
 --hidden-import uvicorn.logging \
 --hidden-import uvicorn.loops \
