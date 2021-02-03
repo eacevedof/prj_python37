@@ -18,7 +18,8 @@ pyinstaller /app/pyprint/public/main.py -F \
 --hidden-import uvicorn.protocols.websockets.auto \
 --hidden-import uvicorn.lifespan \
 --hidden-import uvicorn.lifespan.on \
---clean
+--clean # Clean PyInstaller cache and remove temporary files before building.
+
 #--upx-dir=/usr/local/share/ \
 #    myscript.spec
 # pyinstaller: error: argument --log-level: invalid choice: 'WARNING' (choose from 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
