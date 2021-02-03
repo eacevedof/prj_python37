@@ -2,11 +2,11 @@
 PYTHONOPTIMIZE=1
 
 pyinstaller ./pyprint/public/main.py -F \
---workpath "./compiled/win/build" \
---distpath "./compiled/win/dist" \
---specpath "./compiled/win" \
+--workpath "./compiled/macos/build" \
+--distpath "./compiled/macos/dist" \
+--specpath "./compiled/macos" \
 --onefile --nowindow \
---name "pyprint-win" \
+--name "pyprint-macos" \
 --hidden-import uvicorn.logging \
 --hidden-import uvicorn.loops \
 --hidden-import uvicorn.loops.auto \
@@ -18,8 +18,4 @@ pyinstaller ./pyprint/public/main.py -F \
 --hidden-import uvicorn.lifespan \
 --hidden-import uvicorn.lifespan.on \
 --clean 
-#--upx-dir=/usr/local/share/ \
-#    myscript.spec
-# pyinstaller: error: argument --log-level: invalid choice: 'WARNING' (choose from 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
-
-# para ejecutar el compilado ./pyprint-linux
+# para ejecutar el compilado ./pyprint-macos

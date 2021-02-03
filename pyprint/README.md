@@ -22,3 +22,5 @@ pyprint-linux: 1: pyprint-linux: Syntax error: "(" unexpected
     ```
 - --data me da error de binario
     - https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile
+-  Can not find path /usr/lib/libSystem.B.dylib
+    - 
