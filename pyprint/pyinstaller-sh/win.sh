@@ -19,7 +19,7 @@ pyinstaller ./pyprint/public/main.py -F \
 --specpath "./compiled/win" \
 --onefile --nowindow \
 --name "pyprint-win" \
---add-data "./pyprint/logs/*:logs" \
+--add-data "./pyprint/logs;logs" \
 --hidden-import uvicorn.logging \
 --hidden-import uvicorn.loops \
 --hidden-import uvicorn.loops.auto \

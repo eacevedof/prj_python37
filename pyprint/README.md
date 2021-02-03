@@ -20,3 +20,5 @@ pyprint-linux: 1: pyprint-linux: Syntax error: "(" unexpected
     pip uninstall pydantic
     pip install git+git://github.com/samuelcolvin/pydantic@master#egg=pydantic
     ```
+- --data me da error de binario
+    - https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile
