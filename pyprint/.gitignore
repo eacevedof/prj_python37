@@ -5,4 +5,4 @@ pyprint/config/access.json
 pyprint/logs/*
 compiled/linux
 compiled/win
-compiled/mac
+compiled/macos
