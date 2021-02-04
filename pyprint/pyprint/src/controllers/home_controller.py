@@ -10,7 +10,7 @@ class HomeController:
         self.__log = get_log()
 
     def index(self):
-        routes = ["/","/x"]
+        routes = ["/a","/x"]
         r = {
             "os": get_os(),
             "routes": routes
