@@ -68,22 +68,22 @@ class LogComponent:
         if not self.__is_fix_folder():
             return False
 
-        logresouce = self.__get_resource()
-        if not logresouce:
+        logresource = self.__get_resource()
+        if not logresource:
             return False
 
-        if logresouce.mode == "a":
-            logresouce.write("\n\n")
+        if logresource.mode == "a":
+            logresource.write("\n\n")
 
         headline = f"-- [{self.__get_now()} - ip:{self.__get_remote_ip()}]\n"
-        logresouce.write(headline)
+        logresource.write(headline)
         if title:
-            logresouce.write(f"{title}:\n")
+            logresource.write(f"{title}:\n")
 
         if not isinstance(mxvar, str):
-            self.__var_export(mxvar, logresouce)
+            self.__var_export(mxvar, logresource)
         else:
-            logresouce.write(mxvar)
-        logresouce.close()
+            logresource.write(mxvar)
+        logresource.close()
 
         return True
