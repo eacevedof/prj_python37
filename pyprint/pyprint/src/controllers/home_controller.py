@@ -1,6 +1,6 @@
 from src.services.home_service import HomeService
 from fastapi import Request
-from src.factories.log import get_log
+from src.factories.log_factory import get_log
 from src.components.print_component import PrintComponent
 
 class HomeController:
@@ -9,10 +9,12 @@ class HomeController:
         self.__log = get_log()
 
     def index(self):
+        routes = ["/","/"]
+
         self.__log.save(HomeService(), "HomeService")
         #r = (HomeService()).get_index()
         r = {
-            "printers": (PrintComponent()).get_printers()
+            "routes": routes
         }
         return r
 
