@@ -10,7 +10,7 @@ from pprint import pprint
 # https://stackoverflow.com/questions/24225647/docker-a-way-to-give-access-to-a-host-usb-or-serial-device
 
 
-from src.factories.log import get_log
+from src.factories.log_factory import get_log
 class PrintComponent:
 
     def __init__(self):

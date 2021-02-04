@@ -1,5 +1,5 @@
 from subprocess import PIPE, Popen
-from src.factories.log import get_log
+from src.factories.log_factory import get_log
 
 class CmdComponent:
 
