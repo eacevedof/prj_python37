@@ -1,20 +1,24 @@
 import builtins
 import sys
-
-def pd(text, title=""):
-    if title:
-        print(f"\n{title}:")
-    print(f"{text}\n")
-    sys.exit()
+from pprint import pprint
 
 def pr(text, title=""):
     if title:
         print(f"\n{title}:")
-    print(f"{text}\n")
+    if isinstance(text, str):
+        print(f"{text}\n")
+    else:
+        pprint(text)
 
 
-builtins.pd = pd
+def pd(text, title=""):
+    pr(text, title)
+    sys.exit()
+
+
 builtins.pr = pr
+builtins.pd = pd
+
 
 import sys
 import os
