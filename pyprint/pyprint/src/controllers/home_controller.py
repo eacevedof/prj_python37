@@ -17,5 +17,10 @@ class HomeController:
         }
         return r
 
+    def printers(self):
+        return {
+            "printers":[]
+        }
+
     def test(self, slug: str, request:Request):
         return {"controller": "HomeController", "method": "test", "param":slug, "ip":request.client.host}

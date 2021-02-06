@@ -8,6 +8,10 @@ from src.controllers.home_controller import HomeController
 def home():
     return (HomeController()).index()
 
+@app.get("/printers")
+def home():
+    return (HomeController()).printers()
+
 # para que llegue q hay que enviar todo con cabecer accpet application/json
 @app.get("/prueba/{slug}")
 def test(slug: str, request: Request):
