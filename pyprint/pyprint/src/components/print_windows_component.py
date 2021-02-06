@@ -33,22 +33,28 @@ class PrintWindowsComponent:
 
     def get_printers(self):
         # Invoke once with a NULL pointer to get buffer size.
-        info = ctypes.POINTER(BYTE)()
-        pr(info,"info")
+        # ctypes.wintypes.LP_c_byte
+        devices = ctypes.POINTER(BYTE)()
+        pr(devices,"devices")
         pcbNeeded = DWORD(0)
+        pr(pcbNeeded,"pcbneeded")
         pcReturned = DWORD(0)  # the number of PRINTER_INFO_1 structures retrieved
-        winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, ctypes.byref(info), 0,
+        pr(pcReturned,"pcreturned")
+        winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, ctypes.byref(devices), 0,
                 ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
 
         bufsize = pcbNeeded.value
         buffer = msvcrt.malloc(bufsize)
         winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, buffer, bufsize,
                 ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
-        info = ctypes.cast(buffer, ctypes.POINTER(PRINTER_INFO_1))
+        devices = ctypes.cast(buffer, ctypes.POINTER(PRINTER_INFO_1))
+
+        printers = []
         for i in range(pcReturned.value):
-            print(info[i].pName)
-            #print info[i].pName, '=>', info[i].pDescription
+            print(devices[i].pName)
+            printers.append({"name": devices[i].pName, "description":devices[i].pDescription})
+            #print devices[i].pName, '=>', devices[i].pDescription
         msvcrt.free(buffer)
-        return info
+        return printers
 
     

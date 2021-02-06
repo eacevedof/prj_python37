@@ -3,11 +3,14 @@ import sys
 from pprint import pprint
 
 def pr(text, title=""):
+    vtype = type(text)
     if title:
         print(f"\n{title}:")
     if isinstance(text, str):
+        print(f"type:{vtype}\n")
         print(f"{text}\n")
     else:
+        print(f"type:{vtype}\n")
         pprint(text)
 
 
