@@ -23,22 +23,7 @@ class PRINTER_INFO_1(ctypes.Structure):
         ("pComment", LPCWSTR),
     ]
 
-# Invoke once with a NULL pointer to get buffer size.
-info = ctypes.POINTER(BYTE)()
-pcbNeeded = DWORD(0)
-pcReturned = DWORD(0)  # the number of PRINTER_INFO_1 structures retrieved
-winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, ctypes.byref(info), 0,
-        ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
 
-bufsize = pcbNeeded.value
-buffer = msvcrt.malloc(bufsize)
-winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, buffer, bufsize,
-        ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
-info = ctypes.cast(buffer, ctypes.POINTER(PRINTER_INFO_1))
-for i in range(pcReturned.value):
-    print(info[i].pName)
-    #print info[i].pName, '=>', info[i].pDescription
-msvcrt.free(buffer)
 
 class PrintWindowsComponent:
 
@@ -47,9 +32,23 @@ class PrintWindowsComponent:
 
 
     def get_printers(self):
-        cmd = "lpstat -p | awk '{print $2}'"
-        self.__log.save(cmd,"cmd get_printers")
-        r = CmdComponent.exec(cmd)
-        return r
+        # Invoke once with a NULL pointer to get buffer size.
+        info = ctypes.POINTER(BYTE)()
+        pr(info,"info")
+        pcbNeeded = DWORD(0)
+        pcReturned = DWORD(0)  # the number of PRINTER_INFO_1 structures retrieved
+        winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, ctypes.byref(info), 0,
+                ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
+
+        bufsize = pcbNeeded.value
+        buffer = msvcrt.malloc(bufsize)
+        winspool.EnumPrintersW(PRINTER_ENUM_LOCAL, Name, Level, buffer, bufsize,
+                ctypes.byref(pcbNeeded), ctypes.byref(pcReturned))
+        info = ctypes.cast(buffer, ctypes.POINTER(PRINTER_INFO_1))
+        for i in range(pcReturned.value):
+            print(info[i].pName)
+            #print info[i].pName, '=>', info[i].pDescription
+        msvcrt.free(buffer)
+        return info
 
     
