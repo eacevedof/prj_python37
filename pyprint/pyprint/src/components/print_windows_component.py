@@ -2,6 +2,7 @@ from src.factories.log_factory import get_log
 from src.components.cmd_component import CmdComponent
 import win32print
 
+# https://es.stackoverflow.com/questions/4185/imprimir-datos-en-una-impresora-desde-python-en-windows
 # Use EnumPrintersW to list local printers with their names and descriptions.
 # Tested with CPython 2.7.10 and IronPython 2.7.5.
 
