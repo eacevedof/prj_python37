@@ -3,6 +3,7 @@ from src.components.cmd_component import CmdComponent
 import win32print
 
 # http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
+
 # https://es.stackoverflow.com/questions/4185/imprimir-datos-en-una-impresora-desde-python-en-windows
 # http://timgolden.me.uk/python/win32_how_do_i/print.html
 # Use EnumPrintersW to list local printers with their names and descriptions.
