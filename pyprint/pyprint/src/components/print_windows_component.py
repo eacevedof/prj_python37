@@ -2,6 +2,7 @@ from src.factories.log_factory import get_log
 from src.components.cmd_component import CmdComponent
 import win32print
 
+# integratos
 # http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
 # https://es.stackoverflow.com/questions/4185/imprimir-datos-en-una-impresora-desde-python-en-windows
