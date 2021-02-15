@@ -1,10 +1,13 @@
 import os
 
+# https://github.com/eacevedof/prj_phpapify/blob/master/backend/vendor/theframework/components/session/component_encdecrypt.php
+
 class EncdecryptComponent:
 
-    def __init__(self, subtype: str="", pathfolder:str=""):
-        self.__subtype = subtype if subtype else "debug"
-        self.__pathfolder = self.__get_pathfolder(pathfolder)
-        today = self.__get_today()
-        self.__filename = f"app_{today}.log"
-        self.__fix_folder()
+    def __init__(self, usesalt: bool=True, pathfolder:str=""):
+        self.__sSslMethod = "AES-256-CBC"
+        self.__sSslKey = "@11111111@"
+        self.__sSslIv = "99326425"
+        self.__useSalt = usesalt
+        self.__sSalt = "@#$.salt.$#@"
+
