@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  alchemy:
+    container_name: cont-py38
+    hostname: py38
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    
+    volumes:
+      - ./pyinstaller-sh:/app/pyinstaller-sh
+      - ./compiled:/app/compiled
+      - ./pyprint:/app/pyprint
+
+    # debug vscode
+    ports:
+       - "8080:8080"
+       - "5678:5678"
+    # mantiene el contenedor en ejecución
+    # command: tail -f /dev/null toma 10 segundos en parar el contenedor
+    # tty: true #toma 2 segundos en parar el contenedor (si se tiene entrypoint este no va)
+    entrypoint: /usr/src/entrypoint.sh # da un error y tira el contenedor
+
+    privileged: true
+    devices:
+        - '/dev:/dev'
+        # read_only: true
+    networks:
+      - pyprintnet
+
+networks:
+  pyprintnet:
+      name: pyprintnet
