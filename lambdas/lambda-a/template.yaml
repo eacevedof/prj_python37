@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Template
+
+Globals:
+  Function:
+    Timeout: 600
+
+Resources:
+  AFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda-a/
+      Handler: function.index.fn_a
+      Runtime: python3.8
