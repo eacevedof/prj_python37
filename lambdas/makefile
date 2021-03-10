@@ -9,7 +9,7 @@ fn-b-start:
 	cd lambda-b; sam local start-lambda -p 3050 --debug
 
 fn-a:
-	cd lambda-a; sam local invoke "AFunction"
+	cd lambda-a; sam local invoke "AFunction" --debug
 
 fn-b:
-	cd lambda-b; sam local invoke "BpFunction"
+	cd lambda-b; sam local invoke "BpFunction" --debug
