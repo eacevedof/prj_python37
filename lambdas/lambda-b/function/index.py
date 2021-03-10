@@ -1,9 +1,9 @@
 from pprint import pprint
 
 
-def fn_a(event, context):
+def fn_b(event, context):
     pprint(event)
     pprint(context)
     return (
-        "Hello im function A",
+        "Hello im function B",
     )
