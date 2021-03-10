@@ -10,18 +10,22 @@ def invoke_fn_b():
     lambda_client = boto3.client('lambda',
                              config=config_lambda,
                              endpoint_url='http://docker.for.mac.localhost:3050')
-    lambda_client.invoke(
+    r=lambda_client.invoke(
         FunctionName='BFunction',
         InvocationType='RequestResponse',
         Payload='some_data'.encode('UTF-8')
     )
+    pprint(r)
+
 
 def fn_a(event, context):
+    print("\n")
     pprint(event)
+    print("\n")
     pprint(context)
-
-    #invoke_fn_b()
-
+    print("\n")
+    invoke_fn_b()
+    print("\n\n")
     return (
         "Hello im function A",
     )
