@@ -10,6 +10,6 @@ Resources:
   AFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda-a/
-      Handler: function.index.fn_a
+      CodeUri: function/
+      Handler: index.fn_a
       Runtime: python3.8
