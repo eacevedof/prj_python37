@@ -4,7 +4,7 @@ from botocore.config import Config
 
 
 def invoke_fn_b(local=1):
-    config_lambda = Config(retries={'total_max_attempts': 1}, read_timeout=1200)
+  config_lambda = Config(retries={'total_max_attempts': 1}, read_timeout=1200)
 
     if local:
         return boto3.client(
@@ -19,8 +19,17 @@ def invoke_fn_b(local=1):
         return  boto3.client(
             'lambda'
         )
-    pprint(r)
+...
+    payload = json.dumps({
+            "account_id": account_id
+        })
 
+    response = lambda_client.invoke(
+        FunctionName=lambda_function,
+        InvocationType='RequestResponse',
+        #LogType='Tail',
+        Payload=payload
+    )
 
 def fn_a(event, context):
     print("\n")
