@@ -4,6 +4,7 @@ import json
 
 
 def fn_b(event, context):
+    pprint("fn_b ini")
     now = datetime.utcnow().strftime("%Y-%m-%d-%H:%M:%S")
     eventjson = json.dumps(event)
     return {

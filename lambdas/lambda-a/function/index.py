@@ -19,7 +19,7 @@ def get_boto_client():
 
 
 def fn_a(event, context):
-
+    pprint("fn_a ini")
     now = datetime.utcnow().strftime("%Y-%m-%d-%H:%M:%S")
     eventjson = json.dumps(event)
 
