@@ -1,4 +1,6 @@
 from pprint import pprint
+import datetime
+import json
 import boto3
 from botocore.config import Config
 
@@ -32,13 +34,12 @@ def invoke_fn_b(local=1):
     )
 
 def fn_a(event, context):
-    print("\n")
-    pprint(event)
-    print("\n")
-    pprint(context)
-    print("\n")
+
     invoke_fn_b()
-    print("\n\n")
-    return (
-        "Hello im function A",
-    )
+    now = datetime.utcnow().strftime("%Y-%m-%d-%H:%M:%S")
+    eventjson = json.dumps(event)
+
+    return {
+        "event": f"input event:\n {eventjson}",
+        "success": f"This is a response succes from Lambda A {now}",
+    }
