@@ -45,7 +45,7 @@ def fn_a(event, context):
         return {
             "event": f"input event:\n {eventjson}",
             "success": f"This is a response succes from Lambda A {now}",
-            "from-lambda-b": f""
+            "from-lambda-b": f"{payload['success']}"
         }
     else:
         return {
