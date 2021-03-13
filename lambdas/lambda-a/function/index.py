@@ -10,9 +10,9 @@ def get_boto_client():
     return boto3.client(
             'lambda',
             config=config_lambda,
-            # esto no va
-            # endpoint_url='http://host.docker.internal:3050',
-            endpoint_url='http://localhost:3050',
+            # esto no va por fuera del contenedor
+            endpoint_url='http://host.docker.internal:3050',
+            # endpoint_url='http://localhost:3050',
             use_ssl=False,
             verify=False,
         )
@@ -38,6 +38,7 @@ def fn_a(event, context):
 
     if response['StatusCode'] == 200:
         payload = json.loads(response['Payload'].read())
+        pprint(payload)
         if "error" in payload:
             return {
                 "error": f"Error response from Lambda B: {payload['error']}"
