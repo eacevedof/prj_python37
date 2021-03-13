@@ -7,7 +7,7 @@ Globals:
     Timeout: 600
 
 Resources:
-  BFunction:
+  MyFunctionB:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: function/
