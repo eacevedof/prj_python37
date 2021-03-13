@@ -9,5 +9,5 @@ def fn_b(event, context):
     eventjson = json.dumps(event)
     return {
         "event": f"input event:\n {eventjson}",
-        "sucess": f"This is a successfully response from Lambda B {now}",
+        "success": f"This is a successfully response from Lambda B {now}",
     }
