@@ -10,8 +10,9 @@ def get_boto_client():
     return boto3.client(
             'lambda',
             config=config_lambda,
-            # esto no va por fuera del contenedor
+            # en mac
             endpoint_url='http://host.docker.internal:3050',
+            # en windows
             # endpoint_url='http://localhost:3050',
             use_ssl=False,
             verify=False,
@@ -27,7 +28,7 @@ def fn_a(event, context):
         response = get_boto_client().invoke(
             FunctionName="MyFunctionB",
             InvocationType='RequestResponse',
-            #LogType='Tail',
+            #LogType='Tail', # no va en local
             Payload=json.dumps({"from": "This is some payload for Lambda B"})
         )
     except Exception as ex:
