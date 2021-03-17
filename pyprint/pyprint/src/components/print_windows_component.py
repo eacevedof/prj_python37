@@ -1,5 +1,7 @@
 from src.factories.log_factory import get_log
 from src.components.cmd_component import CmdComponent
+
+# aqui salta la excepcion queda comprobar el so
 import win32print
 
 # integratos
