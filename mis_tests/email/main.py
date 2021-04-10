@@ -9,6 +9,7 @@ def get_gmail_login() -> dict:
         "pwd": ":)Abcd1234"
     }
 
+
 """
 Lista de destinatarios 
 """
@@ -18,6 +19,7 @@ def get_cc_recipients() -> List[str]:
         "to-email-2@yahoo.es",
     ]
 
+
 """
 Lista de destinatarios ocultos 
 """
@@ -25,6 +27,7 @@ def get_bcc_recipients() -> List[str]:
     return [
         "to-email-bcc@hotmail.com"
     ]
+
 
 """
 Ruta de los archivos a adjuntar 
@@ -34,15 +37,6 @@ def get_attachments() -> List[str]:
         "./example-1.txt",
         "./example-2.txt"
     ]
-
-
-def get_smtpssl_object():
-    import smtplib
-    login = get_gmail_login()
-    server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    server_ssl.ehlo()
-    server_ssl.login(login["user"], login["pwd"])
-    return server_ssl
 
 
 def get_html_template() -> str:
@@ -105,6 +99,17 @@ def get_html_template() -> str:
     </html>
     """
     return html
+
+"""
+Crea la conexión con gmail
+"""
+def get_smtpssl_object():
+    import smtplib
+    login = get_gmail_login()
+    server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    server_ssl.ehlo()
+    server_ssl.login(login["user"], login["pwd"])
+    return server_ssl
 
 
 def send_email() -> None:
