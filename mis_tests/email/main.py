@@ -115,7 +115,7 @@ def send_email() -> None:
     from email import encoders
 
     # MIME: Multipurpose Internet Mail Extensions. Mp3, Mid, mpeg, mov, nws etc
-    #the correct MIME type is multipart/alternative.
+    # mixed permite el envío de html y plain
     mime_obj = MIMEMultipart("mixed")
 
     subject = "This is an email subject from Python (example 1)"
@@ -139,6 +139,7 @@ def send_email() -> None:
     smtp_obj = get_smtpssl_object()
     smtp_obj.set_debuglevel(1)
 
+    # tratando los adjuntos (examples.txt)
     for path in get_attachments():
         part = MIMEBase('application', "octet-stream")
         with open(path, 'rb') as file:
