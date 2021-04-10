@@ -99,7 +99,7 @@ def get_html_template() -> str:
     return html
 
 
-def send_email_html(html="") -> None:
+def send_email() -> None:
     from pathlib import Path
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
@@ -121,6 +121,8 @@ def send_email_html(html="") -> None:
 
     plain_text = "This is a plain text example"
     mime_plain = MIMEText(plain_text, "plain")
+
+    html = get_html_template()
     mime_html = MIMEText(html, "html")
 
     mime_obj.attach(mime_html)
@@ -151,4 +153,4 @@ def send_email_html(html="") -> None:
 
 if __name__ == "__main__":
     html = get_html_template()
-    send_email_html(html)
+    send_email()
