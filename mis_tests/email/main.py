@@ -1,6 +1,24 @@
 from typing import List
 
 
+def get_gmail_access() -> dict:
+    return {
+        "user": "some-from@gmail.com",
+        "pwd": ":)Abcd1234"
+    }
+
+
+def get_cc_recipients() -> List[str]:
+    return [
+        "to-email-1@gmail.com",
+        "to-email-2@yahoo.es",
+    ]
+
+
+def get_bcc_recipients() -> List[str]:
+    return [
+        "to-email-bcc@hotmail.com"
+    ]
 
 
 def get_attachments() -> List[str]:
