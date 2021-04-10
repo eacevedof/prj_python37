@@ -2,6 +2,8 @@ from typing import List
 
 
 
+
+
 def get_smtpssl_object():
     import smtplib
     access = get_gmail_access()
@@ -72,35 +74,51 @@ def get_html_template() -> str:
     """
     return html
 
+
 def send_email_html(html=""):
+    from pathlib import Path
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
+    from email.mime.base import MIMEBase
+    from email import encoders
 
     # MIME: Multipurpose Internet Mail Extensions. Mp3, Mid, mpeg, mov, nws etc
     #the correct MIME type is multipart/alternative.
-    mime_obj = MIMEMultipart("alternative")
+    mime_obj = MIMEMultipart("mixed")
 
     subject = "This is an email subject from Python (example 1)"
     mime_obj["Subject"] = subject
 
-    #mime_obj["From"] = "loquesea@mimail.com" no sirve de mucho
+    #mime_obj["From"] = "loquesea@mimail.com" no tiene ningún efecto
 
-    # esto podría ir en blanco y llegaría pero el cliente de correo no podría mostrar
+    # esto podría ir en blanco y llegaría pero el cliente de correo no mostraría nada en destinatarios
     # el o los receptores es decir irian como Bcc
     mime_obj["To"] = ", ".join(get_cc_recipients())
 
     plain_text = "This is a plain text example"
-    mime_objtext1 = MIMEText(plain_text, "plain")
-    mime_objtext2 = MIMEText(html, "html")
+    mime_plain = MIMEText(plain_text, "plain")
+    mime_html = MIMEText(html, "html")
 
-    mime_obj.attach(mime_objtext1)
-    mime_obj.attach(mime_objtext2)
+    mime_obj.attach(mime_html)
+    mime_obj.attach(mime_plain)
 
     smtp_obj = get_smtpssl_object()
     smtp_obj.set_debuglevel(1)
 
+    for path in get_attachments():
+        part = MIMEBase('application', "octet-stream")
+        with open(path, 'rb') as file:
+            part.set_payload(file.read())
+
+        encoders.encode_base64(part)
+        filename = Path(path).name
+        part.add_header('Content-Disposition',f'attachment; filename="{filename}"')
+        mime_obj.attach(part)
+
     smtp_obj.sendmail(
-        "",
+        #si esto se deja en blanco también se envía. No da error pero llega a SPAM.
+        #No es necesario que coincida con el email de la cuenta de gmail
+        "anyaccount@somedomain.local",
         get_cc_recipients()+get_bcc_recipients(),
         mime_obj.as_string()
     )
