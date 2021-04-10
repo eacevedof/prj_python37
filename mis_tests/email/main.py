@@ -99,7 +99,7 @@ def get_html_template() -> str:
     return html
 
 
-def send_email_html(html=""):
+def send_email_html(html="") -> None:
     from pathlib import Path
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
