@@ -3,13 +3,11 @@ from typing import List
 
 
 
-
 def get_attachments() -> List[str]:
     return [
         "./example-1.txt",
         "./example-2.txt"
     ]
-
 
 
 def get_smtpssl_object():
