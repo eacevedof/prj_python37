@@ -1,7 +1,7 @@
 from typing import List
 
 
-def get_gmail_access() -> dict:
+def get_gmail_login() -> dict:
     return {
         "user": "some-from@gmail.com",
         "pwd": ":)Abcd1234"
@@ -30,7 +30,7 @@ def get_attachments() -> List[str]:
 
 def get_smtpssl_object():
     import smtplib
-    access = get_gmail_access()
+    access = get_gmail_login()
     server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server_ssl.ehlo()
     server_ssl.login(access["user"], access["pwd"])
