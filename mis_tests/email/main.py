@@ -30,10 +30,10 @@ def get_attachments() -> List[str]:
 
 def get_smtpssl_object():
     import smtplib
-    access = get_gmail_login()
+    login = get_gmail_login()
     server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server_ssl.ehlo()
-    server_ssl.login(access["user"], access["pwd"])
+    server_ssl.login(login["user"], login["pwd"])
     return server_ssl
 
 
