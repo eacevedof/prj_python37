@@ -1,26 +1,34 @@
 from typing import List
 
-
+"""
+Los datos de acceso a la cuenta de gmail que se usará para enviar el email
+"""
 def get_gmail_login() -> dict:
     return {
         "user": "some-from@gmail.com",
         "pwd": ":)Abcd1234"
     }
 
-
+"""
+Lista de destinatarios 
+"""
 def get_cc_recipients() -> List[str]:
     return [
         "to-email-1@gmail.com",
         "to-email-2@yahoo.es",
     ]
 
-
+"""
+Lista de destinatarios ocultos 
+"""
 def get_bcc_recipients() -> List[str]:
     return [
         "to-email-bcc@hotmail.com"
     ]
 
-
+"""
+Ruta de los archivos a adjuntar 
+"""
 def get_attachments() -> List[str]:
     return [
         "./example-1.txt",
@@ -152,5 +160,8 @@ def send_email() -> None:
 
 
 if __name__ == "__main__":
-    html = get_html_template()
-    send_email()
+    try:
+        send_email()
+    except Exception as ex:
+        print("Unexpected error: ",str(ex))
+
