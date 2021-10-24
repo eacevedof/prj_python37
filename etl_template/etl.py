@@ -3,7 +3,9 @@ from os import unlink
 import json
 from pprint import pprint
 
+# un archivo CSV cuyo separador es ;
 PATH_SOURCE_FILE = "./data/source.txt"
+# archivo destino
 PATH_TARGET_FILE = "./data/target.json"
 
 
@@ -56,7 +58,7 @@ def transform(data: str) -> str:
             "id": values[0] if 0 < len(values) else "",
             "value": values[1] if 1 < len(values) else ""
         })
-    return json.dumps(content)
+    return json.dumps(content, sort_keys=True, indent=2)
 
 
 def main():
