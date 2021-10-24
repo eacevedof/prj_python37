@@ -26,6 +26,12 @@ def load(path, data) -> None:
         unlink(path)
     file_put_contents(path, data)
 
+def handle_exception(ex: Exception) -> None:
+    if hasattr(ex, "message"):
+        print(ex.message)
+    else:
+        print(ex)
+
 def main():
     print("process start")
     try:
@@ -37,7 +43,7 @@ def main():
         load(PATH_TARGET_FILE, data)
         target_path = realpath(PATH_TARGET_FILE)
         print(f"etl finished!\nrun command:\n\ncat {target_path}\n")
-    except Exception:
-        print("Exception")
+    except Exception as ex:
+        handle_exception(ex)
 
 main()
