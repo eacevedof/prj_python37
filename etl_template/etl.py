@@ -64,10 +64,9 @@ def main():
     try:
         print("- Extracting ...\n")
         data = extract(PATH_SOURCE_FILE)
-        print("- Transforming ...\n")
+        print("\n- Transforming ...\n")
         data = transform(data)
-        pprint(data)
-        print("- Loading ...\n")
+        print("\n- Loading ...\n")
         load(PATH_TARGET_FILE, data)
         target_path = realpath(PATH_TARGET_FILE)
         print(f"\nETL finished!\nrun command:\n\ncat {target_path}\n")
