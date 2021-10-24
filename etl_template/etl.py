@@ -64,11 +64,11 @@ def transform(data: str) -> str:
 def main():
     print("process start")
     try:
-        print("- Extracting ...\n")
+        print("- Extracting (1/3)...\n")
         data = extract(PATH_SOURCE_FILE)
-        print("\n- Transforming ...\n")
+        print("\n- Transforming (2/3)...\n")
         data = transform(data)
-        print("\n- Loading ...\n")
+        print("\n- Loading (3/3)...\n")
         load(PATH_TARGET_FILE, data)
         target_path = realpath(PATH_TARGET_FILE)
         print(f"\nETL finished!\nrun command:\n\ncat {target_path}\n")
