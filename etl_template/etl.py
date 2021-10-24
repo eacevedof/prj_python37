@@ -21,11 +21,17 @@ def file_put_contents(path: str, data: str) -> None:
 
 def extract(path: str) -> str:
     content = get_file_content(path)
-    return content.strip(" ")
+    if not content:
+        return ""
+    content = content.strip(" ")
+    pprint(content)
+    return content
 
-def load(path, data) -> None:
+
+def load(path: str, data: str) -> None:
     if exists(path):
         unlink(path)
+    pprint(data)
     file_put_contents(path, data)
 
 
@@ -42,13 +48,13 @@ def transform(data: str) -> str:
         return ""
 
     lines = data.split("\n")
+    pprint(lines)
     content = []
     for line in lines:
         values = line.split(";")
-        pprint(values)
         content.append({
-            "id": values[0] if 0<len(values) else "",
-            "value": values[1] if 1<len(values) else ""
+            "id": values[0] if 0 < len(values) else "",
+            "value": values[1] if 1 < len(values) else ""
         })
     return json.dumps(content)
 
@@ -56,15 +62,15 @@ def transform(data: str) -> str:
 def main():
     print("process start")
     try:
-        print("- Extracting ...")
+        print("- Extracting ...\n")
         data = extract(PATH_SOURCE_FILE)
-        print("- Transforming ...")
+        print("- Transforming ...\n")
         data = transform(data)
         pprint(data)
-        print("- Loading ...")
+        print("- Loading ...\n")
         load(PATH_TARGET_FILE, data)
         target_path = realpath(PATH_TARGET_FILE)
-        print(f"etl finished!\nrun command:\n\ncat {target_path}\n")
+        print(f"\nETL finished!\nrun command:\n\ncat {target_path}\n")
     except Exception as ex:
         handle_exception(ex)
 

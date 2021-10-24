@@ -1,12 +1,1 @@
-[
-  {"id": "id", "value": "value"},
-  {"id": "01", "value": "aaaa"},
-  {"id": "02", "value": "bbbb"},
-  {"id": "03", "value": "cccc"},
-  {"id": "04", "value": "dddd"},
-  {"id": "10", "value": "eeee"},
-  {"id": "11", "value": "ffff"},
-  {"id": "20", "value": "gggg"},
-  {"id": "21", "value": "hhhh"},
-  {"id": "", "value": ""}
-]
+[{"id": "id", "value": "value"}, {"id": "01", "value": "aaaa"}, {"id": "02", "value": "bbbb"}, {"id": "03", "value": "cccc"}, {"id": "04", "value": "dddd"}, {"id": "10", "value": "eeee"}, {"id": "11", "value": "ffff"}, {"id": "20", "value": "gggg"}, {"id": "21", "value": "hhhh"}, {"id": "", "value": ""}]
