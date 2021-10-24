@@ -36,7 +36,7 @@ def handle_exception(ex: Exception) -> None:
     if hasattr(ex, "message"):
         print(ex.message)
     else:
-        print(ex)
+        print(repr(ex))
 
 
 def main():
