@@ -4,33 +4,40 @@ from os import unlink
 PATH_SOURCE_FILE = "./data/source.txt"
 PATH_TARGET_FILE = "./data/target.json"
 
+
 def get_file_content(path: str) -> str:
     if not exists(path):
         return ""
     with open(path) as f:
         return f.read()
 
+
 def file_put_contents(path: str, data: str) -> None:
     with open(path, "a") as f:
         f.write(data)
+
 
 def extract(path: str) -> str:
     content = get_file_content(path)
     return content.strip(" ")
 
+
 def transform(data) -> str:
     return ""
+
 
 def load(path, data) -> None:
     if exists(path):
         unlink(path)
     file_put_contents(path, data)
 
+
 def handle_exception(ex: Exception) -> None:
     if hasattr(ex, "message"):
         print(ex.message)
     else:
         print(ex)
+
 
 def main():
     print("process start")
@@ -45,5 +52,6 @@ def main():
         print(f"etl finished!\nrun command:\n\ncat {target_path}\n")
     except Exception as ex:
         handle_exception(ex)
+
 
 main()
