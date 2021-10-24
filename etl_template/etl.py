@@ -30,7 +30,7 @@ def extract(path: str) -> str:
     return content
 
 
-def load(path: str, data: str) -> None:
+def load(data: str, path: str) -> None:
     if exists(path):
         unlink(path)
     print(data)
@@ -69,7 +69,7 @@ def main():
         print("\n- Transforming (2/3)...\n")
         data = transform(data)
         print("\n- Loading (3/3)...\n")
-        load(PATH_TARGET_FILE, data)
+        load(data, PATH_TARGET_FILE)
         target_path = realpath(PATH_TARGET_FILE)
         print(f"\nETL finished!\nrun command:\n\ncat {target_path}\n")
     except Exception as ex:
