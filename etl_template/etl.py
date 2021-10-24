@@ -1,5 +1,7 @@
 from os.path import exists, realpath
 from os import unlink
+import json
+from pprint import pprint
 
 PATH_SOURCE_FILE = "./data/source.txt"
 PATH_TARGET_FILE = "./data/target.json"
@@ -21,11 +23,6 @@ def extract(path: str) -> str:
     content = get_file_content(path)
     return content.strip(" ")
 
-
-def transform(data) -> str:
-    return ""
-
-
 def load(path, data) -> None:
     if exists(path):
         unlink(path)
@@ -39,6 +36,21 @@ def handle_exception(ex: Exception) -> None:
         print(repr(ex))
 
 
+def transform(data: str) -> str:
+    if not data:
+        return ""
+
+    lines = data.split("\n")
+    content = []
+    for line in lines:
+        values = line.split(";")
+        content.append({
+            "id": values[0],
+            "value": values[1]
+        })
+    return json.dumps(content)
+
+
 def main():
     print("process start")
     try:
@@ -46,6 +58,7 @@ def main():
         data = extract(PATH_SOURCE_FILE)
         print("- Transforming ...")
         data = transform(data)
+        pprint(data)
         print("- Loading ...")
         load(PATH_TARGET_FILE, data)
         target_path = realpath(PATH_TARGET_FILE)
