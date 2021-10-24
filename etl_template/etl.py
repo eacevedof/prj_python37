@@ -1,4 +1,5 @@
-from os.path import exists
+from os.path import exists, realpath
+from os import unlink
 
 PATH_SOURCE_FILE = "./data/source.txt"
 PATH_TARGET_FILE = "./data/target.json"
@@ -21,13 +22,21 @@ def transform(data) -> str:
     return ""
 
 def load(path, data) -> None:
+    if exists(path):
+        unlink(path)
     file_put_contents(path, data)
 
 def main():
+    print("process start")
     try:
+        print("- Extracting ...")
         data = extract(PATH_SOURCE_FILE)
+        print("- Transforming ...")
         data = transform(data)
+        print("- Loading ...")
         load(PATH_TARGET_FILE, data)
+        target_path = realpath(PATH_TARGET_FILE)
+        print(f"etl finished!\nrun command:\n\ncat {target_path}\n")
     except Exception:
         print("Exception")
 
