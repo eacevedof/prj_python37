@@ -166,8 +166,5 @@ def send_email() -> None:
 
 
 if __name__ == "__main__":
-    try:
-        send_email()
-    except Exception as ex:
-        print("Unexpected error: ",str(ex))
+    send_email()
 

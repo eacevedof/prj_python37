@@ -1,4 +1,4 @@
-PATH_SOURCE_FILE = ""
+PATH_SOURCE_FILE = "./data/source.txt"
 PATH_DESTINY_FILE = ""
 
 def get_file_content(path):
