@@ -33,7 +33,7 @@ def extract(path: str) -> str:
 def load(path: str, data: str) -> None:
     if exists(path):
         unlink(path)
-    pprint(data)
+    print(data)
     file_put_contents(path, data)
 
 
