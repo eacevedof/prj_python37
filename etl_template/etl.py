@@ -30,6 +30,7 @@ def load(path, data) -> None:
 
 
 def handle_exception(ex: Exception) -> None:
+    print("ERROR:")
     if hasattr(ex, "message"):
         print(ex.message)
     else:
@@ -44,9 +45,10 @@ def transform(data: str) -> str:
     content = []
     for line in lines:
         values = line.split(";")
+        pprint(values)
         content.append({
-            "id": values[0],
-            "value": values[1]
+            "id": values[0] if 0<len(values) else "",
+            "value": values[1] if 1<len(values) else ""
         })
     return json.dumps(content)
 
