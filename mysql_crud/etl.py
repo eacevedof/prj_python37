@@ -73,23 +73,20 @@ def transform(r:List[Dict]) -> None:
 
 
 def load_into_db2(r: List[Dict]) -> None:
-    query = QueryBuilder()
-    sql = query\
-        .set_comment("some insert")\
-        .set_table("app_array")\
-        .add_insert_fv("code_erp","un-code-erp")\
-        .add_insert_fv("`type`","borrame")\
-        .add_insert_fv("code_cache","uuu-1234")\
-        .get_insert()
+    sqls = []
+    for i, row in enumerate(r):
+        comment = f"row "+str(i)
+        query = QueryBuilder()
+        query.set_table("app_array").set_comment(comment)
+        for field in row:
+            value = row.get(field)
+            query.add_insert_fv(field, value)
 
-    pprint(sql)
+        sqls.append(query.get_insert())
+
+    sqls = ";".join(sqls) + ";"
     db2 = get_db2()
-    r = db2.exec(sql)
-    errors = db2.get_errors()
-    if errors:
-        print("errors:\n")
-        pprint(errors)
-
+    db2.exec(sqls)
 
 def index():
     delete_db2()
