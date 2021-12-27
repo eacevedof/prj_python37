@@ -7,7 +7,7 @@ def get_db():
         "server": "localhost",
         "user": "root",
         "password": "1234",
-        "database": "db_anytest2",
+        "database": "db_anytest",
         #"port": 3307
     })
     return db
