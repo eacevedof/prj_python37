@@ -9,7 +9,6 @@ class ComponentCrud:
         self.__table = ""
 
         self.__argetfields = []
-        self.__arpks = []
         self.__arnumeric = [] #campos trtados como numeros para evitar '' en los insert/update
 
         self.__arjoins = []
@@ -27,21 +26,6 @@ class ComponentCrud:
 
         self.__sql = ""
 
-    def __get_pk_ands(self)->List[str]:
-        ands = []
-        for d_pk in self.__arpks:
-            field = d_pk.get("field", "")
-            if not field:
-                continue
-            value = d_pk.get("value",None)
-            if value is None:
-                ands.append(f"{field} IS null")
-            elif field in self.__arnumeric:
-                ands.append(f"{field} = {value}")
-            else:
-                ands.append(f"{field} = '{value}'")
-        return ands
-
     def get_select_from(self)->str:
         self.__sql = ""
         sql = "-- get_selectfrom"
@@ -57,13 +41,12 @@ class ComponentCrud:
             sql += f"DISTINCT "
 
         sql += ", ".join(self.__argetfields)
-        sql += f" FROM {self.__table}"
+        sql += f" FROM {self.__table} "
         sql += self.__get_joins()
-
-        ands = self.__get_pk_ands()
-        ands += self.__arands
-
-        sql += " WHERE " + " AND ".join(ands) if ands else ""
+        sql += "WHERE 1 "
+        ands = self.__arands
+        if ands:
+            sql += "AND " + " AND ".join(ands) + " "
         sql += self.__get_groupby()
         sql += self.__get_having()
         sql += self.__get_orderby()
@@ -106,16 +89,20 @@ class ComponentCrud:
             return sql
 
         comment = f"/*{self.__comment}*/" if self.__comment else ""
-        sql = f"{comment} DELETE FROM {self.__table}"
+        sql = f"{comment} DELETE FROM {self.__table} "
 
-        sql += " WHERE " + " AND ".join(self.__arands) if self.__arands else ""
+        sql += "WHERE "
+        ands = self.__arands
+        if ands:
+            sql += " AND ".join(ands)
+
         self.__sql = sql.strip()
         return self.__sql
 
     def get_update(self)->str:
         self.__sql = ""
-        sql = "-- get_delete"
-        if not self.__table:
+        sql = "-- get_update"
+        if not self.__table or not self.__arands:
             return sql
 
         comment = f"/*{self.__comment}*/" if self.__comment else ""
@@ -136,11 +123,13 @@ class ComponentCrud:
             else:
                 aux.append(f"{field}='{value}'")
 
-        sql += " ,".join(aux)
+        sql += " ,".join(aux) + " "
 
-        ands = self.__get_pk_ands()
-        ands += self.__arands
-        sql += " WHERE 1 " + ("AND "+" AND ".join(ands)) if ands else ""
+        sql += "WHERE "
+        ands = self.__arands
+        if ands:
+            sql += " AND ".join(ands)
+
         self.__sql = sql.strip()
         return self.__sql
 
