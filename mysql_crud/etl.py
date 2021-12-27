@@ -70,7 +70,7 @@ def transform(r:List[Dict]) -> List[Dict]:
             "code_erp"      : row.get("id", ""),
             "description"   : (row.get("description", " desc") + " " + now) if row.get("description", "") is not None else None,
             "type"          : row.get("type",None),
-            "code_cache"    : uuid.uuid1()
+            "code_cache"    : str(uuid.uuid1())
         }
         rows.append(d)
     return rows
