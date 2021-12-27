@@ -107,6 +107,14 @@ def load_into_db2(r: List[Dict]) -> None:
 
 
 def index():
+    """
+    por más que abro conexiones en el listado de hilos conectados y procesos solo se muestra 1 más
+    es decir, 2 (1 de yog y otro de python)
+    """
+    x1 = get_db1()
+    x2 = get_db1()
+    x3 = get_db2()
+    x4 = get_db2()
     delete_db2()
     r = extract_from_db1()
     r = transform(r)
