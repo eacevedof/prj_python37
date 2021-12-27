@@ -2,14 +2,14 @@ from __future__ import annotations
 from typing import Optional, Any, List
 
 
-class ComponentCrud:
+class QueryBuilder:
 
     def __init__(self):
         self.__comment = ""
         self.__table = ""
 
         self.__argetfields = []
-        self.__arnumeric = [] #campos trtados como numeros para evitar '' en los insert/update
+        self.__arnumeric = [] #campos tratados como numeros para evitar '' en los insert/update
 
         self.__arjoins = []
         self.__arands = []

@@ -1,9 +1,9 @@
 from pprint import pprint
-from components.component_crud import ComponentCrud
-from components.component_mysql import ComponentMysql
+from components.querybuilder import QueryBuilder
+from components.connector import Connector
 
 def get_db():
-    db = ComponentMysql(arconn={
+    db = Connector(arconn={
         "server": "localhost",
         "user": "root",
         "password": "1234",
@@ -14,8 +14,8 @@ def get_db():
 
 
 def select():
-    crud = ComponentCrud()
-    sql = crud.\
+    query = QueryBuilder()
+    sql = query.\
         set_comment("some comment")\
         .set_table("app_array as m").add_getfield("id").add_getfield("code_erp").add_getfield("description")\
         .add_getfield("type")\
@@ -28,8 +28,8 @@ def select():
 
 
 def insert():
-    crud = ComponentCrud()
-    sql = crud\
+    query = QueryBuilder()
+    sql = query\
         .set_comment("some insert")\
         .set_table("app_array")\
         .add_insert_fv("code_erp","un-code-erp")\
@@ -51,7 +51,7 @@ def insert():
 
 
 def update():
-    sql = (ComponentCrud())\
+    sql = (QueryBuilder())\
         .set_comment("some update")\
         .set_table("app_array")\
         .add_update_fv("code_erp","xxxx")\
@@ -65,7 +65,7 @@ def update():
 
 
 def delete():
-    sql = (ComponentCrud())\
+    sql = (QueryBuilder())\
         .set_comment("some delete")\
         .set_table("app_array")\
         .add_and("type = 'borrame'")\

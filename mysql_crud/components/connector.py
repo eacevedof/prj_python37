@@ -4,7 +4,7 @@ import mysql.connector
 from typing import Dict, List
 
 
-class ComponentMysql:
+class Connector:
 
     def __init__(self, arconn = Dict):
         self.__arerrors = []
