@@ -5,6 +5,17 @@ from components.querybuilder import QueryBuilder
 from components.connector import Connector
 
 
+def delete():
+    sql = (QueryBuilder())\
+        .set_comment("some delete")\
+        .set_table("app_array")\
+        .add_and("type = 'borrame'")\
+        .get_delete()
+    pprint(sql)
+    db2 = get_db2()
+    db2.exec(sql)
+
+
 def get_db():
     db = Connector(arconn={
         "server": "localhost",
@@ -55,28 +66,12 @@ def load(r: List[Dict]) -> None:
         .get_insert()
 
     pprint(sql)
-    db = get_db()
-    r = db.exec(sql)
-    errors = db.get_errors()
+    db2 = get_db2()
+    r = db2.exec(sql)
+    errors = db2.get_errors()
     if errors:
+        print("errors:\n")
         pprint(errors)
-
-    pprint(r)
-
-    id = db.get_lastid()
-    pprint(id)
-
-
-def delete():
-    sql = (QueryBuilder())\
-        .set_comment("some delete")\
-        .set_table("app_array")\
-        .add_and("type = 'borrame'")\
-        .get_delete()
-    pprint(sql)
-    db = get_db()
-    db.exec(sql)
-
 
 def index():
     delete()

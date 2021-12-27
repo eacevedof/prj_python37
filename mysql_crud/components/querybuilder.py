@@ -26,7 +26,7 @@ class QueryBuilder:
 
         self.__sql = ""
 
-    def get_select_from(self)->str:
+    def get_select_from(self) -> str:
         self.__sql = ""
         sql = "-- get_selectfrom"
         if not self.__table or not self.__argetfields:
@@ -55,7 +55,7 @@ class QueryBuilder:
         self.__sql = sql.strip()
         return self.__sql
 
-    def get_insert(self)->str:
+    def get_insert(self) -> str:
         self.__sql = ""
         sql = "-- get_insert"
         if not self.__table:
@@ -82,7 +82,7 @@ class QueryBuilder:
         self.__sql = sql
         return self.__sql
 
-    def get_delete(self)->str:
+    def get_delete(self) -> str:
         self.__sql = ""
         sql = "-- get_delete"
         if not self.__table or not self.__arands:
@@ -99,7 +99,7 @@ class QueryBuilder:
         self.__sql = sql.strip()
         return self.__sql
 
-    def get_update(self)->str:
+    def get_update(self) -> str:
         self.__sql = ""
         sql = "-- get_update"
         if not self.__table or not self.__arands:
@@ -132,7 +132,18 @@ class QueryBuilder:
 
         self.__sql = sql.strip()
         return self.__sql
-
+    
+    def get_truncate(self) -> str:
+        self.__sql = ""
+        sql = "-- truncate"
+        if not self.__table:
+            return sql
+        
+        comment = f"/*{self.__comment}*/" if self.__comment else ""
+        sql = f"{comment} TRUNCATE TABLE {self.__table}"
+        self.__sql = sql
+        return self.__sql
+    
     def __get_joins(self)-> str:
         tmp = QueryBuilder.__get_unique(self.__arjoins)
         strjoins = " " + "\n".join(tmp) if tmp else ""
