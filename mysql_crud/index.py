@@ -26,6 +26,7 @@ def select():
     r = get_db().query(sql)
     pprint(r)
 
+
 def insert():
     crud = ComponentCrud()
     sql = crud\
@@ -48,6 +49,7 @@ def insert():
     id = db.get_lastid()
     pprint(id)
 
+
 def update():
     sql = (ComponentCrud())\
         .set_comment("some update")\
@@ -61,6 +63,7 @@ def update():
     db = get_db()
     db.exec(sql)
 
+
 def delete():
     sql = (ComponentCrud())\
         .set_comment("some delete")\
@@ -70,6 +73,7 @@ def delete():
     pprint(sql)
     db = get_db()
     db.exec(sql)
+
 
 def index():
     delete()
