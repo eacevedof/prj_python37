@@ -7,18 +7,6 @@ from components.querybuilder import QueryBuilder
 from components.connector import Connector
 
 
-def delete_db2():
-    pprint("...delete db2 \n")
-    sql = (QueryBuilder())\
-        .set_comment("some delete")\
-        .set_table("app_array")\
-        .add_and("1")\
-        .get_delete()
-    pprint(sql)
-    db2 = get_db2()
-    db2.exec(sql)
-
-
 def get_db1():
     db = Connector(arconn={
         "server": "localhost",
@@ -53,7 +41,9 @@ def extract_from_db1() -> List[Dict]:
         .get_select_from()
 
     pprint(sql)
-    r = get_db1().query(sql)
+    db1 = get_db1()
+    r = db1.query(sql)
+    db1.close()
     return r
 
 
@@ -75,6 +65,16 @@ def transform(r:List[Dict]) -> List[Dict]:
         rows.append(d)
     return rows
 
+def delete_db2():
+    pprint("...delete db2 \n")
+    sql = (QueryBuilder())\
+        .set_comment("some delete")\
+        .set_table("app_array")\
+        .add_and("1")\
+        .get_delete()
+    pprint(sql)
+    db2 = get_db2()
+    db2.exec(sql)
 
 def load_into_db2(r: List[Dict]) -> None:
     print("...load into db2 \n")
