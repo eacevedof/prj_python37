@@ -123,6 +123,9 @@ def index():
 index()
 
 """
+docker exec -it --user root cont-mariadb-univ bash;
+mysql -u root -p
+
 show status where `variable_name` = 'Threads_connected';
 show processlist;
 """
