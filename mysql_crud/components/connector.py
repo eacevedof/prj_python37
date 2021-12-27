@@ -29,6 +29,7 @@ class Connector:
     def close(self) -> None:
         if self.__connection and self.__connection.is_connected():
             self.__connection.close()
+            self.__connection.disconnect()
         self.__connection = None
 
     def query(self, sql: str) -> List:
@@ -65,7 +66,11 @@ class Connector:
         try:
             conn = self.__get_connection()
             cursor = conn.cursor()
-            cursor.execute(sql, multi=ismulti)
+            if not ismulti:
+                cursor.execute(sql)
+            else:
+                for r in cursor.execute(sql, multi=ismulti): pass;
+
             conn.commit()
             self.__iaffectedrows = cursor.rowcount
             if sql.find("INSERT INTO ("):
