@@ -61,11 +61,11 @@ class Connector:
             return int(result[0][0])
         return -1
 
-    def exec(self, sql: str):
+    def exec(self, sql: str, ismulti:bool = False) -> None:
         try:
             conn = self.__get_connection()
             cursor = conn.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, multi=ismulti)
             conn.commit()
             self.__iaffectedrows = cursor.rowcount
             if sql.find("INSERT INTO ("):

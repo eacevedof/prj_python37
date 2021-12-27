@@ -69,7 +69,7 @@ def transform(r:List[Dict]) -> List[Dict]:
         d = {
             "code_erp"      : row.get("id", ""),
             "description"   : (row.get("description", " desc") + " " + now) if row.get("description", "") is not None else None,
-            "type"          : row.get("type",None),
+            "`type`"          : row.get("type",None),
             "code_cache"    : str(uuid.uuid1())
         }
         rows.append(d)
@@ -91,7 +91,10 @@ def load_into_db2(r: List[Dict]) -> None:
 
     sqls = ";".join(sqls) + ";"
     db2 = get_db2()
-    db2.exec(sqls)
+    db2.exec(sqls, True)
+    if db2.is_error():
+        pprint("ERROR in db2\n")
+        pprint(db2.get_errors())
 
 
 def index():
