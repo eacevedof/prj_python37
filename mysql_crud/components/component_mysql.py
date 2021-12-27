@@ -55,10 +55,10 @@ class ComponentMysql:
 
     @staticmethod
     def __get_last_insert_id(cursor) -> int:
-        cursor.execute("LAST_INSERT_ID() id")
+        cursor.execute("SELECT LAST_INSERT_ID() id")
         result = cursor.fetchall()
         if result:
-            return int(result[0].get("id",-1))
+            return int(result[0][0])
         return -1
 
     def exec(self, sql: str):

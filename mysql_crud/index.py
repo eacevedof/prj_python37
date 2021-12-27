@@ -12,7 +12,7 @@ def get_db():
     })
     return db
 
-def index():
+def select():
     crud = ComponentCrud()
     sql = crud.\
         set_comment("some comment")\
@@ -24,7 +24,35 @@ def index():
     pprint(sql)
     r = get_db().query(sql)
     pprint(r)
-    pass
+
+def insert():
+    crud = ComponentCrud()
+    sql = crud\
+        .set_comment("some insert")\
+        .set_table("app_array")\
+        .add_insert_fv("code_erp","un-code-erp")\
+        .add_insert_fv("`type`","borrame")\
+        .add_insert_fv("code_cache","uuu-1234")\
+        .get_insert()
+
+    pprint(sql)
+    db = get_db()
+    r = db.exec(sql)
+    errors = db.get_errors()
+    if errors:
+        pprint(errors)
+
+    pprint(r)
+
+    id = db.get_lastid()
+    pprint(id)
+
+
+def index():
+    select()
+    insert()
+    #update()
+    #delete()
 
 index()
 
