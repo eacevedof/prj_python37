@@ -39,7 +39,7 @@ def get_db2():
     return db
 
 def extract_from_db1() -> List[Dict]:
-    pprint("extract from db 1 ...")
+    print("...extract from db1 \n")
     query = QueryBuilder()
     sql = query.\
         set_comment("some comment")\
@@ -57,6 +57,7 @@ def extract_from_db1() -> List[Dict]:
 
 
 def transform(r:List[Dict]) -> None:
+    print("...transform db1 \n")
     now = datetime.now()
     now = now.strftime("%Y-%m-%d:%H:%M:%S")
 
@@ -73,6 +74,7 @@ def transform(r:List[Dict]) -> None:
 
 
 def load_into_db2(r: List[Dict]) -> None:
+    print("...load into db2 \n")
     sqls = []
     for i, row in enumerate(r):
         comment = f"row "+str(i)
