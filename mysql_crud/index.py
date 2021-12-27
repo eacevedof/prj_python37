@@ -7,10 +7,11 @@ def get_db():
         "server": "localhost",
         "user": "root",
         "password": "1234",
-        "database": "db_anytest",
+        "database": "db_anytest2",
         #"port": 3307
     })
     return db
+
 
 def select():
     crud = ComponentCrud()
@@ -64,7 +65,6 @@ def delete():
     sql = (ComponentCrud())\
         .set_comment("some delete")\
         .set_table("app_array")\
-        .add_and("id = 296")\
         .add_and("type = 'borrame'")\
         .get_delete()
     pprint(sql)
