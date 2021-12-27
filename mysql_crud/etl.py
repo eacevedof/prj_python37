@@ -96,7 +96,8 @@ def load_into_db2(r: List[Dict]) -> None:
     if db2.is_error():
         pprint("ERROR in db2\n")
         pprint(db2.get_errors())
-
+    db2.close()
+    pprint("  === end ===")
 
 def index():
     delete_db2()
