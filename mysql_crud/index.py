@@ -47,12 +47,31 @@ def insert():
     id = db.get_lastid()
     pprint(id)
 
+def update():
+    sql = (ComponentCrud())\
+        .set_comment("some update")\
+        .set_table("app_array")\
+        .add_update_fv("code_erp","xxxx")\
+        .add_update_fv("`type`","yyyy")\
+        .add_update_fv("code_cache","uuu-5248")\
+        .add_and("1")\
+        .get_update()
+    pprint(sql)
+
+
+def delete():
+    sql = (ComponentCrud())\
+        .set_comment("some delete")\
+        .set_table("app_array")\
+        .add_and("id = 296")\
+        .get_delete()
+    pprint(sql)
 
 def index():
     select()
     insert()
-    #update()
-    #delete()
+    update()
+    delete()
 
 index()
 
