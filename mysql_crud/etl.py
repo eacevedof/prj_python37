@@ -72,6 +72,7 @@ def delete_db2():
         .set_table("app_array")\
         .add_and("1")\
         .get_delete()
+    sql = (QueryBuilder()).set_comment(" truncate all").set_table("app_array").get_truncate()
     pprint(sql)
     db2 = get_db2()
     db2.exec(sql)
