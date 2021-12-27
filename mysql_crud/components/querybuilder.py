@@ -134,22 +134,22 @@ class QueryBuilder:
         return self.__sql
 
     def __get_joins(self)-> str:
-        tmp = ComponentCrud.__get_unique(self.__arjoins)
+        tmp = QueryBuilder.__get_unique(self.__arjoins)
         strjoins = " " + "\n".join(tmp) if tmp else ""
         return strjoins
 
     def __get_groupby(self)-> str:
-        tmp = ComponentCrud.__get_unique(self.__argroupby)
+        tmp = QueryBuilder.__get_unique(self.__argroupby)
         strgroupby = " GROUP BY " + ", ".join(tmp) if tmp else ""
         return strgroupby
 
     def __get_having(self)-> str:
-        tmp = ComponentCrud.__get_unique(self.__arhaving)
+        tmp = QueryBuilder.__get_unique(self.__arhaving)
         strhaving = " HAVING " + ", ".join(tmp) if tmp else ""
         return strhaving
 
     def __get_orderby(self)-> str:
-        tmp = ComponentCrud.__get_unique(self.__arorderby)
+        tmp = QueryBuilder.__get_unique(self.__arorderby)
         strorderby = " ORDER BY " + ", ".join(tmp) if tmp else ""
         return strorderby
 
@@ -164,53 +164,53 @@ class QueryBuilder:
         """
         return strlimit
 
-    def set_table(self, name:str) -> ComponentCrud:
+    def set_table(self, name:str) -> QueryBuilder:
         self.__table = name
         return self
 
-    def set_comment(self, comment:str) -> ComponentCrud:
+    def set_comment(self, comment:str) -> QueryBuilder:
         self.__comment = comment
         return self
 
-    def add_insert_fv(self, field:str, value:Any, dosanitize:bool = True) -> ComponentCrud:
+    def add_insert_fv(self, field:str, value:Any, dosanitize:bool = True) -> QueryBuilder:
         self.__arinsertfv.append({
             "field": field,
             "value": self.get_sanitized(value) if dosanitize else value
         })
         return self
 
-    def add_update_fv(self, field:str, value:Any, dosanitize:bool = True) -> ComponentCrud:
+    def add_update_fv(self, field:str, value:Any, dosanitize:bool = True) -> QueryBuilder:
         self.__arupdatefv.append({
             "field": field,
             "value": self.get_sanitized(value) if dosanitize else value
         })
         return self
 
-    def set_getfields(self, fields: List[str]) -> ComponentCrud:
+    def set_getfields(self, fields: List[str]) -> QueryBuilder:
         self.__argetfields = fields
         return self
 
-    def add_getfield(self, field:str) -> ComponentCrud:
+    def add_getfield(self, field:str) -> QueryBuilder:
         self.__argetfields.append(field)
         return self
 
-    def set_joins(self, joins: List[str]) -> ComponentCrud:
+    def set_joins(self, joins: List[str]) -> QueryBuilder:
         self.__arjoins = joins
         return self
 
-    def set_orderby(self, orderbys: List[str]) -> ComponentCrud:
+    def set_orderby(self, orderbys: List[str]) -> QueryBuilder:
         self.__arorderby = orderbys
         return self
 
-    def set_groupby(self, groupbys: List[str]) -> ComponentCrud:
+    def set_groupby(self, groupbys: List[str]) -> QueryBuilder:
         self.__argroupby = groupbys
         return self
 
-    def set_having(self, havings: List[str]) -> ComponentCrud:
+    def set_having(self, havings: List[str]) -> QueryBuilder:
         self.__arhaving = havings
         return self
 
-    def set_limit(self, ippage:int=1000, iregfrom:int=0) -> ComponentCrud:
+    def set_limit(self, ippage:int=1000, iregfrom:int=0) -> QueryBuilder:
         self.__arlimit = []
         self.__arlimit.append(str(iregfrom))
         self.__arlimit.append(str(ippage))
@@ -230,42 +230,42 @@ class QueryBuilder:
     def __get_unique(array:List)->List:
         return list(set(array))
 
-    def is_distinct(self, ison:bool = True) -> ComponentCrud:
+    def is_distinct(self, ison:bool = True) -> QueryBuilder:
         self.__isdistinct = ison
         return self
 
-    def is_foundrows(self, ison:bool = True) -> ComponentCrud:
+    def is_foundrows(self, ison:bool = True) -> QueryBuilder:
         self.__isfoundrows = ison
         return self
 
-    def add_numeric(self, fieldname:str) -> ComponentCrud:
+    def add_numeric(self, fieldname:str) -> QueryBuilder:
         self.__arnumeric.append(fieldname)
         return self
 
-    def add_and(self, strand:str) -> ComponentCrud:
+    def add_and(self, strand:str) -> QueryBuilder:
         self.__arands.append(strand)
         return self
 
-    def add_and_in(self, field:str, values:List, isnum:bool = True) -> ComponentCrud:
+    def add_and_in(self, field:str, values:List, isnum:bool = True) -> QueryBuilder:
         values = list(set(values))
         strin = ",".join(values) if isnum else "','".join(values)
         strin = f"({strin})" if isnum else f"('{strin}')"
         self.__arands.append(f"{field} IN {strin}")
         return self
 
-    def add_join(self, strjoin:str)-> ComponentCrud:
+    def add_join(self, strjoin:str)-> QueryBuilder:
         #to-do key argument
         self.__arjoins.append(strjoin)
         return self
 
-    def add_orderby(self, field:str, sorder:str="ASC")-> ComponentCrud:
+    def add_orderby(self, field:str, sorder:str="ASC")-> QueryBuilder:
         self.__arorderby.append(f"{field} {sorder}")
         return self
 
-    def add_groupby(self, field:str)-> ComponentCrud:
+    def add_groupby(self, field:str)-> QueryBuilder:
         self.__argroupby.append(field)
         return self
 
-    def add_having(self, field:str)-> ComponentCrud:
+    def add_having(self, field:str)-> QueryBuilder:
         self.__arhaving.append(field)
         return self
