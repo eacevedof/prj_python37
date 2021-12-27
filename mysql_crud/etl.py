@@ -12,7 +12,7 @@ def delete_db2():
     sql = (QueryBuilder())\
         .set_comment("some delete")\
         .set_table("app_array")\
-        .add_and("type = 'borrame'")\
+        .add_and("1")\
         .get_delete()
     pprint(sql)
     db2 = get_db2()
@@ -57,21 +57,23 @@ def extract_from_db1() -> List[Dict]:
     return r
 
 
-def transform(r:List[Dict]) -> None:
+def transform(r:List[Dict]) -> List[Dict]:
     print("...transform db1 \n")
     now = datetime.now()
     now = now.strftime("%Y-%m-%d:%H:%M:%S")
 
+    pprint(r)
     rows = []
-    for row in r:
+    for i,row in enumerate(r):
+        pprint(f"i={str(i)}")
         d = {
             "code_erp"      : row.get("id", ""),
-            "description"   : row.get("description", " desc") + " " + now,
+            "description"   : (row.get("description", " desc") + " " + now) if row.get("description", "") is not None else None,
             "type"          : row.get("type",None),
             "code_cache"    : uuid.uuid1()
         }
         rows.append(d)
-    r = rows
+    return rows
 
 
 def load_into_db2(r: List[Dict]) -> None:
@@ -95,7 +97,7 @@ def load_into_db2(r: List[Dict]) -> None:
 def index():
     delete_db2()
     r = extract_from_db1()
-    transform(r)
+    r = transform(r)
     load_into_db2(r)
 
 index()
