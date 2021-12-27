@@ -65,7 +65,7 @@ def transform(r:List[Dict]) -> List[Dict]:
     pprint(r)
     rows = []
     for i,row in enumerate(r):
-        pprint(f"i={str(i)}")
+        #pprint(f"i={str(i)}")
         d = {
             "code_erp"      : row.get("id", ""),
             "description"   : (row.get("description", " desc") + " " + now) if row.get("description", "") is not None else None,
@@ -78,6 +78,7 @@ def transform(r:List[Dict]) -> List[Dict]:
 
 def load_into_db2(r: List[Dict]) -> None:
     print("...load into db2 \n")
+    pprint(r)
     sqls = []
     for i, row in enumerate(r):
         comment = f"row "+str(i)
