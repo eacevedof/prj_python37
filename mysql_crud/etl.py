@@ -43,7 +43,10 @@ def extract_from_db1() -> List[Dict]:
     pprint(sql)
     db1 = get_db1()
     r = db1.query(sql)
-    db1.close()
+    #db1.close()
+
+    db11 = get_db1()
+    db12 = get_db1()
     return r
 
 
@@ -99,7 +102,7 @@ def load_into_db2(r: List[Dict]) -> None:
     if db2.is_error():
         pprint("ERROR in db2\n")
         pprint(db2.get_errors())
-    db2.close()
+    #db2.close()
     pprint("  === end ===")
 
 
