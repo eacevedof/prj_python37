@@ -1,5 +1,7 @@
 from typing import Dict, List
 
+from datetime import datetime
+import uuid
 from pprint import pprint
 from components.querybuilder import QueryBuilder
 from components.connector import Connector
@@ -41,7 +43,10 @@ def extract_from_db1() -> List[Dict]:
     query = QueryBuilder()
     sql = query.\
         set_comment("some comment")\
-        .set_table("app_array as m").add_getfield("id").add_getfield("code_erp").add_getfield("description")\
+        .set_table("app_array as m")\
+        .add_getfield("id")\
+        .add_getfield("code_erp")\
+        .add_getfield("description")\
         .add_getfield("type")\
         .add_and("m.id > 10")\
         .get_select_from()
@@ -52,7 +57,19 @@ def extract_from_db1() -> List[Dict]:
 
 
 def transform(r:List[Dict]) -> None:
+    now = datetime.now()
+    now = now.strftime("%Y-%m-%d:%H:%M:%S")
 
+    rows = []
+    for row in r:
+        d = {
+            "code_erp"      : row.get("id", ""),
+            "description"   : row.get("description", " desc") + " " + now,
+            "type"          : row.get("type",None),
+            "code_cache"    : uuid.uuid1()
+        }
+        rows.append(d)
+    r = rows
 
 
 def load_into_db2(r: List[Dict]) -> None:
