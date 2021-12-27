@@ -90,6 +90,7 @@ def load_into_db2(r: List[Dict]) -> None:
     db2 = get_db2()
     db2.exec(sqls)
 
+
 def index():
     delete_db2()
     r = extract_from_db1()
