@@ -77,6 +77,7 @@ def delete_db2():
     db2 = get_db2()
     db2.exec(sql)
 
+
 def load_into_db2(r: List[Dict]) -> None:
     print("...load into db2 \n")
     pprint(r)
@@ -99,6 +100,7 @@ def load_into_db2(r: List[Dict]) -> None:
         pprint(db2.get_errors())
     db2.close()
     pprint("  === end ===")
+
 
 def index():
     delete_db2()
