@@ -65,6 +65,7 @@ def transform(r:List[Dict]) -> List[Dict]:
         rows.append(d)
     return rows
 
+
 def delete_db2():
     pprint("...delete db2 \n")
     sql = (QueryBuilder())\
