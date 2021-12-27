@@ -8,6 +8,7 @@ from components.connector import Connector
 
 
 def delete_db2():
+    pprint("...delete db2 \n")
     sql = (QueryBuilder())\
         .set_comment("some delete")\
         .set_table("app_array")\
