@@ -57,21 +57,25 @@ def update():
         .add_and("1")\
         .get_update()
     pprint(sql)
-
+    db = get_db()
+    db.exec(sql)
 
 def delete():
     sql = (ComponentCrud())\
         .set_comment("some delete")\
         .set_table("app_array")\
         .add_and("id = 296")\
+        .add_and("type = 'borrame'")\
         .get_delete()
     pprint(sql)
+    db = get_db()
+    db.exec(sql)
 
 def index():
-    select()
+    delete()
     insert()
     update()
-    delete()
+    select()
 
 index()
 
