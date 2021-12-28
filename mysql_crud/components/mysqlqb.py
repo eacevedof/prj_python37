@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, Any, List
 
 
-class QueryBuilder:
+class MysqlQB:
 
     def __init__(self):
         self.__comment = ""
