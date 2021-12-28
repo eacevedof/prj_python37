@@ -20,7 +20,7 @@ def get_db1():
 
 def get_db2():
     db = Connector(arconn={
-        "server": "localhost",
+        "host": "localhost",
         "user": "root",
         "password": "1234",
         "database": "db_anytest2",

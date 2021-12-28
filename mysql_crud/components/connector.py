@@ -17,7 +17,7 @@ class Connector:
     def __get_connection(self):
         if not self.__connection:
             self.__connection = mysql.connector.connect(
-                host=self.__arconn.get("server",""),
+                host=self.__arconn.get("host",""),
                 user=self.__arconn.get("user",""),
                 password=self.__arconn.get("password",""),
                 database=self.__arconn.get("database",""),
