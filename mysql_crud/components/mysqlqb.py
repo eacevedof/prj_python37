@@ -234,7 +234,7 @@ class MysqlQB:
         if value is None:
             return None
         if isinstance(value, str):
-            return value.replace("'", "\'")
+            return value.replace("'", "\\'")
         return value
 
     @staticmethod
