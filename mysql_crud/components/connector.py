@@ -16,8 +16,7 @@ class Connector:
 
     def __get_connection(self):
         if not self.__connection:
-            self.__connection = mysql.connector.connect(**self.__arconn
-            )
+            self.__connection = mysql.connector.connect(**self.__arconn)
         return self.__connection
 
     def close(self) -> None:
