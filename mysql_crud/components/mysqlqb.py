@@ -145,22 +145,22 @@ class MysqlQB:
         return self.__sql
     
     def __get_joins(self)-> str:
-        tmp = QueryBuilder.__get_unique(self.__arjoins)
+        tmp = MysqlQB.__get_unique(self.__arjoins)
         strjoins = " " + "\n".join(tmp) if tmp else ""
         return strjoins
 
     def __get_groupby(self)-> str:
-        tmp = QueryBuilder.__get_unique(self.__argroupby)
+        tmp = MysqlQB.__get_unique(self.__argroupby)
         strgroupby = " GROUP BY " + ", ".join(tmp) if tmp else ""
         return strgroupby
 
     def __get_having(self)-> str:
-        tmp = QueryBuilder.__get_unique(self.__arhaving)
+        tmp = MysqlQB.__get_unique(self.__arhaving)
         strhaving = " HAVING " + ", ".join(tmp) if tmp else ""
         return strhaving
 
     def __get_orderby(self)-> str:
-        tmp = QueryBuilder.__get_unique(self.__arorderby)
+        tmp = MysqlQB.__get_unique(self.__arorderby)
         strorderby = " ORDER BY " + ", ".join(tmp) if tmp else ""
         return strorderby
 
@@ -175,53 +175,53 @@ class MysqlQB:
         """
         return strlimit
 
-    def set_table(self, name:str) -> QueryBuilder:
+    def set_table(self, name:str) -> MysqlQB:
         self.__table = name
         return self
 
-    def set_comment(self, comment:str) -> QueryBuilder:
+    def set_comment(self, comment:str) -> MysqlQB:
         self.__comment = comment
         return self
 
-    def add_insert_fv(self, field:str, value:Any, dosanitize:bool = True) -> QueryBuilder:
+    def add_insert_fv(self, field:str, value:Any, dosanitize:bool = True) -> MysqlQB:
         self.__arinsertfv.append({
             "field": field,
             "value": self.get_sanitized(value) if dosanitize else value
         })
         return self
 
-    def add_update_fv(self, field:str, value:Any, dosanitize:bool = True) -> QueryBuilder:
+    def add_update_fv(self, field:str, value:Any, dosanitize:bool = True) -> MysqlQB:
         self.__arupdatefv.append({
             "field": field,
             "value": self.get_sanitized(value) if dosanitize else value
         })
         return self
 
-    def set_getfields(self, fields: List[str]) -> QueryBuilder:
+    def set_getfields(self, fields: List[str]) -> MysqlQB:
         self.__argetfields = fields
         return self
 
-    def add_getfield(self, field:str) -> QueryBuilder:
+    def add_getfield(self, field:str) -> MysqlQB:
         self.__argetfields.append(field)
         return self
 
-    def set_joins(self, joins: List[str]) -> QueryBuilder:
+    def set_joins(self, joins: List[str]) -> MysqlQB:
         self.__arjoins = joins
         return self
 
-    def set_orderby(self, orderbys: List[str]) -> QueryBuilder:
+    def set_orderby(self, orderbys: List[str]) -> MysqlQB:
         self.__arorderby = orderbys
         return self
 
-    def set_groupby(self, groupbys: List[str]) -> QueryBuilder:
+    def set_groupby(self, groupbys: List[str]) -> MysqlQB:
         self.__argroupby = groupbys
         return self
 
-    def set_having(self, havings: List[str]) -> QueryBuilder:
+    def set_having(self, havings: List[str]) -> MysqlQB:
         self.__arhaving = havings
         return self
 
-    def set_limit(self, ippage:int=1000, iregfrom:int=0) -> QueryBuilder:
+    def set_limit(self, ippage:int=1000, iregfrom:int=0) -> MysqlQB:
         self.__arlimit = []
         self.__arlimit.append(str(iregfrom))
         self.__arlimit.append(str(ippage))
@@ -241,42 +241,42 @@ class MysqlQB:
     def __get_unique(array:List)->List:
         return list(set(array))
 
-    def is_distinct(self, ison:bool = True) -> QueryBuilder:
+    def is_distinct(self, ison:bool = True) -> MysqlQB:
         self.__isdistinct = ison
         return self
 
-    def is_foundrows(self, ison:bool = True) -> QueryBuilder:
+    def is_foundrows(self, ison:bool = True) -> MysqlQB:
         self.__isfoundrows = ison
         return self
 
-    def add_numeric(self, fieldname:str) -> QueryBuilder:
+    def add_numeric(self, fieldname:str) -> MysqlQB:
         self.__arnumeric.append(fieldname)
         return self
 
-    def add_and(self, strand:str) -> QueryBuilder:
+    def add_and(self, strand:str) -> MysqlQB:
         self.__arands.append(strand)
         return self
 
-    def add_and_in(self, field:str, values:List, isnum:bool = True) -> QueryBuilder:
+    def add_and_in(self, field:str, values:List, isnum:bool = True) -> MysqlQB:
         values = list(set(values))
         strin = ",".join(values) if isnum else "','".join(values)
         strin = f"({strin})" if isnum else f"('{strin}')"
         self.__arands.append(f"{field} IN {strin}")
         return self
 
-    def add_join(self, strjoin:str)-> QueryBuilder:
+    def add_join(self, strjoin:str)-> MysqlQB:
         #to-do key argument
         self.__arjoins.append(strjoin)
         return self
 
-    def add_orderby(self, field:str, sorder:str="ASC")-> QueryBuilder:
+    def add_orderby(self, field:str, sorder:str="ASC")-> MysqlQB:
         self.__arorderby.append(f"{field} {sorder}")
         return self
 
-    def add_groupby(self, field:str)-> QueryBuilder:
+    def add_groupby(self, field:str)-> MysqlQB:
         self.__argroupby.append(field)
         return self
 
-    def add_having(self, field:str)-> QueryBuilder:
+    def add_having(self, field:str)-> MysqlQB:
         self.__arhaving.append(field)
         return self
