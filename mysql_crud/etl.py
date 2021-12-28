@@ -48,7 +48,9 @@ def extract_from_db1() -> List[Dict]:
     #db1.close()
 
     db11 = get_db1()
+    r = db11.query(sql)
     db12 = get_db1()
+    r = db12.query(sql)
     return r
 
 
