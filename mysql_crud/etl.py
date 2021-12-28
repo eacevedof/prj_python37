@@ -40,7 +40,7 @@ def extract_from_db1() -> List[Dict]:
         .add_getfield("description")\
         .add_getfield("type")\
         .add_and("m.id > 10")\
-        .get_select_from()
+        .get_select()
 
     pprint(sql)
 
