@@ -9,7 +9,7 @@ from components.connector import Connector
 
 def get_db1():
     db = Connector(arconn={
-        "server": "localhost",
+        "host": "localhost",
         "user": "root",
         "password": "1234",
         "database": "db_anytest",
