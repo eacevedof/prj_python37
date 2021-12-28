@@ -17,14 +17,14 @@ def index():
         .get_select_from()
     pr(sql)
 
-    sql = (MysqlQB("app_array")) .set_comment("some insert")\
+    sql = (MysqlQB("app_array")).set_comment("some insert")\
         .add_insert_fv("code_erp","un-code-erp")\
         .add_insert_fv("`type`","borrame")\
         .add_insert_fv("code_cache","uuu-1234")\
         .get_insert()
     pr(sql)
 
-    sql = (MysqlQB("app_array")) .set_comment("some update")\
+    sql = (MysqlQB("app_array")).set_comment("some update")\
         .add_update_fv("code_erp","xxxx")\
         .add_update_fv("`type`","yyyy")\
         .add_update_fv("code_cache","uuu-5248")\
@@ -32,11 +32,16 @@ def index():
         .get_update()
     pr(sql)
 
-    sql = (MysqlQB("app_array")) .set_comment("some update")\
-        .add_update_fv("code_erp","xxxx")\
-        .add_update_fv("`type`","yyyy")\
-        .add_update_fv("code_cache","uuu-5248")\
-        .add_and("field = 22")\
-        .get_update()
-    pr(sql)
+    somevalue = "'xxx''x'z'x'''x'x'\"'yyy"
+    somevalue = MysqlQB.get_sanitized(somevalue)
+    sql = (MysqlQB("app_array"))\
+        .set_comment("some delete")\
+        .set_table("app_array")\
+        .add_and("type = 'borrame'")\
+        .add_and("fieldy = 22")\
+        .add_and(f"fieldx = '{somevalue}'")\
+        .get_delete()
+    print(sql)
+
+
 index()
