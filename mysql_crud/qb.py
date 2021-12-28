@@ -18,11 +18,12 @@ def index():
     pr(sql)
 
     sql = (MysqlQB("app_array")).set_comment("some insert")\
-        .add_insert_fv("code_erp","un-code-erp")\
+        .add_insert_fv("code_erp","x'z\" un-code-erp")\
         .add_insert_fv("`type`","borrame")\
         .add_insert_fv("code_cache","uuu-1234")\
         .get_insert()
-    pr(sql)
+    print(sql)
+    print("")
 
     sql = (MysqlQB("app_array")).set_comment("some update")\
         .add_update_fv("code_erp","xxxx")\
@@ -30,7 +31,8 @@ def index():
         .add_update_fv("code_cache","uuu-5248")\
         .add_and("field = 22")\
         .get_update()
-    pr(sql)
+    print(sql)
+    print("")
 
     somevalue = "'xxx''x'z'x'''x'x'\"'yyy"
     somevalue = MysqlQB.get_sanitized(somevalue)
@@ -42,6 +44,12 @@ def index():
         .add_and(f"fieldx = '{somevalue}'")\
         .get_delete()
     print(sql)
+    print("")
 
+    sql = (MysqlQB("app_array"))\
+        .set_comment("truncate example")\
+        .get_truncate()
+    print(sql)
+    print("")
 
 index()
