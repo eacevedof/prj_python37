@@ -26,7 +26,7 @@ class MysqlQB:
 
         self.__sql = ""
 
-    def get_select_from(self) -> str:
+    def get_select(self) -> str:
         self.__sql = ""
         sql = "-- get_selectfrom"
         if not self.__table or not self.__argetfields:

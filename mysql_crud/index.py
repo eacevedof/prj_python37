@@ -20,7 +20,7 @@ def select():
         .set_table("app_array as m").add_getfield("id").add_getfield("code_erp").add_getfield("description")\
         .add_getfield("type")\
         .add_and("m.id > 10")\
-        .get_select_from()
+        .get_select()
 
     pprint(sql)
     r = get_db().query(sql)
