@@ -3,12 +3,12 @@ from typing import Dict, List
 from datetime import datetime
 import uuid
 from pprint import pprint
-from components.querybuilder import QueryBuilder
-from components.connector import Connector
+from components.mysqlqb import MysqlQB
+from components.mysqlcli import MysqlCli
 
 
 def get_db1():
-    db = Connector(arconn={
+    db = MysqlCli(arconn={
         "host": "localhost",
         "user": "root",
         "password": "1234",
@@ -19,7 +19,7 @@ def get_db1():
 
 
 def get_db2():
-    db = Connector(arconn={
+    db = MysqlCli(arconn={
         "host": "localhost",
         "user": "root",
         "password": "1234",
@@ -31,7 +31,7 @@ def get_db2():
 
 def extract_from_db1() -> List[Dict]:
     print("...extract from db1 \n")
-    query = QueryBuilder()
+    query = MysqlQB()
     sql = query.\
         set_comment("some comment")\
         .set_table("app_array as m")\
@@ -83,12 +83,12 @@ def transform(r:List[Dict]) -> List[Dict]:
 
 def delete_db2():
     pprint("...delete db2 \n")
-    sql = (QueryBuilder())\
+    sql = (MysqlQB())\
         .set_comment("some delete")\
         .set_table("app_array")\
         .add_and("1")\
         .get_delete()
-    sql = (QueryBuilder()).set_comment(" truncate all").set_table("app_array").get_truncate()
+    sql = (MysqlQB()).set_comment(" truncate all").set_table("app_array").get_truncate()
     pprint(sql)
     db2 = get_db2()
     db2.exec(sql)
@@ -100,7 +100,7 @@ def load_into_db2(r: List[Dict]) -> None:
     sqls = []
     for i, row in enumerate(r):
         comment = f"row "+str(i)
-        query = QueryBuilder()
+        query = MysqlQB()
         query.set_table("app_array").set_comment(comment)
         for field in row:
             value = row.get(field)
