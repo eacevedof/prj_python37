@@ -17,6 +17,7 @@ def get_db1():
     })
     return db
 
+
 def get_db2():
     db = Connector(arconn={
         "server": "localhost",
@@ -26,6 +27,7 @@ def get_db2():
         #"port": 3307
     })
     return db
+
 
 def extract_from_db1() -> List[Dict]:
     print("...extract from db1 \n")
