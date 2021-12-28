@@ -1,9 +1,9 @@
 from pprint import pprint
-from components.querybuilder import QueryBuilder
-from components.connector import Connector
+from components.mysqlqb import MysqlQB
+from components.mysqlcli import MysqlCli
 
 def get_db():
-    db = Connector(arconn={
+    db = MysqlCli(arconn={
         "server": "localhost",
         "user": "root",
         "password": "1234",
@@ -14,7 +14,7 @@ def get_db():
 
 
 def select():
-    query = QueryBuilder()
+    query = MysqlQB()
     sql = query.\
         set_comment("some comment")\
         .set_table("app_array as m").add_getfield("id").add_getfield("code_erp").add_getfield("description")\
@@ -28,7 +28,7 @@ def select():
 
 
 def insert():
-    query = QueryBuilder()
+    query = MysqlQB()
     sql = query\
         .set_comment("some insert")\
         .set_table("app_array")\
@@ -51,7 +51,7 @@ def insert():
 
 
 def update():
-    sql = (QueryBuilder())\
+    sql = (MysqlQB())\
         .set_comment("some update")\
         .set_table("app_array")\
         .add_update_fv("code_erp","xxxx")\
@@ -65,7 +65,7 @@ def update():
 
 
 def delete():
-    sql = (QueryBuilder())\
+    sql = (MysqlQB())\
         .set_comment("some delete")\
         .set_table("app_array")\
         .add_and("type = 'borrame'")\

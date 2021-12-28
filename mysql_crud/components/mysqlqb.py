@@ -43,7 +43,7 @@ class MysqlQB:
         sql += ", ".join(self.__argetfields)
         sql += f" FROM {self.__table} "
         sql += self.__get_joins()
-        sql += "WHERE 1 "
+        sql += " WHERE 1 "
         ands = self.__arands
         if ands:
             sql += "AND " + " AND ".join(ands) + " "
@@ -123,7 +123,7 @@ class MysqlQB:
             else:
                 aux.append(f"{field}='{value}'")
 
-        sql += " ,".join(aux) + " "
+        sql += ", ".join(aux) + " "
 
         sql += "WHERE "
         ands = self.__arands
