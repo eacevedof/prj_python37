@@ -43,14 +43,19 @@ def extract_from_db1() -> List[Dict]:
         .get_select_from()
 
     pprint(sql)
+
     db1 = get_db1()
     r = db1.query(sql)
     #db1.close()
 
     db11 = get_db1()
     r = db11.query(sql)
+
     db12 = get_db1()
     r = db12.query(sql)
+
+    db13 = get_db1()
+    r = db13.query(sql)
     return r
 
 
@@ -115,10 +120,6 @@ def index():
     por más que abro conexiones en el listado de hilos conectados y procesos solo se muestra 1 más
     es decir, 2 (1 de yog y otro de python)
     """
-    x1 = get_db1()
-    x2 = get_db1()
-    x3 = get_db2()
-    x4 = get_db2()
     delete_db2()
     r = extract_from_db1()
     r = transform(r)
