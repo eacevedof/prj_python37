@@ -11,7 +11,7 @@ import os
 
 
 def pdf_splitter(path):
-    fname = os.path.splitext(os.path.basename(path))[0]
+    # fname = os.path.splitext(os.path.basename(path))[0]
     pdf = PdfFileReader(path)
     for page in range(pdf.getNumPages()):
         if page<638:
@@ -24,13 +24,20 @@ def pdf_splitter(path):
         print("Created: {}".format(output_filename))
 
 
-def merger(output_path, input_paths):
+def merge():
+    scanned = os.scandir(dir_splitted)
+    for item in scanned:
+        if item.is_file():
+            input_paths = f"{dir_splitted}/{item.name}"
+
     pdf_writer = PdfFileWriter()
     for path in input_paths:
         pdf_reader = PdfFileReader(path)
         for page in range(pdf_reader.getNumPages()):
             pdf_writer.addPage(pdf_reader.getPage(page))
-    with open(output_path, "wb") as fh:
+
+    with open(file_merged, "wb") as fh:
         pdf_writer.write(fh)
 
 # pdf_splitter(file)
+merge()
