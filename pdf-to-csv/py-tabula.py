@@ -1,7 +1,7 @@
 # pip uninstall tabula; install tabula-py
 
 from files import *
-import tabula
+from tabula import read_pdf
 import sys
 from pprint import pprint
 # Read a PDF File
@@ -13,8 +13,17 @@ from pprint import pprint
 
 # area (top,left,bottom,right)
 #df = tabula.read_pdf(file, lattice=True,pages=[639])
-df = tabula.read_pdf(file, stream=True, pages=[639, 640])
-pprint(df); sys.exit()
+# df = tabula.read_pdf(file, stream=True, pages=[639, 640])
+df = table_pdf = read_pdf(
+    file_merged,
+    guess=False,
+    pages = 1,
+    stream=True,
+    encoding="utf-8",
+    area = (96,24,558,750),
+    columns = (95, 170, 410, 435, 573)
+)
+print(df); sys.exit()
 
 # convert PDF into CSV
 tabula.convert_into(file, file_to, output_format="csv", pages=[639])
