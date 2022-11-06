@@ -42,4 +42,15 @@ def merge():
         pdf_writer.write(fh)
 
 # pdf_splitter(file)
-merge()
+#merge()
+
+def get_text():
+    reader = PdfFileReader(file_merged)
+    texts = []
+    for i_page in range(reader.getNumPages()):
+        page = reader.pages[i_page]
+        texts.append(page.extract_text())
+
+    pprint(texts[0])
+
+get_text()
