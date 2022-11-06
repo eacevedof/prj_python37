@@ -25,11 +25,14 @@ def pdf_splitter(path):
 
 
 def merge():
+    input_paths = []
     scanned = os.scandir(dir_splitted)
     for item in scanned:
         if item.is_file():
-            input_paths = f"{dir_splitted}/{item.name}"
+            input_paths.append(f"{dir_splitted}/{item.name}")
 
+    input_paths.sort()
+    pprint(input_paths)
     pdf_writer = PdfFileWriter()
     for path in input_paths:
         pdf_reader = PdfFileReader(path)
