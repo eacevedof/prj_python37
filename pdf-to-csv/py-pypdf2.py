@@ -23,4 +23,14 @@ def pdf_splitter(path):
             pdf_writer.write(out)
         print("Created: {}".format(output_filename))
 
-pdf_splitter(file)
+
+def merger(output_path, input_paths):
+    pdf_writer = PdfFileWriter()
+    for path in input_paths:
+        pdf_reader = PdfFileReader(path)
+        for page in range(pdf_reader.getNumPages()):
+            pdf_writer.addPage(pdf_reader.getPage(page))
+    with open(output_path, "wb") as fh:
+        pdf_writer.write(fh)
+
+# pdf_splitter(file)
