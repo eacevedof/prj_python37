@@ -32,7 +32,7 @@ def merge():
             input_paths.append(f"{dir_splitted}/{item.name}")
 
     input_paths.sort()
-    pprint(input_paths)
+    # pprint(input_paths)
     pdf_writer = PdfFileWriter()
     for path in input_paths:
         pdf_reader = PdfFileReader(path)
