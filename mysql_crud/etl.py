@@ -42,7 +42,7 @@ def extract_from_db1() -> List[Dict]:
         .add_and("m.id > 10")\
         .get_select()
 
-    pprint(sql)
+    print(sql)
 
     db1 = get_db1()
     r = db1.query(sql)
@@ -67,7 +67,7 @@ def transform(r:List[Dict]) -> List[Dict]:
     now = datetime.now()
     now = now.strftime("%Y-%m-%d:%H:%M:%S")
 
-    pprint(r)
+    #pprint(r)
     rows = []
     for i,row in enumerate(r):
         #pprint(f"i={str(i)}")
@@ -89,14 +89,14 @@ def delete_db2():
         .add_and("1")\
         .get_delete()
     sql = (MysqlQB()).set_comment(" truncate all").set_table("app_array").get_truncate()
-    pprint(sql)
+    print(sql)
     db2 = get_db2()
     db2.exec(sql)
 
 
 def load_into_db2(r: List[Dict]) -> None:
     print("...load into db2 \n")
-    pprint(r)
+    #pprint(r)
     sqls = []
     for i, row in enumerate(r):
         comment = f"row "+str(i)
@@ -109,13 +109,14 @@ def load_into_db2(r: List[Dict]) -> None:
         sqls.append(query.get_insert())
 
     sqls = ";".join(sqls) + ";"
+    print(sqls)
     db2 = get_db2()
     db2.exec(sqls, True)
     if db2.is_error():
         pprint("ERROR in db2\n")
         pprint(db2.get_errors())
     #db2.close()
-    pprint("  === end ===")
+    pprint("  === ETL end ===")
 
 
 def index():
