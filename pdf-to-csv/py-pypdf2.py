@@ -23,7 +23,6 @@ def pdf_splitter(path):
             pdf_writer.write(out)
         print("Created: {}".format(output_filename))
 
-
 def merge():
     input_paths = []
     scanned = os.scandir(dir_splitted)
