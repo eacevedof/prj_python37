@@ -22,10 +22,19 @@ def chk(txt, ar_map, ar_text, font, d):
 
 
 parts = []
-def visitor_body(text, cm, tm, fontDict, fontSize):
-    y = tm[5]
-    if y > 50 and y < 720:
-        parts.append(text)
+def visitor_body(text, cm, text_matrix, fontDict, fontSize):
+    dic = {
+        "text": text,
+        "pos": [text_matrix[3],text_matrix[4],text_matrix[5],],
+    }
+    if text_matrix[4]!= 0.0 and text_matrix[5]!=0.0:
+        pprint(dic)
+
+    #pprint(text_matrix)
+    #if text_matrix[1] != 0.0:
+
+    #parts.append(dic)
+
 
 def get_text():
     reader = PdfFileReader(file_merged)
@@ -33,10 +42,11 @@ def get_text():
     for i_page in range(reader.getNumPages()):
         page = reader.pages[i_page]
         texts.append(page.extract_text(visitor_text=visitor_body))
-        print(texts[0])
+        #print(texts[0])
         sys.exit()
 
 
-    print(texts[0])
+    #print(texts[0])
+
 
 get_text()
