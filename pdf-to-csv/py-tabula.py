@@ -38,7 +38,7 @@ convert_into(
     file_merged,
     file_to,
     output_format="tsv",
-    pages=[1,2,3,4,5],
-    columns = [95, 95+76, 95+318, 95+346, 95+395,95+494,95+574,95+639]
+    pages="all",
+    columns = [0, 95, 95+76, 95+318, 95+346, 95+395,95+494,95+574,95+639]
 )
 
