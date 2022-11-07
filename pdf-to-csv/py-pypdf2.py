@@ -51,6 +51,6 @@ def get_text():
         page = reader.pages[i_page]
         texts.append(page.extract_text())
 
-    print(texts[0])
+    print(texts[2])
 
 get_text()
