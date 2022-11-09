@@ -49,17 +49,11 @@ page_sections = {
     },
     "chapter_title": {
         # if same y and in x in codigo is regex[\d{2}.\d{2}.\d{2}] and next x in resumen and no more in otherscols
-        """
-        {
-            'coord': {'x': 90.72, 'y': 131.52},
-            'text': '01.01.01 kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8'
-        }
-        """
+
         "codigo": "01.01.01",
         "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
     },
-    "chapter_description": {
-        [
+    "chapter_description": [
             # if only in resumen
             {"codigo": "", "resumen": "a"},
             {"codigo": "", "resumen": "b"},
@@ -77,8 +71,8 @@ page_sections = {
                 "codigo": "",
                 "resumen": "TITULO 3"
             },
-        ]
-    },
+        ],
+
     "cantidades": [
         {
             # if in resumen and in cantidad
@@ -128,7 +122,7 @@ def get_title_row(line_y):
     return None
 
 
-def _is_table_header(line_y):
+def get_table_row(line_y):
     title = "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
     xs = line_y.get("xs")
     x0 = xs[0].get("x")

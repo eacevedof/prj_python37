@@ -2,7 +2,7 @@
 from files import *
 from pprint import pprint
 from PyPDF2 import PdfFileReader
-from pdf_parts import get_title_row
+from pdf_parts import *
 import sys
 
 
@@ -80,8 +80,8 @@ for i,page in enumerate(pages_by_y):
     # pprint(page_lines); sys.exit()
     for page_y in page_lines:
         row = get_title_row(page_y)
-        if row:
-            as_dicts.append(row)
+        if row: as_dicts.append(row)
+        row = get_table_row(page_y)
 
 
 pprint(as_dicts)
