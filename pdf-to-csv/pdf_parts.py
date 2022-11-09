@@ -22,6 +22,18 @@ empty_row = {
     "importe": None,
 }
 
+table_row = {
+    "codigo": "CÓDIGO",
+    "resumen": "RESUMEN",
+    "uds": "UDS",
+    "longitud": "LONGITUD",
+    "anchura": "ANCHURA",
+    "altura": "ALTURA",
+    "cantidad": "CANTIDAD",
+    "precio": "PRECIO",
+    "importe": "IMPORTE",
+}
+
 page_sections = {
     "titulo": {
         # if x=90.72 && text=="PRESUPUESTO Y MEDICIONES"
@@ -127,8 +139,9 @@ def get_table_row(line_y):
     xs = line_y.get("xs")
     x0 = xs[0].get("x")
     text = xs[0].get("text")
-    return (_is_in_column("codigo", x0) and text == title)
-
+    if _is_in_column("codigo", x0) and text == title:
+        return table_row
+    return None
 
 def _is_in_column(name, x):
     coords = columns_coords.get(name)
