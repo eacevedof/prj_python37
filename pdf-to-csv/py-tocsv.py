@@ -7,28 +7,36 @@ import sys
 # CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE
 #
 
-pages_content = []
+page_parts = []
 
 
 def visitor_body(text, cm, text_matrix, fontDict, fontSize):
+    #pprint(fontSize);sys.exit()
     dic = {
         "text": text,
-        "pos": [text_matrix[3], text_matrix[4], text_matrix[5], ],
+        "pos": [text_matrix[4], text_matrix[5]],
     }
     if text_matrix[4] != 0.0 and text_matrix[5] != 0.0:
-        pages_content.append(dic)
+        page_parts.append(dic)
 
 
 def get_text():
+    global page_parts
+    all_pages = []
     reader = PdfFileReader(file_merged)
-    texts = []
     for i_page in range(reader.getNumPages()):
+        page_parts = []
         page = reader.pages[i_page]
-        texts.append(page.extract_text(visitor_text=visitor_body))
-        pprint(pages_content)
-        sys.exit()
+        page.extract_text(visitor_text=visitor_body)
 
-    pprint(pages_content)
+        all_pages.append({
+            "page": i_page,
+            "content": page_parts.copy()
+        })
+        if i_page == 7:
+            return all_pages
 
+    return all_pages
 
-get_text()
+all_pages = get_text()
+pprint(all_pages[1])
