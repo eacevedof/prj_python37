@@ -35,32 +35,31 @@ page_sections = {
         "codigo": "01.01",
         "resumen": "ESTRUCTURA METÁLICA",
     },
-    "item": {
+    "chapter": {
         "codigo": "01.01.01",
         "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
     },
-    "item_description": {
+    "chapter_description": {
         [
             {"codigo":"","resumen":"a"},
             {"codigo":"","resumen":"b"},
             {"codigo":"","resumen":"c"},
-            {"codigo":"","resumen":""},
-            {"codigo":"","resumen":"ESTRUCTURA SUELO"},
+            {"codigo":"","resumen":""}, # is only description
+            {
+                "codigo": "",
+                "resumen": "TITULO 1"
+            },
+            {
+                "codigo": "",
+                "resumen": "TITULO 2"
+            },
+            {
+                "codigo": "",
+                "resumen": "TITULO 3"
+            },
         ]
     },
     "cantidades": [
-        {
-            "codigo": "",
-            "resumen": "TITULO 1"
-        },
-        {
-            "codigo": "",
-            "resumen": "TITULO 2"
-        },
-        {
-            "codigo": "",
-            "resumen": "TITULO 3"
-        },
         {
             "codigo": "",
             "resumen": "concepto x",
@@ -68,7 +67,13 @@ page_sections = {
             "longitud": "13,64",
             "anchura": "22.40",
         },
-    ]
+    ],
+    "chapter_total": {
+        "codigo": "", "resumen": "", "uds": "", "longitud": "",
+        "anchura": "", "altura": "",
+        # calcular por coor-x y si hay 3 numeros
+        "cantidad": "", "precio": "", "importe": "",
+    }
 }
 
 page_parts = []
