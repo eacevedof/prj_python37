@@ -10,24 +10,36 @@ columns_coords = {
     "importe": {"x1":735.84, "x2":776.16},
 }
 
+empty_row = {
+    "codigo": None,
+    "resumen": None,
+    "uds": None,
+    "longitud": None,
+    "anchura": None,
+    "altura": None,
+    "cantidad": None,
+    "precio": None,
+    "importe": None,
+}
 
-def is_title(line_y):
+
+def _is_title(line_y):
     title = "PRESUPUESTO Y MEDICIONES"
     xs = line_y.get("xs")
     x0 = xs[0].get("x")
     text = xs[0].get("text")
-    return (is_in_colum("codigo", x0) and text == title)
+    return (_is_in_colum("codigo", x0) and text == title)
 
 
-def is_table_header(line_y):
+def _is_table_header(line_y):
     title = "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
     xs = line_y.get("xs")
     x0 = xs[0].get("x")
     text = xs[0].get("text")
-    return (is_in_colum("codigo", x0) and text == title)
+    return (_is_in_colum("codigo", x0) and text == title)
 
 
-def is_in_colum(name, x):
+def _is_in_colum(name, x):
     coords = columns_coords.get(name)
     return (coords.get("x1")<=x and x<=coords.get("x2"))
 
