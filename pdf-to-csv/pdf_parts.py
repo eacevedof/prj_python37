@@ -28,7 +28,7 @@ def _is_title(line_y):
     xs = line_y.get("xs")
     x0 = xs[0].get("x")
     text = xs[0].get("text")
-    return (_is_in_colum("codigo", x0) and text == title)
+    return (_is_in_column("codigo", x0) and text == title)
 
 
 def _is_table_header(line_y):
@@ -36,10 +36,10 @@ def _is_table_header(line_y):
     xs = line_y.get("xs")
     x0 = xs[0].get("x")
     text = xs[0].get("text")
-    return (_is_in_colum("codigo", x0) and text == title)
+    return (_is_in_column("codigo", x0) and text == title)
 
 
-def _is_in_colum(name, x):
+def _is_in_column(name, x):
     coords = columns_coords.get(name)
     return (coords.get("x1")<=x and x<=coords.get("x2"))
 
