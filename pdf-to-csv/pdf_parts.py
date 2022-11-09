@@ -11,17 +11,20 @@ columns_coords = {
 }
 
 
-def is_title(dic_line):
+def is_title(line_y):
     title = "PRESUPUESTO Y MEDICIONES"
-    x = dic_line.get("pos").get("x")
-    text = dic_line.get("text")
-    return (is_in_colum("codigo", x) and text == title)
+    xs = line_y.get("xs")
+    x0 = xs[0].get("x")
+    text = xs[0].get("text")
+    return (is_in_colum("codigo", x0) and text == title)
 
-def is_table_header(dic_line):
+
+def is_table_header(line_y):
     title = "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
-    x = dic_line.get("pos").get("x")
-    text = dic_line.get("text")
-    return (is_in_colum("codigo", x) and text == title)
+    xs = line_y.get("xs")
+    x0 = xs[0].get("x")
+    text = xs[0].get("text")
+    return (is_in_colum("codigo", x0) and text == title)
 
 
 def is_in_colum(name, x):
