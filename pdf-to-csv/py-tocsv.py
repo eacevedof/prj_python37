@@ -20,6 +20,57 @@ columns = {
     "importe": {"x1":735.84, "x2":776.16},
 }
 
+page_sections = {
+    "titulo": {
+        "codigo": "PRESUPUESTO Y MEDICIONES",
+    },
+    "table_headers": {
+        "codigo": "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
+    },
+    "section": {
+        "codigo": "01",
+        "resumen":"01 VIVIENDA MODULAR"
+    },
+    "sub_section": {
+        "codigo": "01.01",
+        "resumen": "ESTRUCTURA METÁLICA",
+    },
+    "item": {
+        "codigo": "01.01.01",
+        "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
+    },
+    "item_description": {
+        [
+            {"codigo":"","resumen":"a"},
+            {"codigo":"","resumen":"b"},
+            {"codigo":"","resumen":"c"},
+            {"codigo":"","resumen":""},
+            {"codigo":"","resumen":"ESTRUCTURA SUELO"},
+        ]
+    },
+    "cantidades": [
+        {
+            "codigo": "",
+            "resumen": "TITULO 1"
+        },
+        {
+            "codigo": "",
+            "resumen": "TITULO 2"
+        },
+        {
+            "codigo": "",
+            "resumen": "TITULO 3"
+        },
+        {
+            "codigo": "",
+            "resumen": "concepto x",
+            "uds": "2",
+            "longitud": "13,64",
+            "anchura": "22.40",
+        },
+    ]
+}
+
 page_parts = []
 
 
@@ -70,6 +121,7 @@ def get_csv():
         lines = []
         processed = []
         for i,dic_line in enumerate(page_lines):
+            pprint(dic_line)
             y = dic_line.get("pos").get("y",0)
             if (y in processed): continue
             processed.append(y)
