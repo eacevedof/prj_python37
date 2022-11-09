@@ -4,22 +4,6 @@ from pprint import pprint
 from PyPDF2 import PdfFileReader
 import sys
 
-"""
-90.72 - 127	166.4 - 407.23	411 - 429.40	436.12 - 483.84	487.87 - 535	538.27 - 575.23	590.01 - 636-38	666.62 - 700.22	735.84 - 776.16
-
-"""
-columns = {
-    "codigo": {"x1": 90.72, "x2": 127},
-    "resumen": {"x1": 166.4, "x2": 407.23},
-    "uds": {"x1": 411, "x2": 429.4},
-    "longitud": {"x1": 436.12, "x2": 483.84},
-    "anchura": {"x1": 487.87, "x2": 535},
-    "altura": {"x1": 538.27, "x2": 575.23},
-    "cantidad": {"x1": 590.01, "x2": 636.38},
-    "precio": {"x1": 666.62, "x2": 700.22},
-    "importe": {"x1": 735.84, "x2": 776.16},
-}
-
 
 page_coords = []
 
@@ -87,7 +71,7 @@ def get_merged_line_with_same_y():
         })
     return transformed
 
-
+as_dicts = []
 pages_by_y = get_merged_line_with_same_y()
 for i,page in enumerate(pages_by_y):
     print(f"page {i}")
