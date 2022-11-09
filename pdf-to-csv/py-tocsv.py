@@ -32,6 +32,11 @@ page_sections = {
     "section_header": {
         # if same y and in x in codigo is regex[\d{2}] and
         # next item in x in resumen and no more in other cols
+        """
+        {'pos': {'x': 90.72, 'y': 84.32}, 'text': '\n'}
+        {'pos': {'x': 90.72, 'y': 84.32}, 'text': '01'}
+        {'pos': {'x': 166.4, 'y': 84.32}, 'text': ' VIVIENDA MODULAR'}
+        """
         "codigo": "01",
         "resumen":"01 VIVIENDA MODULAR"
     },
@@ -102,7 +107,7 @@ page_sections = {
     }
 }
 
-page_parts = []
+page_coords = []
 
 
 def visitor_body(text, cm, text_matrix, fontDict, fontSize):
@@ -115,28 +120,30 @@ def visitor_body(text, cm, text_matrix, fontDict, fontSize):
         }
     }
     if text_matrix[4] != 0.0 and text_matrix[5] != 0.0:
-        page_parts.append(dic)
+        page_coords.append(dic)
 
 
-def get_text():
-    global page_parts
+def get_text_coords():
+    global page_coords
+    
     all_pages = []
     reader = PdfFileReader(file_merged)
     for i_page in range(reader.getNumPages()):
-        page_parts = []
+        page_coords = []
         page = reader.pages[i_page]
         page.extract_text(visitor_text=visitor_body)
 
         all_pages.append({
             "page": i_page,
-            "content": page_parts.copy()
+            "content": page_coords.copy()
         })
         if i_page == 2:
             return all_pages
 
     return all_pages
 
-all_pages = get_text()
+
+all_pages = get_text_coords()
 
 def get_merged_line_with_same_y(page_lines, y):
     lines = filter(lambda line: line.get("coord").get("y")==y, page_lines)
