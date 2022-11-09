@@ -73,6 +73,18 @@ page_sections = {
         "anchura": "", "altura": "",
         # calcular por coor-x y si hay 3 numeros
         "cantidad": "", "precio": "", "importe": "",
+    },
+    "subsection_total": {
+        # si hay TOTAL y ....
+        #TOTAL 01.03.......................................... 11.455,45
+        "codigo": "", "resumen": "",
+        "uds": "TOTAL nn.pp ...........................................................................................",
+        "longitud": "",
+        "anchura": "",
+        "altura": "",
+        "cantidad": "",
+        "precio": "",
+        "importe": "11.455,45",
     }
 }
 
