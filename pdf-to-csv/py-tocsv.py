@@ -25,17 +25,17 @@ page_sections = {
         # if x=90.72 && text=="PRESUPUESTO Y MEDICIONES"
         "codigo": "PRESUPUESTO Y MEDICIONES",
     },
-    "table_headers": {
+    "table_header": {
         # if x=90.72 && text=="CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
         "codigo": "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
     },
-    "section": {
+    "section_header": {
         # if same y and in x in codigo is regex[\d{2}] and
         # next item in x in resumen and no more in other cols
         "codigo": "01",
         "resumen":"01 VIVIENDA MODULAR"
     },
-    "sub_section": {
+    "subsection_header": {
         # if same y and in x in codigo is regex[\d{2}.\d{2}] and next x in resumen and no more in otherscols
         "codigo": "01.01",
         "resumen": "ESTRUCTURA METÁLICA",
@@ -44,7 +44,7 @@ page_sections = {
         # if same y and in x in codigo is regex[\d{2}.\d{2}.\d{2}] and next x in resumen and no more in otherscols
         """
         {
-            'pos': {'x': 90.72, 'y': 131.52},
+            'coord': {'x': 90.72, 'y': 131.52},
             'text': '01.01.01 kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8'
         }
         """
@@ -109,7 +109,7 @@ def visitor_body(text, cm, text_matrix, fontDict, fontSize):
     #pprint(fontSize);sys.exit()
     dic = {
         "text": text,
-        "pos": {
+        "coord": {
             "x": text_matrix[4],
             "y": text_matrix[5],
         }
@@ -139,7 +139,7 @@ def get_text():
 all_pages = get_text()
 
 def get_merged_line_with_same_y(page_lines, y):
-    lines = filter(lambda line: line.get("pos").get("y")==y, page_lines)
+    lines = filter(lambda line: line.get("coord").get("y")==y, page_lines)
     #lines = list(lines)
     texts = list(map(lambda line: line.get("text", ""), lines))
     texts = "".join(texts)
@@ -153,7 +153,7 @@ def get_csv():
         processed = []
         for i,dic_line in enumerate(page_lines):
             pprint(dic_line)
-            y = dic_line.get("pos").get("y",0)
+            y = dic_line.get("coord").get("y", 0)
             if (y in processed): continue
             processed.append(y)
             text_line = get_merged_line_with_same_y(page_lines, y)
