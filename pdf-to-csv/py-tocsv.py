@@ -70,11 +70,11 @@ def get_merged_line_with_same_y():
     page_and_its_coord_lines = get_all_pages_coords()
 
     transformed = []
-    y_processed = []
     for page in page_and_its_coord_lines:
-        i_page = page.get("page")
+        #i_page = page.get("page")
         lines_coords = page.get("lines")
         new_lines = []
+        y_processed = []
         for lines_coord in lines_coords:
             y = lines_coord.get("coord").get("y")
             if y in y_processed:
@@ -88,27 +88,12 @@ def get_merged_line_with_same_y():
     return transformed
 
 
-by_y = get_merged_line_with_same_y()
-pprint(by_y);
-sys.exit()
+pages_by_y = get_merged_line_with_same_y()
+for i,page in enumerate(pages_by_y):
+    print(f"page {i}")
+    page_lines = page.get("page")
+    for page_y in page_lines:
+        y = page_y.get("y")
+        xs = page_y.get("xs")
+        pprint(xs)
 
-
-def get_csv():
-    global all_pages
-    for page in all_pages:
-        page_lines = page.get("content", [])
-        lines = []
-        processed = []
-        for i, dic_line in enumerate(page_lines):
-            pprint(dic_line)
-            y = dic_line.get("coord").get("y", 0)
-            if (y in processed): continue
-            processed.append(y)
-            text_line = get_merged_line_with_same_y(page_lines, y)
-            lines.append(text_line)
-        pprint(lines)
-        sys.exit()
-
-        pprint(lines)
-
-# get_csv()
