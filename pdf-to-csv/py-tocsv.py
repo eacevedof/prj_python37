@@ -2,6 +2,7 @@
 from files import *
 from pprint import pprint
 from PyPDF2 import PdfFileReader
+from pdf_parts import get_title_row
 import sys
 
 
@@ -35,7 +36,7 @@ def get_all_pages_coords():
             "page": i_page,
             "lines": page_coords.copy()
         })
-        if i_page == 1:
+        if i_page == 0:
             return all_pages
 
     return all_pages
@@ -76,8 +77,12 @@ pages_by_y = get_merged_line_with_same_y()
 for i,page in enumerate(pages_by_y):
     print(f"page {i}")
     page_lines = page.get("page")
+    # pprint(page_lines); sys.exit()
     for page_y in page_lines:
-        y = page_y.get("y")
-        xs = page_y.get("xs")
-        pprint(xs)
+        row = get_title_row(page_y)
+        if row:
+            as_dicts.append(row)
+
+
+pprint(as_dicts)
 

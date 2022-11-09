@@ -22,6 +22,93 @@ empty_row = {
     "importe": None,
 }
 
+page_sections = {
+    "titulo": {
+        # if x=90.72 && text=="PRESUPUESTO Y MEDICIONES"
+        "codigo": "PRESUPUESTO Y MEDICIONES",
+    },
+    "table_header": {
+        # if x=90.72 && text=="CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
+        "codigo": "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
+    },
+    "section_header": {
+        # if same y and in x in codigo is regex[\d{2}] and
+        # next item in x in resumen and no more in other cols
+        """
+        {'pos': {'x': 90.72, 'y': 84.32}, 'text': '\n'}
+        {'pos': {'x': 90.72, 'y': 84.32}, 'text': '01'}
+        {'pos': {'x': 166.4, 'y': 84.32}, 'text': ' VIVIENDA MODULAR'}
+        """
+        "codigo": "01",
+        "resumen": "01 VIVIENDA MODULAR"
+    },
+    "subsection_header": {
+        # if same y and in x in codigo is regex[\d{2}.\d{2}] and next x in resumen and no more in otherscols
+        "codigo": "01.01",
+        "resumen": "ESTRUCTURA METÁLICA",
+    },
+    "chapter_title": {
+        # if same y and in x in codigo is regex[\d{2}.\d{2}.\d{2}] and next x in resumen and no more in otherscols
+        """
+        {
+            'coord': {'x': 90.72, 'y': 131.52},
+            'text': '01.01.01 kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8'
+        }
+        """
+        "codigo": "01.01.01",
+        "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
+    },
+    "chapter_description": {
+        [
+            # if only in resumen
+            {"codigo": "", "resumen": "a"},
+            {"codigo": "", "resumen": "b"},
+            {"codigo": "", "resumen": "c"},
+            {"codigo": "", "resumen": ""},  # is only description
+            {
+                "codigo": "",
+                "resumen": "TITULO 1"
+            },
+            {
+                "codigo": "",
+                "resumen": "TITULO 2"
+            },
+            {
+                "codigo": "",
+                "resumen": "TITULO 3"
+            },
+        ]
+    },
+    "cantidades": [
+        {
+            # if in resumen and in cantidad
+            "codigo": "",
+            "resumen": "concepto x",
+            "uds": "2",
+            "longitud": "13,64",
+            "anchura": "22.40",
+        },
+    ],
+    "chapter_total": {
+        "codigo": "", "resumen": "", "uds": "", "longitud": "",
+        "anchura": "", "altura": "",
+        # calcular por coor-x y si hay 3 numeros
+        "cantidad": "", "precio": "", "importe": "",
+    },
+    "subsection_total": {
+        # si hay TOTAL y ....
+        # TOTAL 01.03.......................................... 11.455,45
+        "codigo": "", "resumen": "",
+        "uds": "TOTAL nn.pp ...........................................................................................",
+        "longitud": "",
+        "anchura": "",
+        "altura": "",
+        "cantidad": "",
+        "precio": "",
+        "importe": "11.455,45",
+    }
+}
+
 
 def _is_title(line_y):
     title = "PRESUPUESTO Y MEDICIONES"
@@ -29,6 +116,16 @@ def _is_title(line_y):
     x0 = xs[0].get("x")
     text = xs[0].get("text")
     return (_is_in_column("codigo", x0) and text == title)
+
+
+def get_title_row(line_y):
+    if _is_title(line_y):
+        row = empty_row.copy()
+        xs = line_y.get("xs")
+        text = xs[0].get("text")
+        row["codigo"] = text
+        return row
+    return None
 
 
 def _is_table_header(line_y):
