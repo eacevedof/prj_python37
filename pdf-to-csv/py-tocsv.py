@@ -56,20 +56,28 @@ def get_text():
 
 all_pages = get_text()
 
-def get_merged_line_with_same_y(page, x, y):
-    lines = filter(lambda line: line.get("pos").get("x")==x and line.get("pos").get("y")==y, page.get("content"))
+def get_merged_line_with_same_y(page_lines, y):
+    lines = filter(lambda line: line.get("pos").get("y")==y, page_lines)
     #lines = list(lines)
-    lines = map(lambda line: line.get("text", ""), lines)
-    return "".join(lines)
+    texts = list(map(lambda line: line.get("text", ""), lines))
+    texts = "".join(texts)
+    return texts
 
 def get_csv():
     global all_pages
     for page in all_pages:
-        dic_lines = page.get("content", [])
+        page_lines = page.get("content", [])
         lines = []
-        for dic_line in dic_lines:
-            text_line = get_merged_line_with_same_y(page, dic_line.get("pos").get("x"), dic_line.get("pos").get("y"))
+        processed = []
+        for i,dic_line in enumerate(page_lines):
+            y = dic_line.get("pos").get("y",0)
+            if (y in processed): continue
+            processed.append(y)
+            text_line = get_merged_line_with_same_y(page_lines, y)
             lines.append(text_line)
+        pprint(lines)
+        sys.exit()
+
         pprint(lines)
 
 get_csv()
