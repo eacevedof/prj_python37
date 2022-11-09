@@ -153,11 +153,11 @@ def get_line_by_y(y, lines):
 
 
 def get_merged_line_with_same_y():
-    page_coords = get_all_pages_coords()
+    page_and_its_coord_lines = get_all_pages_coords()
 
     transformed = []
     y_processed = []
-    for page in page_coords:
+    for page in page_and_its_coord_lines:
         lines_coords = page.get("lines")
         for lines_coord in lines_coords:
             y = lines_coord.get("coord").get("y")
