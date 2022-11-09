@@ -22,25 +22,38 @@ columns = {
 
 page_sections = {
     "titulo": {
+        # if x=90.72 && text=="PRESUPUESTO Y MEDICIONES"
         "codigo": "PRESUPUESTO Y MEDICIONES",
     },
     "table_headers": {
+        # if x=90.72 && text=="CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
         "codigo": "CÓDIGO RESUMEN UDS LONGITUD ANCHURA ALTURA CANTIDAD PRECIO IMPORTE"
     },
     "section": {
+        # if same y and in x in codigo is regex[\d{2}] and
+        # next item in x in resumen and no more in other cols
         "codigo": "01",
         "resumen":"01 VIVIENDA MODULAR"
     },
     "sub_section": {
+        # if same y and in x in codigo is regex[\d{2}.\d{2}] and next x in resumen and no more in otherscols
         "codigo": "01.01",
         "resumen": "ESTRUCTURA METÁLICA",
     },
     "chapter": {
+        # if same y and in x in codigo is regex[\d{2}.\d{2}.\d{2}] and next x in resumen and no more in otherscols
+        """
+        {
+            'pos': {'x': 90.72, 'y': 131.52},
+            'text': '01.01.01 kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8'
+        }
+        """
         "codigo": "01.01.01",
         "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
     },
     "chapter_description": {
         [
+            # if only in resumen
             {"codigo":"","resumen":"a"},
             {"codigo":"","resumen":"b"},
             {"codigo":"","resumen":"c"},
@@ -61,6 +74,7 @@ page_sections = {
     },
     "cantidades": [
         {
+            # if in resumen and in cantidad
             "codigo": "",
             "resumen": "concepto x",
             "uds": "2",
@@ -117,7 +131,7 @@ def get_text():
             "page": i_page,
             "content": page_parts.copy()
         })
-        if i_page == 7:
+        if i_page == 2:
             return all_pages
 
     return all_pages
