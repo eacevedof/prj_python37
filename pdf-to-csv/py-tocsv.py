@@ -9,15 +9,15 @@ import sys
 
 """
 columns = {
-    "codigo": {"x1":90.72, "x2":127},
-    "resumen": {"x1":166.4, "x2":407.23},
-    "uds": {"x1":411, "x2":429.4},
-    "longitud": {"x1":436.12, "x2":483.84},
-    "anchura": {"x1":487.87, "x2":535},
-    "altura": {"x1":538.27, "x2":575.23},
-    "cantidad": {"x1":590.01, "x2":636.38},
-    "precio": {"x1":666.62, "x2":700.22},
-    "importe": {"x1":735.84, "x2":776.16},
+    "codigo": {"x1": 90.72, "x2": 127},
+    "resumen": {"x1": 166.4, "x2": 407.23},
+    "uds": {"x1": 411, "x2": 429.4},
+    "longitud": {"x1": 436.12, "x2": 483.84},
+    "anchura": {"x1": 487.87, "x2": 535},
+    "altura": {"x1": 538.27, "x2": 575.23},
+    "cantidad": {"x1": 590.01, "x2": 636.38},
+    "precio": {"x1": 666.62, "x2": 700.22},
+    "importe": {"x1": 735.84, "x2": 776.16},
 }
 
 page_sections = {
@@ -38,7 +38,7 @@ page_sections = {
         {'pos': {'x': 166.4, 'y': 84.32}, 'text': ' VIVIENDA MODULAR'}
         """
         "codigo": "01",
-        "resumen":"01 VIVIENDA MODULAR"
+        "resumen": "01 VIVIENDA MODULAR"
     },
     "subsection_header": {
         # if same y and in x in codigo is regex[\d{2}.\d{2}] and next x in resumen and no more in otherscols
@@ -59,10 +59,10 @@ page_sections = {
     "chapter_description": {
         [
             # if only in resumen
-            {"codigo":"","resumen":"a"},
-            {"codigo":"","resumen":"b"},
-            {"codigo":"","resumen":"c"},
-            {"codigo":"","resumen":""}, # is only description
+            {"codigo": "", "resumen": "a"},
+            {"codigo": "", "resumen": "b"},
+            {"codigo": "", "resumen": "c"},
+            {"codigo": "", "resumen": ""},  # is only description
             {
                 "codigo": "",
                 "resumen": "TITULO 1"
@@ -95,7 +95,7 @@ page_sections = {
     },
     "subsection_total": {
         # si hay TOTAL y ....
-        #TOTAL 01.03.......................................... 11.455,45
+        # TOTAL 01.03.......................................... 11.455,45
         "codigo": "", "resumen": "",
         "uds": "TOTAL nn.pp ...........................................................................................",
         "longitud": "",
@@ -111,7 +111,7 @@ page_coords = []
 
 
 def visitor_body(text, cm, text_matrix, fontDict, fontSize):
-    #pprint(fontSize);sys.exit()
+    # pprint(fontSize);sys.exit()
     dic = {
         "text": text,
         "coord": {
@@ -125,7 +125,7 @@ def visitor_body(text, cm, text_matrix, fontDict, fontSize):
 
 def get_all_pages_coords():
     global page_coords
-    
+
     all_pages = []
     reader = PdfFileReader(file_merged)
     for i_page in range(reader.getNumPages()):
@@ -143,18 +143,36 @@ def get_all_pages_coords():
     return all_pages
 
 
+def get_line_by_y(y, lines):
+    by_y = filter(lambda line: line.get("coord").get("y") == y and line.get("text") != "\n", lines)
+    r = map(lambda line: {"x": line.get("coord").get("x"), "text": line.get("text")}, by_y)
+    return {
+        "y": y,
+        "xs": list(r)
+    }
+
+
 def get_merged_line_with_same_y():
     page_coords = get_all_pages_coords()
 
     transformed = []
+    y_processed = []
     for page in page_coords:
         lines_coords = page.get("lines")
-
-
+        for lines_coord in lines_coords:
+            y = lines_coord.get("coord").get("y")
+            if y in y_processed:
+                continue
+            y_processed.append(y)
+            by_y = get_line_by_y(y, lines_coords)
+            transformed.append(by_y)
     return transformed
 
+
 by_y = get_merged_line_with_same_y()
-pprint(by_y)
+pprint(by_y);
+sys.exit()
+
 
 def get_csv():
     global all_pages
@@ -162,7 +180,7 @@ def get_csv():
         page_lines = page.get("content", [])
         lines = []
         processed = []
-        for i,dic_line in enumerate(page_lines):
+        for i, dic_line in enumerate(page_lines):
             pprint(dic_line)
             y = dic_line.get("coord").get("y", 0)
             if (y in processed): continue
@@ -174,4 +192,4 @@ def get_csv():
 
         pprint(lines)
 
-#get_csv()
+# get_csv()
