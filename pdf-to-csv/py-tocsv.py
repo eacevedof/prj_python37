@@ -146,9 +146,12 @@ def get_all_pages_coords():
 def get_merged_line_with_same_y():
     page_coords = get_all_pages_coords()
 
+    transformed = []
     for page in page_coords:
-        page_lines_coord = page.get("lines")
+        lines_coords = page.get("lines")
 
+
+    return transformed
 
 by_y = get_merged_line_with_same_y()
 pprint(by_y)
