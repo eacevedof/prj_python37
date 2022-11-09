@@ -123,7 +123,7 @@ def visitor_body(text, cm, text_matrix, fontDict, fontSize):
         page_coords.append(dic)
 
 
-def get_text_coords():
+def get_all_pages_coords():
     global page_coords
     
     all_pages = []
@@ -135,7 +135,7 @@ def get_text_coords():
 
         all_pages.append({
             "page": i_page,
-            "content": page_coords.copy()
+            "lines": page_coords.copy()
         })
         if i_page == 2:
             return all_pages
@@ -143,14 +143,15 @@ def get_text_coords():
     return all_pages
 
 
-all_pages = get_text_coords()
+def get_merged_line_with_same_y():
+    page_coords = get_all_pages_coords()
 
-def get_merged_line_with_same_y(page_lines, y):
-    lines = filter(lambda line: line.get("coord").get("y")==y, page_lines)
-    #lines = list(lines)
-    texts = list(map(lambda line: line.get("text", ""), lines))
-    texts = "".join(texts)
-    return texts
+    for page in page_coords:
+        page_lines_coord = page.get("lines")
+
+
+by_y = get_merged_line_with_same_y()
+pprint(by_y)
 
 def get_csv():
     global all_pages
@@ -170,4 +171,4 @@ def get_csv():
 
         pprint(lines)
 
-get_csv()
+#get_csv()
