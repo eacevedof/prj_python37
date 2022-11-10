@@ -1,13 +1,15 @@
+import re
+
 columns_coords = {
-    "codigo": {"x1":90.72, "x2":127},
-    "resumen": {"x1":166.4, "x2":407.23},
-    "uds": {"x1":411, "x2":429.4},
-    "longitud": {"x1":436.12, "x2":483.84},
-    "anchura": {"x1":487.87, "x2":535},
-    "altura": {"x1":538.27, "x2":575.23},
-    "cantidad": {"x1":590.01, "x2":636.38},
-    "precio": {"x1":666.62, "x2":700.22},
-    "importe": {"x1":735.84, "x2":776.16},
+    "codigo": {"x1": 90.72, "x2": 127},
+    "resumen": {"x1": 166.4, "x2": 407.23},
+    "uds": {"x1": 411, "x2": 429.4},
+    "longitud": {"x1": 436.12, "x2": 483.84},
+    "anchura": {"x1": 487.87, "x2": 535},
+    "altura": {"x1": 538.27, "x2": 575.23},
+    "cantidad": {"x1": 590.01, "x2": 636.38},
+    "precio": {"x1": 666.62, "x2": 700.22},
+    "importe": {"x1": 735.84, "x2": 776.16},
 }
 
 empty_row = {
@@ -66,24 +68,24 @@ page_sections = {
         "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
     },
     "chapter_description": [
-            # if only in resumen
-            {"codigo": "", "resumen": "a"},
-            {"codigo": "", "resumen": "b"},
-            {"codigo": "", "resumen": "c"},
-            {"codigo": "", "resumen": ""},  # is only description
-            {
-                "codigo": "",
-                "resumen": "TITULO 1"
-            },
-            {
-                "codigo": "",
-                "resumen": "TITULO 2"
-            },
-            {
-                "codigo": "",
-                "resumen": "TITULO 3"
-            },
-        ],
+        # if only in resumen
+        {"codigo": "", "resumen": "a"},
+        {"codigo": "", "resumen": "b"},
+        {"codigo": "", "resumen": "c"},
+        {"codigo": "", "resumen": ""},  # is only description
+        {
+            "codigo": "",
+            "resumen": "TITULO 1"
+        },
+        {
+            "codigo": "",
+            "resumen": "TITULO 2"
+        },
+        {
+            "codigo": "",
+            "resumen": "TITULO 3"
+        },
+    ],
 
     "cantidades": [
         {
@@ -143,9 +145,28 @@ def get_table_row(line_y):
         return table_row
     return None
 
+
+def get_section_header_row(line_y):
+    xs = line_y.get("xs")
+
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+    x1 = xs[1].get("x")
+    x1text = xs[1].get("text")
+
+    if _is_in_column("codigo", x0) and re.search("^\d{2}$", x0text) and x1:
+        row = empty_row.copy()
+        row["codigo"] = x0text
+        row["resumen"] = x1text
+        return row
+
+    return None
+
+
 def _is_in_column(name, x):
     coords = columns_coords.get(name)
-    return (coords.get("x1")<=x and x<=coords.get("x2"))
+    return (coords.get("x1") <= x and x <= coords.get("x2"))
+
 
 """
   {'xs': [{'text': 'Perfil 04 - Chapa L.80.50.2 (P=2,04kg/ml)',
