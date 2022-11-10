@@ -168,6 +168,18 @@ def _is_in_column(name, x):
     return (coords.get("x1") <= x and x <= coords.get("x2"))
 
 
+def _are_empty_after(colname, line_y):
+    xs = line_y.get("xs")
+    columns = columns_coords.keys()
+    for i, col in enumerate(columns):
+        if col == colname:
+            break
+
+
+def _is_index(idx, ls):
+    return idx < len(ls)
+
+
 """
   {'xs': [{'text': 'Perfil 04 - Chapa L.80.50.2 (P=2,04kg/ml)',
                     'x': 166.4},
