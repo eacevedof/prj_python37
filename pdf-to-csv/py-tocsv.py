@@ -72,6 +72,7 @@ def get_merged_line_with_same_y():
         })
     return transformed
 
+
 as_dicts = []
 pages_by_y = get_merged_line_with_same_y()
 for i,page in enumerate(pages_by_y):
@@ -83,6 +84,7 @@ for i,page in enumerate(pages_by_y):
         if row: as_dicts.append(row)
         row = get_table_row(page_y)
         if row: as_dicts.append(row)
+
 
 pprint(as_dicts)
 
