@@ -183,17 +183,19 @@ def get_subsection_header_row(line_y):
 
 def get_chapter_title_row(line_y):
     xs = line_y.get("xs")
-    if len(xs) < 2:
+    if len(xs) != 1:
         return None
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
-    x1 = xs[1].get("x")
-    x1text = xs[1].get("text")
 
-    if _is_in_column("codigo", x0) and _match("\d{2}\.\d{2}.\d{2}$", x0text) and x1 and _are_empty_after("resumen", line_y):
+    if _is_in_column("codigo", x0) and _match("^(\d{2}\.\d{2}\.\d{2}).*", x0text) and _are_empty_after("codigo", line_y):
         row = empty_row.copy()
-        row["codigo"] = x0text
-        row["resumen"] = x1text
+        codigo = x0text.split(" ")
+        title = codigo[1:]
+        codigo = codigo[0]
+        title = " ".join(title)
+        row["codigo"] = codigo
+        row["resumen"] = title
         return row
 
     return None
