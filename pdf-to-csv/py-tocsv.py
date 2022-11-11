@@ -84,7 +84,8 @@ for i,page in enumerate(pages_by_y):
         if row: as_dicts.append(row)
         row = get_table_row(page_y)
         if row: as_dicts.append(row)
-
+        row = get_section_header_row(page_y)
+        if row: as_dicts.append(row)
 
 pprint(as_dicts)
 
