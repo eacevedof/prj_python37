@@ -79,7 +79,7 @@ def get_merged_line_with_same_y():
 
 as_dicts = []
 pages_by_y = get_merged_line_with_same_y()
-#pprint(pages_by_y)
+#pprint(pages_by_y); sys.exit()
 for i,page in enumerate(pages_by_y):
     print(f"page {i}")
     page_lines = page.get("page")
@@ -105,9 +105,10 @@ for i,page in enumerate(pages_by_y):
 
 def to_csv():
     import csv
+    # csv.writer(f, delimiter =' ',quotechar =',',quoting=csv.QUOTE_MINIMAL)
     with open("./in-excel.csv", "w") as f:
         # using csv.writer method from CSV package
-        write = csv.writer(f)
+        write = csv.writer(f, delimiter ='||')
         write.writerows(map(lambda row: list(row.values()), as_dicts))
 
 to_csv()
