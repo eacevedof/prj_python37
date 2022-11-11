@@ -163,14 +163,14 @@ def get_section_header_row(line_y):
     return None
 
 
-def _match(pattern,text):
+def _match(pattern, text):
     r = re.search(pattern, text)
     return True if r else False
 
 
 def _is_in_column(name, x):
     coords = columns_coords.get(name)
-    return (coords.get("x1") <= x and x <= coords.get("x2"))
+    return coords.get("x1") <= x <= coords.get("x2")
 
 
 def _are_empty_after(colname, line_y):
@@ -187,7 +187,7 @@ def _are_empty_after(colname, line_y):
             x1 = x_range.get("x1")
             if coord_x < x1: continue
             x2 = x_range.get("x2")
-            if x1<=coord_x and coord_x<=x2:
+            if x1 <= coord_x <= x2:
                 return False
     return True
 
