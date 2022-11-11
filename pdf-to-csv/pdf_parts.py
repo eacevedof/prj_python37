@@ -188,7 +188,8 @@ def get_chapter_title_row(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
-    if _is_in_column("codigo", x0) and _match("^(\d{2}\.\d{2}\.\d{2}).*", x0text) and _are_empty_after("codigo", line_y):
+    if _is_in_column("codigo", x0) and _match("^(\d{2}\.\d{2}\.\d{2}).*", x0text) and _are_empty_after("codigo",
+                                                                                                       line_y):
         row = empty_row.copy()
         codigo = x0text.split(" ")
         title = codigo[1:]
@@ -199,6 +200,22 @@ def get_chapter_title_row(line_y):
         return row
 
     return None
+
+
+def get_chapter_description_row(line_y):
+    xs = line_y.get("xs")
+    if len(xs) != 1:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _are_empty_after("resumen", line_y):
+        row = empty_row.copy()
+        row["resumen"] = x0text
+        return row
+
+    return None
+
 
 def _match(pattern, text):
     r = re.search(pattern, text)
