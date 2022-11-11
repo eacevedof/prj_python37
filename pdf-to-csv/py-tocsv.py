@@ -108,7 +108,7 @@ def to_csv():
     # csv.writer(f, delimiter =' ',quotechar =',',quoting=csv.QUOTE_MINIMAL)
     with open("./in-excel.csv", "w") as f:
         # using csv.writer method from CSV package
-        write = csv.writer(f, delimiter ='||')
+        write = csv.writer(f, delimiter ='|')
         write.writerows(map(lambda row: list(row.values()), as_dicts))
 
 to_csv()

@@ -279,13 +279,13 @@ def get_subsection_total(line_y):
     """
     {'text': 'TOTAL 01.01............................................................................... 39.008,61','x': 351.52}
     """
-    if not _is_in_column("altura", x0) and "....." in x0text and _match("\d+\,\d+", x0text):
+    if _is_in_column("resumen", x0) and "....." in x0text and _match("\d+\,\d+", x0text):
         row = empty_row.copy()
         parts = x0text.split(".....")
         row["resumen"] = parts[0]
-        total = parts[-1:]
+        total = parts[-1:][0]
         total = total.split(" ")
-        row["importe"] = total[-1:]
+        row["importe"] = total[-1:][0]
         return row
 
     return None
