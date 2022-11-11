@@ -267,13 +267,3 @@ def _are_empty_after(colname, line_y):
 
 def _is_index(idx, ls):
     return idx < len(ls)
-
-
-"""
-  {'xs': [{'text': 'Perfil 04 - Chapa L.80.50.2 (P=2,04kg/ml)',
-                    'x': 166.4},
-                   {'text': '10', 'x': 417.28},
-                   {'text': '3,30', 'x': 462.72},
-                   {'text': '2,04 67,32', 'x': 512.0}],
-            'y': 1050.24},
-"""
