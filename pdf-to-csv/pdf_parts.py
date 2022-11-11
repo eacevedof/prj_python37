@@ -63,7 +63,6 @@ page_sections = {
     },
     "chapter_title": {
         # if same y and in x in codigo is regex[\d{2}.\d{2}.\d{2}] and next x in resumen and no more in otherscols
-
         "codigo": "01.01.01",
         "resumen": "kg VIGAS METÁLICAS DE MÓDULOS 1, 2, 3, 4, 5, 6, 7 y 8",
     },
@@ -181,6 +180,23 @@ def get_subsection_header_row(line_y):
 
     return None
 
+
+def get_chapter_title_row(line_y):
+    xs = line_y.get("xs")
+    if len(xs) < 2:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+    x1 = xs[1].get("x")
+    x1text = xs[1].get("text")
+
+    if _is_in_column("codigo", x0) and _match("\d{2}\.\d{2}.\d{2}$", x0text) and x1 and _are_empty_after("resumen", line_y):
+        row = empty_row.copy()
+        row["codigo"] = x0text
+        row["resumen"] = x1text
+        return row
+
+    return None
 
 def _match(pattern, text):
     r = re.search(pattern, text)
