@@ -174,7 +174,14 @@ def _are_empty_after(colname, line_y):
     for i, col in enumerate(columns):
         if col == colname:
             break
-    columns = columns[i+1:10]
+    columns = columns[i + 1:10]
+    for x in xs:
+        coord_x = x.get("x")
+        for col in columns:
+            x_range = columns_coords.get(col)
+            x1 = x_range.get("x1")
+            if coord_x < x1: continue
+            x2 = x_range.get("x2")
 
 
 def _is_index(idx, ls):
