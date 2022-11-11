@@ -233,6 +233,34 @@ def get_quantity_row(line_y):
     return None
 
 
+def get_no_desc_quantity_row(line_y):
+    xs = line_y.get("xs")
+    if len(xs) != 3:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    x1 = xs[1].get("x")
+    x2 = xs[2].get("x")
+
+    """
+    {'xs': [{'text': '1', 'x': 422.24},//unidades
+    {'text': '3,22', 'x': 462.72},//longitud
+    {'text': '7,71 24,83', 'x': 512.0}],//anchura y cantidad
+    """
+
+    if _is_in_column("uds", x0) and _is_in_column("longitud", x1) and _is_in_column("anchura", x2):
+        row = empty_row.copy()
+        row["uds"] = x0text
+        row["longitud"] = xs[1].get("text")
+        anchura_cantidad = xs[2].get("text").split(" ")
+        row["anchura"] = anchura_cantidad[0]
+        row["cantidad"] = anchura_cantidad[1]
+        return row
+
+    return None
+
+
 def get_chapter_total(line_y):
     xs = line_y.get("xs")
     if len(xs) != 1:
@@ -241,7 +269,7 @@ def get_chapter_total(line_y):
     x0text = xs[0].get("text")
 
     # {'xs': [{'text': '15.545,91 1,58 24.562,54', 'x': 591.68}],
-    #r = _is_numbers(x0text)
+    # r = _is_numbers(x0text)
 
     if _is_in_column("cantidad", x0) and " " in x0text and _is_numbers(x0text):
         row = empty_row.copy()
@@ -256,7 +284,7 @@ def get_chapter_total(line_y):
 
 
 def _is_number(s):
-    return _match("\d+\.\d+\,\d+",s) or _match("\d+\,\d+",s) or _match("\d+",s)
+    return _match("\d+\.\d+\,\d+", s) or _match("\d+\,\d+", s) or _match("\d+", s)
 
 
 def _is_numbers(string):
