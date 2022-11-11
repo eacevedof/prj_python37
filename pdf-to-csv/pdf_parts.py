@@ -236,6 +236,26 @@ def get_quantity_row(line_y):
 
     return None
 
+
+def get_chapter_total(line_y):
+    xs = line_y.get("xs")
+    if len(xs) != 1:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    if not _is_in_column("cantidad", x0) and " " in x0text:
+        row = empty_row.copy()
+        # cantidad, precio e importe
+        values = x0text.split(" ")
+        row["cantidad"] = values[0]
+        row["precio"] = values[1]
+        row["importe"] = values[2]
+        return row
+
+    return None
+
+
 def _match(pattern, text):
     r = re.search(pattern, text)
     return True if r else False
