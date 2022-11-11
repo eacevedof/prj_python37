@@ -217,6 +217,25 @@ def get_chapter_description_row(line_y):
     return None
 
 
+def get_quantity_row(line_y):
+    xs = line_y.get("xs")
+    if len(xs) < 3:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0):
+        row = empty_row.copy()
+        row["resumen"] = x0text
+        row["uds"] = xs[1].get("text")
+        row["longitud"] = xs[2].get("text")
+        altura = xs[3].get("text").split(" ")
+        row["anchura"] = altura[0]
+        row["cantidad"] = altura[1]
+        return row
+
+    return None
+
 def _match(pattern, text):
     r = re.search(pattern, text)
     return True if r else False
