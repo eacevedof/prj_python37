@@ -241,7 +241,9 @@ def get_chapter_total(line_y):
     x0text = xs[0].get("text")
 
     # {'xs': [{'text': '15.545,91 1,58 24.562,54', 'x': 591.68}],
-    if not _is_in_column("cantidad", x0) and " " in x0text and _is_numbers(x0text):
+    #r = _is_numbers(x0text)
+
+    if _is_in_column("cantidad", x0) and " " in x0text and _is_numbers(x0text):
         row = empty_row.copy()
         # cantidad, precio e importe
         values = x0text.split(" ")
@@ -251,6 +253,7 @@ def get_chapter_total(line_y):
         return row
 
     return None
+
 
 def _is_number(s):
     return _match("\d+\.\d+\,\d+",s) or _match("\d+\,\d+",s) or _match("\d+",s)
