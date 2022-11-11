@@ -182,6 +182,9 @@ def _are_empty_after(colname, line_y):
             x1 = x_range.get("x1")
             if coord_x < x1: continue
             x2 = x_range.get("x2")
+            if x1<=coord_x and coord_x<=x2:
+                return False
+    return True
 
 
 def _is_index(idx, ls):
