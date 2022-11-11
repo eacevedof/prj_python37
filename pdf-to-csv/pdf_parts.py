@@ -241,7 +241,7 @@ def get_chapter_total(line_y):
     x0text = xs[0].get("text")
 
     # {'xs': [{'text': '15.545,91 1,58 24.562,54', 'x': 591.68}],
-    if not _is_in_column("cantidad", x0) and " " in x0text and _match("\d+\,\d+\s\d+\,\d+\s\d+\,\d+", x0text):
+    if not _is_in_column("cantidad", x0) and " " in x0text and _is_numbers(x0text):
         row = empty_row.copy()
         # cantidad, precio e importe
         values = x0text.split(" ")
@@ -251,6 +251,19 @@ def get_chapter_total(line_y):
         return row
 
     return None
+
+def _is_number(s):
+    return _match("\d+\.\d+\,\d+",s) or _match("\d+\,\d+",s) or _match("\d+",s)
+
+
+def _is_numbers(string):
+    if isinstance(string, float):
+        return True
+    nums = string.split(" ")
+    for num in nums:
+        if not _is_number(num):
+            return False
+    return True
 
 
 def get_subsection_total(line_y):
@@ -267,7 +280,8 @@ def get_subsection_total(line_y):
         row = empty_row.copy()
         parts = x0text.split(".....")
         row["resumen"] = parts[0]
-        total = parts[-1:].split(" ")
+        total = parts[-1:]
+        total = total.split(" ")
         row["importe"] = total[-1:]
         return row
 
