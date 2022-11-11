@@ -106,17 +106,9 @@ page_sections = {
         """
         {'xs': [
         {'text': 'TOTAL 01.01........................................................................................... 39.008,61',
-         'x': 351.52}],
+         'x': 351.52}], //altura
         'y': 659.2},
         """
-        "codigo": "", "resumen": "",
-        "uds": "TOTAL nn.pp ...........................................................................................",
-        "longitud": "",
-        "anchura": "",
-        "altura": "",
-        "cantidad": "",
-        "precio": "",
-        "importe": "11.455,45",
     }
 }
 
@@ -255,6 +247,21 @@ def get_chapter_total(line_y):
         row["cantidad"] = values[0]
         row["precio"] = values[1]
         row["importe"] = values[2]
+        return row
+
+    return None
+
+
+def get_subsection_total(line_y):
+    xs = line_y.get("xs")
+    if len(xs) != 1:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    if not _is_in_column("altura", x0) and "....." in x0text and _match("\d+\,\d+", x0text):
+        row = empty_row.copy()
+        row["altura"] = x0text
         return row
 
     return None
