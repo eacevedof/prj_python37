@@ -265,7 +265,9 @@ def get_subsection_total(line_y):
     """
     if not _is_in_column("altura", x0) and "....." in x0text and _match("\d+\,\d+", x0text):
         row = empty_row.copy()
-        row["altura"] = x0text
+        parts = x0text.split(".....")
+        row["uds"] = parts[0]
+        row["importe"] = parts[-1:]
         return row
 
     return None
