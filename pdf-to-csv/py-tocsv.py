@@ -45,9 +45,13 @@ def get_all_pages_coords():
 def get_line_by_y(y, lines):
     by_y = filter(lambda line: line.get("coord").get("y") == y and line.get("text") != "\n", lines)
     r = map(lambda line: {"x": line.get("coord").get("x"), "text": line.get("text","").strip()}, by_y)
+    r = list(r)
+    def _sort(dc):
+        return dc["x"]
+    r.sort(key = _sort)
     return {
         "y": y,
-        "xs": list(r)
+        "xs": r
     }
 
 
@@ -86,6 +90,8 @@ for i,page in enumerate(pages_by_y):
         if row: as_dicts.append(row)
         row = get_section_header_row(page_y)
         if row: as_dicts.append(row)
+        row = get_subsection_header_row(page_y)
+        if row: as_dicts.append(row)
 
-print(as_dicts)
+pprint(as_dicts)
 
