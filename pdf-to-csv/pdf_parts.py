@@ -99,14 +99,14 @@ page_sections = {
     "chapter_total": {
         "codigo": "", "resumen": "", "uds": "", "longitud": "",
         "anchura": "", "altura": "",
-        # calcular por coor-x y si hay 3 numeros
+        # calcular por coor-x y si hay 3 numeros: 15.545,91 1,58 24.562,54
         "cantidad": "", "precio": "", "importe": "",
     },
     "subsection_total": {
         """
         {'xs': [
         {'text': 'TOTAL 01.01........................................................................................... 39.008,61',
-         'x': 351.52}], //altura
+         'x': 351.52}], //resumen
         'y': 659.2},
         """
     }
@@ -205,7 +205,7 @@ def get_chapter_description_row(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
-    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _are_empty_after("resumen", line_y):
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _are_empty_after("resumen", line_y) and "...." not in x0text:
         row = empty_row.copy()
         row["resumen"] = x0text
         return row
@@ -240,7 +240,8 @@ def get_chapter_total(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
-    if not _is_in_column("cantidad", x0) and " " in x0text and _match("\d+\,\d+", x0text):
+    # 15.545,91 1,58 24.562,54
+    if not _is_in_column("cantidad", x0) and " " in x0text and _match("\d+\,\d+\s\d+\,\d+\s\d+\,\d+", x0text):
         row = empty_row.copy()
         # cantidad, precio e importe
         values = x0text.split(" ")
@@ -259,6 +260,9 @@ def get_subsection_total(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
+    """
+    {'text': 'TOTAL 01.01............................................................................... 39.008,61','x': 351.52}
+    """
     if not _is_in_column("altura", x0) and "....." in x0text and _match("\d+\,\d+", x0text):
         row = empty_row.copy()
         row["altura"] = x0text
