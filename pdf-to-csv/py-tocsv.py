@@ -36,7 +36,7 @@ def get_all_pages_coords():
             "page": i_page,
             "lines": page_coords.copy()
         })
-        if i_page == 0:
+        if i_page == 1:
             return all_pages
 
     return all_pages
@@ -79,7 +79,7 @@ def get_merged_line_with_same_y():
 
 as_dicts = []
 pages_by_y = get_merged_line_with_same_y()
-# pprint(pages_by_y)
+pprint(pages_by_y)
 for i,page in enumerate(pages_by_y):
     print(f"page {i}")
     page_lines = page.get("page")
