@@ -92,6 +92,8 @@ for i,page in enumerate(pages_by_y):
         if row: as_dicts.append(row)
         row = get_subsection_header_row(page_y)
         if row: as_dicts.append(row)
+        row = get_chapter_title_row(page_y)
+        if row: as_dicts.append(row)
 
 pprint(as_dicts)
 
