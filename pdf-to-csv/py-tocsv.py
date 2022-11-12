@@ -36,9 +36,7 @@ def get_all_pages_coords():
             "page": i_page,
             "lines": page_coords.copy()
         })
-        if i_page == 3:
-            return all_pages
-
+        #if i_page == 3: return all_pages
     return all_pages
 
 
