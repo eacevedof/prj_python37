@@ -226,8 +226,8 @@ def get_quantity_with_length_row(line_y):
     [
       {'text': 'Perfil 04 - Chapa L.80.50.2 (P=2,04kg/ml)','x': 166.4},
       {'text': '12', 'x': 417.28},//uds
-      {'text': '3,02', 'x': 462.72},//longitud
-      {'text': '2,04 73,93', 'x': 512.0} //anchura
+      {'text': '3,02', 'x': 462.72},//longitud (x2)
+      {'text': '2,04 73,93', 'x': 512.0} //anchura cantidad
     ]
     """
     if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _is_in_column("longitud",x2) and _match("\d+", x1text):
@@ -249,22 +249,24 @@ def get_quantity_with_width_row(line_y):
         return None
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
+    x1text = xs[1].get("text")
+    x2 = xs[2].get("x")
 
     """
     [
       {'text': 'Pilar 01 de Perfil Tub. Cuad. 100x6 (P=16,70kg/ml)','x': 166.4},
       {'text': '9', 'x': 422.24},//uds
-      {'text': '16,70', 'x': 507.04},//anchura
-      {'text': '3,00 450,90', 'x': 553.44}//altura
+      {'text': '16,70', 'x': 507.04},//anchura (x2)
+      {'text': '3,00 450,90', 'x': 553.44}//altura y cantidad
     ]
     """
-    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _match("\d+\,\d+", x0text):
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _is_in_column("anchura", x2) and _match("\d+", x1text):
         row = empty_row.copy()
         row["resumen"] = x0text
-        row["uds"] = xs[1].get("text")
-        row["longitud"] = xs[2].get("text")
+        row["uds"] = x1text
+        row["anchura"] = xs[2].get("text")
         altura = xs[3].get("text").split(" ")
-        row["anchura"] = altura[0]
+        row["altura"] = altura[0]
         row["cantidad"] = altura[1]
         return row
 
