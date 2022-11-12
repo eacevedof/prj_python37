@@ -232,6 +232,7 @@ def get_quantity_with_length_row(line_y):
 
     return None
 
+
 def get_quantity_with_width_row(line_y):
     xs = line_y.get("xs")
     if len(xs) != 4:
