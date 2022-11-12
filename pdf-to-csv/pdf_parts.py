@@ -213,9 +213,9 @@ def get_chapter_description_row(line_y):
     return None
 
 
-def get_quantity_row(line_y):
+def get_quantity_with_length_row(line_y):
     xs = line_y.get("xs")
-    if len(xs) < 3:
+    if len(xs) != 4:
         return None
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
