@@ -105,6 +105,8 @@ for i,page in enumerate(pages_by_y):
         if row: as_dicts.append(row)
         row = get_quantity_with_width_row(page_y)
         if row: as_dicts.append(row)
+        row = get_page_number_row(page_y)
+        if row: as_dicts.append(row)
 #pprint(as_dicts)
 
 def to_csv():

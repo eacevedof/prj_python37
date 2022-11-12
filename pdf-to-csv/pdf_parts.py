@@ -304,6 +304,21 @@ def get_no_desc_quantity_row(line_y):
     return None
 
 
+def get_page_number_row(line_y):
+    #{'xs': [{'text': '2', 'x': 766.24}], 'y': 1101.12}]},
+    xs = line_y.get("xs")
+    if len(xs) != 1:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    if _is_in_column("importe", x0) and _match("\d+", x0text):
+        row = empty_row.copy()
+        row["importe"] = x0text
+        return row
+
+    return None
+
 def get_chapter_total(line_y):
     xs = line_y.get("xs")
     if len(xs) != 1:
