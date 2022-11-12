@@ -232,7 +232,7 @@ def get_quantity_with_length_row(line_y):
     if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _match("\d+", x1text):
         row = empty_row.copy()
         row["resumen"] = x0text
-        row["uds"] = xs[1].get("text")
+        row["uds"] = x1text
         row["longitud"] = xs[2].get("text")
         altura = xs[3].get("text").split(" ")
         row["anchura"] = altura[0]
