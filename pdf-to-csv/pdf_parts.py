@@ -184,8 +184,10 @@ def get_chapter_title_row(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
-    if _is_in_column("codigo", x0) and _match("^(\d{2}\.\d{2}\.\d{2}).*", x0text) and _are_empty_after("codigo",
-                                                                                                       line_y):
+    """
+    {'xs': [{'text': '01.01.04 m2 FORJADO DE CHAPA COLABORANTE DE MÓDULOS 1, 2, 3, 4, 5, 6 y 7', 'x': 90.72}],
+    """
+    if _is_in_column("codigo", x0) and _match("^(\d{2}\.\d{2}\.\d{2}).*", x0text) :
         row = empty_row.copy()
         codigo = x0text.split(" ")
         title = codigo[1:]
