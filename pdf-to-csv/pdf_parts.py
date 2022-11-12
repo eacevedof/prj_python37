@@ -237,7 +237,8 @@ def get_quantity_with_length_row(line_y):
         row["longitud"] = xs[2].get("text")
         altura = xs[3].get("text").split(" ")
         row["anchura"] = altura[0]
-        row["cantidad"] = altura[1]
+        if len(altura)>1:
+            row["cantidad"] = altura[1]
         return row
 
     return None
