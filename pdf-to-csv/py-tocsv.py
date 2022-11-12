@@ -1,8 +1,8 @@
 # pip install PyPDF2
 from files import *
-from pprint import pprint
 from PyPDF2 import PdfFileReader
 from pdf_parts import *
+from pprint import pprint
 import sys
 
 
@@ -106,7 +106,9 @@ for i,page in enumerate(pages_by_y):
         row = get_quantity_with_width_row(page_y)
         if row: as_dicts.append(row)
         row = get_page_number_row(page_y)
-        if row: as_dicts.append(row)
+        if row:
+            as_dicts.append(row)
+            as_dicts.append(empty_row)
 #pprint(as_dicts)
 
 def to_csv():
