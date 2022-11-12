@@ -232,6 +232,33 @@ def get_quantity_with_length_row(line_y):
 
     return None
 
+def get_quantity_with_width_row(line_y):
+    xs = line_y.get("xs")
+    if len(xs) != 4:
+        return None
+    x0 = xs[0].get("x")
+    x0text = xs[0].get("text")
+
+    """
+    [
+      {'text': 'Pilar 01 de Perfil Tub. Cuad. 100x6 (P=16,70kg/ml)','x': 166.4},
+      {'text': '9', 'x': 422.24},//uds
+      {'text': '16,70', 'x': 507.04},//anchura
+      {'text': '3,00 450,90', 'x': 553.44}//altura
+    ]
+    """
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _match("\d+\,\d+", x0text):
+        row = empty_row.copy()
+        row["resumen"] = x0text
+        row["uds"] = xs[1].get("text")
+        row["longitud"] = xs[2].get("text")
+        altura = xs[3].get("text").split(" ")
+        row["anchura"] = altura[0]
+        row["cantidad"] = altura[1]
+        return row
+
+    return None
+
 
 def get_no_desc_quantity_row(line_y):
     xs = line_y.get("xs")
