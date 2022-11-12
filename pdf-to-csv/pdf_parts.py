@@ -220,6 +220,7 @@ def get_quantity_with_length_row(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
     x1text = xs[1].get("text")
+    x2 = xs[2].get("x")
 
     """
     [
@@ -229,7 +230,7 @@ def get_quantity_with_length_row(line_y):
       {'text': '2,04 73,93', 'x': 512.0} //anchura
     ]
     """
-    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _match("\d+", x1text):
+    if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _is_in_column("longitud",x2) and _match("\d+", x1text):
         row = empty_row.copy()
         row["resumen"] = x0text
         row["uds"] = x1text
