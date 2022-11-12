@@ -220,6 +220,14 @@ def get_quantity_with_length_row(line_y):
     x0 = xs[0].get("x")
     x0text = xs[0].get("text")
 
+    """
+    [
+      {'text': 'Perfil 04 - Chapa L.80.50.2 (P=2,04kg/ml)','x': 166.4},
+      {'text': '12', 'x': 417.28},//uds
+      {'text': '3,02', 'x': 462.72},//longitud
+      {'text': '2,04 73,93', 'x': 512.0} //anchura
+    ]
+    """
     if not _is_in_column("codigo", x0) and _is_in_column("resumen", x0) and _match("\d+\,\d+", x0text):
         row = empty_row.copy()
         row["resumen"] = x0text
