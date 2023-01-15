@@ -40,8 +40,8 @@ def asset_create_material() -> None:
 
 
 def __create_attributes_info(dom:Dom):
-
-    el = Element(None)
+    el = Element()
     element_id = "id-Código Material - Versión"
-    input = dom.find_by_id(element_id)
-    el.set_value_in_input(input, "matxxx")
+    input_text = dom.find_by_id(element_id)
+    el.set_value_in_input(input_text, "matxxx")
+
