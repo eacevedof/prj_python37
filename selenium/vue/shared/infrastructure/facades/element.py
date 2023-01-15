@@ -16,9 +16,9 @@ class Element:
 
         input_element = self.__dom.find_by_id(element_id)
         input_element.send_keys(value)
-        sleep(0.5)
+        sleep(0.25)
 
     @staticmethod
     def set_value_in_input(input_element: object, value: str) -> None:
         input_element.send_keys(value)
-        sleep(0.5)
+        sleep(0.25)
