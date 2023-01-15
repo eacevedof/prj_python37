@@ -36,6 +36,7 @@ def asset_create_material() -> None:
     __create_attributes_info(dom)
     __create_attributes_production(dom)
     __create_attributes_diseno(dom)
+    __create_attributes_datos_opcionales(dom)
 
     close(20)
 
@@ -142,3 +143,15 @@ def __create_attributes_diseno(dom) -> None:
     value = "ref 1"
     el.set_value(element_id, value)
 
+
+def __create_attributes_datos_opcionales(dom) -> None:
+    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[4]"
+    btn_tab = dom.find_by_xpath(tab_xpath)
+    btn_tab.click()
+    sleep(1)
+
+    el = Element(dom)
+
+    element_id = "id-Comentarios Opcionales de Material"
+    value = "comentarios opcionales xxx"
+    el.set_value(element_id, value)
