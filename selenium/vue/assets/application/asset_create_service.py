@@ -22,11 +22,16 @@ def asset_create_material() -> None:
     input_code = dom.find_by_id(element_id)
     input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
 
-    element_id = "id-assetTypes"
+    xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[2]/button"
+    btn_dropdown = dom.find_by_xpath(xpath)
+    btn_dropdown.click()
+    #element_id = "id-assetTypes"
+    sleep(1)
+
     xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[3]/ul/li[1]"
     li_material = dom.find_by_xpath(xpath)
     li_material.click()
     ##input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
     #  driver.findElement(By.name("country-1")).click()
 
-    close(120)
+    close(60)
