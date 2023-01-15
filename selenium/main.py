@@ -1,9 +1,12 @@
 # main.py
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
-objdriver = webdriver.Chrome("chromedriver.exe")
-objdriver.get("http://newtours.demoaut.com")
+#objdriver = webdriver.Chrome("chromedriver.exe")
+service = Service("/Users/ioedu/projects/chrome-driver-selenium/chromedriver")
+objdriver = webdriver.Chrome(service=service)
+objdriver.get("http://localhost:3000")
 time.sleep(5)
 user_box = objdriver.find_element_by_name("userName")
 pass_box = objdriver.find_element_by_name("password")
