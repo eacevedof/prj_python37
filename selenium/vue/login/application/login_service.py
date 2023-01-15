@@ -1,11 +1,10 @@
-# VUE/login_repository.py
 import time
 from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT_URL
 from vue.login.infrastructure.login_repository import LOGIN_DATA
 from selenium.webdriver.common.by import By
 
 
-def login_javi_or_fail():
+def login_javi_or_fail() -> None:
     browser = get_chrome()
     browser.get(FRONT_URL)
     time.sleep(2)
