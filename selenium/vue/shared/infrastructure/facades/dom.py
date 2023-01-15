@@ -12,5 +12,8 @@ class Dom:
     def find_by_id(self, element_id: str) -> object:
         return self.__browser.find_element(By.ID, element_id)
 
+    def find_by_name(self, element_name: str) -> object:
+        return self.__browser.find_element(By.NAME, element_name)
+
     def find_by_xpath(self, xpath: str) -> object:
         return self.__browser.find_element(By.XPATH, xpath)
