@@ -1,6 +1,7 @@
 ASSETS_CREATION = {
-    "asset-1": {
-        "email": "email_test1@lacia.com",
-        "secret": "123456",
+    "mat-1": {
+        "id-asset-code": "mat-1",
+        "id-asset-name": "mat-1",
+        "id-assetTypes": "id-assetTypes",
     },
 }
