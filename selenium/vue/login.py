@@ -1,10 +1,10 @@
 # VUE/login.py
 import time
-from vue.boot.driver import get_chrome
+from vue.boot.driver import get_chrome, FRONT_URL
 from selenium.webdriver.common.by import By
 
 browser = get_chrome()
-browser.get("http://localhost:3000")
+browser.get(FRONT_URL)
 time.sleep(2)
 
 input_email = browser.find_element(By.ID, "id-email")
