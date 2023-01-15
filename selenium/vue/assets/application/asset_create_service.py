@@ -36,6 +36,7 @@ def asset_create_material() -> None:
     __create_attributes_info(dom)
     __create_attributes_production(dom)
 
+
     close(20)
 
 
@@ -114,5 +115,30 @@ def __create_attributes_production(dom) -> None:
 
     element_id = "id-Acabados especiales"
     value = "acab espe 1"
+    el.set_value(element_id, value)
+
+
+def __create_attributes_diseno(dom) -> None:
+    # tab diseno
+    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[3]"
+    btn_tab = dom.find_by_xpath(tab_xpath)
+    btn_tab.click()
+    sleep(1)
+
+    el = Element(dom)
+
+    element_id = "id-LAETUS"
+    value = "laetus 1"
+    el.set_value(element_id, value)
+
+    dd = Dropdown(dom)
+
+    # marcas visuales
+    btn_xpath = ""
+    li_xpath = ""
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+    element_id = "id-Referencia al libro de estilo"
+    value = "ref 1"
     el.set_value(element_id, value)
 
