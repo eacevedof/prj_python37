@@ -21,4 +21,4 @@ def login_usr1_or_fail() -> None:
     sleep(25)
 
     div_assets = browser.find_element(By.ID, "commons-assets")
-    sleep(120)
+    sleep(1)
