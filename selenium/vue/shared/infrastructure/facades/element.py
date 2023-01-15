@@ -15,5 +15,6 @@ class Element:
         input_element = self.__browser.find_element(By.ID, element_id)
         input_element.send_keys(value)
 
-    def set_value_in_input(self, input_element:object, value: str) -> None:
+    @staticmethod
+    def set_value_in_input(input_element:object, value: str) -> None:
         input_element.send_keys(value)
