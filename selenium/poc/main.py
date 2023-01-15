@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
 #objdriver = webdriver.Chrome("chromedriver.exe")
-service = Service("path-to-my-driver")
+service = Service("path-to-my-driver.py")
 objdriver = webdriver.Chrome(service=service)
 objdriver.get("http://localhost:3000")
 time.sleep(5)
