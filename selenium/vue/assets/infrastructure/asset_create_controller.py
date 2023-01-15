@@ -1,11 +1,11 @@
-from vue.login.application.login_service import login_usr1_or_fail
+from vue.assets.application.asset_create_service import asset_create
 
 
-def login_usr1() -> None:
+def __invoke() -> None:
     try:
-        login_usr1_or_fail()
+        asset_create()
     except Exception as e:
         print(e)
 
 
-login_usr1()
+__invoke()

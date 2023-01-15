@@ -8,7 +8,7 @@ def login_usr1_or_fail() -> None:
     browser = get_chrome()
     browser.get(FRONT_URL)
     dom = Dom(browser)
-    sleep(2)
+    sleep(1)
 
     input_email = dom.find_by_id("id-email")
     input_email.send_keys(LOGIN_DATA.get("usr1").get("email"))
