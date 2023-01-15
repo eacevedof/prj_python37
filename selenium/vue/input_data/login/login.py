@@ -1,6 +1,6 @@
 LOGIN_DATA = {
     "javi": {
-        "email": "",
-        "password": "",
+        "email": "email_test1@lacia.com",
+        "secret": "123456",
     },
 }
