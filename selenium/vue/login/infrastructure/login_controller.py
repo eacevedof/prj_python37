@@ -1,8 +1,8 @@
-# VUE/login.py
+# VUE/login_data.py
 import time
 from vue.boot.driver import get_chrome, FRONT_URL
 from selenium.webdriver.common.by import By
-from input_data.login.login import LOGIN_DATA
+from vue.login.infrastructure.login_controller import LOGIN_DATA
 
 browser = get_chrome()
 browser.get(FRONT_URL)
