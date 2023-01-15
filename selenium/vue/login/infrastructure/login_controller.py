@@ -1,8 +1,8 @@
-from vue.login.application.login_service import login_javi_or_fail
+from vue.login.application.login_service import login_usr1_or_fail
 
 
-def login_javi() -> None:
-    login_javi_or_fail()
+def login_usr1() -> None:
+    login_usr1_or_fail()
 
 
-login_javi()
+login_usr1()

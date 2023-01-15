@@ -5,7 +5,7 @@ from vue.login.domain.exceptions.login_exception import LoginException
 from selenium.webdriver.common.by import By
 
 
-def login_javi_or_fail() -> None:
+def login_usr1_or_fail() -> None:
     browser = get_chrome()
     browser.get(FRONT_URL)
     sleep(2)
@@ -13,12 +13,12 @@ def login_javi_or_fail() -> None:
     input_email = browser.find_element(By.ID, "id-email")
     if not input_email:
         LoginException.fail_if_no_input("no id:id-mail")
-    input_email.send_keys(LOGIN_DATA.get("javi").get("email"))
+    input_email.send_keys(LOGIN_DATA.get("usr1").get("email"))
 
     input_password = browser.find_element(By.ID, "id-password")
     if not input_password:
         LoginException.fail_if_no_input("no id:id-password")
-    input_password.send_keys(LOGIN_DATA.get("javi").get("secret"))
+    input_password.send_keys(LOGIN_DATA.get("usr1").get("secret"))
 
     submit_button = browser.find_element(By.ID, "btnSignIn")
     if not submit_button:
