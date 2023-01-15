@@ -167,4 +167,4 @@ def __create_tags_documentos(dom) -> None:
     el = Element(dom)
 
     element_name = "Artworks"
-    el.set_value_by_name(element_name, "")
+    el.set_value_by_name(element_name, "/Users/ioedu/Desktop/assets-1/mat-arch-opcionales-2-de-n.jpg")
