@@ -1,4 +1,4 @@
-# main.py
+# VUE/main.py
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
