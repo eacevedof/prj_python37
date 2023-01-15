@@ -8,7 +8,7 @@ class Element:
     __dom: Dom
 
     def __int__(self, dom: Dom):
-        self.__dom = Dom
+        self.__dom = dom
 
     def set_value(self, element_id: str, value: str) -> None:
         if not self.__dom:
