@@ -33,7 +33,6 @@ def asset_create_material() -> None:
     li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[3]/ul/li[1]"
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-
     __create_attributes_info(dom)
     close(20)
 
@@ -84,5 +83,15 @@ def __create_attributes_info(dom) -> None:
     li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[9]/div/div/div/div[3]/ul/li[3]"
     dd.select_by_xpath(btn_xpath, li_xpath)
 
+    # Fabricante
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[2]/button"
+    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[3]/ul/li[1]"
+    dd.select_by_xpath(btn_xpath, li_xpath)
 
-# /html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[2]/button
+    element_id = "id-Principio Activo"
+    value = "pa-1"
+    el.set_value(element_id, value)
+
+    element_id = "id-Nomenclatura Extra"
+    value = "nomenclatura-1"
+    el.set_value(element_id, value)
