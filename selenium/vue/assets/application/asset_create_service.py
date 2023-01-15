@@ -9,32 +9,33 @@ from vue.login.application.login_service import login_usr1_or_fail
 
 def asset_create_material() -> None:
     login_usr1_or_fail()
+    sleep(15)
 
     create_url = f"{FRONT_URL_HASH}/assets/add"
     browser = get_chrome()
     browser.get(create_url)
     dom = Dom(browser)
-    sleep(5)
+    el = Element(dom)
+    sleep(3)
 
     element_id = "id-asset-code"
-    input_code = dom.find_by_id(element_id)
-    input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
+    value = ASSETS_CREATION.get("mat-1").get(element_id)
+    el.set_value(element_id, value)
 
     element_id = "id-asset-name"
-    input_code = dom.find_by_id(element_id)
-    input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
+    value = ASSETS_CREATION.get("mat-1").get(element_id)
+    el.set_value(element_id, value)
 
     dd = Dropdown(dom)
     btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[2]/button"
     li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[3]/ul/li[1]"
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    __create_attributes_info(dom)
-    close(60)
+    __create_attributes_info(el)
+    close(20)
 
 
-def __create_attributes_info(dom: Dom) -> None:
-    el = Element(dom)
+def __create_attributes_info(el:Element) -> None:
     element_id = "id-Código Material - Versión"
-    input_text = dom.find_by_id(element_id)
-    el.set_value_in_input(input_text, "matxxx")
+    value = "xxx11"
+    el.set_value(element_id, value)

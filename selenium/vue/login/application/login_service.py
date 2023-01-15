@@ -18,7 +18,7 @@ def login_usr1_or_fail() -> None:
 
     submit_button = dom.find_by_id("btnSignIn")
     submit_button.click()
-    sleep(10)
+    #sleep(10)
 
     #div_assets = dom.find_by_id("commons-assets")
     #sleep(1)
