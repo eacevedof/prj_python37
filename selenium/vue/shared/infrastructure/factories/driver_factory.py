@@ -5,7 +5,16 @@ from selenium.webdriver.chrome.service import Service
 PATH_DRIVER = os.environ.get("PATHPRJ", "")
 FRONT_URL = "http://localhost:3000"
 
+__webdriver = None
+
 
 def get_chrome():
+    global __webdriver
+
+    if __webdriver:
+        return __webdriver
+
     service = Service(f"{PATH_DRIVER}/chrome-driver-selenium/chromedriver")
-    return webdriver.Chrome(service=service)
+    __webdriver = webdriver.Chrome(service=service)
+    return __webdriver
+

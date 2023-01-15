@@ -11,9 +11,9 @@ def __login() -> None:
 
 def asset_create() -> None:
     __login()
-
+    create_url = f"{FRONT_URL}/#/assets/add"
     browser = get_chrome()
-    browser.get(FRONT_URL)
-    sleep(2)
+    browser.get(create_url)
+    sleep(60)
 
 
