@@ -1,6 +1,6 @@
 # VUE/main.py
 import time
-from vue.boot.driver import get_chrome
+from vue.shared.infrastructure.factories.driver_factory import get_chrome
 from selenium.webdriver.common.by import By
 
 browser = get_chrome()
