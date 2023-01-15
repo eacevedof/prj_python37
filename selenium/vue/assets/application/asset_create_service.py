@@ -107,7 +107,7 @@ def __create_attributes_production(dom) -> None:
     btn_tab.click()
     sleep(1)
 
-    el = Element(Dom)
+    el = Element(dom)
 
     element_id = "id-Número de tintas"
     value = 3
