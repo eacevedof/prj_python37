@@ -35,7 +35,45 @@ def asset_create_material() -> None:
     close(20)
 
 
-def __create_attributes_info(el:Element) -> None:
+def __create_attributes_info(dom) -> None:
+    el = Element(dom)
     element_id = "id-Código Material - Versión"
     value = "xxx11"
     el.set_value(element_id, value)
+
+    dd = Dropdown(dom)
+
+    # categoria
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div[2]/button"
+    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div[3]/ul/li[1]"
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+    # tipo
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[3]/div/div/div/div[2]/button"
+    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[3]/div/div/div/div[3]/ul/li[1]"
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+    # Forma Farmacéutica
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[2]/button"
+    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[3]/ul/li[1]"
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+    element_id = "id-Dosis"
+    value = "dosis-1"
+    el.set_value(element_id, value)
+
+    element_id = "id-Presentación"
+    value = "presentacion-1"
+    el.set_value(element_id, value)
+
+    # Mercado
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[7]/div/div/div/div[2]/button"
+    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[7]/div/div/div/div[3]/ul/li[2]"
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+    # Cliente
+    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[8]/div/div/div/div[2]/button"
+    li_xpath = ""
+    dd.select_by_xpath(btn_xpath, li_xpath)
+
+
