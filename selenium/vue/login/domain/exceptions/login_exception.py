@@ -7,3 +7,6 @@ class LoginException:
 
     def fail_if_no_button(self, message: str = "") -> None:
         raise Exception(message)
+
+    def fail_if_not_logged(self, message: str = "") -> None:
+        raise Exception(message)

@@ -24,3 +24,9 @@ def login_usr1_or_fail() -> None:
     if not submit_button:
         LoginException.fail_if_no_button("no id:btnSignIn")
     submit_button.click()
+    sleep(25)
+
+    div_assets = browser.find_element(By.ID, "commons-assets")
+    if not div_assets:
+        LoginException.fail_if_not_logged("not logged")
+    sleep(120)
