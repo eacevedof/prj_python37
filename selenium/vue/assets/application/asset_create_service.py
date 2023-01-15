@@ -23,10 +23,7 @@ def asset_create_material() -> None:
     input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
 
     element_id = "id-assetTypes"
-    #input_code = dom.find_by_id(element_id)
-    #input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
-
+    # input_code = dom.find_by_id(element_id)
+    # input_code.send_keys(ASSETS_CREATION.get("mat-1").get(element_id))
 
     close(120)
-
-
