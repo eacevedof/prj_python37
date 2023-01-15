@@ -1,4 +1,5 @@
 from time import sleep
+from vue.shared.infrastructure.facades.env import *
 from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT_URL_HASH, close
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
@@ -39,6 +40,10 @@ def asset_create_material() -> None:
     __create_attributes_datos_opcionales(dom)
 
     __create_tags_documentos(dom)
+
+    element_id = "btnSaveAsset"
+    btn_save = dom.find_by_id(element_id)
+    btn_save.click()
     close(20)
 
 
@@ -167,4 +172,6 @@ def __create_tags_documentos(dom) -> None:
     el = Element(dom)
 
     element_name = "Artworks"
-    el.set_value_by_name(element_name, "/Users/ioedu/Desktop/assets-1/mat-arch-opcionales-2-de-n.jpg")
+    home = getenv(ENV_HOME)
+    path_file = f"{home}/Desktop/assets-1/mat-arch-opcionales-2-de-n.jpg"
+    el.set_value_by_name(element_name, path_file)
