@@ -35,7 +35,7 @@ def asset_create_material() -> None:
 
     __create_attributes_info(dom)
     __create_attributes_production(dom)
-
+    __create_attributes_diseno(dom)
 
     close(20)
 
