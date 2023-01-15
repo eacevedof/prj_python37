@@ -4,6 +4,8 @@ from selenium.webdriver.chrome.service import Service
 
 PATH_DRIVER = os.environ.get("PATHPRJ", "")
 FRONT_URL = "http://localhost:3000"
+FRONT_URL_HASH = "http://localhost:3000/#"
+
 
 __webdriver = None
 
