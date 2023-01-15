@@ -34,6 +34,8 @@ def asset_create_material() -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     __create_attributes_info(dom)
+    __create_attributes_production(dom)
+
     close(20)
 
 
@@ -95,3 +97,22 @@ def __create_attributes_info(dom) -> None:
     element_id = "id-Nomenclatura Extra"
     value = "nomenclatura-1"
     el.set_value(element_id, value)
+
+
+def __create_attributes_production(dom) -> None:
+    # tab produccion
+    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[2]"
+    btn_tab = dom.find_by_xpath(tab_xpath)
+    btn_tab.click()
+    sleep(1)
+
+    el = Element(Dom)
+
+    element_id = "id-Número de tintas"
+    value = 3
+    el.set_value(element_id, value)
+
+    element_id = "id-Acabados especiales"
+    value = "acab espe 1"
+    el.set_value(element_id, value)
+
