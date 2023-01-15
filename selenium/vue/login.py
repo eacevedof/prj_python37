@@ -1,4 +1,4 @@
-# VUE/main.py
+# VUE/login.py
 import time
 from vue.boot.driver import get_chrome
 from selenium.webdriver.common.by import By
