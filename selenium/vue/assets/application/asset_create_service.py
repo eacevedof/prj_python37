@@ -22,11 +22,11 @@ def asset_create_material() -> None:
 
     element_id = "id-asset-code"
     uuid = get_uuid(4)
-    value = ASSETS_CREATION.get(f"mat-{uuid}").get(element_id)
+    value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
     element_id = "id-asset-name"
-    value = ASSETS_CREATION.get(f"mat-{uuid}").get(element_id)
+    value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
