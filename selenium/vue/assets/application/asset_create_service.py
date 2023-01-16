@@ -7,6 +7,7 @@ from vue.shared.infrastructure.facades.element import Element
 from vue.assets.infrastructure.asset_repository import ASSETS_CREATION
 from vue.login.application.login_service import login_usr1_or_fail
 from vue.shared.infrastructure.generators.uuid import get_uuid
+import random
 
 def asset_create_material() -> None:
     login_usr1_or_fail()
@@ -119,11 +120,12 @@ def __create_attributes_production(dom: Dom) -> None:
     el = Element(dom)
 
     element_id = "id-Número de tintas"
-    value = 3
+    value = random.randint(1, 10)
     el.set_value(element_id, value)
 
     element_id = "id-Acabados especiales"
-    value = "acab espe 1"
+    i = random.randint(1, 10)
+    value = f"acab espe {i}"
     el.set_value(element_id, value)
 
 
@@ -137,7 +139,8 @@ def __create_attributes_diseno(dom: Dom) -> None:
     el = Element(dom)
 
     element_id = "id-LAETUS"
-    value = "laetus 1"
+    i = random.randint(1, 10)
+    value = f"laetus {i}"
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
@@ -148,7 +151,8 @@ def __create_attributes_diseno(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     element_id = "id-Referencia al libro de estilo"
-    value = "ref 1"
+    i = random.randint(1, 10)
+    value = f"ref {i}"
     el.set_value(element_id, value)
 
 
@@ -161,7 +165,8 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
     el = Element(dom)
 
     element_id = "id-Comentarios Opcionales de Material"
-    value = "comentarios opcionales xxx"
+    uuid = get_uuid(4)
+    value = f"comentarios opcionales {uuid}"
     el.set_value(element_id, value)
 
 
