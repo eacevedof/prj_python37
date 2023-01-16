@@ -47,7 +47,7 @@ def asset_create_material() -> None:
     close(20)
 
 
-def __create_attributes_info(dom) -> None:
+def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
     element_id = "id-Código Material - Versión"
     value = "xxx11"
@@ -107,7 +107,7 @@ def __create_attributes_info(dom) -> None:
     el.set_value(element_id, value)
 
 
-def __create_attributes_production(dom) -> None:
+def __create_attributes_production(dom: Dom) -> None:
     # tab produccion
     tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[2]"
     btn_tab = dom.find_by_xpath(tab_xpath)
@@ -125,7 +125,7 @@ def __create_attributes_production(dom) -> None:
     el.set_value(element_id, value)
 
 
-def __create_attributes_diseno(dom) -> None:
+def __create_attributes_diseno(dom: Dom) -> None:
     # tab diseno
     tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[3]"
     btn_tab = dom.find_by_xpath(tab_xpath)
@@ -150,7 +150,7 @@ def __create_attributes_diseno(dom) -> None:
     el.set_value(element_id, value)
 
 
-def __create_attributes_datos_opcionales(dom) -> None:
+def __create_attributes_datos_opcionales(dom: Dom) -> None:
     tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[4]"
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
@@ -163,7 +163,7 @@ def __create_attributes_datos_opcionales(dom) -> None:
     el.set_value(element_id, value)
 
 
-def __create_tags_documentos(dom) -> None:
+def __create_tags_documentos(dom: Dom) -> None:
     tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/ul/li[2]"
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
