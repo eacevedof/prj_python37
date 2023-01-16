@@ -6,7 +6,7 @@ from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.assets.infrastructure.asset_repository import ASSETS_CREATION
 from vue.login.application.login_service import login_usr1_or_fail
-
+from vue.shared.infrastructure.generators.uuid import get_uuid
 
 def asset_create_material() -> None:
     login_usr1_or_fail()
@@ -20,11 +20,12 @@ def asset_create_material() -> None:
     sleep(3)
 
     element_id = "id-asset-code"
-    value = ASSETS_CREATION.get("mat-1").get(element_id)
+    uuid = get_uuid(4)
+    value = ASSETS_CREATION.get(f"mat-{uuid}").get(element_id)
     el.set_value(element_id, value)
 
     element_id = "id-asset-name"
-    value = ASSETS_CREATION.get("mat-1").get(element_id)
+    value = ASSETS_CREATION.get(f"mat-{uuid}").get(element_id)
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
@@ -50,7 +51,8 @@ def asset_create_material() -> None:
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
     element_id = "id-Código Material - Versión"
-    value = "xxx11"
+    uuid = get_uuid(4)
+    value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
@@ -71,11 +73,11 @@ def __create_attributes_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     element_id = "id-Dosis"
-    value = "dosis-1"
+    value = f"dosis-{uuid}"
     el.set_value(element_id, value)
 
     element_id = "id-Presentación"
-    value = "presentacion-1"
+    value = f"presentacion-{uuid}"
     el.set_value(element_id, value)
 
     # Mercado
@@ -99,11 +101,11 @@ def __create_attributes_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     element_id = "id-Principio Activo"
-    value = "pa-1"
+    value = f"pa-{uuid}"
     el.set_value(element_id, value)
 
     element_id = "id-Nomenclatura Extra"
-    value = "nomenclatura-1"
+    value = f"nomenclatura-{uuid}"
     el.set_value(element_id, value)
 
 
