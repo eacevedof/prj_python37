@@ -3,10 +3,10 @@ from vue.shared.infrastructure.factories.db import get_db
 
 def run():
     db = get_db()
-    db.execute("SELECT @@version;")
+    db.execute("SELECT * FROM users;")
     row = db.fetchone()
     while row:
-        print(row[0])
+        print(row)
         row = db.fetchone()
 
 run()
