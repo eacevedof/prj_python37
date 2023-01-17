@@ -10,7 +10,7 @@ xcode-select --install
 import pyodbc
 
 CONFIG = {
-    "driver": "{ODBC Driver 18 for SQL Server}",
+    "driver": "{ODBC Driver 17 for SQL Server}",
     "server": "tcp:localhost,1433",
     "database": "local_laciahub",
     "user": "sa",
@@ -25,7 +25,7 @@ def get_db() -> object:
     username = CONFIG.get("user")
     password = CONFIG.get("password")
     cnxn = pyodbc.connect(
-        f"DRIVER={driver};SERVER={server};DATABASE={database};ENCRYPT=yes;UID={username};PWD={password}"
+        f"DRIVER={driver};SERVER={server};DATABASE={database};ENCRYPT=no;UID={username};PWD={password}"
     )
     cursor = cnxn.cursor()
     return cursor
