@@ -4,7 +4,7 @@ https://www.mytecbits.com/internet/python/connect-sql-server-from-python-on-maco
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
 brew update
-brew install msodbcsql17 mssql-tools
+brew install msodbcsql18 mssql-tools
 xcode-select --install
 """
 import pyodbc
