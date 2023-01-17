@@ -1,8 +1,8 @@
 import pyodbc
 
 CONFIG = {
-    "driver": "{ODBC Driver 18 for SQL Server}",
-    "server": "tcp:localhost",
+    "driver": "{ODBC Driver 17 for SQL Server}",
+    "server": "tcp:localhost,1433",
     "database": "local_laciahub",
     "user": "sa",
     "password": "EafEaf1234",
