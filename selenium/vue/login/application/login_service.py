@@ -11,14 +11,16 @@ def login_usr1_or_fail() -> None:
     sleep(1)
 
     input_email = dom.find_by_id("id-email")
-    input_email.send_keys(LOGIN_DATA.get("usr1").get("email"))
+    if len(input_email.get_attribute("value")) == 0:
+        input_email.send_keys(LOGIN_DATA.get("usr1").get("email"))
 
     input_password = dom.find_by_id("id-password")
-    input_password.send_keys(LOGIN_DATA.get("usr1").get("secret"))
+    if len(input_password.get_attribute("value")) == 0:
+        input_password.send_keys(LOGIN_DATA.get("usr1").get("secret"))
 
     submit_button = dom.find_by_id("btnSignIn")
     submit_button.click()
-    #sleep(10)
+    # sleep(10)
 
-    #div_assets = dom.find_by_id("commons-assets")
-    #sleep(1)
+    # div_assets = dom.find_by_id("commons-assets")
+    # sleep(1)
