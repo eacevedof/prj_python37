@@ -15,6 +15,7 @@ CONFIG = {
     "database": "local_laciahub",
     "user": "sa",
     "password": "EafEaf1234",
+    "encrypt": "no",
 }
 
 
@@ -24,8 +25,9 @@ def get_db() -> object:
     database = CONFIG.get("database")
     username = CONFIG.get("user")
     password = CONFIG.get("password")
+    encrypt = CONFIG.get("encrypt")
     cnxn = pyodbc.connect(
-        f"DRIVER={driver};SERVER={server};DATABASE={database};ENCRYPT=no;UID={username};PWD={password}"
+        f"DRIVER={driver};SERVER={server};DATABASE={database};ENCRYPT={encrypt};UID={username};PWD={password}"
     )
     cursor = cnxn.cursor()
     return cursor
