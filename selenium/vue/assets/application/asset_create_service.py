@@ -11,7 +11,7 @@ import random
 
 def asset_create_material() -> None:
     login_usr1_or_fail()
-    sleep(45)
+    sleep(30)
 
     create_url = f"{FRONT_URL_HASH}/assets/add"
     browser = get_chrome()
