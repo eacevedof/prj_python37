@@ -4,12 +4,13 @@ from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
-from vue.assets.infrastructure.asset_repository import ASSETS_CREATION
+from vue.requests.infrastructure.request_repository import ASSETS_CREATION
 from vue.login.application.login_service import login_usr1_or_fail
 from vue.shared.infrastructure.generators.uuid import get_uuid
 import random
 
-def asset_create_material() -> None:
+
+def request_create_material_update() -> None:
     login_usr1_or_fail()
     sleep(30)
 
