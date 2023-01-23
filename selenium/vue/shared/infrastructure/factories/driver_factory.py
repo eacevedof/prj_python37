@@ -5,7 +5,7 @@ from vue.shared.infrastructure.facades.env import *
 
 PATH_DRIVER = getenv(ENV_PATHPRJ)
 FRONT_URL = "http://localhost:3000"
-FRONT_URL_HASH = "http://localhost:3000/#"
+FRONT_URL_HASH = f"{FRONT_URL}/#"
 
 __webdriver = None
 
