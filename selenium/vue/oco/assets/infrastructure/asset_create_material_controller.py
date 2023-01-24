@@ -1,4 +1,4 @@
-from vue.assets.application.asset_create_service import asset_create_material
+from vue.oco.assets.application.asset_create_service import asset_create_material
 
 
 def __asset_create_material() -> None:

@@ -1,7 +1,7 @@
 from time import sleep
 from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT_URL
 from vue.shared.infrastructure.facades.dom import Dom
-from vue.login.infrastructure.login_repository import LOGIN_DATA
+from vue.oco.login.infrastructure.login_repository import LOGIN_DATA
 
 
 def login_usr1_or_fail() -> None:
