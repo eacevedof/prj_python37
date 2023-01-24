@@ -4,7 +4,7 @@ from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
-from vue.oco.login import login_usr1_or_fail
+from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.shared.infrastructure.generators.uuid import get_uuid
 import random
 
