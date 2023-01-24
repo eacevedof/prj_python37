@@ -1,4 +1,4 @@
-from vue.requests.application.request_create_service import request_create_material_update
+from vue.oco.requests.application.request_create_service import request_create_material_update
 
 
 def __request_create_material_update() -> None:
