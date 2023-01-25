@@ -45,8 +45,8 @@ def asset_create_material() -> None:
 
     __create_tags_documentos(dom)
 
-    element_id = "btnSaveAsset"
-    btn_save = dom.find_by_id(element_id)
+    btn_id = AssetRepository.get_id_button_save()
+    btn_save = dom.find_by_id(btn_id)
     btn_save.click()
     close(20)
 
