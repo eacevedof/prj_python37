@@ -20,6 +20,9 @@ class AssetRepository:
     @staticmethod
     def get_id_asset_name() -> str:
         return "id-asset-name"
+    @staticmethod
+    def get_id_button_save() -> str:
+        return "btnSaveAsset"
 
     @staticmethod
     def get_sel_asset_type(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
