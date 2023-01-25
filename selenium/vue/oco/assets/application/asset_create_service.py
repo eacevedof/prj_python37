@@ -71,11 +71,11 @@ def __create_attributes_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Forma Farmacéutica
-    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[2]/button"
-    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[3]/ul/li[1]"
+    btn_xpath = AssetRepository.get_sel_lab_form()
+    li_xpath = AssetRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = "id-Dosis"
+    element_id = AssetRepository.get_id_dosis()
     value = f"dosis-{uuid}"
     el.set_value(element_id, value)
 
