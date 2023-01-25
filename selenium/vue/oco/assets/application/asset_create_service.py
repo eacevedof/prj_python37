@@ -84,8 +84,8 @@ def __create_attributes_info(dom: Dom) -> None:
     el.set_value(element_id, value)
 
     # Mercado
-    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[7]/div/div/div/div[2]/button"
-    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[7]/div/div/div/div[3]/ul/li[2]"
+    btn_xpath = AssetRepository.get_sel_market()
+    li_xpath = AssetRepository.get_sel_market(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Cliente
