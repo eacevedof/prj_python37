@@ -89,8 +89,8 @@ def __create_attributes_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Cliente
-    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[8]/div/div/div/div[2]/button"
-    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[8]/div/div/div/div[3]/ul/li[1]"
+    btn_xpath = AssetRepository.get_sel_client()
+    li_xpath = AssetRepository.get_sel_client(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # País
