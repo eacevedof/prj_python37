@@ -53,5 +53,8 @@ class AssetRepository:
     @staticmethod
     def get_id_dosis() -> str:
         return "id-Dosis"
+    @staticmethod
+    def get_id_presentation() -> str:
+        return "id-Presentación"
 
 

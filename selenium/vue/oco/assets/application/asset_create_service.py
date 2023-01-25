@@ -79,7 +79,7 @@ def __create_attributes_info(dom: Dom) -> None:
     value = f"dosis-{uuid}"
     el.set_value(element_id, value)
 
-    element_id = "id-Presentación"
+    element_id = AssetRepository.get_id_presentation()
     value = f"presentacion-{uuid}"
     el.set_value(element_id, value)
 
