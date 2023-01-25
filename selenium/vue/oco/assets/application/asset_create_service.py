@@ -6,6 +6,8 @@ from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.shared.infrastructure.generators.uuid import get_uuid
+from vue.oco.assets.infrastructure.asset_repository import AssetRepository
+from vue.shared.domain.element_enum import ElementEnum
 import random
 
 def asset_create_material() -> None:
@@ -19,20 +21,20 @@ def asset_create_material() -> None:
     el = Element(dom)
     sleep(3)
 
-    element_id = "id-asset-code"
+    element_id = AssetRepository.get_id_asset_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
-    element_id = "id-asset-name"
+    element_id = AssetRepository.get_id_asset_name()
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
 
     # tipo de asset
-    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[2]/button"
-    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[3]/ul/li[1]"
+    btn_xpath = AssetRepository.get_sel_id_asset_type()
+    li_xpath = AssetRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     __create_attributes_info(dom)
@@ -50,7 +52,7 @@ def asset_create_material() -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    element_id = "id-Código Material - Versión"
+    element_id = AssetRepository.get_id_material_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
