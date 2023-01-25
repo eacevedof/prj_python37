@@ -10,6 +10,7 @@ from vue.oco.assets.infrastructure.asset_repository import AssetRepository
 from vue.shared.domain.element_enum import ElementEnum
 import random
 
+
 def asset_create_material() -> None:
     login_usr1_or_fail()
     sleep(30)
