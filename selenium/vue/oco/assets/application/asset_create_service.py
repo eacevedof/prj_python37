@@ -103,11 +103,11 @@ def __create_attributes_info(dom: Dom) -> None:
     li_xpath = AssetRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = "id-Principio Activo"
+    element_id = AssetRepository.get_id_principio_activo()
     value = f"pa-{uuid}"
     el.set_value(element_id, value)
 
-    element_id = "id-Nomenclatura Extra"
+    element_id = AssetRepository.get_id_nomenclatura_extra()
     value = f"nomenclatura-{uuid}"
     el.set_value(element_id, value)
 

@@ -81,3 +81,10 @@ class AssetRepository:
             return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[2]/button"
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[3]/ul/li[1]"
 
+    @staticmethod
+    def get_id_principio_activo() -> str:
+        return "id-Principio Activo"\
+
+    @staticmethod
+    def get_id_nomenclatura_extra() -> str:
+        return "id-Nomenclatura Extra"
