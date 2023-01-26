@@ -34,7 +34,7 @@ def asset_create_material() -> None:
     dd = Dropdown(dom)
 
     # tipo de asset
-    btn_xpath = AssetRepository.get_sel_id_asset_type()
+    btn_xpath = AssetRepository.get_sel_asset_type()
     li_xpath = AssetRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
