@@ -123,11 +123,11 @@ def __create_attributes_production(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = "id-Número de tintas"
+    element_id = AssetAttributesRepository.get_id_numero_de_tintas()
     value = random.randint(1, 10)
     el.set_value(element_id, value)
 
-    element_id = "id-Acabados especiales"
+    element_id = AssetAttributesRepository.get_id_acabados_especiales()
     i = random.randint(1, 10)
     value = f"acab espe {i}"
     el.set_value(element_id, value)
