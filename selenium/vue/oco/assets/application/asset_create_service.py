@@ -154,7 +154,7 @@ def __create_attributes_diseno(dom: Dom) -> None:
     li_xpath = AssetAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = "id-Referencia al libro de estilo"
+    element_id = AssetAttributesRepository.get_id_referencia_al_libro()
     i = random.randint(1, 10)
     value = f"ref {i}"
     el.set_value(element_id, value)
