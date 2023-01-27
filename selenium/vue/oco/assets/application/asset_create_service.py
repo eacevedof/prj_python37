@@ -9,6 +9,7 @@ from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.oco.assets.infrastructure.assets_repository import AssetsRepository
 from vue.oco.assets.infrastructure.asset_attributes_repository import AssetAttributesRepository
+from vue.oco.assets.infrastructure.asset_groups_attributes_repository import AssetGroupsAttributesRepository
 import random
 
 
@@ -115,7 +116,7 @@ def __create_attributes_info(dom: Dom) -> None:
 
 def __create_attributes_production(dom: Dom) -> None:
     # tab produccion
-    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[2]"
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_production()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
