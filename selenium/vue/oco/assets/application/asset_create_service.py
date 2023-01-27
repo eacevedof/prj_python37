@@ -135,7 +135,7 @@ def __create_attributes_production(dom: Dom) -> None:
 
 def __create_attributes_diseno(dom: Dom) -> None:
     # tab diseno
-    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[3]"
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_diseno()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
