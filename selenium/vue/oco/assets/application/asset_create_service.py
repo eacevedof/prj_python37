@@ -175,7 +175,7 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
 
 def __create_tags_documentos(dom: Dom) -> None:
-    tab_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/ul/li[2]"
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_documentos()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
