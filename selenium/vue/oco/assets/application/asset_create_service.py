@@ -7,7 +7,8 @@ from vue.shared.infrastructure.facades.element import Element
 from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
-from vue.oco.assets.infrastructure.asset_repository import AssetAttributesRepository
+from vue.oco.assets.infrastructure.assets_repository import AssetsRepository
+from vue.oco.assets.infrastructure.asset_attributes_repository import AssetAttributesRepository
 import random
 
 
@@ -22,12 +23,12 @@ def asset_create_material() -> None:
     el = Element(dom)
     sleep(3)
 
-    element_id = AssetAttributesRepository.get_id_asset_code()
+    element_id = AssetsRepository.get_id_asset_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
-    element_id = AssetAttributesRepository.get_id_asset_name()
+    element_id = AssetsRepository.get_id_asset_name()
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
@@ -53,7 +54,7 @@ def asset_create_material() -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    element_id = AssetAttributesRepository.get_id_material_code()
+    element_id = AssetsRepository.get_id_material_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
