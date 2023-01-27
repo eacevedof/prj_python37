@@ -100,3 +100,6 @@ class AssetAttributesRepository:
     @staticmethod
     def get_id_referencia_al_libro() -> str:
         return "id-Referencia al libro de estilo"
+    @staticmethod
+    def get_id_comentarios_opcionales() -> str:
+        return "id-Comentarios Opcionales de Material"

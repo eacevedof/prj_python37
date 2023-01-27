@@ -168,7 +168,7 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = "id-Comentarios Opcionales de Material"
+    element_id = AssetAttributesRepository.get_id_comentarios_opcionales()
     uuid = get_uuid(4)
     value = f"comentarios opcionales {uuid}"
     el.set_value(element_id, value)
