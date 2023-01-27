@@ -150,8 +150,8 @@ def __create_attributes_diseno(dom: Dom) -> None:
     dd = Dropdown(dom)
 
     # marcas visuales
-    btn_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div[2]/div/div/div/div[2]/button"
-    li_xpath = "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div[2]/div/div/div/div[3]/ul/li[1]"
+    btn_xpath = AssetAttributesRepository.get_sel_marcas_visuales()
+    li_xpath = AssetAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     element_id = "id-Referencia al libro de estilo"
