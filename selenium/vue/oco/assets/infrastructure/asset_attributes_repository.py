@@ -72,8 +72,16 @@ class AssetAttributesRepository:
 
     @staticmethod
     def get_id_principio_activo() -> str:
-        return "id-Principio Activo"\
+        return "id-Principio Activo"
 
     @staticmethod
     def get_id_nomenclatura_extra() -> str:
         return "id-Nomenclatura Extra"
+
+    @staticmethod
+    def get_id_numero_de_tintas() -> str:
+        return "id-Número de tintas"
+
+    @staticmethod
+    def get_id_acabados_especiales() -> str:
+        return "id-Acabados especiales"
