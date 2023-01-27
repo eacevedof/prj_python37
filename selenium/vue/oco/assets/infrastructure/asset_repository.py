@@ -9,7 +9,7 @@ ASSETS_CREATION = {
 }
 
 
-class AssetRepository:
+class AssetAttributesRepository:
     def __int__(self):
         pass
 
