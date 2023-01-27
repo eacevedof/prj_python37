@@ -85,3 +85,7 @@ class AssetAttributesRepository:
     @staticmethod
     def get_id_acabados_especiales() -> str:
         return "id-Acabados especiales"
+
+    @staticmethod
+    def get_id_laetus() -> str:
+        return "id-LAETUS"

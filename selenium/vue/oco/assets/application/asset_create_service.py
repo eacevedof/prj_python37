@@ -142,7 +142,7 @@ def __create_attributes_diseno(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = "id-LAETUS"
+    element_id = AssetAttributesRepository.get_id_laetus()
     i = random.randint(1, 10)
     value = f"laetus {i}"
     el.set_value(element_id, value)
