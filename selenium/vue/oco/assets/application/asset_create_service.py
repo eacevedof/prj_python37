@@ -10,6 +10,7 @@ from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.oco.assets.infrastructure.assets_repository import AssetsRepository
 from vue.oco.assets.infrastructure.asset_attributes_repository import AssetAttributesRepository
 from vue.oco.assets.infrastructure.asset_groups_attributes_repository import AssetGroupsAttributesRepository
+from vue.oco.assets.infrastructure.asset_tags_repository import AssetTagsRepository
 import random
 
 
@@ -182,7 +183,7 @@ def __create_tags_documentos(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_name = "Artworks"
+    element_name = AssetTagsRepository.get_tag_artworks()
     home = getenv(ENV_HOME)
     path_file = f"{home}/Desktop/assets-1/mat-arch-opcionales-2-de-n.jpg"
     el.set_value_by_name(element_name, path_file)
