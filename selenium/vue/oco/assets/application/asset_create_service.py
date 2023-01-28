@@ -100,8 +100,8 @@ def __create_attributes_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # País
-    btn_xpath = AssetAttributesRepository.get_sel_client()
-    li_xpath = AssetAttributesRepository.get_sel_client(ElementEnum.LI_XPATH)
+    btn_xpath = AssetAttributesRepository.get_sel_country()
+    li_xpath = AssetAttributesRepository.get_sel_country(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Fabricante
