@@ -59,7 +59,7 @@ def __config_asset_type(dom: Dom) -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    element_id = AssetsRepository.get_id_material_code()
+    element_id = AssetsRepository.get_id_asset_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)

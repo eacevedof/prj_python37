@@ -12,6 +12,7 @@ class AssetsRepository:
     @staticmethod
     def get_id_asset_name() -> str:
         return "id-asset-name"
+
     @staticmethod
     def get_id_button_save() -> str:
         return "btnSaveAsset"
