@@ -1,11 +1,12 @@
 from time import sleep
 import random
-from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT_URL_HASH, close
+from vue.shared.infrastructure.factories.driver_factory import get_chrome, close
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.infrastructure.repositories.files_repository import FilesRepository
+from vue.shared.infrastructure.repositories.routes_repository import RoutesRepository
 
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
@@ -19,7 +20,7 @@ def asset_create_material() -> None:
     login_usr1_or_fail()
     sleep(30)
 
-    create_url = f"{FRONT_URL_HASH}/assets/add"
+    create_url = RoutesRepository.get_asset_add()
     browser = get_chrome()
     browser.get(create_url)
     dom = Dom(browser)
