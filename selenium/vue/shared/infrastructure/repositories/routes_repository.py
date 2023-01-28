@@ -6,5 +6,5 @@ class RoutesRepository:
         pass
 
     @staticmethod
-    def get_asset_add() -> str:
+    def get_asset_add_url() -> str:
         create_url = f"{FRONT_URL_HASH}/assets/add"

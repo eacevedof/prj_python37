@@ -12,7 +12,8 @@ from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.oco.assets.infrastructure.repositories.assets_repository import AssetsRepository
 from vue.oco.assets.infrastructure.repositories.asset_attributes_repository import AssetAttributesRepository
-from vue.oco.assets.infrastructure.repositories.asset_groups_attributes_repository import AssetGroupsAttributesRepository
+from vue.oco.assets.infrastructure.repositories.asset_groups_attributes_repository import \
+    AssetGroupsAttributesRepository
 from vue.oco.assets.infrastructure.repositories.asset_tags_repository import AssetTagsRepository
 
 
@@ -20,13 +21,26 @@ def asset_create_material() -> None:
     login_usr1_or_fail()
     sleep(30)
 
-    create_url = RoutesRepository.get_asset_add()
     browser = get_chrome()
-    browser.get(create_url)
+    browser.get(RoutesRepository.get_asset_add_url())
     dom = Dom(browser)
-    el = Element(dom)
     sleep(3)
 
+    __config_asset_type(dom)
+    __create_attributes_info(dom)
+    __create_attributes_production(dom)
+    __create_attributes_diseno(dom)
+    __create_attributes_datos_opcionales(dom)
+    __create_tags_documentos(dom)
+
+    btn_id = AssetAttributesRepository.get_id_button_save()
+    btn_save = dom.find_by_id(btn_id)
+    btn_save.click()
+    close(20)
+
+
+def __config_asset_type(dom: Dom) -> None:
+    el = Element(dom)
     element_id = AssetsRepository.get_id_asset_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
@@ -37,23 +51,10 @@ def asset_create_material() -> None:
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
-
     # tipo de asset
     btn_xpath = AssetAttributesRepository.get_sel_asset_type()
     li_xpath = AssetAttributesRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-
-    __create_attributes_info(dom)
-    __create_attributes_production(dom)
-    __create_attributes_diseno(dom)
-    __create_attributes_datos_opcionales(dom)
-
-    __create_tags_documentos(dom)
-
-    btn_id = AssetAttributesRepository.get_id_button_save()
-    btn_save = dom.find_by_id(btn_id)
-    btn_save.click()
-    close(20)
 
 
 def __create_attributes_info(dom: Dom) -> None:
