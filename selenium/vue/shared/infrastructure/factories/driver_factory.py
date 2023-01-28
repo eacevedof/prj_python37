@@ -18,9 +18,10 @@ def get_chrome():
 
     options = webdriver.ChromeOptions()
     options.add_argument("--auto-open-devtools-for-tabs")
+    # deshabilita validación cors
     options.add_argument("--disable-web-security")
     options.add_argument("start-maximized")
-    options.add_argument("--disable-blink-features=AutomationControlled")
+    #options.add_argument("--disable-blink-features=AutomationControlled")
 
     service = Service(f"{PATH_DRIVER}/chrome-driver-selenium/chromedriver")
     __webdriver = webdriver.Chrome(service=service, options=options)
