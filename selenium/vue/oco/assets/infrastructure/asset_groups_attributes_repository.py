@@ -1,13 +1,5 @@
 from vue.shared.domain.element_enum import ElementEnum
 
-ASSETS_CREATION = {
-    "mat-1": {
-        "id-asset-code": "mat-1",
-        "id-asset-name": "mat-1",
-        "id-assetTypes": "id-assetTypes",
-    },
-}
-
 
 class AssetGroupsAttributesRepository:
     def __int__(self):
