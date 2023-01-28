@@ -1,11 +1,11 @@
 from time import sleep
 import random
-from vue.shared.infrastructure.facades.env import *
 from vue.shared.infrastructure.factories.driver_factory import get_chrome, FRONT_URL_HASH, close
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.shared.infrastructure.generators.uuid import get_uuid
+from vue.shared.infrastructure.repositories.files_repository import FilesRepository
 
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
@@ -185,6 +185,5 @@ def __create_tags_documentos(dom: Dom) -> None:
     el = Element(dom)
 
     element_name = AssetTagsRepository.get_tag_artworks()
-    home = getenv(ENV_HOME)
-    path_file = f"{home}/Desktop/assets-1/mat-arch-opcionales-2-de-n.jpg"
+    path_file = FilesRepository.get_rnd_artworks()
     el.set_value_by_name(element_name, path_file)
