@@ -9,10 +9,10 @@ from vue.shared.infrastructure.generators.uuid import get_uuid
 
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
-from vue.oco.assets.infrastructure.assets_repository import AssetsRepository
-from vue.oco.assets.infrastructure.asset_attributes_repository import AssetAttributesRepository
-from vue.oco.assets.infrastructure.asset_groups_attributes_repository import AssetGroupsAttributesRepository
-from vue.oco.assets.infrastructure.asset_tags_repository import AssetTagsRepository
+from vue.oco.assets.infrastructure.repositories.assets_repository import AssetsRepository
+from vue.oco.assets.infrastructure.repositories.asset_attributes_repository import AssetAttributesRepository
+from vue.oco.assets.infrastructure.repositories.asset_groups_attributes_repository import AssetGroupsAttributesRepository
+from vue.oco.assets.infrastructure.repositories.asset_tags_repository import AssetTagsRepository
 
 
 def asset_create_material() -> None:
