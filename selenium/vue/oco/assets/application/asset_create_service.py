@@ -33,7 +33,7 @@ def asset_create_material() -> None:
     __create_attributes_datos_opcionales(dom)
     __create_tags_documentos(dom)
 
-    btn_id = AssetAttributesRepository.get_id_button_save()
+    btn_id = AssetsRepository.get_id_button_save()
     btn_save = dom.find_by_id(btn_id)
     btn_save.click()
     close(20)
@@ -59,7 +59,7 @@ def __config_asset_type(dom: Dom) -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    element_id = AssetsRepository.get_id_asset_code()
+    element_id = AssetAttributesRepository.get_id_material_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
