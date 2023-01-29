@@ -47,9 +47,9 @@ def __config_request_type(dom: Dom) -> None:
     li_xpath = TacticalRequestsRepository.get_sel_request_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = TacticalRequestsRepository.get_id_asset_name()
-    value = f"mat-{uuid}"
-    el.set_value(element_id, value)
+    btn_xpath = TacticalRequestsRepository.get_sel_asset()
+    li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
+    dd.select_by_xpath(btn_xpath, li_xpath)
 
     # tipo de asset
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_asset_type()
