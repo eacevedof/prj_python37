@@ -41,16 +41,16 @@ def invoke() -> None:
 
 def __config_request_type(dom: Dom) -> None:
     el = Element(dom)
-    element_id = TacticalRequestsRepository.get_id_asset_code()
-    uuid = get_uuid(4)
-    value = f"mat-{uuid}"
-    el.set_value(element_id, value)
+    dd = Dropdown(dom)
+
+    btn_xpath = TacticalRequestsRepository.get_sel_request_type()
+    li_xpath = TacticalRequestsRepository.get_sel_request_type(ElementEnum.LI_XPATH)
+    dd.select_by_xpath(btn_xpath, li_xpath)
 
     element_id = TacticalRequestsRepository.get_id_asset_name()
     value = f"mat-{uuid}"
     el.set_value(element_id, value)
 
-    dd = Dropdown(dom)
     # tipo de asset
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_asset_type()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
