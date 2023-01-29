@@ -27,7 +27,7 @@ def invoke() -> None:
     sleep(3)
 
     __config_request_type(dom)
-    __create_attributes_info(dom)
+    __requests_details(dom)
     __create_attributes_production(dom)
     __create_attributes_diseno(dom)
     __create_attributes_datos_opcionales(dom)
@@ -52,18 +52,12 @@ def __config_request_type(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
 
-def __create_attributes_info(dom: Dom) -> None:
-    el = Element(dom)
-    element_id = TacticalRequestsAttributesRepository.get_id_material_code()
-    uuid = get_uuid(4)
-    value = f"mat-{uuid}"
-    el.set_value(element_id, value)
-
+def __requests_details(dom: Dom) -> None:
     dd = Dropdown(dom)
 
-    # categoria
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_category()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_category(ElementEnum.LI_XPATH)
+    # motivo de solicitud
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # tipo
@@ -76,41 +70,7 @@ def __create_attributes_info(dom: Dom) -> None:
     li_xpath = TacticalRequestsAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = TacticalRequestsAttributesRepository.get_id_dosis()
-    value = f"dosis-{uuid}"
-    el.set_value(element_id, value)
 
-    element_id = TacticalRequestsAttributesRepository.get_id_presentation()
-    value = f"presentacion-{uuid}"
-    el.set_value(element_id, value)
-
-    # Mercado
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_market()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_market(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    # Cliente
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_client()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_client(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    # País
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_country()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_country(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    # Fabricante
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_fabricant()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    element_id = TacticalRequestsAttributesRepository.get_id_principio_activo()
-    value = f"pa-{uuid}"
-    el.set_value(element_id, value)
-
-    element_id = TacticalRequestsAttributesRepository.get_id_nomenclatura_extra()
-    value = f"nomenclatura-{uuid}"
-    el.set_value(element_id, value)
 
 
 def __create_attributes_production(dom: Dom) -> None:
