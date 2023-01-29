@@ -51,11 +51,6 @@ def __config_request_type(dom: Dom) -> None:
     li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # tipo de asset
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_asset_type()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
