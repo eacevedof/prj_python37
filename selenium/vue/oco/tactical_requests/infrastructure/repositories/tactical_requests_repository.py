@@ -5,7 +5,6 @@ class TacticalRequestsRepository:
     def __int__(self):
         pass
 
-
     @staticmethod
     def get_sel_request_type(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
         if xpath == ElementEnum.BUTTON_XPATH:
