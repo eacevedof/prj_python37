@@ -18,6 +18,7 @@ def get_chrome():
 
     options = webdriver.ChromeOptions()
     options.add_argument("--auto-open-devtools-for-tabs")
+    options.add_argument("--detach-devtools-docked-at-startup")
     # deshabilita validación cors
     options.add_argument("--disable-web-security")
     options.add_argument("start-maximized")
@@ -25,6 +26,14 @@ def get_chrome():
 
     service = Service(f"{PATH_DRIVER}/chrome-driver-selenium/chromedriver")
     __webdriver = webdriver.Chrome(service=service, options=options)
+    #__webdriver.execute_cdp_cmd("Page.setDevToolsFlattened", {"devtoolsFlattened": True})
+    __webdriver.execute_script("""
+    async function openDevTools() {
+        const {Runtime} = await import('chrome-devtools-frontend/front_end/common/Runtime.js');
+        await Runtime.evaluate({expression: `inspect(window.open())`});
+    }
+    openDevTools();
+""")
     return __webdriver
 
 
