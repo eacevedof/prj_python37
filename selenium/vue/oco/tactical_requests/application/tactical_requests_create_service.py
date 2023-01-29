@@ -22,7 +22,7 @@ def invoke() -> None:
     sleep(30)
 
     browser = get_chrome()
-    browser.get(RoutesRepository.get_asset_add_url())
+    browser.get(RoutesRepository.get_tactical_requests_add_url())
     dom = Dom(browser)
     sleep(3)
 
