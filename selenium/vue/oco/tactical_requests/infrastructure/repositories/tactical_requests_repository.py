@@ -1,7 +1,7 @@
 from vue.shared.domain.element_enum import ElementEnum
 
 
-class AssetsRepository:
+class TacticalRequestsRepository:
     def __int__(self):
         pass
 
