@@ -10,11 +10,14 @@ from vue.shared.infrastructure.repositories.routes_repository import RoutesRepos
 
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
-from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_repository import TacticalRequestsRepository
-from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_attributes_repository import TacticalRequestsAttributesRepository
+from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_repository import \
+    TacticalRequestsRepository
+from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_attributes_repository import \
+    TacticalRequestsAttributesRepository
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_request_groups_attributes_repository import \
     TacticalRequestGroupsAttributesRepository
-from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tags_repository import TacticalRequestTagsRepository
+from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tags_repository import \
+    TacticalRequestTagsRepository
 
 
 def invoke() -> None:
@@ -53,6 +56,7 @@ def __config_request_type(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
     sleep(15)
 
+
 def __requests_details(dom: Dom) -> None:
     dd = Dropdown(dom)
 
@@ -70,8 +74,6 @@ def __requests_details(dom: Dom) -> None:
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_lab_form()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-
-
 
 
 def __create_attributes_production(dom: Dom) -> None:
