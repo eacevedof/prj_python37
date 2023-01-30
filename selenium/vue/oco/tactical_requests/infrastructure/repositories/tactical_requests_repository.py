@@ -23,5 +23,5 @@ class TacticalRequestsRepository:
         return ""
 
     @staticmethod
-    def get_id_button_save() -> str:
-        return "btnSaveAsset"
+    def get_xpath_button_save() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[1]/div[1]/div[2]/div/div[2]/button"
