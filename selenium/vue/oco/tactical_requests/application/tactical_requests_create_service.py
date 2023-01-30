@@ -19,12 +19,12 @@ from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tag
 
 def invoke() -> None:
     login_usr1_or_fail()
-    sleep(30)
+    sleep(20)
 
     browser = get_chrome()
     browser.get(RoutesRepository.get_tactical_requests_add_url())
     dom = Dom(browser)
-    sleep(3)
+    sleep(7)
 
     __config_request_type(dom)
     __requests_details(dom)
@@ -46,11 +46,12 @@ def __config_request_type(dom: Dom) -> None:
     btn_xpath = TacticalRequestsRepository.get_sel_request_type()
     li_xpath = TacticalRequestsRepository.get_sel_request_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(10)
 
     btn_xpath = TacticalRequestsRepository.get_sel_asset()
     li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-
+    sleep(15)
 
 def __requests_details(dom: Dom) -> None:
     dd = Dropdown(dom)
