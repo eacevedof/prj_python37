@@ -30,3 +30,8 @@ class Element:
     def set_value_in_input(input_element: object, value: str) -> None:
         input_element.send_keys(value)
         sleep(0.2)
+
+    def set_value_by_xpath(self, xpath: str, value: str) -> None:
+        input_element = self.__dom.find_by_xpath(xpath)
+        input_element.send_keys(value)
+        sleep(0.2)
