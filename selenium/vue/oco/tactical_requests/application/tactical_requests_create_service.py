@@ -35,14 +35,13 @@ def invoke() -> None:
     __requests_details(dom)
 
     __update_attributes_tab_material_info(dom)
-    __create_attributes_diseno(dom)
-    __create_attributes_datos_opcionales(dom)
-    __create_tags_documentos(dom)
+    __update_attributes_tab_optional_data(dom)
+    #__create_tags_documentos(dom)
 
-    btn_id = TacticalRequestsRepository.get_id_button_save()
-    btn_save = dom.find_by_id(btn_id)
+    btn_xpath = TacticalRequestsRepository.get_xpath_button_save()
+    btn_save = dom.find_by_xpath(btn_xpath)
     btn_save.click()
-    close(25)
+    close(30)
 
 
 def __config_request_type(dom: Dom) -> None:
@@ -83,7 +82,7 @@ def __requests_details(dom: Dom) -> None:
     i = random.randint(1, 10)
     value = f"comment {i}"
     el.set_value_by_xpath(xpath, value)
-    sleep(7)
+    sleep(1)
 
 
 def __update_attributes_tab_material_info(dom: Dom) -> None:
@@ -103,37 +102,11 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
     dd = Dropdown(dom)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(10)
+    sleep(3)
 
 
-def __create_attributes_diseno(dom: Dom) -> None:
+def __update_attributes_tab_optional_data(dom: Dom) -> None:
     # tab diseno
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_diseno()
-    btn_tab = dom.find_by_xpath(tab_xpath)
-    btn_tab.click()
-    sleep(1)
-
-    el = Element(dom)
-
-    element_id = TacticalRequestsAttributesRepository.get_id_laetus()
-    i = random.randint(1, 10)
-    value = f"laetus {i}"
-    el.set_value(element_id, value)
-
-    dd = Dropdown(dom)
-
-    # marcas visuales
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_marcas_visuales()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    element_id = TacticalRequestsAttributesRepository.get_id_referencia_al_libro()
-    i = random.randint(1, 10)
-    value = f"ref {i}"
-    el.set_value(element_id, value)
-
-
-def __create_attributes_datos_opcionales(dom: Dom) -> None:
     tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_datos_opcionales()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
@@ -141,10 +114,11 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = TacticalRequestsAttributesRepository.get_id_comentarios_opcionales()
-    uuid = get_uuid(4)
-    value = f"comentarios opcionales {uuid}"
-    el.set_value(element_id, value)
+    el_xpath = TacticalRequestsAttributesRepository.get_xpath_optional_comment()
+    i = random.randint(1, 10)
+    value = f"optional commment {i}"
+    el.set_value_by_xpath(el_xpath, value)
+    sleep(1)
 
 
 def __create_tags_documentos(dom: Dom) -> None:

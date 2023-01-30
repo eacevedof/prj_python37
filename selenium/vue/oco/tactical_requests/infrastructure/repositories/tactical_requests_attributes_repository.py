@@ -26,6 +26,10 @@ class TacticalRequestsAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/textarea"
 
     @staticmethod
+    def get_xpath_optional_comment() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[2]/div/div[2]/div[2]/div/div/div/div/div[1]/textarea"
+
+    @staticmethod
     def get_xpath_btn_pais() -> str:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[2]/div/div[2]/div[1]/div/div/div[3]/div/div/div/div[1]/div[1]/div/div/button"
 
