@@ -6,8 +6,8 @@ class TacticalRequestGroupsAttributesRepository:
         pass
 
     @staticmethod
-    def get_tab_production() -> str:
-        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[1]/button[2]"
+    def get_tab_attributes() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/ul/li[2]"
 
     @staticmethod
     def get_tab_diseno() -> str:

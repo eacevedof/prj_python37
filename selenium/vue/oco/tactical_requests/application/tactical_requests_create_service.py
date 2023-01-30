@@ -33,9 +33,8 @@ def invoke() -> None:
 
     __config_request_type(dom)
     __requests_details(dom)
-    sleep(7)
 
-    __create_attributes_production(dom)
+    __update_attributes_tab_material_info(dom)
     __create_attributes_diseno(dom)
     __create_attributes_datos_opcionales(dom)
     __create_tags_documentos(dom)
@@ -84,25 +83,27 @@ def __requests_details(dom: Dom) -> None:
     i = random.randint(1, 10)
     value = f"comment {i}"
     el.set_value_by_xpath(xpath, value)
-    sleep(100)
+    sleep(7)
 
 
-def __create_attributes_production(dom: Dom) -> None:
-    # tab produccion
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_production()
+def __update_attributes_tab_material_info(dom: Dom) -> None:
+    # tab attrubutes -> tab material info
+    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_attributes()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
 
     el = Element(dom)
-    element_id = TacticalRequestsAttributesRepository.get_id_numero_de_tintas()
-    value = random.randint(1, 10)
-    el.set_value(element_id, value)
+    btn_xpath = TacticalRequestsAttributesRepository.get_xpath_btn_pais()
+    btn_tab = dom.find_by_xpath(btn_xpath)
+    btn_tab.click()
+    sleep(1)
 
-    element_id = TacticalRequestsAttributesRepository.get_id_acabados_especiales()
-    i = random.randint(1, 10)
-    value = f"acab espe {i}"
-    el.set_value(element_id, value)
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_pais()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
+    dd = Dropdown(dom)
+    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(10)
 
 
 def __create_attributes_diseno(dom: Dom) -> None:
