@@ -4,7 +4,7 @@ from vue.shared.infrastructure.factories.driver_factory import get_chrome, close
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
-from vue.shared.infrastructure.facades.dt import get_yyyy_mm_dd
+from vue.shared.infrastructure.facades.dt import get_ymd_plus
 
 from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.infrastructure.repositories.files_repository import FilesRepository
@@ -29,7 +29,7 @@ def invoke() -> None:
     browser = get_chrome()
     browser.get(RoutesRepository.get_tactical_requests_add_url())
     dom = Dom(browser)
-    sleep(7)
+    sleep(10)
 
     __config_request_type(dom)
     __requests_details(dom)
@@ -75,9 +75,15 @@ def __requests_details(dom: Dom) -> None:
 
     # fecha
     element_id = TacticalRequestsAttributesRepository.get_id_fecha()
-    value = get_yyyy_mm_dd()
+    value = get_ymd_plus()
     el = Element(dom)
     el.set_value(element_id, value)
+
+    # comentarios
+    xpath = TacticalRequestsAttributesRepository.get_xpath_comment()
+    i = random.randint(1, 10)
+    value = f"comment {i}"
+    el.set_value_by_xpath(xpath, value)
     sleep(100)
 
 

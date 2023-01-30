@@ -22,6 +22,10 @@ class TacticalRequestsAttributesRepository:
         return "id-null"
 
     @staticmethod
+    def get_xpath_comment() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/textarea"
+
+    @staticmethod
     def get_sel_tmp(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
         if xpath == ElementEnum.BUTTON_XPATH:
             return ""
