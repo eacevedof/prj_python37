@@ -43,7 +43,6 @@ def invoke() -> None:
 
 
 def __config_request_type(dom: Dom) -> None:
-    el = Element(dom)
     dd = Dropdown(dom)
 
     btn_xpath = TacticalRequestsRepository.get_sel_request_type()
@@ -84,7 +83,6 @@ def __create_attributes_production(dom: Dom) -> None:
     sleep(1)
 
     el = Element(dom)
-
     element_id = TacticalRequestsAttributesRepository.get_id_numero_de_tintas()
     value = random.randint(1, 10)
     el.set_value(element_id, value)
