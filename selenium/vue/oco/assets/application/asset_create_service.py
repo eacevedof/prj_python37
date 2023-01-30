@@ -36,7 +36,7 @@ def asset_create_material() -> None:
     btn_id = AssetsRepository.get_id_button_save()
     btn_save = dom.find_by_id(btn_id)
     btn_save.click()
-    close(25)
+    close(30)
 
 
 def __config_asset_type(dom: Dom) -> None:
