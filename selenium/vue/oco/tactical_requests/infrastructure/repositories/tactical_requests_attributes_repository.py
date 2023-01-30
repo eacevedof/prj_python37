@@ -18,6 +18,10 @@ class TacticalRequestsAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div/div/div[1]/div[3]/div/div/div/div[3]/ul/li[2]"
 
     @staticmethod
+    def get_id_fecha() -> str:
+        return "id-null"
+
+    @staticmethod
     def get_sel_tmp(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
         if xpath == ElementEnum.BUTTON_XPATH:
             return ""

@@ -4,6 +4,8 @@ from vue.shared.infrastructure.factories.driver_factory import get_chrome, close
 from vue.shared.infrastructure.facades.dom import Dom
 from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
+from vue.shared.infrastructure.facades.dt import get_yyyy_mm_dd
+
 from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.infrastructure.repositories.files_repository import FilesRepository
 from vue.shared.infrastructure.repositories.routes_repository import RoutesRepository
@@ -31,6 +33,8 @@ def invoke() -> None:
 
     __config_request_type(dom)
     __requests_details(dom)
+    sleep(7)
+
     __create_attributes_production(dom)
     __create_attributes_diseno(dom)
     __create_attributes_datos_opcionales(dom)
@@ -64,15 +68,17 @@ def __requests_details(dom: Dom) -> None:
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # tipo
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_type()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_type(ElementEnum.LI_XPATH)
+    # prioridad
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # Forma Farmacéutica
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_lab_form()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
+    # fecha
+    element_id = TacticalRequestsAttributesRepository.get_id_fecha()
+    value = get_yyyy_mm_dd()
+    el = Element(dom)
+    el.set_value(element_id, value)
+    sleep(100)
 
 
 def __create_attributes_production(dom: Dom) -> None:
