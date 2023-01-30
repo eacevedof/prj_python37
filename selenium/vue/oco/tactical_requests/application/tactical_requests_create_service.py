@@ -54,7 +54,7 @@ def __config_request_type(dom: Dom) -> None:
     btn_xpath = TacticalRequestsRepository.get_sel_asset()
     li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(15)
+    sleep(25)
 
 
 def __requests_details(dom: Dom) -> None:
