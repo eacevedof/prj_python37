@@ -1,4 +1,4 @@
-from vue.oco.tactical_requests.application.tactical_requests_create_service import invoke
+from vue.oco.tactical_requests.application.tactical_requests_create_new_dev_service import invoke
 
 
 def __invoke() -> None:
