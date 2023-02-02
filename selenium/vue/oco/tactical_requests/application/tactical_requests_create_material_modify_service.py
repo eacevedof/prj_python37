@@ -47,8 +47,8 @@ def invoke() -> None:
 def __config_request_type(dom: Dom) -> None:
     dd = Dropdown(dom)
 
-    btn_xpath = TacticalRequestsRepository.get_sel_request_type_new_dev()
-    li_xpath = TacticalRequestsRepository.get_sel_request_type_new_dev(ElementEnum.LI_XPATH)
+    btn_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify()
+    li_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
     sleep(10)
 
