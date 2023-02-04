@@ -29,7 +29,7 @@ def invoke() -> None:
     browser = get_chrome()
     browser.get(RoutesRepository.get_tactical_requests_add_url())
     dom = Dom(browser)
-    sleep(10)
+    sleep(20)
 
     __config_request_type(dom)
     __requests_details(dom)
