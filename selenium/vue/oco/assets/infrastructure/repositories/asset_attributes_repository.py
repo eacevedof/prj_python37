@@ -78,12 +78,12 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[2]/div/div/div[1]/div/div/input"
 
     @staticmethod
-    def get_id_acabados_especiales() -> str:
-        return "id-Acabados especiales"
+    def get_xpath_acabados_especiales() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[2]/div/div/div[2]/div/div/input"
 
     @staticmethod
-    def get_id_laetus() -> str:
-        return "id-LAETUS"
+    def get_xpath_laetus() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div[1]/div/div/input"
 
     @staticmethod
     def get_sel_marcas_visuales(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
@@ -92,9 +92,9 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div[2]/div/div/div/div[3]/ul/li[1]"
 
     @staticmethod
-    def get_id_referencia_al_libro() -> str:
-        return "id-Referencia al libro de estilo"
+    def get_xpath_referencia_al_libro() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div[3]/div/div/input"
 
     @staticmethod
-    def get_id_comentarios_opcionales() -> str:
-        return "id-Comentarios Opcionales de Material"
+    def get_xpath_comentarios_opcionales() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[4]/div/div/div/div/div[1]/textarea"
