@@ -34,12 +34,12 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[3]/ul/li[1]"
 
     @staticmethod
-    def get_id_dosis() -> str:
-        return "id-Dosis"
+    def get_xpath_dosis() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[5]/div/div/input"
 
     @staticmethod
-    def get_id_presentation() -> str:
-        return "id-Presentación"
+    def get_xpath_presentation() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[6]/div/div/input"
 
     @staticmethod
     def get_sel_market(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
