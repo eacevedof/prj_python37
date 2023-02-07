@@ -11,7 +11,7 @@ from vue.shared.infrastructure.repositories.routes_repository import RoutesRepos
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.oco.assets.infrastructure.repositories.assets_repository import AssetsRepository
-from vue.oco.assets.infrastructure.repositories.asset_attributes_repository import AssetAttributesRepository
+from vue.oco.assets.infrastructure.repositories.asset_material_attributes_repository import AssetMaterialAttributesRepository
 from vue.oco.assets.infrastructure.repositories.asset_groups_attributes_repository import \
     AssetGroupsAttributesRepository
 from vue.oco.assets.infrastructure.repositories.asset_tags_repository import AssetTagsRepository
@@ -52,14 +52,14 @@ def __config_asset_type(dom: Dom) -> None:
 
     dd = Dropdown(dom)
     # tipo de asset
-    btn_xpath = AssetAttributesRepository.get_sel_asset_type_material()
-    li_xpath = AssetAttributesRepository.get_sel_asset_type_material(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_material()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_material(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    xpath = AssetAttributesRepository.get_xpath_material_code()
+    xpath = AssetMaterialAttributesRepository.get_xpath_material_code()
     uuid = get_uuid(4)
     value = f"mat-{uuid}"
     el.set_value_by_xpath(xpath, value)
@@ -67,53 +67,53 @@ def __create_attributes_info(dom: Dom) -> None:
     dd = Dropdown(dom)
 
     # categoria
-    btn_xpath = AssetAttributesRepository.get_sel_category()
-    li_xpath = AssetAttributesRepository.get_sel_category(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_category()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_category(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # tipo
-    btn_xpath = AssetAttributesRepository.get_sel_type()
-    li_xpath = AssetAttributesRepository.get_sel_type(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_type()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_type(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Forma Farmacéutica
-    btn_xpath = AssetAttributesRepository.get_sel_lab_form()
-    li_xpath = AssetAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_lab_form()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    xpath = AssetAttributesRepository.get_xpath_dosis()
+    xpath = AssetMaterialAttributesRepository.get_xpath_dosis()
     value = f"dosis-{uuid}"
     el.set_value_by_xpath(xpath, value)
 
-    xpath = AssetAttributesRepository.get_xpath_presentation()
+    xpath = AssetMaterialAttributesRepository.get_xpath_presentation()
     value = f"presentacion-{uuid}"
     el.set_value_by_xpath(xpath, value)
 
     # Mercado
-    btn_xpath = AssetAttributesRepository.get_sel_market()
-    li_xpath = AssetAttributesRepository.get_sel_market(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_market()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_market(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Cliente
-    btn_xpath = AssetAttributesRepository.get_sel_client()
-    li_xpath = AssetAttributesRepository.get_sel_client(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_client()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_client(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # País
-    btn_xpath = AssetAttributesRepository.get_sel_country()
-    li_xpath = AssetAttributesRepository.get_sel_country(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_country()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_country(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # Fabricante
-    btn_xpath = AssetAttributesRepository.get_sel_fabricant()
-    li_xpath = AssetAttributesRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_fabricant()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    xpath = AssetAttributesRepository.get_xpath_principio_activo()
+    xpath = AssetMaterialAttributesRepository.get_xpath_principio_activo()
     value = f"pa-{uuid}"
     el.set_value_by_xpath(xpath, value)
 
-    xpath = AssetAttributesRepository.get_xpath_nomenclatura_extra()
+    xpath = AssetMaterialAttributesRepository.get_xpath_nomenclatura_extra()
     value = f"nomenclatura-{uuid}"
     el.set_value_by_xpath(xpath, value)
 
@@ -127,11 +127,11 @@ def __create_attributes_production(dom: Dom) -> None:
 
     el = Element(dom)
 
-    xpath = AssetAttributesRepository.get_xpath_numero_de_tintas()
+    xpath = AssetMaterialAttributesRepository.get_xpath_numero_de_tintas()
     value = random.randint(1, 10)
     el.set_value_by_xpath(xpath, value)
 
-    xpath = AssetAttributesRepository.get_xpath_acabados_especiales()
+    xpath = AssetMaterialAttributesRepository.get_xpath_acabados_especiales()
     i = random.randint(1, 10)
     value = f"acab espe {i}"
     el.set_value_by_xpath(xpath, value)
@@ -146,7 +146,7 @@ def __create_attributes_diseno(dom: Dom) -> None:
 
     el = Element(dom)
 
-    xpath = AssetAttributesRepository.get_xpath_laetus()
+    xpath = AssetMaterialAttributesRepository.get_xpath_laetus()
     i = random.randint(1, 10)
     value = f"laetus {i}"
     el.set_value_by_xpath(xpath, value)
@@ -154,11 +154,11 @@ def __create_attributes_diseno(dom: Dom) -> None:
     dd = Dropdown(dom)
 
     # marcas visuales
-    btn_xpath = AssetAttributesRepository.get_sel_marcas_visuales()
-    li_xpath = AssetAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_marcas_visuales()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    xpath = AssetAttributesRepository.get_xpath_referencia_al_libro()
+    xpath = AssetMaterialAttributesRepository.get_xpath_referencia_al_libro()
     i = random.randint(1, 10)
     value = f"ref {i}"
     el.set_value_by_xpath(xpath, value)
@@ -172,7 +172,7 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
     el = Element(dom)
 
-    xpath = AssetAttributesRepository.get_xpath_comentarios_opcionales()
+    xpath = AssetMaterialAttributesRepository.get_xpath_comentarios_opcionales()
     uuid = get_uuid(4)
     value = f"comentarios opcionales {uuid}"
     el.set_value_by_xpath(xpath, value)
