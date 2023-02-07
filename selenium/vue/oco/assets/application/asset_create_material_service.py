@@ -81,13 +81,13 @@ def __create_attributes_info(dom: Dom) -> None:
     li_xpath = AssetAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = AssetAttributesRepository.get_id_dosis()
+    xpath = AssetAttributesRepository.get_xpath_dosis()
     value = f"dosis-{uuid}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
-    element_id = AssetAttributesRepository.get_id_presentation()
+    xpath = AssetAttributesRepository.get_xpath_presentation()
     value = f"presentacion-{uuid}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
     # Mercado
     btn_xpath = AssetAttributesRepository.get_sel_market()
