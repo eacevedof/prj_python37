@@ -59,7 +59,7 @@ def __config_asset_type(dom: Dom) -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    xpath = AssetKeylineAttributesRepository.get_xpath_material_code()
+    xpath = AssetKeylineAttributesRepository.get_sel_maquina()
     uuid = get_uuid(4)
     value = f"kl-{uuid}"
     el.set_value_by_xpath(xpath, value)
