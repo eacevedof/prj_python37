@@ -127,9 +127,9 @@ def __create_attributes_production(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = AssetAttributesRepository.get_id_numero_de_tintas()
+    xpath = AssetAttributesRepository.get_xpath_numero_de_tintas()
     value = random.randint(1, 10)
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
     element_id = AssetAttributesRepository.get_id_acabados_especiales()
     i = random.randint(1, 10)
