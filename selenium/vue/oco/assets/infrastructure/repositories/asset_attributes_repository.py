@@ -12,8 +12,8 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div/div[2]/div[3]/div/div/div/div[3]/ul/li[1]"
 
     @staticmethod
-    def get_id_material_code() -> str:
-        return "id-Código Material - Versión"
+    def get_xpath_material_code() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[1]/div/div/input"
 
     @staticmethod
     def get_sel_category(xpath: str = ElementEnum.BUTTON_XPATH) -> str:

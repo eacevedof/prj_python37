@@ -59,10 +59,10 @@ def __config_asset_type(dom: Dom) -> None:
 
 def __create_attributes_info(dom: Dom) -> None:
     el = Element(dom)
-    element_id = AssetAttributesRepository.get_id_material_code()
+    xpath = AssetAttributesRepository.get_xpath_material_code()
     uuid = get_uuid(4)
-    value = f"mat-{uuid}"
-    el.set_value(element_id, value)
+    value = f"kl-{uuid}"
+    el.set_value_by_xpath(xpath, value)
 
     dd = Dropdown(dom)
 
