@@ -131,10 +131,10 @@ def __create_attributes_production(dom: Dom) -> None:
     value = random.randint(1, 10)
     el.set_value_by_xpath(xpath, value)
 
-    element_id = AssetAttributesRepository.get_id_acabados_especiales()
+    xpath = AssetAttributesRepository.get_xpath_acabados_especiales()
     i = random.randint(1, 10)
     value = f"acab espe {i}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
 
 def __create_attributes_diseno(dom: Dom) -> None:
@@ -146,10 +146,10 @@ def __create_attributes_diseno(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = AssetAttributesRepository.get_id_laetus()
+    xpath = AssetAttributesRepository.get_xpath_laetus()
     i = random.randint(1, 10)
     value = f"laetus {i}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
     dd = Dropdown(dom)
 
@@ -158,10 +158,10 @@ def __create_attributes_diseno(dom: Dom) -> None:
     li_xpath = AssetAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = AssetAttributesRepository.get_id_referencia_al_libro()
+    xpath = AssetAttributesRepository.get_xpath_acabados_especiales()
     i = random.randint(1, 10)
-    value = f"ref {i}"
-    el.set_value(element_id, value)
+    value = f"acab espe {i}"
+    el.set_value_by_xpath(xpath, value)
 
 
 def __create_attributes_datos_opcionales(dom: Dom) -> None:
@@ -172,10 +172,10 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
     el = Element(dom)
 
-    element_id = AssetAttributesRepository.get_id_comentarios_opcionales()
+    xpath = AssetAttributesRepository.get_xpath_comentarios_opcionales()
     uuid = get_uuid(4)
     value = f"comentarios opcionales {uuid}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
 
 def __create_tags_documentos(dom: Dom) -> None:
