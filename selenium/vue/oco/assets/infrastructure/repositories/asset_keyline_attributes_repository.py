@@ -33,10 +33,10 @@ class AssetKeylineAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[3]/div/div/input"
 
     @staticmethod
-    def get_sel_xxx(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
+    def get_sel_tipo_plano(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
         if xpath == ElementEnum.BUTTON_XPATH:
-            return ""
-        return ""
+            return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[2]/button"
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[4]/div/div/div/div[3]/ul/li[1]"
 
     @staticmethod
     def get_sel_xxx(xpath: str = ElementEnum.BUTTON_XPATH) -> str:
