@@ -66,12 +66,12 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[10]/div/div/div/div[3]/ul/li[1]"
 
     @staticmethod
-    def get_id_principio_activo() -> str:
-        return "id-Principio Activo"
+    def get_xpath_principio_activo() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[11]/div/div/input"
 
     @staticmethod
-    def get_id_nomenclatura_extra() -> str:
-        return "id-Nomenclatura Extra"
+    def get_xpath_nomenclatura_extra() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[12]/div/div/input"
 
     @staticmethod
     def get_id_numero_de_tintas() -> str:

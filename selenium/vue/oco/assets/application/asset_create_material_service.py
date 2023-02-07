@@ -109,13 +109,13 @@ def __create_attributes_info(dom: Dom) -> None:
     li_xpath = AssetAttributesRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    element_id = AssetAttributesRepository.get_id_principio_activo()
+    xpath = AssetAttributesRepository.get_xpath_principio_activo()
     value = f"pa-{uuid}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
-    element_id = AssetAttributesRepository.get_id_nomenclatura_extra()
+    xpath = AssetAttributesRepository.get_xpath_nomenclatura_extra()
     value = f"nomenclatura-{uuid}"
-    el.set_value(element_id, value)
+    el.set_value_by_xpath(xpath, value)
 
 
 def __create_attributes_production(dom: Dom) -> None:
