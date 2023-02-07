@@ -27,9 +27,8 @@ def asset_create_keyline() -> None:
     sleep(3)
 
     __config_asset_type(dom)
-    __create_attributes_info(dom)
     __create_attributes_production(dom)
-    __create_attributes_diseno(dom)
+    __create_attributes_measures(dom)
     __create_attributes_datos_opcionales(dom)
     __create_tags_documentos(dom)
 
@@ -57,7 +56,7 @@ def __config_asset_type(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
 
-def __create_attributes_info(dom: Dom) -> None:
+def __create_attributes_production(dom: Dom) -> None:
     el = Element(dom)
     xpath = AssetKeylineAttributesRepository.get_sel_maquina()
     uuid = get_uuid(4)
@@ -66,60 +65,35 @@ def __create_attributes_info(dom: Dom) -> None:
 
     dd = Dropdown(dom)
 
-    # categoria
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_category()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_category(ElementEnum.LI_XPATH)
+    # maquina
+    btn_xpath = AssetKeylineAttributesRepository.get_sel_maquina()
+    li_xpath = AssetKeylineAttributesRepository.get_sel_maquina(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # tipo
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_type()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_type(ElementEnum.LI_XPATH)
+    # plano propio
+    btn_xpath = AssetKeylineAttributesRepository.get_sel_plano_propio()
+    li_xpath = AssetKeylineAttributesRepository.get_sel_plano_propio(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # Forma Farmacéutica
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_lab_form()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_lab_form(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_dosis()
-    value = f"dosis-{uuid}"
+    # descripcion plano
+    xpath = AssetKeylineAttributesRepository.get_xpath_descripcion()
+    value = f"desc plano {uuid}"
     el.set_value_by_xpath(xpath, value)
 
-    xpath = AssetKeylineAttributesRepository.get_xpath_presentation()
-    value = f"presentacion-{uuid}"
-    el.set_value_by_xpath(xpath, value)
-
-    # Mercado
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_market()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_market(ElementEnum.LI_XPATH)
+    # tipo plano
+    btn_xpath = AssetKeylineAttributesRepository.get_sel_tipo_plano()
+    li_xpath = AssetKeylineAttributesRepository.get_sel_tipo_plano(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # Cliente
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_client()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_client(ElementEnum.LI_XPATH)
+    # prospecto doblado
+    btn_xpath = AssetKeylineAttributesRepository.get_sel_prospecto_doblado()
+    li_xpath = AssetKeylineAttributesRepository.get_sel_prospecto_doblado(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # País
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_country()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_country(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    # Fabricante
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_fabricant()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_fabricant(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_principio_activo()
-    value = f"pa-{uuid}"
-    el.set_value_by_xpath(xpath, value)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_nomenclatura_extra()
-    value = f"nomenclatura-{uuid}"
-    el.set_value_by_xpath(xpath, value)
 
 
-def __create_attributes_production(dom: Dom) -> None:
-    # tab produccion
+def __create_attributes_measures(dom: Dom) -> None:
+    # tab medida
     tab_xpath = AssetGroupsAttributesRepository.get_tab_production()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
@@ -127,41 +101,42 @@ def __create_attributes_production(dom: Dom) -> None:
 
     el = Element(dom)
 
-    xpath = AssetKeylineAttributesRepository.get_xpath_numero_de_tintas()
-    value = random.randint(1, 10)
-    el.set_value_by_xpath(xpath, value)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_acabados_especiales()
+    # medida A
     i = random.randint(1, 10)
-    value = f"acab espe {i}"
+    xpath = AssetKeylineAttributesRepository.get_xpath_medida_a()
+    value = f"medida a {i}"
     el.set_value_by_xpath(xpath, value)
 
-
-def __create_attributes_diseno(dom: Dom) -> None:
-    # tab diseno
-    tab_xpath = AssetGroupsAttributesRepository.get_tab_diseno()
-    btn_tab = dom.find_by_xpath(tab_xpath)
-    btn_tab.click()
-    sleep(1)
-
-    el = Element(dom)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_laetus()
+    # medida B
     i = random.randint(1, 10)
-    value = f"laetus {i}"
+    xpath = AssetKeylineAttributesRepository.get_xpath_medida_b()
+    value = f"medida b {i}"
     el.set_value_by_xpath(xpath, value)
 
-    dd = Dropdown(dom)
-
-    # marcas visuales
-    btn_xpath = AssetKeylineAttributesRepository.get_sel_marcas_visuales()
-    li_xpath = AssetKeylineAttributesRepository.get_sel_marcas_visuales(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
-    xpath = AssetKeylineAttributesRepository.get_xpath_acabados_especiales()
+    # medida C
     i = random.randint(1, 10)
-    value = f"acab espe {i}"
+    xpath = AssetKeylineAttributesRepository.get_xpath_medida_c()
+    value = f"medida c {i}"
     el.set_value_by_xpath(xpath, value)
+
+    # medida D
+    i = random.randint(1, 10)
+    xpath = AssetKeylineAttributesRepository.get_xpath_medida_d()
+    value = f"medida d {i}"
+    el.set_value_by_xpath(xpath, value)
+
+    # capacidad
+    i = random.randint(1, 10)
+    xpath = AssetKeylineAttributesRepository.get_xpath_capacidad()
+    value = f"capacidad {i}"
+    el.set_value_by_xpath(xpath, value)
+
+    # capacidad
+    i = random.randint(1, 10)
+    xpath = AssetKeylineAttributesRepository.get_xpath_diametro()
+    value = f"diametro {i}"
+    el.set_value_by_xpath(xpath, value)
+
 
 
 def __create_attributes_datos_opcionales(dom: Dom) -> None:
