@@ -52,8 +52,8 @@ def __config_asset_type(dom: Dom) -> None:
 
     dd = Dropdown(dom)
     # tipo de asset
-    btn_xpath = AssetAttributesRepository.get_sel_asset_type()
-    li_xpath = AssetAttributesRepository.get_sel_asset_type(ElementEnum.LI_XPATH)
+    btn_xpath = AssetAttributesRepository.get_sel_asset_type_material()
+    li_xpath = AssetAttributesRepository.get_sel_asset_type_material(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
 
