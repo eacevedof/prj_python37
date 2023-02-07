@@ -74,8 +74,8 @@ class AssetAttributesRepository:
         return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div/div/div[12]/div/div/input"
 
     @staticmethod
-    def get_id_numero_de_tintas() -> str:
-        return "id-Número de tintas"
+    def get_xpath_numero_de_tintas() -> str:
+        return "/html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div[2]/div/div/div[1]/div/div/input"
 
     @staticmethod
     def get_id_acabados_especiales() -> str:
