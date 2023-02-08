@@ -11,7 +11,8 @@ from vue.shared.infrastructure.repositories.routes_repository import RoutesRepos
 from vue.shared.domain.element_enum import ElementEnum
 from vue.oco.login.application.login_service import login_usr1_or_fail
 from vue.oco.assets.infrastructure.repositories.assets_repository import AssetsRepository
-from vue.oco.assets.infrastructure.repositories.asset_keyline_attributes_repository import AssetKeylineAttributesRepository
+from vue.oco.assets.infrastructure.repositories.asset_keyline_attributes_repository import \
+    AssetKeylineAttributesRepository
 from vue.oco.assets.infrastructure.repositories.asset_groups_attributes_repository import \
     AssetGroupsAttributesRepository
 from vue.oco.assets.infrastructure.repositories.asset_tags_repository import AssetTagsRepository
@@ -91,10 +92,9 @@ def __create_attributes_production(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
 
-
 def __create_attributes_measures(dom: Dom) -> None:
     # tab medida
-    tab_xpath = AssetGroupsAttributesRepository.get_tab_production()
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_keyline_medida()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
@@ -138,9 +138,8 @@ def __create_attributes_measures(dom: Dom) -> None:
     el.set_value_by_xpath(xpath, value)
 
 
-
 def __create_attributes_datos_opcionales(dom: Dom) -> None:
-    tab_xpath = AssetGroupsAttributesRepository.get_tab_datos_opcionales()
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_keyline_datos_opcionales()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
@@ -154,13 +153,13 @@ def __create_attributes_datos_opcionales(dom: Dom) -> None:
 
 
 def __create_tags_documentos(dom: Dom) -> None:
-    tab_xpath = AssetGroupsAttributesRepository.get_tab_documentos()
+    tab_xpath = AssetGroupsAttributesRepository.get_tab_keyline_documentos()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)
 
     el = Element(dom)
 
-    xpath = AssetTagsRepository.get_xpath_tag_artworks()
+    xpath = AssetTagsRepository.get_xpath_file_tag_artworks()
     path_file = FilesRepository.get_rnd_artworks()
     el.set_value_by_xpath(xpath, path_file)
