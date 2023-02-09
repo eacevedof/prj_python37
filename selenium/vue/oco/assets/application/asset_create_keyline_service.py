@@ -160,6 +160,6 @@ def __create_tags_documentos(dom: Dom) -> None:
 
     el = Element(dom)
 
-    xpath = AssetTagsRepository.get_xpath_file_tag_artworks()
+    xpath = AssetTagsRepository.get_xpath_file_tag_keyline()
     path_file = FilesRepository.get_rnd_artworks()
     el.set_value_by_xpath(xpath, path_file)
