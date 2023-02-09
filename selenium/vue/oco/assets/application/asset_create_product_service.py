@@ -34,15 +34,15 @@ def __config_asset_type(dom: Dom) -> None:
     el = Element(dom)
     element_id = AssetsRepository.get_id_asset_code()
     uuid = get_uuid(4)
-    value = f"mat-{uuid}"
+    value = f"prd-{uuid}"
     el.set_value(element_id, value)
 
     element_id = AssetsRepository.get_id_asset_name()
-    value = f"mat-{uuid}"
+    value = f"prd-{uuid}"
     el.set_value(element_id, value)
 
     dd = Dropdown(dom)
     # tipo de asset
-    btn_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_material()
-    li_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_material(ElementEnum.LI_XPATH)
+    btn_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_product()
+    li_xpath = AssetMaterialAttributesRepository.get_sel_asset_type_product(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
