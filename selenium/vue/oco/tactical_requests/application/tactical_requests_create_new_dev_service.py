@@ -72,7 +72,7 @@ def __requests_details(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
 
     # fecha
-    element_id = TacticalRequestsAttributesRepository.get_id_fecha()
+    element_id = TacticalRequestsAttributesRepository.get_id_target_date()
     value = get_ymd_plus()
     el = Element(dom)
     el.set_value(element_id, value)
