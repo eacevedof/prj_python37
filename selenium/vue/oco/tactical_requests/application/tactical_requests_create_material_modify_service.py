@@ -29,7 +29,7 @@ def invoke() -> None:
     browser = get_chrome()
     browser.get(RoutesRepository.get_tactical_requests_add_url())
     dom = Dom(browser)
-    sleep(15)
+    sleep(10)
 
     __config_request_type(dom)
     __requests_details(dom)
@@ -51,13 +51,13 @@ def __config_request_type(dom: Dom) -> None:
     btn_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify()
     li_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(25)
+    sleep(15)
 
     # activo
     btn_xpath = TacticalRequestsRepository.get_sel_asset()
     li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(25)
+    sleep(15)
 
 
 def __requests_details(dom: Dom) -> None:
@@ -86,7 +86,7 @@ def __requests_details(dom: Dom) -> None:
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(15)
+    sleep(200)
 
 
 def __update_attributes_tab_material_info(dom: Dom) -> None:
