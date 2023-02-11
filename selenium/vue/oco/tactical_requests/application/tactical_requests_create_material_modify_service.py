@@ -96,18 +96,18 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     #btn_tab.click()
     #sleep(1)
 
-    #el = Element(dom)
+    # categoria no es necesario modificarla
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_categoria()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_categoria(ElementEnum.LI_XPATH)
+    dd = Dropdown(dom)
+    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(3)
+
     # pais
     btn_xpath = TacticalRequestsAttributesRepository.get_xpath_btn_pais()
     btn_tab = dom.find_by_xpath(btn_xpath)
     btn_tab.click()
     sleep(1)
-
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_category()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
-    dd = Dropdown(dom)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(3)
 
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_pais()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
@@ -115,7 +115,7 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
     sleep(3)
 
-# /html/body/div[1]/main/div/div[1]/div[3]/section/div[2]/div/div[1]/div[3]/div/div[4]/div/div[2]/div[2]/div/div[1]/textarea
+    # comentarios opcionales
 
 
 def __update_attributes_tab_optional_data(dom: Dom) -> None:
