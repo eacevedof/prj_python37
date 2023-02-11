@@ -119,14 +119,13 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
 
 
 def __update_attributes_tab_optional_data(dom: Dom) -> None:
-    # tab diseno
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_datos_opcionales()
-    btn_tab = dom.find_by_xpath(tab_xpath)
-    btn_tab.click()
-    sleep(1)
+    # tab diseno (ya no existe
+    #tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_datos_opcionales()
+    #btn_tab = dom.find_by_xpath(tab_xpath)
+    #btn_tab.click()
+    # sleep(1)
 
     el = Element(dom)
-
     el_xpath = TacticalRequestsAttributesRepository.get_xpath_optional_comment()
     i = random.randint(1, 10)
     value = f"optional commment {i}"
