@@ -66,11 +66,6 @@ def __requests_details(dom: Dom) -> None:
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
 
-    # prioridad
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
-
     # fecha
     element_id = TacticalRequestsAttributesRepository.get_id_target_date()
     value = get_ymd_plus()
@@ -83,6 +78,12 @@ def __requests_details(dom: Dom) -> None:
     value = f"comment {i}"
     el.set_value_by_xpath(xpath, value)
     sleep(1)
+
+    # prioridad
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
+    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(15)
 
 
 def __update_attributes_tab_material_info(dom: Dom) -> None:
