@@ -47,15 +47,17 @@ def invoke() -> None:
 def __config_request_type(dom: Dom) -> None:
     dd = Dropdown(dom)
 
+    # tipo de la solicitud
     btn_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify()
     li_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
     sleep(40)
 
+    # activo
     btn_xpath = TacticalRequestsRepository.get_sel_asset()
     li_xpath = TacticalRequestsRepository.get_sel_asset(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(200)
+    sleep(10)
 
 
 def __requests_details(dom: Dom) -> None:
@@ -65,6 +67,7 @@ def __requests_details(dom: Dom) -> None:
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(15)
 
     # fecha
     element_id = TacticalRequestsAttributesRepository.get_id_target_date()
