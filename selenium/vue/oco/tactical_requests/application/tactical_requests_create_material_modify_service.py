@@ -35,8 +35,8 @@ def invoke() -> None:
     __requests_details(dom)
 
     __update_attributes_tab_material_info(dom)
-    __update_attributes_tab_optional_data(dom)
-    #__create_tags_documentos(dom)
+    __update_attributes_optional_data(dom)
+    __update_upload_files(dom)
 
     btn_xpath = TacticalRequestsRepository.get_xpath_button_save()
     btn_save = dom.find_by_xpath(btn_xpath)
@@ -51,7 +51,7 @@ def __config_request_type(dom: Dom) -> None:
     btn_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify()
     li_xpath = TacticalRequestsRepository.get_sel_request_type_material_modify(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(15)
+    sleep(10)
 
     # activo
     btn_xpath = TacticalRequestsRepository.get_sel_asset()
@@ -104,10 +104,10 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     sleep(3)
 
     # pais
-    btn_xpath = TacticalRequestsAttributesRepository.get_xpath_btn_pais()
-    btn_tab = dom.find_by_xpath(btn_xpath)
-    btn_tab.click()
-    sleep(1)
+    # btn_xpath = TacticalRequestsAttributesRepository.get_xpath_btn_pais()
+    # btn_tab = dom.find_by_xpath(btn_xpath)
+    # btn_tab.click()
+    # sleep(1)
 
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_pais()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
@@ -115,10 +115,8 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     dd.select_by_xpath(btn_xpath, li_xpath)
     sleep(3)
 
-    # comentarios opcionales
 
-
-def __update_attributes_tab_optional_data(dom: Dom) -> None:
+def __update_attributes_optional_data(dom: Dom) -> None:
     # tab diseno (ya no existe
     #tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_datos_opcionales()
     #btn_tab = dom.find_by_xpath(tab_xpath)
@@ -133,7 +131,7 @@ def __update_attributes_tab_optional_data(dom: Dom) -> None:
     sleep(1)
 
 
-def __create_tags_documentos(dom: Dom) -> None:
+def __update_upload_files(dom: Dom) -> None:
     tab_xpath = TacticalRequestGroupsAttributesRepository.get_xpath_btn_modal_optional_files()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
