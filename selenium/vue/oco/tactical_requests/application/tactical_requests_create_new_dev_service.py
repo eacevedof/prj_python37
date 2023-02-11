@@ -122,7 +122,7 @@ def __update_attributes_tab_optional_data(dom: Dom) -> None:
 
 
 def __create_tags_documentos(dom: Dom) -> None:
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_documentos()
+    tab_xpath = TacticalRequestGroupsAttributesRepository.get_xpath_btn_modal_optional_files()
     btn_tab = dom.find_by_xpath(tab_xpath)
     btn_tab.click()
     sleep(1)

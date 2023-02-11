@@ -86,7 +86,7 @@ def __requests_details(dom: Dom) -> None:
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-    sleep(200)
+    sleep(15)
 
 
 def __update_attributes_tab_material_info(dom: Dom) -> None:
@@ -134,13 +134,13 @@ def __update_attributes_tab_optional_data(dom: Dom) -> None:
 
 
 def __create_tags_documentos(dom: Dom) -> None:
-    #tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_documentos()
-    #btn_tab = dom.find_by_xpath(tab_xpath)
-    #btn_tab.click()
-    #sleep(1)
+    tab_xpath = TacticalRequestGroupsAttributesRepository.get_xpath_btn_modal_optional_files()
+    btn_tab = dom.find_by_xpath(tab_xpath)
+    btn_tab.click()
+    sleep(1)
 
     el = Element(dom)
 
-    element_name = TacticalRequestTagsRepository.get_tag_artworks()
+    xpath = TacticalRequestTagsRepository.get_xpath_input_upload_optional_files()
     path_file = FilesRepository.get_rnd_artworks()
-    el.set_value_by_name(element_name, path_file)
+    el.set_value_by_xpath(xpath, path_file)
