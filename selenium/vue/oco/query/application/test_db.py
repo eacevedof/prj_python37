@@ -1,7 +1,7 @@
 from vue.shared.infrastructure.factories.db import get_db
 
 
-def run():
+def invoke():
     db = get_db()
     db.execute("SELECT * FROM users;")
     row = db.fetchone()
@@ -9,4 +9,3 @@ def run():
         print(row)
         row = db.fetchone()
 
-run()
