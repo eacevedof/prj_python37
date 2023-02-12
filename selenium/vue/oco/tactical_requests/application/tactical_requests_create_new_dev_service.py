@@ -19,7 +19,7 @@ from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_att
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_request_groups_attributes_repository import \
     TacticalRequestGroupsAttributesRepository
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tags_repository import \
-    TacticalRequestTagsRepository
+    TacticalRequestTagsFilesRepository
 
 
 def invoke() -> None:
@@ -34,9 +34,9 @@ def invoke() -> None:
     __config_request_type(dom)
     __requests_details(dom)
 
-    __update_attributes_tab_material_info(dom)
-    __update_attributes_tab_optional_data(dom)
-    #__create_tags_documentos(dom)
+    __update_attributes_material_info(dom)
+    __update_attributes_optional_data(dom)
+    # __create_tags_documentos(dom)
 
     btn_xpath = TacticalRequestsRepository.get_xpath_button_save()
     btn_save = dom.find_by_xpath(btn_xpath)
@@ -65,11 +65,7 @@ def __requests_details(dom: Dom) -> None:
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_request_reason(ElementEnum.LI_XPATH)
     dd.select_by_xpath(btn_xpath, li_xpath)
-
-    # prioridad
-    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
-    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
-    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(15)
 
     # fecha
     element_id = TacticalRequestsAttributesRepository.get_id_target_date()
@@ -84,19 +80,20 @@ def __requests_details(dom: Dom) -> None:
     el.set_value_by_xpath(xpath, value)
     sleep(1)
 
+    # prioridad
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_request_priority(ElementEnum.LI_XPATH)
+    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(15)
 
-def __update_attributes_tab_material_info(dom: Dom) -> None:
-    # tab attrubutes -> tab material info
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_attributes()
-    btn_tab = dom.find_by_xpath(tab_xpath)
-    btn_tab.click()
-    sleep(1)
 
-    el = Element(dom)
-    btn_xpath = TacticalRequestsAttributesRepository.get_xpath_btn_pais()
-    btn_tab = dom.find_by_xpath(btn_xpath)
-    btn_tab.click()
-    sleep(1)
+def __update_attributes_material_info(dom: Dom) -> None:
+    # categoria no es necesario modificarla
+    btn_xpath = TacticalRequestsAttributesRepository.get_sel_categoria()
+    li_xpath = TacticalRequestsAttributesRepository.get_sel_categoria(ElementEnum.LI_XPATH)
+    dd = Dropdown(dom)
+    dd.select_by_xpath(btn_xpath, li_xpath)
+    sleep(3)
 
     btn_xpath = TacticalRequestsAttributesRepository.get_sel_pais()
     li_xpath = TacticalRequestsAttributesRepository.get_sel_pais(ElementEnum.LI_XPATH)
@@ -105,15 +102,8 @@ def __update_attributes_tab_material_info(dom: Dom) -> None:
     sleep(3)
 
 
-def __update_attributes_tab_optional_data(dom: Dom) -> None:
-    # tab diseno
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_datos_opcionales()
-    btn_tab = dom.find_by_xpath(tab_xpath)
-    btn_tab.click()
-    sleep(1)
-
+def __update_attributes_optional_data(dom: Dom) -> None:
     el = Element(dom)
-
     el_xpath = TacticalRequestsAttributesRepository.get_xpath_optional_comment()
     i = random.randint(1, 10)
     value = f"optional commment {i}"
@@ -121,14 +111,19 @@ def __update_attributes_tab_optional_data(dom: Dom) -> None:
     sleep(1)
 
 
-def __create_tags_documentos(dom: Dom) -> None:
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_xpath_btn_modal_optional_files()
-    btn_tab = dom.find_by_xpath(tab_xpath)
+def __update_upload_files(dom: Dom) -> None:
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_btn_modal_optional_files()
+    btn_tab = dom.find_by_xpath(xpath)
     btn_tab.click()
-    sleep(1)
+    sleep(3)
 
     el = Element(dom)
-
-    element_name = TacticalRequestTagsRepository.get_tag_artworks()
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_input_upload_optional_files()
     path_file = FilesRepository.get_rnd_artworks()
-    el.set_value_by_name(element_name, path_file)
+    el.set_value_by_xpath(xpath, path_file)
+    sleep(3)
+
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_btn_modal_apply_changes()
+    btn_tab = dom.find_by_xpath(xpath)
+    btn_tab.click()
+    sleep(3)
