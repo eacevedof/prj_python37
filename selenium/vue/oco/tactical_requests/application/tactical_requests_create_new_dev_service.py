@@ -6,7 +6,6 @@ from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.shared.infrastructure.facades.dt import get_ymd_plus
 
-from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.infrastructure.repositories.files_repository import FilesRepository
 from vue.shared.infrastructure.repositories.routes_repository import RoutesRepository
 
