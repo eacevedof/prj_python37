@@ -19,7 +19,7 @@ from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_att
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_request_groups_attributes_repository import \
     TacticalRequestGroupsAttributesRepository
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tags_repository import \
-    TacticalRequestTagsRepository
+    TacticalRequestTagsFilesRepository
 
 
 def invoke() -> None:
@@ -34,7 +34,7 @@ def invoke() -> None:
     __config_request_type(dom)
     __requests_details(dom)
 
-    __update_attributes_tab_material_info(dom)
+    __update_attributes_material_info(dom)
     __update_attributes_optional_data(dom)
     __update_upload_files(dom)
 
@@ -89,7 +89,7 @@ def __requests_details(dom: Dom) -> None:
     sleep(15)
 
 
-def __update_attributes_tab_material_info(dom: Dom) -> None:
+def __update_attributes_material_info(dom: Dom) -> None:
     # tab attrubutes -> tab material info
     #tab_xpath = TacticalRequestGroupsAttributesRepository.get_tab_attributes()
     #btn_tab = dom.find_by_xpath(tab_xpath)
@@ -132,13 +132,18 @@ def __update_attributes_optional_data(dom: Dom) -> None:
 
 
 def __update_upload_files(dom: Dom) -> None:
-    tab_xpath = TacticalRequestGroupsAttributesRepository.get_xpath_btn_modal_optional_files()
-    btn_tab = dom.find_by_xpath(tab_xpath)
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_btn_modal_optional_files()
+    btn_tab = dom.find_by_xpath(xpath)
     btn_tab.click()
-    sleep(1)
+    sleep(3)
 
     el = Element(dom)
-
-    xpath = TacticalRequestTagsRepository.get_xpath_input_upload_optional_files()
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_input_upload_optional_files()
     path_file = FilesRepository.get_rnd_artworks()
     el.set_value_by_xpath(xpath, path_file)
+    sleep(3)
+
+    xpath = TacticalRequestTagsFilesRepository.get_xpath_btn_modal_apply_changes()
+    btn_tab = dom.find_by_xpath(xpath)
+    btn_tab.click()
+    sleep(3)
