@@ -21,7 +21,7 @@ from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tag
 
 def invoke() -> None:
     login_usr1_or_fail()
-    sleep(10)
+    sleep(15)
 
     browser = get_chrome()
     browser.get(RoutesRepository.get_tactical_requests_add_url())
