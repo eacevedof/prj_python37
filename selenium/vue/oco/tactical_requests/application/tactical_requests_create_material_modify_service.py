@@ -6,7 +6,6 @@ from vue.shared.infrastructure.facades.dropdown import Dropdown
 from vue.shared.infrastructure.facades.element import Element
 from vue.shared.infrastructure.facades.dt import get_ymd_plus
 
-from vue.shared.infrastructure.generators.uuid import get_uuid
 from vue.shared.infrastructure.repositories.files_repository import FilesRepository
 from vue.shared.infrastructure.repositories.routes_repository import RoutesRepository
 
@@ -16,8 +15,6 @@ from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_rep
     TacticalRequestsRepository
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_attributes_repository import \
     TacticalRequestsAttributesRepository
-from vue.oco.tactical_requests.infrastructure.repositories.tactical_request_groups_attributes_repository import \
-    TacticalRequestGroupsAttributesRepository
 from vue.oco.tactical_requests.infrastructure.repositories.tactical_requests_tags_repository import \
     TacticalRequestTagsFilesRepository
 
