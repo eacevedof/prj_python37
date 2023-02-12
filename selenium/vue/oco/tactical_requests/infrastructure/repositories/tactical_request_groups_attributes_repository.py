@@ -1,5 +1,3 @@
-from vue.shared.domain.element_enum import ElementEnum
-
 
 class TacticalRequestGroupsAttributesRepository:
     def __int__(self):
