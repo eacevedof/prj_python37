@@ -2,4 +2,6 @@ selenium==4.7.2
 pytest
 flake8
 webdriver_manager==3.8.5
-pyodbc
+pyodbc~=4.0.35
+redis~=4.5.1
+python-dotenv~=0.21.0
