@@ -13,10 +13,14 @@ data = file_get_contents(path_json)
 # Extraer las claves
 keys = set()
 for value in data.values():
+    if not hasattr(value, "keys"):
+        continue
+
     keys |= set(value.keys())
+
     ks = value.keys()
     for k in ks:
-        if isinstance(value[k], str) or value[k] is None:
+        if not hasattr(value[k], "keys"):
             continue
         keys |= set(value[k].keys())
 
