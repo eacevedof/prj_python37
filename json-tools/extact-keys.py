@@ -16,7 +16,7 @@ for value in data.values():
     keys |= set(value.keys())
     ks = value.keys()
     for k in ks:
-        if isinstance(value[k],str):
+        if isinstance(value[k], str) or value[k] is None:
             continue
         keys |= set(value[k].keys())
 
