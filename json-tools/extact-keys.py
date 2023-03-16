@@ -16,6 +16,8 @@ for value in data.values():
     keys |= set(value.keys())
     ks = value.keys()
     for k in ks:
+        if isinstance(value[k],str):
+            continue
         keys |= set(value[k].keys())
 
 for k in keys:
