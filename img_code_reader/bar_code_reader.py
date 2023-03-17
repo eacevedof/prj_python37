@@ -10,6 +10,11 @@ path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
 lines = []
 
+def get_reverse():
+    width = lines[0]
+    if width == "small":
+        return lines
+    return lines.reverse()
 
 def get_value(width, position):
     small = position + 1
@@ -20,6 +25,7 @@ def get_value(width, position):
 
 def get_sum():
     total = 0
+    lines = get_reverse()
     for idx, line in enumerate(lines):
         width = lines[idx]
         total += get_value(width, idx)
