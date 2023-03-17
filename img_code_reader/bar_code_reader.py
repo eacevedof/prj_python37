@@ -8,6 +8,30 @@ from pyzbar.pyzbar import decode
 path_img = os.getenv("HOME")
 path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
+def get_value(width, position):
+    table = [
+        {
+            "small": 1,
+            "big": 2,
+        },
+        {
+            "small": 2,
+            "big": 4,
+        },
+        {
+            "small": 4,
+            "big": 8,
+        },
+        {
+            "small": 8,
+            "big": 16,
+        },
+        {
+            "small": 16,
+            "big": 32,
+        },
+    ]
+
 
 # Make one method to decode the barcode
 def BarcodeReader(image):
