@@ -12,7 +12,7 @@ lines = []
 
 def get_reverse():
     width = lines[0]
-    if width == "small":
+    if width != "small":
         return lines
     return lines.reverse()
 
