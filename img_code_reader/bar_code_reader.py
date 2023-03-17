@@ -10,11 +10,13 @@ path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
 lines = []
 
+
 def get_reverse():
     width = lines[0]
     if width != "small":
         return lines
     return lines.reverse()
+
 
 def get_value(width, position):
     small = position + 1
