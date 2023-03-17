@@ -10,11 +10,13 @@ path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
 lines = []
 
+
 def get_value(width, position):
     small = position + 1
     if width == "small":
         return small
     return small * 2
+
 
 def get_sum():
     total = 0
