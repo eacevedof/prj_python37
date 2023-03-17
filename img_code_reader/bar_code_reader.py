@@ -1,6 +1,10 @@
 # Importing library
 import cv2
+import os
 from pyzbar.pyzbar import decode
+
+path_img = os.getenv("HOME")
+path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
 
 # Make one method to decode the barcode
@@ -41,5 +45,5 @@ def BarcodeReader(image):
 
 if __name__ == "__main__":
     # Take the image from user
-    image = "Img.jpg"
+    image = path_img
     BarcodeReader(image)
