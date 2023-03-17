@@ -8,6 +8,7 @@ from pyzbar.pyzbar import decode
 path_img = os.getenv("HOME")
 path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 
+lines = []
 
 def get_value(width, position):
     small = position + 1
@@ -15,10 +16,18 @@ def get_value(width, position):
         return small
     return small * 2
 
+def get_sum():
+    total = 0
+    for idx, line in enumerate(lines):
+        width = lines[idx]
+        total += get_value(width, idx)
+    return total
+
 
 # Make one method to decode the barcode
 def BarcodeReader(image):
     # read the image in numpy array using cv2
+
     imgs = cv2.imread(image)
     for ar1 in imgs:
         for ar2 in ar1:
