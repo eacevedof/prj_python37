@@ -1,4 +1,6 @@
 # Importing library
+import sys
+
 import cv2
 import os
 from pyzbar.pyzbar import decode
@@ -10,8 +12,12 @@ path_img = f"{path_img}/Downloads/laetus-bar-code/laetus-324.jpg"
 # Make one method to decode the barcode
 def BarcodeReader(image):
     # read the image in numpy array using cv2
-    img = cv2.imread(image)
-
+    imgs = cv2.imread(image)
+    for ar1 in imgs:
+        for ar2 in ar1:
+            print(ar2[0])
+    #print(imgs)
+    sys.exit()
     # Decode the barcode image
     detectedBarcodes = decode(img)
 
