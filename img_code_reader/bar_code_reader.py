@@ -1,4 +1,6 @@
-# Importing library
+# https://www.computalabel.com/aboutpharmacodes.htm
+# https://stackoverflow.com/questions/51164713/how-to-get-pixel-coordinates-if-i-know-colorrgb
+# https://pharmaguddu.com/pharmacode-calculate-pharmacode-value/
 import sys
 
 import cv2
