@@ -21,7 +21,7 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 - Corrijamos el resultado. Agregemos una **importancia** o **peso** a x1.  Sin dinero no vamos de viaje.
 - `s => suma(x1*2, x2*1, x3*1) > 2`
 - Esta función ya no es tan simple. A este tipo de funcones la podemos identificar como: [**perceptron**](https://youtu.be/CU24iC3grq8?t=451)
-- Un **perceptrón** consta de:
+- Un **perceptrón** (**neurona**) consta de:
   - **Factores o entradas**
   - **Peso de cada entrada**
   - **Función de activación** `s => suma(x1*2, x2*1, x3*1) > 2`
@@ -31,6 +31,8 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 de [**red neuronal**](https://youtu.be/CU24iC3grq8?t=516)
 - Con un solo **perceptrón** pudimos tomar una decisión interesante si contamos con una red de estos perceptrones podriamos tomar decisiones más complejas.
 - [Red neuronal que debe entender una imagen](https://youtu.be/CU24iC3grq8?t=555)
+- El **peso** y **umbral** son perillas ajustables permitiendo así optimizar la salida esperada
+- Una red neuronal consta de millones de neuronas 
 
 ### Instalando tensorflow
 - instalación de miniconda
