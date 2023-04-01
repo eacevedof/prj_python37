@@ -24,7 +24,7 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 - Para la toma de decisión se necesita:
   - **Factores o entradas**
   - **Peso de cada entrada**
-  - **Función de activación** `s => suma(x1*2, x2, x3) > 2`
+  - **Función de activación** `s => suma(x1*2, x2*1, x3*1) > 2`
   - **Umbral** (Realmente se usa el **sesgo**, que es la inverda del umbral)
 
 ### Instalando tensorflow
