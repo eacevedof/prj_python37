@@ -26,6 +26,9 @@ de modo que la activacion en la primera hace que la última se dispare instantan
   - **Peso de cada entrada**
   - **Función de activación** `s => suma(x1*2, x2*1, x3*1) > 2`
   - **Umbral** (Realmente se usa el **sesgo**, que es la inverda del umbral)
+- Si este perceptron recibe una entrada de n factores que a su vez son resultados de la toma de decisión de otros perceptrones
+- Así se podria formar un [perceptrón multicapa](https://youtu.be/CU24iC3grq8?t=510)
+
 
 ### Instalando tensorflow
 - instalación de miniconda
