@@ -35,8 +35,9 @@ de [**red neuronal**](https://youtu.be/CU24iC3grq8?t=516)
 - Una red neuronal consta de millones de neuronas 
 - Los ajustes de estas perillas podrían desencadenar en una salida no esperada ya que al ser millones no es factible controlar todas estas I/O. 
 Por lo tanto, lo interesante sería que la neurona no tome la decisión como tal (1/0) si no que **sugiera** en que porcentaje entre **0 y 1**
-es adecuada una decisión.
-- 
+es adecuada una salida.  En lugar de una función de onda cuadrada se usa una sigmoide
+- [De esta manera](https://youtu.be/CU24iC3grq8?t=674), al cambiar un (peso/umbral) la salida y su impacto en las otras neuronas esta mejor controlado
+
 
 
 ### Instalando tensorflow
