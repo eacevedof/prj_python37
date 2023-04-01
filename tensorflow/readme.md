@@ -34,4 +34,4 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 - Si suma(xi)>1 => 1 si no 0 `s => suma(xi)>1`
 - Con esta toma de decisión así no haya dinero deberias irte de viaje.
 - Corrijamos el resultado. Agregemos una **importancia** o **peso** a x1.  Sin dinero no vamos de viaje.
-- `s => suma(x1*2, x2, x3)>1`
+- `s => suma(x1*2, x2, x3) > 2`
