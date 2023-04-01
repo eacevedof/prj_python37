@@ -18,4 +18,14 @@ Successfully installed MarkupSafe-2.1.2 absl-py-1.4.0 astunparse-1.6.3 cachetool
 - En el proceso de práctica de una habilidad (hacer malabares p.e) esto genera conexiones entre neuronas que no tienen relación ninguna
 de modo que la activacion en la primera hace que la última se dispare instantaneamente
 - [como se emularia este proceso en 0 y 1](https://youtu.be/CU24iC3grq8?t=201)
+- Que influye en la toma de una decisión?
+  - Tomemos como ejemplo la planificación de un viaje con estas tres preguntas:
+  - Tienes dinero suficiente?  => x1
+  - Tu pareja quiere ir? => x2
+  - El lugar tiene clima agradable? => x3
+- Asumamos estos factores como x1, x2 y x3
+  - Cada factor tiene dos opciones opsibles si/no  1/0
+- Si entendemos estos estados como entradas de una función podriamos asumir que según unos valores esperemos un retorno
+- las posibles entradas serían 2^3 = 8.  (cantidad de valores posibles en las entradas) ^ (numero de entradas)
+- Tomemos el caso: x1=0, x2=0 y x3=0 la salida esperada 0
 - 
