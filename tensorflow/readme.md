@@ -30,4 +30,8 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 - las posibles entradas serían 2^3 = 8.  (cantidad de valores posibles en las entradas) ^ (numero de entradas)
 - Tomemos el caso: x1=0, x2=0 y x3=0 la salida esperada 0
 - [Como deberia ser esta **función** para que retorne 0?](https://youtu.be/CU24iC3grq8?t=297)
-- Definamos un **umbral** de decisión (un número arbitrario) 
+- Definamos un **umbral** de decisión (un número arbitrario) en este caso 1
+- Si suma(xi)>1 => 1 si no 0 `s => suma(xi)>1`
+- Con esta toma de decisión así no haya dinero deberias irte de viaje.
+- Corrijamos el resultado. Agregemos una **importancia** o **peso** a x1.  Sin dinero no vamos de viaje.
+- `s => suma(x1*2, x2, x3)>1`
