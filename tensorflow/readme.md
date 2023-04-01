@@ -29,6 +29,7 @@ de modo que la activacion en la primera hace que la última se dispare instantan
 - Si este perceptron recibe una entrada de n factores que a su vez son resultados de la toma de decisión de otros perceptrones
 - Así se podria formar un [**perceptrón multicapa**](https://youtu.be/CU24iC3grq8?t=510) los perceptrones multicapa reciben el nombre
 de [**red neuronal**](https://youtu.be/CU24iC3grq8?t=516)
+- Con un solo **perceptrón** pudimos tomar una decisión interesante si contamos con una red de estos perceptrones podriamos tomar decisiones más complejas.
 
 
 ### Instalando tensorflow
