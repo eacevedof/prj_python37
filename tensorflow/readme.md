@@ -33,6 +33,11 @@ de [**red neuronal**](https://youtu.be/CU24iC3grq8?t=516)
 - [Red neuronal que debe entender una imagen](https://youtu.be/CU24iC3grq8?t=555)
 - El **peso** y **umbral** son perillas ajustables permitiendo así optimizar la salida esperada
 - Una red neuronal consta de millones de neuronas 
+- Los ajustes de estas perillas pdorian desencadenar en una salida no esperada ya que al ser millones no es factible controlar todas estas I/O. 
+Por lo tanto, lo interesante sería que la neurona no tome la decisión como tal (1/0) si no que **sugiera** en que porcentaje entre **0 y 1**
+es adecuada una decisión.
+- 
+
 
 ### Instalando tensorflow
 - instalación de miniconda
