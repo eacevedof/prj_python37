@@ -38,6 +38,8 @@ Por lo tanto, lo interesante sería que la neurona no tome la decisión como tal
 es adecuada una salida.  En lugar de una función de onda cuadrada se usa una sigmoide
 - [De esta manera](https://youtu.be/CU24iC3grq8?t=674), al cambiar un (peso/umbral) la salida y su impacto en las otras neuronas esta mejor controlado
 
+### [Funciones de activación](https://www.youtube.com/watch?v=_0wdproot34&t=637s)
+
 
 
 ### Instalando tensorflow
