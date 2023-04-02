@@ -50,7 +50,7 @@ para ver que tan bien estuvo la red en las predicciones.
 - `calcular la derivada gradiente de la función de costo respecto a cada uno de los pesos y sesgos` esto se hace capa por capa hacia atras llegando al inicio.
 - Este proceso se llama [**propagación hacia atras**](https://youtu.be/_0wdproot34?t=341)
 - Siguiendo esta premisa la función **step** no tiene derivada o siempre es 0 con lo cual no permitiria un ajuste. 
-- Esto nos obliga a que las funciones de activación sean **diferenciables** [Video derivadas](https://youtu.be/_0wdproot34)
+- Esto nos obliga a que las funciones de activación sean **diferenciables** [Video derivadas](https://www.youtube.com/watch?v=njoOd9iV2Qo)
 
 ### Instalando tensorflow
 - instalación de miniconda
