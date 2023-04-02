@@ -39,9 +39,16 @@ es adecuada una salida.  En lugar de una función [**escalón o step function**]
 - [De esta manera](https://youtu.be/CU24iC3grq8?t=674), al cambiar un (peso/umbral) la salida y su impacto en las otras neuronas esta mejor controlado
 
 ### [Funciones de activación](https://www.youtube.com/watch?v=_0wdproot34&t=637s)
+- `(entrada*peso + netrada*peso ...) comparado con el sesgo`
 - Una red neuronal sin funcion de activación es muy limitada
-- Algunas 
-
+- Algunas funciones:
+  - step function
+  - no es lineal pero no es apta para el aprendizaje que necesitamos
+- En el proceso de entrenamiento tras varios intentos comprobamos los resultados y los procesamos con al [función de costo](https://youtu.be/_0wdproot34?t=326)
+para ver que tan bien estuvo la red en las predicciones.
+- Dependiendo que tan mal le fue habrá que ajustar los **pesos** y **sesgos**. Para hacer esto debemos 
+- `calcular la derivada gradiente de la función de costo respecto a cada uno de los pesos y sesgos` esto se hace capa por capa hacia atras llegando al inicio.
+- Este proceso se llama [**propagación hacia atras**](https://youtu.be/_0wdproot34?t=341)
 
 ### Instalando tensorflow
 - instalación de miniconda
