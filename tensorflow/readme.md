@@ -52,8 +52,9 @@ para ver que tan bien estuvo la red en las predicciones.
 - Siguiendo esta premisa la función **step** no tiene derivada o siempre es 0 con lo cual no permitiria un ajuste. 
 - Esto nos obliga a que las funciones de activación sean **diferenciables** [Video derivadas](https://www.youtube.com/watch?v=njoOd9iV2Qo)
 - Funciones **sigmoides** (porque tienen forma de S)
-  - [Función logistica](https://youtu.be/_0wdproot34?t=412)
-  - 
+  - [Función logistica](https://youtu.be/_0wdproot34?t=412) tambien se le conoce como función sigmoide a secas.
+  - Esta función es diferenciable ya que tiene una curva. No es lo mismo la y de x1 que de x2. Hay una variación (dY)
+  - [su formula: 1/(1 + e^-x)](https://youtu.be/_0wdproot34?t=442)
 
 
 ### Instalando tensorflow
