@@ -63,6 +63,9 @@ para ver que tan bien estuvo la red en las predicciones.
   - [Tangente Hiperbolica - TANH](https://youtu.be/_0wdproot34?t=554)
     - Similar a la logistica. Acotada en y entre -1 y 1
     - [su formula: (e^x - e^-x)/(e^x + e^-X)](https://youtu.be/_0wdproot34?t=561)
+    - Esta derivada es mayor a la anterior. Buscamos que estas sean suficientemente grandes para que los ajustes en la red neuronal 
+    sean sustanciales de modo que aprenda más rápido.
+    - 
 
 
 ### Instalando tensorflow
