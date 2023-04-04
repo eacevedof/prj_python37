@@ -53,7 +53,7 @@ para ver que tan bien estuvo la red en las predicciones.
 - Esto nos obliga a que las funciones de activación sean **diferenciables** [Video derivadas](https://www.youtube.com/watch?v=njoOd9iV2Qo)
 - Funciones **sigmoides** (porque tienen forma de S)
   - [Función logistica](https://youtu.be/_0wdproot34?t=412) tambien se le conoce como función sigmoide a secas.
-    - Acotada en y entre 0 y 2
+    - Acotada en y entre 0 y 1
     - Esta función es diferenciable ya que tiene una curva. No es lo mismo la y de x1 que de x2. Hay una variación (dY)
     - [su formula: 1/(1 + e^-x)](https://youtu.be/_0wdproot34?t=442)
     - la y de esta función se mueve entre 0 y 1. Si una imagen es un perro o un gato. Esta función es perfecta.
@@ -65,7 +65,7 @@ para ver que tan bien estuvo la red en las predicciones.
     - [su formula: (e^x - e^-x)/(e^x + e^-X)](https://youtu.be/_0wdproot34?t=561)
     - Esta derivada es mayor a la anterior. Buscamos que estas sean suficientemente grandes para que los ajustes en la red neuronal 
     sean sustanciales de modo que aprenda más rápido.
-    - 
+    - Otro punto importante es que está centrada en el 0
 
 
 ### Instalando tensorflow
