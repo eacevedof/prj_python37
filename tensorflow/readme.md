@@ -67,7 +67,8 @@ para ver que tan bien estuvo la red en las predicciones.
     sean sustanciales de modo que aprenda más rápido.
     - Otro punto importante es que está centrada en el 0
     - La anterior (logistica) solo permite trabajar con + o - en cada capa. No deja mezclar. lo que limita la velocidad de aprendizaje
-    - 
+    - La hiperbolica permite mezclar + y -
+    - tambien tiene el problema de **desvanecimiento del gradiente**
 
 ### Instalando tensorflow
 - instalación de miniconda
