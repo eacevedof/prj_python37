@@ -66,7 +66,8 @@ para ver que tan bien estuvo la red en las predicciones.
     - Esta derivada es mayor a la anterior. Buscamos que estas sean suficientemente grandes para que los ajustes en la red neuronal 
     sean sustanciales de modo que aprenda más rápido.
     - Otro punto importante es que está centrada en el 0
-
+    - La anterior (logistica) solo permite trabajar con + o - en cada capa. No deja mezclar. lo que limita la velocidad de aprendizaje
+    - 
 
 ### Instalando tensorflow
 - instalación de miniconda
