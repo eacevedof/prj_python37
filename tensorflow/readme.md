@@ -55,7 +55,12 @@ para ver que tan bien estuvo la red en las predicciones.
   - [Función logistica](https://youtu.be/_0wdproot34?t=412) tambien se le conoce como función sigmoide a secas.
     - Esta función es diferenciable ya que tiene una curva. No es lo mismo la y de x1 que de x2. Hay una variación (dY)
     - [su formula: 1/(1 + e^-x)](https://youtu.be/_0wdproot34?t=442)
-    - la y de esta función se mueve entre 0 y 1
+    - la y de esta función se mueve entre 0 y 1. Si una imagen es un perro o un gato. Esta función es perfecta.
+    - si le damos entradas muy grandes o muy pequeñas la derivada se hace muy pequeña esto implica que en la propagación hacia 
+    atrás los ajustes de los pesos y sesgos en la red seran tambien minimos y esto hará que las capas iniciales dejen de aprender
+    - Esto se llama el **desvanecimiento de la gradiente** la derivada se vuelve muy pequeña
+  - [Tangente Hiperbolica](https://youtu.be/_0wdproot34?t=554)
+    - Similar a la logistica 
 
 
 ### Instalando tensorflow
