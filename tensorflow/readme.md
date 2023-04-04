@@ -60,6 +60,7 @@ para ver que tan bien estuvo la red en las predicciones.
     - si le damos entradas muy grandes o muy pequeñas la derivada se hace muy pequeña esto implica que en la propagación hacia 
     atrás los ajustes de los pesos y sesgos en la red seran tambien minimos y esto hará que las capas iniciales dejen de aprender
     - Esto se llama el **desvanecimiento de la gradiente** la derivada se vuelve muy pequeña conforme se avanza en la **propagación hacia atrás**
+    - es cara de calcular por que lleva exponentes
   - [Tangente Hiperbolica - TANH](https://youtu.be/_0wdproot34?t=554)
     - Similar a la logistica. Acotada en y entre -1 y 1
     - [su formula: (e^x - e^-x)/(e^x + e^-X)](https://youtu.be/_0wdproot34?t=561)
@@ -69,6 +70,7 @@ para ver que tan bien estuvo la red en las predicciones.
     - La anterior (logistica) solo permite trabajar con + o - en cada capa. No deja mezclar. lo que limita la velocidad de aprendizaje
     - La hiperbolica permite mezclar + y -
     - tambien tiene el problema de **desvanecimiento del gradiente**
+    - es cara de calcular por que lleva exponentes
 
 ### Instalando tensorflow
 - instalación de miniconda
