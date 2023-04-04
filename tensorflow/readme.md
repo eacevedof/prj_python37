@@ -71,6 +71,7 @@ para ver que tan bien estuvo la red en las predicciones.
     - La hiperbolica permite mezclar + y -
     - tambien tiene el problema de **desvanecimiento del gradiente**
     - es cara de calcular por que lleva exponentes
+  - [softsign](https://youtu.be/_0wdproot34?t=657)
 
 ### Instalando tensorflow
 - instalación de miniconda
