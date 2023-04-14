@@ -73,6 +73,7 @@ para ver que tan bien estuvo la red en las predicciones.
     - es cara de calcular por que lleva exponentes
   - [softsign](https://youtu.be/_0wdproot34?t=657)
 
+
 ### Instalando tensorflow
 - instalación de miniconda
   - **Miniconda**: version light de Anaconda. Anaconda plataforma de ciencia de datos de codigo abierto. Con miniconda se pueden crar projectos
