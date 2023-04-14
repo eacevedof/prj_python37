@@ -72,7 +72,9 @@ para ver que tan bien estuvo la red en las predicciones.
     - tambien tiene el problema de **desvanecimiento del gradiente**
     - es cara de calcular por que lleva exponentes
   - [softsign](https://youtu.be/_0wdproot34?t=657)
-
+    - Tiene mejor gradiente pero su derivada es más compleja y comparte algunos inconvenientes
+  - [ReLU Rectified Linear Unit](https://youtu.be/_0wdproot34?t=672)
+    - Esta era mucho mejor que las anteriores en la mayoria de los casos
 
 ### Instalando tensorflow
 - instalación de miniconda
