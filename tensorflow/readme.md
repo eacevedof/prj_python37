@@ -75,12 +75,21 @@ para ver que tan bien estuvo la red en las predicciones.
     - Tiene mejor gradiente pero su derivada es más compleja y comparte algunos inconvenientes
   - [ReLU Rectified Linear Unit](https://youtu.be/_0wdproot34?t=672)
     - [su fórmula: max(0, x)](https://youtu.be/_0wdproot34?t=713) 
+    - si x<0 => 0 sino x
     - Esta era mucho mejor que las anteriores en la mayoria de los casos
     - La propagación hacia adelante y atras era hasta seis veces más rapida que la *tangente hiperbólica*
     - Se usó para AlexNet en 2012
     - En 2018 fue la más usada
     - Lo especial de ReLU ante las otras:
-      -  
+      - La formula es muy simple
+      - [Su gráfica](https://youtu.be/_0wdproot34?t=726) nos permite ver que tiene un coste computacional muy bajo
+      - Su derivada también es muy simple. 0 para todos los x negativos y 1 para todos los positivos
+      - La derivada en 0 no existe. Pero es tan raro tener un 0 absoluto que se puede despreciar y usar 0 o 1
+      - Relu no está acotada pra numeros positivos con lo cual da una gradiente constante y genera un aprendizaje más rápido
+    - Inconvenientes
+      - Como regresa 0 para todos los numeros negativos va a degenerar en las llamadas neuronas muertas que durante el entrenamiento
+      solo devolverán 0 entorpeciendo el aprendizaje. Esto sucede especialmente en tasas de aprendizajes muy grandes donde es más probable
+      que caigamos en números negativos pasando las neuronas a 0 y que ya no se puedan recuperar.
 
 ### Instalando tensorflow
 - instalación de miniconda
