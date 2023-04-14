@@ -75,6 +75,11 @@ para ver que tan bien estuvo la red en las predicciones.
     - Tiene mejor gradiente pero su derivada es más compleja y comparte algunos inconvenientes
   - [ReLU Rectified Linear Unit](https://youtu.be/_0wdproot34?t=672)
     - Esta era mucho mejor que las anteriores en la mayoria de los casos
+    - La propagación hacia adelante y atras era hasta seis veces más rapida que la *tangente hiperbólica*
+    - Se usó para AlexNet en 2012
+    - En 2018 fue la más usada
+    - Lo especial de ReLU ante las otras:
+      -  
 
 ### Instalando tensorflow
 - instalación de miniconda
