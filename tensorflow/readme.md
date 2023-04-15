@@ -8,6 +8,7 @@
 - Redes neuronales de clasificación. Gato o perro
 - Redes neuronales de retroalimentación (feedback). Las redes de retroalimentación se utilizan en aplicaciones como el control de procesos, la predicción de series temporales y el modelado de sistemas físicos.
 - Redes neuronales de aprendizaje por refuerzo
+- Una **red de regresión** es un tipo de red neuronal que se utiliza para predecir un valor numérico continuo, en lugar de una etiqueta discreta. La red de regresión toma una serie de variables de entrada, las procesa a través de múltiples capas de neuronas y devuelve un valor numérico continuo como salida. 
 - etc etc
 
 
@@ -151,7 +152,10 @@ para ver que tan bien estuvo la red en las predicciones.
     - se usa en aprendizaje automático desde hace 30 años
     - la usamos para redes de clasificación. Es gato o perro. Es una cuchara, tenedor o cuchillo
     - [como hace este cálculo](https://youtu.be/_0wdproot34?t=1089)
-    - la media de todas las salidas se devuelve en porcentaje 
+    - la media de todas las salidas se devuelve en porcentaje este se calcula con el número e
+
+### Cuando usar cada función?
+- 
 
 ### Instalando tensorflow
 - instalación de miniconda
