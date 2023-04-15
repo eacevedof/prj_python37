@@ -1,12 +1,12 @@
 ### Tipos de redes neuronales
-- Redes neuronales de clasificación. Gato o perro
 - Redes neuronales convolucionales (CNN). Procesamiento de imagenes y señales. Convertir una imagen en comic.
 - Redes neuronales recurrentes (RNN). Procesamiento lenguaje natural, introducción automática y análisis de sentimientos.
-- Redes neuronales de retroalimentación (feedback). Las redes de retroalimentación se utilizan en aplicaciones como el control de procesos, la predicción de series temporales y el modelado de sistemas físicos.
 - Redes neuronales de memoria a largo plazo (LSTM)
-- Redes neuronales de atención
 - Redes neuronales generativas adversarias (GAN)
-- Redes neuronales autoencoders
+- Redes neuronales de atención
+- Redes neuronales autoencoders 
+- Redes neuronales de clasificación. Gato o perro
+- Redes neuronales de retroalimentación (feedback). Las redes de retroalimentación se utilizan en aplicaciones como el control de procesos, la predicción de series temporales y el modelado de sistemas físicos.
 - Redes neuronales de aprendizaje por refuerzo
 - etc etc
 
