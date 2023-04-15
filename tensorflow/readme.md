@@ -118,7 +118,21 @@ para ver que tan bien estuvo la red en las predicciones.
     lineal de la entrada original.
     ``` 
     - Se pueden obtener mejores resultados pero su costo computacional es muy elevado
-
+  - [switsh](https://youtu.be/_0wdproot34?t=947)
+    ```
+    f(x) = x * sigmoid(bx)
+    b: parámetro modifcable. Si b=1 (no se usa) se llama swish 1
+    ```
+    - En casi todas las tareas y pruebas es mejor que ReLU su costo computacional es más alto
+    - Gráfica suave, no es monotónica.
+  - [mish](https://youtu.be/_0wdproot34?t=992)
+    ```
+    f(x) = x * tanh(softplus(x))
+    ```
+    - no es monotonica, mejora los resultados de ReLU y swish principalmente en vision computacional
+    - mantiene un poco de [información negativa](https://youtu.be/_0wdproot34?t=1012) evitando la muerte de neuronas
+    - su costo computacional es superior a ReLU
+    - 
 
 ### Instalando tensorflow
 - instalación de miniconda
