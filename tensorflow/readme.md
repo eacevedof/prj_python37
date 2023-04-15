@@ -132,6 +132,10 @@ para ver que tan bien estuvo la red en las predicciones.
     - no es monotonica, mejora los resultados de ReLU y swish principalmente en vision computacional
     - mantiene un poco de [información negativa](https://youtu.be/_0wdproot34?t=1012) evitando la muerte de neuronas
     - su costo computacional es superior a ReLU
+  - [identidad](https://youtu.be/_0wdproot34?t=1038)
+    - es la básica cuando no se usa una función de activación 
+    - por ejemplo transformacion de celcius a fahrenheit o calculo de precio de una casa
+  - [softmax](https://youtu.be/_0wdproot34?t=1055)
     - 
 
 ### Instalando tensorflow
