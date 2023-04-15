@@ -96,9 +96,15 @@ para ver que tan bien estuvo la red en las predicciones.
     - No acotada, simple de calcular y evita las neuronas muertas pero como la derivada en números negativos es pequeña es propensa
     al desvanecimiento del gradiente.
   - [Parametric ReLu - Relu Parametrizable](https://youtu.be/_0wdproot34?t=844) 
-    - **su fórmula: ax if x>0** a es el parámetrizable
-
+    - **su fórmula: ax if x>0** a es el parámetrizable. Por ejemplo a=0.1
+  - [Parametric GeLu](https://youtu.be/_0wdproot34?t=844)
+    - Caracterisctica muy importante. No es **monótona** (solo creciente o decreciente) Incrementan o decrementan constantemente y pasan
+    solo una vez por el 0.
+    - Una que no lo es puede crear montes y valles e incluso pasar dos veces o más por el 0
+    - Esto posibilita que algunas funciones basadas en Gelu puedan hacer que las redes neuronales sean tan eficientes como las cerebrales
+    - Es utilizada por la función [BERT](https://cloud.google.com/ai-platform/training/docs/algorithms/bert-start?hl=es-419), [GPT](https://chat.openai.com/)
     - 
+
 
 ### Instalando tensorflow
 - instalación de miniconda
