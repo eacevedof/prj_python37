@@ -90,6 +90,15 @@ para ver que tan bien estuvo la red en las predicciones.
       - Como regresa 0 para todos los numeros negativos va a degenerar en las llamadas neuronas muertas que durante el entrenamiento
       solo devolverán 0 entorpeciendo el aprendizaje. Esto sucede especialmente en tasas de aprendizajes muy grandes donde es más probable
       que caigamos en números negativos pasando las neuronas a 0 y que ya no se puedan recuperar.
+  - [Leaky ReLU](https://youtu.be/_0wdproot34?t=819)
+    - **su fórmula: max(0.01x, x)**
+    - Similar a la anterior pero para x<0 f(x) tiende a -0.01 pero nunca lo es.
+    - No acotada, simple de calcular y evita las neuronas muertas pero como la derivada en números negativos es pequeña es propensa
+    al desvanecimiento del gradiente.
+  - [Parametric ReLu - Relu Parametrizable](https://youtu.be/_0wdproot34?t=844) 
+    - **su fórmula: ax if x>0** a es el parámetrizable
+
+    - 
 
 ### Instalando tensorflow
 - instalación de miniconda
