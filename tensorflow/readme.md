@@ -103,7 +103,21 @@ para ver que tan bien estuvo la red en las predicciones.
     - Una que no lo es puede crear montes y valles e incluso pasar dos veces o más por el 0
     - Esto posibilita que algunas funciones basadas en Gelu puedan hacer que las redes neuronales sean tan eficientes como las cerebrales
     - Es utilizada por la función [BERT](https://cloud.google.com/ai-platform/training/docs/algorithms/bert-start?hl=es-419), [GPT](https://chat.openai.com/)
-    - 
+  - [Softplus](https://youtu.be/_0wdproot34?t=896)
+    - **fórmula: ln(1 + e^x)**
+    - Una versión suave de ReLU
+    - Un dato interesante es que su derivada es la función logística
+    - Da mejores resultados que ReLU pero su costo computacional es mayor
+    - Aunque tiene mejores beneficios que ReLU en la práctica no son tangibles
+  - [Maxout](https://youtu.be/_0wdproot34?t=930)
+    ```
+    f(x) = max(w_1^T x + b_1, w_2^T x + b_2)
+    
+    Donde x es la entrada a la neurona, w_1, w_2 son vectores de pesos y b_1, b_2 son sesgos. 
+    La función Maxout toma el máximo entre dos funciones lineales de la entrada, donde cada función lineal es una transformación 
+    lineal de la entrada original.
+    ``` 
+    - Se pueden obtener mejores resultados pero su costo computacional es muy elevado
 
 
 ### Instalando tensorflow
