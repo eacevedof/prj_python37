@@ -15,4 +15,20 @@ capa1 = tf.keras.layers.Dense(units=1, input_shape=[1])
 
 modelo = tf.keras.Sequential(capa1)
 
-# asignar un optimizador y una regla de perdida
+# asignar un optimizador y una metrica de perdida
+modelo.compile(
+    optimizer = tf.keras.optimizers.Adam(0.1),
+
+    # tiene como prioridad corregir los grandes errores aunque sean pocos antes que los pequeños errores
+    loss = "mean_squared_error"
+)
+
+print("Entrenando")
+
+#entrenando el modelo
+# epochs son los ciclos de entrenamiento
+entrenamiento = modelo.fit(entradas, resultados, epochs=500, verbose=False)
+
+# guardamos la red despues de su entrenamiento
+modelo.save("red-uno")
+modelo.save_weights("pesos.red-uno")
