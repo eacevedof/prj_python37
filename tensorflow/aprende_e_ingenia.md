@@ -1,0 +1,1 @@
+[Aprende a crear una red neuronal en python](https://youtu.be/cDMoaMnbQUc?t=57)
