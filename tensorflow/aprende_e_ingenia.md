@@ -8,3 +8,5 @@
   - matplotlib
 
 - **capa tipo densa** todas las salidas de una neurona se conecta a la entrada de otra
+- **Un optimizador** es el encargado de ajustar los pesos y sesgos de la red neuronal
+- **metrica de perdida** es la encargada de indicarnos el tamaño del desfase de la salida devuelta y la esperada
