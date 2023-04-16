@@ -32,3 +32,9 @@ entrenamiento = modelo.fit(entradas, resultados, epochs=500, verbose=False)
 # guardamos la red despues de su entrenamiento
 modelo.save("red-uno")
 modelo.save_weights("pesos.red-uno")
+
+# verificar que la red se entrenó
+print("terminado")
+
+# prediccion
+i = input("ingresa el valor en pulgadas")
