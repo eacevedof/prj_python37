@@ -9,4 +9,10 @@ resultados = np.array([0.0254, 0.1524, 0.762, 0.1778, 1.778, 1.0922, 12.776, 5.1
 
 # topografia de la red
 # 1 capa de entrada con una neurona de entrada y una de salida
-capa1 = tf.keras.layers.Dense()
+
+# units = capas
+capa1 = tf.keras.layers.Dense(units=1, input_shape=[1])
+
+modelo = tf.keras.Sequential(capa1)
+
+# asignar un optimizador y una regla de perdida
