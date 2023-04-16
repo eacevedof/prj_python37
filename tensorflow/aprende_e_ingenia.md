@@ -6,4 +6,5 @@
   - tensorflow
   - numpy
   - matplotlib
-- 
+
+- **capa tipo densa** todas las salidas de una neurona se conecta a la entrada de otra
