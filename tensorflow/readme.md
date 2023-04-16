@@ -1,3 +1,5 @@
+[Aprende e Ingenia](https://github.com/eacevedof/prj_python37/blob/master/tensorflow/aprende_e_ingenia.md)
+
 ### Tipos de redes neuronales
 - Redes neuronales convolucionales (CNN). Procesamiento de imagenes y señales. Convertir una imagen en comic.
 - Redes neuronales recurrentes (RNN). Procesamiento lenguaje natural, introducción automática y análisis de sentimientos.
