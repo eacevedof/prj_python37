@@ -37,4 +37,8 @@ modelo.save_weights("pesos.red-uno")
 print("terminado")
 
 # prediccion
-i = input("ingresa el valor en pulgadas")
+i = input("ingresa el valor en pulgadas\n")
+i = float(i)
+
+r = modelo.predict([i])
+print(f"prediccion {r}")
