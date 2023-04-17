@@ -42,3 +42,9 @@ i = float(i)
 
 r = modelo.predict([i])
 print(f"prediccion {r}")
+
+#grafico
+plt.xlabel("ciclos de entrenamiento")
+plt.ylabel("errores")
+plt.plot(entrenamiento.history["loss"])
+plt.show()
