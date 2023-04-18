@@ -33,4 +33,8 @@ plt.show()
 
 # comprobar si predice
 result = modelo.predict([100])
+print("100 C en fahrenheit")
 print(result)
+
+print("peso, sesgo")
+print(capa.get_weights())
