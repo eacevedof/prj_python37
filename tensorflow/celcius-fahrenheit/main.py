@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt
 plt.xlabel("# epochs")
 plt.ylabel("perdida")
 plt.plot(historial.history["loss"])
+plt.show()
 
 # comprobar si predice
 result = modelo.predict([100])
