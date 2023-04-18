@@ -26,3 +26,10 @@ print("modelo entrenado")
 #reultado de la funcion de perdida
 import matplotlib.pyplot as plt
 
+plt.xlabel("# epochs")
+plt.ylabel("perdida")
+plt.plot(historial.history["loss"])
+
+# comprobar si predice
+result = modelo.predict([100])
+print(result)
