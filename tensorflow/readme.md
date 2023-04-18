@@ -1,4 +1,5 @@
 [Aprende e Ingenia](./pulgadas-metros/aprende_e_ingenia.md)
+[Ringa Tech](./perro-gato/ringa-tech.md)
 
 ### Tipos de redes neuronales
 - Redes neuronales convolucionales (CNN). Procesamiento de imagenes y señales. Convertir una imagen en comic.
