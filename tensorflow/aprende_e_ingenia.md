@@ -9,6 +9,6 @@
 
 - **capa tipo densa** todas las salidas de una neurona se conecta a la entrada de otra
 - **Un optimizador** es el encargado de ajustar los pesos y sesgos de la red neuronal
-  - ![Flecha amarilla con optimizador](./images/optimizador.png)
+  - ![Flecha amarilla con optimizador](pulgadas-metros/images/optimizador.png)
   - inicialmente se asume una perdida muy grande pero con cada repaso del optimizador la perdida debe tender a 0
 - **metrica de perdida** es la encargada de indicarnos el tamaño del desfase de la salida devuelta y la esperada
