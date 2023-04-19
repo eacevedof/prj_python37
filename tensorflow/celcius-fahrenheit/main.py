@@ -38,7 +38,7 @@ plt.show()
 
 # comprobar si predice
 result = modelo.predict([100])
-print("100 C en fahrenheit")
+print("100 C en fahrenheit deberia ser 212")
 print(result)
 
 print("peso, sesgo")
