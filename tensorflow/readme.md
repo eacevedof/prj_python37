@@ -1,6 +1,9 @@
 [Aprende e Ingenia](./pulgadas-metros/aprende_e_ingenia.md)
 [Ringa Tech](./perro-gato/ringa-tech.md)
 
+[1 - Ringa Tech - Tu primera red neuronal en python y tensorflow](./celcius-fahrenheit/ringa-tech.md)
+[2 - Ringa Tech - Tu primer clasificador de imágenes con Python y Tensorflow](./clasificador-imagenes/ringa-tech.md)
+
 ### Tipos de redes neuronales
 - Redes neuronales convolucionales (CNN). Procesamiento de imagenes y señales. Convertir una imagen en comic.
 - Redes neuronales recurrentes (RNN). Procesamiento lenguaje natural, introducción automática y análisis de sentimientos.
