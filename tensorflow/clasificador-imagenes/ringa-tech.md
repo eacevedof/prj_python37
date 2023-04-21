@@ -8,3 +8,6 @@
 - Si se trata de un problema de regresion es decir que sea lineal entonces se podria hacer con dos capas. Las capas de entrada y salida.
 - Este planteamiento no serviria para una clasifcación puesto que los limites del dominio no es trivial.
 - Aqui entran en juego las [Capas ocultas y las funciones de activación](https://youtu.be/j6eGHROLKP8?list=PLZ8REt5zt2Pn0vfJjTAPaDVSACDvnuGiG&t=301)
+- En le primer caso, entre la entrada y salida hay apenas margen para aplicar transformaciones.
+- Solo podriamos resolver problemas de multiplicación o suma.
+- En problemas más complejos se requiere de varias capas que vayan sumando y multiplicando
