@@ -3,3 +3,12 @@
 - IA
   - Machine Learning
     - Deep learning
+
+#### Deep learning
+- Basado en algoritmos de redes neuronales profundas
+- Pe: 
+  - Clasificación de imagenes
+  - Reconocimiento de texto
+  - Conducción autonoma
+  - etc
+- Redes neuronales densamente conectadas
