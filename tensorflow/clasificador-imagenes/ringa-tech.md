@@ -11,3 +11,7 @@
 - En le primer caso, entre la entrada y salida hay apenas margen para aplicar transformaciones.
 - Solo podriamos resolver problemas de multiplicación o suma.
 - En problemas más complejos se requiere de varias capas que vayan sumando y multiplicando
+
+
+
+
