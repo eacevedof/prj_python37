@@ -12,3 +12,7 @@
   - Conducción autonoma
   - etc
 - Redes neuronales densamente conectadas
+- Instalación de anaconda
+- **anaconda**
+  - anaconda incluye muchos paquetes y bibliotecas populares utilizadas en ciencia de datos, como NumPy, Pandas, Matplotlib, Jupyter, y muchos otros. 
+  - [Instaladores](https://www.anaconda.com/download)
