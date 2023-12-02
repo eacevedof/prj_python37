@@ -16,4 +16,6 @@
 - **anaconda**
   - anaconda incluye muchos paquetes y bibliotecas populares utilizadas en ciencia de datos, como NumPy, Pandas, Matplotlib, Jupyter, y muchos otros. 
   - [Instaladores](https://www.anaconda.com/download)
-  - v 2.5.1 
+  - v2.5.1 
+  - $HOME/projects/py-anaconda/anaconda3 (entorno por defecto)
+  - creo entorno virtual: **udemy-machine-learning**
