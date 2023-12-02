@@ -28,3 +28,9 @@
     - k arriba
 - Google colaboratory (es como el jupiter notebook pero online)
   -  https://colab.research.google.com/
+**NumPy**
+  - import numpy as np
+  ```numpy
+  # array de 2 filas y 4 columnas
+  a = np.zeros((2, 4))
+  ```
