@@ -25,3 +25,5 @@
     - dd borra celda
     - j abajo
     - k arriba
+- Google colaboratory (es como el jupiter notebook pero online)
+  -  https://colab.research.google.com/
