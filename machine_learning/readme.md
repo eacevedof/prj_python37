@@ -14,6 +14,7 @@
 - Redes neuronales densamente conectadas
 - Instalación de anaconda
 - **anaconda**
+  - Es como un concentrador visual de herramientas para machine learning
   - anaconda incluye muchos paquetes y bibliotecas populares utilizadas en ciencia de datos, como NumPy, Pandas, Matplotlib, Jupyter, y muchos otros. 
   - [Instaladores](https://www.anaconda.com/download)
   - v2.5.1 
