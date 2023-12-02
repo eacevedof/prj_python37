@@ -19,3 +19,9 @@
   - v2.5.1 
   - $HOME/projects/py-anaconda/anaconda3 (entorno por defecto)
   - creo entorno virtual: **udemy-machine-learning**
+  - Atajos teclado en Jupiter notebook
+    - a añade celda en linea anterior
+    - b celda debajo
+    - dd borra celda
+    - j abajo
+    - k arriba
