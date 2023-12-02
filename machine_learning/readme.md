@@ -29,6 +29,12 @@
 - Google colaboratory (es como el jupiter notebook pero online)
   -  https://colab.research.google.com/
 **NumPy**
+  - Aporta:
+    - Arreglos (Arrays)
+    - Operaciones Matriciales: suma y mult de matrices
+    - Funciones Matemáticas: sin, exp
+    - Índices y Rebanadas (Slicing)
+    - Funciones Estadísticas
   - import numpy as np
   ```numpy
   # array de 2 filas y 4 columnas
