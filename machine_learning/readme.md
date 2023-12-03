@@ -40,3 +40,8 @@
   # array de 2 filas y 4 columnas
   a = np.zeros((2, 4))
   ```
+  - En numpy los arrays nos ofrecen métodos que no se encuentran en las listas
+    - a.shape
+    - a.ndim
+    - a.size
+  - 
