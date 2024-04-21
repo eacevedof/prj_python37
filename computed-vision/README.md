@@ -9,3 +9,7 @@
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
 Traceback (most recent call last):
 ```
+
+### camara arduino:
+- https://www.amazon.es/SingTown-OpenMV-Genuine-5MP-Definition-Processing/dp/B09WYQMDX2
+- https://openmv.io/products/openmv-cam-rt
