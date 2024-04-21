@@ -3,6 +3,7 @@
 - 1 [Crea tu propio Dataset Personalizado Python Yolov5](https://youtu.be/zpRl8rEvjbo?si=zLf0Eso3jyQFIH5q) 
   - [makesense.ai crear etiquetas](https://makesense.ai) 
 
+
 ### errores:
 - macos 11
 ```
