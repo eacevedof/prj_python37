@@ -82,8 +82,3 @@ def process_video(video_path):
 # Example usage: Process a football video
 video_path = 'path_to_your_football_video.mp4'
 process_video(video_path)
-
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
