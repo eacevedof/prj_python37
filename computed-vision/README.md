@@ -1,3 +1,5 @@
+### recursos
+- [APRENDE A DETECTAR OBJETOS DESDE CERO](https://www.youtube.com/watch?v=zpRl8rEvjbo&list=PLnKxR99sdlEiRC4sBFwSJ-8SiDW4Gx6y6)
 
 ### errores:
 - macos 11
