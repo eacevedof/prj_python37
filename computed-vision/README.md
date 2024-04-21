@@ -1,7 +1,7 @@
 ### recursos
 - [APRENDE A DETECTAR OBJETOS DESDE CERO](https://www.youtube.com/watch?v=zpRl8rEvjbo&list=PLnKxR99sdlEiRC4sBFwSJ-8SiDW4Gx6y6)
-- 1 [Crea tu propio Dataset Personalizado Python Yolov5](https://youtu.be/zpRl8rEvjbo?si=zLf0Eso3jyQFIH5q)
-    - 
+- 1 [Crea tu propio Dataset Personalizado Python Yolov5](https://youtu.be/zpRl8rEvjbo?si=zLf0Eso3jyQFIH5q) 
+  - [makesense.ai crear etiquetas](https://makesense.ai) 
 
 ### errores:
 - macos 11
