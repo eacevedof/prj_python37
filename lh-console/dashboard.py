@@ -15,8 +15,9 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.syntax import Syntax
 from rich.table import Table
 
-# console = Console()
+console = Console()
 
+console.print("hello", style="bold red")
 
 def get_dashboard_layout() -> Layout:
     """Define the layout."""
@@ -27,6 +28,7 @@ def get_dashboard_layout() -> Layout:
         Layout(name="body", ratio=1),
         Layout(name="footer", size=7),
     )
+
     dash_layout["body"].split_row(
         Layout(name="side"),
         Layout(name="right", ratio=2, minimum_size=60),
@@ -51,7 +53,7 @@ class Header:
             "[b]Rich[/b] Layout application",
             datetime.now().ctime().replace(":", "[blink]:[/]"),
         )
-        return Panel(header_table, style="white on blue")
+        return Panel(header_table, style="black on yellow")
 
 def make_sponsor_message() -> Panel:
     """Some example content."""
