@@ -1,6 +1,7 @@
 """
 Demonstrates a Rich "application" using the Layout and Live classes.
 https://github.com/Textualize/rich/blob/master/examples/fullscreen.py
+https://github.com/Textualize/rich/tree/master
 """
 
 from datetime import datetime
@@ -149,16 +150,21 @@ progress_table.add_row(
         border_style="green",
         padding=(2, 2),
     ),
-    Panel(job_progress, title="[b]Jobs", border_style="red", padding=(1, 2)),
+    Panel(
+        job_progress,
+        title="[b]Jobs",
+        border_style="red",
+        padding=(1, 2)
+    ),
 )
 
 
 layout = make_layout()
-layout["header"].update(Header())
+#layout["header"].update(Header())
 layout["body"].update(make_sponsor_message())
-layout["box2"].update(Panel(make_syntax(), border_style="green"))
-layout["box1"].update(Panel(layout.tree, border_style="red"))
-layout["footer"].update(progress_table)
+#layout["box2"].update(Panel(make_syntax(), border_style="green"))
+#layout["box1"].update(Panel(layout.tree, border_style="red"))
+#layout["footer"].update(progress_table)
 
 
 from time import sleep
