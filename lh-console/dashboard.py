@@ -14,7 +14,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.syntax import Syntax
 from rich.table import Table
 
-console = Console()
+# console = Console()
 
 
 def make_layout() -> Layout:
