@@ -20,22 +20,24 @@ from rich.table import Table
 
 def get_dashboard_layout() -> Layout:
     """Define the layout."""
-    layout = Layout(name="root")
+    dash_layout = Layout(name="root")
 
-    layout.split(
+    dash_layout.split(
         Layout(name="header", size=3),
-        Layout(name="main", ratio=1),
+        Layout(name="body", ratio=1),
         Layout(name="footer", size=7),
     )
-    layout["main"].split_row(
+    dash_layout["body"].split_row(
         Layout(name="side"),
-        Layout(name="body", ratio=2, minimum_size=60),
+        Layout(name="right", ratio=2, minimum_size=60),
     )
-    layout["side"].split(
+
+    # espacio de la izquierda se divide en dos
+    dash_layout["side"].split(
         Layout(name="box1"),
         Layout(name="box2")
     )
-    return layout
+    return dash_layout
 
 
 class Header:
@@ -158,7 +160,7 @@ progress_table.add_row(
 
 dashboard_layout = get_dashboard_layout()
 dashboard_layout["header"].update(Header())
-dashboard_layout["body"].update(make_sponsor_message())
+dashboard_layout["right"].update(make_sponsor_message())
 #layout["box2"].update(Panel(make_syntax(), border_style="green"))
 #layout["box1"].update(Panel(layout.tree, border_style="red"))
 dashboard_layout["footer"].update(progress_table)
