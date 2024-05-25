@@ -1,5 +1,6 @@
 """
 Demonstrates a Rich "application" using the Layout and Live classes.
+https://rich.readthedocs.io/en/latest/tables.html?highlight=column#column-options
 https://github.com/Textualize/rich/blob/master/examples/fullscreen.py
 https://github.com/Textualize/rich/tree/master
 """
