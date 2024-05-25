@@ -1,5 +1,6 @@
 #!/bin/bash
 TODAY := $(shell date +'%Y-%m-%d')
+NOW := $(shell date +'%Y-%m-%d %H:%M:%S')
 
 help: ## Show this help message
 	@echo "usage: make [target]"
@@ -13,4 +14,5 @@ gitpush: ## git push m=any message
 
 dashboard:
 	clear;
+	@echo $(NOW)
 	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python $(PATHPRJ)/prj_python37/lh-console/dashboard.py
