@@ -31,7 +31,10 @@ def get_dashboard_layout() -> Layout:
         Layout(name="side"),
         Layout(name="body", ratio=2, minimum_size=60),
     )
-    layout["side"].split(Layout(name="box1"), Layout(name="box2"))
+    layout["side"].split(
+        Layout(name="box1"),
+        Layout(name="box2")
+    )
     return layout
 
 
@@ -122,7 +125,6 @@ def ratio_resolve(total: int, edges: List[Edge]) -> List[int]:
     syntax = Syntax(code, "python", line_numbers=True)
     return syntax
 
-
 job_progress = Progress(
     "{task.description}",
     SpinnerColumn(),
@@ -159,7 +161,7 @@ dashboard_layout["header"].update(Header())
 dashboard_layout["body"].update(make_sponsor_message())
 #layout["box2"].update(Panel(make_syntax(), border_style="green"))
 #layout["box1"].update(Panel(layout.tree, border_style="red"))
-#layout["footer"].update(progress_table)
+dashboard_layout["footer"].update(progress_table)
 
 
 from time import sleep
