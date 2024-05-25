@@ -1,6 +1,6 @@
 """
 Demonstrates a Rich "application" using the Layout and Live classes.
-
+https://github.com/Textualize/rich/blob/master/examples/fullscreen.py
 """
 
 from datetime import datetime
