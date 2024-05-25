@@ -11,5 +11,5 @@ gitpush: ## git push m=any message
 	clear;
 	git add .; git commit -m "$(m)"; git push;
 
-run:
+dashboard:
 	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python $(PATHPRJ)/prj_python37/lh-console/dashboard.py
