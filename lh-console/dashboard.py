@@ -50,7 +50,7 @@ class Header:
         header_table.add_column(justify="center", ratio=1)
         header_table.add_column(justify="right")
         header_table.add_row(
-            "[b]Rich[/b] Layout application",
+            "[b]WinView[/b] monitoring system",
             datetime.now().ctime().replace(":", "[blink]:[/]"),
         )
         return Panel(header_table, style="black on yellow")
