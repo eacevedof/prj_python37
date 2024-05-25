@@ -18,7 +18,7 @@ from rich.table import Table
 # console = Console()
 
 
-def make_layout() -> Layout:
+def get_dashboard_layout() -> Layout:
     """Define the layout."""
     layout = Layout(name="root")
 
@@ -35,31 +35,39 @@ def make_layout() -> Layout:
     return layout
 
 
+class Header:
+    """Display header with clock."""
+
+    def __rich__(self) -> Panel:
+        header_table = Table.grid(expand=True)
+        header_table.add_column(justify="center", ratio=1)
+        header_table.add_column(justify="right")
+        header_table.add_row(
+            "[b]Rich[/b] Layout application",
+            datetime.now().ctime().replace(":", "[blink]:[/]"),
+        )
+        return Panel(header_table, style="white on blue")
+
 def make_sponsor_message() -> Panel:
     """Some example content."""
-    sponsor_message = Table.grid(padding=1)
-    sponsor_message.add_column(style="green", justify="right")
-    sponsor_message.add_column(no_wrap=True)
-    sponsor_message.add_row(
+    table_sponsor = Table.grid(padding=1)
+    table_sponsor.add_column(style="bold red", justify="right")
+    table_sponsor.add_column(no_wrap=True)
+    table_sponsor.add_row(
         "Twitter",
         "[u blue link=https://twitter.com/textualize]https://twitter.com/textualize",
     )
-    sponsor_message.add_row(
+    table_sponsor.add_row(
         "CEO",
         "[u blue link=https://twitter.com/willmcgugan]https://twitter.com/willmcgugan",
     )
-    sponsor_message.add_row(
+    table_sponsor.add_row(
         "Textualize", "[u blue link=https://www.textualize.io]https://www.textualize.io"
     )
 
-    message = Table.grid(padding=1)
-    message.add_column()
-    message.add_column(no_wrap=True)
-    message.add_row(sponsor_message)
-
-    message_panel = Panel(
+    panel_sponsor = Panel(
         Align.center(
-            Group("\n", Align.center(sponsor_message)),
+            Group("\n", Align.center(table_sponsor)),
             vertical="middle",
         ),
         box=box.ROUNDED,
@@ -67,21 +75,8 @@ def make_sponsor_message() -> Panel:
         title="[b red]Thanks for trying out Rich!",
         border_style="bright_blue",
     )
-    return message_panel
+    return panel_sponsor
 
-
-class Header:
-    """Display header with clock."""
-
-    def __rich__(self) -> Panel:
-        grid = Table.grid(expand=True)
-        grid.add_column(justify="center", ratio=1)
-        grid.add_column(justify="right")
-        grid.add_row(
-            "[b]Rich[/b] Layout application",
-            datetime.now().ctime().replace(":", "[blink]:[/]"),
-        )
-        return Panel(grid, style="white on blue")
 
 
 def make_syntax() -> Syntax:
@@ -159,9 +154,9 @@ progress_table.add_row(
 )
 
 
-layout = make_layout()
-#layout["header"].update(Header())
-layout["body"].update(make_sponsor_message())
+dashboard_layout = get_dashboard_layout()
+dashboard_layout["header"].update(Header())
+dashboard_layout["body"].update(make_sponsor_message())
 #layout["box2"].update(Panel(make_syntax(), border_style="green"))
 #layout["box1"].update(Panel(layout.tree, border_style="red"))
 #layout["footer"].update(progress_table)
@@ -171,7 +166,7 @@ from time import sleep
 
 from rich.live import Live
 
-with Live(layout, refresh_per_second=10, screen=True):
+with Live(dashboard_layout, refresh_per_second=10, screen=True):
     while not overall_progress.finished:
         sleep(0.1)
         for job in job_progress.tasks:
