@@ -15,13 +15,13 @@ from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
-from app_versions.application.services.get_versions_service import get_versions
+# from lh_monitor.lh_monitor.app_versions.application.services.get_versions_service import get_versions
 
 #console = Console()
 
 #console.print("hello", style="bold red")
 
-vers = get_versions()
+# vers = get_versions()
 
 def get_dashboard_layout() -> Layout:
     """Define the layout."""
