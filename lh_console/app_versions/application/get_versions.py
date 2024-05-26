@@ -9,4 +9,5 @@ def _get_login() -> str:
 
 
 def make_request():
+    config.get("")
     response = http_get("https://www.example.com")
