@@ -56,7 +56,7 @@ class Header:
         )
         return Panel(header_table, style="black on yellow")
 
-def make_sponsor_message() -> Panel:
+def get_panel_sponsor() -> Panel:
     """Some example content."""
     table_sponsor = Table.grid(padding=1)
     table_sponsor.add_column(style="bold red", justify="right")
@@ -86,50 +86,6 @@ def make_sponsor_message() -> Panel:
     return panel_sponsor
 
 
-
-def make_syntax() -> Syntax:
-    code = """\
-def ratio_resolve(total: int, edges: List[Edge]) -> List[int]:
-    sizes = [(edge.size or None) for edge in edges]
-
-    # While any edges haven't been calculated
-    while any(size is None for size in sizes):
-        # Get flexible edges and index to map these back on to sizes list
-        flexible_edges = [
-            (index, edge)
-            for index, (size, edge) in enumerate(zip(sizes, edges))
-            if size is None
-        ]
-        # Remaining space in total
-        remaining = total - sum(size or 0 for size in sizes)
-        if remaining <= 0:
-            # No room for flexible edges
-            sizes[:] = [(size or 0) for size in sizes]
-            break
-        # Calculate number of characters in a ratio portion
-        portion = remaining / sum((edge.ratio or 1) for _, edge in flexible_edges)
-
-        # If any edges will be less than their minimum, replace size with the minimum
-        for index, edge in flexible_edges:
-            if portion * edge.ratio <= edge.minimum_size:
-                sizes[index] = edge.minimum_size
-                break
-        else:
-            # Distribute flexible space and compensate for rounding error
-            # Since edge sizes can only be integers we need to add the remainder
-            # to the following line
-            _modf = modf
-            remainder = 0.0
-            for index, edge in flexible_edges:
-                remainder, size = _modf(portion * edge.ratio + remainder)
-                sizes[index] = int(size)
-            break
-    # Sizes now contains integers only
-    return cast(List[int], sizes)
-    """
-    syntax = Syntax(code, "python", line_numbers=True)
-    return syntax
-
 job_progress = Progress(
     "{task.description}",
     SpinnerColumn(),
@@ -140,9 +96,9 @@ job_progress.add_task("[green]Cooking")
 job_progress.add_task("[magenta]Baking", total=200)
 job_progress.add_task("[cyan]Mixing", total=400)
 
-total = sum(task.total for task in job_progress.tasks)
 overall_progress = Progress()
-overall_task = overall_progress.add_task("All Jobs", total=int(total))
+total_tasks = sum(task.total for task in job_progress.tasks)
+overall_task = overall_progress.add_task("All Jobs", total=int(total_tasks))
 
 progress_table = Table.grid(expand=True)
 progress_table.add_row(
@@ -162,10 +118,11 @@ progress_table.add_row(
 
 
 dashboard_layout = get_dashboard_layout()
+
 dashboard_layout["header"].update(Header())
-dashboard_layout["right-column"].update(make_sponsor_message())
+dashboard_layout["right-column"].update(get_panel_sponsor())
 #layout["box2"].update(Panel(make_syntax(), border_style="green"))
-#layout["box1"].update(Panel(layout.tree, border_style="red"))
+dashboard_layout["box1"].update(Panel(dashboard_layout.tree, border_style="red"))
 dashboard_layout["footer"].update(progress_table)
 
 
