@@ -9,14 +9,13 @@ from datetime import datetime
 
 from rich import box
 from rich.align import Align
-from rich.console import Console, Group
+from rich.console import Group
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
-from rich.syntax import Syntax
 from rich.table import Table
 
-from app_versions.application.services.get_versions_service import get_versions
+from lh_monitor.lh_monitor.app_versions.application.services.get_versions_service import get_versions
 
 #console = Console()
 
