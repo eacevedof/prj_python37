@@ -7,4 +7,3 @@ def make_request():
     response = http_get("https://www.example.com")
 
 
-make_request()
