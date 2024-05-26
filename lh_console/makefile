@@ -12,7 +12,10 @@ gitpush: ## git push m=any message
 	clear;
 	git add .; git commit -m "$(m)"; git push;
 
-dashboard:
+dashboard: ## Run dashboard
 	clear;
 	@echo $(NOW)
-	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python $(PATHPRJ)/prj_python37/lh_console/dashboard.py
+
+	@export PYTHONPATH="${PYTHONPATH}:${PATHPRJ}/prj_python37/lh_console"
+	@cd $(PATHPRJ)/prj_python37/lh_console/
+	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python -m dashboard
