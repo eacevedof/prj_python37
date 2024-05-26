@@ -39,6 +39,8 @@ def get_dashboard_layout() -> Layout:
         Layout(name="right-column", ratio=2, minimum_size=60),
     )
 
+
+
     # espacio de la izquierda se divide en dos
     dash_layout["left-column"].split(
         Layout(name="box1"),
