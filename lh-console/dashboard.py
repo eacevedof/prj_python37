@@ -31,12 +31,12 @@ def get_dashboard_layout() -> Layout:
     )
 
     dash_layout["body"].split_row(
-        Layout(name="side"),
-        Layout(name="right", ratio=2, minimum_size=60),
+        Layout(name="left-column"),
+        Layout(name="right-column", ratio=2, minimum_size=60),
     )
 
     # espacio de la izquierda se divide en dos
-    dash_layout["side"].split(
+    dash_layout["left-column"].split(
         Layout(name="box1"),
         Layout(name="box2")
     )
@@ -163,14 +163,13 @@ progress_table.add_row(
 
 dashboard_layout = get_dashboard_layout()
 dashboard_layout["header"].update(Header())
-dashboard_layout["right"].update(make_sponsor_message())
+dashboard_layout["right-column"].update(make_sponsor_message())
 #layout["box2"].update(Panel(make_syntax(), border_style="green"))
 #layout["box1"].update(Panel(layout.tree, border_style="red"))
 dashboard_layout["footer"].update(progress_table)
 
 
 from time import sleep
-
 from rich.live import Live
 
 with Live(dashboard_layout, refresh_per_second=10, screen=True):
