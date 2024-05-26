@@ -17,5 +17,5 @@ dashboard: ## Run dashboard
 	@echo $(NOW)
 
 	@export PYTHONPATH="${PYTHONPATH}:${PATHPRJ}/prj_python37"
-	@cd $(PATHPRJ)/prj_python37/lh_monitor; \
-	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python -m lh_monitor.dashboard
+	@cd $(PATHPRJ)/prj_python37/lh_monitor/lh_monitor; \
+	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python -m main
