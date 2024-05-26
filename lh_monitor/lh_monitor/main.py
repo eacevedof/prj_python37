@@ -4,6 +4,7 @@ https://rich.readthedocs.io/en/latest/tables.html?highlight=column#column-option
 https://github.com/Textualize/rich/blob/master/examples/fullscreen.py
 https://github.com/Textualize/rich/tree/master
 """
+import sys; sys.path.append("..")
 
 from datetime import datetime
 
@@ -15,7 +16,7 @@ from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
-from lh_monitor.lh_monitor.app_versions.application.services.get_versions_service import get_versions
+from lh_monitor.app_versions.application.services.get_versions_service import get_versions
 
 #console = Console()
 
