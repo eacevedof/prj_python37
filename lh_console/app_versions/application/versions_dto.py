@@ -11,7 +11,7 @@ class VersionsDto:
     def password(self):
         return self._password
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "username": self._username,
             "password": self._password
