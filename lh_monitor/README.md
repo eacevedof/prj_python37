@@ -1,1 +1,3 @@
 - para que pycharm detecte la jerarquia de modulos se debe abrir la carpeta raiz como proyecto
+- compilar:
+- https://youtube.com/shorts/7vuukix1ebE?si=d9KaibIIB5zf0uMq
