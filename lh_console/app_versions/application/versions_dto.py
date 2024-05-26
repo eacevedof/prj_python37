@@ -10,3 +10,9 @@ class VersionsDto:
     @property
     def password(self):
         return self._password
+
+    def to_dict(self):
+        return {
+            "username": self._username,
+            "password": self._password
+        }
