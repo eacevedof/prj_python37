@@ -1,6 +1,6 @@
-from lh_monitor.lh_monitor.config.config import *
-from lh_monitor.lh_monitor.shared.infrastructure.http.requests.get_request import http_get
-from lh_monitor.lh_monitor.app_versions.application.versions_dto import VersionsDto
+from config.config import *
+from shared.infrastructure.http.requests.get_request import http_get
+from app_versions.application.versions_dto import VersionsDto
 
 
 def _get_login() -> str:
