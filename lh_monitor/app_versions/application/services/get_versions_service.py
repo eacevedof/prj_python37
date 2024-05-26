@@ -1,7 +1,7 @@
-from lh_console.config.config import *
-from lh_console.shared.infrastructure.shell.shell_exec import ShellExec
-from lh_console.shared.infrastructure.http.requests.get_request import http_get
-from lh_console.app_versions.application.versions_dto import VersionsDto
+from lh_monitor.config.config import *
+from lh_monitor.shared.infrastructure.shell.shell_exec import ShellExec
+from lh_monitor.shared.infrastructure.http.requests.get_request import http_get
+from lh_monitor.app_versions.application.versions_dto import VersionsDto
 
 
 def _get_login() -> str:
