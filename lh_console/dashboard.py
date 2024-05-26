@@ -16,9 +16,13 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.syntax import Syntax
 from rich.table import Table
 
-console = Console()
+from lh_console.app_versions.application.services.get_versions_service import get_versions
 
-console.print("hello", style="bold red")
+#console = Console()
+
+#console.print("hello", style="bold red")
+
+vers = get_versions()
 
 def get_dashboard_layout() -> Layout:
     """Define the layout."""
