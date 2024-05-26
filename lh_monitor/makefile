@@ -16,6 +16,6 @@ dashboard: ## Run dashboard
 	clear;
 	@echo $(NOW)
 
-	@export PYTHONPATH="${PYTHONPATH}:${PATHPRJ}/prj_python37/lh_console"
-	@cd $(PATHPRJ)/prj_python37/
+	@export PYTHONPATH="${PYTHONPATH}:${PATHPRJ}/prj_python37"
+	@cd $(PATHPRJ)/prj_python37/lh_console
 	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python -m dashboard

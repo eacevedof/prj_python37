@@ -16,7 +16,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.syntax import Syntax
 from rich.table import Table
 
-from lh_console.app_versions.application.services.get_versions_service import get_versions
+from app_versions.application.services.get_versions_service import get_versions
 
 #console = Console()
 
