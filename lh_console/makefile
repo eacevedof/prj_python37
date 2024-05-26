@@ -15,4 +15,4 @@ gitpush: ## git push m=any message
 dashboard:
 	clear;
 	@echo $(NOW)
-	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python $(PATHPRJ)/prj_python37/lh-console/dashboard.py
+	$(PIPENV_VENV_IN_PROJECT)/prj_python37/bin/python $(PATHPRJ)/prj_python37/lh_console/dashboard.py
