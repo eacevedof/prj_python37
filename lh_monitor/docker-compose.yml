@@ -1,0 +1,9 @@
+version: "3.3"
+
+services:
+  service-py:
+    build: docker-alpine/
+    container_name: cont-python-3x
+    hostname: host-python-3x
+    volumes:
+      - ./lh_monitor:/lh_monitor
