@@ -16,7 +16,7 @@ rebuild-all: ## rebuild all services containers in docker-compose
 	docker-compose -f docker-compose.yml down
 	docker-compose -f docker-compose.yml up -d --build --remove-orphans
 
-dashboard: ## Run dashboard
+lh-monitor: ## Run dashboard
 	clear;
 	@echo $(NOW)
 
