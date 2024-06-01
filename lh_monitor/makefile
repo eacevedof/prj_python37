@@ -12,6 +12,10 @@ gitpush: ## git push m=any message
 	clear;
 	git add .; git commit -m "$(m)"; git push;
 
+rebuild-all: ## rebuild all services containers in docker-compose
+	docker-compose -f docker-compose.yml down
+	docker-compose -f docker-compose.yml up -d --build --remove-orphans
+
 dashboard: ## Run dashboard
 	clear;
 	@echo $(NOW)
