@@ -1,3 +1,4 @@
+
 import qrcode
 from PIL import Image
 
@@ -11,9 +12,10 @@ qr_code = qrcode.QRCode(
 url = "http://elchalanaruba.com/la-carta-con-precios"
 qr_code.add_data(url)
 qr_code.make(fit=True)
+qr_code.make_image(fill="black", back_color="white").save("./qr_images/qr_code.png")
+pass
 
 qr_image = qr_code.make_image(fill="black", back_color="white")
-
 image_logo = Image.open("./logos/chalan.jpg")
 
 logo_size = min(qr_image.size)
