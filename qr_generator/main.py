@@ -12,10 +12,11 @@ qr_code = qrcode.QRCode(
 url = "http://elchalanaruba.com/la-carta-con-precios"
 qr_code.add_data(url)
 qr_code.make(fit=True)
-qr_code.make_image(fill="black", back_color="white").save("./qr_images/qr_url.png")
+qr_code.make_image(fill="white", back_color="red").save("./qr_images/qr_url.png")
 
-
+# image
 qr_image = qr_code.make_image(fill="black", back_color="white")
+
 image_logo = Image.open("./logos/chalan.jpg")
 
 logo_size = min(qr_image.size) // 5
