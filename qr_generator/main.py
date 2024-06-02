@@ -2,20 +2,28 @@
 import qrcode
 from PIL import Image
 
+css = {
+    "background": "white",
+    "color": "black",
+}
+
 # Generate QR code
 qr_code = qrcode.QRCode(
     version=1,
     error_correction=qrcode.constants.ERROR_CORRECT_H,
     box_size=10,
-    border=4,
+    border=2,
 )
 url = "http://elchalanaruba.com/la-carta-con-precios"
 qr_code.add_data(url)
 qr_code.make(fit=True)
-qr_code.make_image(fill="white", back_color="red").save("./qr_images/qr_url.png")
+qr_code.make_image(
+    fill_color=css.get("color"),
+    back_color=css.get("background")
+).save("./qr_images/qr_url.png")
 
 # image
-qr_image = qr_code.make_image(fill="black", back_color="white")
+qr_image = qr_code.make_image()
 
 image_logo = Image.open("./logos/chalan.jpg")
 
