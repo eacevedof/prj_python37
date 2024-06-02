@@ -19,10 +19,7 @@ qr_code.add_data(url)
 qr_code.make(fit=True)
 
 # qr colo con url
-qr_code.make_image(
-    back_color=css.get("background"),
-    fill_color=css.get("color")
-).save("./qr_images/qr_url.png")
+#qr_code.make_image(back_color=css.get("background"), fill_color=css.get("color")).save("./qr_images/qr_url.png")
 
 # image
 qr_image = qr_code.make_image(
