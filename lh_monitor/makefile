@@ -15,6 +15,7 @@ gitpush: ## git push m=any message
 rebuild-all: ## rebuild all services containers in docker-compose
 	docker-compose -f docker-compose.yml down
 	docker-compose -f docker-compose.yml up -d --build --remove-orphans
+	docker ps
 
 lh-monitor: ## Run dashboard
 	clear;
