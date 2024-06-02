@@ -155,6 +155,6 @@ RUN set -eux; \
 	\
 	pip --version
 
-RUN mkdir /lh_monitor
+# RUN mkdir lh_monitor
 
 CMD ["python3"]
