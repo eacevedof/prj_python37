@@ -1,4 +1,5 @@
 ﻿# prj_python37  
+- multi-project of mini pocs in python 
 ## Pruebas de concepto de python siguiendo diversos tutoriales.
 
 ### [Parte 9 - POO y UML]()
