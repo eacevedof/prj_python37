@@ -55,3 +55,8 @@ sobre el fichero de configuración (**settings.py**)
 - Prueba de concepto con Python 3.7.2
 - Instalación sin Django
 - Applicación CRUD tipo consola con instalador
+
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+
+---
