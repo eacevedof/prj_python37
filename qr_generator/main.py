@@ -6,6 +6,9 @@ css = {
     "color": (255, 255, 255)
 }
 
+URL_TO_QR = "http://elchalanaruba.com/la-carta-con-precios"
+PATH_IMG_MIDDLE = "./logos/chalan-head.png"
+IMG_NAME = "qr_chalan.png"
 
 def _get_qr_code_with_url() -> qrcode.QRCode:
     # Generate QR code
@@ -39,7 +42,7 @@ def _get_qr_image_from_qr_code(qr_code: qrcode.QRCode) -> Image:
 
 
 def _append_logo_to_qr_image(qr_image: Image) -> Image:
-    image_logo = Image.open("./logos/chalan-head.png")
+    image_logo = Image.open(PATH_IMG_MIDDLE)
     #image_logo = Image.open("./logos/chalan-full.png")
     logo_size = min(qr_image.size) // 5
     logo_pos = ((qr_image.size[0] - logo_size) // 2, (qr_image.size[1] - logo_size) // 2)
@@ -53,4 +56,4 @@ if __name__ == "__main__":
     qr_code = _get_qr_code_with_url()
     qr_image = _get_qr_image_from_qr_code(qr_code)
     _append_logo_to_qr_image(qr_image)
-    qr_image.save("./qr_images/qr_url.png")
+    qr_image.save(f"./qr_images/{IMG_NAME}")
