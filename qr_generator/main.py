@@ -2,13 +2,20 @@ import qrcode
 from PIL import Image, ImageDraw
 
 css = {
-    "background": (208, 31, 47),
-    "color": (255, 255, 255)
+    "background": (208, 31, 47), # chalan rojo
+    "color": (255, 255, 255), # chalan casi negro
+
+    "background": (255, 255, 255), #jasmira blanco
+    "color": (4,87,98), # Jasmira turquesa
 }
 
 URL_TO_QR = "http://elchalanaruba.com/la-carta-con-precios"
-PATH_IMG_MIDDLE = "./logos/chalan-head.png"
-IMG_NAME = "qr_chalan.png"
+LOGO_IMAGE_MIDDLE = "chalan-head.png"
+IMG_QR_GENERATED = "qr_chalan.png"
+
+URL_TO_QR = "https://www.facebook.com/share/4NMKZ6KEqasfJQKr/?mibextid=qi2Omg"
+LOGO_IMAGE_MIDDLE = "jasmira-logo.jpg"
+IMG_QR_GENERATED = "qr_jasmira.png"
 
 def _get_qr_code_with_url() -> qrcode.QRCode:
     # Generate QR code
@@ -18,7 +25,7 @@ def _get_qr_code_with_url() -> qrcode.QRCode:
         box_size=10,
         border=2,
     )
-    url = "http://elchalanaruba.com/la-carta-con-precios"
+    url = URL_TO_QR
     qr_code.add_data(url)
     qr_code.make(fit=True)
     return qr_code
@@ -42,8 +49,7 @@ def _get_qr_image_from_qr_code(qr_code: qrcode.QRCode) -> Image:
 
 
 def _append_logo_to_qr_image(qr_image: Image) -> Image:
-    image_logo = Image.open(PATH_IMG_MIDDLE)
-    #image_logo = Image.open("./logos/chalan-full.png")
+    image_logo = Image.open(f"./logos/{LOGO_IMAGE_MIDDLE}")
     logo_size = min(qr_image.size) // 5
     logo_pos = ((qr_image.size[0] - logo_size) // 2, (qr_image.size[1] - logo_size) // 2)
 
@@ -56,4 +62,4 @@ if __name__ == "__main__":
     qr_code = _get_qr_code_with_url()
     qr_image = _get_qr_image_from_qr_code(qr_code)
     _append_logo_to_qr_image(qr_image)
-    qr_image.save(f"./qr_images/{IMG_NAME}")
+    qr_image.save(f"./qr_images/{IMG_QR_GENERATED}")
