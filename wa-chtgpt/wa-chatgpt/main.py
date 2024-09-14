@@ -6,7 +6,7 @@ import openai
 from config.config import CHATGPT_API_KEY
 
 openai.api_key = CHATGPT_API_KEY
-model_engine = "text-davinci-003"
+model_engine = "gpt-3.5-turbo"
 prompt = "la suma de 5 mas 5"
 completion = openai.Completion.create(
     engine=model_engine,
