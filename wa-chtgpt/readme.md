@@ -1,5 +1,6 @@
 # chatgpt api keys:
-  https://platform.openai.com/api-keys
+  - https://platform.openai.com/api-keys
+  - https://platform.openai.com/docs/overview
 
 # videos:
   - [vid 1 - https://www.youtube.com/watch?v=c77so_bKXhQ](https://www.youtube.com/watch?v=c77so_bKXhQ)
@@ -12,11 +13,11 @@
 
 ```commandline
 curl -i -X POST https://graph.facebook.com/v20.0/4076378991030422/messages \
--H 'Authorization: Bearer EAAFZCoM5eKPwBO67DpxPSe1ZA4t6cujaepCWSAJOWq3ApYRLp5YXjGI8LiMtuJ0ZCGdT1QfC4QoehRQqRRVRZA1fSegXcQLAhZCCYxRKD25IRJ6ZAoZCqLI0J18g3TFvGZCgZBiE0Iyuw2o05bRrVi6FLOzRqdTvBuIb0E8lS22IiqvV1WAxZCyQpbIwEEFkUDtWgb7ZBbwJsaAYXC8NjC810GeZBcgONxNapk6yOQgZD2' \
+-H 'Authorization: Bearer EAAFZCoM5eKPwBO2RLqG03WZBCgFowotttozU5xqIuuHtHumttbUmGxTLfX4yH0wrM05crm6iqZARNrZCbsh5yINtMZA1rrdfSTQJEZBJUPzVmJrlZAcnMBX5ysp3eb5Guc4Wn7WqzZCgHV8mNTlpJabQRROxCKfpflfxi5ji4PqteKXRfWVts5de2qvPqHkoSLp47N95NmX4TPdMw9iZCbxopUu12MMJhaFDZBr8kZD' \
 -H 'Content-Type: application/json' \
 -d '{
   "messaging_product": "whatsapp",
-  "to": "PHONE_NUMBER",
+  "to": "34629196076",
   "type": "template",
   "template": {
     "name": "hello_world",
