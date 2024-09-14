@@ -1,0 +1,4 @@
+__pycache__
+venv
+.idea
+wa-chatgpt/config/config.py
