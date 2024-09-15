@@ -1,4 +1,4 @@
-
+from flask import render_template_string
 
 def render() -> str:
     html = """
@@ -33,4 +33,4 @@ curl --location 'https://hola.com' \
 </body>
 </html>
     """
-    return html
+    return render_template_string(html)

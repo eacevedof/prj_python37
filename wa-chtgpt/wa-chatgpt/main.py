@@ -6,15 +6,16 @@ app_flask = Flask(__name__)
 @app_flask.route("/", methods=["GET"])
 async def get_documentation_html():
     from api_doc.infrastructure.controllers.get_documentation_controller import invoke
-    html = invoke(request)
-    return render_template_string(html)
+    return invoke(request)
 
-@app_flask.route("/api/v1/", methods=["GET"])
-async def index2():
+
+@app_flask.route("/api/v1/example", methods=["GET"])
+async def get_example_json():
     response = {
-        "message": "API documentation"
+        "message": "example json"
     }
     return jsonify(response)
+
 
 if __name__ == "__main__":
     import uvicorn
