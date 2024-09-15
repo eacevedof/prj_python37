@@ -17,7 +17,7 @@ curl -i -X POST https://graph.facebook.com/v20.0/4076378991030422/messages \
 -H 'Content-Type: application/json' \
 -d '{
   "messaging_product": "whatsapp",
-  "to": "34629196076",
+  "to": "34629160706",
   "type": "template",
   "template": {
     "name": "hello_world",
