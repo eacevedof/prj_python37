@@ -1,5 +1,5 @@
 # python
-- https://github.com/openai/openai-python/blob/main/api.md
+- https://github.com/openai/openai-python/tree/main
 
 # chatgpt api keys:
   - https://platform.openai.com/api-keys
