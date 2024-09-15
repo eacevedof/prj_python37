@@ -14,9 +14,9 @@ clientOpenAI = OpenAI(
 completion = clientOpenAI.chat.completions.create(
     model=model_engine,
     max_tokens=250,
-    n=1, #numero de respuestas
+    n=1, # numero de respuestas
     stop=None,
-    temperature=0.7, #nivel de creatividad moderado [0,1]
+    temperature=0.7, # nivel de creatividad moderado [0,1]
     messages=[
         {
             "role": "user",
