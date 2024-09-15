@@ -1,18 +1,20 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 from asgiref.wsgi import WsgiToAsgi
 
 app_flask = Flask(__name__)
 
-@app_flask.route("/", methods=["GET"])
-async def index():
-    from api_doc.infrastructure.controllers import get_documentation
-    get_documentation()
+@app_flask.route("/x", methods=["GET"])
+async def get_documentation_html():
+    from api_doc.infrastructure.controllers.get_documentation_controller import invoke
+    html = invoke()
+    return render_template_string(html)
 
-async def index():
+@app_flask.route("/", methods=["GET"])
+async def index2():
     response = {
         "message": "API documentation"
     }
-    return jsonify(response)
+    return render_template_string("hola")
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,4 +1,6 @@
-def render():
+
+
+def render() -> str:
     html = """
     <!DOCTYPE html>
     <html>
