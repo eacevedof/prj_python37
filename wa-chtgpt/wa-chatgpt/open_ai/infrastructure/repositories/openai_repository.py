@@ -1,7 +1,9 @@
 from openai import OpenAI
 from config.config import OPENAI_API_KEY
 
-def get_gpt35_turbo(prompt: str) -> str:
+
+def get_gpt35_turbo(question: str) -> str:
+    return "get_gpt35_turbo :)"
     model_engine = "gpt-3.5-turbo"
 
     client_open_ai = __get_client_openai()
@@ -14,7 +16,7 @@ def get_gpt35_turbo(prompt: str) -> str:
         messages=[
             {
                 "role": "user",
-                "content": prompt
+                "content": question
             }
         ]
     )
