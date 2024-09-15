@@ -1,9 +1,3 @@
-
-respuesta = ""
-for choice in completion.choices:
-    respuesta = respuesta + choice.message.content.strip()
-    print(f"response: {respuesta}")
-
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
