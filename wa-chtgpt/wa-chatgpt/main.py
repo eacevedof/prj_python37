@@ -27,5 +27,5 @@ completion = clientOpenAI.chat.completions.create(
 
 respuesta = ""
 for choice in completion.choices:
-    respuesta = respuesta + choice.message["content"].strip()
+    respuesta = respuesta + choice.message.content.strip()
     print(f"response: {respuesta}")
