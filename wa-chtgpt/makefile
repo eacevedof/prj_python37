@@ -14,5 +14,6 @@ gitpush: ## git push m=any message
 
 http: ## Start a simple http server
 	@echo "C:\projects\prj_python37\wa-chtgpt\venv\Scripts\activate"
+	@echo "cd C:\projects\prj_python37\wa-chtgpt"
 	@echo "uvicorn main:app --reload --port 5000"
 
