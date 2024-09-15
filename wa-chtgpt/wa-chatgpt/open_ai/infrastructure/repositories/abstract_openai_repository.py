@@ -3,6 +3,7 @@ from config.config import OPENAI_API_KEY
 
 def get_gpt35_turbo(prompt: str) -> str:
     model_engine = "gpt-3.5-turbo"
+
     client_open_ai = __get_client_openai()
     chat_completion = client_open_ai.chat.completions.create(
         model=model_engine,
@@ -18,6 +19,7 @@ def get_gpt35_turbo(prompt: str) -> str:
         ]
     )
     return chat_completion.choices[0].message["content"]
+
 
 def __get_client_openai() -> OpenAI:
     return OpenAI(
