@@ -11,4 +11,4 @@ def talk_to_gpt35_service(talk_to_gpt35_dto: TalkToGpt35DTO) -> TalkedToGpt35DTO
 
 
 def __get_ok() -> None:
-    TalkToGpt35Exception.ticket_not_found()
+    TalkToGpt35Exception.empty_question()

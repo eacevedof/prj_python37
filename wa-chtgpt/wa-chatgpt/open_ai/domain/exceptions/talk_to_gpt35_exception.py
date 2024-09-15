@@ -9,7 +9,7 @@ class TalkToGpt35Exception(AbstractDomainException):
         super().__init__(self.message)
 
     @staticmethod
-    def ticket_not_found():
+    def empty_question():
         raise TalkToGpt35Exception(
             "tickets-tr.ticket-not-found",
             HttpResponseCodeEnum.NOT_FOUND.value
