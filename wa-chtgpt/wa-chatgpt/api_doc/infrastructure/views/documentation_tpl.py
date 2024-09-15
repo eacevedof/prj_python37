@@ -3,21 +3,21 @@
 def render() -> str:
     html = """
 <!DOCTYPE html>
-<html lang="{{ str_replace("_", "-", app()->getLocale()) }}">
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Lazarus Freshdesk API</title>
+	<title>API documentation</title>
 </head>
-<body class="font-sans antialiased dark:bg-black dark:text-white/50">
-<h1>Lazarus Freshdesk API</h1>
+<body>
+<h1>API Documentation</h1>
 
 <h2>1. Tickets:</h2>
 <code>
 	/api/tickets
 </code>
 <pre>
-curl --location 'https://freshdesk-api.lazarus.es/api/tickets/?start_date=2024-01-01&end_date=2024-10-01' \
+curl --location 'https://hola.com' \
 	--header 'Authorization: table-clients-token'
 </pre>
 <h3>Response</h3>

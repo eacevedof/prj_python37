@@ -6,7 +6,7 @@ app_flask = Flask(__name__)
 @app_flask.route("/", methods=["GET"])
 async def get_documentation_html():
     from api_doc.infrastructure.controllers.get_documentation_controller import invoke
-    html = invoke()
+    html = invoke(request)
     return render_template_string(html)
 
 @app_flask.route("/api/v1/", methods=["GET"])
