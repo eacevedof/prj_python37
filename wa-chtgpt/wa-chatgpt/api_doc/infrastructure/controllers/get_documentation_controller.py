@@ -1,6 +1,6 @@
-#controller
-from api_doc.infrastructure.views.documentation import render
+from typing import Any
+from api_doc.infrastructure.views.documentation_tpl import render
 
 
-def invoke() -> str:
+def invoke(request: Any) -> str:
     return render()
