@@ -16,6 +16,8 @@
   - [https://developers.facebook.com/](https://developers.facebook.com/)
   - https://business.facebook.com/
 
+
+### whatsapp:
 ```sh
 # send whatsapp message
 
@@ -33,5 +35,10 @@ curl -i -X POST https://graph.facebook.com/v20.0/1076378991030422/messages \
     }
   }
 }'
+
+```
+
+### openai:
+```sh
 
 ```
