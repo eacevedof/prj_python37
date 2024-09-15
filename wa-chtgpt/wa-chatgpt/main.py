@@ -2,6 +2,13 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+@app.route("/", methods=["GET"])
+def index():
+    response = {
+        "message": "API documentation"
+    }
+    return jsonify(response)
+
 @app.route("/get-data", methods=["GET"])
 def get_data():
     # Retrieve query parameters
