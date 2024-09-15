@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from asgiref.wsgi import WsgiToAsgi
 
 app = Flask(__name__)
 
@@ -11,18 +12,16 @@ def index():
 
 @app.route("/get-data", methods=["GET"])
 def get_data():
-    # Retrieve query parameters
     param1 = request.args.get("param1")
     param2 = request.args.get("param2")
-
-    # Process the parameters and create a response
     response = {
         "param1": param1,
         "param2": param2,
         "message": "GET request received successfully!"
     }
-
     return jsonify(response)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import uvicorn
+    asgi_app = WsgiToAsgi(app)
+    uvicorn.run(asgi_app, host="127.0.0.1", port=8000, log_level="info")
