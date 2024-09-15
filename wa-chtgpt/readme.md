@@ -7,6 +7,9 @@
 
 ### python
 - [pip install openai==1.45.0](https://github.com/openai/openai-python/tree/main)
+- hostings python: 
+  - [https://www.pythonanywhere.com/](https://www.pythonanywhere.com/)
+  - [https://www.alwaysdata.com/en/](https://www.alwaysdata.com/en/)
 
 ### chatgpt api keys:
 - https://platform.openai.com/usage
@@ -17,6 +20,8 @@
 ### facebook:
 - [https://developers.facebook.com/](https://developers.facebook.com/)
 - https://business.facebook.com/
+
+
 
 
 #### whatsapp:
