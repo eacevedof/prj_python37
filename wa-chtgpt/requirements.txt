@@ -1,5 +1,5 @@
 requests==2.32.3
 openai==1.45.0
-flask==3.0.3
 jsonfy==0.4
+flask==3.0.3
 uvicorn==0.30.6
