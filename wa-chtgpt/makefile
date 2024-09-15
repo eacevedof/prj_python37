@@ -13,4 +13,6 @@ gitpush: ## git push m=any message
 	git add .; git commit -m "$(m)"; git push;
 
 http: ## Start a simple http server
-    uvicorn main:app --reload
+	@echo "C:\projects\prj_python37\wa-chtgpt\venv\Scripts\activate"
+	@echo "uvicorn main:app --reload --port 5000"
+
