@@ -1,10 +1,10 @@
 from flask import Response, request
 
-from shared.domain.enums import HttpResponseCodeEnum
+from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
 from shared.infrastructure.components.http_json_response import HttpJsonResponse
-
+from open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
 
 def invoke(http_request: request) -> Response:
     try:
@@ -21,7 +21,7 @@ def invoke(http_request: request) -> Response:
             "data": {"chat_response": talked_to_gpt35_dto.chat_response}
         }).get_as_json_response()
 
-    except (GetTicketByTicketNumberException, GetUserIdByAuthTokenException) as ex:
+    except TalkToGpt35Exception as ex:
         return HttpJsonResponse.from_primitives({
             "code": ex.code,
             "message": ex.message,
@@ -29,7 +29,7 @@ def invoke(http_request: request) -> Response:
 
     except Exception as ex:
         return HttpJsonResponse.from_primitives({
-            "code": ex.code,
+            "code": HttpResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
             "message": "shared-tr.some-unexpected-error-occurred",
         }).get_as_json_response()
 
