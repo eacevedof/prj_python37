@@ -1,23 +1,11 @@
 import os
-from openai import OpenAI
-from config.config import OPENAI_API_KEY
 
-model_engine = "gpt-3.5-turbo"
-prompt = "la suma de 5 mas 5"
+from application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
+from infrastructure.repositories.openai_repository import get_gpt35_turbo
 
-clientOpenAI = OpenAI(
-    api_key = OPENAI_API_KEY
-)
-completion = clientOpenAI.chat.completions.create(
-    model=model_engine,
-    max_tokens=250,
-    n=1, # numero de respuestas
-    stop=None,
-    temperature=0.7, # nivel de creatividad moderado [0,1]
-    messages=[
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ]
-)
+def invoke(talk_to_gpt35_dto: TalkToGpt35DTO) -> str:
+    prompt = talk_to_gpt35_dto.question
+    return get_gpt35_turbo(prompt)
+
+def __get_ok() -> str:
+    return "OK"
