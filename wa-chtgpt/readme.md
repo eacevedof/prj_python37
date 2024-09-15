@@ -1,5 +1,6 @@
 # chatgpt api keys:
   - https://platform.openai.com/api-keys
+  - https://platform.openai.com/settings/organization/billing/overview
   - https://platform.openai.com/docs/overview
 
 # videos:
