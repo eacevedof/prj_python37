@@ -9,12 +9,10 @@ async def get_documentation_html():
     return invoke(request)
 
 
-@app_flask.route("/api/v1/example", methods=["GET"])
+@app_flask.route("/api/v1/health-check", methods=["GET"])
 async def get_example_json():
-    response = {
-        "message": "example json"
-    }
-    return jsonify(response)
+    from health_check.infrastructure.controllers.get_health_check_controller import invoke
+    return invoke(request)
 
 
 if __name__ == "__main__":
