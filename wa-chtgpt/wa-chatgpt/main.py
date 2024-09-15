@@ -10,7 +10,7 @@ async def get_documentation_html():
 
 
 @app_flask.route("/api/v1/health-check", methods=["GET"])
-async def get_example_json():
+async def get_health_check():
     from health_check.infrastructure.controllers.get_health_check_controller import invoke
     return invoke(request)
 
