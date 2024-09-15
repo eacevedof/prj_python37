@@ -1,3 +1,6 @@
+# python
+- https://github.com/openai/openai-python/blob/main/api.md
+
 # chatgpt api keys:
   - https://platform.openai.com/api-keys
   - https://platform.openai.com/settings/organization/billing/overview
