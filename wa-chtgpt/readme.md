@@ -10,6 +10,13 @@
 - hostings python: 
   - [https://www.pythonanywhere.com/](https://www.pythonanywhere.com/)
   - [https://www.alwaysdata.com/en/](https://www.alwaysdata.com/en/)
+  ```sh
+  requests==2.32.3
+  openai==1.45.0
+  flask==3.0.3
+  jsonfy==0.4
+  uvicorn==0.30.6
+  ```
 
 ### chatgpt api keys:
 - https://platform.openai.com/usage
