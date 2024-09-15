@@ -28,6 +28,7 @@ def invoke(http_request: request) -> Response:
         }).get_as_json_response()
 
     except Exception as ex:
+        print(str(ex))
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
             "message": "shared-tr.some-unexpected-error-occurred",
