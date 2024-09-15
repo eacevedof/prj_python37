@@ -56,3 +56,21 @@ curl -i -X POST https://graph.facebook.com/v20.0/1076378991030422/messages \
 ```sh
 
 ```
+
+#### python errors:
+```sh
+TypeError: Flask.__call__() missing 1 required positional argument: 'start_response'
+INFO:     127.0.0.1:62234 - "GET /favicon.ico HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "<prj-dir>wa-chtgpt\venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 406, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<prj-dir>wa-chtgpt\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<prj-dir>wa-chtgpt\venv\Lib\site-packages\uvicorn\middleware\asgi2.py", line 14, in __call__
+    instance = self.app(scope)
+               ^^^^^^^^^^^^^^^
+TypeError: Flask.__call__() missing 1 required positional argument: 'start_response'
+```
