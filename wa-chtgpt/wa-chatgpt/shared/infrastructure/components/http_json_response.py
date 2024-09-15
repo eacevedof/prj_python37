@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Any
-import json
+from typing import Dict, Any
 from shared.domain.enums import HttpResponseCodeEnum
+
 
 @dataclass(frozen=True)
 class HttpJsonResponse:
