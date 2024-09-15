@@ -1,7 +1,7 @@
 from flask import jsonify, Response
 from dataclasses import dataclass, field
 from typing import Dict, Any
-from shared.domain.enums import HttpResponseCodeEnum
+from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
 
 @dataclass(frozen=True)
