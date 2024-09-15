@@ -1,6 +1,6 @@
-from flask import jsonify, Response, request
+from flask import Response, request
 
-from domain.enums import HttpResponseCodeEnum
+from shared.domain.enums import HttpResponseCodeEnum
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
 from shared.infrastructure.components.http_json_response import HttpJsonResponse
