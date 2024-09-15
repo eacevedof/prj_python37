@@ -6,7 +6,7 @@
 - [openai - que son los tokens](https://youtu.be/U0yBE-twgnk?t=463)
 
 ### python
-- https://github.com/openai/openai-python/tree/main
+- [pip install openai==1.45.0](https://github.com/openai/openai-python/tree/main)
 
 ### chatgpt api keys:
 - https://platform.openai.com/usage
