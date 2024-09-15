@@ -1,6 +1,26 @@
 """
 
 """
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+
+chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            "role": "user",
+            "content": "Say this is a test",
+        }
+    ],
+    model="gpt-3.5-turbo",
+)
+
+
+
 #import sys; sys.path.append("..")
 import openai
 from config.config import CHATGPT_API_KEY
@@ -16,6 +36,15 @@ completion = openai.Completion.create(
     stop=None,
     temperature=0.7
 )
+from openai import OpenAI
+client = OpenAI()
+completion = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "user", "content": "write a haiku about ai"}
+    ]
+)
+
 
 respuesta = ""
 for choice in completion.choices:
