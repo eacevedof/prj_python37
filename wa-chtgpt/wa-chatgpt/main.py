@@ -3,18 +3,18 @@ from asgiref.wsgi import WsgiToAsgi
 
 app_flask = Flask(__name__)
 
-@app_flask.route("/x", methods=["GET"])
+@app_flask.route("/", methods=["GET"])
 async def get_documentation_html():
     from api_doc.infrastructure.controllers.get_documentation_controller import invoke
     html = invoke()
     return render_template_string(html)
 
-@app_flask.route("/", methods=["GET"])
+@app_flask.route("/api/v1/", methods=["GET"])
 async def index2():
     response = {
         "message": "API documentation"
     }
-    return render_template_string("hola")
+    return jsonify(response)
 
 if __name__ == "__main__":
     import uvicorn
