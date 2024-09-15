@@ -1,3 +1,8 @@
+# videos tutorial:
+  - [vid 1 - https://www.youtube.com/watch?v=c77so_bKXhQ](https://www.youtube.com/watch?v=c77so_bKXhQ)
+  - [vid 2 - https://www.youtube.com/watch?v=hNE2WPtn54A](https://www.youtube.com/watch?v=hNE2WPtn54A)
+  - [openai - que son los tokens](https://youtu.be/U0yBE-twgnk?t=463)
+
 # python
 - https://github.com/openai/openai-python/tree/main
 
@@ -6,11 +11,6 @@
   - https://platform.openai.com/api-keys
   - https://platform.openai.com/settings/organization/billing/overview
   - https://platform.openai.com/docs/overview
-
-# videos:
-  - [vid 1 - https://www.youtube.com/watch?v=c77so_bKXhQ](https://www.youtube.com/watch?v=c77so_bKXhQ)
-  - [vid 2 - https://www.youtube.com/watch?v=hNE2WPtn54A](https://www.youtube.com/watch?v=hNE2WPtn54A)
-  - 
 
 # facebook:
   - [https://developers.facebook.com/](https://developers.facebook.com/)
