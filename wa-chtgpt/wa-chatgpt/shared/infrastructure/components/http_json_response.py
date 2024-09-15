@@ -11,8 +11,8 @@ class HttpJsonResponse:
     data: Dict[str, Any]
 
     def __post_init__(self):
-        object.__setattr__(self, 'code', self._validate_code(self.code))
-        object.__setattr__(self, 'status', self._get_status_by_code())
+        object.__setattr__(self, "code", self._validate_code(self.code))
+        object.__setattr__(self, "status", self._get_status_by_code())
 
     @staticmethod
     def _validate_code(code: int) -> int:
