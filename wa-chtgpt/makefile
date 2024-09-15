@@ -15,5 +15,5 @@ gitpush: ## git push m=any message
 uvicorn: ## lines to start uvicorn server
 	@echo "C:\projects\prj_python37\wa-chtgpt\venv\Scripts\activate"
 	@echo "cd C:\projects\prj_python37\wa-chtgpt\wa-chatgpt"
-	@echo "uvicorn main:app --reload -host 0.0.0.0 --port 5000"
+	@echo "uvicorn main:app --reload --host 0.0.0.0 --port 5000"
 
