@@ -11,3 +11,6 @@ help: ## Show this help message
 gitpush: ## git push m=any message
 	clear;
 	git add .; git commit -m "$(m)"; git push;
+
+http: ## Start a simple http server
+    uvicorn main:app --reload
