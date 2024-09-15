@@ -5,6 +5,10 @@ app_flask = Flask(__name__)
 
 @app_flask.route("/", methods=["GET"])
 async def index():
+    from api_doc.infrastructure.controllers import get_documentation
+    get_documentation()
+
+async def index():
     response = {
         "message": "API documentation"
     }
