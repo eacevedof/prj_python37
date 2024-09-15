@@ -5,6 +5,7 @@ from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
 from shared.infrastructure.components.http_json_response import HttpJsonResponse
 
+
 def invoke(http_request: request) -> Response:
     try:
         talk_to_gpt35_dto = TalkToGpt35DTO(
