@@ -1,5 +1,4 @@
 from shared.domain.enums import HttpResponseCodeEnum
-from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
 class AbstractDomainException(Exception):
     pass
