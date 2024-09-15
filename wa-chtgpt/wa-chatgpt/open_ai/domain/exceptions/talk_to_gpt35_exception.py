@@ -3,9 +3,14 @@ from shared.domain.exceptions.abstract_domain_exception import AbstractDomainExc
 
 class TalkToGpt35Exception(AbstractDomainException):
 
+    def __init__(self, message, code):
+        self.message = message
+        self.code = code
+        super().__init__(self.message)
+
     @staticmethod
     def ticket_not_found():
-        raise GetTicketByTicketNumberException(
+        raise TalkToGpt35Exception(
             "tickets-tr.ticket-not-found",
             HttpResponseCodeEnum.NOT_FOUND.value
         )
