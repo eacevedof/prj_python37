@@ -1,3 +1,4 @@
+from flask import jsonify, Response
 from dataclasses import dataclass, field
 from typing import Dict, Any
 from shared.domain.enums import HttpResponseCodeEnum
@@ -32,10 +33,14 @@ class HttpJsonResponse:
             return "success"
         return "error"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def get_as_json_response(self) -> Response:
+        return jsonify(self.__to_dict())
+
+    def __to_dict(self) -> Dict[str, Any]:
         return {
             "code": self.code,
             "status": self.status,
             "message": self.message,
             "data": self.data
         }
+
