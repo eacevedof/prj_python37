@@ -17,3 +17,5 @@ uvicorn: ## lines to start uvicorn server
 	@echo "cd C:\projects\prj_python37\wa-chtgpt\wa-chatgpt"
 	@echo "uvicorn main:app --reload --host 127.0.0.1 --port 5000"
 
+vue: ## run vue
+	@echo "cd fe-vue && npm run serve"
