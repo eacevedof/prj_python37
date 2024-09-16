@@ -2,3 +2,11 @@ __pycache__
 venv
 .idea
 */config/config.py
+fe-vue/node_modules
+fe-vue/dist
+fe-vue/.env
+fe-vue/.env.local
+fe-vue/.env.development
+fe-vue/.env.production
+fe-vue/.env.staging
+fe-vue/.env.test
