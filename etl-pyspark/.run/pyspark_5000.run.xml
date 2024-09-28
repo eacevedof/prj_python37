@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pyspark" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="pyspark:5000" type="PythonConfigurationType" factoryName="Python">
     <module name="etl-pyspark" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
