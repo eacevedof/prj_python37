@@ -12,12 +12,12 @@ def render() -> str:
 <body>
 <h1>API Documentation</h1>
 
-<h2>1. Tickets:</h2>
+<h2>1. xxxx:</h2>
 <code>
-	/api/tickets
+	/api/xxx
 </code>
 <pre>
-curl --location 'https://hola.com' \
+curl --location 'https://xxxx.com' \
 	--header 'Authorization: table-clients-token'
 </pre>
 <h3>Response</h3>
