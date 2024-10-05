@@ -1,27 +1,43 @@
 import logging
 import os
+from datetime import datetime
 
-import os
 
-def get_project_root() -> str:
-    return os.path.dirname(os.path.abspath(__file__))
+PATH_LOGS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+PATH_LOGS_FOLDER = PATH_LOGS_FOLDER + "../../../storage/logs"
+PATH_LOGS_FOLDER = os.path.abspath(PATH_LOGS_FOLDER)
 
-# Example usage
-project_root = get_project_root()
-print(f"Project root directory: {project_root}")
+TODAY = datetime.today().strftime("%Y-%m-%d")
 
 
 
 def file_put_contents(path_file: str, str_data:str) -> None:
     try:
+        print(path_file)
         with open(path_file, "a") as f:
             f.write(str_data)
     except IOError:
         logging.error(f"__file_put_contents: error writing to file: {path_file}")
 
 
-
 class Log:
+
+    @staticmethod
+    def __get_today() -> str:
+        return datetime.today().strftime("%Y-%m-%d")
+
+    @staticmethod
+    def __get_now() -> str:
+        return datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+
+    @staticmethod
+    def __log_in_file(content: str, file_name: str) -> None:
+        today = Log.__get_today()
+        now = Log.__get_now()
+        content = f"[{now}]\n{content}"
+        file_put_contents(f"{PATH_LOGS_FOLDER}/{file_name}-{today}.log", content)
+
+
     @staticmethod
     def log_debug(mixed, title=""):
         if not callable(logging.debug):
@@ -30,8 +46,9 @@ class Log:
         content = mixed if isinstance(mixed, str) else repr(mixed)
         if title:
             content = f"\n{title}\n\t{content}"
-        content = f"[DEBUG]\n{content}"
-        logging.debug(content)
+
+        logging.info(f"{content}")
+        Log.__log_in_file(content, "debug")
 
     @staticmethod
     def log_sql(sql, title=""):
@@ -42,21 +59,25 @@ class Log:
         if title:
             content = f"\n{title}\n\t{content}"
         content = f"[SQL]\n{content}"
-        logging.info(content)
+
+        logging.info(f"{content}")
+        Log.__log_in_file(content, "sql")
 
     @staticmethod
-    def log_error(mixed, title=""):
+    def log_error(mixed, title="ERROR"):
         if not callable(logging.error):
             return
 
         content = mixed if isinstance(mixed, str) else repr(mixed)
         if title:
             content = f"\n{title}\n\t{content}"
-        content = f"[ERROR]\n{content}"
-        logging.error(content)
+
+        logging.error(f"{content}")
+        Log.__log_in_file(content, "error")
+
 
     @staticmethod
-    def log_exception(throwable, title="ERROR"):
+    def log_exception(throwable, title="EXCEPTION"):
         content = []
         if title:
             content.append(title)
@@ -67,6 +88,5 @@ class Log:
         content.append(f"ex message:\n\t{str(throwable)}")
         #content.append(f"ex trace:\n\t{''.join(throwable.__traceback__.format())}")
         content = "\n".join(content)
-        content = f"[ERROR]\n{content}"
-        file_put_contents(project_root + "/logs/exceptions.log", content)
-        logging.error(content)
+        logging.error(f"{content}")
+        Log.__log_in_file(content, "error")
