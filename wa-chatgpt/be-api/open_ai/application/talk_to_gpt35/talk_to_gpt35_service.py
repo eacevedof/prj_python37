@@ -1,6 +1,6 @@
-from application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
-from application.talk_to_gpt35.talked_to_gpt35_dto import TalkedToGpt35DTO
-from infrastructure.repositories.openai_repository import get_gpt35_turbo
+from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
+from open_ai.application.talk_to_gpt35.talked_to_gpt35_dto import TalkedToGpt35DTO
+from open_ai.infrastructure.repositories.openai_repository import get_gpt35_turbo
 from open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
 
 
