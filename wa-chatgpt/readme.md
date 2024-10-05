@@ -16,6 +16,7 @@
   jsonfy==0.4
   flask==3.0.3
   uvicorn==0.30.6
+  asgiref==3.8.1
   ```
 
 ### chatgpt api keys:
@@ -28,8 +29,17 @@
 - [https://developers.facebook.com/](https://developers.facebook.com/)
 - https://business.facebook.com/
 
-
-
+## start project
+```sh
+# create virtualenv
+python -m venv venv
+# activate virtualenv
+.\venv\Scripts\activate
+# estando en py-api
+pip install -r requirements.txt
+# run server
+uvicorn main:app --reload
+```
 
 #### whatsapp:
 ```sh

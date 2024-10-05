@@ -1,5 +1,8 @@
 __pycache__
 venv
+be-api/.venv
+be-api/venv
+
 .idea
 */config/config.py
 fe-vue/node_modules
