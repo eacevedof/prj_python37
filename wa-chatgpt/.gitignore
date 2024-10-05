@@ -2,6 +2,8 @@ __pycache__
 venv
 be-api/.venv
 be-api/venv
+be-api/storage/*.log
+be-api/storage/*.sql
 
 .idea
 */config/config.py
