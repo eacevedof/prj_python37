@@ -35,7 +35,10 @@ class Log:
         today = Log.__get_today()
         now = Log.__get_now()
         content = f"[{now}]\n{content}"
-        file_put_contents(f"{PATH_LOGS_FOLDER}/{file_name}-{today}.log", content)
+        extension = "log"
+        if file_name == "sql":
+            extension = "sql"
+        file_put_contents(f"{PATH_LOGS_FOLDER}/{file_name}-{today}.{extension}", content)
 
 
     @staticmethod
