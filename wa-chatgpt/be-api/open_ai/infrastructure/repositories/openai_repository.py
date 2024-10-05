@@ -7,6 +7,7 @@ def get_gpt35_turbo(question: str) -> str:
     model_engine = "gpt-3.5-turbo"
 
     client_open_ai = __get_client_openai()
+
     chat_completion = client_open_ai.chat.completions.create(
         model=model_engine,
         max_tokens=250,
@@ -20,7 +21,9 @@ def get_gpt35_turbo(question: str) -> str:
             }
         ]
     )
-    return chat_completion.choices[0].message["content"]
+
+    # return chat_completion.choices[0].message["content"] error
+    return chat_completion.choices[0].message.content
 
 
 def __get_client_openai() -> OpenAI:
