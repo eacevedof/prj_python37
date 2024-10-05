@@ -2,6 +2,7 @@ from flask import Response, request
 
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
+from shared.infrastructure.log import Log
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
 from open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
@@ -29,7 +30,7 @@ def invoke(http_request: request) -> Response:
         }).get_as_json_response()
 
     except Exception as ex:
-        print(str(ex))
+        Log.log_exception(ex, "talk_to_gpt35_controller.invoke")
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
             "message": "shared-tr.some-unexpected-error-occurred",
