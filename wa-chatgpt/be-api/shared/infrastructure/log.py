@@ -10,7 +10,6 @@ PATH_LOGS_FOLDER = os.path.abspath(PATH_LOGS_FOLDER)
 TODAY = datetime.today().strftime("%Y-%m-%d")
 
 
-
 def file_put_contents(path_file: str, str_data:str) -> None:
     try:
         print(path_file)
