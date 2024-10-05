@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-
+from shared.infrastructure.var_export import dump
 
 PATH_LOGS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 PATH_LOGS_FOLDER = PATH_LOGS_FOLDER + "../../../storage/logs"
@@ -45,7 +45,7 @@ class Log:
         if not callable(logging.debug):
             return
 
-        content = mixed if isinstance(mixed, str) else repr(mixed)
+        content = mixed if isinstance(mixed, str) else dump(mixed)
         if title:
             content = f"\n{title}\n\t{content}"
 
@@ -60,7 +60,6 @@ class Log:
         content = sql
         if title:
             content = f"\n{title}\n\t{content}"
-        content = f"[SQL]\n{content}"
 
         logging.info(f"{content}")
         Log.__log_in_file(content, "sql")
@@ -70,7 +69,7 @@ class Log:
         if not callable(logging.error):
             return
 
-        content = mixed if isinstance(mixed, str) else repr(mixed)
+        content = mixed if isinstance(mixed, str) else dump(mixed)
         if title:
             content = f"\n{title}\n\t{content}"
 
