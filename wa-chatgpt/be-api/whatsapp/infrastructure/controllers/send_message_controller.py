@@ -7,6 +7,7 @@ from whatsapp.domain.exceptions.send_message_exception import SendMessageExcepti
 from whatsapp.application.send_message.send_message_dto import SendMessageDto
 from whatsapp.application.send_message.send_message_service import send_message
 
+
 def invoke(http_request: request) -> Response:
     try:
         send_message_dto = SendMessageDto(
