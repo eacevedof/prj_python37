@@ -7,9 +7,9 @@ from shared.domain.exceptions.abstract_domain_exception import AbstractDomainExc
 class TalkToGpt35Exception(AbstractDomainException):
 
     def __init__(self, message: str, code: int) -> None:
-        self.message = message
-        self.code = code
-        super().__init__(self.message)
+        self._message = message
+        self._code = code
+        super().__init__(self._message)
 
 
     @staticmethod
