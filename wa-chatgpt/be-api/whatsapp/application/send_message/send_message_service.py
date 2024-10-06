@@ -5,27 +5,37 @@ from whatsapp.application.send_message.send_message_dto import SendMessageDto
 from whatsapp.application.send_message.sent_message_dto import SentMessageDto
 from whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
 
-def send_message_service(send_message_dto: SendMessageDto) -> SentMessageDto:
+from typing import final
+from dataclasses import dataclass
 
-    __fail_if_wrong_input(send_message_dto)
+@final
+@dataclass(frozen=True)
+class SendMessageService:
 
-    number = send_message_dto.phone_number
-    message = send_message_dto.message
+    _send_message_dto: SendMessageDto
 
-    wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
-    Log.log_debug(wa_response, "send_message_service.send_message")
-    return SentMessageDto("ok")
+    def invoke(self, send_message_dto: SendMessageDto) -> SentMessageDto:
+
+        _send_message_dto = send_message_dto
+        self.__fail_if_wrong_input()
+
+        number = send_message_dto.phone_number
+        message = send_message_dto.message
+
+        wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
+        Log.log_debug(wa_response, "send_message_service.send_message")
+        return SentMessageDto("ok")
 
 
-def __fail_if_wrong_input(send_message_dto: SendMessageDto):
-    if not send_message_dto.phone_number:
-        raise SendMessageException(
-            code=HttpResponseCodeEnum.BAD_REQUEST.value,
-            message="whatsapp-tr.phone-number-is-required"
-        )
+    def __fail_if_wrong_input(self):
+        if not self._send_message_dto.phone_number:
+            raise SendMessageException(
+                code=HttpResponseCodeEnum.BAD_REQUEST.value,
+                message="whatsapp-tr.phone-number-is-required"
+            )
 
-    if not send_message_dto.message:
-        raise SendMessageException(
-            code=HttpResponseCodeEnum.BAD_REQUEST.value,
-            message="whatsapp-tr.message-is-required"
-        )
+        if not self._send_message_dto.message:
+            raise SendMessageException(
+                code=HttpResponseCodeEnum.BAD_REQUEST.value,
+                message="whatsapp-tr.message-is-required"
+            )
