@@ -1,13 +1,9 @@
-
-from flask import Response, request
-
 from shared.infrastructure.log import Log
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
-from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
 from whatsapp.domain.exceptions.send_message_exception import SendMessageException
 from whatsapp.application.send_message.send_message_dto import SendMessageDto
 from whatsapp.application.send_message.sent_message_dto import SentMessageDto
-
+from whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
 
 def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
 
@@ -16,6 +12,8 @@ def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
     number = send_message_dto.to_phone_number
     message = send_message_dto.message
 
+    wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
+    Log.log_debug(wa_response, "send_message_service.send_message")
     return SentMessageDto()
 
 
