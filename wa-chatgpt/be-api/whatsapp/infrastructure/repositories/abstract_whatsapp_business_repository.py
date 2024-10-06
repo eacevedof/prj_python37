@@ -16,12 +16,13 @@ class AbstractWhatsappBusinessRepository(ABC):
         "Authorization": __BEARER_TOKEN,
     }
 
-    def _post(self, endpoint: str, payload: dict) -> dict:
+    def _post(self, endpoint: str, payload: dict) -> dict | None:
         endpoint_url = f"{self.__ROOT_ENDPOINT}/{endpoint}"
         response = requests.post(endpoint_url, headers=self.__headers, json=payload)
 
-        if response.status_code != 200:
+        if 400 <= response.status_code <= 600:
             self.__log_error(response, endpoint)
+            return None
 
         dict_response = response.json()
         return dict_response
@@ -30,16 +31,32 @@ class AbstractWhatsappBusinessRepository(ABC):
     def _get(self, endpoint: str) -> list[dict]:
         endpoint_url = f"{self.__ROOT_ENDPOINT}/{endpoint}"
         response = requests.get(endpoint_url, headers=self.__headers)
+
+        if 400 <= response.status_code <= 600:
+            self.__log_error(response, endpoint)
+            return []
+
         dict_response = response.json()
         return dict_response
 
 
-    def __log_error(self, response: Response, endpoint: str):
-        Log.log_error({
+
+    def __log_error(self, response: Response, endpoint: str) -> None:
+        status_code = response.status_code
+
+        error = {
             "url": endpoint,
-            "client_error": response.json(),
-            "server_error": response.text,
-            "status": response.status_code,
-            "reason": response.reason
-        }, endpoint)
+            "status": status_code,
+            "reason": response.reason,
+            "client_error": "",
+            "server_error": "",
+        }
+
+        if status_code >= 500:
+            error["server_error"] = response.json()
+
+        if (status_code >= 400) and (status_code < 500):
+            error["client_error"] = response.json()
+
+        Log.log_error(error, endpoint)
 
