@@ -2,6 +2,9 @@ __pycache__
 venv
 be-api/.venv
 be-api/venv
+fe-flet/.venv
+fe-flet/venv
+
 be-api/storage/*.log
 be-api/storage/*.sql
 
