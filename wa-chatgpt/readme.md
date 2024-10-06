@@ -46,6 +46,8 @@ uvicorn main:app --reload
 
 #LINUX
 https://help.pythonanywhere.com/pages/Flask/
+
+mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
 ```
 
 #### whatsapp:
