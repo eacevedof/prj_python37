@@ -72,6 +72,9 @@ curl -i -X POST https://graph.facebook.com/v20.0/1076378991030422/messages \
 #### flet
 - [flet](https://flet.dev/docs/getting-started/create-flet-app)
 ```sh
+cd fe-flet
+flet create talk_bot
+flet run talk_bot
 ```
 
 #### python errors:
