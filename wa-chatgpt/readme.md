@@ -35,7 +35,7 @@
 ### pythonanywhere:
 - https://help.pythonanywhere.com/pages/Flask/
 - https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
-- https://www.pythonanywhere.com/user/eaf/webapps/#tab_id_eaf_pythonanywhere_com
+- https://www.pythonanywhere.com/user/eduardoaf/webapps/#tab_id_eduardoaf_pythonanywhere_com
 ```sh
 cat /var/log/eaf.pythonanywhere.com.error.log
 cat /var/log/eaf.pythonanywhere.com.server.log
