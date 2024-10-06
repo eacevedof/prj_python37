@@ -69,6 +69,11 @@ curl -i -X POST https://graph.facebook.com/v20.0/1076378991030422/messages \
 
 ```
 
+#### flet
+- [flet](https://flet.dev/docs/getting-started/create-flet-app)
+```sh
+```
+
 #### python errors:
 ```sh
 TypeError: Flask.__call__() missing 1 required positional argument: 'start_response'
