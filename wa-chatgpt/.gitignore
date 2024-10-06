@@ -18,3 +18,5 @@ fe-vue/.env.development
 fe-vue/.env.production
 fe-vue/.env.staging
 fe-vue/.env.test
+
+*.drawio.bkp
