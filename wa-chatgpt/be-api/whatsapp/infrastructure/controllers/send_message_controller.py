@@ -19,7 +19,7 @@ def invoke(http_request: request) -> Response:
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
-            "message": "open-ai-tr.talk_to_gpt35",
+            "message": "whatsapp-tr.send_text_message",
             "data": {"message_result": sent_message_dto.result}
         }).get_as_json_response()
 
@@ -30,7 +30,7 @@ def invoke(http_request: request) -> Response:
         }).get_as_json_response()
 
     except Exception as ex:
-        Log.log_exception(ex, "talk_to_gpt35_controller.invoke")
+        Log.log_exception(ex, "send_message_controller.invoke")
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
             "message": "shared-tr.some-unexpected-error-occurred",
