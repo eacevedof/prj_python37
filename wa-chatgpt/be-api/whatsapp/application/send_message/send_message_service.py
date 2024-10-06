@@ -21,7 +21,7 @@ def __fail_if_wrong_input(send_message_dto: SendMessageDto):
     if not send_message_dto.phone_number:
         raise SendMessageException(
             code=HttpResponseCodeEnum.BAD_REQUEST.value,
-            message="whatsapp-tr.to_phone_number-is-required"
+            message="whatsapp-tr.phone-number-is-required"
         )
 
     if not send_message_dto.message:
