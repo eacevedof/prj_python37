@@ -5,7 +5,7 @@ from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
 from whatsapp.domain.exceptions.send_message_exception import SendMessageException
 from whatsapp.application.send_message.send_message_dto import SendMessageDto
-from whatsapp.application.send_message.send_message_service import send_message
+from whatsapp.application.send_message.send_message_service import send_message_service
 
 
 def invoke(http_request: request) -> Response:
@@ -15,9 +15,7 @@ def invoke(http_request: request) -> Response:
             message=http_request.get_json().get("message", "")
         )
 
-        sent_message_dto = send_message(
-            send_message_dto
-        )
+        sent_message_dto = send_message_service(send_message_dto)
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
