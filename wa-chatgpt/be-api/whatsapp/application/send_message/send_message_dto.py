@@ -10,11 +10,7 @@ class SendMessageDto:
     message: str
 
     @staticmethod
-    def get_instance(
-            phone_number: str,
-            message: str
-    ) -> 'SendMessageDto':
-
+    def get_instance(phone_number: str, message: str) -> 'SendMessageDto':
         phone_number = str(phone_number).strip()
         message = str(message).strip()
 

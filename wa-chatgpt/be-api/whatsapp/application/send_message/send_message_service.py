@@ -9,14 +9,14 @@ from typing import final
 from dataclasses import dataclass
 
 @final
-@dataclass(frozen=True)
+#@dataclass(frozen=True)
 class SendMessageService:
 
     _send_message_dto: SendMessageDto
 
     def invoke(self, send_message_dto: SendMessageDto) -> SentMessageDto:
 
-        _send_message_dto = send_message_dto
+        self._send_message_dto = send_message_dto
         self.__fail_if_wrong_input()
 
         number = send_message_dto.phone_number
