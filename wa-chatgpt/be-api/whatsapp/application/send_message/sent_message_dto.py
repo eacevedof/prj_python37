@@ -5,5 +5,5 @@ from typing import List
 @final
 @dataclass(frozen=True)
 class SentMessageDto:
-    pass
+    result: str
 
