@@ -21,7 +21,7 @@ class AbstractWhatsappBusinessRepository(ABC):
         response = requests.post(endpoint_url, headers=self.__headers, json=payload)
 
         if 400 <= response.status_code <= 600:
-            self.__log_error(response, f"GET: {endpoint_url}")
+            self.__log_error(response, f"POST: {endpoint_url}")
             return None
 
         dict_response = response.json()
@@ -33,7 +33,7 @@ class AbstractWhatsappBusinessRepository(ABC):
         response = requests.get(endpoint_url, headers=self.__headers)
 
         if 400 <= response.status_code <= 600:
-            self.__log_error(response, f"POST: {endpoint_url}")
+            self.__log_error(response, f"GET: {endpoint_url}")
             return []
 
         dict_response = response.json()
