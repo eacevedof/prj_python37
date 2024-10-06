@@ -26,8 +26,9 @@
 - https://platform.openai.com/docs/overview
 
 ### facebook:
-- [https://developers.facebook.com/](https://developers.facebook.com/)
+- [mis facebook apps](https://developers.facebook.com/apps/)
 - https://business.facebook.com/
+
 
 ## start project
 ```sh
