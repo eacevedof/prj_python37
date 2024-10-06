@@ -11,5 +11,8 @@ from whatsapp.application.send_message.sent_message_dto import SentMessageDto
 
 @final
 class WhatsappBusinessWriterRepository(AbstractWhatsappBusinessRepository):
-    pass
+
+    def send_message(self, message: dict) -> dict:
+        response_data = self._post("messages", dict)
+        return response_data
 
