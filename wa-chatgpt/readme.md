@@ -43,6 +43,9 @@ python -m venv venv
 pip install -r requirements.txt
 # run server (be-api)
 uvicorn main:app --reload
+
+#LINUX
+./venv/bin/activate
 ```
 
 #### whatsapp:
