@@ -39,7 +39,7 @@ python -m venv venv
 .\venv\Scripts\activate
 # estando en py-api
 pip install -r requirements.txt
-# run server
+# run server (be-api)
 uvicorn main:app --reload
 ```
 
