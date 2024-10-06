@@ -1,4 +1,4 @@
-# [this repo: /wa-chtgpt](https://github.com/eacevedof/prj_python37/tree/master/wa-chtgpt)
+# [this repo: /wa-chatgpt](https://github.com/eacevedof/prj_python37/tree/master/wa-chtgpt)
 
 ### videos tutorial:
 - [vid 1 - https://www.youtube.com/watch?v=c77so_bKXhQ](https://www.youtube.com/watch?v=c77so_bKXhQ)
