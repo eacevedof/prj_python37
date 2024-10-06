@@ -1,6 +1,5 @@
 from typing import final
 from dataclasses import dataclass
-from typing import List
 
 
 @final
@@ -15,3 +14,4 @@ class SendMessageDto:
         message = str(message).strip()
 
         return SendMessageDto(phone_number, message)
+
