@@ -31,6 +31,8 @@
 
 ## start project
 ```sh
+cd be-api
+cd fe-flet
 # create virtualenv
 python -m venv venv
 # activate virtualenv
