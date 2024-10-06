@@ -45,7 +45,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 
 #LINUX
-./venv/bin/activate
+https://help.pythonanywhere.com/pages/Flask/
 ```
 
 #### whatsapp:
