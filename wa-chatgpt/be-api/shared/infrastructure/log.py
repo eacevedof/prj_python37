@@ -25,15 +25,17 @@ class Log:
     def __get_today() -> str:
         return datetime.today().strftime("%Y-%m-%d")
 
+
     @staticmethod
     def __get_now() -> str:
         return datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+
 
     @staticmethod
     def __log_in_file(content: str, file_name: str) -> None:
         today = Log.__get_today()
         now = Log.__get_now()
-        content = f"[{now}]\n{content}"
+        content = f"\n[{now}]\n{content}"
         extension = "log"
         if file_name == "sql":
             extension = "sql"
@@ -47,10 +49,11 @@ class Log:
 
         content = mixed if isinstance(mixed, str) else dump(mixed)
         if title:
-            content = f"\n{title}\n\t{content}"
+            content = f"{title}\n\t{content}"
 
         logging.info(f"{content}")
         Log.__log_in_file(content, "debug")
+
 
     @staticmethod
     def log_sql(sql, title=""):
@@ -59,10 +62,11 @@ class Log:
 
         content = sql
         if title:
-            content = f"\n{title}\n\t{content}"
+            content = f"{title}\n\t{content}"
 
         logging.info(f"{content}")
         Log.__log_in_file(content, "sql")
+
 
     @staticmethod
     def log_error(mixed, title="ERROR"):
@@ -71,7 +75,7 @@ class Log:
 
         content = mixed if isinstance(mixed, str) else dump(mixed)
         if title:
-            content = f"\n{title}\n\t{content}"
+            content = f"{title}\n\t{content}"
 
         logging.error(f"{content}")
         Log.__log_in_file(content, "error")
