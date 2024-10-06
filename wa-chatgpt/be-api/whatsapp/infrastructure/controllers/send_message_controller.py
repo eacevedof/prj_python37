@@ -3,6 +3,7 @@ from flask import Response, request
 from shared.infrastructure.log import Log
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
+from whatsapp.domain.exceptions.send_message_exception import SendMessageException
 
 
 def invoke(http_request: request) -> Response:
@@ -20,7 +21,7 @@ def invoke(http_request: request) -> Response:
             "data": {"chat_response": talked_to_gpt35_dto.chat_response}
         }).get_as_json_response()
 
-    except TalkToGpt35Exception as ex:
+    except SendMessageException as ex:
         return HttpJsonResponse.from_primitives({
             "code": ex.code,
             "message": ex.message,
