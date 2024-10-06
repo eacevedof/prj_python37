@@ -10,7 +10,7 @@ from whatsapp.application.send_message.send_message_service import send_message
 
 def invoke(http_request: request) -> Response:
     try:
-        send_message_dto = SendMessageDto(
+        send_message_dto = SendMessageDto.get_instance(
             phone_number=http_request.get_json().get("phone_number", ""),
             message=http_request.get_json().get("message", "")
         )
