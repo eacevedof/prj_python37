@@ -1,5 +1,7 @@
+from typing import Any
 from abc import ABC
 import requests
+from requests import Response
 
 from config.config import META_BUSINESS_ID, META_BUSINESS_BEARER_TOKEN
 from shared.infrastructure.log import Log
@@ -17,6 +19,10 @@ class AbstractWhatsappBusinessRepository(ABC):
     def _post(self, endpoint: str, payload: dict) -> dict:
         endpoint_url = f"{self.__ROOT_ENDPOINT}/{endpoint}"
         response = requests.post(endpoint_url, headers=self.__headers, json=payload)
+
+        if response.status_code != 200:
+            self.__log_error(response, endpoint)
+
         dict_response = response.json()
         return dict_response
 
@@ -28,6 +34,12 @@ class AbstractWhatsappBusinessRepository(ABC):
         return dict_response
 
 
-    def __log_error(self, response_data: dict, endpoint: str):
-        Log.log_error(response_data, endpoint)
+    def __log_error(self, response: Response, endpoint: str):
+        Log.log_error({
+            "url": endpoint,
+            "client_error": response.json(),
+            "server_error": response.text,
+            "status": response.status_code,
+            "reason": response.reason
+        }, endpoint)
 
