@@ -2,7 +2,6 @@ from abc import ABC
 import requests
 
 from config.config import META_BUSINESS_ID, META_BUSINESS_BEARER_TOKEN
-
 from shared.infrastructure.log import Log
 
 
