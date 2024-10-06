@@ -6,6 +6,6 @@ from typing import List
 @final
 @dataclass(frozen=True)
 class SendMessageDto:
-    to_phone_number: str
+    phone_number: str
     message: str
 

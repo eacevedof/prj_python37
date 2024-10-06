@@ -9,7 +9,7 @@ def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
 
     __fail_if_wrong_input(send_message_dto)
 
-    number = send_message_dto.to_phone_number
+    number = send_message_dto.phone_number
     message = send_message_dto.message
 
     wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
@@ -18,7 +18,7 @@ def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
 
 
 def __fail_if_wrong_input(send_message_dto: SendMessageDto):
-    if not send_message_dto.to_phone_number:
+    if not send_message_dto.phone_number:
         raise SendMessageException(
             code=HttpResponseCodeEnum.BAD_REQUEST.value,
             message="whatsapp-tr.to_phone_number-is-required"
