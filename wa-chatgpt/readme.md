@@ -49,6 +49,7 @@ https://help.pythonanywhere.com/pages/Flask/
 
 mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
 pip install -r requirements.txt
+https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
 ```
 
 #### whatsapp:
