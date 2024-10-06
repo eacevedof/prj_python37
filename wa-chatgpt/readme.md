@@ -31,6 +31,10 @@
   - ![fb-error](./readme/images/fb-wa-enterprise.png)
   - ![fb-response](./readme/images/fb-wa-response.png)
 
+### pythonanywhere:
+- https://help.pythonanywhere.com/pages/Flask/
+- https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
+
 ## start project
 ```sh
 cd be-api
@@ -45,11 +49,11 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 
 #LINUX
-https://help.pythonanywhere.com/pages/Flask/
-
 mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
 pip install -r requirements.txt
-https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
+
+cat /var/log/eaf.pythonanywhere.com.error.log
+cat /var/log/eaf.pythonanywhere.com.server.log
 ```
 
 #### whatsapp:
