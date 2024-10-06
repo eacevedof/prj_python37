@@ -5,7 +5,7 @@ from whatsapp.application.send_message.send_message_dto import SendMessageDto
 from whatsapp.application.send_message.sent_message_dto import SentMessageDto
 from whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
 
-def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
+def send_message_service(send_message_dto: SendMessageDto) -> SentMessageDto:
 
     __fail_if_wrong_input(send_message_dto)
 
@@ -14,7 +14,7 @@ def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
 
     wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
     Log.log_debug(wa_response, "send_message_service.send_message")
-    return SentMessageDto()
+    return SentMessageDto("ok")
 
 
 def __fail_if_wrong_input(send_message_dto: SendMessageDto):
