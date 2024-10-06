@@ -4,15 +4,17 @@ from shared.infrastructure.log import Log
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
 from whatsapp.domain.exceptions.send_message_exception import SendMessageException
-
+from whatsapp.application.send_message.send_message_dto import SendMessageDto
+from whatsapp.application.send_message.send_message_service import send_message_service
 
 def invoke(http_request: request) -> Response:
     try:
-        talk_to_gpt35_dto = TalkToGpt35DTO(
-            question=http_request.args["question"]
+        send_message_dto = SendMessageDto(
+            to_phone_number = http_request.args.get("to_phone_number", ""),
+            message = http_request.args.get("message", "")
         )
-        talked_to_gpt35_dto = talk_to_gpt35_service(
-            talk_to_gpt35_dto
+        talked_to_gpt35_dto = send_message_service(
+            send_message_dto
         )
 
         return HttpJsonResponse.from_primitives({
