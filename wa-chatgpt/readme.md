@@ -34,6 +34,20 @@
 ### pythonanywhere:
 - https://help.pythonanywhere.com/pages/Flask/
 - https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
+- https://www.pythonanywhere.com/user/eaf/webapps/#tab_id_eaf_pythonanywhere_com
+```sh
+cat /var/log/eaf.pythonanywhere.com.error.log
+cat /var/log/eaf.pythonanywhere.com.server.log
+
+# ==============================================
+# pythonanywhere_com_wsgi.py
+import sys
+path = '<home>py-apps/wa-chatgpt/be-api'
+if path not in sys.path:
+   sys.path.insert(0, path)
+
+from main import app_flask as application
+```
 
 ## start project
 ```sh
@@ -51,9 +65,6 @@ uvicorn main:app --reload
 #LINUX
 mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
 pip install -r requirements.txt
-
-cat /var/log/eaf.pythonanywhere.com.error.log
-cat /var/log/eaf.pythonanywhere.com.server.log
 ```
 
 #### whatsapp:
