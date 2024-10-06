@@ -17,7 +17,6 @@ def send_message(send_message_dto: SendMessageDto) -> SentMessageDto:
     return SentMessageDto()
 
 
-
 def __fail_if_wrong_input(send_message_dto: SendMessageDto):
     if not send_message_dto.to_phone_number:
         raise SendMessageException(
