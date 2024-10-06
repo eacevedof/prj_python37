@@ -5,7 +5,7 @@ from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
 from whatsapp.domain.exceptions.send_message_exception import SendMessageException
 from whatsapp.application.send_message.send_message_dto import SendMessageDto
-from whatsapp.application.send_message.send_message_service import send_message_service
+from whatsapp.application.send_message.send_message_service import send_message
 
 def invoke(http_request: request) -> Response:
     try:
@@ -13,14 +13,14 @@ def invoke(http_request: request) -> Response:
             to_phone_number = http_request.args.get("to_phone_number", ""),
             message = http_request.args.get("message", "")
         )
-        talked_to_gpt35_dto = send_message_service(
+        sent_message_dto = send_message(
             send_message_dto
         )
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
             "message": "open-ai-tr.talk_to_gpt35",
-            "data": {"chat_response": talked_to_gpt35_dto.chat_response}
+            "data": {"message_result": sent_message_dto.result}
         }).get_as_json_response()
 
     except SendMessageException as ex:
