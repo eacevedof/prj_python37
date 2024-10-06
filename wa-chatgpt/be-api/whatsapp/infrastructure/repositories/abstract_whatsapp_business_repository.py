@@ -17,15 +17,17 @@ class AbstractWhatsappBusinessRepository(ABC):
     def _post(self, endpoint: str, payload: dict) -> dict:
         endpoint_url = f"{self.__ROOT_ENDPOINT}/{endpoint}"
         response = requests.post(endpoint_url, headers=self.__headers, json=payload)
-        response_data = response.json()
-        return response_data
+        dict_response = response.json()
+        return dict_response
 
 
     def _get(self, endpoint: str) -> list[dict]:
         endpoint_url = f"{self.__ROOT_ENDPOINT}/{endpoint}"
         response = requests.get(endpoint_url, headers=self.__headers)
-        response_data = response.json()
-        return response_data
+        dict_response = response.json()
+        return dict_response
 
 
+    def __log_error(self, response_data: dict, endpoint: str):
+        Log.log_error(response_data, endpoint)
 
