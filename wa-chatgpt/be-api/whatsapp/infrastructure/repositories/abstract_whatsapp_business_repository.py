@@ -53,10 +53,10 @@ class AbstractWhatsappBusinessRepository(ABC):
         }
 
         if status_code >= 500:
-            error["server_error"] = response.json()
+            error["server_error"] = response.json().get("error", "")
 
         if (status_code >= 400) and (status_code < 500):
-            error["client_error"] = response.json()
+            error["client_error"] = response.json().get("error", "")
 
         Log.log_error(error, endpoint)
 
