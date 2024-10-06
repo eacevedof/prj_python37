@@ -39,6 +39,10 @@
 cat /var/log/eaf.pythonanywhere.com.error.log
 cat /var/log/eaf.pythonanywhere.com.server.log
 
+#LINUX
+mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
+pip install -r requirements.txt
+
 # ==============================================
 # pythonanywhere_com_wsgi.py
 import sys
@@ -60,11 +64,7 @@ python -m venv venv
 # estando en py-api
 pip install -r requirements.txt
 # run server (be-api)
-uvicorn main:app --reload
-
-#LINUX
-mkvirtualenv --python=/usr/bin/python3.10 api-virtualenv
-pip install -r requirements.txt
+# uvicorn main:app --reload
 ```
 
 #### whatsapp:
