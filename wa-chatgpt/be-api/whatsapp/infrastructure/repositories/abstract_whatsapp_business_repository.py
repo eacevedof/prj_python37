@@ -1,5 +1,6 @@
+from abc import ABC
 
-from flask import Response, request
+from config.config import META_BUSINESS_ID, META_BUSINESS_BEARER_TOKEN
 
 from shared.infrastructure.log import Log
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
@@ -8,10 +9,9 @@ from whatsapp.domain.exceptions.send_message_exception import SendMessageExcepti
 from whatsapp.application.send_message.send_message_dto import SendMessageDto
 from whatsapp.application.send_message.sent_message_dto import SentMessageDto
 
-def send_message(talk_to_gpt35_dto: SendMessageDto) -> SentMessageDto:
-    prompt = talk_to_gpt35_dto.question
+class AbstractWhatsappBusinessRepository(ABC):
+    _ROOT_ENDPOINT: str = f"https://graph.facebook.com/v20.0/{META_BUSINESS_ID}"
+    _BEARER_TOKEN: str = f"Bearer {META_BUSINESS_BEARER_TOKEN}"
 
-
-    return SentMessageDto()
 
 
