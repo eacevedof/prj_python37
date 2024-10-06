@@ -27,8 +27,8 @@
 
 ### facebook:
 - [mis facebook apps](https://developers.facebook.com/apps/)
-- https://business.facebook.com/
-
+- [agregar telefono de empresa](https://business.facebook.com/latest/whatsapp_manager/phone_numbers/)
+  - ![fb-error](./readme/images/fb-wa-enterprise.png)
 
 ## start project
 ```sh
