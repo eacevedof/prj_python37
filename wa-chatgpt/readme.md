@@ -30,6 +30,7 @@
 - [agregar telefono de empresa](https://business.facebook.com/latest/whatsapp_manager/phone_numbers/)
   - ![fb-error](./readme/images/fb-wa-enterprise.png)
   - ![fb-response](./readme/images/fb-wa-response.png)
+- [configurar api key](https://developers.facebook.com/apps/42180361048294/whatsapp-business/wa-dev-console/)
 
 ### pythonanywhere:
 - https://help.pythonanywhere.com/pages/Flask/
