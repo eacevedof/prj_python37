@@ -119,3 +119,6 @@ Traceback (most recent call last):
                ^^^^^^^^^^^^^^^
 TypeError: Flask.__call__() missing 1 required positional argument: 'start_response'
 ```
+
+#### embedding
+- [pregunta a tu pdf con chatgpt](https://www.youtube.com/watch?v=iDrpdkIHMq8)
