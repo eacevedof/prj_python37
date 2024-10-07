@@ -5,8 +5,9 @@ be-api/venv
 fe-flet/.venv
 fe-flet/venv
 
-be-api/storage/*.log
-be-api/storage/*.sql
+be-api/storage/logs/*.log
+be-api/storage/logs/*.sql
+
 
 .idea
 */config/config.py
