@@ -7,7 +7,7 @@ fe-flet/venv
 
 be-api/storage/logs/*.log
 be-api/storage/logs/*.sql
-
+be-api/storage/upload/*
 
 .idea
 */config/config.py
