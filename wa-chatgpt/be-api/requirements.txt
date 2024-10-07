@@ -4,3 +4,7 @@ jsonfy==0.4
 flask==3.0.3
 uvicorn==0.30.6
 asgiref==3.8.1
+PyPDF2==3.0.1
+sentence-transformers==2.2.2
+langchain==0.0.324
+faiss-cpu==1.7.4
