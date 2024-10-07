@@ -22,5 +22,6 @@ def __get_embedding_by_minilm():
 def get_knowledge_base_from_text(text: str):
     chunks = __get_chunks_from_text(text)
     embeddings = __get_embedding_by_minilm()
-    vector_store = FAISS.from_texts(chunks, embeddings)
-    return vector_store
+    knowledge_base = FAISS.from_texts(chunks, embeddings)
+    return knowledge_base
+
