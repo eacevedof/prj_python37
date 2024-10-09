@@ -10,12 +10,10 @@ from modules.open_ai.domain.exceptions.ask_your_pdf_exception import AskYourPdfE
 
 def invoke(http_request: request) -> Response:
     try:
-        ask_your_pdf_dto = AskYourPdfDto(
-            question=http_request.args["question"]
-        )
-        asked_your_pdf_dto = AskYourPdfService.invoke(
-            ask_your_pdf_dto
-        )
+        ask_your_pdf_dto = AskYourPdfDto.from_primitives({
+            "question": http_request.get("question")
+        })
+        asked_your_pdf_dto = AskYourPdfService.invoke(ask_your_pdf_dto)
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
