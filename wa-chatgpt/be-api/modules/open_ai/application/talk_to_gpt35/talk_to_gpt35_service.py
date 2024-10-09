@@ -1,4 +1,4 @@
-from modules.shared.infrastructure.log import Log
+from modules.shared.infrastructure.components.log import Log
 from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from modules.open_ai.application.talk_to_gpt35.talked_to_gpt35_dto import TalkedToGpt35DTO
 from modules.open_ai.infrastructure.repositories.openai_repository import get_gpt35_turbo

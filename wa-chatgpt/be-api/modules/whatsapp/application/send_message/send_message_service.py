@@ -1,7 +1,7 @@
 from typing import final
 from dataclasses import dataclass
 
-from modules.shared.infrastructure.log import Log
+from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
 from modules.whatsapp.domain.exceptions.send_message_exception import SendMessageException
