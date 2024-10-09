@@ -2,7 +2,7 @@ from flask import Response, request
 
 from modules.shared.infrastructure.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
-from modules.shared.infrastructure.http.response.http_json_response import HttpJsonResponse
+from modules.shared.infrastructure.components.http.response.http_json_response import HttpJsonResponse
 from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
 from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
 from modules.open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
