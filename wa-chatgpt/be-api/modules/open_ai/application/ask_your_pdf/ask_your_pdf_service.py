@@ -35,9 +35,8 @@ class AskYourPdfService:
         self.__load_knowledge_database()
 
         message = self.__get_response_from_chatgpt()
-
         Log.log_debug(message, "ask_your_pdf_service.ask_your_pdf")
-        return AskedYourPdfDto("ok")
+        return AskedYourPdfDto.from_primitives(message)
 
 
     def __fail_if_wrong_input(self) -> None:
