@@ -12,7 +12,7 @@ from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourP
 
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
 from modules.shared.infrastructure.components.ia.text.language import get_knowledge_base_from_text
-
+from modules.open_ai.infrastructure.repositories.openai_repository import get_response_using_chain
 
 @final
 #@dataclass(frozen=True)
@@ -51,4 +51,5 @@ class AskYourPdfService:
 
     def __cal_open_ai(self) -> str:
         docs = self.__knowledge_base.similarity_search(self._ask_your_pdf_dto.question, 3)
+        return get_response_using_chain(docs)
 
