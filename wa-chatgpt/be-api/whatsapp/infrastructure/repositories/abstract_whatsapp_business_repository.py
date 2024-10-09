@@ -4,7 +4,7 @@ import requests
 from requests import Response
 
 from config.config import META_BUSINESS_ID, META_BUSINESS_BEARER_TOKEN
-from shared.infrastructure.log import Log
+from modules.shared.infrastructure.log import Log
 
 
 class AbstractWhatsappBusinessRepository(ABC):

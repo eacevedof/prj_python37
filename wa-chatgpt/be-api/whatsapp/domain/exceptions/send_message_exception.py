@@ -1,6 +1,6 @@
 from typing import final
-from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
-from shared.domain.exceptions.abstract_domain_exception import AbstractDomainException
+from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
+from modules.shared.domain.exceptions.abstract_domain_exception import AbstractDomainException
 
 
 @final
