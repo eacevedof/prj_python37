@@ -1,44 +1,38 @@
 from typing import final
 from dataclasses import dataclass
 
+from application.ask_your_pdf.asked_to_pdf_dto import AskedYourPdfDto
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.text.language import get_knowledge_base_from_text
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
-from modules.whatsapp.domain.exceptions.send_message_exception import SendMessageException
-from modules.whatsapp.application.send_message.send_message_dto import SendMessageDto
-from modules.whatsapp.application.send_message.sent_message_dto import SentMessageDto
-from modules.whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
+from modules.open_ai.domain.exceptions.ask_your_pdf_exception import AskYourPdfException
+from modules.open_ai.application.ask_your_pdf.ask_your_pdf_dto import AskYourPdfDto
+from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourPdfDto
+from modules.open_ai.infrastructure.repositories.open_ai_business_writer_repository import WhatsappBusinessWriterRepository
 
 
 @final
 #@dataclass(frozen=True)
 class AskYourPdfService:
 
-    _send_message_dto: SendMessageDto
+    _ask_your_pdf_dto: AskYourPdfDto
 
-    def invoke(self, send_message_dto: SendMessageDto) -> SentMessageDto:
+    def invoke(self, ask_your_pdf_dto: AskYourPdfDto) -> AskedYourPdfDto:
 
-        self._send_message_dto = send_message_dto
+        self._ask_your_pdf_dto = ask_your_pdf_dto
         self.__fail_if_wrong_input()
 
-        number = send_message_dto.phone_number
-        message = send_message_dto.message
+        message = ask_your_pdf_dto.question
 
         wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
-        Log.log_debug(wa_response, "send_message_service.send_message")
-        return SentMessageDto("ok")
+        Log.log_debug(wa_response, "ask_your_pdf_service.ask_your_pdf")
+        return AskedYourPdfDto("ok")
 
 
     def __fail_if_wrong_input(self):
-        if not self._send_message_dto.phone_number:
-            raise SendMessageException(
+        if not self._ask_your_pdf_dto.question:
+            raise AskYourPdfException(
                 code=HttpResponseCodeEnum.BAD_REQUEST.value,
-                message="whatsapp-tr.phone-number-is-required"
-            )
-
-        if not self._send_message_dto.message:
-            raise SendMessageException(
-                code=HttpResponseCodeEnum.BAD_REQUEST.value,
-                message="whatsapp-tr.message-is-required"
+                message="open_ai-tr.ask-your-pdf-question-is-required"
             )
