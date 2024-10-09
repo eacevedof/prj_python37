@@ -1,6 +1,7 @@
 from typing import final
 from dataclasses import dataclass
 
+
 @final
 @dataclass(frozen=True)
 class AskYourPdfDto:
