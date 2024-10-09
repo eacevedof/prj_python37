@@ -58,7 +58,7 @@ class AskYourPdfService:
 
 
     def __get_response_from_chatgpt(self) -> str:
-        number_of_paragraphs = 3
+        number_of_paragraphs = 10
         docs = self.__knowledge_base.similarity_search(
             self._ask_your_pdf_dto.question,
             number_of_paragraphs
