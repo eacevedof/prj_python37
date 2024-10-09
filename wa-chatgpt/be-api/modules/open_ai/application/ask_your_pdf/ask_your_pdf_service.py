@@ -50,3 +50,5 @@ class AskYourPdfService:
         self.__knowledge_base = get_knowledge_base_from_text(pdf_text)
 
     def __cal_open_ai(self) -> str:
+        docs = self.__knowledge_base.similarity_search(self._ask_your_pdf_dto.question, 3)
+
