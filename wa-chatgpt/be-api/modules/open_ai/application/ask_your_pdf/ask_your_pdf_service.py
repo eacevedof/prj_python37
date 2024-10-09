@@ -13,7 +13,7 @@ from modules.whatsapp.infrastructure.repositories.whatsapp_business_writer_repos
 
 @final
 #@dataclass(frozen=True)
-class AskYourPdf:
+class AskYourPdfService:
 
     _send_message_dto: SendMessageDto
 
