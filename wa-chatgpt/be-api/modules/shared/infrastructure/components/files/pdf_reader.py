@@ -1,11 +1,8 @@
 import os
-from config.config import PATH_FILES_DIR
 from PyPDF2 import PdfReader
+from config.paths import PATH_UPLOAD_FOLDER
 
 
-
-
-PATH_UPLOAD_FOLDER = os.path.realpath(PATH_FILES_DIR)
 FILE_PDF_NAME = "boe-constitucion-espanola.pdf"
 PATH_FILE = f"{PATH_UPLOAD_FOLDER}/{FILE_PDF_NAME}"
 
