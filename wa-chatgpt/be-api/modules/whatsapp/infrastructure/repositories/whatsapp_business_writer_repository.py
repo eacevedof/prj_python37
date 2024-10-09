@@ -1,6 +1,6 @@
 from typing import final
 
-from whatsapp.infrastructure.repositories.abstract_whatsapp_business_repository import AbstractWhatsappBusinessRepository
+from modules.whatsapp.infrastructure.repositories.abstract_whatsapp_business_repository import AbstractWhatsappBusinessRepository
 
 @final
 class WhatsappBusinessWriterRepository(AbstractWhatsappBusinessRepository):

@@ -4,9 +4,9 @@ from modules.shared.infrastructure.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from modules.shared.infrastructure.http.response.http_json_response import HttpJsonResponse
 
-from whatsapp.domain.exceptions.send_message_exception import SendMessageException
-from whatsapp.application.send_message.send_message_dto import SendMessageDto
-from whatsapp.application.send_message.send_message_service import SendMessageService
+from modules.whatsapp.domain.exceptions.send_message_exception import SendMessageException
+from modules.whatsapp.application.send_message.send_message_dto import SendMessageDto
+from modules.whatsapp.application.send_message.send_message_service import SendMessageService
 
 
 def invoke(http_request: request) -> Response:
