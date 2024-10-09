@@ -34,7 +34,7 @@ class AskYourPdfService:
         return AskedYourPdfDto("ok")
 
 
-    def __fail_if_wrong_input(self):
+    def __fail_if_wrong_input(self) -> None:
         if not self._ask_your_pdf_dto.question:
             raise AskYourPdfException(
                 code = HttpResponseCodeEnum.BAD_REQUEST.value,
@@ -42,9 +42,11 @@ class AskYourPdfService:
             )
 
 
-    def __load_knowledge_database(self):
+    def __load_knowledge_database(self) -> None:
         pdf_file_name = "boe-constitucion-espanola.pdf"
         path_pdf_file = f"{PATH_UPLOAD_FOLDER}.{pdf_file_name}"
 
         pdf_text = get_text_from_pdf_file(path_pdf_file)
         self.__knowledge_base = get_knowledge_base_from_text(pdf_text)
+
+    def __cal_open_ai(self) -> str:
