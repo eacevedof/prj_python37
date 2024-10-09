@@ -3,7 +3,6 @@ from config.paths import PATH_UPLOAD_FOLDER
 from typing import final
 from dataclasses import dataclass
 
-from application.ask_your_pdf.asked_to_pdf_dto import AskedYourPdfDto
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
