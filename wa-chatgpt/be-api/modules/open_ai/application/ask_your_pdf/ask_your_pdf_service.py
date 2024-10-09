@@ -3,6 +3,7 @@ from config.paths import PATH_UPLOAD_FOLDER
 from typing import final
 from dataclasses import dataclass
 
+from langchain.vectorstores import FAISS
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_absolute_path, is_file
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
@@ -20,7 +21,7 @@ from modules.open_ai.infrastructure.repositories.openai_repository import get_re
 class AskYourPdfService:
 
     _ask_your_pdf_dto: AskYourPdfDto
-    __knowledge_base: object
+    __knowledge_base: FAISS
 
     @staticmethod
     def get_instance() -> "AskYourPdfService":
