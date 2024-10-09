@@ -31,6 +31,6 @@ class AskYourPdfService:
     def __fail_if_wrong_input(self):
         if not self._ask_your_pdf_dto.question:
             raise AskYourPdfException(
-                code=HttpResponseCodeEnum.BAD_REQUEST.value,
-                message="ask_your_pdf_service.question-is-mandatory"
+                code = HttpResponseCodeEnum.BAD_REQUEST.value,
+                message = "ask_your_pdf_service.question-is-mandatory"
             )
