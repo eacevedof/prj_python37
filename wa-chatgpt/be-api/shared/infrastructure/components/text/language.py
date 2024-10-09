@@ -1,10 +1,10 @@
-from langchain.text_splitter import RecursiveTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
 
 def __get_chunks_from_text(text: str) -> list[str]:
-    splitter = RecursiveTextSplitter(
+    splitter = RecursiveCharacterTextSplitter(
         chunk_size = 800,
         chunk_overlap = 100,
         length_function = len
