@@ -13,14 +13,14 @@ def invoke(http_request: request) -> Response:
         ask_your_pdf_dto = AskYourPdfDto(
             question=http_request.args["question"]
         )
-        AskedYourPdfDto = AskYourPdfService.invoke(
+        asked_your_pdf_dto = AskYourPdfService.invoke(
             ask_your_pdf_dto
         )
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
             "message": "open-ai-tr.ask_your_pdf",
-            "data": {"chat_response": AskedYourPdfDto.chat_response}
+            "data": {"chat_response": asked_your_pdf_dto.chat_response}
         }).get_as_json_response()
 
     except AskYourPdfException as ex:
