@@ -14,8 +14,8 @@ def __get_chunks_from_text(text: str) -> list[str]:
 
 # https://youtu.be/iDrpdkIHMq8?t=549
 def __get_embedding_by_minilm():
-    model_name = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    embeddings = HuggingFaceEmbeddings(model_name = model_name)
+    transformer_name = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embeddings = HuggingFaceEmbeddings(model_name = transformer_name)
     return embeddings
 
 
