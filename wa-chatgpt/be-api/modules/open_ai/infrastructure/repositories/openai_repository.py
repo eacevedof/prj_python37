@@ -8,7 +8,7 @@ def get_gpt35_turbo(question: str) -> str:
 
     client_open_ai = __get_client_openai()
 
-    chat_completion = client_modules.open_ai.chat.completions.create(
+    chat_completion = client_open_ai.chat.completions.create(
         model=model_engine,
         max_tokens=250,
         n=1, # numero de respuestas
