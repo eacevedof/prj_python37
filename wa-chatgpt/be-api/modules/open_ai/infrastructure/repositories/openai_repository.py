@@ -34,8 +34,11 @@ def get_gpt35_turbo(question: str) -> str:
     return chat_completion.choices[0].message.content
 
 
-def get_response_using_chain(docs: List[Document], question: str) -> str:
-    llm_obj = ChatOpenAI(model_name = OpenAiModelEnum.GPT_3_5_TURBO.value)
+def get_response_using_chain(langchain_documents: List[Document], question: str) -> str:
+    llm_obj = ChatOpenAI(
+        model_name = OpenAiModelEnum.GPT_3_5_TURBO.value,
+        openai_api_key = OPENAI_API_KEY
+    )
     chain_obj = load_qa_chain(llm_obj, chain_type = LangchainTypeEnum.STUFF.value)
-    respuesta = chain_obj.run(input_documents = docs, question = question)
+    respuesta = chain_obj.run(input_documents = langchain_documents, question = question)
     return respuesta
