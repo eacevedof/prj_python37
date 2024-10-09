@@ -11,7 +11,7 @@ from modules.whatsapp.application.send_message.send_message_service import SendM
 
 def invoke(http_request: request) -> Response:
     try:
-        send_message_dto = SendMessageDto.get_instance(
+        send_message_dto = SendMessageDto.from_primitives(
             phone_number = http_request.get_json().get("phone_number", ""),
             message = http_request.get_json().get("message", "")
         )
