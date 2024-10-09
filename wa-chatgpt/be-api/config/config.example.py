@@ -1,1 +1,3 @@
-OPENAI_API_KEY = "apy from here: https://platform.openai.com/api-keys"
+OPENAI_API_KEY = ":)"
+META_BUSINESS_ID = ":)"
+META_BUSINESS_BEARER_TOKEN = ":)"
