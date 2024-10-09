@@ -1,7 +1,7 @@
 from typing import final
 from dataclasses import dataclass
 
-from modules.shared.infrastructure.log import Log
+from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.text.language import get_knowledge_base_from_text
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
