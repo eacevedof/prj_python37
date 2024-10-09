@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from modules.shared.infrastructure.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
-from whatsapp.domain.exceptions.send_message_exception import SendMessageException
-from whatsapp.application.send_message.send_message_dto import SendMessageDto
-from whatsapp.application.send_message.sent_message_dto import SentMessageDto
-from whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
+from modules.whatsapp.domain.exceptions.send_message_exception import SendMessageException
+from modules.whatsapp.application.send_message.send_message_dto import SendMessageDto
+from modules.whatsapp.application.send_message.sent_message_dto import SentMessageDto
+from modules.whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
 
 
 @final
