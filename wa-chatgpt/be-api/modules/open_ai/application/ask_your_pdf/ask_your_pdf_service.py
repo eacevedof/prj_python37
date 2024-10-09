@@ -28,7 +28,7 @@ class AskYourPdfService:
 
         self.__load_knowledge_database()
 
-        message = ask_your_pdf_dto.question
+        message = self.__get_response_from_chatgpt()
 
         Log.log_debug(message, "ask_your_pdf_service.ask_your_pdf")
         return AskedYourPdfDto("ok")
@@ -49,7 +49,8 @@ class AskYourPdfService:
         pdf_text = get_text_from_pdf_file(path_pdf_file)
         self.__knowledge_base = get_knowledge_base_from_text(pdf_text)
 
-    def __cal_open_ai(self) -> str:
+
+    def __get_response_from_chatgpt(self) -> str:
         docs = self.__knowledge_base.similarity_search(self._ask_your_pdf_dto.question, 3)
         return get_response_using_chain(docs)
 
