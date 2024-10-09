@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-from modules.shared.infrastructure.var_export import dump
+from modules.shared.infrastructure.components.var_export import dump
 
 PATH_LOGS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 PATH_LOGS_FOLDER = PATH_LOGS_FOLDER + "../../../storage/logs"
