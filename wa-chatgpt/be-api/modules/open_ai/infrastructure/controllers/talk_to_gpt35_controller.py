@@ -3,9 +3,9 @@ from flask import Response, request
 from shared.infrastructure.log import Log
 from shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from shared.infrastructure.http.response.http_json_response import HttpJsonResponse
-from open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
-from open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
-from open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
+from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
+from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
+from modules.open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
 
 
 def invoke(http_request: request) -> Response:
