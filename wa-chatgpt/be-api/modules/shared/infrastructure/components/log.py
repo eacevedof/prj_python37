@@ -1,14 +1,9 @@
 import logging
-import os
 from datetime import datetime
 from modules.shared.infrastructure.components.var_export import dump
-
-PATH_LOGS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-PATH_LOGS_FOLDER = PATH_LOGS_FOLDER + "../../../storage/logs"
-PATH_LOGS_FOLDER = os.path.abspath(PATH_LOGS_FOLDER)
+from config.paths import PATH_LOGS_FOLDER
 
 TODAY = datetime.today().strftime("%Y-%m-%d")
-
 
 def file_put_contents(path_file: str, str_data:str) -> None:
     try:
