@@ -19,7 +19,7 @@ def __get_embedding_by_minilm():
     return embeddings
 
 
-def get_knowledge_base_from_text(text: str):
+def get_knowledge_base_from_text(text: str) -> FAISS:
     chunks = __get_chunks_from_text(text)
     embeddings = __get_embedding_by_minilm()
     knowledge_base = FAISS.from_texts(chunks, embeddings)
