@@ -64,5 +64,5 @@ class AskYourPdfService:
             self._ask_your_pdf_dto.question,
             number_of_paragraphs
         )
-        return get_response_using_chain(docs)
+        return get_response_using_chain(docs, self._ask_your_pdf_dto.question)
 
