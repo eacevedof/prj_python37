@@ -1,10 +1,12 @@
 from typing import final
+from dataclasses import dataclass
 
 from modules.whatsapp.infrastructure.repositories.abstract_whatsapp_business_repository import \
     AbstractWhatsappBusinessRepository
 
 
 @final
+@dataclass(frozen=True)
 class WhatsappBusinessWriterRepository(AbstractWhatsappBusinessRepository):
 
     def send_text_message(self, phone_number: str, message: str) -> dict:
