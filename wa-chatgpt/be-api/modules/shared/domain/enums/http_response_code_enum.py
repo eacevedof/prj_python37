@@ -1,5 +1,10 @@
+from dataclasses import dataclass
 from enum import Enum
+from typing import final
 
+
+@final
+@dataclass(frozen=True)
 class HttpResponseCodeEnum(Enum):
     OK = 200
     CREATED = 201

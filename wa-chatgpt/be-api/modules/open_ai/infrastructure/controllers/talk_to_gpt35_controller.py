@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Request, Response
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
@@ -8,7 +8,7 @@ from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_service import Talk
 from modules.open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
 
 
-def invoke(http_request: request) -> Response:
+def invoke(http_request: Request) -> Response:
     try:
         talk_to_gpt35_dto = TalkToGpt35DTO(
             question=http_request.args["question"]

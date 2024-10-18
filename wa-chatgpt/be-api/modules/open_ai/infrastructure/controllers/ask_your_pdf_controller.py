@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Response, Request
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
@@ -8,7 +8,7 @@ from modules.open_ai.application.ask_your_pdf.ask_your_pdf_service import AskYou
 from modules.open_ai.domain.exceptions.ask_your_pdf_exception import AskYourPdfException
 
 
-def invoke(http_request: request) -> Response:
+def invoke(http_request: Request) -> Response:
     try:
         ask_your_pdf_dto = AskYourPdfDto.from_primitives(
             question = http_request.args.get("question")
