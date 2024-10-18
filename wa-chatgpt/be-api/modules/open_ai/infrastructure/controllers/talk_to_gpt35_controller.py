@@ -4,7 +4,7 @@ from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from modules.shared.infrastructure.components.http.response.http_json_response import HttpJsonResponse
 from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_dto import TalkToGpt35DTO
-from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_service import talk_to_gpt35_service
+from modules.open_ai.application.talk_to_gpt35.talk_to_gpt35_service import TalkToGpt35Service
 from modules.open_ai.domain.exceptions.talk_to_gpt35_exception import TalkToGpt35Exception
 
 
@@ -13,7 +13,7 @@ def invoke(http_request: request) -> Response:
         talk_to_gpt35_dto = TalkToGpt35DTO(
             question=http_request.args["question"]
         )
-        talked_to_gpt35_dto = talk_to_gpt35_service(
+        talked_to_gpt35_dto = TalkToGpt35Service.get_instance().invoke(
             talk_to_gpt35_dto
         )
 
