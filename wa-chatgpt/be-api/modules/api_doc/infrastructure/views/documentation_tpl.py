@@ -1,5 +1,6 @@
 from flask import render_template_string
 
+
 def render() -> str:
     html = """
 <!DOCTYPE html>
