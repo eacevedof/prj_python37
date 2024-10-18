@@ -13,7 +13,7 @@ from open_ai.infrastructure.repositories.abstract_openai_repository import Abstr
 class OpenAiRepository(AbstractOpenAiRepository):
 
     @staticmethod
-    def get_instance() -> OpenAiRepository:
+    def get_instance() -> "OpenAiRepository":
         return OpenAiRepository()
 
     def get_gpt35_turbo(self, question: str) -> str:
