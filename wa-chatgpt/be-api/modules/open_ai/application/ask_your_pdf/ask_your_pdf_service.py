@@ -16,10 +16,10 @@ from modules.shared.infrastructure.components.files.pdf_reader import get_text_f
 from modules.shared.infrastructure.components.ia.text.language import get_knowledge_base_from_text
 from modules.open_ai.infrastructure.repositories.openai_repository import get_response_using_chain
 
+
 @final
 #@dataclass(frozen=True)
 class AskYourPdfService:
-
     _ask_your_pdf_dto: AskYourPdfDto
     __knowledge_base: FAISS
 
@@ -38,14 +38,12 @@ class AskYourPdfService:
         Log.log_debug(message, "ask_your_pdf_service.ask_your_pdf")
         return AskedYourPdfDto.from_primitives(message)
 
-
     def __fail_if_wrong_input(self) -> None:
         if not self._ask_your_pdf_dto.question:
             raise AskYourPdfException(
-                code = HttpResponseCodeEnum.BAD_REQUEST.value,
-                message = "ask_your_pdf_service.question-is-mandatory"
+                code=HttpResponseCodeEnum.BAD_REQUEST.value,
+                message="ask_your_pdf_service.question-is-mandatory"
             )
-
 
     def __load_knowledge_database(self) -> None:
         pdf_file_name = "boe-constitucion-espanola.pdf"
@@ -56,7 +54,6 @@ class AskYourPdfService:
         pdf_text = get_text_from_pdf_file(path_pdf_file)
         self.__knowledge_base = get_knowledge_base_from_text(pdf_text)
 
-
     def __get_response_from_chatgpt(self) -> str:
         number_of_paragraphs = 10
         docs = self.__knowledge_base.similarity_search(
@@ -64,4 +61,3 @@ class AskYourPdfService:
             number_of_paragraphs
         )
         return get_response_using_chain(docs, self._ask_your_pdf_dto.question)
-
