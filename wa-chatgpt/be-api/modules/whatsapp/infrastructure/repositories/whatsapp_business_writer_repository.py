@@ -1,10 +1,11 @@
 from typing import final
 
-from modules.whatsapp.infrastructure.repositories.abstract_whatsapp_business_repository import AbstractWhatsappBusinessRepository
+from modules.whatsapp.infrastructure.repositories.abstract_whatsapp_business_repository import \
+    AbstractWhatsappBusinessRepository
+
 
 @final
 class WhatsappBusinessWriterRepository(AbstractWhatsappBusinessRepository):
-
 
     def send_text_message(self, phone_number: str, message: str) -> dict:
         payload = {
@@ -17,4 +18,3 @@ class WhatsappBusinessWriterRepository(AbstractWhatsappBusinessRepository):
         }
         response_data = self._post("messages", payload)
         return response_data
-
