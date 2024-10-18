@@ -1,4 +1,3 @@
-from typing import Any
 from abc import ABC
 import requests
 from requests import Response
