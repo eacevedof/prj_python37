@@ -9,6 +9,7 @@ from typing import List, final
 
 from open_ai.infrastructure.repositories.abstract_openai_repository import AbstractOpenAiRepository
 
+
 @final
 class OpenAiRepository(AbstractOpenAiRepository):
 
