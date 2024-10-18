@@ -1,6 +1,7 @@
-from typing import Any
+from flask import Request
+
 from modules.api_doc.infrastructure.views.documentation_tpl import render
 
 
-def invoke(request: Any) -> str:
+def invoke(request: Request) -> str:
     return render()
