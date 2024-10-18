@@ -1,8 +1,10 @@
 from typing import List, final
 from config.config import OPENAI_API_KEY
+
 from langchain_core.documents import Document
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
+
 from modules.shared.infrastructure.enums.langchain_type_enum import LangchainTypeEnum
 from modules.open_ai.infrastructure.enums.open_ai_model_enum import OpenAiModelEnum
 from modules.open_ai.infrastructure.repositories.abstract_openai_repository import AbstractOpenAiRepository
@@ -35,10 +37,7 @@ class OpenAiRepository(AbstractOpenAiRepository):
         return chat_completion.choices[0].message.content
 
     def get_response_using_chain(self, langchain_documents: List[Document], question: str) -> str:
-        llm_obj = ChatOpenAI(
-            model_name=OpenAiModelEnum.GPT_3_5_TURBO.value,
-            openai_api_key=OPENAI_API_KEY
-        )
+        llm_obj = self._get_chat_openai()
         chain_obj = load_qa_chain(llm_obj, chain_type=LangchainTypeEnum.STUFF.value)
         respuesta = chain_obj.run(input_documents=langchain_documents, question=question)
         return respuesta
