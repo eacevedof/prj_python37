@@ -7,13 +7,13 @@ from modules.shared.domain.enums.http_response_code_enum import HttpResponseCode
 from modules.whatsapp.domain.exceptions.send_message_exception import SendMessageException
 from modules.whatsapp.application.send_message.send_message_dto import SendMessageDto
 from modules.whatsapp.application.send_message.sent_message_dto import SentMessageDto
-from modules.whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import WhatsappBusinessWriterRepository
+from modules.whatsapp.infrastructure.repositories.whatsapp_business_writer_repository import \
+    WhatsappBusinessWriterRepository
 
 
 @final
 #@dataclass(frozen=True)
 class SendMessageService:
-
     _send_message_dto: SendMessageDto
 
     def invoke(self, send_message_dto: SendMessageDto) -> SentMessageDto:
@@ -27,7 +27,6 @@ class SendMessageService:
         wa_response = WhatsappBusinessWriterRepository().send_text_message(number, message)
         Log.log_debug(wa_response, "send_message_service.send_message")
         return SentMessageDto("ok")
-
 
     def __fail_if_wrong_input(self):
         if not self._send_message_dto.phone_number:
