@@ -1,9 +1,7 @@
 from typing import List, final
-from config.config import OPENAI_API_KEY
 
 from langchain_core.documents import Document
 from langchain.chains.question_answering import load_qa_chain
-from langchain.chat_models import ChatOpenAI
 
 from modules.shared.infrastructure.enums.langchain_type_enum import LangchainTypeEnum
 from modules.open_ai.infrastructure.enums.open_ai_model_enum import OpenAiModelEnum
