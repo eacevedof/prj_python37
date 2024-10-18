@@ -4,6 +4,7 @@ from modules.shared.infrastructure.components.log import Log
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 from modules.shared.infrastructure.components.http.response.http_json_response import HttpJsonResponse
 
+
 def get_result_after_invoke(module_path: str, http_request: request) -> Response | str:
     try:
         module = importlib.import_module(module_path)

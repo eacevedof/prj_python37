@@ -1,12 +1,18 @@
 import subprocess
+from dataclasses import dataclass
+from typing import final
 
 
+@final
+# @dataclass(frozen=True)
 class ShellExecException(Exception):
     @staticmethod
-    def fail_if_empty_commands():
+    def fail_if_empty_commands() -> None:
         raise ShellExecException("No commands to execute")
 
 
+@final
+# @dataclass(frozen=True)
 class ShellExec:
     def __init__(self):
         self.commands = []

@@ -1,9 +1,10 @@
 from flask import jsonify, Response
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Dict, Any, final
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
 
+@final
 @dataclass(frozen=True)
 class HttpJsonResponse:
     status: str = field(init=False)
