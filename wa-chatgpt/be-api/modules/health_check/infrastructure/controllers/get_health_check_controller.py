@@ -1,8 +1,7 @@
-from typing import Any
 from flask import jsonify, Response
 
 
-def invoke(request: Any) -> Response:
+def invoke() -> Response:
     response = {
         "status": "ok"
     }
