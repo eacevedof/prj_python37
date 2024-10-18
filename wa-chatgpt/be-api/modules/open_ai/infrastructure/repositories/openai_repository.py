@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List, final
 
 from langchain_core.documents import Document
@@ -9,6 +10,7 @@ from modules.open_ai.infrastructure.repositories.abstract_openai_repository impo
 
 
 @final
+@dataclass(frozen=True)
 class OpenAiRepository(AbstractOpenAiRepository):
 
     @staticmethod
