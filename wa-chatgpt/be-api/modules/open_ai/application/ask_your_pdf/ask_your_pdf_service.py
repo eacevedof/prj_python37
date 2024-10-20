@@ -16,7 +16,7 @@ from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourP
 
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
 from modules.lang_chain.infrastructure.repositories.langchain_repository import LangchainRepository
-from modules.lang_chain.infrastructure.components.knowledge_repository import KnowledgeRepository
+from modules.lang_chain.infrastructure.repositories.knowledge_repository import KnowledgeRepository
 
 @final
 #@dataclass(frozen=True)
