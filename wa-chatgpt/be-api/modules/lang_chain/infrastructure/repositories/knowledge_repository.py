@@ -59,9 +59,11 @@ class KnowledgeRepository:
     def get_documents_by_user_question(self, user_question: str) -> list[Document]:
         embeddings = self.__get_embeddings_obj_by_mpnet_base_v2()
         vector_store = Pinecone.from_existing_index(PINECONE_INDEX_NAME, embeddings)
+
+        number_of_paragraphs = 50
         return vector_store.similarity_search(
             query=user_question,
-            top_k=3
+            k=number_of_paragraphs
         )
 
 
