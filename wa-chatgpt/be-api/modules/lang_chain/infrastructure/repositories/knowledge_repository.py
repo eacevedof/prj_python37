@@ -14,11 +14,12 @@ class KnowledgeRepository:
     def get_instance() -> "KnowledgeRepository":
         return KnowledgeRepository()
 
-    def get_faiss_obj_from_text(self, large_text: str) -> FAISS:
+    def get_embeddings_faiss(self, large_text: str) -> FAISS:
         text_chunks = self.__get_chunks_from_text(large_text)
         # embeddings = __get_embedding_by_minilm()
         embeddings_obj = self.__get_embeddings_obj_by_mpnet_base_v2()
         fais_obj = FAISS.from_texts(text_chunks, embeddings_obj)
+
         return fais_obj
 
 
