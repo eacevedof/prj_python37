@@ -20,11 +20,12 @@ class LangchainRepository(AbstractLangchainRepository):
         return LangchainRepository()
 
     def get_response_using_chain(self, langchain_documents: List[Document], question: str) -> str:
-        prompt_tpl = ChatPromptTemplate.from_template(question+" {context}")
+        str_tpl = question+" {context}"
+        prompt_tpl = ChatPromptTemplate.from_template(str_tpl)
         oai_llm = self._get_chat_openai()
         chain = create_stuff_documents_chain(llm=oai_llm, prompt=prompt_tpl)
-        respuesta = chain.invoke({"context": langchain_documents})
-        return respuesta
+        str_result = chain.invoke({"context": langchain_documents})
+        return str_result
 
     def get_response_using_chain_old(self, langchain_documents: List[Document], question: str) -> str:
         llm_obj = self._get_chat_openai()
@@ -34,6 +35,5 @@ class LangchainRepository(AbstractLangchainRepository):
             chain_type=LangchainTypeEnum.STUFF.value
         )
         respuesta = chain_obj.run(input_documents=langchain_documents, question=question)
-
         return respuesta
 
