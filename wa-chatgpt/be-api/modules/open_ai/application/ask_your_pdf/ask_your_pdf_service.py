@@ -63,7 +63,7 @@ class AskYourPdfService:
         vstorage = EmbeddingsRepository.get_instance().get_vector_storage_from_pdf_index(
             hf_embeddings=hf_embeddings
         )
-        search_result = vstorage.similarity_search(self._ask_your_pdf_dto.question, k=3)
+        search_result = vstorage.similarity_search(self._ask_your_pdf_dto.question, k=10)
 
 
         #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
