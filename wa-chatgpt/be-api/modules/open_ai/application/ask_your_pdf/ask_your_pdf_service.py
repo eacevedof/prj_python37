@@ -1,11 +1,8 @@
-from itertools import chain
-
-from config.paths import PATH_UPLOAD_FOLDER
-
 from typing import final
 from dataclasses import dataclass
-
 from langchain_community.vectorstores import FAISS
+
+from config.paths import PATH_UPLOAD_FOLDER
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_absolute_path, is_file
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
