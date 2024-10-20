@@ -35,9 +35,3 @@ class OpenAiRepository(AbstractOpenAiRepository):
         )
         # return chat_completion.choices[0].message["content"] error
         return chat_completion.choices[0].message.content
-
-    def get_response_using_chain(self, langchain_documents: List[Document], question: str) -> str:
-        llm_obj = self._get_chat_openai()
-        chain_obj = load_qa_chain(llm_obj, chain_type=LangchainTypeEnum.STUFF.value)
-        respuesta = chain_obj.run(input_documents=langchain_documents, question=question)
-        return respuesta
