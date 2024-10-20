@@ -9,6 +9,7 @@ from modules.lang_chain.domain.enums.langchain_embedding_enum import LangchainEm
 
 @final
 class KnowledgeRepository:
+
     @staticmethod
     def get_instance() -> "KnowledgeRepository":
         return KnowledgeRepository()
