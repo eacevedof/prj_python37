@@ -48,22 +48,34 @@ class AskYourPdfService:
         if not is_file(path_pdf_file):
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
+
+        #self.__pdf_chunks = EmbeddingsRepository.get_instance().get_chunks_from_text(pdf_text)
+
+
+        #question_embeddings = EmbeddingsRepository.get_instance().get_prompt_as_vectors(self._ask_your_pdf_dto.question)
+        #dimension = len(question_embeddings)
+        #Log.log_debug(f"question_embeddings dim: {dimension}", "__load_knowledge_database")
+
         pdf_text = get_text_from_pdf_file(path_pdf_file)
-        self.__pdf_chunks = EmbeddingsRepository.get_instance().get_chunks_from_text(pdf_text)
-
         pdf_chunks_documents = EmbeddingsRepository.get_instance().get_chunks_as_documents(pdf_text)
-        question_embeddings = EmbeddingsRepository.get_instance().get_prompt_as_vectors(self._ask_your_pdf_dto.question)
-        dimension = len(question_embeddings)
-        Log.log_debug(f"question_embeddings dim: {dimension}", "__load_knowledge_database")
+        cardinality = len(pdf_chunks_documents)
+        Log.log_debug(f"pdf_embeddings cardinality: {cardinality}", "__load_knowledge_database")
+        hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
+        EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, hf_embeddings)
 
-        EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, question_embeddings)
-
-        self.__fb_ai_search = EmbeddingsRepository.get_instance().get_embeddings_faiss(pdf_text)
-
+        #self.__fb_ai_search = EmbeddingsRepository.get_instance().get_embeddings_faiss(pdf_text)
         #PineconeRepository.get_instance().upsert_pdf_index(self.__fb_ai_search)
 
 
     def __get_response_from_chatgpt(self) -> str:
+        hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
+
+        vstorage = EmbeddingsRepository.get_instance().get_vector_storage_from_pdf_index(
+            hf_embeddings=hf_embeddings
+        )
+        search_result = vstorage.similarity_search(self._ask_your_pdf_dto.question, k=3)
+
+
         #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
         #    self._ask_your_pdf_dto.question
         #)
@@ -75,10 +87,10 @@ class AskYourPdfService:
         #     query = self._ask_your_pdf_dto.question,
         #     k = number_of_paragraphs
         # )
-        documents = EmbeddingsRepository.get_instance().get_documents_by_user_question(
-            user_question = self._ask_your_pdf_dto.question
-        )
+        # documents = EmbeddingsRepository.get_instance().get_documents_by_user_question(
+        #     user_question = self._ask_your_pdf_dto.question
+        # )
         return LangchainRepository.get_instance().get_response_using_chain(
-            langchain_documents = documents,
-            question = self._ask_your_pdf_dto.question
+            langchain_documents = search_result,
+             question = self._ask_your_pdf_dto.question
         )
