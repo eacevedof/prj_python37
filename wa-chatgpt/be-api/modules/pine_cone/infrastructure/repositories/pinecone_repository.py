@@ -16,8 +16,8 @@ class PineconeRepository(AbstractPineconeRepository):
 
 
     def upsert_pdf_index(self, documents: List[Document]) -> None:
-        pinecone = self._get_pinecone_by_index(PINECONE_INDEX_NAME)
-        pinecone.upsert(documents)
+        pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
+        pdf_index.upsert(documents)
 
 
 
