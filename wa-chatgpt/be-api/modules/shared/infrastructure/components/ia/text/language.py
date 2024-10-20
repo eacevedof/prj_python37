@@ -27,7 +27,8 @@ def __get_embedding_by_mpnet_base():
 
 def get_knowledge_base_from_text(text: str) -> FAISS:
     chunks = __get_chunks_from_text(text)
-    embeddings = __get_embedding_by_minilm()
+    # embeddings = __get_embedding_by_minilm()
+    embeddings = __get_embedding_by_mpnet_base()
     knowledge_base = FAISS.from_texts(chunks, embeddings)
     return knowledge_base
 
