@@ -49,7 +49,7 @@ class KnowledgeRepository:
 
     # https://youtu.be/iDrpdkIHMq8?t=549
     def __get_embedding_by_minilm(self) -> HuggingFaceEmbeddings:
-        transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2
+        transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2.value
         embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
         return embeddings
 
