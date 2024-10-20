@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import List, final
+from typing import List, final, Dict
 
 from config.config import PINECONE_INDEX_NAME
-from langchain_core.documents import Document
 
 from modules.pine_cone.infrastructure.repositories.abstract_pinecone_repository import AbstractPineconeRepository
 
@@ -15,9 +14,9 @@ class PineconeRepository(AbstractPineconeRepository):
         return PineconeRepository()
 
 
-    def upsert_pdf_index(self, documents: List[Document]) -> None:
+    def upsert_pdf_index(self, vectors: List[Dict]) -> None:
         pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
-        pdf_index.upsert(documents)
+        pdf_index.upsert(vectors)
 
 
 
