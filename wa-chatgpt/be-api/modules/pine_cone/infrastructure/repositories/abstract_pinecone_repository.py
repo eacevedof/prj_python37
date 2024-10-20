@@ -12,8 +12,4 @@ class AbstractPineconeRepository(ABC):
         )
 
     def _get_pinecone_by_index(self, db_index: str) -> Pinecone:
-        return Pinecone(
-            api_key=PINECONE_API_KEY,
-            host=PINECONE_SERVER,
-            index_api=db_index
-       )
+        return self._get_pinecone().Index(db_index)
