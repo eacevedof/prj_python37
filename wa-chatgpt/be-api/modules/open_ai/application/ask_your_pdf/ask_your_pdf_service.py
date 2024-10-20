@@ -50,6 +50,7 @@ class AskYourPdfService:
         pdf_text = get_text_from_pdf_file(path_pdf_file)
         self.__fb_ai_search = KnowledgeRepository.get_instance().get_embeddings_faiss(pdf_text)
 
+
     def __get_response_from_chatgpt(self) -> str:
         #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
         #    self._ask_your_pdf_dto.question
