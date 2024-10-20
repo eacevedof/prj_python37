@@ -22,7 +22,7 @@ from modules.lang_chain.infrastructure.components.knowledge_repository import Kn
 #@dataclass(frozen=True)
 class AskYourPdfService:
     _ask_your_pdf_dto: AskYourPdfDto
-    __knowledge_base: FAISS
+    __fb_ai_search: FAISS
 
     @staticmethod
     def get_instance() -> "AskYourPdfService":
@@ -53,11 +53,11 @@ class AskYourPdfService:
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
         pdf_text = get_text_from_pdf_file(path_pdf_file)
-        self.__knowledge_base = KnowledgeRepository.get_instance().get_knowledge_base_from_text(pdf_text)
+        self.__fb_ai_search = KnowledgeRepository.get_instance().get_knowledge_base_from_text(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
         number_of_paragraphs = 10
-        docs = self.__knowledge_base.similarity_search(
+        docs = self.__fb_ai_search.similarity_search(
             self._ask_your_pdf_dto.question,
             number_of_paragraphs
         )
