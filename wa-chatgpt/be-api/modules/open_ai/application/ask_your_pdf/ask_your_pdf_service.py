@@ -48,13 +48,13 @@ class AskYourPdfService:
         if not is_file(path_pdf_file):
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
-
-        pdf_text = get_text_from_pdf_file(path_pdf_file)
-        pdf_chunks_documents = EmbeddingsRepository.get_instance().get_chunks_as_documents(pdf_text)
-        cardinality = len(pdf_chunks_documents)
-        Log.log_debug(f"pdf_embeddings cardinality: {cardinality}", "__load_knowledge_database")
-        hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
-        EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, hf_embeddings)
+        #
+        # pdf_text = get_text_from_pdf_file(path_pdf_file)
+        # pdf_chunks_documents = EmbeddingsRepository.get_instance().get_chunks_as_documents(pdf_text)
+        # cardinality = len(pdf_chunks_documents)
+        # Log.log_debug(f"pdf_embeddings cardinality: {cardinality}", "__load_knowledge_database")
+        # hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
+        # EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, hf_embeddings)
 
 
     def __get_response_from_chatgpt(self) -> str:
