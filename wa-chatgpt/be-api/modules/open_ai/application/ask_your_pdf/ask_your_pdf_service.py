@@ -1,3 +1,5 @@
+from itertools import chain
+
 from config.paths import PATH_UPLOAD_FOLDER
 
 from typing import final
@@ -13,9 +15,8 @@ from modules.open_ai.application.ask_your_pdf.ask_your_pdf_dto import AskYourPdf
 from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourPdfDto
 
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
-from modules.shared.infrastructure.components.ia.text.language import get_knowledge_base_from_text
-from modules.open_ai.infrastructure.repositories.langchain_repository import LangchainRepository
-
+from modules.lang_chain.infrastructure.repositories.langchain_repository import LangchainRepository
+from modules.lang_chain.infrastructure.components.knowledge_repository import KnowledgeRepository
 
 @final
 #@dataclass(frozen=True)
@@ -52,7 +53,7 @@ class AskYourPdfService:
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
         pdf_text = get_text_from_pdf_file(path_pdf_file)
-        self.__knowledge_base = get_knowledge_base_from_text(pdf_text)
+        self.__knowledge_base = KnowledgeRepository.get_instance().get_knowledge_base_from_text(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
         number_of_paragraphs = 10
