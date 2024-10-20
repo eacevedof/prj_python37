@@ -23,8 +23,22 @@ class PineconeRepository(AbstractPineconeRepository):
         pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
         pdf_index.delete(filter)
 
+
     def delete_all(self) -> None:
         pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
         pdf_index.delete(delete_all=True)
+
+
+    def get_vectors_from_pdf_index(self) -> None:
+        pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
+        pdf_index.query(
+            namespace="example-namespace",
+            vector=[0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3],
+            filter={
+                "genre": {"$eq": "documentary"}
+            },
+            top_k=3,
+            include_values=True
+        )
 
 

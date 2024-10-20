@@ -13,6 +13,7 @@ from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourP
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
 from modules.lang_chain.infrastructure.repositories.langchain_repository import LangchainRepository
 from modules.lang_chain.infrastructure.repositories.knowledge_repository import KnowledgeRepository
+from modules.pine_cone.infrastructure.repositories.pinecone_repository import PineconeRepository
 
 @final
 class AskYourPdfService:
@@ -50,6 +51,12 @@ class AskYourPdfService:
         self.__fb_ai_search = KnowledgeRepository.get_instance().get_embeddings_faiss(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
+        prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
+            self._ask_your_pdf_dto.question
+        )
+        prompt_size = len(prompt_vectors)
+        Log.log_debug(f"prompt_size: {prompt_size}", "__get_response_from_chatgpt")
+
         number_of_paragraphs = 50
         documents = self.__fb_ai_search.similarity_search(
             query = self._ask_your_pdf_dto.question,
