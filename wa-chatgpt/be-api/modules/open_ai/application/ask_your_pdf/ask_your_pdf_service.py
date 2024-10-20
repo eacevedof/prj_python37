@@ -51,16 +51,19 @@ class AskYourPdfService:
         self.__fb_ai_search = KnowledgeRepository.get_instance().get_embeddings_faiss(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
-        prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
-            self._ask_your_pdf_dto.question
-        )
-        prompt_size = len(prompt_vectors)
-        Log.log_debug(f"prompt_size: {prompt_size}", "__get_response_from_chatgpt")
+        #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
+        #    self._ask_your_pdf_dto.question
+        #)
+        #prompt_size = len(prompt_vectors)
+        #Log.log_debug(f"prompt_size: {prompt_size}", "__get_response_from_chatgpt")
 
-        number_of_paragraphs = 50
-        documents = self.__fb_ai_search.similarity_search(
-            query = self._ask_your_pdf_dto.question,
-            k = number_of_paragraphs
+        # number_of_paragraphs = 50
+        # documents = self.__fb_ai_search.similarity_search(
+        #     query = self._ask_your_pdf_dto.question,
+        #     k = number_of_paragraphs
+        # )
+        documents = KnowledgeRepository.get_instance().get_documents_by_user_question(
+            user_question = self._ask_your_pdf_dto.question
         )
         return LangchainRepository.get_instance().get_response_using_chain(
             langchain_documents = documents,
