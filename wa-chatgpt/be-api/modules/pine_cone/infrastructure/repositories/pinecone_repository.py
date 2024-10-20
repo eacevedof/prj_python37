@@ -19,5 +19,12 @@ class PineconeRepository(AbstractPineconeRepository):
         pdf_index.upsert(vectors)
 
 
+    def delete_by_filter(self, filter: Dict) -> None:
+        pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
+        pdf_index.delete(filter)
+
+    def delete_all(self) -> None:
+        pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
+        pdf_index.delete(delete_all=True)
 
 
