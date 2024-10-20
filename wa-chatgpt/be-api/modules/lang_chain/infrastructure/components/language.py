@@ -2,7 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-from modules.open_ai.domain.enums.langchain_embedding_enum import LangchainEmbeddingEnum
+from modules.lang_chain.domain.enums.langchain_embedding_enum import LangchainEmbeddingEnum
 
 def __get_chunks_from_text(text: str) -> list[str]:
     splitter = RecursiveCharacterTextSplitter(
@@ -23,7 +23,6 @@ def __get_embedding_by_mpnet_base():
     transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2
     embeddings = HuggingFaceEmbeddings(model_name = transformer_name)
     return embeddings
-
 
 def get_knowledge_base_from_text(text: str) -> FAISS:
     chunks = __get_chunks_from_text(text)
