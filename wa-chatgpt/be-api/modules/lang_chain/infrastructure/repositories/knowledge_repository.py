@@ -1,5 +1,8 @@
 from typing import final
 
+import numpy as np
+from torch import Tensor
+from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -18,10 +21,16 @@ class KnowledgeRepository:
         text_chunks = self.__get_chunks_from_text(large_text)
         # embeddings = __get_embedding_by_minilm()
         embeddings_obj = self.__get_embeddings_obj_by_mpnet_base_v2()
+
         fais_obj = FAISS.from_texts(text_chunks, embeddings_obj)
 
         return fais_obj
 
+    def get_prompt_as_vectors(self, prompt: str) ->  list[Tensor] | np.ndarray | Tensor:
+        transformer = SentenceTransformer(
+            model_name_or_path=LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2.value
+        )
+        return transformer.encode(prompt)
 
     def __get_chunks_from_text(self, text: str) -> list[str]:
         splitter = RecursiveCharacterTextSplitter(
@@ -32,8 +41,9 @@ class KnowledgeRepository:
         return splitter.split_text(text)
 
     def __get_embeddings_obj_by_mpnet_base_v2(self) -> HuggingFaceEmbeddings:
-        transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2
-        embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
+        embeddings = HuggingFaceEmbeddings(
+            model_name=LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2.value
+        )
         return embeddings
 
 
