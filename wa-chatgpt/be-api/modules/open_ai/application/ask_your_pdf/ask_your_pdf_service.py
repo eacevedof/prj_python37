@@ -56,7 +56,7 @@ class AskYourPdfService:
         self.__fb_ai_search = KnowledgeRepository.get_instance().get_faiss_obj_from_text(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
-        number_of_paragraphs = 10
+        number_of_paragraphs = 50
         docs = self.__fb_ai_search.similarity_search(
             self._ask_your_pdf_dto.question,
             number_of_paragraphs
