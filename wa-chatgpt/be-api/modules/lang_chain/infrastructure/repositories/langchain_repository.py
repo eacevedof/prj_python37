@@ -10,7 +10,6 @@ from modules.lang_chain.infrastructure.repositories.abstract_langchain_repositor
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-
 @final
 @dataclass(frozen=True)
 class LangchainRepository(AbstractLangchainRepository):
@@ -27,7 +26,7 @@ class LangchainRepository(AbstractLangchainRepository):
         str_result = chain.invoke({"context": langchain_documents})
         return str_result
 
-    def get_response_using_chain_old(self, langchain_documents: List[Document], question: str) -> str:
+    def __get_response_using_chain_old(self, langchain_documents: List[Document], question: str) -> str:
         llm_obj = self._get_chat_openai()
 
         chain_obj = load_qa_chain(
@@ -36,4 +35,3 @@ class LangchainRepository(AbstractLangchainRepository):
         )
         respuesta = chain_obj.run(input_documents=langchain_documents, question=question)
         return respuesta
-

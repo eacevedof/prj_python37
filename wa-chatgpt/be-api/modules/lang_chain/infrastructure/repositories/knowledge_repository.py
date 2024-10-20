@@ -1,12 +1,14 @@
 from typing import final
-
 import numpy as np
 from torch import Tensor
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain.vectorstores import Pinecone
+from langchain_core.documents import Document
 
+from config.config import PINECONE_INDEX_NAME
 from modules.lang_chain.domain.enums.langchain_embedding_enum import LangchainEmbeddingEnum
 
 
@@ -52,6 +54,16 @@ class KnowledgeRepository:
         transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2.value
         embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
         return embeddings
+
+
+    def get_documents_by_user_question(self, user_question: str) -> list[Document]:
+        embeddings = self.__get_embeddings_obj_by_mpnet_base_v2()
+        vector_store = Pinecone.from_existing_index(PINECONE_INDEX_NAME, embeddings)
+        return vector_store.similarity_search(
+            query=user_question,
+            top_k=3
+        )
+
 
 
 
