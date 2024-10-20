@@ -47,7 +47,7 @@ class AskYourPdfService:
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
         pdf_text = get_text_from_pdf_file(path_pdf_file)
-        self.__fb_ai_search = KnowledgeRepository.get_instance().get_faiss_obj_from_text(pdf_text)
+        self.__fb_ai_search = KnowledgeRepository.get_instance().get_embeddings_faiss(pdf_text)
 
     def __get_response_from_chatgpt(self) -> str:
         number_of_paragraphs = 50
