@@ -1,8 +1,9 @@
 from abc import ABC
 from openai import OpenAI
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
+
 from config.config import OPENAI_API_KEY
-from open_ai.infrastructure.enums.open_ai_model_enum import OpenAiModelEnum
+from modules.open_ai.infrastructure.enums.open_ai_model_enum import OpenAiModelEnum
 
 
 class AbstractOpenAiRepository(ABC):
