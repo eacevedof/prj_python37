@@ -51,11 +51,11 @@ class AskYourPdfService:
 
     def __get_response_from_chatgpt(self) -> str:
         number_of_paragraphs = 50
-        document_list = self.__fb_ai_search.similarity_search(
-            self._ask_your_pdf_dto.question,
-            number_of_paragraphs
+        documents = self.__fb_ai_search.similarity_search(
+            query = self._ask_your_pdf_dto.question,
+            k = number_of_paragraphs
         )
         return LangchainRepository.get_instance().get_response_using_chain(
-            langchain_documents = document_list,
+            langchain_documents = documents,
             question = self._ask_your_pdf_dto.question
         )
