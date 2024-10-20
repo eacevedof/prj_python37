@@ -13,6 +13,14 @@ class KnowledgeRepository:
     def get_instance() -> "KnowledgeRepository":
         return KnowledgeRepository()
 
+    def get_faiss_obj_from_text(self, large_text: str) -> FAISS:
+        text_chunks = self.__get_chunks_from_text(large_text)
+        # embeddings = __get_embedding_by_minilm()
+        embeddings_obj = self.__get_embeddings_obj_by_mpnet_base_v2()
+        fais_obj = FAISS.from_texts(text_chunks, embeddings_obj)
+        return fais_obj
+
+
     def __get_chunks_from_text(self, text: str) -> list[str]:
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=800,
@@ -21,23 +29,18 @@ class KnowledgeRepository:
         )
         return splitter.split_text(text)
 
-    # https://youtu.be/iDrpdkIHMq8?t=549
-    def __get_embedding_by_minilm(self):
-        transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2
-        embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
-        return embeddings
-
-    def __get_embedding_by_mpnet_base(self):
+    def __get_embeddings_obj_by_mpnet_base_v2(self) -> HuggingFaceEmbeddings:
         transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2
         embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
         return embeddings
 
-    def get_knowledge_base_from_text(self, text: str) -> FAISS:
-        chunks = self.__get_chunks_from_text(text)
-        # embeddings = __get_embedding_by_minilm()
-        embeddings = self.__get_embedding_by_mpnet_base()
-        knowledge_base = FAISS.from_texts(chunks, embeddings)
-        return knowledge_base
+
+    # https://youtu.be/iDrpdkIHMq8?t=549
+    def __get_embedding_by_minilm(self) -> HuggingFaceEmbeddings:
+        transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2
+        embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
+        return embeddings
+
 
 
 
