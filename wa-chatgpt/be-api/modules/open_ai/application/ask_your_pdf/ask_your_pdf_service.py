@@ -12,7 +12,7 @@ from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourP
 
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
 from modules.lang_chain.infrastructure.repositories.langchain_repository import LangchainRepository
-from modules.lang_chain.infrastructure.repositories.knowledge_repository import KnowledgeRepository
+from modules.lang_chain.infrastructure.repositories.embeddings_repository import EmbeddingsRepository
 from modules.pine_cone.infrastructure.repositories.pinecone_repository import PineconeRepository
 
 @final
@@ -20,6 +20,7 @@ class AskYourPdfService:
 
     _ask_your_pdf_dto: AskYourPdfDto
     __fb_ai_search: FAISS
+    __pdf_chunks: list[str]
 
     @staticmethod
     def get_instance() -> "AskYourPdfService":
@@ -48,7 +49,18 @@ class AskYourPdfService:
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
         pdf_text = get_text_from_pdf_file(path_pdf_file)
-        self.__fb_ai_search = KnowledgeRepository.get_instance().get_embeddings_faiss(pdf_text)
+        self.__pdf_chunks = EmbeddingsRepository.get_instance().get_chunks_from_text(pdf_text)
+
+        pdf_chunks_documents = EmbeddingsRepository.get_instance().get_chunks_as_documents(pdf_text)
+        question_embeddings = EmbeddingsRepository.get_instance().get_prompt_as_vectors(self._ask_your_pdf_dto.question)
+        dimension = len(question_embeddings)
+        Log.log_debug(f"question_embeddings dim: {dimension}", "__load_knowledge_database")
+
+        EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, question_embeddings)
+
+        self.__fb_ai_search = EmbeddingsRepository.get_instance().get_embeddings_faiss(pdf_text)
+
+        #PineconeRepository.get_instance().upsert_pdf_index(self.__fb_ai_search)
 
 
     def __get_response_from_chatgpt(self) -> str:
@@ -63,7 +75,7 @@ class AskYourPdfService:
         #     query = self._ask_your_pdf_dto.question,
         #     k = number_of_paragraphs
         # )
-        documents = KnowledgeRepository.get_instance().get_documents_by_user_question(
+        documents = EmbeddingsRepository.get_instance().get_documents_by_user_question(
             user_question = self._ask_your_pdf_dto.question
         )
         return LangchainRepository.get_instance().get_response_using_chain(
