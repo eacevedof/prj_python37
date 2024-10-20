@@ -22,7 +22,7 @@ class PineconeRepository(AbstractPineconeRepository):
     def get_response_using_chain(self, langchain_documents: List[Document], question: str) -> str:
         str_tpl = question+" {context}"
         prompt_tpl = ChatPromptTemplate.from_template(str_tpl)
-        oai_llm = self._get_chat_openai()
+        oai_llm = self._get_pinecone()
         chain = create_stuff_documents_chain(llm=oai_llm, prompt=prompt_tpl)
         str_result = chain.invoke({"context": langchain_documents})
         return str_result
