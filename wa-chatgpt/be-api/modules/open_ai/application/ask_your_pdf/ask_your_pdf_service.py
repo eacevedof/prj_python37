@@ -1,5 +1,4 @@
 from typing import final
-from dataclasses import dataclass
 from langchain_community.vectorstores import FAISS
 
 from config.paths import PATH_UPLOAD_FOLDER
@@ -16,7 +15,6 @@ from modules.lang_chain.infrastructure.repositories.langchain_repository import 
 from modules.lang_chain.infrastructure.repositories.knowledge_repository import KnowledgeRepository
 
 @final
-#@dataclass(frozen=True)
 class AskYourPdfService:
 
     _ask_your_pdf_dto: AskYourPdfDto
