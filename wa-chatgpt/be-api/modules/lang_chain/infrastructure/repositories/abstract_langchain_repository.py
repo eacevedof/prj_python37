@@ -1,5 +1,5 @@
 from abc import ABC
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from config.config import OPENAI_API_KEY
 from modules.open_ai.infrastructure.enums.open_ai_model_enum import OpenAiModelEnum
