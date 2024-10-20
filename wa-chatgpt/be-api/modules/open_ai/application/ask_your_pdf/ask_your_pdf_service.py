@@ -29,10 +29,8 @@ class AskYourPdfService:
         return AskYourPdfService()
 
     def invoke(self, ask_your_pdf_dto: AskYourPdfDto) -> AskedYourPdfDto:
-
         self._ask_your_pdf_dto = ask_your_pdf_dto
         self.__fail_if_wrong_input()
-
         self.__load_knowledge_database()
 
         message = self.__get_response_from_chatgpt()
