@@ -1,7 +1,7 @@
 from typing import final
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from modules.lang_chain.domain.enums.langchain_embedding_enum import LangchainEmbeddingEnum
