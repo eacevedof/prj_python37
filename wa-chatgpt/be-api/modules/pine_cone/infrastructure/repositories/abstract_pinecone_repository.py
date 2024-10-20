@@ -1,6 +1,7 @@
 from abc import ABC
+from ast import Index
 
-from config.config import PINECONE_API_KEY, PINECONE_SERVER, PINECONE_INDEX_NAME
+from config.config import PINECONE_API_KEY, PINECONE_SERVER
 from pinecone import Pinecone
 
 class AbstractPineconeRepository(ABC):
@@ -11,5 +12,5 @@ class AbstractPineconeRepository(ABC):
             host=PINECONE_SERVER
         )
 
-    def _get_pinecone_by_index(self, db_index: str) -> Pinecone:
-        return self._get_pinecone().Index(db_index)
+    def _get_index_obj_by_name(self, db_index_name: str) -> Index:
+        return self._get_pinecone().Index(db_index_name)
