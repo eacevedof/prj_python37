@@ -5,8 +5,7 @@ from torch import Tensor
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_community.vectorstores import Pinecone
+from langchain_community.vectorstores import FAISS, Pinecone
 from langchain_core.documents import Document
 
 from config.config import PINECONE_INDEX_NAME
@@ -19,6 +18,13 @@ class EmbeddingsRepository:
     @staticmethod
     def get_instance() -> "EmbeddingsRepository":
         return EmbeddingsRepository()
+
+
+    def get_vector_storage_from_pdf_index(self, hf_embeddings: HuggingFaceEmbeddings) -> Pinecone:
+        return Pinecone.from_existing_index(
+            index_name=PINECONE_INDEX_NAME,
+            embedding=hf_embeddings
+        )
 
 
     def get_chunks_from_text(self, large_text: str) -> list[str]:
@@ -43,7 +49,7 @@ class EmbeddingsRepository:
     def get_embeddings_faiss(self, large_text: str) -> FAISS:
         text_chunks = self.get_chunks_from_text(large_text)
         # embeddings = __get_embedding_by_minilm()
-        embeddings_obj = self.__get_embeddings_obj_by_mpnet_base_v2()
+        embeddings_obj = self.get_embeddings_obj_by_mpnet_base_v2()
         fais_obj = FAISS.from_texts(text_chunks, embeddings_obj)
         return fais_obj
 
@@ -54,7 +60,7 @@ class EmbeddingsRepository:
         return transformer.encode(prompt)
 
 
-    def __get_embeddings_obj_by_mpnet_base_v2(self) -> HuggingFaceEmbeddings:
+    def get_embeddings_obj_by_mpnet_base_v2(self) -> HuggingFaceEmbeddings:
         embeddings = HuggingFaceEmbeddings(
             model_name=LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2.value
         )
@@ -62,14 +68,14 @@ class EmbeddingsRepository:
 
 
     # https://youtu.be/iDrpdkIHMq8?t=549
-    def __get_embedding_by_minilm(self) -> HuggingFaceEmbeddings:
+    def get_embedding_by_minilm(self) -> HuggingFaceEmbeddings:
         transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2.value
         embeddings = HuggingFaceEmbeddings(model_name=transformer_name)
         return embeddings
 
 
     def get_documents_by_user_question(self, user_question: str) -> list[Document]:
-        embeddings = self.__get_embeddings_obj_by_mpnet_base_v2()
+        embeddings = self.get_embeddings_obj_by_mpnet_base_v2()
         vector_store = Pinecone.from_existing_index(PINECONE_INDEX_NAME, embeddings)
 
         number_of_paragraphs = 10
