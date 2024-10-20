@@ -2,6 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
+from modules.open_ai.domain.enums.langchain_embedding_enum import LangchainEmbeddingEnum
 
 def __get_chunks_from_text(text: str) -> list[str]:
     splitter = RecursiveCharacterTextSplitter(
@@ -14,7 +15,12 @@ def __get_chunks_from_text(text: str) -> list[str]:
 
 # https://youtu.be/iDrpdkIHMq8?t=549
 def __get_embedding_by_minilm():
-    transformer_name = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MINILM_L12_V2
+    embeddings = HuggingFaceEmbeddings(model_name = transformer_name)
+    return embeddings
+
+def __get_embedding_by_mpnet_base():
+    transformer_name = LangchainEmbeddingEnum.PARAPHRASE_MULTILINGUAL_MPNET_BASE_V2
     embeddings = HuggingFaceEmbeddings(model_name = transformer_name)
     return embeddings
 
