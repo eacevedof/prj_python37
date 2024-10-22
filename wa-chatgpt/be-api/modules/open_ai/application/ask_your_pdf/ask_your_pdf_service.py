@@ -88,6 +88,6 @@ class AskYourPdfService:
         # para las respuestas raras hay q revisar:
         # https://api.python.langchain.com/en/latest/chains/langchain.chains.combine_documents.stuff.create_stuff_documents_chain.html
         return LangchainRepository.get_instance().get_response_using_chain(
-            langchain_documents = search_result,
+            docs_context = search_result,
             question = self._ask_your_pdf_dto.question
         )
