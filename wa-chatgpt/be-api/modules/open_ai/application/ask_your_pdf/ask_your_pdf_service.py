@@ -63,7 +63,11 @@ class AskYourPdfService:
         vstorage = EmbeddingsRepository.get_instance().get_vector_storage_from_pdf_index(
             hf_embeddings=hf_embeddings
         )
-        search_result = vstorage.similarity_search(self._ask_your_pdf_dto.question, k=20)
+        number_of_paragraphs = 20
+        search_result = vstorage.similarity_search(
+            query=self._ask_your_pdf_dto.question,
+            k=number_of_paragraphs
+        )
 
 
         #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
@@ -85,5 +89,5 @@ class AskYourPdfService:
         # https://api.python.langchain.com/en/latest/chains/langchain.chains.combine_documents.stuff.create_stuff_documents_chain.html
         return LangchainRepository.get_instance().get_response_using_chain(
             langchain_documents = search_result,
-             question = self._ask_your_pdf_dto.question
+            question = self._ask_your_pdf_dto.question
         )

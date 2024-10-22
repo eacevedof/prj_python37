@@ -36,8 +36,9 @@ class EmbeddingsRepository:
         return splitter.split_text(large_text)
 
     def get_chunks_as_documents(self, large_text: str) -> list[Document]:
+        paragraphs = 800
         splitter = RecursiveCharacterTextSplitter(
-            chunk_size=800,
+            chunk_size=paragraphs,
             chunk_overlap=100,
             length_function=len
         )
