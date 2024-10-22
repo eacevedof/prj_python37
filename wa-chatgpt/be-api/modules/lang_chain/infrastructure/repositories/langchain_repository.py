@@ -18,19 +18,22 @@ class LangchainRepository(AbstractLangchainRepository):
     def get_instance() -> "LangchainRepository":
         return LangchainRepository()
 
-    def get_response_using_chain(self, langchain_documents: List[Document], question: str) -> str:
+    def get_response_using_chain(self, docs_context: List[Document], question: str) -> str:
         str_tpl = question+" {context}"
-        prompt_tpl = ChatPromptTemplate.from_template(str_tpl)
-        oai_llm = self._get_chat_openai()
-        chain = create_stuff_documents_chain(llm=oai_llm, prompt=prompt_tpl)
-        str_result = chain.invoke({"context": langchain_documents})
+        # prompt_tpl = ChatPromptTemplate.from_template(str_tpl)
+        prompt_tpl = ChatPromptTemplate.from_messages(
+            [("system", question+":\n\n{context}")]
+        )
+        openai_llm = self._get_chat_openai()
+        chain = create_stuff_documents_chain(llm=openai_llm, prompt=prompt_tpl)
+        str_result = chain.invoke({"context": docs_context})
         return str_result
 
     def __get_response_using_chain_old(self, langchain_documents: List[Document], question: str) -> str:
-        llm_obj = self._get_chat_openai()
+        openai_llm = self._get_chat_openai()
 
         chain_obj = load_qa_chain(
-            llm = llm_obj,
+            llm = openai_llm,
             chain_type=LangchainTypeEnum.STUFF.value
         )
         respuesta = chain_obj.run(input_documents=langchain_documents, question=question)
