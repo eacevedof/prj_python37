@@ -18,7 +18,7 @@ class FormUserSignupView:
         self.__text_username = TextField(label="Username", text_align=ft.TextAlign.LEFT, width=300)
         self.__text_password = TextField(password=True, label="Password", text_align=ft.TextAlign.LEFT, width=300)
         self.__chk_agree = Checkbox(label="I agree to the terms and conditions", value=False)
-        self.__btn_signup = ElevatedButton(text="Signup", disabled=False, width=300)
+        self.__btn_signup = ElevatedButton(text="Signup", disabled=True, width=300)
 
         self.__configure_input_events()
 
@@ -32,7 +32,8 @@ class FormUserSignupView:
                     ],
                     alignment=ft.MainAxisAlignment.CENTER
                 )
-            ]
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
         ))
 
     def __configure_input_events(self) -> None:
@@ -43,7 +44,7 @@ class FormUserSignupView:
 
     def __validate_input(self, event: ft.ControlEvent) -> None:
         self.__btn_signup.disabled = True
-        if all([self.__text_username, self.__text_password, self.__chk_agree]):
+        if all([self.__text_username.value, self.__text_password.value, self.__chk_agree.value]):
             self.__btn_signup.disabled = False
 
         self.__page.update()
@@ -53,6 +54,8 @@ class FormUserSignupView:
         print("password:", self.__text_password.value)
         self.__page.clean()
         self.__page.add(Row(
-            controls=[Text(value=f"User {self.__text_username.value} created successfully", text_align=ft.TextAlign.CENTER, size=20)],
+            controls=[
+                Text(value=f"User {self.__text_username.value} created successfully", text_align=ft.TextAlign.CENTER, size=20)
+            ],
             alignment=ft.MainAxisAlignment.CENTER
         ))
