@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import final
 import flet as ft
 from flet import TextField, Checkbox, ElevatedButton, Row, Text
@@ -5,6 +6,7 @@ from flet_core import Column
 
 
 @final
+# @dataclass(frozen=True)
 class FormUserSignupView:
     def __init__(self, page: ft.Page) -> None:
         self.__page = page
