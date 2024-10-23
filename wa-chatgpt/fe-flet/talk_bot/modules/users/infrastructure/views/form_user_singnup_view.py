@@ -1,6 +1,8 @@
 from typing import final
 import flet as ft
 from flet import TextField, Checkbox, ElevatedButton, Row, Text
+from flet_core import Column
+
 
 @final
 class FormUserSignupView:
@@ -20,10 +22,18 @@ class FormUserSignupView:
 
         self.__configure_input_events()
 
-        page.add(self.__text_username)
-        page.add(self.__text_password)
-        page.add(self.__chk_agree)
-        page.add(self.__btn_signup)
+        page.add(Row(
+            controls=[
+                Column([
+                        self.__text_username,
+                        self.__text_password,
+                        self.__chk_agree,
+                        self.__btn_signup
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER
+                )
+            ]
+        ))
 
     def __configure_input_events(self) -> None:
         self.__text_username.on_change = self.__validate_input
