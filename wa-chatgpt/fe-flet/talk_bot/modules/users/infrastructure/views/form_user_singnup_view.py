@@ -35,20 +35,20 @@ class FormUserSignupView:
 
 
     def __configure_input_events(self) -> None:
-        self.__text_username.on_change = self.validate_input
-        self.__text_password.on_change = self.validate_input
-        self.__chk_agree.on_change = self.validate_input
-        self.__btn_signup.on_click = self.on_submit
+        self.__text_username.on_change = self.__validate_input
+        self.__text_password.on_change = self.__validate_input
+        self.__chk_agree.on_change = self.__validate_input
+        self.__btn_signup.on_click = self.__on_submit
 
 
-    def validate_input(self, event: ft.ControlEvent) -> None:
+    def __validate_input(self, event: ft.ControlEvent) -> None:
         self.__btn_signup.disabled = True
         if all([self.__text_username, self.__text_password, self.__chk_agree]):
             self.__btn_signup.disabled = False
 
         self.__page.update()
 
-    def on_submit(self, event: ft.ControlEvent) -> None:
+    def __on_submit(self, event: ft.ControlEvent) -> None:
         print("username:", self.__text_username.value)
         print("password:", self.__text_password.value)
         self.__page.clean()
