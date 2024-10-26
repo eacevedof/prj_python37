@@ -31,6 +31,9 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         result = results[0].get("exists", "f")
         return result == "t"
 
+    def does_migrations_table_exist(self) -> bool:
+        return self.does_table_exist(self.__MIGRATIONS_TABLE_NAME)
+
     def create_migrations_table(self) -> None:
         sql = self.__get_migration_file_content(self.__MIGRATIONS_FILE)
         self._query(sql)
