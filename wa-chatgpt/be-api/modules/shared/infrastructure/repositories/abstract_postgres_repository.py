@@ -36,3 +36,4 @@ class AbstractPostgresRepository(ABC):
                 cursor.close()
             if conn:
                 conn.close()
+            raise e
