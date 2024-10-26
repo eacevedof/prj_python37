@@ -15,15 +15,12 @@ class RunMigrationsService:
             MigrationsPostgresRepository.get_instance()
         )
 
-    def invoke(self) -> None:
+    def invoke(self) -> list[str]:
         self.__create_migrations_table()
-        # self.__run_migrations()
+        return self.__migrations_repository.run_migrations()
 
     def __create_migrations_table(self) -> None:
         if self.__migrations_repository.does_migrations_table_exist():
             return
         self.__migrations_repository.create_migrations_table()
 
-    def __run_migrations(self) -> None:
-        for migration_file in self.__migrations_repository.get_migrations_files():
-            self.__migrations_repository.run_from_file(migration_file)
