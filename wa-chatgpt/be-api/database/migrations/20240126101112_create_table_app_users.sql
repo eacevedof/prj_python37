@@ -8,7 +8,7 @@ CREATE TABLE app_users
     updated_by VARCHAR(10) DEFAULT NULL,
     deleted_at TIMESTAMP DEFAULT NULL,
     deleted_by VARCHAR(10) DEFAULT NULL,
-    autoid SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_name VARCHAR(100) NOT NULL,
     user_login VARCHAR(100) NOT NULL UNIQUE,
     user_password VARCHAR(100) NOT NULL,
