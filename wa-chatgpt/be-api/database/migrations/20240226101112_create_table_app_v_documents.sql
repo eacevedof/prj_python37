@@ -11,25 +11,28 @@ CREATE TABLE app_v_documents (
 );
 
 -- funcion seno que busca documentos similares
-create or replace function match_documents (
+DROP FUNCTION IF EXISTS match_documents(vector(384), float, int);
+
+CREATE OR REPLACE FUNCTION match_documents
+(
   query_embedding vector(384),
   match_threshold float,
   match_count int
 )
-returns table (
+RETURNS TABLE (
   id bigint,
   title text,
   body text,
   similarity float
 )
 language sql stable
-as $$
+AS $$
     SELECT
         app_v_documents.id,
         app_v_documents.title,
         app_v_documents.body,
         1 - (app_v_documents.embedding <=> query_embedding) as similarity
-    FROM documents
+    FROM app_v_documents
     WHERE 1 - (app_v_documents.embedding <=> query_embedding) > match_threshold
     ORDER BY (app_v_documents.embedding <=> query_embedding) ASC
     LIMIT match_count;
