@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import final
 
@@ -10,7 +11,9 @@ from modules.shared.infrastructure.repositories.abstract_postgres_repository imp
 class MigrationsPostgresRepository(AbstractPostgresRepository):
 
     __MIGRATIONS_TABLE_NAME = "migrations"
-    __MIGRATIONS_FILE = f"{PATH_DATABASE_FOLDER}/migrations/00000_create_table_migrations.sql"
+    __MIGRATIONS_FOLDER = f"{PATH_DATABASE_FOLDER}/migrations"
+    __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/00000_create_table_migrations.sql"
+
 
     @staticmethod
     def get_instance() -> "MigrationsPostgresRepository":
@@ -41,3 +44,6 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
     def __get_migration_file_content(self) -> str:
         with open(self.__MIGRATIONS_FILE, "r") as file:
             return file.read()
+
+    def get_migrations_files(self) -> list[str]:
+        files = os.listdir(self.__MIGRATIONS_FOLDER)
