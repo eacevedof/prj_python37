@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS migrations
+;
 CREATE TABLE migrations
 (
     id SERIAL PRIMARY KEY,
