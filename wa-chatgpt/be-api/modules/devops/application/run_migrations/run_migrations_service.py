@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import final
-from langchain_community.vectorstores import FAISS
 
-from config.paths import PATH_UPLOAD_FOLDER
 
 @final
 @dataclass
