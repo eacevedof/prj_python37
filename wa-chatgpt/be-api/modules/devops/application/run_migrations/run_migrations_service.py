@@ -25,13 +25,5 @@ class RunMigrationsService:
         self.__migrations_repository.create_migrations_table()
 
     def __run_migrations(self) -> None:
-        for migration_file in self.__get_migration_files():
-            self.__run_migration(migration_file)
-
-    def __get_migration_files(self) -> list[str]:
-        return os.listdir(self.__migrations_folder)
-
-    def __run_migration(self, migration_file: str) -> None:
-        migration_file_path = f"{self.__migrations_folder}/{migration_file}"
-        sql = self.__get_migration_file_content(migration_file_path)
-        self.__migrations_repository.query(sql)
+        for migration_file in self.__migrations_repository.get_migrations_files():
+            self.__migrations_repository.run_from_file(migration_file)
