@@ -28,16 +28,16 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         results = self._query(sql)
         if not results:
             return False
-        result = results[0].get("exists", "f")
-        return result == "t"
+
+        return results[0][0]
 
     def does_migrations_table_exist(self) -> bool:
         return self.does_table_exist(self.__MIGRATIONS_TABLE_NAME)
 
     def create_migrations_table(self) -> None:
-        sql = self.__get_migration_file_content(self.__MIGRATIONS_FILE)
-        self._query(sql)
+        sql = self.__get_migration_file_content()
+        self._execute(sql)
 
-    def __get_migration_file_content(self, file_path) -> str:
-        with open(file_path, "r") as file:
+    def __get_migration_file_content(self) -> str:
+        with open(self.__MIGRATIONS_FILE, "r") as file:
             return file.read()
