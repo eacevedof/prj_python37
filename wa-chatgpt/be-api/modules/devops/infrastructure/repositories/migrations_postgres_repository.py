@@ -1,11 +1,16 @@
 from dataclasses import dataclass
 from typing import final
 
+from config.paths import PATH_DATABASE_FOLDER
+
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
 @final
 @dataclass(frozen=True)
 class MigrationsPostgresRepository(AbstractPostgresRepository):
+
+    __MIGRATIONS_TABLE_NAME = "migrations"
+    __MIGRATIONS_FILE = f"{PATH_DATABASE_FOLDER}/migrations/00000_create_table_migrations.sql"
 
     @staticmethod
     def get_instance() -> "MigrationsPostgresRepository":
@@ -25,3 +30,11 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
             return False
         result = results[0].get("exists", "f")
         return result == "t"
+
+    def create_migrations_table(self) -> None:
+        sql = self.__get_migration_file_content(self.__MIGRATIONS_FILE)
+        self._query(sql)
+
+    def __get_migration_file_content(self, file_path) -> str:
+        with open(file_path, "r") as file:
+            return file.read()

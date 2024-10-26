@@ -1,18 +1,24 @@
 from dataclasses import dataclass
 from typing import final
 
+from config.paths import PATH_DATABASE_FOLDER
+from modules.devops.infrastructure.repositories.migrations_postgres_repository import MigrationsPostgresRepository
 
 @final
 @dataclass
 class RunMigrationsService:
-    page: ft.Page
-    __text_username: TextField = field(init=False)
-    __text_password: TextField = field(init=False)
-    __chk_agree: Checkbox = field(init=False)
-    __btn_signup: ElevatedButton = field(init=False)
+    __migrations_folder: str
+    __migrations_table_file: str
+    __migrations_repository: MigrationsPostgresRepository
 
     def __post_init__(self):
-        self.page.title = "Signup"
+        __migrations_folder = f"{PATH_DATABASE_FOLDER}/migrations"
+        __migrations_table_file = "00000_create_table_migrations.sql"
+        __migrations_repository = MigrationsPostgresRepository.get_instance()
 
+    def invoke(self) -> None:
+        pass
 
-    def __configure_input_events(self) -> None:
+    def __create_migrations_table(self) -> None:
+        if self.__migrations_repository.does_table_exist("migrations"):
+            return
