@@ -1,7 +1,6 @@
 -- example of supabase:
 -- https://supabase.com/docs/guides/ai/vector-columns?queryGroups=database-method&database-method=sql
 DROP TABLE IF EXISTS app_v_documents;
-;
 
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE app_v_documents (
