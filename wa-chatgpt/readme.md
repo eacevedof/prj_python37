@@ -56,7 +56,7 @@ from main import app_flask as application
 
 ## start project
 ```sh
-cd be-api
+cd C:\projects\prj_python37\wa-chatgpt\be-api
 cd fe-flet
 # create virtualenv
 python -m venv venv
