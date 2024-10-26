@@ -10,9 +10,10 @@ from modules.shared.infrastructure.repositories.abstract_postgres_repository imp
 @dataclass(frozen=True)
 class MigrationsPostgresRepository(AbstractPostgresRepository):
 
+    __CREATE_MIGRATION_TABLE_FILE = "00000_create_table_migrations.sql"
     __MIGRATIONS_TABLE_NAME = "migrations"
     __MIGRATIONS_FOLDER = f"{PATH_DATABASE_FOLDER}/migrations"
-    __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/00000_create_table_migrations.sql"
+    __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/{__CREATE_MIGRATION_TABLE_FILE}"
 
     __results: list[str]
 
@@ -54,6 +55,8 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
 
         for sql_file in files:
             if not sql_file.endswith(".sql"):
+                continue
+            if sql_file == self.__CREATE_MIGRATION_TABLE_FILE:
                 continue
             if sql_file in run_migrations:
                 continue
