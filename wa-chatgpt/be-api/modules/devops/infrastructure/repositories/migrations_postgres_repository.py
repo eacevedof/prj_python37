@@ -45,5 +45,31 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         with open(self.__MIGRATIONS_FILE, "r") as file:
             return file.read()
 
-    def get_migrations_files(self) -> list[str]:
+    def run_migrations(self) -> None:
         files = os.listdir(self.__MIGRATIONS_FOLDER)
+        batch_number = self.__get_last_migration_batch() or 1
+        for file in files:
+            if not file.endswith(".sql"):
+                continue
+            sql = self.__get_file_content(file)
+            self._execute(sql)
+            self.__save_migration(file)
+
+    def __get_file_content(self, file) -> str:
+        with open(f"{self.__MIGRATIONS_FOLDER}/{file}", "r") as file:
+            return file.read()
+
+    def __save_migration(self, migration_name: str, batch_number: int) -> None:
+        sql = f"""
+        INSERT INTO {self.__MIGRATIONS_TABLE_NAME} (migration, batch) VALUES ('{migration_name}', {batch_number});
+        """
+        self._execute(sql)
+
+    def __get_last_migration_batch(self) -> None | int:
+        sql = f"""
+        SELECT batch FROM {self.__MIGRATIONS_TABLE_NAME} ORDER BY id DESC LIMIT 1;
+        """
+        results = self._query(sql)
+        if not results:
+            return None
+        return int(results[0][0])
