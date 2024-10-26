@@ -14,10 +14,11 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
     __MIGRATIONS_FOLDER = f"{PATH_DATABASE_FOLDER}/migrations"
     __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/00000_create_table_migrations.sql"
 
+    __results: list[str]
 
     @staticmethod
     def get_instance() -> "MigrationsPostgresRepository":
-        return MigrationsPostgresRepository()
+        return MigrationsPostgresRepository([])
 
     def does_table_exist(self, table_name) -> bool:
         sql = f"""
@@ -45,15 +46,24 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         with open(self.__MIGRATIONS_FILE, "r") as file:
             return file.read()
 
-    def run_migrations(self) -> None:
+    def run_migrations(self) -> list[str]:
         files = os.listdir(self.__MIGRATIONS_FOLDER)
+        files = sorted(files)
         batch_number = self.__get_last_migration_batch() or 1
-        for file in files:
-            if not file.endswith(".sql"):
+        run_migrations = self.__get_all_migrations()
+
+        for sql_file in files:
+            if not sql_file.endswith(".sql"):
                 continue
-            sql = self.__get_file_content(file)
+            if sql_file in run_migrations:
+                continue
+            sql = self.__get_file_content(sql_file)
             self._execute(sql)
-            self.__save_migration(file)
+            self.__save_migration(sql_file, batch_number)
+            self.__results.append(sql_file)
+
+        return self.__results
+
 
     def __get_file_content(self, file) -> str:
         with open(f"{self.__MIGRATIONS_FOLDER}/{file}", "r") as file:
@@ -73,3 +83,10 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         if not results:
             return None
         return int(results[0][0])
+
+    def __get_all_migrations(self) -> list[str]:
+        sql = f"""
+        SELECT migration FROM {self.__MIGRATIONS_TABLE_NAME} ORDER BY id ASC;
+        """
+        results = self._query(sql)
+        return [result[0] for result in results]

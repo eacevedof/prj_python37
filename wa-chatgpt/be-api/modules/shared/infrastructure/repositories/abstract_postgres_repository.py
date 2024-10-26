@@ -28,8 +28,11 @@ class AbstractPostgresRepository(ABC):
             cursor = conn.cursor()
             cursor.execute(sql)
             conn.commit()
-        except Exception as e:
-            Log.log_error(e, "abstract_postgres_repository._execute")
-        finally:
             cursor.close()
             conn.close()
+        except Exception as e:
+            Log.log_error(e, "abstract_postgres_repository._execute")
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
