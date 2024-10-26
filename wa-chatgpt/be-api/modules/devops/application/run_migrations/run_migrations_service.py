@@ -16,11 +16,8 @@ class RunMigrationsService:
         )
 
     def invoke(self) -> list[str]:
-        try:
-            self.__create_migrations_table()
-            return self.__migrations_repository.run_migrations()
-        except Exception as e:
-            print(e)
+        self.__create_migrations_table()
+        return self.__migrations_repository.run_migrations()
 
     def __create_migrations_table(self) -> None:
         if self.__migrations_repository.does_migrations_table_exist():

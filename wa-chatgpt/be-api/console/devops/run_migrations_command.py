@@ -18,8 +18,11 @@ class RunMigrationsCommand:
         return RunMigrationsCommand()
 
     def invoke(self) -> None:
-        result = RunMigrationsService.get_instance().invoke()
-        pprint(result)
+        try:
+            result = RunMigrationsService.get_instance().invoke()
+            pprint(result)
+        except Exception as e:
+            print(e)
 
 if __name__ == "__main__":
     RunMigrationsCommand.get_instance().invoke()
