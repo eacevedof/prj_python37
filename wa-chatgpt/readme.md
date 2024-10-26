@@ -123,3 +123,6 @@ TypeError: Flask.__call__() missing 1 required positional argument: 'start_respo
 #### embedding
 - [pregunta a tu pdf con chatgpt](https://www.youtube.com/watch?v=iDrpdkIHMq8)
   - [repo](https://github.com/NechuBM/preguntaDOC/blob/main/)
+
+#### Langchain
+- [agregar memoria](https://youtu.be/lY4aGKpD-90?t=1852)
