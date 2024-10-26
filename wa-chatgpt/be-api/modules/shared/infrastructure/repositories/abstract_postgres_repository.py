@@ -18,6 +18,8 @@ class AbstractPostgresRepository(ABC):
         cursor = conn.cursor()
         cursor.execute(sql)
         results = cursor.fetchall()
+        cursor.close()
+        conn.close()
         return results
 
     def _execute(self, sql: str) -> None:
