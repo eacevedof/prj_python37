@@ -1,10 +1,10 @@
 from abc import ABC
 import psycopg2
-from psycopg2._psycopg.connection import Connection
+
 
 class AbstractPostgresRepository(ABC):
 
-    def __get_connection(self) -> Connection:
+    def __get_connection(self) -> object:
         return psycopg2.connect(
             dbname="db_vector",
             user="postgress",

@@ -4,6 +4,11 @@ from typing import final
 
 from modules.devops.application.run_migrations.run_migrations_service import RunMigrationsService
 
+"""
+cd C:\projects\prj_python37\wa-chatgpt\be-api
+python -m console.devops.run_migrations_command
+"""
+
 @final
 @dataclass(frozen=True)
 class RunMigrationsCommand:
