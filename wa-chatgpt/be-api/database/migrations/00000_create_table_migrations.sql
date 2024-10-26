@@ -1,0 +1,8 @@
+CREATE TABLE migrations
+(
+    id SERIAL PRIMARY KEY,
+    migration VARCHAR(255) NOT NULL,
+    batch INT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+;
