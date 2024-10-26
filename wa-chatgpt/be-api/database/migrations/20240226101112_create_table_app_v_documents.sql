@@ -1,6 +1,7 @@
 -- example of supabase:
 -- https://supabase.com/docs/guides/ai/vector-columns?queryGroups=database-method&database-method=sql
-DROP TABLE IF EXISTS app_v_documents;
+DROP TABLE IF EXISTS app_v_documents
+;
 
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE app_v_documents (
@@ -8,7 +9,8 @@ CREATE TABLE app_v_documents (
   title text not null,
   body text not null,
   embedding vector(384)
-);
+)
+;
 
 -- funcion seno que busca documentos similares
 DROP FUNCTION IF EXISTS match_documents(vector(384), float, int);
