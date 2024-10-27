@@ -18,7 +18,7 @@ CREATE TABLE app_users
     user_email VARCHAR(100) NOT NULL UNIQUE,
     user_is_enabled INT DEFAULT 1,
     user_misc JSONB DEFAULT '{}',
-    user_tmp VARCHAR(1000) DEFAULT NULL
+    user_etl VARCHAR(1000) DEFAULT NULL
 )
 ;
 
