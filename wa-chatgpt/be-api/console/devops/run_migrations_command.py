@@ -8,7 +8,6 @@ from modules.devops.application.run_migrations.run_migrations_service import Run
 cd C:/projects/prj_python37/wa-chatgpt/be-api
 python -m console.devops.run_migrations_command
 """
-
 @final
 @dataclass(frozen=True)
 class RunMigrationsCommand:
@@ -23,6 +22,7 @@ class RunMigrationsCommand:
             pprint(result)
         except Exception as e:
             print(e)
+
 
 if __name__ == "__main__":
     RunMigrationsCommand.get_instance().invoke()
