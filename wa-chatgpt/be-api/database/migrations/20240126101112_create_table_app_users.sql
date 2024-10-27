@@ -14,7 +14,7 @@ CREATE TABLE app_users
     user_login VARCHAR(100) NOT NULL UNIQUE,
     user_password VARCHAR(100) NOT NULL,
     user_email VARCHAR(100) NOT NULL UNIQUE,
-    is_enabled INT
+    is_enabled INT DEFAULT 1
 )
 ;
 
