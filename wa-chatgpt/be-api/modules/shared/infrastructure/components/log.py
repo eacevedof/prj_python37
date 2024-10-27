@@ -46,7 +46,7 @@ class Log:
         if title:
             content = f"{title}\n\t{content}"
 
-        logging.info(f"{content}")
+        #logging.info(f"{content}")
         Log.__log_in_file(content, "debug")
 
 
@@ -59,7 +59,7 @@ class Log:
         if title:
             content = f"{title}\n\t{content}"
 
-        logging.info(f"{content}")
+        #logging.info(f"{content}")
         Log.__log_in_file(content, "sql")
 
 
@@ -88,5 +88,5 @@ class Log:
         content.append(f"ex message:\n\t{str(throwable)}")
         #content.append(f"ex trace:\n\t{''.join(throwable.__traceback__.format())}")
         content = "\n".join(content)
-        logging.error(f"{content}")
+        #logging.error(f"{content}")
         Log.__log_in_file(content, "error")
