@@ -1,5 +1,6 @@
 -- example of supabase:
 -- https://supabase.com/docs/guides/ai/vector-columns?queryGroups=database-method&database-method=sql
+-- https://supabase.com/blog/openai-embeddings-postgres-vector?utm_source=youtube&utm_medium=social&utm_term=tips&utm_content=pG95GO0Kcxs
 DROP TABLE IF EXISTS app_v_documents
 ;
 
