@@ -7,7 +7,7 @@ TODAY = datetime.today().strftime("%Y-%m-%d")
 
 def file_put_contents(path_file: str, str_data:str) -> None:
     try:
-        print(path_file)
+        # print(path_file)
         with open(path_file, "a") as f:
             f.write(str_data)
     except IOError:
@@ -46,7 +46,7 @@ class Log:
         if title:
             content = f"{title}\n\t{content}"
 
-        #logging.info(f"{content}")
+        logging.info(f"{content}")
         Log.__log_in_file(content, "debug")
 
 
@@ -57,9 +57,8 @@ class Log:
 
         content = sql
         if title:
-            content = f"{title}\n\t{content}"
-
-        #logging.info(f"{content}")
+            content = f"-- {title}\n\t{content}"
+        logging.info(f"{content}")
         Log.__log_in_file(content, "sql")
 
 
@@ -88,5 +87,5 @@ class Log:
         content.append(f"ex message:\n\t{str(throwable)}")
         #content.append(f"ex trace:\n\t{''.join(throwable.__traceback__.format())}")
         content = "\n".join(content)
-        #logging.error(f"{content}")
+        logging.error(f"{content}")
         Log.__log_in_file(content, "error")
