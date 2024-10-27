@@ -8,9 +8,11 @@ fe-flet/venv
 be-api/storage/logs/*.log
 be-api/storage/logs/*.sql
 be-api/storage/uploads/*
+be-api/storage/cache/*
 
 .idea
 */config/config.py
+*/config/database.py
 fe-vue/node_modules
 fe-vue/dist
 fe-vue/.env
