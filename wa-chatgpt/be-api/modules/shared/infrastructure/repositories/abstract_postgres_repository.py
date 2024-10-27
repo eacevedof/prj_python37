@@ -4,18 +4,18 @@ import psycopg2
 from config.database import PostgresDb
 from modules.shared.infrastructure.components.log import Log
 
-class AbstractPostgresRepository(ABC):
 
+class AbstractPostgresRepository(ABC):
     __connection = None
     __cursor = None
 
     def __get_connection(self) -> object:
         return psycopg2.connect(
-            dbname = PostgresDb.dbname,
-            user = PostgresDb.user,
-            password = PostgresDb.password,
-            host = PostgresDb.host,
-            port = PostgresDb.port
+            dbname=PostgresDb.dbname,
+            user=PostgresDb.user,
+            password=PostgresDb.password,
+            host=PostgresDb.host,
+            port=PostgresDb.port
         )
 
     def _query(self, sql: str) -> list:
