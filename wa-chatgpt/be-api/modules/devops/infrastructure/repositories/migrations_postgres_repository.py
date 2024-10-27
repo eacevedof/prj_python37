@@ -17,7 +17,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
     __MIGRATIONS_FOLDER = f"{PATH_DATABASE_FOLDER}/migrations"
     __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/{__CREATE_MIGRATION_TABLE_FILE}"
 
-    __datetimer: DateTimer
+    __date_timer: DateTimer
 
     @staticmethod
     def get_instance() -> "MigrationsPostgresRepository":
@@ -71,7 +71,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
             Log.log_sql(sql, sql_file)
             self._execute(sql)
             self.__save_migration(sql_file, batch_number)
-            result = f"[{self.__datetimer.get_now_ymd_his()}] {sql_file}"
+            result = f"[{self.__date_timer.get_now_ymd_his()}] {sql_file}"
             results.append(result)
 
         return results
