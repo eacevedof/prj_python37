@@ -8,5 +8,7 @@ PATH_PROJECT_ROOT = __get_absolute_path(os.path.join(PATH_OF_PATHS_FILE, "../../
 
 PATH_DATABASE_FOLDER = __get_absolute_path(os.path.join(PATH_PROJECT_ROOT, "database"))
 PATH_STORAGE_FOLDER = __get_absolute_path(os.path.join(PATH_PROJECT_ROOT, "storage"))
+
 PATH_LOGS_FOLDER = __get_absolute_path(os.path.join(PATH_STORAGE_FOLDER, "logs"))
 PATH_UPLOAD_FOLDER = __get_absolute_path(os.path.join(PATH_STORAGE_FOLDER, "uploads"))
+PATH_CACHE_FOLDER = __get_absolute_path(os.path.join(PATH_STORAGE_FOLDER, "cache"))

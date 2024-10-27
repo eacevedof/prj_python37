@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from typing import final
 import logging
 from datetime import datetime
 from modules.shared.infrastructure.components.var_export import dump
@@ -13,7 +15,8 @@ def file_put_contents(path_file: str, str_data:str) -> None:
     except IOError:
         logging.error(f"__file_put_contents: error writing to file: {path_file}")
 
-
+@final
+@dataclass(frozen=True)
 class Log:
 
     @staticmethod
