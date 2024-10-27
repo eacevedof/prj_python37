@@ -1,4 +1,6 @@
 from abc import ABC
+from typing import Dict
+
 import psycopg2
 
 from config.database import PostgresDb
@@ -18,15 +20,19 @@ class AbstractPostgresRepository(ABC):
             port=PostgresDb.port
         )
 
-    def _query(self, sql: str) -> list:
+    def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()
         self.__cursor = self.__connection.cursor()
         self.__cursor.execute(sql)
-        results = self.__cursor.fetchall()
+        columns = [desc[0] for desc in self.__cursor.description]
+        results = [
+            {columns[i]: value for i, value in enumerate(row)}
+            for row in self.__cursor.fetchall()
+        ]
         self.__close_all()
         return results
 
-    def _execute(self, sql: str) -> None:
+    def _command(self, sql: str) -> None:
         try:
             self.__connection = self.__get_connection()
             self.__cursor = self.__connection.cursor()
