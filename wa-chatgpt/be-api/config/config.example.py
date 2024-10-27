@@ -7,6 +7,7 @@ PINECONE_SERVER = "https://yyy-xxxx.pinecone.io"
 PINECONE_API_KEY = ":)"
 PINECONE_INDEX_NAME = "pdf"
 
+ENCRYPT_SALT = ":)"
 
 import os
 os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
