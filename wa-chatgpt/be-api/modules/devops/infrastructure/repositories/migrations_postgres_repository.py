@@ -4,6 +4,8 @@ from typing import final
 
 from config.paths import PATH_DATABASE_FOLDER
 
+from modules.shared.infrastructure.components.log import Log
+from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
 @final
@@ -15,11 +17,13 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
     __MIGRATIONS_FOLDER = f"{PATH_DATABASE_FOLDER}/migrations"
     __MIGRATIONS_FILE = f"{__MIGRATIONS_FOLDER}/{__CREATE_MIGRATION_TABLE_FILE}"
 
-    __results: list[str]
+    __datetimer: DateTimer
 
     @staticmethod
     def get_instance() -> "MigrationsPostgresRepository":
-        return MigrationsPostgresRepository([])
+        return MigrationsPostgresRepository(
+            DateTimer.get_instance()
+        )
 
     def does_table_exist(self, table_name) -> bool:
         sql = f"""
@@ -40,6 +44,8 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         return self.does_table_exist(self.__MIGRATIONS_TABLE_NAME)
 
     def create_migrations_table(self) -> None:
+        if self.does_migrations_table_exist():
+            return
         sql = self.__get_migration_file_content()
         self._execute(sql)
 
@@ -53,6 +59,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         batch_number = self.__get_last_migration_batch() or 1
         run_migrations = self.__get_all_migrations()
 
+        results = []
         for sql_file in files:
             if not sql_file.endswith(".sql"):
                 continue
@@ -61,11 +68,13 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
             if sql_file in run_migrations:
                 continue
             sql = self.__get_file_content(sql_file)
+            Log.log_sql(sql, sql_file)
             self._execute(sql)
             self.__save_migration(sql_file, batch_number)
-            self.__results.append(sql_file)
+            result = f"[{self.__datetimer.get_now_ymd_his()}] {sql_file}"
+            results.append(result)
 
-        return self.__results
+        return results
 
 
     def __get_file_content(self, file) -> str:
