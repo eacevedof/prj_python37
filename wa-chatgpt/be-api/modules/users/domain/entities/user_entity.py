@@ -7,12 +7,13 @@ from dataclasses import dataclass
 class UserEntity:
 
     id: int|None
-    user_uuid: str
-    user_name: str
-    user_password: str
-    user_email: str
-    user_code: str
-    user_login: str
+    user_uuid: str|None
+    user_name: str|None
+    user_password: str|None
+    user_email: str|None
+    user_code: str|None
+    user_login: str|None
+    created_at: str|None
 
     @staticmethod
     def from_primitives(
@@ -22,7 +23,8 @@ class UserEntity:
         user_login: str,
         user_password: str,
         user_email: str,
-        user_code: str = None
+        user_code: str,
+        created_at: str
     ) -> 'UserEntity':
         user_uuid = str(user_uuid).strip()
         user_name = str(user_name).strip()
@@ -37,6 +39,7 @@ class UserEntity:
             user_password=user_password,
             user_email=user_email,
             user_code=user_code,
+            created_at=created_at
         )
 
     def login_with_email(self) -> None:

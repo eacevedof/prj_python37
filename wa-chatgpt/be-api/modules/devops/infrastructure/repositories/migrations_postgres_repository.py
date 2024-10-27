@@ -47,7 +47,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         if self.does_migrations_table_exist():
             return
         sql = self.__get_migration_file_content()
-        self._execute(sql)
+        self._command(sql)
 
     def __get_migration_file_content(self) -> str:
         with open(self.__MIGRATIONS_FILE, "r") as file:
@@ -69,7 +69,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
                 continue
             sql = self.__get_file_content(sql_file)
             Log.log_sql(sql, sql_file)
-            self._execute(sql)
+            self._command(sql)
             self.__save_migration(sql_file, batch_number)
             result = f"[{self.__date_timer.get_now_ymd_his()}] {sql_file}"
             results.append(result)
@@ -85,7 +85,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         sql = f"""
         INSERT INTO {self.__MIGRATIONS_TABLE_NAME} (migration, batch) VALUES ('{migration_name}', {batch_number});
         """
-        self._execute(sql)
+        self._command(sql)
 
     def __get_last_migration_batch(self) -> None | int:
         sql = f"""

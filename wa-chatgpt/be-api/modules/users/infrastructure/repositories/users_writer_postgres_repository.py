@@ -36,4 +36,4 @@ class UsersWriterPostgresRepository(AbstractPostgresRepository):
         ('{user_uuid}', '{user_name}', '{user_login}' , '{user_password}', '{user_email}', '{user_code}', 1, '{created_at}');
         """
         Log.log_sql(sql, "create_user")
-        self._execute(sql)
+        self._command(sql)
