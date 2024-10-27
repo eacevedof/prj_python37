@@ -1,12 +1,9 @@
-import os
 from dataclasses import dataclass
 from typing import final
 
-from config.paths import PATH_DATABASE_FOLDER
-
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.uuider import Uuider
-from modules.users.domain.entities.create_user_entity import CreateUserEntity
+from modules.users.domain.entities.user_entity import UserEntity
 from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
@@ -24,7 +21,7 @@ class UsersPostgresRepository(AbstractPostgresRepository):
             Uuider.get_instance()
         )
 
-    def create_user(self, create_user_entity: CreateUserEntity) -> None:
+    def create_user(self, create_user_entity: UserEntity) -> None:
         user_uuid = self.__uuider.get_id_with_prefix("usr")
         user_name = create_user_entity.user_name
         user_password = create_user_entity.user_password

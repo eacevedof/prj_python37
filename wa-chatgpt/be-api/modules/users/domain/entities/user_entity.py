@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @final
 @dataclass(frozen=True)
-class CreateUserEntity:
+class UserEntity:
     user_uuid: str
     user_name: str
     user_password: str
@@ -18,13 +18,13 @@ class CreateUserEntity:
         user_password: str,
         user_email: str,
         user_code: str = None
-    ) -> 'CreateUserEntity':
+    ) -> 'UserEntity':
         user_uuid = str(user_uuid).strip()
         user_name = str(user_name).strip()
         user_password = str(user_password).strip()
         user_email = str(user_email).strip()
         user_code = str(user_code).strip()
-        return CreateUserEntity(
+        return UserEntity(
             user_uuid=user_uuid,
             user_name=user_name,
             user_password=user_password,
