@@ -4,11 +4,12 @@ from dataclasses import dataclass
 
 @final
 @dataclass(frozen=True)
-class CreateUserDto:
+class CreateUserEntity:
+    user_uuid: str
     user_name: str
     user_password: str
     user_email: str
-    user_code: str = None
+    user_code: str
 
     @staticmethod
     def from_primitives(
@@ -16,13 +17,13 @@ class CreateUserDto:
         user_password: str,
         user_email: str,
         user_code: str = None
-    ) -> 'CreateUserDto':
+    ) -> 'CreateUserEntity':
 
         user_name = str(user_name).strip()
         user_password = str(user_password).strip()
         user_email = str(user_email).strip()
         user_code = str(user_code).strip()
-        return CreateUserDto(
+        return CreateUserEntity(
             user_name=user_name,
             user_password=user_password,
             user_email=user_email,
