@@ -14,9 +14,9 @@ CREATE TABLE app_users
     user_login VARCHAR(100) NOT NULL UNIQUE,
     user_password VARCHAR(100) NOT NULL,
     user_email VARCHAR(100) NOT NULL UNIQUE,
-    user_tmp VARCHAR(100) NOT NULL UNIQUE,
-    is_enabled INT DEFAULT 1,
-    user_misc JSONB DEFAULT '{}'
+    user_is_enabled INT DEFAULT 1,
+    user_misc JSONB DEFAULT '{}',
+    user_tmp VARCHAR(1000) DEFAULT NULL
 )
 ;
 
