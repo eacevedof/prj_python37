@@ -36,3 +36,5 @@ class CreateUserService:
         )
         user_entity.login_with_email()
         self.__users_repository.create_user(user_entity)
+
+        new_user = self.__users_repository.get_user_by_uuid(user_uuid)
