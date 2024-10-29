@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import final
-from modules.users.infrastructure.repositories.users_postgres_repository import UsersWriterPostgresRepository
+from modules.users.infrastructure.repositories.users_writer_postgres_repository import UsersWriterPostgresRepository
+from modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
 from shared.infrastructure.components.encrypter import Encrypter
 from shared.infrastructure.components.uuider import Uuider
 from users.application.create_user.create_user_dto import CreateUserDto
@@ -13,14 +14,16 @@ class CreateUserService:
 
     __uuider: Uuider
     __encrypter: Encrypter
-    __users_repository: UsersWriterPostgresRepository
+    __users_writer_repository: UsersWriterPostgresRepository
+    __users_reader_repository: UsersReaderPostgresRepository
 
     @staticmethod
     def get_instance() -> 'CreateUserService':
         return CreateUserService(
             Uuider.get_instance(),
             Encrypter.get_instance(),
-            UsersWriterPostgresRepository.get_instance()
+            UsersWriterPostgresRepository.get_instance(),
+            UsersReaderPostgresRepository.get_instance()
         )
 
     def invoke(self, create_user_dto: CreateUserDto) -> None:
@@ -35,6 +38,6 @@ class CreateUserService:
             user_code=create_user_dto.user_code
         )
         user_entity.login_with_email()
-        self.__users_repository.create_user(user_entity)
+        self.__users_writer_repository.create_user(user_entity)
 
-        new_user = self.__users_repository.get_user_by_uuid(user_uuid)
+        new_user = self.__users_reader_repository.get_user_by_uuid(user_entity)
