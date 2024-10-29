@@ -40,3 +40,6 @@ class DateTimer:
     def get_current_date_ymd(self) -> str:
         current_date = datetime.now()
         return current_date.strftime("%Y-%m-%d")
+
+    def get_datetime_to_ymd_his(self, obj_dt: datetime) -> str:
+        return obj_dt.strftime("%Y-%m-%d %H:%M:%S")
