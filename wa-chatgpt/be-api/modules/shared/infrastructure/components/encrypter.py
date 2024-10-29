@@ -15,5 +15,6 @@ class Encrypter:
 
     def get_encrypted(self, text: str) -> str:
         text_encode = text.encode("utf-8")
-        hashed_password = bcrypt.hashpw(text_encode, self.__SALT)
+        salt = self.__SALT.encode("utf-8")
+        hashed_password = bcrypt.hashpw(text_encode, salt)
         return hashed_password.decode("utf-8")
