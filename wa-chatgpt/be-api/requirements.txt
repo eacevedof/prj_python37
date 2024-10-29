@@ -9,3 +9,4 @@ langchain==0.3.4
 langchain-community==0.3.3
 faiss-cpu==1.8.0
 psycopg2==2.9.10
+bcrypt==4.2.0
