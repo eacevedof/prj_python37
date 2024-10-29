@@ -9,7 +9,7 @@ from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class MigrationsPostgresRepository(AbstractPostgresRepository):
 
     __CREATE_MIGRATION_TABLE_FILE = "00000_create_table_migrations.sql"
@@ -38,7 +38,7 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         if not results:
             return False
 
-        return results[0][0]
+        return results[0]["exists"]
 
     def does_migrations_table_exist(self) -> bool:
         return self.does_table_exist(self.__MIGRATIONS_TABLE_NAME)
