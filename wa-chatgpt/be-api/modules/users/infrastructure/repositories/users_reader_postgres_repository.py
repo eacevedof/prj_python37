@@ -8,7 +8,7 @@ from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class UsersReaderPostgresRepository(AbstractPostgresRepository):
 
     @staticmethod
@@ -19,17 +19,18 @@ class UsersReaderPostgresRepository(AbstractPostgresRepository):
         sql = f"""
         SELECT *
         FROM app_users 
-        WHERE 1
+        WHERE 1=1 
         AND user_uuid = '{create_user_entity.user_uuid}'
         """
         Log.log_sql(sql, "get_user_by_uuid")
         result = self._query(sql)
-        if (len(result) == 0):
+        if not result:
             return None
+
         return UserEntity.from_primitives(
-            user_uuid=result[0][0],
-            user_name=result[0][1],
-            user_password=result[0][2],
-            user_email=result[0][3],
-            user_code=result[0][4]
+            user_uuid=result[0].get("user_uuid"),
+            user_name=result[0].get("user_name"),
+            user_password=result[0].get("user_password"),
+            user_email=result[0].get("user_email"),
+            user_code=result[0].get("user_code"),
         )
