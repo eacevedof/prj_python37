@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @final
 @dataclass(frozen=True)
-class CreateUserDto:
+class CreatedUserDto:
 
     id: int
     user_uuid: str
@@ -24,13 +24,13 @@ class CreateUserDto:
         user_email: str,
         user_code: str,
         created_at: str
-    ) -> 'CreateUserDto':
+    ) -> 'CreatedUserDto':
 
         user_name = str(user_name).strip()
         user_email = str(user_email).strip()
         user_code = str(user_code).strip()
 
-        return CreateUserDto(
+        return CreatedUserDto(
             id=id,
             user_uuid=user_uuid,
             user_name=user_name,
