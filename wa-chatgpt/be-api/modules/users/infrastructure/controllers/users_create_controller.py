@@ -23,7 +23,7 @@ def invoke(http_request: Request) -> Response:
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
             "message": "open-ai-tr.create_user",
-            "data": {"user": created_user_dto.chat_response}
+            "data": {"user": created_user_dto}
         }).get_as_json_response()
 
     except CreateUserException as ex:
