@@ -21,3 +21,10 @@ class CreateUserException(AbstractDomainException):
             "users-tr.empty-email",
             HttpResponseCodeEnum.BAD_REQUEST.value
         )
+
+    @staticmethod
+    def empty_user_name() -> None:
+        raise CreateUserException(
+            "users-tr.empty-user-name",
+            HttpResponseCodeEnum.BAD_REQUEST.value
+        )
