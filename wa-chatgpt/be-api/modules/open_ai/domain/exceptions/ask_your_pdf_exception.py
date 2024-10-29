@@ -15,6 +15,6 @@ class AskYourPdfException(AbstractDomainException):
     @staticmethod
     def empty_question() -> None:
         raise AskYourPdfException(
-            "open-ai-tr.ticket-not-found",
+            "open-ai-tr.resource-not-found",
             HttpResponseCodeEnum.NOT_FOUND.value
         )

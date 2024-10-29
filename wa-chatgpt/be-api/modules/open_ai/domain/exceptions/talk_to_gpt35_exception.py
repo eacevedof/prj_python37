@@ -15,6 +15,6 @@ class TalkToGpt35Exception(AbstractDomainException):
     @staticmethod
     def empty_question() -> None:
         raise TalkToGpt35Exception(
-            "open-ai-tr.ticket-not-found",
+            "open-ai-tr.resource-not-found",
             HttpResponseCodeEnum.NOT_FOUND.value
         )
