@@ -32,11 +32,14 @@ class CreateUserService:
         user_password = self.__encrypter.get_encrypted(create_user_dto.user_password)
 
         user_entity = UserEntity.from_primitives(
+            id=None,
             user_uuid=user_uuid,
             user_name=create_user_dto.user_name,
             user_password=user_password,
             user_email=create_user_dto.user_email,
-            user_code=create_user_dto.user_code
+            user_code=create_user_dto.user_code,
+            user_login="",
+            created_at=""
         )
         user_entity.login_with_email()
         self.__users_writer_repository.create_user(user_entity)

@@ -8,7 +8,7 @@ from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class UsersWriterPostgresRepository(AbstractPostgresRepository):
 
     __date_timer: DateTimer

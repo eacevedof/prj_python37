@@ -8,6 +8,7 @@ from modules.shared.infrastructure.components.log import Log
 
 
 class AbstractPostgresRepository(ABC):
+
     __connection = None
     __cursor = None
 
