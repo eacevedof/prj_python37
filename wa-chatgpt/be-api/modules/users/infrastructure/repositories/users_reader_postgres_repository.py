@@ -27,10 +27,16 @@ class UsersReaderPostgresRepository(AbstractPostgresRepository):
         if not result:
             return None
 
+        created_at = DateTimer.get_instance().get_now_ymd_his(
+            result[0].get("created_at")
+        )
         return UserEntity.from_primitives(
+            id=result[0].get("id"),
             user_uuid=result[0].get("user_uuid"),
             user_name=result[0].get("user_name"),
+            user_login=result[0].get("user_login"),
             user_password=result[0].get("user_password"),
             user_email=result[0].get("user_email"),
             user_code=result[0].get("user_code"),
+            created_at=created_at
         )
