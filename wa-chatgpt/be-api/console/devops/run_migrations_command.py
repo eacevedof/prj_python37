@@ -21,6 +21,7 @@ class RunMigrationsCommand:
             result = RunMigrationsService.get_instance().invoke()
             pprint(result)
         except Exception as e:
+            print("Error: RunMigrationsCommand")
             print(e)
 
 
