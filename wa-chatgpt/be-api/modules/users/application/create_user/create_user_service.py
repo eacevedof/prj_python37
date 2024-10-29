@@ -10,7 +10,7 @@ from users.domain.entities.user_entity import UserEntity
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class CreateUserService:
 
     __uuider: Uuider
