@@ -46,8 +46,7 @@ class UpdateUserService:
             user_login="",
             created_at=""
         )
-        user_entity.login_with_email()
-        self.__users_writer_repository.update_user(user_entity)
+        self.__users_writer_repository.update_user_by_uuid(user_entity)
 
         new_user = self.__users_reader_repository.get_user_by_uuid(user_entity)
         return CreatedUserDto.from_primitives(
