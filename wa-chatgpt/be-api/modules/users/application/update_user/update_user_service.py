@@ -6,10 +6,9 @@ from modules.shared.infrastructure.components.uuider import Uuider
 from modules.users.application.update_user.update_user_dto import UpdateUserDto
 from modules.users.application.update_user.updated_user_dto import UpdatedUserDto
 from modules.users.domain.entities.user_entity import UserEntity
-from modules.users.domain.exceptions.update_user_exception import UpdateUserException
 from modules.users.infrastructure.repositories.users_writer_postgres_repository import UsersWriterPostgresRepository
 from modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
-
+from modules.users.domain.exceptions.update_user_exception import UpdateUserException
 
 @final
 @dataclass(frozen=False)
