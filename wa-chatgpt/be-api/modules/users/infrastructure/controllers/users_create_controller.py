@@ -8,13 +8,14 @@ from modules.users.application.create_user.create_user_dto import CreateUserDto
 from modules.users.application.create_user.create_user_service import CreateUserService
 from modules.users.domain.exceptions.create_user_exception import CreateUserException
 
+
 def invoke(http_request: Request) -> Response:
     try:
         create_user_dto = CreateUserDto.from_primitives(
-            user_name = http_request.form.get("user_name", ""),
-            user_password = http_request.form.get("user_password", ""),
-            user_email = http_request.form.get("user_email", ""),
-            user_code = http_request.form.get("user_code", "")
+            user_name=http_request.form.get("user_name", ""),
+            user_password=http_request.form.get("user_password", ""),
+            user_email=http_request.form.get("user_email", ""),
+            user_code=http_request.form.get("user_code", "")
         )
         created_user_dto = CreateUserService.get_instance().invoke(
             create_user_dto
