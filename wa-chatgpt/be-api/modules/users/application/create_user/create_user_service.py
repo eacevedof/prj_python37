@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from typing import final
+
+from modules.shared.infrastructure.components.encrypter import Encrypter
+from modules.shared.infrastructure.components.uuider import Uuider
 from modules.users.infrastructure.repositories.users_writer_postgres_repository import UsersWriterPostgresRepository
 from modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
-from shared.infrastructure.components.encrypter import Encrypter
-from shared.infrastructure.components.uuider import Uuider
-from users.application.create_user.create_user_dto import CreateUserDto
-from users.application.create_user.created_user_dto import CreatedUserDto
-from users.domain.entities.user_entity import UserEntity
-from users.domain.exceptions.create_user_exception import CreateUserException
+from modules.users.application.create_user.create_user_dto import CreateUserDto
+from modules.users.application.create_user.created_user_dto import CreatedUserDto
+from modules.users.domain.entities.user_entity import UserEntity
+from modules.users.domain.exceptions.create_user_exception import CreateUserException
 
 
 @final
