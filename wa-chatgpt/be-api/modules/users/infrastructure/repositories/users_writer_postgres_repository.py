@@ -59,6 +59,6 @@ class UsersWriterPostgresRepository(AbstractPostgresRepository):
         WHERE 1=1
         AND user_uuid = '{user_uuid}'
         """
-        Log.log_sql(sql, "create_user")
+        Log.log_sql(sql, "update_user")
         self._command(sql)
 
