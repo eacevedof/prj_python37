@@ -8,6 +8,7 @@ class ModulePathEnum(Enum):
     CHAT_GPT_ASK_QUESTION = "modules.open_ai.infrastructure.controllers.talk_to_gpt35_controller"
 
     USERS_CREATE_USER = "modules.users.infrastructure.controllers.create_user_controller"
+    USERS_UPDATE_USER = "modules.users.infrastructure.controllers.update_user_controller"
 
     HEALTH_CHECK = "modules.health_check.infrastructure.controllers.get_health_check_controller"
     DOCUMENTATION = "modules.api_doc.infrastructure.controllers.get_documentation_controller"
