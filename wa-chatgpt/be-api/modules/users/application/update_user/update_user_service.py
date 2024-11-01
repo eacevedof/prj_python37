@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from typing import final
+
+from modules.shared.infrastructure.components.encrypter import Encrypter
+from modules.shared.infrastructure.components.uuider import Uuider
+from modules.users.application.update_user.update_user_dto import UpdateUserDto
+from modules.users.application.update_user.updated_user_dto import UpdatedUserDto
+from modules.users.domain.entities.user_entity import UserEntity
+from modules.users.domain.exceptions.update_user_exception import UpdateUserException
 from modules.users.infrastructure.repositories.users_writer_postgres_repository import UsersWriterPostgresRepository
 from modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
-from shared.infrastructure.components.encrypter import Encrypter
-from shared.infrastructure.components.uuider import Uuider
-from users.application.update_user.update_user_dto import UpdateUserDto
-from users.application.update_user.created_user_dto import CreatedUserDto
-from users.domain.entities.user_entity import UserEntity
-from users.domain.exceptions.update_user_exception import UpdateUserException
 
 
 @final
@@ -28,7 +29,7 @@ class UpdateUserService:
             UsersReaderPostgresRepository.get_instance()
         )
 
-    def invoke(self, update_user_dto: UpdateUserDto) -> CreatedUserDto:
+    def invoke(self, update_user_dto: UpdateUserDto) -> UpdatedUserDto:
         self.__update_user_dto = update_user_dto
 
         self.__fail_if_wrong_input()
@@ -49,7 +50,7 @@ class UpdateUserService:
         self.__users_writer_repository.update_user_by_uuid(user_entity)
 
         new_user = self.__users_reader_repository.get_user_by_uuid(user_entity)
-        return CreatedUserDto.from_primitives(
+        return UpdatedUserDto.from_primitives(
             new_user.id,
             new_user.user_uuid,
             new_user.user_name,
