@@ -8,7 +8,7 @@ import nacl.pwhash
 @final
 class Hasher:
 
-    ENCRYPT_SALT = "huGA&64<IVoL!97<GAHo|89_"
+    ENCRYPT_SALT = "3`(<516`]w6'C~sGjB]<^!Dpu[9?6`"
     ENCRYPT_ALGORITHM = "AES-256-CBC"
     INITIALIZATION_VECTOR = "cdf86fc413278d46"
 
@@ -36,4 +36,4 @@ class Hasher:
         return ini_vector[:16]
 
     def does_password_match(self, hashed_password: str, plain_password: str) -> bool:
-        return sodium.crypto_pwhash_str_verify(hashed_password, plain_password)
+        return nacl.pwhash.verify(hashed_password.encode(), plain_password.encode())
