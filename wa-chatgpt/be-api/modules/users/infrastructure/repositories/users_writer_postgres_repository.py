@@ -3,9 +3,9 @@ from typing import final
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.uuider import Uuider
-from modules.users.domain.entities.user_entity import UserEntity
 from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
+from modules.users.domain.entities.user_entity import UserEntity
 
 @final
 @dataclass(frozen=False)
@@ -37,3 +37,53 @@ class UsersWriterPostgresRepository(AbstractPostgresRepository):
         """
         Log.log_sql(sql, "create_user")
         self._command(sql)
+
+    def update_user_by_uuid(self, update_user_entity: UserEntity) -> None:
+        user_uuid = update_user_entity.user_uuid
+        user_name = update_user_entity.user_name
+        user_login = update_user_entity.user_login
+        user_password = update_user_entity.user_password
+        user_email = update_user_entity.user_email
+        user_code = update_user_entity.user_code
+        updated_at = self.__date_timer.get_now_ymd_his()
+
+        sql = f"""
+        UPDATE app_users
+        SET 
+            user_name = '{user_name}', 
+            user_login = '{user_login}', 
+            user_password = '{user_password}', 
+            user_email = '{user_email}', 
+            user_code = '{user_code}', 
+            updated_at = '{updated_at}'
+        WHERE 1=1
+        AND user_uuid = '{user_uuid}'
+        """
+        Log.log_sql(sql, "update_user")
+        self._command(sql)
+
+
+    def delete_user_by_uuid(self, update_user_entity: UserEntity) -> None:
+        user_uuid = update_user_entity.user_uuid
+        user_name = update_user_entity.user_name
+        user_login = update_user_entity.user_login
+        user_password = update_user_entity.user_password
+        user_email = update_user_entity.user_email
+        user_code = update_user_entity.user_code
+        updated_at = self.__date_timer.get_now_ymd_his()
+
+        sql = f"""
+        UPDATE app_users
+        SET 
+            user_name = '{user_name}', 
+            user_login = '{user_login}', 
+            user_password = '{user_password}', 
+            user_email = '{user_email}', 
+            user_code = '{user_code}', 
+            updated_at = '{updated_at}'
+        WHERE 1=1
+        AND user_uuid = '{user_uuid}'
+        """
+        Log.log_sql(sql, "update_user")
+        self._command(sql)
+
