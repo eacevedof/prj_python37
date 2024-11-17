@@ -66,4 +66,12 @@ class CreateUserService:
         if not self.__create_user_dto.user_name:
             raise CreateUserException.empty_user_name()
 
+        user_name = self.__create_user_dto.user_name
+        user_entity = UserEntity.from_primitives(user_name=user_name)
+        user_entity = self.__users_reader_repository.get_user_by_user_name(user_entity)
+        if user_entity:
+            raise CreateUserException.user_name_already_exists()
+
+
+
 

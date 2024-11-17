@@ -28,3 +28,11 @@ class CreateUserException(AbstractDomainException):
             "users-tr.empty-user-name",
             HttpResponseCodeEnum.BAD_REQUEST.value
         )
+
+    @staticmethod
+    def user_name_already_exists() -> None:
+        raise CreateUserException(
+            "users-tr.user-name-already-exists",
+            HttpResponseCodeEnum.BAD_REQUEST.value
+        )
+

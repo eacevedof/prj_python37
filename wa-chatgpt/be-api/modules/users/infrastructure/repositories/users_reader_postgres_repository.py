@@ -41,3 +41,22 @@ class UsersReaderPostgresRepository(AbstractPostgresRepository):
             user_code=result[0].get("user_code"),
             created_at=created_at
         )
+
+
+    def get_user_by_user_name(self, create_user_entity: UserEntity) -> UserEntity|None:
+        user_name = create_user_entity.user_name
+        user_name = self._get_escaped_sql_string(user_name)
+        sql = f"""
+        SELECT id
+        FROM app_users 
+        WHERE 1=1 
+        AND user_name = '{user_name}'
+        """
+        Log.log_sql(sql, "get_user_by_user_name")
+        result = self._query(sql)
+        if not result:
+            return None
+
+        return UserEntity.from_primitives(
+            id=result[0].get("id")
+        )

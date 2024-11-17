@@ -51,3 +51,7 @@ class AbstractPostgresRepository(ABC):
 
         if self.__connection:
             self.__connection.close()
+
+    def _get_escaped_sql_string(self, string: str) -> str:
+        string = string.replace("\\", "\\\\")
+        return string.replace("'", "\\'")
