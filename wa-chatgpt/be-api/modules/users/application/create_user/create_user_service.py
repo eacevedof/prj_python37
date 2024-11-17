@@ -22,6 +22,7 @@ class CreateUserService:
     @staticmethod
     def get_instance() -> 'CreateUserService':
         return CreateUserService(
+            None,
             Uuider.get_instance(),
             Encrypter.get_instance(),
             UsersWriterPostgresRepository.get_instance(),
