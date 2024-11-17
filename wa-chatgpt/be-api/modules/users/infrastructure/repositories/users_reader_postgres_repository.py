@@ -42,28 +42,34 @@ class UsersReaderPostgresRepository(AbstractPostgresRepository):
             created_at=created_at
         )
 
-
-    def get_user_by_user_name(self, create_user_entity: UserEntity) -> UserEntity|None:
-        user_name = create_user_entity.user_name
-        user_name = self._get_escaped_sql_string(user_name)
+    def get_user_id_by_user_email(self, create_user_entity: UserEntity) -> UserEntity | None:
+        user_email = create_user_entity.user_email
+        user_email = self._get_escaped_sql_string(user_email)
         sql = f"""
         SELECT id
         FROM app_users 
         WHERE 1=1 
-        AND user_name = '{user_name}'
+        AND user_email = '{user_email}'
         """
-        Log.log_sql(sql, "get_user_by_user_name")
+        Log.log_sql(sql, "get_user_id_by_user_email")
         result = self._query(sql)
         if not result:
             return None
 
-        return UserEntity.from_primitives(
-            id=result[0].get("id"),
-            user_uuid="",
-            user_name="",
-            user_login="",
-            user_password="",
-            user_email="",
-            user_code="",
-            created_at=""
-        )
+        return UserEntity.from_primitives_dic({"id": result[0].get("id")})
+
+    def get_user_id_by_user_login(self, create_user_entity: UserEntity) -> UserEntity | None:
+        user_login = create_user_entity.user_login
+        user_login = self._get_escaped_sql_string(user_login)
+        sql = f"""
+        SELECT id
+        FROM app_users 
+        WHERE 1=1 
+        AND user_login = '{user_login}'
+        """
+        Log.log_sql(sql, "get_user_id_by_user_login")
+        result = self._query(sql)
+        if not result:
+            return None
+
+        return UserEntity.from_primitives_dic({"id": result[0].get("id")})
