@@ -25,6 +25,12 @@ pip install -r requirements.txt
 # uvicorn main:app --reload
 ```
 
+### commands
+```sh
+cd C:/projects/prj_python37/wa-chatgpt/be-api
+python -m console.devops.run_migrations_command
+```
+
 ### pythonanywhere:
 - https://help.pythonanywhere.com/pages/Flask/
 - https://www.pythonanywhere.com/user/eaf/files/var/www/eaf_pythonanywhere_com_wsgi.py?edit
