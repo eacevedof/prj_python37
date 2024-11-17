@@ -41,7 +41,7 @@ class AbstractPostgresRepository(ABC):
             self.__connection.commit()
             self.__close_all()
         except Exception as e:
-            Log.log_error(e, "abstract_postgres_repository._execute")
+            Log.log_exception(e, "abstract_postgres_repository._execute")
             self.__close_all()
             raise e
 
