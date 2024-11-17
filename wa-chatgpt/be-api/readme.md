@@ -25,6 +25,9 @@ pip install -r requirements.txt
 # uvicorn main:app --reload
 ```
 
+## postgres db:
+- https://github.com/eacevedof/prj_docker_lamp/tree/main/postgres
+
 ### commands
 ```sh
 cd C:/projects/prj_python37/wa-chatgpt/be-api
