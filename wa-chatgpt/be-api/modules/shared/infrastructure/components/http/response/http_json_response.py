@@ -35,7 +35,9 @@ class HttpJsonResponse:
         return "error"
 
     def get_as_json_response(self) -> Response:
-        return jsonify(self.__to_dict())
+        response = jsonify(self.__to_dict())
+        response.status_code = self.code
+        return response
 
     def __to_dict(self) -> Dict[str, Any]:
         return {

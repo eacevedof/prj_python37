@@ -1,3 +1,4 @@
+import traceback
 from dataclasses import dataclass
 from typing import final
 import logging
@@ -88,7 +89,7 @@ class Log:
         content.append(f"ex line:\n\t{throwable.__traceback__.tb_lineno}")
         content.append(f"ex code:\n\t{type(throwable).__name__}")
         content.append(f"ex message:\n\t{str(throwable)}")
-        #content.append(f"ex trace:\n\t{''.join(throwable.__traceback__.format())}")
+        content.append(f"ex trace:\n\t{''.join(traceback.format_exception(type(throwable), throwable, throwable.__traceback__))}")
         content = "\n".join(content)
         logging.error(f"{content}")
         Log.__log_in_file(content, "error")
