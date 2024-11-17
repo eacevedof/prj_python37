@@ -1,6 +1,6 @@
 from typing import final
 from dataclasses import dataclass
-
+from typing import Dict
 
 @final
 @dataclass(frozen=False)
@@ -33,6 +33,26 @@ class UserEntity:
         user_code = str(user_code).strip()
         return UserEntity(
             id=id,
+            user_uuid=user_uuid,
+            user_name=user_name,
+            user_login=user_login,
+            user_password=user_password,
+            user_email=user_email,
+            user_code=user_code,
+            created_at=created_at
+        )
+
+    @staticmethod
+    def from_primitives_dic(primitives: Dict[str, str]) -> 'UserEntity':
+        user_uuid = str(primitives.get("user_uuid", "")).strip()
+        user_name = str(primitives.get("user_name", "")).strip()
+        user_password = str(primitives.get("user_password", "")).strip()
+        user_email = str(primitives.get("user_email", "")).strip()
+        user_code = str(primitives.get("user_code", "")).strip()
+        user_login = str(primitives.get("user_login", "")).strip()
+        created_at = str(primitives.get("created_at", "")).strip()
+        return UserEntity(
+            id=primitives.get("id", None),
             user_uuid=user_uuid,
             user_name=user_name,
             user_login=user_login,

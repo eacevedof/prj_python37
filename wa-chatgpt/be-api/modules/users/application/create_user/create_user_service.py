@@ -68,16 +68,7 @@ class CreateUserService:
             raise CreateUserException.empty_user_name()
 
         user_name = self.__create_user_dto.user_name
-        user_entity = UserEntity.from_primitives(
-            id=None,
-            user_uuid="",
-            user_name=user_name,
-            user_password="",
-            user_email="",
-            user_code="",
-            user_login="",
-            created_at=""
-        )
+        user_entity = UserEntity.from_primitives_dic({"user_name": user_name})
         user_entity = self.__users_reader_repository.get_user_by_user_name(user_entity)
 
         if user_entity:
