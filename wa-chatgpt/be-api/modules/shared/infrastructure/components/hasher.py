@@ -8,7 +8,7 @@ import nacl.pwhash
 @final
 class Hasher:
 
-    ENCRYPT_SALT = "3`(<516`]w6'C~sGjB]<^!Dpu[9?6`"
+    ENCRYPT_SALT = "GAHo|89_ijaB%10@kOYu-92>"
     ENCRYPT_ALGORITHM = "AES-256-CBC"
     INITIALIZATION_VECTOR = "cdf86fc413278d46"
 
