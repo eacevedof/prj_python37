@@ -71,16 +71,16 @@ class CreateUserService:
             "user_login": self.__create_user_dto.user_email,
             "user_email": self.__create_user_dto.user_email
         })
-        user_entity = self.__users_reader_repository.get_user_id_by_user_email(
+        user = self.__users_reader_repository.get_user_id_by_user_email(
             user_entity
         )
-        if user_entity:
+        if user:
             raise CreateUserException.user_email_already_exists()
 
-        user_entity = self.__users_reader_repository.get_user_id_by_user_login(
+        user = self.__users_reader_repository.get_user_id_by_user_login(
             user_entity
         )
-        if user_entity:
+        if user:
             raise CreateUserException.user_login_already_exists()
 
 
