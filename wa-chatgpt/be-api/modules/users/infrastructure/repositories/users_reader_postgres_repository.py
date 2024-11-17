@@ -58,5 +58,12 @@ class UsersReaderPostgresRepository(AbstractPostgresRepository):
             return None
 
         return UserEntity.from_primitives(
-            id=result[0].get("id")
+            id=result[0].get("id"),
+            user_uuid="",
+            user_name="",
+            user_login="",
+            user_password="",
+            user_email="",
+            user_code="",
+            created_at=""
         )
