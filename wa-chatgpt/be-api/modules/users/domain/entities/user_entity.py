@@ -9,10 +9,10 @@ class UserEntity:
     id: int|None
     user_uuid: str|None
     user_name: str|None
+    user_login: str|None
     user_password: str|None
     user_email: str|None
     user_code: str|None
-    user_login: str|None
     created_at: str|None
 
     @staticmethod
@@ -28,6 +28,7 @@ class UserEntity:
     ) -> 'UserEntity':
         user_uuid = str(user_uuid).strip()
         user_name = str(user_name).strip()
+        user_login = str(user_login).strip()
         user_password = str(user_password).strip()
         user_email = str(user_email).strip()
         user_code = str(user_code).strip()
@@ -46,10 +47,10 @@ class UserEntity:
     def from_primitives_dic(primitives: Dict[str, str]) -> 'UserEntity':
         user_uuid = str(primitives.get("user_uuid", "")).strip()
         user_name = str(primitives.get("user_name", "")).strip()
+        user_login = str(primitives.get("user_login", "")).strip()
         user_password = str(primitives.get("user_password", "")).strip()
         user_email = str(primitives.get("user_email", "")).strip()
         user_code = str(primitives.get("user_code", "")).strip()
-        user_login = str(primitives.get("user_login", "")).strip()
         created_at = str(primitives.get("created_at", "")).strip()
         return UserEntity(
             id=primitives.get("id", None),
