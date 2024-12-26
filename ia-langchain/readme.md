@@ -14,11 +14,12 @@
   5. Salida
 
 ### Red de neuronas:
-- Red de neuronas para aceptar datos de entreda.
-- Red capa oculta para el procesamiento de cada una de las etapas.
-- Neurona de salida.
+- Se compone de:
+  - Red de neuronas para aceptar datos de entreda.
+  - Red capa oculta para el procesamiento de cada una de las etapas.
+  - Neurona de salida.
 
-Transformer:
+### Transformer:
 - Red neuronal que consta de dos capas.
 - Capa de codificacion.
   - Codifica la entrada y en el contexto que se ha proporionado en un set de vecotes 
