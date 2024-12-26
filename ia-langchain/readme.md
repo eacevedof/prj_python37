@@ -5,7 +5,7 @@
   1. Xn entradas
   2. Wj pesos 
   3. Bk bias
-  4. f funcion de activacion
+  4. f **funcion de activacion**
     - aplica funciones matematicas complejas que evitan la linealidad en el modelo
     - Ejemplos:
       - Sigmoide: ![Sigmoide](./images/fn-sigmoid.png)
