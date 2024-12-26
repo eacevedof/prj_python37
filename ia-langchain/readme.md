@@ -7,3 +7,8 @@ Neurona:
   - f funcion de activacion
   - y salida
 
+Red de neuronas:
+- Red de neuronas para aceptar datos de entreda.
+- Red capa oculta para el procesamiento de cada una de las etapas.
+- Neurona de salida.
+
