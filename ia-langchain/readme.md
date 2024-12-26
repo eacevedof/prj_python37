@@ -8,7 +8,7 @@
   4. f funcion de activacion
     - aplica funciones matematicas complejas que evitan la linealidad en el modelo
     - Ejemplos:
-      - Sigmoide: `1 / (1 + e^-x)` ![Sigmoide](./images/fn-sigmoid.png)
+      - Sigmoide: ![Sigmoide](./images/fn-sigmoid.png)
       - Tangente hiperbolica:  ![Tangente hiperbolica](./images/fn-hyperbolic-tangent.png)
       - ... reul, leaky ReLU, etc cada una se ajusta a un tipo de problema
   5. Salida
