@@ -1,5 +1,5 @@
 Neurona artificial:
-- ![Artificial neuron]("./images/artificial_neuron.png")
+- ![Artificial neuron](./images/artificial_neuron.png)
 - Es una representacion matematica de una neurona biologica
 - Una neurona se compone de:
   - 1. Xn entradas
@@ -8,8 +8,8 @@ Neurona artificial:
   - 4. f funcion de activacion
     - aplica funciones matematicas complejas que evitan la linealidad en el modelo
     - Ejemplos:
-      - Sigmoide: `1 / (1 + e^-x)` ![Sigmoide]("./images/fn-sigmoid.png")
-      - Tangente hiperbolica:  ![Tangente hiperbolica]("./images/fn-hyperbolic-tangent.png")
+      - Sigmoide: `1 / (1 + e^-x)` ![Sigmoide](./images/fn-sigmoid.png)
+      - Tangente hiperbolica:  ![Tangente hiperbolica](./images/fn-hyperbolic-tangent.png)
       - ... reul, leaky ReLU, etc cada una se ajusta a un tipo de problema
   - 5. Salida
 
