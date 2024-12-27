@@ -32,3 +32,4 @@
 ## Langchain
 - Framework para desarrollar apps impulsadas por LLMs.
 - Consta de módulos o componentes.
+- [https://python.langchain.com](https://python.langchain.com/docs/introduction/)
