@@ -26,4 +26,4 @@
   - Codifica la entrada y en el contexto que se ha proporionado en un set de vecotes 
 - Capa de decodificacion.
 - **Mecanismo de atención**
-  -  
+  - El mecanismo de atención es la base del modelo Transformer, donde se utiliza la variante llamada self-attention o atención propia. Este mecanismo permite que el modelo analice cómo cada palabra en una oración está relacionada con otras palabras en la misma oración.
