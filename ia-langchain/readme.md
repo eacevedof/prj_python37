@@ -30,3 +30,5 @@
   - Es una herramienta poderosa que ayuda a los modelos de IA a comprender mejor las entradas, enfocándose en lo relevante y descartando lo redundante o menos importante
 
 ## Langchain
+- Framework para desarrollar apps impulsadas por LLMs.
+- Consta de módulos o componentes.
