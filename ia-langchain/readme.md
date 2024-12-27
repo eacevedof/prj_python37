@@ -68,4 +68,5 @@ dará más flexibilidad para cambiar de proveedor de LLM en el futuro por cumpli
   - **human message**
     - solicitud del usuario 
 - [Api con chat models](https://python.langchain.com/docs/integrations/chat/)
+  - Ejemplo [**Chat Open AI**](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) 
   
