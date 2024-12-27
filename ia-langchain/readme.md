@@ -37,6 +37,7 @@
   - [https://python.langchain.com/docs/integrations/providers/](https://python.langchain.com/docs/integrations/providers/)
 
 ### Componentes:
+- ![langchain components](./images/langchain-components.png)
 - **Modelo IO**. 
   - Componente que sigue un estandar tipo interfaz que permite ser sustituido por otro modelo. 
 - **Conectores de datos**
@@ -49,3 +50,6 @@
 - **Agentes**
   - Van a ser capaces de disernir entre diferentes tipos de herramientas cual es la más adecuada para la solicitud que se le hace.
   
+
+### Casos de uso:
+- 
