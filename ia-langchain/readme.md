@@ -34,4 +34,10 @@
 - Consta de módulos o componentes.
 - [https://python.langchain.com](https://python.langchain.com/docs/introduction/)
 - Proveedores con los que langchain tiene conectividad:
-  - [https://python.langchain.com/docs/integrations/providers/](https://python.langchain.com/docs/integrations/providers/) 
+  - [https://python.langchain.com/docs/integrations/providers/](https://python.langchain.com/docs/integrations/providers/)
+
+### Componentes:
+- Modelo IO. 
+  - Componente que sigue un estandar tipo interfaz que permite ser sustituido por otro modelo. 
+- Conectores de datos
+  - Conecta un modelo LLM a una fuente de datos. 
