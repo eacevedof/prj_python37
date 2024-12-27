@@ -49,7 +49,12 @@
   - Permite que retenga un contexto historico de interacciones. 
 - **Agentes**
   - Van a ser capaces de disernir entre diferentes tipos de herramientas cual es la más adecuada para la solicitud que se le hace.
-  
 
 ### Casos de uso:
-- 
+- Aplicaciones de preguntas y respuestas
+- Resumir información
+- Consultar bases de datos
+- Consulta a bds
+- Interaccion con apis
+- Agentes
+- Chatbots
