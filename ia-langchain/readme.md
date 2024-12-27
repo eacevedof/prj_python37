@@ -33,3 +33,5 @@
 - Framework para desarrollar apps impulsadas por LLMs.
 - Consta de módulos o componentes.
 - [https://python.langchain.com](https://python.langchain.com/docs/introduction/)
+- Proveedores con los que langchain tiene conectividad:
+  - [https://python.langchain.com/docs/integrations/providers/](https://python.langchain.com/docs/integrations/providers/) 
