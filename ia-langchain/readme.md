@@ -37,7 +37,10 @@
   - [https://python.langchain.com/docs/integrations/providers/](https://python.langchain.com/docs/integrations/providers/)
 
 ### Componentes:
-- Modelo IO. 
+- **Modelo IO**. 
   - Componente que sigue un estandar tipo interfaz que permite ser sustituido por otro modelo. 
-- Conectores de datos
+- **Conectores de datos**
   - Conecta un modelo LLM a una fuente de datos. 
+- **cadenas**
+  - Permite enlazar salidas de un llm con entradas de otro. Pe. App que en primera fase resume un contenido de texto y seguidamente lo
+  traduce a otro idioma.
