@@ -41,6 +41,10 @@
   - Componente que sigue un estandar tipo interfaz que permite ser sustituido por otro modelo. 
 - **Conectores de datos**
   - Conecta un modelo LLM a una fuente de datos. 
-- **cadenas**
+- **Cadenas**
   - Permite enlazar salidas de un llm con entradas de otro. Pe. App que en primera fase resume un contenido de texto y seguidamente lo
   traduce a otro idioma.
+- **Memoria** 
+  - Permite que retenga un contexto historico de interacciones. 
+- **Agentes**
+  -  
