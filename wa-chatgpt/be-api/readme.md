@@ -13,7 +13,12 @@
   ```
 ## start project
 ```sh
+cd C:\projects\prj_python37\wa-chatgpt/be-api/venv/Scripts
+activate
+
+# o
 cd C:\projects\prj_python37\wa-chatgpt\be-api
+
 cd fe-flet
 # create virtualenv
 python -m venv venv
