@@ -58,3 +58,9 @@
 - Interaccion con apis
 - Agentes
 - Chatbots
+
+- Langchain necesita poder enviar texto al LLM y también recibir y trabajar con sus resultados.
+- El uso de LC y el componente **Modelo IO** nos permitirá construir cadenas más adelante, pero también nos 
+dará más flexibilidad para cambiar de proveedor de LLM en el futuro por cumplir con la interfaz
+
+- 
