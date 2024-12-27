@@ -4,8 +4,8 @@ from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.http.response.http_json_response import HttpJsonResponse
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
-from modules.open_ai.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
-from modules.open_ai.application.lc_ask_question.lc_ask_question_service import LcAskQuestionService
+from modules.lang_chain.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
+from modules.lang_chain.application.lc_ask_question.lc_ask_question_service import LcAskQuestionService
 from modules.open_ai.domain.exceptions.lc_ask_question_exception import LcAskQuestionException
 
 
