@@ -1,7 +1,7 @@
 from typing import final
 from modules.shared.infrastructure.components.log import Log
-from modules.open_ai.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
-from modules.open_ai.application.lc_ask_question.lc_asked_question_dto import LcAskedQuestionDTO
+from modules.lang_chain.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
+from modules.lang_chain.application.lc_ask_question.lc_asked_question_dto import LcAskedQuestionDTO
 from modules.open_ai.infrastructure.repositories.openai_repository import OpenAiRepository
 
 

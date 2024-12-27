@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ModulePathEnum(Enum):
+class ControllerModuleEnum(Enum):
     WHATSAPP_SEND_TEXT_MESSAGE = "whatsapp.infrastructure.controllers.send_message_controller"
 
     CHAT_GPT_PDF_QUESTION = "modules.open_ai.infrastructure.controllers.ask_your_pdf_controller"
