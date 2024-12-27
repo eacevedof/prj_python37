@@ -14,14 +14,14 @@ def invoke(http_request: Request) -> Response:
         lc_ask_question_dto = LcAskQuestionDTO(
             question=http_request.args["question"]
         )
-        talked_to_gpt35_dto = LcAskQuestionService.get_instance().invoke(
+        lc_asked_question_dto = LcAskQuestionService.get_instance().invoke(
             lc_ask_question_dto
         )
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
             "message": "open-ai-tr.lc_ask_question",
-            "data": {"chat_response": talked_to_gpt35_dto.chat_response}
+            "data": {"chat_response": lc_asked_question_dto.chat_response}
         }).get_as_json_response()
 
     except LcAskQuestionException as ex:
