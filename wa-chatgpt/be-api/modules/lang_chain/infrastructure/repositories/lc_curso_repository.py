@@ -37,6 +37,10 @@ class LcCursoRepository(AbstractLangchainRepository):
                 }
             },
         }
+        chat_prompt = ChatPromptTemplate.from_messages([
+            dic_prompt.get("car_specialist").get("system").get("message_prompt"),
+            dic_prompt.get("car_specialist").get("human").get("message_prompt"),
+        ])
         return {}
 
 
