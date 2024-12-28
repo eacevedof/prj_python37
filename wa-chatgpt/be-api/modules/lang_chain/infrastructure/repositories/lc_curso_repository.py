@@ -23,12 +23,13 @@ class LcCursoRepository(AbstractLangchainRepository):
 
 
     def ejemplo_prompt_template_especialista_en_coches(self) -> dict:
-        system_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
+        sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
         human_template = "Necesito un artículo para vehículos con motor {motor_type}"
+
         dic_prompt = {
             "car_specialist": {
                 "system": {
-                    "template": system_template,
+                    "template": sys_template,
                     "message_prompt": SystemMessagePromptTemplate.from_template(system_template),
                 },
                 "human": {
