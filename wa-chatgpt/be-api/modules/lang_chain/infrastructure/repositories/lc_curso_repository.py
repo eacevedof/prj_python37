@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, final
 
+from langchain.chains.question_answering.map_rerank_prompt import output_parser
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -22,12 +23,38 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
 
+    def ejemplo_parsear_salida_de_caracteristicas_coches(self) -> str:
+        str_sys_template = ""
+        str_human_template = "{request}\n{format_instructions}"
+        dic_prompt = {
+            "car_specialist": {
+                "system": {
+                    "prompt_tpl": SystemMessagePromptTemplate.from_template(str_sys_template),
+                },
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
+                }
+            },
+        }
+        chat_prompt = ChatPromptTemplate.from_messages([
+            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+        ])
+        csv_output_parser = CommaSeparatedListOutputParser()
+        chat_prompt_value = chat_prompt.format_prompt(
+            request="dime 5 caracteresticas de los coches americanos",
+            format_instructions = csv_output_parser.get_format_instructions()
+        )
+        final_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(final_request)
+        return ai_message.content
+
+
     def ejemplo_parsear_salida(self) -> List[str]:
-        output_parser = CommaSeparatedListOutputParser()
+        csv_output_parser = CommaSeparatedListOutputParser()
         # las instrucciones nos indica que formato de entrada debe tener la respuesta
-        format_instructions = output_parser.get_format_instructions()
+        format_instructions = csv_output_parser.get_format_instructions()
         respuesta = "coche, árbol, carretera"
-        return output_parser.parse(respuesta)
+        return csv_output_parser.parse(respuesta)
 
 
     def ejemplo_prompt_template_especialista_en_coches(self) -> str:
