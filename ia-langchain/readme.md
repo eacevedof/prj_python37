@@ -136,3 +136,7 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
 - Ofrencen un enfoque más estructurado para pasar entradas formateadas evitando formalizarlas con `f o xxx.format()`
 ya que **PromptTemplate** las convierte en nombres de parámetros de función que podemos pasar.
 - Es recomendable usar las plantillas para estandarizar los mensajes entre las distintas apps.
+```python
+```
+- ![chat-prompt-template](./images/chat-prompt-template.png)
+- ![prompt-template-config](./images/prompt-template-config.png)

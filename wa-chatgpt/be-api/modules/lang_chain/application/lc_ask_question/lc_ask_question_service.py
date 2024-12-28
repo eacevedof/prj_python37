@@ -18,11 +18,12 @@ class LcAskQuestionService:
     def invoke(self, lc_ask_question: LcAskQuestionDTO) -> LcAskedQuestionDTO:
         # str_response = LcCursoRepository.get_instance().donde_se_encuentra_caceres_only_human_message()
         # str_response = LcCursoRepository.get_instance().donde_se_encuentra_lima_system_human_message()
-        dic_response = LcCursoRepository.get_instance().ejemplo_multi_rol_con_generate()
-        str_response = \
-            f"History: {dic_response.get("history").get("question")} {dic_response.get("history").get("response")}\n"\
-            f"Rude young person: {dic_response.get("rude_young_person").get("question")} {dic_response.get("rude_young_person").get('response')}";
-        return LcAskedQuestionDTO(chat_response=str_response)
+        # dic_response = LcCursoRepository.get_instance().ejemplo_multi_rol_con_generate()
+        # str_response = \
+        #    f"History: {dic_response.get("history").get("question")} {dic_response.get("history").get("response")}\n"\
+        #    f"Rude young person: {dic_response.get("rude_young_person").get("question")} {dic_response.get("rude_young_person").get('response')}";
+        str_response = LcCursoRepository.get_instance().ejemplo_prompt_template_especialista_en_coches()
+        return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
 
 
