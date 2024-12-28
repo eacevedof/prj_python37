@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from langchain.chains.question_answering.map_reduce_prompt import system_template
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
