@@ -22,7 +22,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
 
-    def ejemplo_con_prompt_template(self) -> dict:
+    def ejemplo_prompt_template_especialista_en_coches(self) -> dict:
         system_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
         human_template = "Necesito un artículo para vehículos con motor {motor_type}"
         dic_prompt = {
