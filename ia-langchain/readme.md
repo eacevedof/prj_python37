@@ -140,3 +140,4 @@ ya que **PromptTemplate** las convierte en nombres de parámetros de función qu
 ```
 - ![chat-prompt-template](./images/chat-prompt-template.png)
 - ![prompt-template-config](./images/prompt-template-config.png)
+- ![chat-prompt-value](./images/chat-prompt-value.png)
