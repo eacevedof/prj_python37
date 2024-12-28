@@ -20,7 +20,7 @@ def invoke(http_request: Request) -> Response:
 
         return HttpJsonResponse.from_primitives({
             "code": HttpResponseCodeEnum.OK.value,
-            "message": "open-ai-tr.lc_ask_question",
+            "message": "lang-chain-tr.lc_ask_question",
             "data": {"chat_response": lc_asked_question_dto.chat_response}
         }).get_as_json_response()
 
