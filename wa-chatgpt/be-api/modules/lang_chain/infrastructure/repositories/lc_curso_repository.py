@@ -20,11 +20,11 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def donde_se_encuentra_caceres_system_human_message(self) -> str:
-        str_content = "¿Puedes decirme dónde se encuentra Cáceres?"
+    def donde_se_encuentra_lima_system_human_message(self) -> str:
+        str_content = "¿Puedes decirme dónde se encuentra Lima?"
         human_message = HumanMessage(content=str_content)
 
-        system_rol = "Eres un historiador que conoce los detalles de todas las ciudades de España."
+        system_rol = "Eres un historiador que conoce los detalles de todas las ciudades del mundo"
         system_message = SystemMessage(content=system_rol)
 
         ai_message = self._get_chat_openai().invoke([
