@@ -9,6 +9,7 @@ from langchain.prompts import (
     AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
+from langchain.output_parsers import CommaSeparatedListOutputParser
 
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
@@ -19,6 +20,14 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+
+    def ejemplo_parsear_salida(self) -> List[str]:
+        output_parser = CommaSeparatedListOutputParser()
+        # las instrucciones nos indica que formato de entrada debe tener la respuesta
+        format_instructions = output_parser.get_format_instructions()
+        respuesta = "coche, árbol, carretera"
+        return output_parser.parse(respuesta)
 
 
     def ejemplo_prompt_template_especialista_en_coches(self) -> str:
