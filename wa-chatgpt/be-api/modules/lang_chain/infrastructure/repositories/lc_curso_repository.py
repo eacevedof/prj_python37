@@ -43,8 +43,8 @@ class LcCursoRepository(AbstractLangchainRepository):
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
         str_content = ai_message.content
-        lst_content = dt_output_parser.parse(str_content)
-        Log.log_debug(lst_content, "lst_content")
+        dt = dt_output_parser.parse(str_content)
+        # Log.log_debug(dt, "dt_parsed") # error con dt
         return str_content
 
 
