@@ -91,6 +91,7 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
     ])
     return ai_message.content
 ```
+- ![ai-message](./images/ai-message.png)
 - **generate**
 - multiples mensajes con multiples roles
 ```python
