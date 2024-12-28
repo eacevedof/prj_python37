@@ -170,3 +170,5 @@ def ejemplo_prompt_template_especialista_en_coches(self) -> str:
 - ![chat-prompt-template](./images/chat-prompt-template.png)
 - ![prompt-template-config](./images/prompt-template-config.png)
 - ![chat-prompt-value](./images/chat-prompt-value.png)
+
+### Parsear y procesar la salida
