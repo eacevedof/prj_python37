@@ -43,7 +43,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         chat_prompt_value = chat_prompt.format_prompt(
             motor_type="hibrido enchufable",
             read_time="3 min",
-            cart_type="japoneses"
+            car_type="japoneses",
         )
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
