@@ -94,7 +94,38 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
 - **generate**
 - multiples mensajes con multiples roles
 ```python
-
+  def ejemplo_multi_rol_con_generate(self) -> dict:
+      dic_prompt = {
+          "history": {
+              "system_role": "Eres un historiador que conoce los detalles de todas las ciudades del mundo",
+              "question": "¿Puedes decirme dónde se encuentra Cáceres?",
+          },
+          "rude_young_person": {
+              "system_role": "Eres un joven rudo que no le gusta que le pregunten, solo quiere estar de fiesta",
+              "question": "¿Puedes decirme dónde se encuentra Cáceres?",
+          }
+      }
+      llm_result = self._get_chat_openai().generate([
+        [
+            SystemMessage(content=dic_prompt.get("history").get("system_role")),
+            HumanMessage(content=dic_prompt.get("history").get("question"))
+        ],
+        [
+            SystemMessage(content=dic_prompt.get("rude_young_person").get("system_role")),
+            HumanMessage(content=dic_prompt.get("rude_young_person").get("question"))
+        ],
+      ])
+      generated_texts = llm_result.generations
+      return {
+          "history": {
+              "question": dic_prompt.get("history").get("question"),
+              "response": generated_texts[0][0].text,
+          },
+          "rude_young_person": {
+              "question": dic_prompt.get("rude_young_person").get("question"),
+              "response": generated_texts[0][0].text,
+          },
+      }
 ```
 - respuesta:
 - ![lc-chat-generate-result](./images/lc-chat-generate-result.png)

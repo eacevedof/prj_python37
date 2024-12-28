@@ -41,9 +41,16 @@ class LcCursoRepository(AbstractLangchainRepository):
               HumanMessage(content=dic_prompt.get("rude_young_person").get("question"))
           ],
         ])
+        generated_texts = llm_result.generations
         return {
-            "history": llm_result[0].content,
-            "rude_young_person": llm_result[1].content
+            "history": {
+                "question": dic_prompt.get("history").get("question"),
+                "response": generated_texts[0][0].text,
+            },
+            "rude_young_person": {
+                "question": dic_prompt.get("rude_young_person").get("question"),
+                "response": generated_texts[0][0].text,
+            },
         }
 
 
