@@ -10,6 +10,8 @@ from modules.lang_chain.infrastructure.repositories.abstract_langchain_repositor
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
+from langchain.schema import SystemMessage, HumanMessage
+
 @final
 @dataclass(frozen=True)
 class LcCursoRepository(AbstractLangchainRepository):
@@ -20,6 +22,6 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def donde_se_encuentra_caceres(self) -> str:
         str_content = "¿Puedes decirme dónde se encuentra Cáceres?"
-        chatOpenAi = self._get_chat_openai()
-        resultado = chatOpenAi.invoke(content=str_content)
-        return str_content
+        human_message = HumanMessage(content=str_content)
+        ai_message = self._get_chat_openai().invoke([human_message])
+        return ai_message.content
