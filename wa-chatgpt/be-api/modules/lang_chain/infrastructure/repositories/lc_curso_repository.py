@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from langchain.chains.question_answering.map_rerank_prompt import output_parser
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -12,7 +11,9 @@ from langchain.prompts import (
 )
 from langchain.output_parsers import CommaSeparatedListOutputParser
 
+from shared.infrastructure.components.log import Log
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
+
 
 @final
 @dataclass(frozen=True)
@@ -46,6 +47,9 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
+        str_content = ai_message.content
+        lst_content = csv_output_parser.parse(str_content)
+        Log.log_debug(lst_content, "lst_content")
         return ai_message.content
 
 
