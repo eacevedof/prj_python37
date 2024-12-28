@@ -1,5 +1,6 @@
 ### code
 - https://github.com/eacevedof/prj_python37/tree/master/wa-chatgpt/be-api/modules/lang_chain/application/lc_ask_question
+- [curso](https://www.udemy.com/course/langchain-y-llm-desarrolla-aplicaciones-de-ia-en-python/learn/lecture/45189465)
 
 ### Neurona artificial:
 - ![Artificial neuron](./images/artificial-neuron.png)
@@ -138,6 +139,33 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
 ya que **PromptTemplate** las convierte en nombres de parámetros de función que podemos pasar.
 - Es recomendable usar las plantillas para estandarizar los mensajes entre las distintas apps.
 ```python
+def ejemplo_prompt_template_especialista_en_coches(self) -> str:
+    str_sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
+    str_human_template = "Necesito un artículo para vehículos con motor {motor_type}"
+
+    dic_prompt = {
+        "car_specialist": {
+            "system": {
+                "prompt_tpl": SystemMessagePromptTemplate.from_template(str_sys_template),
+            },
+            "human": {
+                "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
+            }
+        },
+    }
+    chat_prompt = ChatPromptTemplate.from_messages([
+        dic_prompt.get("car_specialist").get("system").get("prompt_tpl"),
+        dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+    ])
+
+    chat_prompt_value = chat_prompt.format_prompt(
+        motor_type="hibrido enchufable",
+        read_time="3 min",
+        car_type="japoneses",
+    )
+    final_request = chat_prompt_value.to_messages()
+    ai_message = self._get_chat_openai().invoke(final_request)
+    return ai_message.content
 ```
 - ![chat-prompt-template](./images/chat-prompt-template.png)
 - ![prompt-template-config](./images/prompt-template-config.png)
