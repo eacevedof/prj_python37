@@ -130,3 +130,9 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
 - respuesta:
 - ![lc-chat-generate-result](./images/lc-chat-generate-result.png)
 - ![lc-chat-generate-result](./images/postman-lc-chat-generate-result.png)
+
+### Plantillas de prompts
+- Permiten modificar nuestras indicaciones de entrada al LLM fácilmente.
+- Ofrencen un enfoque más estructurado para pasar entradas formateadas evitando formalizarlas con `f o xxx.format()`
+ya que **PromptTemplate** las convierte en nombres de parámetros de función que podemos pasar.
+- Es recomendable usar las plantillas para estandarizar los mensajes entre las distintas apps.
