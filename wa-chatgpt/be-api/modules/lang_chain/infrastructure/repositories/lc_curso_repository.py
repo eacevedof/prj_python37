@@ -49,7 +49,7 @@ class LcCursoRepository(AbstractLangchainRepository):
             },
             "rude_young_person": {
                 "question": dic_prompt.get("rude_young_person").get("question"),
-                "response": generated_texts[0][0].text,
+                "response": generated_texts[1][0].text,
             },
         }
 

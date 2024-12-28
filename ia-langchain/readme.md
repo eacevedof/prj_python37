@@ -129,3 +129,4 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
 ```
 - respuesta:
 - ![lc-chat-generate-result](./images/lc-chat-generate-result.png)
+- ![lc-chat-generate-result](./images/postman-lc-chat-generate-result.png)
