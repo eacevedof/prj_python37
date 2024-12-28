@@ -17,8 +17,10 @@ class LcAskQuestionService:
 
 
     def invoke(self, lc_ask_question: LcAskQuestionDTO) -> LcAskedQuestionDTO:
-        chat_response = LcCursoRepository.get_instance().donde_se_encuentra_caceres_only_human_message()
-        return LcAskedQuestionDTO(chat_response=chat_response)
+        # str_response = LcCursoRepository.get_instance().donde_se_encuentra_caceres_only_human_message()
+        str_response = LcCursoRepository.get_instance().donde_se_encuentra_lima_system_human_message()
+
+        return LcAskedQuestionDTO(chat_response=str_response)
 
 
 
