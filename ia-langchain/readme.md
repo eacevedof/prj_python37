@@ -1,3 +1,6 @@
+### code
+- https://github.com/eacevedof/prj_python37/tree/master/wa-chatgpt/be-api/modules/lang_chain/application/lc_ask_question
+
 ### Neurona artificial:
 - ![Artificial neuron](./images/artificial-neuron.png)
 - Es una representacion matematica de una neurona biologica
