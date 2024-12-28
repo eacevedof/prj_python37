@@ -14,16 +14,15 @@ class LcAskQuestionService:
     def get_instance() -> "LcAskQuestionService":
         return LcAskQuestionService()
 
-
     def invoke(self, lc_ask_question: LcAskQuestionDTO) -> LcAskedQuestionDTO:
         chat_response = donde_se_encuentra_caceres()
         Log.log_debug(LcAskQuestionDTO.__dict__, "donde_se_encuentra_caceres")
         return LcAskedQuestionDTO(chat_response=chat_response)
 
     def invoke1(self, lc_ask_question: LcAskQuestionDTO) -> LcAskedQuestionDTO:
-        prompt = lc_ask_question.question
-        Log.log_debug(LcAskQuestionDTO.__dict__, "LcAskQuestionDTO")
-        chat_response = OpenAiRepository.get_instance().get_gpt35_turbo(prompt)
+        chat_response = donde_se_encuentra_caceres()
+        Log.log_debug(LcAskQuestionDTO.__dict__, "donde_se_encuentra_caceres")
         return LcAskedQuestionDTO(chat_response=chat_response)
+
 
 
