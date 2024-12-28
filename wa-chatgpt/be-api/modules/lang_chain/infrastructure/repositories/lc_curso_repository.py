@@ -30,7 +30,7 @@ class LcCursoRepository(AbstractLangchainRepository):
             "car_specialist": {
                 "system": {
                     "template": sys_template,
-                    "message_prompt": SystemMessagePromptTemplate.from_template(system_template),
+                    "message_prompt": SystemMessagePromptTemplate.from_template(sys_template),
                 },
                 "human": {
                     "template": human_template,
