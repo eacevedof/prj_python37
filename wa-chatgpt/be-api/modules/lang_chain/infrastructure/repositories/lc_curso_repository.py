@@ -33,7 +33,7 @@ class LcCursoRepository(AbstractLangchainRepository):
                 },
                 "human": {
                     "template": human_template,
-                    "message_prompt": HumanMessagePromptTemplate(human_template),
+                    "message_prompt": HumanMessagePromptTemplate.from_template(human_template),
                 }
             },
         }
