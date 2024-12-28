@@ -73,7 +73,8 @@ dará más flexibilidad para cambiar de proveedor de LLM en el futuro por cumpli
 - [Api con chat models](https://python.langchain.com/docs/integrations/chat/)
   - Ejemplo [**Chat Open AI**](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html)
 
-### ejemplo **invoke**
+### ejemplos 
+- **invoke**
 - invoke trata solo un mensaje
 - aplicando un rol al sistema la respesta tendrá un mejor contexto
 ```python
@@ -90,3 +91,10 @@ def donde_se_encuentra_lima_system_human_message(self) -> str:
     ])
     return ai_message.content
 ```
+- **generate**
+- multiples mensajes con multiples roles
+```python
+
+```
+- respuesta:
+- ![lc-chat-generate-result](./images/lc-chat-generate-result.png)
