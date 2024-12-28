@@ -22,27 +22,29 @@ class LcCursoRepository(AbstractLangchainRepository):
 
 
     def ejemplo_prompt_template_especialista_en_coches(self) -> str:
-        sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
-        human_template = "Necesito un artículo para vehículos con motor {motor_type}"
+        str_sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
+        str_human_template = "Necesito un artículo para vehículos con motor {motor_type}"
 
         dic_prompt = {
             "car_specialist": {
                 "system": {
-                    "template": sys_template,
-                    "message_prompt": SystemMessagePromptTemplate.from_template(sys_template),
+                    "prompt_tpl": SystemMessagePromptTemplate.from_template(str_sys_template),
                 },
                 "human": {
-                    "template": human_template,
-                    "message_prompt": HumanMessagePromptTemplate.from_template(human_template),
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
                 }
             },
         }
         chat_prompt = ChatPromptTemplate.from_messages([
-            dic_prompt.get("car_specialist").get("system").get("message_prompt"),
-            dic_prompt.get("car_specialist").get("human").get("message_prompt"),
+            dic_prompt.get("car_specialist").get("system").get("prompt_tpl"),
+            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
         ])
 
-        chat_prompt_value = chat_prompt.format_prompt(motor_type="hibrido enchufable", read_time="3 min", cart_type="japoneses")
+        chat_prompt_value = chat_prompt.format_prompt(
+            motor_type="hibrido enchufable",
+            read_time="3 min",
+            cart_type="japoneses"
+        )
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
         return ai_message.content
