@@ -1,8 +1,10 @@
-from flask import jsonify, Response
-from dataclasses import dataclass, field
-from typing import Dict, Any, final
-from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
+from typing import Dict, Any, final
+from dataclasses import dataclass, field
+from datetime import datetime
+from flask import jsonify, Response
+
+from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
 @final
 @dataclass(frozen=True)
@@ -40,10 +42,14 @@ class HttpJsonResponse:
         return response
 
     def __to_dict(self) -> Dict[str, Any]:
+        # get current timezone
+        tz = datetime.now().astimezone().tzinfo
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return {
             "code": self.code,
             "status": self.status,
             "message": self.message,
-            "data": self.data
+            "data": self.data,
+            "responded_at": f"{now} ({tz})"
         }
 
