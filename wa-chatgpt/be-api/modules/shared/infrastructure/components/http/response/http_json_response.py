@@ -42,7 +42,6 @@ class HttpJsonResponse:
         return response
 
     def __to_dict(self) -> Dict[str, Any]:
-        # get current timezone
         tz = datetime.now().astimezone().tzinfo
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return {
