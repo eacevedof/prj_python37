@@ -71,6 +71,22 @@ dará más flexibilidad para cambiar de proveedor de LLM en el futuro por cumpli
   - **human message**
     - solicitud del usuario 
 - [Api con chat models](https://python.langchain.com/docs/integrations/chat/)
-  - Ejemplo [**Chat Open AI**](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) 
-  - 
-  
+  - Ejemplo [**Chat Open AI**](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html)
+
+### ejemplo **invoke**
+- invoke trata solo un mensaje
+- aplicando un rol al sistema la respesta tendrá un mejor contexto
+```python
+def donde_se_encuentra_lima_system_human_message(self) -> str:
+    str_content = "¿Puedes decirme dónde se encuentra Lima?"
+    human_message = HumanMessage(content=str_content)
+
+    system_rol = "Eres un historiador que conoce los detalles de todas las ciudades del mundo"
+    system_message = SystemMessage(content=system_rol)
+
+    ai_message = self._get_chat_openai().invoke([
+        system_message,
+        human_message
+    ])
+    return ai_message.content
+```
