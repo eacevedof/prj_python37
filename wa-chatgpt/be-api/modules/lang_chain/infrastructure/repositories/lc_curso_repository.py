@@ -21,7 +21,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
 
-    def ejemplo_prompt_template_especialista_en_coches(self) -> dict:
+    def ejemplo_prompt_template_especialista_en_coches(self) -> str:
         sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
         human_template = "Necesito un artículo para vehículos con motor {motor_type}"
 
@@ -41,7 +41,11 @@ class LcCursoRepository(AbstractLangchainRepository):
             dic_prompt.get("car_specialist").get("system").get("message_prompt"),
             dic_prompt.get("car_specialist").get("human").get("message_prompt"),
         ])
-        return {}
+
+        chat_prompt_value = chat_prompt.format_prompt(motor_type="hibrido enchufable", read_time="3 min", cart_type="japoneses")
+        final_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(final_request)
+        return ai_message.content
 
 
     def ejemplo_multi_rol_con_generate(self) -> dict:
