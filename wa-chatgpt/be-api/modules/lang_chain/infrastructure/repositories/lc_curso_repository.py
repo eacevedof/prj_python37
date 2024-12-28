@@ -9,7 +9,7 @@ from langchain.prompts import (
     AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-from langchain.output_parsers import CommaSeparatedListOutputParser
+from langchain.output_parsers import CommaSeparatedListOutputParser, DatetimeOutputParser
 
 from shared.infrastructure.components.log import Log
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -23,15 +23,35 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-
-    def ejemplo_parsear_salida_de_caracteristicas_coches(self) -> str:
-        str_sys_template = ""
+    def ejemplo_parser_fecha(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
         dic_prompt = {
             "car_specialist": {
-                "system": {
-                    "prompt_tpl": SystemMessagePromptTemplate.from_template(str_sys_template),
-                },
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
+                }
+            },
+        }
+        chat_prompt = ChatPromptTemplate.from_messages([
+            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+        ])
+        dt_output_parser = DatetimeOutputParser()
+        chat_prompt_value = chat_prompt.format_prompt(
+            request="¿Cuando es el día de la declaración de la independencia de los EEUU",
+            format_instructions = dt_output_parser.get_format_instructions()
+        )
+        final_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(final_request)
+        str_content = ai_message.content
+        lst_content = dt_output_parser.parse(str_content)
+        Log.log_debug(lst_content, "lst_content")
+        return str_content
+
+
+    def ejemplo_parsear_salida_de_caracteristicas_coches(self) -> str:
+        str_human_template = "{request}\n{format_instructions}"
+        dic_prompt = {
+            "car_specialist": {
                 "human": {
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
                 }
@@ -50,7 +70,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         str_content = ai_message.content
         lst_content = csv_output_parser.parse(str_content)
         Log.log_debug(lst_content, "lst_content")
-        return ai_message.content
+        return str_content
 
 
     def ejemplo_parsear_salida(self) -> List[str]:
