@@ -44,18 +44,13 @@ class HttpJsonResponse:
         response.status_code = self.code
         return response
 
-    def __get_timezone_name(self) -> str:
-        tz = datetime.now().astimezone().tzinfo
-        return pytz.timezone(str(tz)).zone
-
     def __to_dict(self) -> Dict[str, Any]:
-        tz = self.__get_timezone_name()
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now(pytz.UTC).strftime("%Y-%m-%d %H:%M:%S")
         return {
             "code": self.code,
             "status": self.status,
             "message": self.message,
             "data": self.data,
-            "responded_at": f"{now} ({tz})"
+            "responded_at": f"{now} (UTC)"
         }
 

@@ -1,7 +1,8 @@
-from dataclasses import dataclass
-from datetime import datetime
 import re
 from typing import final
+from datetime import datetime
+import pytz
+from dataclasses import dataclass
 
 
 @final
@@ -17,7 +18,7 @@ class DateTimer:
         return bool(re.match(regex, date_string))
 
     def get_now_ymd_his(self) -> str:
-        now = datetime.now()
+        now = datetime.now(pytz.UTC)
         return now.strftime("%Y-%m-%d %H:%M:%S")
 
     def is_valid_date_ymd(self, date_string: str) -> bool:
@@ -38,7 +39,7 @@ class DateTimer:
         return int(date.timestamp())
 
     def get_current_date_ymd(self) -> str:
-        current_date = datetime.now()
+        current_date = datetime.now(pytz.UTC)
         return current_date.strftime("%Y-%m-%d")
 
     def get_datetime_to_ymd_his(self, obj_dt: datetime) -> str:
