@@ -1,16 +1,17 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from langchain_core.documents import Document
-from langchain.chains.question_answering import load_qa_chain
-
-from modules.shared.infrastructure.enums.langchain_type_enum import LangchainTypeEnum
-from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
-
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
-
+from langchain.chains.question_answering.map_reduce_prompt import system_template
 from langchain.schema import SystemMessage, HumanMessage
+from langchain.prompts import (
+    ChatPromptTemplate,
+    PromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
+
+from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
 @final
 @dataclass(frozen=True)
@@ -19,6 +20,25 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+
+    def ejemplo_con_prompt_template(self) -> dict:
+        system_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
+        human_template = "Necesito un artículo para vehículos con motor {motor_type}"
+        dic_prompt = {
+            "car_specialist": {
+                "system": {
+                    "template": system_template,
+                    "message_prompt": SystemMessagePromptTemplate.from_template(system_template),
+                },
+                "human": {
+                    "template": human_template,
+                    "message_prompt": HumanMessagePromptTemplate(human_template),
+                }
+            },
+        }
+        return {}
+
 
     def ejemplo_multi_rol_con_generate(self) -> dict:
         dic_prompt = {
