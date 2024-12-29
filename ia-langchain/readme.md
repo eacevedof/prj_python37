@@ -337,3 +337,8 @@ def __get_independence_day_saved_prompt(self) -> BasePromptTemplate:
     "_type": "prompt"
 }
 ```
+### conectores de datos
+- ![data-connectors](./images/data-connectors.png)
+```python
+
+```
