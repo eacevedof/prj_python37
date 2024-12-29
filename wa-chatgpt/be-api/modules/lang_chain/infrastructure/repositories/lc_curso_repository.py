@@ -50,9 +50,9 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
 
         openai_chat = self._get_chat_openai()
-        lmi_request = chat_prompt_formatted.to_messages()
+        lm_input_request = chat_prompt_formatted.to_messages()
 
-        ai_message = openai_chat.invoke(lmi_request)
+        ai_message = openai_chat.invoke(lm_input_request)
         str_dt_unformatted = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
         fixing_parser = OutputFixingParser.from_llm(
             parser = dt_output_parser,
@@ -80,16 +80,16 @@ class LcCursoRepository(AbstractLangchainRepository):
         ])
         dt_output_parser = DatetimeOutputParser()
 
-        chat_prompt_value = chat_prompt.format_prompt(
+        chat_prompt_formatted = chat_prompt.format_prompt(
             request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions(),
         )
-        lmi_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(lmi_request)
+        lm_input_request = chat_prompt_formatted.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
         str_content = ai_message.content
 
-        dt = dt_output_parser.parse(str_content)
-        # Log.log_debug(dt, "dt_parsed") # error con dt
+        dt_independence_day = dt_output_parser.parse(str_content)
+        print(dt_independence_day)
 
         return str_content
 
@@ -114,8 +114,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             format_instructions = csv_output_parser.get_format_instructions(),
         )
 
-        lmi_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(lmi_request)
+        lm_input_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
         str_content = ai_message.content
         lst_content = csv_output_parser.parse(str_content)
         Log.log_debug(lst_content, "lst_content")
@@ -155,8 +155,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             read_time="3 min",
             car_type="japoneses",
         )
-        lmi_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(lmi_request)
+        lm_input_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
         return ai_message.content
 
 
