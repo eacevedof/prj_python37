@@ -339,6 +339,11 @@ def __get_independence_day_saved_prompt(self) -> BasePromptTemplate:
 ```
 ### conectores de datos
 - ![data-connectors](./images/data-connectors.png)
+#### cargadores de documentos (loaders)
+- Langchain viene con herramientas de carga integradas. Estas son librerias que mapean un tipo de documento 
+a nivel de infraestructura con un objeto de python.
+- `pip install langchain-community` con esto se instala algunos loaders
+- [documentación loaders](https://python.langchain.com/docs/how_to/#document-loaders)
 ```python
 
 ```
