@@ -75,12 +75,12 @@ class LcCursoRepository(AbstractLangchainRepository):
                 }
             },
         }
-        chat_prompt = ChatPromptTemplate.from_messages([
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
             prompt_conf.get("history").get("human").get("prompt_tpl"),
         ])
         dt_output_parser = DatetimeOutputParser()
 
-        chat_prompt_formatted = chat_prompt.format_prompt(
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(
             request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions(),
         )
@@ -91,7 +91,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         dt_independence_day = dt_output_parser.parse(str_content)
         print(dt_independence_day)
 
-        return str_content
+        return dt_independence_day.strftime("%Y-%m-%d")
 
 
     def ejemplo_parsear_salida_de_caracteristicas_coches(self) -> str:
