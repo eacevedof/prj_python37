@@ -28,6 +28,42 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_template_system_prompt(self) -> str:
+        prompt_conf = {
+            "history": {
+                "system": {
+                    "prompt_tpl": SystemMessagePromptTemplate.from_template(
+                        "Tienes que responder únicamente con un patrón de fechas"
+                    ),
+                },
+                "human": {
+                    "request": "¿Cuando es el día de la declaración de la independencia de los EEUU",
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                        "{request}\n{format_instructions}"
+                    ),
+                }
+            },
+        }
+
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
+            prompt_conf.get("history").get("system").get("prompt_tpl"),
+            prompt_conf.get("history").get("human").get("prompt_tpl"),
+        ])
+
+        dt_output_parser = DatetimeOutputParser()
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(
+            request = prompt_conf.get("history").get("human").get("request"),
+            format_instructions = dt_output_parser.get_format_instructions()
+        )
+
+        lm_input_request = chat_prompt_formatted.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
+        str_dt_unformatted = ai_message.content # 1776-07-04T00:00:00:00000Z
+        dt_independence_day = dt_output_parser.parse(str_dt_unformatted) # datetime.datetime(1776, 7, 4, 0, 0)
+        print(dt_independence_day) # 1776-07-04 00:00:00
+
+        return dt_independence_day.strftime("%Y-%m-%d")
+
     def ejemplo_parser_auto_fix(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
         prompt_conf = {
