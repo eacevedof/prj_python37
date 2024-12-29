@@ -25,7 +25,10 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_parsear_salida_de_caracteristicas_coches()
         # str_response = LcCursoRepository.get_instance().ejemplo_parser_fecha()
         # str_response = LcCursoRepository.get_instance().ejemplo_parser_auto_fix()
-        str_response = LcCursoRepository.get_instance().ejemplo_template_system_prompt()
+        # str_response = LcCursoRepository.get_instance().ejemplo_template_system_prompt()
+
+        str_response = LcCursoRepository.get_instance().ejemplo_prompt_tamplate_save()
+
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
 
