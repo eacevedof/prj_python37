@@ -23,7 +23,8 @@ class LcAskQuestionService:
         #    f"Rude young person: {dic_response.get("rude_young_person").get("question")} {dic_response.get("rude_young_person").get('response')}";
         # str_response = LcCursoRepository.get_instance().ejemplo_prompt_template_especialista_en_coches()
         # str_response = LcCursoRepository.get_instance().ejemplo_parsear_salida_de_caracteristicas_coches()
-        str_response = LcCursoRepository.get_instance().ejemplo_parser_fecha()
+        # str_response = LcCursoRepository.get_instance().ejemplo_parser_fecha()
+        str_response = LcCursoRepository.get_instance().ejemplo_parser_auto_fix()
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
 

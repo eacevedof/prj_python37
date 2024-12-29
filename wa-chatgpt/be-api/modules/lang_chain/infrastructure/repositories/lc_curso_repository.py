@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, final
 
+from langchain.output_parsers.fix import OutputFixingParserRetryChainInput
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -9,7 +10,11 @@ from langchain.prompts import (
     PromptTemplate,
     AIMessagePromptTemplate,
 )
-from langchain.output_parsers import CommaSeparatedListOutputParser, DatetimeOutputParser
+from langchain.output_parsers import (
+    CommaSeparatedListOutputParser,
+    DatetimeOutputParser,
+    OutputFixingParser
+)
 
 from shared.infrastructure.components.log import Log
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -43,13 +48,15 @@ class LcCursoRepository(AbstractLangchainRepository):
             format_instructions = dt_output_parser.get_format_instructions()
         )
         final_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(final_request)
-        str_content = ai_message.content
-
-        dt = dt_output_parser.parse(str_content)
-        # Log.log_debug(dt, "dt_parsed") # error con dt
-
-        return str_content
+        oai_chat = self._get_chat_openai()
+        ai_message = oai_chat.invoke(final_request)
+        unknown_format = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
+        new_parser = OutputFixingParser.from_llm(
+            parser = dt_output_parser,
+            llm = oai_chat,
+        )
+        dt = new_parser.parse(unknown_format)
+        return unknown_format
 
 
     def ejemplo_parser_fecha(self) -> str:
