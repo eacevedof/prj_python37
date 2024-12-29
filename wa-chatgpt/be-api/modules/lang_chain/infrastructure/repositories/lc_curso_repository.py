@@ -4,10 +4,10 @@ from typing import List, final
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
-    PromptTemplate,
     SystemMessagePromptTemplate,
-    AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
+    PromptTemplate,
+    AIMessagePromptTemplate,
 )
 from langchain.output_parsers import CommaSeparatedListOutputParser, DatetimeOutputParser
 
@@ -36,15 +36,19 @@ class LcCursoRepository(AbstractLangchainRepository):
             dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
         ])
         dt_output_parser = DatetimeOutputParser()
+
+        human_request = "¿Cuando es el día de la declaración de la independencia de los EEUU",
         chat_prompt_value = chat_prompt.format_prompt(
-            request="¿Cuando es el día de la declaración de la independencia de los EEUU",
+            request = human_request,
             format_instructions = dt_output_parser.get_format_instructions()
         )
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
         str_content = ai_message.content
+
         dt = dt_output_parser.parse(str_content)
         # Log.log_debug(dt, "dt_parsed") # error con dt
+
         return str_content
 
 
@@ -61,15 +65,19 @@ class LcCursoRepository(AbstractLangchainRepository):
             dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
         ])
         csv_output_parser = CommaSeparatedListOutputParser()
+
+        human_request = "dime 5 caracteresticas de los coches americanos",
         chat_prompt_value = chat_prompt.format_prompt(
-            request="dime 5 caracteresticas de los coches americanos",
+            request = human_request,
             format_instructions = csv_output_parser.get_format_instructions()
         )
+
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
         str_content = ai_message.content
         lst_content = csv_output_parser.parse(str_content)
         Log.log_debug(lst_content, "lst_content")
+
         return str_content
 
 
