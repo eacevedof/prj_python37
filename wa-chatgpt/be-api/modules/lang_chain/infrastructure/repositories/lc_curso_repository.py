@@ -53,7 +53,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         lm_input_request = chat_prompt_formatted.to_messages()
 
         ai_message = openai_chat.invoke(lm_input_request)
-        str_dt_unformatted = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
+        str_dt_unformatted = ai_message.content # 1776-07-04T00:00:00:00000Z
         fixing_parser = OutputFixingParser.from_llm(
             parser = dt_output_parser,
             llm = openai_chat,
@@ -86,9 +86,9 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
         lm_input_request = chat_prompt_formatted.to_messages()
         ai_message = self._get_chat_openai().invoke(lm_input_request)
-        str_content = ai_message.content # 1776-07-04T00:00:00:00000Z
+        str_dt_unformatted = ai_message.content # 1776-07-04T00:00:00:00000Z
 
-        dt_independence_day = dt_output_parser.parse(str_content)
+        dt_independence_day = dt_output_parser.parse(str_dt_unformatted)
         print(dt_independence_day) # 1776-07-04 00:00:00
 
         return dt_independence_day.strftime("%Y-%m-%d")
