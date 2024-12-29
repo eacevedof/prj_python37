@@ -279,3 +279,7 @@ def ejemplo_parser_fecha(self) -> str:
 
     return dt_independence_day.strftime("%Y-%m-%d")
 ```
+### serializacion de prompts
+- Permite guardar plantillas complejas en formato JSON para su reutilización.
+```python
+```
