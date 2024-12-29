@@ -53,16 +53,16 @@ class LcCursoRepository(AbstractLangchainRepository):
         lmi_request = chat_prompt_formatted.to_messages()
 
         ai_message = openai_chat.invoke(lmi_request)
-        unknown_format = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
-        new_parser = OutputFixingParser.from_llm(
+        str_dt_unformatted = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
+        fixing_parser = OutputFixingParser.from_llm(
             parser = dt_output_parser,
             llm = openai_chat,
         )
 
-        dt = new_parser.parse(unknown_format)
+        dt = fixing_parser.parse(str_dt_unformatted)
         print(dt)
 
-        return unknown_format
+        return str_dt_unformatted
 
 
     def ejemplo_parser_fecha(self) -> str:
