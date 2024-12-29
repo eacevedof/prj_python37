@@ -38,6 +38,7 @@ class LcCursoRepository(AbstractLangchainRepository):
             csv_args = {"delimiter": ";"}
         )
         csv_data = csv_loader.load()
+        print(csv_data[1].page_content)
         return csv_data
 
 
