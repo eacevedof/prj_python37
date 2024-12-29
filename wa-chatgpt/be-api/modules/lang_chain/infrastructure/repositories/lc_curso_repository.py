@@ -23,11 +23,12 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_parser_fecha(self) -> str:
+    def ejemplo_parser_auto_fix(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
         dic_prompt = {
             "car_specialist": {
                 "human": {
+                    "request": "¿Cuando es el día de la declaración de la independencia de los EEUU",
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
                 }
             },
@@ -37,10 +38,38 @@ class LcCursoRepository(AbstractLangchainRepository):
         ])
         dt_output_parser = DatetimeOutputParser()
 
-        human_request = "¿Cuando es el día de la declaración de la independencia de los EEUU",
         chat_prompt_value = chat_prompt.format_prompt(
-            request = human_request,
+            request = dic_prompt.get("car_specialist").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions()
+        )
+        final_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(final_request)
+        str_content = ai_message.content
+
+        dt = dt_output_parser.parse(str_content)
+        # Log.log_debug(dt, "dt_parsed") # error con dt
+
+        return str_content
+
+
+    def ejemplo_parser_fecha(self) -> str:
+        str_human_template = "{request}\n{format_instructions}"
+        dic_prompt = {
+            "car_specialist": {
+                "human": {
+                    "request": "¿Cuando es el día de la declaración de la independencia de los EEUU",
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
+                }
+            },
+        }
+        chat_prompt = ChatPromptTemplate.from_messages([
+            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+        ])
+        dt_output_parser = DatetimeOutputParser()
+
+        chat_prompt_value = chat_prompt.format_prompt(
+            request = dic_prompt.get("car_specialist").get("human").get("request"),
+            format_instructions = dt_output_parser.get_format_instructions(),
         )
         final_request = chat_prompt_value.to_messages()
         ai_message = self._get_chat_openai().invoke(final_request)
@@ -57,6 +86,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         dic_prompt = {
             "car_specialist": {
                 "human": {
+                    "request": "dime 5 caracteresticas de los coches americanos",
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
                 }
             },
@@ -66,10 +96,9 @@ class LcCursoRepository(AbstractLangchainRepository):
         ])
         csv_output_parser = CommaSeparatedListOutputParser()
 
-        human_request = "dime 5 caracteresticas de los coches americanos",
         chat_prompt_value = chat_prompt.format_prompt(
-            request = human_request,
-            format_instructions = csv_output_parser.get_format_instructions()
+            request = dic_prompt.get("car_specialist").get("human").get("request"),
+            format_instructions = csv_output_parser.get_format_instructions(),
         )
 
         final_request = chat_prompt_value.to_messages()
