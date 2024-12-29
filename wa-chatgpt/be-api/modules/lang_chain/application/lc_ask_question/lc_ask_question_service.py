@@ -15,6 +15,7 @@ class LcAskQuestionService:
 
 
     def invoke(self, lc_ask_question: LcAskQuestionDTO) -> LcAskedQuestionDTO:
+        str_response = ":)"
         # str_response = LcCursoRepository.get_instance().donde_se_encuentra_caceres_only_human_message()
         # str_response = LcCursoRepository.get_instance().donde_se_encuentra_lima_system_human_message()
         # dic_response = LcCursoRepository.get_instance().ejemplo_multi_rol_con_generate()
@@ -26,8 +27,9 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_parser_fecha()
         # str_response = LcCursoRepository.get_instance().ejemplo_parser_auto_fix()
         # str_response = LcCursoRepository.get_instance().ejemplo_template_system_prompt()
+        # str_response = LcCursoRepository.get_instance().ejemplo_prompt_tamplate_save()
 
-        str_response = LcCursoRepository.get_instance().ejemplo_prompt_tamplate_save()
+        csv = LcCursoRepository.get_instance().ejemplo_get_datos_ventas_small_con_loader()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
