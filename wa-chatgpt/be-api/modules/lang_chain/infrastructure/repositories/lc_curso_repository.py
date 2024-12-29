@@ -38,25 +38,30 @@ class LcCursoRepository(AbstractLangchainRepository):
                 }
             },
         }
-        chat_prompt = ChatPromptTemplate.from_messages([
+
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
             prompt_conf.get("history").get("human").get("prompt_tpl"),
         ])
-        dt_output_parser = DatetimeOutputParser()
 
-        chat_prompt_value = chat_prompt.format_prompt(
+        dt_output_parser = DatetimeOutputParser()
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(
             request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions()
         )
-        final_request = chat_prompt_value.to_messages()
 
-        oai_chat = self._get_chat_openai()
-        ai_message = oai_chat.invoke(final_request)
+        openai_chat = self._get_chat_openai()
+        lmi_request = chat_prompt_formatted.to_messages()
+
+        ai_message = openai_chat.invoke(lmi_request)
         unknown_format = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
         new_parser = OutputFixingParser.from_llm(
             parser = dt_output_parser,
-            llm = oai_chat,
+            llm = openai_chat,
         )
+
         dt = new_parser.parse(unknown_format)
+        print(dt)
+
         return unknown_format
 
 
@@ -79,8 +84,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions(),
         )
-        final_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(final_request)
+        lmi_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(lmi_request)
         str_content = ai_message.content
 
         dt = dt_output_parser.parse(str_content)
@@ -109,8 +114,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             format_instructions = csv_output_parser.get_format_instructions(),
         )
 
-        final_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(final_request)
+        lmi_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(lmi_request)
         str_content = ai_message.content
         lst_content = csv_output_parser.parse(str_content)
         Log.log_debug(lst_content, "lst_content")
@@ -150,8 +155,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             read_time="3 min",
             car_type="japoneses",
         )
-        final_request = chat_prompt_value.to_messages()
-        ai_message = self._get_chat_openai().invoke(final_request)
+        lmi_request = chat_prompt_value.to_messages()
+        ai_message = self._get_chat_openai().invoke(lmi_request)
         return ai_message.content
 
 
