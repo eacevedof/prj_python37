@@ -33,7 +33,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
         csv_loader = CSVLoader(
-            file_path = "modules/lang_chain/application/lc_ask_question/curso/datos_ventas_small.csv",
+            file_path = "./modules/lang_chain/application/lc_ask_question/curso/datos_ventas_small.csv",
             csv_args = {"delimiter": ";"}
         )
         csv_data = csv_loader.load()
