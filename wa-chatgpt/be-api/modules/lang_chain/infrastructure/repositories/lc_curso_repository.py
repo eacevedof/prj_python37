@@ -59,10 +59,10 @@ class LcCursoRepository(AbstractLangchainRepository):
             llm = openai_chat,
         )
 
-        dt = fixing_parser.parse(str_dt_unformatted)
-        print(dt)
+        dt_independence_day = fixing_parser.parse(str_dt_unformatted) # datetime.datetime(1776, 7, 4, 0, 0)
+        print(dt_independence_day) # 1776-07-04 00:00:00
 
-        return str_dt_unformatted
+        return dt_independence_day.strftime("%Y-%m-%d")
 
 
     def ejemplo_parser_fecha(self) -> str:
