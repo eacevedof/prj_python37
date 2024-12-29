@@ -30,8 +30,8 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_parser_auto_fix(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
-        dic_prompt = {
-            "car_specialist": {
+        prompt_conf = {
+            "history": {
                 "human": {
                     "request": "¿Cuando es el día de la declaración de la independencia de los EEUU",
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
@@ -39,15 +39,16 @@ class LcCursoRepository(AbstractLangchainRepository):
             },
         }
         chat_prompt = ChatPromptTemplate.from_messages([
-            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+            prompt_conf.get("history").get("human").get("prompt_tpl"),
         ])
         dt_output_parser = DatetimeOutputParser()
 
         chat_prompt_value = chat_prompt.format_prompt(
-            request = dic_prompt.get("car_specialist").get("human").get("request"),
+            request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions()
         )
         final_request = chat_prompt_value.to_messages()
+
         oai_chat = self._get_chat_openai()
         ai_message = oai_chat.invoke(final_request)
         unknown_format = ai_message.content # tiene un formato: 1776-07-04T00:00:00:00000Z
@@ -61,8 +62,8 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_parser_fecha(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
-        dic_prompt = {
-            "car_specialist": {
+        prompt_conf = {
+            "history": {
                 "human": {
                     "request": "¿Cuando es el día de la declaración de la independencia de los EEUU",
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(str_human_template),
@@ -70,12 +71,12 @@ class LcCursoRepository(AbstractLangchainRepository):
             },
         }
         chat_prompt = ChatPromptTemplate.from_messages([
-            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+            prompt_conf.get("history").get("human").get("prompt_tpl"),
         ])
         dt_output_parser = DatetimeOutputParser()
 
         chat_prompt_value = chat_prompt.format_prompt(
-            request = dic_prompt.get("car_specialist").get("human").get("request"),
+            request = prompt_conf.get("history").get("human").get("request"),
             format_instructions = dt_output_parser.get_format_instructions(),
         )
         final_request = chat_prompt_value.to_messages()
@@ -90,7 +91,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_parsear_salida_de_caracteristicas_coches(self) -> str:
         str_human_template = "{request}\n{format_instructions}"
-        dic_prompt = {
+        prompt_conf = {
             "car_specialist": {
                 "human": {
                     "request": "dime 5 caracteresticas de los coches americanos",
@@ -99,12 +100,12 @@ class LcCursoRepository(AbstractLangchainRepository):
             },
         }
         chat_prompt = ChatPromptTemplate.from_messages([
-            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+            prompt_conf.get("car_specialist").get("human").get("prompt_tpl"),
         ])
         csv_output_parser = CommaSeparatedListOutputParser()
 
         chat_prompt_value = chat_prompt.format_prompt(
-            request = dic_prompt.get("car_specialist").get("human").get("request"),
+            request = prompt_conf.get("car_specialist").get("human").get("request"),
             format_instructions = csv_output_parser.get_format_instructions(),
         )
 
@@ -129,7 +130,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         str_sys_template = "Eres una IA especializada en coches de tipo {car_type} y generar artículos que leen en {read_time}"
         str_human_template = "Necesito un artículo para vehículos con motor {motor_type}"
 
-        dic_prompt = {
+        prompt_conf = {
             "car_specialist": {
                 "system": {
                     "prompt_tpl": SystemMessagePromptTemplate.from_template(str_sys_template),
@@ -140,8 +141,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             },
         }
         chat_prompt = ChatPromptTemplate.from_messages([
-            dic_prompt.get("car_specialist").get("system").get("prompt_tpl"),
-            dic_prompt.get("car_specialist").get("human").get("prompt_tpl"),
+            prompt_conf.get("car_specialist").get("system").get("prompt_tpl"),
+            prompt_conf.get("car_specialist").get("human").get("prompt_tpl"),
         ])
 
         chat_prompt_value = chat_prompt.format_prompt(
@@ -155,7 +156,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
 
     def ejemplo_multi_rol_con_generate(self) -> dict:
-        dic_prompt = {
+        prompt_conf = {
             "history": {
                 "system_role": "Eres un historiador que conoce los detalles de todas las ciudades del mundo",
                 "question": "¿Puedes decirme dónde se encuentra Cáceres?",
@@ -167,22 +168,22 @@ class LcCursoRepository(AbstractLangchainRepository):
         }
         llm_result = self._get_chat_openai().generate([
           [
-              SystemMessage(content=dic_prompt.get("history").get("system_role")),
-              HumanMessage(content=dic_prompt.get("history").get("question"))
+              SystemMessage(content=prompt_conf.get("history").get("system_role")),
+              HumanMessage(content=prompt_conf.get("history").get("question"))
           ],
           [
-              SystemMessage(content=dic_prompt.get("rude_young_person").get("system_role")),
-              HumanMessage(content=dic_prompt.get("rude_young_person").get("question"))
+              SystemMessage(content=prompt_conf.get("rude_young_person").get("system_role")),
+              HumanMessage(content=prompt_conf.get("rude_young_person").get("question"))
           ],
         ])
         generated_texts = llm_result.generations
         return {
             "history": {
-                "question": dic_prompt.get("history").get("question"),
+                "question": prompt_conf.get("history").get("question"),
                 "response": generated_texts[0][0].text,
             },
             "rude_young_person": {
-                "question": dic_prompt.get("rude_young_person").get("question"),
+                "question": prompt_conf.get("rude_young_person").get("question"),
                 "response": generated_texts[1][0].text,
             },
         }
