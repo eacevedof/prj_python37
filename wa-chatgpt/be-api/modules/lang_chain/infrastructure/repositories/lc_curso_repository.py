@@ -30,6 +30,8 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+
+
     def ejemplo_prompt_tamplate_save(self) -> str:
         prompt_conf = {
             "history": {
