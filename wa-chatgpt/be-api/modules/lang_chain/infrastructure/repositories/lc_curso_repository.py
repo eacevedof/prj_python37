@@ -17,6 +17,7 @@ from langchain.output_parsers import (
     DatetimeOutputParser,
     OutputFixingParser
 )
+from langchain.document_loaders import CSVLoader
 
 from shared.infrastructure.components.log import Log
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -30,6 +31,13 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
+        csv_loader = CSVLoader(
+            file_path = "modules/lang_chain/application/lc_ask_question/curso/datos_ventas_small.csv",
+            csv_args = {"delimiter": ";"}
+        )
+        csv_data = csv_loader.load()
+        return csv_data
 
 
     def ejemplo_prompt_tamplate_save(self) -> str:
