@@ -282,4 +282,58 @@ def ejemplo_parser_fecha(self) -> str:
 ### serializacion de prompts
 - Permite guardar plantillas complejas en formato JSON para su reutilización.
 ```python
+from langchain_core.prompts import (
+    BasePromptTemplate,
+    PromptTemplate
+)
+def ejemplo_prompt_tamplate_save(self) -> str:
+    prompt_conf = {
+        "history": {
+            "human": {
+                "user_question": "Cómo se prepara un bizcocho de vainilla",
+                "str_prompt_tpl": "Pregunta: {user_question}\n\nRespuesta: Vamos a verlo paso a paso",
+            }
+        },
+    }
+    self.__save_prompt_tpl_independece_day(
+        prompt_conf.get("history").get("human").get("str_prompt_tpl")
+    )
+    chat_prompt_tpl = self.__get_independence_day_saved_prompt()
+
+    chat_prompt_formatted = chat_prompt_tpl.format_prompt(
+        user_question = prompt_conf.get("history").get("human").get("user_question"),
+    )
+
+    lm_input_request = chat_prompt_formatted.to_messages()
+    ai_message = self._get_chat_openai().invoke(lm_input_request)
+    str_response = ai_message.content
+
+    return str_response
+
+def __save_prompt_tpl_independece_day(self, tpl: str) -> None:
+    chat_prompt_tpl = PromptTemplate(
+        template = tpl
+    )
+    chat_prompt_tpl.save("history-independence-day.json")
+
+def __get_independence_day_saved_prompt(self) -> BasePromptTemplate:
+    return load_prompt("history-independence-day.json")
+```
+- ejemplo **history-independence-day.json**
+```json
+{
+    "name": null,
+    "input_variables": [
+        "user_question"
+    ],
+    "optional_variables": [],
+    "output_parser": null,
+    "partial_variables": {},
+    "metadata": null,
+    "tags": null,
+    "template": "Pregunta: {user_question}\n\nRespuesta: Vamos a verlo paso a paso",
+    "template_format": "f-string",
+    "validate_template": false,
+    "_type": "prompt"
+}
 ```
