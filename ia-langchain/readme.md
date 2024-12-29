@@ -353,5 +353,6 @@ def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
         csv_args = {"delimiter": ";"}
     )
     csv_data = csv_loader.load()
+    print(csv_data[1].page_content)
     return csv_data
 ```
