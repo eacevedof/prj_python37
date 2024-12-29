@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from langchain_core.prompts import BasePromptTemplate
+from langchain_core.prompts import (
+    BasePromptTemplate,
+    PromptTemplate
+)
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -52,7 +55,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         return str_response
 
     def __save_prompt_tpl_independece_day(self, tpl: str) -> None:
-        chat_prompt_tpl = ChatPromptTemplate(
+        chat_prompt_tpl = PromptTemplate(
             template = tpl
         )
         chat_prompt_tpl.save("history-independence-day.json")
