@@ -53,10 +53,10 @@ class LcCursoRepository(AbstractLangchainRepository):
         ])
 
         path = "./modules/lang_chain/application/lc_ask_question/curso/documento-tecnologias-emergentes.pdf"
-        pdf_loader = PyPDFLoader(file_path=path)
-        pdf_data = pdf_loader.load()
+        pdf_content = self.__get_pdf_content(path)
+        print(pdf_content)
         chat_prompt_formatted = chat_prompt_tpl.format_prompt(
-            pdf_content = pdf_data[0].page_content
+            pdf_content = pdf_content
         )
 
         lm_input_request = chat_prompt_formatted.to_messages()
@@ -64,6 +64,17 @@ class LcCursoRepository(AbstractLangchainRepository):
         summarized_content = ai_message.content
 
         return summarized_content
+
+
+    def __get_pdf_content(self, path: str) -> str:
+        pdf_loader = PyPDFLoader(file_path=path)
+        pdf_data = pdf_loader.load()
+        pdf_content = []
+
+        for page in pdf_data:
+            pdf_content.append(page.page_content)
+
+        return "\n".join(pdf_content)
 
 
     def ejemplo_get_html_con_bshtml_loader(self) -> str:
