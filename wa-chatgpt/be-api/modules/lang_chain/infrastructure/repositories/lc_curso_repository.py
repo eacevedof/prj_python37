@@ -3,25 +3,26 @@ from typing import List, final
 
 from langchain_core.prompts import (
     BasePromptTemplate,
-    PromptTemplate
+    PromptTemplate,
 )
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
-    load_prompt
+    load_prompt,
 )
 from langchain.output_parsers import (
     CommaSeparatedListOutputParser,
     DatetimeOutputParser,
-    OutputFixingParser
+    OutputFixingParser,
 )
 from langchain.document_loaders import (
     CSVLoader,
     BSHTMLLoader,
     PyPDFLoader,
-    WikipediaLoader
+    WikipediaLoader,
+    TextLoader,
 )
 from langchain.text_splitter import (
     CharacterTextSplitter,
@@ -40,6 +41,11 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    def ejemplo_save_embeddings(self)-> str:
+        pass
+
+
 
     def ejemplo_embeddings(self) -> str:
         csv_data = self.ejemplo_get_datos_ventas_small_con_csv_loader()
