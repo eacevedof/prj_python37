@@ -23,8 +23,13 @@ from langchain.document_loaders import (
     PyPDFLoader,
     WikipediaLoader
 )
+from langchain.text_splitter import (
+    CharacterTextSplitter,
+)
 
-from shared.infrastructure.components.log import Log
+from modules.shared.infrastructure.components.log import Log
+from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
+
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
 
@@ -35,6 +40,19 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    def ejemplo_transformer(self) -> str:
+        path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
+        historia_espana = get_file_content(path)
+        len(historia_espana) # 85369
+        len(historia_espana.split(" ")) # 13701
+
+        text_splitter = CharacterTextSplitter(
+            separator = "\n",
+            chunk_size = 1000
+        )
+        chunks = text_splitter.create_documents([historia_espana])
+
 
 
     def ejemplo_resumir_wikipedia(self) -> str:
