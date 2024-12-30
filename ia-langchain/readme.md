@@ -471,3 +471,6 @@ def ejemplo_resumir_wikipedia(self) -> str:
 - Este límite esta en el rango de 8K tokens +/- 6K palabras.
 - Estos chunks serviran en su forma vectorial (embeddings) para buscar similitudes de acuerdo a su distancia
 - Por ejemplo, podremos alimentar un modelo LLM con contexto adicional para afinar su respuesta.
+```python
+
+```
