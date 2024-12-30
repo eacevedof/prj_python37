@@ -22,7 +22,7 @@ class AbstractSklearnRepository(ABC):
     __connection = None
     __cursor = None
 
-    def create_db_openai(self, ls_documents: List) -> SKLearnVectorStore:
+    def create_db_openai_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
         if self.db_exists():
             return self.get_db_openai()
 
@@ -53,6 +53,7 @@ class AbstractSklearnRepository(ABC):
 
     def db_exists(self) -> bool:
         return os.path.exists(self.__persist_path)
+
 
     def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()
