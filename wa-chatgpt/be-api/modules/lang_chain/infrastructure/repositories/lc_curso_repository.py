@@ -31,6 +31,7 @@ from langchain.text_splitter import (
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
 
+from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
 
@@ -43,7 +44,12 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_save_embeddings(self)-> str:
-        pass
+        path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
+        documents = TextLoader(file_path=path).load()
+        text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
+        docs = text_splitter.split_documents(documents)
+        openai_embeddings = self._get_embeddings_openai()
+        EjemplosSklearnRepository.get_instance().create_db(docs, openai_embeddings)
 
 
 
