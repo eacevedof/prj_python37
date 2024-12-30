@@ -20,7 +20,7 @@ from langchain.output_parsers import (
 from langchain.document_loaders import (
     CSVLoader,
     BSHTMLLoader,
-    PDFMinerLoader
+    PyPDFLoader
 )
 
 from shared.infrastructure.components.log import Log
@@ -53,9 +53,12 @@ class LcCursoRepository(AbstractLangchainRepository):
         ])
 
         path = "./modules/lang_chain/application/lc_ask_question/curso/documento-tecnologias-emergentes.pdf"
-        pdf_loader = PDFMinerLoader(path)
+        pdf_loader = PyPDFLoader(file_path=path)
         pdf_data = pdf_loader.load()
-        chat_prompt_formatted = chat_prompt_tpl.format_prompt(pdf_content = pdf_data[0].page_content)
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(
+            pdf_content = pdf_data[0].page_content
+        )
+
         lm_input_request = chat_prompt_formatted.to_messages()
         ai_message = self._get_chat_openai().invoke(lm_input_request)
         summarized_content = ai_message.content
