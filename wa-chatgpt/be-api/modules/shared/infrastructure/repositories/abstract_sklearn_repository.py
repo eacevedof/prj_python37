@@ -2,19 +2,14 @@ import os
 from abc import ABC
 from typing import Dict, List
 
-import psycopg2
-
-from langchain_community.vectorstores import SKLearnVectorStore
-from langchain_core.embeddings import Embeddings
-
-from config.database import PostgresDb
-from modules.shared.infrastructure.components.log import Log
-
 from langchain_openai import (
-    ChatOpenAI,
     OpenAIEmbeddings
 )
+from langchain_community.vectorstores import SKLearnVectorStore
+
 from config.config import OPENAI_API_KEY
+from modules.shared.infrastructure.components.log import Log
+
 
 class AbstractSklearnRepository(ABC):
 
