@@ -489,3 +489,14 @@ def ejemplo_transformer(self) -> str:
 ```
 #### incrustación de textos y creación de vectores (embeddings)
 - ![embeddings](./images/embeddings.png)
+```python
+def ejemplo_embeddings(self) -> str:
+    csv_data = self.ejemplo_get_datos_ventas_small_con_csv_loader()
+    openai_embeddings = self._get_embeddings_openai()
+    embedded_docs = openai_embeddings.embed_documents([
+        page.page_content for page in csv_data
+    ])
+    len(embedded_docs) # 22
+    return embedded_docs[0]
+```
+- ![embedded docs](./images/embedded-docs.png)
