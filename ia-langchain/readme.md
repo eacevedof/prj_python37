@@ -500,3 +500,8 @@ def ejemplo_embeddings(self) -> str:
     return embedded_docs[0]
 ```
 - ![embedded docs](./images/embedded-docs.png)
+#### almacenamiento de vectores en base de datos
+- hasta ahora hemos generado los **embeddings** en tiempo real, es decir en RAM.
+- Podemos almacenar estos vectores en una **base de datos de vectores** 
+- caracterisiticas de bases de datos vectoriales:
+![almacenamiento de vectores en base de datos](./images/almacenamiento-de-vectores-en-base-de-datos.png)
