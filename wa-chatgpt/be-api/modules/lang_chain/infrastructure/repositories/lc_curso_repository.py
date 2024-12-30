@@ -41,6 +41,13 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_embeddings(self) -> str:
+        openai_embeddings = self._get_embeddings_openai()
+        texto = "Esto es un texto enviado a OpenAI para ser incrustado en un vector n-dimensional"
+        embedded_text = openai_embeddings.embed_query(texto)
+        return embedded_text
+
+
     def ejemplo_transformer(self) -> str:
         path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
         historia_espana = get_file_content(path)
