@@ -360,6 +360,12 @@ def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
     print(csv_data[1].page_content)
     return csv_data
 
+def ejemplo_get_html_con_bshtml_loader(self) -> str:
+    path = "./modules/lang_chain/application/lc_ask_question/curso/ejemplo-web.html"
+    bshtml_loader = BSHTMLLoader(path)
+    html_data = bshtml_loader.load()
+
+    return html_data[0].page_content
 ```
 - **html loaded**
 - ![html-data-loaded](./images/html-data-loaded.png)
