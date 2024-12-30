@@ -464,3 +464,9 @@ def ejemplo_resumir_wikipedia(self) -> str:
     return ai_wiki_response
 ```
 ![postman ask wikipedia](./images/postman-ask-wikipedia.png)
+
+#### transformacion de documentos 
+- son troceadores semanticos de información en **chunks**
+- Viene a solucionar el límite de información soportado por un modelo.
+- Este límite esta en el rango de 8K tokens +/- 6K palabras.
+- 
