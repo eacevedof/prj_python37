@@ -44,13 +44,20 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_save_embeddings(self)-> str:
-        path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
-        documents = TextLoader(file_path=path).load()
-        text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
-        vectorized_docs = text_splitter.split_documents(documents)
-        vector_db = EjemplosSklearnRepository.get_instance().create_db_openai_by_documents(
-            vectorized_docs
-        )
+        sklearn_repository = EjemplosSklearnRepository.get_instance()
+        vector_db = None
+        if sklearn_repository.db_exists():
+            vector_db = sklearn_repository.get_openai_db()
+
+        if not sklearn_repository.db_exists():
+            path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
+            documents = TextLoader(file_path=path).load()
+            text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
+            vectorized_docs = text_splitter.split_documents(documents)
+            vector_db = sklearn_repository.create_openai_db_by_documents(
+                vectorized_docs
+            )
+
 
         consulta = "dame información de la Primera Guerra Mundial"
         matched_docs = vector_db.similarity_search(consulta) # busqueda seno. convierte consulta en un vector y lo comparará con lo que hay en la bd
