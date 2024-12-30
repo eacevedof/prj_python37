@@ -371,7 +371,7 @@ def ejemplo_get_html_con_bshtml_loader(self) -> str:
 - ![html-data-loaded](./images/html-data-loaded.png)
 - **resumir contenido de un pdf**
 - ![pypdf-data-loaded](./images/pypdf-data-loaded.png)
-````python
+```python
 from langchain.document_loaders import (
     PyPDFLoader
 )
@@ -414,5 +414,11 @@ def __get_pdf_content(self, path: str) -> str:
         pdf_content.append(page.page_content)
 
     return "\n".join(pdf_content)
-````
+```
 ![postman pdf summarized](./images/postman-pdf-summarized.png)
+
+### cargadores de tipo integración (integration loaders)
+- Permite la carga de fuente de datos concreta.
+- Ejemplo: AWS, Google Drive, Dropbox, MongoDB, Wikipedia, Youtube, Azure, etc
+```python
+```
