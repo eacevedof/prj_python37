@@ -42,12 +42,12 @@ class LcCursoRepository(AbstractLangchainRepository):
         topic = "Fernando Alonso"
         user_question = "¿Cuándo nació?"
 
-        lang = "es"
+        language_code = "es"
         load_max_docs = 5
 
         wikipedia_loader = WikipediaLoader(
             query = topic,
-            lang = lang,
+            lang = language_code,
             load_max_docs = load_max_docs
         )
         wikipedia_data = wikipedia_loader.load()
