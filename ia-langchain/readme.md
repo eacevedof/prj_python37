@@ -472,5 +472,18 @@ def ejemplo_resumir_wikipedia(self) -> str:
 - Estos chunks serviran en su forma vectorial (embeddings) para buscar similitudes de acuerdo a su distancia
 - Por ejemplo, podremos alimentar un modelo LLM con contexto adicional para afinar su respuesta.
 ```python
+def ejemplo_transformer(self) -> str:
+    path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
+    historia_espana = get_file_content(path)
+    len(historia_espana) # 85369
+    len(historia_espana.split(" ")) # 13701
 
+    text_splitter = CharacterTextSplitter(
+        separator = "\n",
+        chunk_size = 1000
+    )
+    chunks = text_splitter.create_documents([historia_espana])
+    print(type(chunks)) # <class 'list'>
+    print(type(chunks[0]))
+    return chunks[0].page_content
 ```
