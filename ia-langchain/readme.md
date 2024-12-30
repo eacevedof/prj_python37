@@ -506,6 +506,8 @@ def ejemplo_embeddings(self) -> str:
 - caracterisiticas de bases de datos vectoriales:
 ![almacenamiento de vectores en base de datos](./images/almacenamiento-de-vectores-en-base-de-datos.png)
 ![proceso de persistencia de vectores](./images/proceso-de-persistencia-de-vectores.png)
+- Una vez que se tenga el contenido de un texto en vectores cuando se haga una consulta sobre este se podra
+obtener los documentos más similares a este (ranking)
 ```python
 
 ```
