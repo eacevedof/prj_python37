@@ -34,7 +34,7 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_get_html_con_bshtml_loader(self) -> List[dict]:
+    def ejemplo_get_html_con_bshtml_loader(self) -> str:
         path = "./modules/lang_chain/application/lc_ask_question/curso/ejemplo-web.html"
         bshtml_loader = BSHTMLLoader(path)
         html_data = bshtml_loader.load()
