@@ -18,9 +18,6 @@ class AbstractSklearnRepository(ABC):
     __cursor = None
 
     def create_openai_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
-        if self.db_exists():
-            return self.get_openai_db()
-
         vector_store = SKLearnVectorStore.from_documents(
             documents = ls_documents,
             embedding = self.__get_embeddings_openai(),
