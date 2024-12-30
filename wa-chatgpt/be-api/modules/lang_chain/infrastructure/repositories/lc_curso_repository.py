@@ -45,6 +45,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_save_embeddings(self)-> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
+
         vector_db = None
         if sklearn_repository.db_exists():
             vector_db = sklearn_repository.get_openai_db()
@@ -58,11 +59,13 @@ class LcCursoRepository(AbstractLangchainRepository):
                 vectorized_docs
             )
 
-
         consulta = "dame información de la Primera Guerra Mundial"
-        matched_docs = vector_db.similarity_search(consulta) # busqueda seno. convierte consulta en un vector y lo comparará con lo que hay en la bd
+        # busqueda seno. convierte consulta en un vector y lo comparará con lo que hay en la bd
         # recuperara los vectores que hablen de la Primera Guerra Mundial
+        matched_docs = vector_db.similarity_search(consulta)
+
         print(matched_docs[0].page_content)
+        return matched_docs[0].page_content
 
 
     def ejemplo_embeddings(self) -> str:
