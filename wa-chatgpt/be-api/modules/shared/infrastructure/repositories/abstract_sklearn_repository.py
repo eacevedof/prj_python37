@@ -1,3 +1,4 @@
+import os
 from abc import ABC
 from typing import Dict, List
 
@@ -9,6 +10,11 @@ from langchain_core.embeddings import Embeddings
 from config.database import PostgresDb
 from modules.shared.infrastructure.components.log import Log
 
+from langchain_openai import (
+    ChatOpenAI,
+    OpenAIEmbeddings
+)
+from config.config import OPENAI_API_KEY
 
 class AbstractSklearnRepository(ABC):
 
@@ -16,24 +22,37 @@ class AbstractSklearnRepository(ABC):
     __connection = None
     __cursor = None
 
-    def _create_db(self, ls_documents: List, fn_embedding:Embeddings) -> SKLearnVectorStore:
+    def create_db_openai(self, ls_documents: List) -> SKLearnVectorStore:
+        if self.db_exists():
+            return self.get_db_openai()
+
         vector_store = SKLearnVectorStore.from_documents(
             documents = ls_documents,
-            embedding = fn_embedding,
+            embedding = self.__get_embeddings_openai(),
             persist_path = self.__persist_path,
-            serializer = "parquet"
         )
         vector_store.persist()
         return vector_store
 
-    def __get_connection(self) -> object:
-        return psycopg2.connect(
-            dbname=PostgresDb.dbname,
-            user=PostgresDb.user,
-            password=PostgresDb.password,
-            host=PostgresDb.host,
-            port=PostgresDb.port
+
+    def get_db_openai(self) -> SKLearnVectorStore:
+        if not self.db_exists():
+            raise Exception(f"db does not exist: {self.__persist_path}")
+
+        return SKLearnVectorStore.from_documents(
+            serializer = "parquet",
+            persist_path = self.__persist_path,
+            embedding = self.__get_embeddings_openai(),
         )
+
+
+    def __get_embeddings_openai(self) -> OpenAIEmbeddings:
+        return OpenAIEmbeddings(
+            openai_api_key=OPENAI_API_KEY
+        )
+
+    def db_exists(self) -> bool:
+        return os.path.exists(self.__persist_path)
 
     def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()

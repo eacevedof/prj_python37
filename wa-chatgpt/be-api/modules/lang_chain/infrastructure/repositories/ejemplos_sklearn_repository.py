@@ -16,8 +16,6 @@ class EjemplosSklearnRepository(AbstractSklearnRepository):
     def get_instance() -> "EjemplosSklearnRepository":
         return EjemplosSklearnRepository()
 
-    def create_db(self, ls_documents: List, fn_embedding:Embeddings) -> SKLearnVectorStore:
-        return self._create_db(ls_documents, fn_embedding)
 
 
 
