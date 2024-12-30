@@ -20,7 +20,8 @@ from langchain.output_parsers import (
 from langchain.document_loaders import (
     CSVLoader,
     BSHTMLLoader,
-    PyPDFLoader
+    PyPDFLoader,
+    WikipediaLoader
 )
 
 from shared.infrastructure.components.log import Log
@@ -34,6 +35,46 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+
+    def ejemplo_resumir_wikipedia(self) -> str:
+
+        pregunta_arg = "¿Qué son las tecnologías emergentes?"
+
+        query = "Tecnologías emergentes"
+        lang = "es"
+        load_max_docs = 5
+
+        wikipedia_loader = WikipediaLoader(
+            query = query,
+            lang = lang,
+            load_max_docs = load_max_docs
+        )
+        wikipedia_data = wikipedia_loader.load()
+        print(wikipedia_data[0].page_content)
+        wiki_content = wikipedia_data[0].page_content # por optimizar solo pasamos el primer documento
+
+        prompt_conf = {
+            "wikipedia": {
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                        "Responde a esta pregunta:\n{human_question}, aquí tienes contenido extra:\n{extra_content}"
+                    ),
+                }
+            },
+        }
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
+            prompt_conf.get("wikipedia").get("human").get("prompt_tpl"),
+        ])
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(
+            human_question = pregunta_arg,
+            extra_content = wiki_content
+        )
+        lm_input_request = chat_prompt_formatted.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
+        ai_response = ai_message.content
+
+        return ai_response
 
 
     def ejemplo_resumir_pdf(self) -> str:
