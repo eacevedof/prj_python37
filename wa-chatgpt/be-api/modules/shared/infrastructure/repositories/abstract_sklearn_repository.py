@@ -22,9 +22,9 @@ class AbstractSklearnRepository(ABC):
     __connection = None
     __cursor = None
 
-    def create_db_openai_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
+    def create_openai_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
         if self.db_exists():
-            return self.get_db_openai()
+            return self.get_openai_db()
 
         vector_store = SKLearnVectorStore.from_documents(
             documents = ls_documents,
@@ -35,7 +35,7 @@ class AbstractSklearnRepository(ABC):
         return vector_store
 
 
-    def get_db_openai(self) -> SKLearnVectorStore:
+    def get_openai_db(self) -> SKLearnVectorStore:
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path}")
 
