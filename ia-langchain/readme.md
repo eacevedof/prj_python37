@@ -422,4 +422,45 @@ def __get_pdf_content(self, path: str) -> str:
 - Ejemplo: AWS, Google Drive, Dropbox, MongoDB, Wikipedia, Youtube, Azure, etc
 - Son abstracciones de tipo repositiorio que permiten solicitar información de estos servicios externos.
 ```python
+# pip install wikipedia
+from langchain.document_loaders import WikipediaLoader
+def ejemplo_resumir_wikipedia(self) -> str:
+
+    topic = "Fernando Alonso"
+    user_question = "¿Cuándo nació?"
+
+    lang = "es"
+    load_max_docs = 5
+
+    wikipedia_loader = WikipediaLoader(
+        query = topic,
+        lang = lang,
+        load_max_docs = load_max_docs
+    )
+    wikipedia_data = wikipedia_loader.load()
+    print(wikipedia_data[0].page_content)
+    wiki_content = wikipedia_data[0].page_content # por optimizar solo pasamos el primer documento
+
+    prompt_conf = {
+        "wikipedia": {
+            "human": {
+                "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                    "Responde a esta pregunta:\n{human_question}, aquí tienes contenido extra:\n{context_info}"
+                ),
+            }
+        },
+    }
+    chat_prompt_tpl = ChatPromptTemplate.from_messages([
+        prompt_conf.get("wikipedia").get("human").get("prompt_tpl"),
+    ])
+    chat_prompt_formatted = chat_prompt_tpl.format_prompt(
+        context_info = wiki_content,
+        human_question = user_question,
+    )
+    lm_input_request = chat_prompt_formatted.to_messages()
+    ai_message = self._get_chat_openai().invoke(lm_input_request)
+    ai_wiki_response = ai_message.content
+
+    return ai_wiki_response
 ```
+![postman ask wikipedia](./images/postman-ask-wikipedia.png)
