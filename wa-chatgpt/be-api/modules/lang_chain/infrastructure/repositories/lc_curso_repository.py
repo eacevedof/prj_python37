@@ -19,7 +19,8 @@ from langchain.output_parsers import (
 )
 from langchain.document_loaders import (
     CSVLoader,
-    BSHTMLLoader
+    BSHTMLLoader,
+    PDFMinerLoader
 )
 
 from shared.infrastructure.components.log import Log
@@ -34,12 +35,32 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_resumir_pdf(self) -> str:
-        path = "./modules/lang_chain/application/lc_ask_question/curso/ejemplo-web.html"
-        bshtml_loader = BSHTMLLoader(path)
-        html_data = bshtml_loader.load()
 
-        return html_data[0].page_content
+    def ejemplo_resumir_pdf(self) -> str:
+
+        prompt_conf = {
+            "summarize": {
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                        "Necesito que hagas un resume del siguiente texto: \{pdf_content}"
+                    ),
+                }
+            },
+        }
+
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
+            prompt_conf.get("summarize").get("human").get("prompt_tpl"),
+        ])
+
+        path = "./modules/lang_chain/application/lc_ask_question/curso/documento-tecnologias-emergentes.pdf"
+        pdf_loader = PDFMinerLoader(path)
+        pdf_data = pdf_loader.load()
+        chat_prompt_formatted = chat_prompt_tpl.format_prompt(pdf_content = pdf_data[0].page_content)
+        lm_input_request = chat_prompt_formatted.to_messages()
+        ai_message = self._get_chat_openai().invoke(lm_input_request)
+        summarized_content = ai_message.content
+
+        return summarized_content
 
 
     def ejemplo_get_html_con_bshtml_loader(self) -> str:
