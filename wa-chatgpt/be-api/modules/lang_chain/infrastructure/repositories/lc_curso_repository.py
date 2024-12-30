@@ -52,7 +52,9 @@ class LcCursoRepository(AbstractLangchainRepository):
             chunk_size = 1000
         )
         chunks = text_splitter.create_documents([historia_espana])
-
+        print(type(chunks)) # <class 'list'>
+        print(type(chunks[0]))
+        return chunks[0].page_content
 
 
     def ejemplo_resumir_wikipedia(self) -> str:
