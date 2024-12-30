@@ -42,10 +42,13 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_embeddings(self) -> str:
+        csv_data = self.ejemplo_get_datos_ventas_small_con_csv_loader()
         openai_embeddings = self._get_embeddings_openai()
-        texto = "Esto es un texto enviado a OpenAI para ser incrustado en un vector n-dimensional"
-        embedded_text = openai_embeddings.embed_query(texto)
-        return embedded_text
+        embedded_docs = openai_embeddings.embed_documents([
+            page.page_content for page in csv_data
+        ])
+        len(embedded_docs) # 22
+        return embedded_docs[0]
 
 
     def ejemplo_transformer(self) -> str:
@@ -160,6 +163,7 @@ class LcCursoRepository(AbstractLangchainRepository):
             csv_args = {"delimiter": ";"}
         )
         csv_data = csv_loader.load()
+        # csv_data[0] es de tipo langchain.documents.base.Document
         print(csv_data[1].page_content)
         return csv_data
 

@@ -33,7 +33,8 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_get_html_con_bshtml_loader()
         # str_response = LcCursoRepository.get_instance().ejemplo_resumir_pdf()
         # str_response = LcCursoRepository.get_instance().ejemplo_resumir_wikipedia()
-        str_response = LcCursoRepository.get_instance().ejemplo_transformer()
+        # str_response = LcCursoRepository.get_instance().ejemplo_transformer()
+        str_response = LcCursoRepository.get_instance().ejemplo_embeddings()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
