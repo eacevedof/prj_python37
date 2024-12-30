@@ -39,7 +39,7 @@ class AbstractSklearnRepository(ABC):
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path}")
 
-        return SKLearnVectorStore.from_documents(
+        return SKLearnVectorStore(
             serializer = "parquet",
             persist_path = self.__persist_path,
             embedding = self.__get_embeddings_openai(),
