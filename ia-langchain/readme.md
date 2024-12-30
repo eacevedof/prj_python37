@@ -345,7 +345,11 @@ a nivel de infraestructura con un objeto de python.
 - `pip install langchain-community` con esto se instala algunos loaders
 - [documentación loaders](https://python.langchain.com/docs/how_to/#document-loaders)
 ```python
-from langchain.document_loaders import CSVLoader
+from langchain.document_loaders import (
+    CSVLoader,
+    BSHTMLLoader
+)
+
 def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
     path = "./modules/lang_chain/application/lc_ask_question/curso/datos-ventas-small.csv"
     csv_loader = CSVLoader(
@@ -355,4 +359,7 @@ def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
     csv_data = csv_loader.load()
     print(csv_data[1].page_content)
     return csv_data
+
 ```
+- **html loaded**
+- ![html-data-loaded](./images/html-data-loaded.png)

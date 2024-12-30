@@ -17,7 +17,10 @@ from langchain.output_parsers import (
     DatetimeOutputParser,
     OutputFixingParser
 )
-from langchain.document_loaders import CSVLoader
+from langchain.document_loaders import (
+    CSVLoader,
+    BSHTMLLoader
+)
 
 from shared.infrastructure.components.log import Log
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -31,7 +34,14 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_get_datos_ventas_small_con_loader(self) -> List[dict]:
+    def ejemplo_get_html_con_bshtml_loader(self) -> List[dict]:
+        path = "./modules/lang_chain/application/lc_ask_question/curso/ejemplo-web.html"
+        bshtml_loader = BSHTMLLoader(path)
+        html_data = bshtml_loader.load()
+
+        return html_data[0].page_content
+
+    def ejemplo_get_datos_ventas_small_con_csv_loader(self) -> List[dict]:
         path = "./modules/lang_chain/application/lc_ask_question/curso/datos-ventas-small.csv"
         csv_loader = CSVLoader(
             file_path = path,
@@ -40,7 +50,6 @@ class LcCursoRepository(AbstractLangchainRepository):
         csv_data = csv_loader.load()
         print(csv_data[1].page_content)
         return csv_data
-
 
     def ejemplo_prompt_tamplate_save(self) -> str:
         prompt_conf = {
