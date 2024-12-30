@@ -505,3 +505,5 @@ def ejemplo_embeddings(self) -> str:
 - Podemos almacenar estos vectores en una **base de datos de vectores** 
 - caracterisiticas de bases de datos vectoriales:
 ![almacenamiento de vectores en base de datos](./images/almacenamiento-de-vectores-en-base-de-datos.png)
+```python
+```
