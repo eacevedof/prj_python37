@@ -49,7 +49,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
         docs = text_splitter.split_documents(documents)
         openai_embeddings = self._get_embeddings_openai()
-        vector_db = EjemplosSklearnRepository.get_instance().create_db(docs, openai_embeddings)
+        vector_db = EjemplosSklearnRepository.get_instance().create_db_openai(docs, openai_embeddings)
         consulta = "dame información de la Primera Guerra Mundial"
         docs = vector_db.similarity_search(consulta) # busqueda seno. convierte consulta en un vector y lo comparará con lo que hay en la bd
         # recuperara los vectores que hablen de la Primera Guerra Mundial
