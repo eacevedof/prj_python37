@@ -39,14 +39,14 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_resumir_wikipedia(self) -> str:
 
-        pregunta_arg = "¿Qué son las tecnologías emergentes?"
+        topic = "Fernando Alonso"
+        user_question = "¿Cuándo nació?"
 
-        query = "Tecnologías emergentes"
         lang = "es"
         load_max_docs = 5
 
         wikipedia_loader = WikipediaLoader(
-            query = query,
+            query = topic,
             lang = lang,
             load_max_docs = load_max_docs
         )
@@ -58,7 +58,7 @@ class LcCursoRepository(AbstractLangchainRepository):
             "wikipedia": {
                 "human": {
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(
-                        "Responde a esta pregunta:\n{human_question}, aquí tienes contenido extra:\n{extra_content}"
+                        "Responde a esta pregunta:\n{human_question}, aquí tienes contenido extra:\n{context_info}"
                     ),
                 }
             },
@@ -67,14 +67,14 @@ class LcCursoRepository(AbstractLangchainRepository):
             prompt_conf.get("wikipedia").get("human").get("prompt_tpl"),
         ])
         chat_prompt_formatted = chat_prompt_tpl.format_prompt(
-            human_question = pregunta_arg,
-            extra_content = wiki_content
+            context_info = wiki_content,
+            human_question = user_question,
         )
         lm_input_request = chat_prompt_formatted.to_messages()
         ai_message = self._get_chat_openai().invoke(lm_input_request)
-        ai_response = ai_message.content
+        ai_wiki_response = ai_message.content
 
-        return ai_response
+        return ai_wiki_response
 
 
     def ejemplo_resumir_pdf(self) -> str:
