@@ -487,3 +487,4 @@ def ejemplo_transformer(self) -> str:
     print(type(chunks[0]))
     return chunks[0].page_content
 ```
+#### incrustación de textos y creación de vectores (embeddings)
