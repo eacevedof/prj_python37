@@ -369,3 +369,4 @@ def ejemplo_get_html_con_bshtml_loader(self) -> str:
 ```
 - **html loaded**
 - ![html-data-loaded](./images/html-data-loaded.png)
+- **resumir contenido de un pdf**
