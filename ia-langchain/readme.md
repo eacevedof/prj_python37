@@ -420,5 +420,6 @@ def __get_pdf_content(self, path: str) -> str:
 ### cargadores de tipo integración (integration loaders)
 - Permite la carga de fuente de datos concreta.
 - Ejemplo: AWS, Google Drive, Dropbox, MongoDB, Wikipedia, Youtube, Azure, etc
+- Son abstracciones de tipo repositiorio que permiten solicitar información de estos servicios externos.
 ```python
 ```
