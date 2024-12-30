@@ -52,9 +52,9 @@ class LcCursoRepository(AbstractLangchainRepository):
 
         if not sklearn_repository.db_exists():
             path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
-            documents = TextLoader(file_path=path).load()
+            texts = TextLoader(file_path=path).load()
             text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
-            vectorized_docs = text_splitter.split_documents(documents)
+            vectorized_docs = text_splitter.split_documents(texts)
             vector_db = sklearn_repository.create_openai_db_by_documents(
                 vectorized_docs
             )
