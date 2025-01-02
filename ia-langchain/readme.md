@@ -509,5 +509,33 @@ def ejemplo_embeddings(self) -> str:
 - Una vez que se tenga el contenido de un texto en vectores cuando se haga una consulta sobre este se podra
 obtener los documentos más similares a este (ranking)
 ```python
+def ejemplo_save_embeddings(self)-> str:
+    sklearn_repository = EjemplosSklearnRepository.get_instance()
 
+    vector_db = None
+    consulta = "dame información de la Primera Guerra Mundial"
+    if sklearn_repository.db_exists():
+        consulta = "¿Qué pasó en el siglo de Oro?"
+        print("db exists")
+        vector_db = sklearn_repository.get_openai_db()
+
+    if not sklearn_repository.db_exists():
+        print("creating db")
+        path = "./modules/lang_chain/application/lc_ask_question/curso/historia-espana.txt"
+        texts = TextLoader(file_path=path, encoding="utf8").load()
+        text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
+        vectorized_docs = text_splitter.split_documents(texts)
+        vector_db = sklearn_repository.create_openai_db_by_documents(
+            vectorized_docs
+        )
+
+
+    # busqueda seno. convierte consulta en un vector y lo comparará con lo que hay en la bd
+    # recuperara los vectores que hablen de la Primera Guerra Mundial
+    matched_docs = vector_db.similarity_search(consulta)
+
+    print(matched_docs[0].page_content)
+    return f"{consulta}\n{matched_docs[0].page_content}"
 ```
+![db parquet format example](./images/db-parquet-format.png)
+![postman db response](./images/postman-db-parquet-response.png)
