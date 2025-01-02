@@ -537,5 +537,9 @@ def ejemplo_save_embeddings(self)-> str:
     print(matched_docs[0].page_content)
     return f"{consulta}\n{matched_docs[0].page_content}"
 ```
+- parquet example
 ![db parquet format example](./images/db-parquet-format.png)
 ![postman db response](./images/postman-db-parquet-response.png)
+
+#### compresion y optimizacion de resultados
+- ![compression](./images/compresion-and-result-optimization.png)
