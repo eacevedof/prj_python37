@@ -96,4 +96,13 @@ Traceback (most recent call last):
     instance = self.app(scope)
                ^^^^^^^^^^^^^^^
 TypeError: Flask.__call__() missing 1 required positional argument: 'start_response'
+
+
+File "pyarrow\_dataset.pyx", line 3126, 
+in pyarrow._dataset.DatasetFactory.finish File "pyarrow\error.pxi", line 155, 
+in pyarrow.lib.pyarrow_internal_check_status File "pyarrow\error.pxi", line 92, 
+in pyarrow.lib.check_status pyarrow.lib.ArrowInvalid: Error creating dataset. 
+Could not read schema from .. 
+
+FIX: habia que crear con el serializer="parquet"
 ```
