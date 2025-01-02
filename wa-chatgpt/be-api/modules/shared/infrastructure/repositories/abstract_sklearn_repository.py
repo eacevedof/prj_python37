@@ -61,7 +61,7 @@ class AbstractSklearnRepository(ABC):
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path_optimization}")
 
-        if not self.__is_valid_parquet_file():
+        if not self.__is_valid_parquet_file(self.__persist_path_optimization):
             raise Exception(f"db {self.__persist_path_optimization} is not a parquet file")
 
         return SKLearnVectorStore(
