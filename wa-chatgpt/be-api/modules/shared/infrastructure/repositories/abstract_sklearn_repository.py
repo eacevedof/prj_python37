@@ -20,6 +20,7 @@ class AbstractSklearnRepository(ABC):
 
     def create_openai_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
         vector_store = SKLearnVectorStore.from_documents(
+            serializer = "parquet",
             documents = ls_documents,
             embedding = self.__get_embeddings_openai(),
             persist_path = self.__persist_path,
