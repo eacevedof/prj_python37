@@ -15,8 +15,23 @@ from modules.shared.infrastructure.components.log import Log
 class AbstractSklearnRepository(ABC):
 
     __persist_path = "./database/sk_learn/ejemplos_embedding_db.parquet"
+    __persist_path_optimization = "./database/sk_learn/optimization_db.parquet"
+
     __connection = None
     __cursor = None
+
+    def create_optimization_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
+        vector_store = SKLearnVectorStore.from_documents(
+            serializer = "parquet",
+            documents = ls_documents,
+            embedding = self.__get_embeddings_openai(),
+            persist_path = self.__persist_path_optimization,
+        )
+        vector_store.persist()
+        if not self.__is_valid_parquet_file(self.__persist_path_optimization):
+            raise Exception(f"db {self.__persist_path_optimization} is not a parquet file")
+
+        return vector_store
 
     def create_openai_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
         vector_store = SKLearnVectorStore.from_documents(
@@ -26,14 +41,14 @@ class AbstractSklearnRepository(ABC):
             persist_path = self.__persist_path,
         )
         vector_store.persist()
-        if not self.__is_valid_parquet_file():
+        if not self.__is_valid_parquet_file(self.__persist_path):
             raise Exception(f"db {self.__persist_path} is not a parquet file")
 
         return vector_store
 
-    def __is_valid_parquet_file(self) -> bool:
+    def __is_valid_parquet_file(self, db_path:str) -> bool:
         try:
-            pq.read_table(self.__persist_path)
+            pq.read_table(db_path)
             return True
         except Exception as e:
             Log.log_exception(e, "AbstractSklearnRepository.__is_valid_parquet_file")
@@ -57,6 +72,9 @@ class AbstractSklearnRepository(ABC):
         return OpenAIEmbeddings(
             openai_api_key=OPENAI_API_KEY
         )
+
+    def db_optimization_exists(self) -> bool:
+        return os.path.exists(self.__persist_path_optimization)
 
     def db_exists(self) -> bool:
         return os.path.exists(self.__persist_path)
