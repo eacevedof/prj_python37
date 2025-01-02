@@ -90,7 +90,7 @@ class AbstractSklearnRepository(ABC):
             openai_api_key=OPENAI_API_KEY
         )
 
-    def get_compresion_retriever(self) -> ContextualCompressionRetriever:
+    def get_compression_retriever(self) -> ContextualCompressionRetriever:
         return ContextualCompressionRetriever(
             base_retriever= self.get_optimization_db().as_retriever(),
             base_compressor = self.__get_llm_chain_extractor(),

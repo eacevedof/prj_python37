@@ -69,7 +69,14 @@ class LcCursoRepository(AbstractLangchainRepository):
                 wikipedia_chunks
             )
 
-        matched_docs = vector_db.similarity_search(consulta)
+
+        # esta no es la forma optimizada devuelve todo el contenido de wikipedia
+        # matched_docs = vector_db.similarity_search(consulta)
+
+        # en la forma optimizada se le solicita al llm de compresion y no la bd
+        compression_retriever = sklearn_repository.get_compression_retriever()
+        matched_docs = compression_retriever.invoke(consulta)
+
         print(matched_docs[0].page_content)
         return f"{consulta}\n{matched_docs[0].page_content}"
 
