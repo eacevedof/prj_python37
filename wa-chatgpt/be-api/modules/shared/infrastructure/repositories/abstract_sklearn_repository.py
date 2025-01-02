@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 from typing import Dict, List
+import pyarrow.parquet as pq
 
 from langchain_openai import (
     OpenAIEmbeddings
@@ -13,7 +14,7 @@ from modules.shared.infrastructure.components.log import Log
 
 class AbstractSklearnRepository(ABC):
 
-    __persist_path = "./database/sk_learn/ejemplos_embedding_db"
+    __persist_path = "./database/sk_learn/ejemplos_embedding_db.parquet"
     __connection = None
     __cursor = None
 
@@ -24,12 +25,20 @@ class AbstractSklearnRepository(ABC):
             persist_path = self.__persist_path,
         )
         vector_store.persist()
+        if not self.__is_valid_parquet():
+            raise Exception(f"db {self.__persist_path} is not a parquet file")
+
         return vector_store
 
+    def __is_valid_parquet(self) -> bool:
+        return  pq.read_table(self.__persist_path)
 
     def get_openai_db(self) -> SKLearnVectorStore:
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path}")
+
+        if not self.__is_valid_parquet():
+            raise Exception(f"db {self.__persist_path} is not a parquet file")
 
         return SKLearnVectorStore(
             serializer = "parquet",
