@@ -27,6 +27,8 @@ from langchain.document_loaders import (
 from langchain.text_splitter import (
     CharacterTextSplitter,
 )
+from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.document_compressors import LLMChainExtractor
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
@@ -50,7 +52,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         consulta = "¿Por qué él lenguaje Python se llama así?"
         if sklearn_repository.db_optimization_exists():
             print("db optimization exists")
-            vector_db = sklearn_repository.get_openai_db()
+            vector_db = sklearn_repository.get_optimization_db()
 
         if not sklearn_repository.db_optimization_exists():
             print("creating optimization db")
