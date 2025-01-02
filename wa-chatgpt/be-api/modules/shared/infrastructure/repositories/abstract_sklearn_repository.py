@@ -25,19 +25,24 @@ class AbstractSklearnRepository(ABC):
             persist_path = self.__persist_path,
         )
         vector_store.persist()
-        if not self.__is_valid_parquet():
+        if not self.__is_valid_parquet_file():
             raise Exception(f"db {self.__persist_path} is not a parquet file")
 
         return vector_store
 
-    def __is_valid_parquet(self) -> bool:
-        return  pq.read_table(self.__persist_path)
+    def __is_valid_parquet_file(self) -> bool:
+        try:
+            pq.read_table(self.__persist_path)
+            return True
+        except Exception as e:
+            Log.log_exception(e, "AbstractSklearnRepository.__is_valid_parquet_file")
+            return False
 
     def get_openai_db(self) -> SKLearnVectorStore:
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path}")
 
-        if not self.__is_valid_parquet():
+        if not self.__is_valid_parquet_file():
             raise Exception(f"db {self.__persist_path} is not a parquet file")
 
         return SKLearnVectorStore(
