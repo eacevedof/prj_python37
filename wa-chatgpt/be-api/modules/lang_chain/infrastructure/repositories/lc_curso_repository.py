@@ -64,12 +64,12 @@ class LcCursoRepository(AbstractLangchainRepository):
 
         full_chain = SimpleSequentialChain(
             chains=[prompt_conf.get("gimme-summary"), prompt_conf.get("create-a-post")],
-            verbose=True # nos ira dando paso a paso lo que se va haciendo
+            verbose=True # nos ira dando paso a paso lo que se va haciendo por consola
         )
 
         dic_response = full_chain.invoke(input="Inteligencia Artificial")
 
-        return f"{dic_response.get("company_product")}: {dic_response.get("text")}"
+        return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
 
 
     def ejemplo_creacion_objeto_llm_chain(self) -> str:
