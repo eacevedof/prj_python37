@@ -543,3 +543,39 @@ def ejemplo_save_embeddings(self)-> str:
 
 #### compresion y optimizacion de resultados
 - ![compression](./images/compresion-and-result-optimization.png)
+```python
+def ejemplo_compresion_y_optimizacion_de_resultados(self)-> str:
+    sklearn_repository = EjemplosSklearnRepository.get_instance()
+
+    vector_db = None
+    consulta = "¿Por qué él lenguaje Python se llama así?"
+    if sklearn_repository.db_optimization_exists():
+        print("db optimization exists")
+        vector_db = sklearn_repository.get_optimization_db()
+
+    if not sklearn_repository.db_optimization_exists():
+        print("creating optimization db")
+        wikipedia_loader = WikipediaLoader(
+            query="Lenguaje python",
+            lang="es",
+            load_max_docs = 5
+        )
+        wikipedia_data = wikipedia_loader.load()
+        char_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500)
+        wikipedia_chunks = char_splitter.split_documents(wikipedia_data)
+
+        vector_db = sklearn_repository.create_optimization_db_by_documents(
+            wikipedia_chunks
+        )
+
+
+    # esta no es la forma optimizada devuelve todo el contenido de wikipedia
+    # matched_docs = vector_db.similarity_search(consulta)
+
+    # en la forma optimizada se le solicita al llm de compresion y no la bd
+    compression_retriever = sklearn_repository.get_compression_retriever()
+    matched_docs = compression_retriever.invoke(consulta)
+
+    print(matched_docs[0].page_content)
+    return f"{consulta}\n{matched_docs[0].page_content}"
+```
