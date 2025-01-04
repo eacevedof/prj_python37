@@ -609,3 +609,7 @@ def ejemplo_cadena_secuencia_simple(self) -> str:
 
     return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
 ```
+#### modelo secuencial completo
+- ![](./images/)
+```python
+```
