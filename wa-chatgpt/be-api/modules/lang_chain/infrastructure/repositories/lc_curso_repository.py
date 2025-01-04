@@ -44,6 +44,30 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_cadena_secuencia_simple(self) -> str:
+        prompt_conf = {
+            "company_creator": {
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                        "Dame un nombre de compañia que sea simpatico para una compañia que cree {company_product}"
+                    ),
+                }
+            },
+        }
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
+            prompt_conf.get("company_creator").get("human").get("prompt_tpl"),
+        ])
+
+        # chat_prompt_formatted = chat_prompt_tpl.format_prompt(company_product="Lavadoras")
+        # lm_input_request = chat_prompt_formatted.to_messages()
+
+        llm_chain = LLMChain(llm=self._get_chat_openai(), prompt=chat_prompt_tpl)
+
+        # el input se asocia al parametro del prompt. En este caso company_product
+        dic_response = llm_chain.invoke(input="Lavadoras")
+
+        return f"{dic_response.get("company_product")}: {dic_response.get("text")}"
+
     def ejemplo_creacion_objeto_llm_chain(self) -> str:
         prompt_conf = {
             "company_creator": {
