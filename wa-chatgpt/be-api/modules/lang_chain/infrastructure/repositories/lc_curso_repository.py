@@ -28,6 +28,7 @@ from langchain.text_splitter import (
     CharacterTextSplitter,
 )
 from langchain.chains.llm import LLMChain
+from langchain.chains.sequential import SimpleSequentialChain
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
@@ -45,28 +46,31 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_cadena_secuencia_simple(self) -> str:
+        open_ai_chat = self._get_chat_openai()
         prompt_conf = {
-            "company_creator": {
-                "human": {
-                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
-                        "Dame un nombre de compañia que sea simpatico para una compañia que cree {company_product}"
-                    ),
-                }
-            },
+            "gimme-summary": LLMChain(
+                llm=open_ai_chat,
+                prompt=ChatPromptTemplate.from_template(
+                    "Dame un simple resumen con un listado de puntos para un post de un blog acerca de {topic}"
+                )
+            ),
+            "create-a-post": LLMChain(
+                llm=open_ai_chat,
+                prompt=ChatPromptTemplate.from_template(
+                    "Escribe un post completo usando este resumen: {summary}"
+                )
+            ),
         }
-        chat_prompt_tpl = ChatPromptTemplate.from_messages([
-            prompt_conf.get("company_creator").get("human").get("prompt_tpl"),
-        ])
 
-        # chat_prompt_formatted = chat_prompt_tpl.format_prompt(company_product="Lavadoras")
-        # lm_input_request = chat_prompt_formatted.to_messages()
+        full_chain = SimpleSequentialChain(
+            chains=[prompt_conf.get("gimme-summary"), prompt_conf.get("create-a-post")],
+            verbose=True # nos ira dando paso a paso lo que se va haciendo
+        )
 
-        llm_chain = LLMChain(llm=self._get_chat_openai(), prompt=chat_prompt_tpl)
-
-        # el input se asocia al parametro del prompt. En este caso company_product
-        dic_response = llm_chain.invoke(input="Lavadoras")
+        dic_response = full_chain.invoke(input="Inteligencia Artificial")
 
         return f"{dic_response.get("company_product")}: {dic_response.get("text")}"
+
 
     def ejemplo_creacion_objeto_llm_chain(self) -> str:
         prompt_conf = {
