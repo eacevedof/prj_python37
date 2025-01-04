@@ -581,3 +581,4 @@ def ejemplo_compresion_y_optimizacion_de_resultados(self)-> str:
 ```
 ## cadenas en langchain
 - **modelo secuencial simple**
+- ![modelo-secuencial-simple](./images/llm-simple-chain.png)
