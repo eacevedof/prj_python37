@@ -44,7 +44,7 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_cadena_secuencial_simple(self) -> str:
+    def ejemplo_creacion_objeto_llm_chain(self) -> str:
         prompt_conf = {
             "company_creator": {
                 "human": {
