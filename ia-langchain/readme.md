@@ -579,3 +579,5 @@ def ejemplo_compresion_y_optimizacion_de_resultados(self)-> str:
     print(matched_docs[0].page_content)
     return f"{consulta}\n{matched_docs[0].page_content}"
 ```
+## cadenas en langchain
+- **modelo secuencial simple**
