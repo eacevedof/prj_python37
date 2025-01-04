@@ -27,8 +27,7 @@ from langchain.document_loaders import (
 from langchain.text_splitter import (
     CharacterTextSplitter,
 )
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import LLMChainExtractor
+from langchain.chains.llm import LLMChain
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
@@ -44,6 +43,31 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    def ejemplo_cadena_secuencial_simple(self) -> str:
+        prompt_conf = {
+            "company_creator": {
+                "human": {
+                    "prompt_tpl": HumanMessagePromptTemplate.from_template(
+                        "Dame un nombre de compañia que sea simpatico para una compañia que cree {company_product}"
+                    ),
+                }
+            },
+        }
+        chat_prompt_tpl = ChatPromptTemplate.from_messages([
+            prompt_conf.get("company_creator").get("human").get("prompt_tpl"),
+        ])
+
+        # chat_prompt_formatted = chat_prompt_tpl.format_prompt(company_product="Lavadoras")
+        # lm_input_request = chat_prompt_formatted.to_messages()
+
+        llm_chain = LLMChain(llm=self._get_chat_openai(), prompt=chat_prompt_tpl)
+
+        # el input se asocia al parametro del prompt. En este caso company_product
+        dic_response = llm_chain.invoke(input="Lavadoras")
+
+        return f"{dic_response.get("company_product")}: {dic_response.get("text")}"
+
 
     def ejemplo_compresion_y_optimizacion_de_resultados(self)-> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
