@@ -37,7 +37,7 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_embeddings()
         # str_response = LcCursoRepository.get_instance().ejemplo_save_embeddings()
         # str_response = LcCursoRepository.get_instance().ejemplo_compresion_y_optimizacion_de_resultados()
-        str_response = LcCursoRepository.get_instance().ejemplo_cadena_secuencial_simple()
+        str_response = LcCursoRepository.get_instance().ejemplo_creacion_objeto_llm_chain()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
