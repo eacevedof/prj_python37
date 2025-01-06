@@ -676,3 +676,8 @@ de tomar la iniciativa.
     return f"{dic_response.get("performance_review")}:\n{dic_response.get("employee_performance")}\n{dic_response.get("employee_weaknesses")}\n{dic_response.get("improve_plan")}"
 ```
 ![full sequential model](./images/postman-full-sequential-model.png)
+
+#### Enrutamiento a cadenas con LLMRouterChain
+- ![llm-router-chain](./images/llm-router-chain.png)
+```python
+```
