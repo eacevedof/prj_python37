@@ -804,5 +804,5 @@ def ejemplo_cadenas_transformacion(self) -> str:
     # return f"{dic_response.get("input")}\n{dic_response.get("output")}"
     return f"{wikipedia_query} ({final_language})\n{dic_response.get("output")}"
 ```
-- ![postman transformation-chains](./images/postman-transformation-chains.png)
 - ![debug transformation-chains](./images/debug-transformation-chains.png)
+- ![postman transformation-chains](./images/postman-transformation-chains.png)
