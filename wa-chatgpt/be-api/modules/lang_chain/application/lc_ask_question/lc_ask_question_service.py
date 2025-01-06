@@ -39,7 +39,8 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_compresion_y_optimizacion_de_resultados()
         # str_response = LcCursoRepository.get_instance().ejemplo_creacion_objeto_llm_chain()
         # str_response = LcCursoRepository.get_instance().ejemplo_cadena_secuencia_simple()
-        str_response = LcCursoRepository.get_instance().ejemplo_cadena_secuencia_completo()
+        # str_response = LcCursoRepository.get_instance().ejemplo_cadena_secuencia_completo()
+        str_response = LcCursoRepository.get_instance().ejemplo_enrutamiento_de_cadenas()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
