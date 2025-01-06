@@ -45,6 +45,32 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_cadena_secuencia_completo(self) -> str:
+        open_ai_chat = self._get_chat_openai()
+        prompt_conf = {
+            "gimme-summary": LLMChain(
+                llm = open_ai_chat,
+                prompt = ChatPromptTemplate.from_template(
+                    "Dame un resumen del rendimiento de este trabajador: {employee_resume}"
+                )
+            ),
+            "create-a-post": LLMChain(
+                llm = open_ai_chat,
+                prompt = ChatPromptTemplate.from_template(
+                    "Escribe un post completo usando este resumen: {summary}"
+                )
+            ),
+        }
+
+        full_chain = SimpleSequentialChain(
+            chains=[prompt_conf.get("gimme-summary"), prompt_conf.get("create-a-post")],
+            verbose=True # nos ira dando paso a paso lo que se va haciendo por consola
+        )
+
+        dic_response = full_chain.invoke(input="Inteligencia Artificial")
+
+        return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+
     def ejemplo_cadena_secuencia_simple(self) -> str:
         open_ai_chat = self._get_chat_openai()
         prompt_conf = {
