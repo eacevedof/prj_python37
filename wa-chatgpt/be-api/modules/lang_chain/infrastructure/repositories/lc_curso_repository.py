@@ -29,6 +29,7 @@ from langchain.text_splitter import (
 )
 from langchain.chains.llm import LLMChain
 from langchain.chains.sequential import SimpleSequentialChain
+from langchain.chains import SequentialChain
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
@@ -48,28 +49,64 @@ class LcCursoRepository(AbstractLangchainRepository):
     def ejemplo_cadena_secuencia_completo(self) -> str:
         open_ai_chat = self._get_chat_openai()
         prompt_conf = {
-            "gimme-summary": LLMChain(
+            "employee-performance": LLMChain(
                 llm = open_ai_chat,
                 prompt = ChatPromptTemplate.from_template(
-                    "Dame un resumen del rendimiento de este trabajador: {employee_resume}"
-                )
+                    "Dame un resumen del rendimiento de este trabajador:\n{performance_review}"
+                ),
+                output_key = "employee_performance",
             ),
-            "create-a-post": LLMChain(
+            "employee-weaknesses": LLMChain(
                 llm = open_ai_chat,
                 prompt = ChatPromptTemplate.from_template(
-                    "Escribe un post completo usando este resumen: {summary}"
-                )
+                    "Identifica las debilidades de este trabajador dentro de de este resumen de la revisión:\n{employee_performance}"
+                ),
+                output_key = "employee_weaknesses",
+            ),
+            "improve-plan":  LLMChain(
+                llm = open_ai_chat,
+                prompt = ChatPromptTemplate.from_template(
+                    "Crea un plan de mejora para ayudar en estas debilidades:\n{employee_weaknesses}"
+                ),
+                output_key="improve_plan",
             ),
         }
 
-        full_chain = SimpleSequentialChain(
-            chains=[prompt_conf.get("gimme-summary"), prompt_conf.get("create-a-post")],
-            verbose=True # nos ira dando paso a paso lo que se va haciendo por consola
+        full_chain = SequentialChain(
+            chains=[prompt_conf.get("employee-performance"), prompt_conf.get("employee-weaknesses"), prompt_conf.get("improve-plan")],
+            input_variables=["performance_review"],
+            output_variables=["employee_performance", "employee_weaknesses", "improve_plan"],
+            verbose=True,
         )
 
-        dic_response = full_chain.invoke(input="Inteligencia Artificial")
+        # esto podria venir de una base de datos
+        performance_review = '''
+Revisión de Rendimiento del Empleado
+
+Nombre del Empleado: Juan Pérez,
+Posición: Analista de Datos,
+Período Evaluado: Enero 2023 - Junio 2023,
+
+Fortalezas:
+Juan ha demostrado un fuerte dominio de las herramientas analíticas y ha proporcionado informes detallados y precisos 
+que han sido de gran ayuda para la toma de decisiones estratégicas. Su capacidad para trabajar en equipo y su disposición 
+para ayudar a los demás también han sido notables. Además, ha mostrado una gran ética de trabajo y una actitud positiva 
+en el entorno laboral.
+
+Debilidades:
+A pesar de sus muchas fortalezas, Juan ha mostrado áreas que necesitan mejoras. En particular, se ha observado que a 
+veces tiene dificultades para manejar múltiples tareas simultáneamente, lo que resulta en retrasos en la entrega de proyectos. 
+También ha habido ocasiones en las que la calidad del trabajo ha disminuido bajo presión. Además, se ha identificado 
+una necesidad de mejorar sus habilidades de comunicación, especialmente en lo que respecta a la presentación de datos 
+complejos de manera clara y concisa a los miembros no técnicos del equipo. Finalmente, se ha notado una falta de proactividad 
+en la búsqueda de soluciones a problemas imprevistos, confiando a menudo en la orientación de sus superiores en lugar 
+de tomar la iniciativa.        
+        '''
+
+        dic_response = full_chain.invoke(performance_review)
 
         return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+
 
     def ejemplo_cadena_secuencia_simple(self) -> str:
         open_ai_chat = self._get_chat_openai()
