@@ -19,9 +19,36 @@ class AbstractSklearnRepository(ABC):
 
     __persist_path = "./database/sk_learn/ejemplos_embedding_db.parquet"
     __persist_path_optimization = "./database/sk_learn/optimization_db.parquet"
+    __persist_path_qa = "./database/sk_learn/qa_db.parquet"
 
     __connection = None
     __cursor = None
+
+    def get_qa_db(self) -> SKLearnVectorStore:
+        if not self.qa_db_exists():
+            raise Exception(f"db does not exist: {self.__persist_path_qa}")
+
+        if not self.__is_valid_parquet_file():
+            raise Exception(f"db {self.__persist_path_qa} is not a parquet file")
+
+        return SKLearnVectorStore(
+            serializer = "parquet",
+            persist_path = self.__persist_path_qa,
+            embedding = self.__get_embeddings_openai(),
+        )
+
+
+    def create_qa_db(self) -> SKLearnVectorStore:
+        vector_store = SKLearnVectorStore(
+            serializer = "parquet",
+            embedding = self.__get_embeddings_openai(),
+            persist_path = self.__persist_path_qa,
+        )
+        vector_store.persist()
+        if not self.__is_valid_parquet_file(self.__persist_path_qa):
+            raise Exception(f"db {self.__persist_path_qa} is not a parquet file")
+
+        return vector_store
 
     def create_optimization_db_by_documents(self, ls_documents: List) -> SKLearnVectorStore:
         vector_store = SKLearnVectorStore.from_documents(
@@ -70,7 +97,6 @@ class AbstractSklearnRepository(ABC):
             embedding = self.__get_embeddings_openai(),
         )
 
-
     def get_openai_db(self) -> SKLearnVectorStore:
         if not self.db_exists():
             raise Exception(f"db does not exist: {self.__persist_path}")
@@ -83,7 +109,6 @@ class AbstractSklearnRepository(ABC):
             persist_path = self.__persist_path,
             embedding = self.__get_embeddings_openai(),
         )
-
 
     def __get_embeddings_openai(self) -> OpenAIEmbeddings:
         return OpenAIEmbeddings(
@@ -109,6 +134,8 @@ class AbstractSklearnRepository(ABC):
     def db_exists(self) -> bool:
         return os.path.exists(self.__persist_path)
 
+    def qa_db_exists(self) -> bool:
+        return os.path.exists(self.__persist_path_qa)
 
     def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()
