@@ -38,6 +38,8 @@ from langchain.chains.router.llm_router import (
     RouterOutputParser
 )
 from langchain.chains.router import MultiPromptChain
+from langchain.chains.question_answering import load_qa_chain
+from langchain.chains.qa_with_sources import load_qa_with_sources_chain #nos ayuda a identificar la fuente de la informacion
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
@@ -55,6 +57,23 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_preguntas_y_respuestas(self) -> str:
+        sklearn_repository = EjemplosSklearnRepository.get_instance()
+        vector_store_connection = sklearn_repository.create_qa_db()
+        chat_open_ai = self._get_chat_openai()
+
+        # stuff: se usa cuando se desea una manera simple y directa de cargar y procesar el contenido completo sin dividirlo
+        # en fragmentos más pequeños. Es ideal para situaciones donde el volumen de datos no es demasiado grande y se
+        # puede manejar de manera eficiente por el modelo de lenguaje en una sola operación.
+        qa_chain = load_qa_chain(llm=chat_open_ai, chain_type="stuff")
+
+        question = "Qúe pasó en el siglo de oro?"
+
+        # documentos ranqueados por busqueda de similitud seno
+        docs = vector_store_connection.similarity_search(question)
+
+        # no usamos compresion como vimos en el ejemplo anterior
+        result = qa_chain.run(input_documents=docs, question=question)
+
 
         return ""
 
