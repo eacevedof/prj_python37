@@ -31,6 +31,13 @@ from langchain.chains.llm import LLMChain
 from langchain.chains.sequential import SimpleSequentialChain
 from langchain.chains import SequentialChain
 
+from langchain.chains.router.multi_prompt_prompt import MULTI_PROMPT_ROUTER_TEMPLATE
+from langchain.chains.router.llm_router import (
+    LLMRouterChain,
+    RouterOutputParser
+)
+from langchain.chains.router import MultiPromptChain
+
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
 
@@ -64,12 +71,44 @@ Esta es la pregunta del cliente/n{input}
             },
             {
                 "name": "mecánica avanzada", "description": "Responde preguntas avanzadas de mecánica a a expertos con conocimiento previo",
-                "prompt_template": plantilla_soporte_basico,
+                "prompt_template": plantilla_soporte_avanzado_mecanico,
             },
         ]
 
+        destination_chains = {}
+        chat_open_ai = self._get_chat_openai()
+        for p_info in prompt_info:
+            name = p_info.get("name")
+            prompt_template = p_info.get("prompt_template")
+            prompt = ChatPromptTemplate.from_template(prompt_template)
+            chain = LLMChain(llm = chat_open_ai, prompt = prompt)
+            destination_chains[name] = chain
 
+        router = MULTI_PROMPT_ROUTER_TEMPLATE # el parametro importante es el "destinations" , debemos formatearlo en tipo string
+        destinations = [f"{p["name"]}: {p["description"]}" for p in prompt_info]
+        str_destinations = "\n".join(destinations)
 
+        router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(destinations=str_destinations)
+        router_prompt = PromptTemplate(
+            template=router_template,
+            input_variables=["input"],
+            output_parser=RouterOutputParser(),  #para transformar el objeto JSON parseandolo a una string
+        )
+        router_chain = LLMRouterChain.from_llm(chat_open_ai, router_prompt)
+
+        # creamos el prompt y cadena por defecto puesto que son arumentos obligatorios que usaremos posteriormente
+        default_chain = LLMChain(
+            llm=chat_open_ai,
+            prompt=ChatPromptTemplate.from_template("{input}")
+        )
+        chain = MultiPromptChain(
+            router_chain = router_chain,
+            destination_chains=destination_chains, # El objeto con los posibles LLMChain que creamos al inicio",
+            default_chain=default_chain,
+            verbose=True,
+        )
+        dic_response = chain.invoke("¿Cómo cambio el aceite de mi coche?")
+        return dic_response.get("text")
 
 
     def ejemplo_cadena_secuencia_completo(self) -> str:
