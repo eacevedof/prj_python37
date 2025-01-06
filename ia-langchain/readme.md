@@ -749,6 +749,6 @@ Esta es la pregunta del cliente/n{input}
 - ![llm router expert](./images/postman-router-chain-expert.png)
 
 #### cadenas de transformacion
-- ![transform chain](./images/transform-chain.png)
+- ![transformation-chains](./images/llm-transformation-chains.png)
 ```python
 ```
