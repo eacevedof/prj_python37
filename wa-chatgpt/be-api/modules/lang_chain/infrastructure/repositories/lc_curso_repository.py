@@ -46,7 +46,8 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-
+    def ejemplo_enrutamiento_de_cadenas(self) -> str:
+        pass
 
 
     def ejemplo_cadena_secuencia_completo(self) -> str:
