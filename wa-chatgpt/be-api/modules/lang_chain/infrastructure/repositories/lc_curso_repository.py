@@ -107,6 +107,7 @@ Esta es la pregunta del cliente/n{input}
             verbose=True,
         )
         dic_response = llm_chain.invoke("¿Cómo cambio el aceite de mi coche?")
+        dic
         return f"{dic_response.get("input")}:\n{dic_response.get("text")}"
 
 
