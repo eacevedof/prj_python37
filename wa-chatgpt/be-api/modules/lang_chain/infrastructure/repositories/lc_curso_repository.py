@@ -54,6 +54,10 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_preguntas_y_respuestas(self) -> str:
+
+        return ""
+
     def ejemplo_cadenas_transformacion(self) -> str:
         wikipedia_query = "Real Madrid"
         final_language = "francés"
