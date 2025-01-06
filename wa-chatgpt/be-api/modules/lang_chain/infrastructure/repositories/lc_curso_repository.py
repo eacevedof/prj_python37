@@ -47,7 +47,29 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_enrutamiento_de_cadenas(self) -> str:
-        pass
+        plantilla_soporte_basico = '''
+Eres una persona que asiste a los clientes de automóviles con preguntas básicas que pueden,
+necesitar en su día a día y que explica los conceptos de una manera que sea simple de entender. 
+Asume que no tienen conocimiento,previo. Esta es la pregunta del cliente/n{input}
+'''
+        plantilla_soporte_avanzado_mecanico = '''
+Eres un experto en mecánica que explicas consultas avanzadas a los mecánicos,
+de la plantilla. Puedes asumir que cualquier que está preguntando tiene conocimientos avanzados de mecánica.
+Esta es la pregunta del cliente/n{input}
+'''
+        prompt_info = [
+            {
+                "name": "mecánica básica", "description": "Responde preguntas básicas de mecánica a clientes",
+                "prompt_template": plantilla_soporte_basico,
+            },
+            {
+                "name": "mecánica avanzada", "description": "Responde preguntas avanzadas de mecánica a a expertos con conocimiento previo",
+                "prompt_template": plantilla_soporte_basico,
+            },
+        ]
+
+
+
 
 
     def ejemplo_cadena_secuencia_completo(self) -> str:
