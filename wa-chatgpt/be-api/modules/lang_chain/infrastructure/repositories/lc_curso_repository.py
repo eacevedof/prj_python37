@@ -106,8 +106,10 @@ Esta es la pregunta del cliente/n{input}
             default_chain=default_chain, #la entrada principal
             verbose=True,
         )
-        dic_response = llm_chain.invoke("¿Cómo cambio el aceite de mi coche?")
-        dic
+
+        # dic_response = llm_chain.invoke("¿Cómo cambio el aceite de mi coche?")  # input de mecanica basica
+        dic_response = llm_chain.invoke("¿Cómo funciona un catalizador?") # input de mecanica avanzada
+
         return f"{dic_response.get("input")}:\n{dic_response.get("text")}"
 
 
