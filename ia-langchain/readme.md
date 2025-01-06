@@ -747,3 +747,8 @@ Esta es la pregunta del cliente/n{input}
 ```
 - ![llm router no expert](./images/postman-router-chain-no-expert.png)
 - ![llm router expert](./images/postman-router-chain-expert.png)
+
+#### cadenas de transformacion
+- ![transform chain](./images/transform-chain.png)
+```python
+```
