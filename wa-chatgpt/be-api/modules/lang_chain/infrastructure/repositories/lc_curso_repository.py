@@ -53,6 +53,11 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_cadenas_transformacion(self) -> str:
+        open_ai_chat = self._get_chat_openai()
+        return ""
+
+
     def ejemplo_enrutamiento_de_cadenas(self) -> str:
         plantilla_soporte_basico = '''
 Eres una persona que asiste a los clientes de automóviles con preguntas básicas que pueden,
