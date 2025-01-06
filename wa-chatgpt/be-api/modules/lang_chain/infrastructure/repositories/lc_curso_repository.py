@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from tabnanny import verbose
 from typing import List, final
 
 from langchain_core.prompts import (
@@ -28,8 +29,8 @@ from langchain.text_splitter import (
     CharacterTextSplitter,
 )
 from langchain.chains.llm import LLMChain
-from langchain.chains.sequential import SimpleSequentialChain
-from langchain.chains import SequentialChain
+from langchain.chains.sequential import (SequentialChain, SimpleSequentialChain)
+from langchain.chains.transform import TransformChain
 
 from langchain.chains.router.multi_prompt_prompt import MULTI_PROMPT_ROUTER_TEMPLATE
 from langchain.chains.router.llm_router import (
@@ -54,8 +55,56 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_cadenas_transformacion(self) -> str:
-        open_ai_chat = self._get_chat_openai()
-        return ""
+        wikipedia_query = "Real Madrid"
+        final_language = "francés"
+
+        wikip_loader = WikipediaLoader(query=wikipedia_query, lang="es", load_max_docs=1)
+        wikipedia_data = wikip_loader.load()
+
+        # el texto del primer documento es muy grande y no lo necesitamos todo
+        wiki_page1 = wikipedia_data[0].page_content
+        print(f"texto-wiki-page1: {wiki_page1}")
+
+        def fn_get_first_paragraph(inputs: dict) -> dict:
+            texto = inputs.get("texto")
+            primer_parrafo = texto.split("\n")[0]
+            print(f"primer_parrafo: {primer_parrafo}")
+            return {
+                "salida": primer_parrafo
+            }
+
+        transform_chain = TransformChain(
+            input_variables = ["texto"],
+            output_variables = ["salida"],
+            transform = fn_get_first_paragraph # aunque no lo detecta como un argumento lo construye en ejecución a partir de kwargs
+        )
+
+        chat_open_ai = self._get_chat_openai()
+        llm_chain = {
+            "create-summary": LLMChain(
+                llm=chat_open_ai,
+                prompt=ChatPromptTemplate.from_template("Crea un resumen de este texto:\n{texto}"),
+                output_key="summary_text"
+            ),
+            "translate": LLMChain(
+                llm=chat_open_ai,
+                # texto vendra de la cadena 1 (create-summary)
+                prompt=ChatPromptTemplate.from_template("Traduce este texto al "+final_language+" el siguiente texto:\n{texto}"),
+                output_key="translated_text"
+            )
+        }
+
+        # no entiendo esta parte que hace? devuelve una clase del mismo tipo?
+        simple_sequential_chain = SimpleSequentialChain(
+            chains = [transform_chain, llm_chain.get("create-summary"), llm_chain.get("translate")],
+            verbose = True
+        )
+
+        # aqui llama a simple_sequential_chain.__call__
+        dic_response = simple_sequential_chain(wiki_page1)
+
+        # return f"{dic_response.get("input")}\n{dic_response.get("output")}"
+        return f"{wikipedia_query} ({final_language})\n{dic_response.get("output")}"
 
 
     def ejemplo_enrutamiento_de_cadenas(self) -> str:
@@ -368,7 +417,7 @@ de tomar la iniciativa.
             "summarize": {
                 "human": {
                     "prompt_tpl": HumanMessagePromptTemplate.from_template(
-                        "Necesito que hagas un resume del siguiente texto: \{pdf_content}"
+                        "Necesito que hagas un resume del siguiente texto: {pdf_content}"
                     ),
                 }
             },
