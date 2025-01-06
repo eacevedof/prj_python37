@@ -46,6 +46,9 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+
+
+
     def ejemplo_cadena_secuencia_completo(self) -> str:
         open_ai_chat = self._get_chat_openai()
         prompt_conf = {
