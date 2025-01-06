@@ -680,5 +680,70 @@ de tomar la iniciativa.
 #### Enrutamiento a cadenas con LLMRouterChain
 - ![llm-router-chain](./images/llm-router-chain.png)
 ```python
+from langchain.chains.router.llm_router import (
+    LLMRouterChain,
+    RouterOutputParser
+)
+from langchain.chains.router import MultiPromptChain
+
+def ejemplo_enrutamiento_de_cadenas(self) -> str:
+    plantilla_soporte_basico = '''
+Eres una persona que asiste a los clientes de automóviles con preguntas básicas que pueden,
+necesitar en su día a día y que explica los conceptos de una manera que sea simple de entender. 
+Asume que no tienen conocimiento,previo. Esta es la pregunta del cliente/n{input}
+'''
+    plantilla_soporte_avanzado_mecanico = '''
+Eres un experto en mecánica que explicas consultas avanzadas a los mecánicos,
+de la plantilla. Puedes asumir que cualquier que está preguntando tiene conocimientos avanzados de mecánica.
+Esta es la pregunta del cliente/n{input}
+'''
+    prompt_info = [
+        {
+            "name": "mecánica básica", "description": "Responde preguntas básicas de mecánica a clientes",
+            "prompt_template": plantilla_soporte_basico,
+        },
+        {
+            "name": "mecánica avanzada", "description": "Responde preguntas avanzadas de mecánica a a expertos con conocimiento previo",
+            "prompt_template": plantilla_soporte_avanzado_mecanico,
+        },
+    ]
+
+    destination_chains = {}
+    chat_open_ai = self._get_chat_openai()
+    for p_info in prompt_info:
+        name = p_info.get("name")
+        prompt_template = p_info.get("prompt_template")
+        chat_prompt_tpl = ChatPromptTemplate.from_template(prompt_template)
+        llm_chain = LLMChain(llm = chat_open_ai, prompt = chat_prompt_tpl)
+        destination_chains[name] = llm_chain
+
+    destinations = [f"{p["name"]}: {p["description"]}" for p in prompt_info]
+    str_destinations = "\n".join(destinations)
+
+    router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(destinations=str_destinations) # el parametro importante es el "destinations" , debemos formatearlo en tipo string
+    router_prompt_tpl = PromptTemplate(
+        template=router_template,
+        input_variables=["input"],
+        output_parser=RouterOutputParser(),  #para transformar el objeto JSON parseandolo a una string
+    )
+    router_chain = LLMRouterChain.from_llm(llm=chat_open_ai, prompt=router_prompt_tpl)
+
+    # creamos el prompt y cadena por defecto puesto que son arumentos obligatorios que usaremos posteriormente
+    default_chain = LLMChain(
+        llm=chat_open_ai,
+        prompt=ChatPromptTemplate.from_template("{input}")
+    )
+    llm_chain = MultiPromptChain(
+        router_chain = router_chain,
+        destination_chains=destination_chains, # los llms con los roles de niveles de respuesta,
+        default_chain=default_chain, #la entrada principal
+        verbose=True,
+    )
+
+    # dic_response = llm_chain.invoke("¿Cómo cambio el aceite de mi coche?")  # input de mecanica basica
+    dic_response = llm_chain.invoke("¿Cómo funciona un catalizador?") # input de mecanica avanzada
+
+    return f"{dic_response.get("input")}:\n{dic_response.get("text")}"
 ```
-- ![llm no expert](./images/postman-router-chain-no-expert.png)
+- ![llm router no expert](./images/postman-router-chain-no-expert.png)
+- ![llm router expert](./images/postman-router-chain-expert.png)
