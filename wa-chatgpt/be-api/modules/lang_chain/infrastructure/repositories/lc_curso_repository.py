@@ -84,11 +84,10 @@ Esta es la pregunta del cliente/n{input}
             chain = LLMChain(llm = chat_open_ai, prompt = prompt)
             destination_chains[name] = chain
 
-        router = MULTI_PROMPT_ROUTER_TEMPLATE # el parametro importante es el "destinations" , debemos formatearlo en tipo string
         destinations = [f"{p["name"]}: {p["description"]}" for p in prompt_info]
         str_destinations = "\n".join(destinations)
 
-        router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(destinations=str_destinations)
+        router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(destinations=str_destinations) # el parametro importante es el "destinations" , debemos formatearlo en tipo string
         router_prompt = PromptTemplate(
             template=router_template,
             input_variables=["input"],
