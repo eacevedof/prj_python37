@@ -105,7 +105,7 @@ de tomar la iniciativa.
 
         dic_response = full_chain.invoke(performance_review)
 
-        return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+        return f"{dic_response.get("performance_review")}:\n{dic_response.get("employee_performance")}\n{dic_response.get("employee_weaknesses")}\n{dic_response.get("improve_plan")}"
 
 
     def ejemplo_cadena_secuencia_simple(self) -> str:
