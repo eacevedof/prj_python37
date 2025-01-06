@@ -94,7 +94,7 @@ Esta es la pregunta del cliente/n{input}
             input_variables=["input"],
             output_parser=RouterOutputParser(),  #para transformar el objeto JSON parseandolo a una string
         )
-        router_chain = LLMRouterChain.from_llm(chat_open_ai, router_prompt)
+        router_chain = LLMRouterChain.from_llm(llm=chat_open_ai, prompt=router_prompt)
 
         # creamos el prompt y cadena por defecto puesto que son arumentos obligatorios que usaremos posteriormente
         default_chain = LLMChain(
