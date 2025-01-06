@@ -17,7 +17,7 @@ from modules.shared.infrastructure.components.log import Log
 
 class AbstractSklearnRepository(ABC):
 
-    __persist_path = "./database/sk_learn/ejemplos_embedding_db.parquet"
+    __persist_path = "./database/sk_learn/ejemplos_embedding_db.parquet" ## db historia de espana
     __persist_path_optimization = "./database/sk_learn/optimization_db.parquet" ## contenido sobre python
 
 
