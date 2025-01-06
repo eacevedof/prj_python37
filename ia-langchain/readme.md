@@ -752,6 +752,8 @@ Esta es la pregunta del cliente/n{input}
 - Son clases que llevan una funcion de callback como argumento al que invocan para aplicar la transformacion correspondiente
 - ![transformation-chains](./images/llm-transformation-chains.png)
 ```python
+from langchain.chains.transform import TransformChain
+
 def ejemplo_cadenas_transformacion(self) -> str:
     wikipedia_query = "Real Madrid"
     final_language = "francés"
@@ -806,3 +808,5 @@ def ejemplo_cadenas_transformacion(self) -> str:
 ```
 - ![debug transformation-chains](./images/debug-transformation-chains.png)
 - ![postman transformation-chains](./images/postman-transformation-chains.png)
+
+#### cadenas para preguntas y respuestas de nuestros datos
