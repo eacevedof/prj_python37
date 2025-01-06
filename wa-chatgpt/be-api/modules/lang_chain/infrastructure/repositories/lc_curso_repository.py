@@ -58,7 +58,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_preguntas_y_respuestas(self) -> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
-        vector_store_connection = sklearn_repository.create_qa_db()
+        vector_store_connection = sklearn_repository.get_qa_db()
         chat_open_ai = self._get_chat_openai()
 
         # stuff: se usa cuando se desea una manera simple y directa de cargar y procesar el contenido completo sin dividirlo
@@ -74,8 +74,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         # no usamos compresion como vimos en el ejemplo anterior
         result = qa_chain.run(input_documents=docs, question=question)
 
-
-        return ""
+        return result
 
     def ejemplo_cadenas_transformacion(self) -> str:
         wikipedia_query = "Real Madrid"
