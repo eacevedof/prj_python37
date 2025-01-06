@@ -810,3 +810,6 @@ def ejemplo_cadenas_transformacion(self) -> str:
 - ![postman transformation-chains](./images/postman-transformation-chains.png)
 
 #### cadenas para preguntas y respuestas de nuestros datos
+- ![](./images/)
+```python
+```
