@@ -681,3 +681,4 @@ de tomar la iniciativa.
 - ![llm-router-chain](./images/llm-router-chain.png)
 ```python
 ```
+- ![llm no expert](./images/postman-router-chain-no-expert.png)
