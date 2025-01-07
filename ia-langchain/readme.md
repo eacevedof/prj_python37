@@ -812,4 +812,25 @@ def ejemplo_cadenas_transformacion(self) -> str:
 #### cadenas para preguntas y respuestas de nuestros datos
 - ![Q & A chains](./images/q-and-a-chains.png)
 ```python
+
+def ejemplo_preguntas_y_respuestas(self) -> str:
+    sklearn_repository = EjemplosSklearnRepository.get_instance()
+    qa_db = sklearn_repository.get_q_and_a_connection()
+    chat_open_ai = self._get_chat_openai()
+
+    # stuff: se usa cuando se desea una manera simple y directa de cargar y procesar el contenido completo sin dividirlo
+    # en fragmentos más pequeños. Es ideal para situaciones donde el volumen de datos no es demasiado grande y se
+    # puede manejar de manera eficiente por el modelo de lenguaje en una sola operación.
+    qa_chain = load_qa_chain(llm=chat_open_ai, chain_type="stuff")
+
+    question = "Qúe pasó en el siglo de oro?"
+    # documentos ranqueados por busqueda de similitud seno
+    docs = qa_db.similarity_search(question)
+
+    # no usamos compresion como vimos en el ejemplo anterior
+    str_ia_response = qa_chain.run(input_documents=docs, question=question)
+
+    return str_ia_response
 ```
+![Q & A chains by run](./images/debug-q-and-a-chain-run.png)
+![postman q and a](./images/postman-q-and-a-chain-run.png)

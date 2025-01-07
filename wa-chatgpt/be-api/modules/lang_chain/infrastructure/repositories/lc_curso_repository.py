@@ -58,7 +58,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_preguntas_y_respuestas(self) -> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
-        vector_store_connection = sklearn_repository.get_qa_db()
+        qa_db = sklearn_repository.get_q_and_a_connection()
         chat_open_ai = self._get_chat_openai()
 
         # stuff: se usa cuando se desea una manera simple y directa de cargar y procesar el contenido completo sin dividirlo
@@ -67,14 +67,13 @@ class LcCursoRepository(AbstractLangchainRepository):
         qa_chain = load_qa_chain(llm=chat_open_ai, chain_type="stuff")
 
         question = "Qúe pasó en el siglo de oro?"
-
         # documentos ranqueados por busqueda de similitud seno
-        docs = vector_store_connection.similarity_search(question)
+        docs = qa_db.similarity_search(question)
 
         # no usamos compresion como vimos en el ejemplo anterior
-        result = qa_chain.run(input_documents=docs, question=question)
+        str_ia_response = qa_chain.run(input_documents=docs, question=question)
 
-        return result
+        return str_ia_response
 
     def ejemplo_cadenas_transformacion(self) -> str:
         wikipedia_query = "Real Madrid"
