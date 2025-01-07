@@ -41,10 +41,7 @@ from langchain.chains.router import MultiPromptChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain #nos ayuda a identificar la fuente de la informacion
 
-from langchain.schema import (
-    SystemMessage,
-    HumanMessage,
-)
+from langchain.memory import ChatMessageHistory
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
@@ -66,8 +63,21 @@ class LcCursoRepository(AbstractLangchainRepository):
     '''
     def ejemplo_chat_messge_history(self) -> str:
 
+        human_query = "Hola, ¿Cómo estás? Necesito ayuda para configurar el router"
 
-        return ""
+        chat_message_history = ChatMessageHistory()
+        chat_message_history.add_user_message(human_query)
+
+        chat_open_ai = self._get_chat_openai()
+
+        ai_message = chat_open_ai.invoke([HumanMessage(content=human_query)])
+
+        chat_message_history.add_ai_message(ai_message.content)
+
+        all_messages = chat_message_history.messages
+        print(all_messages)
+
+        return ai_message.content
 
 
     def ejemplo_preguntas_y_respuestas_invoke(self) -> str:
