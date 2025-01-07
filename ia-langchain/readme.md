@@ -848,3 +848,5 @@ def ejemplo_preguntas_y_respuestas(self) -> str:
   
   return f"{dic_response.get("question")}\n{dic_response.get("output_text")}"
 ```
+### memoria
+![memory scope](./images/memory-scope.png)
