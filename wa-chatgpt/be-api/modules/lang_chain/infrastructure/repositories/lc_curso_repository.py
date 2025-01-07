@@ -44,6 +44,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.memory import (
     ChatMessageHistory,
     ConversationBufferMemory,
+    ConversationBufferWindowMemory
 )
 import pickle
 
@@ -61,6 +62,27 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    '''
+    window buffer memory k ultimas iteraciones
+    '''
+    def ejemplo_buffer_en_memoria_con_ventana(self) -> str:
+        #k indica el número de últimas iteraciones (pareja de mensajes human-AI) que guardara
+        conversation_buffer_window_memory = ConversationBufferWindowMemory(k=1)
+        conversation_chain = ConversationChain(
+            llm=self._get_chat_openai(),
+            memory=conversation_buffer_window_memory,
+            verbose=True
+        )
+        human_query = "Hola, ¿Cómo estás?"
+        conversation_chain.predict(input=human_query)
+
+        human_query2 = "Necesito un consejo para tener un gran día"
+        conversation_chain.predict(input=human_query2)
+
+        str_raw_conversation = conversation_buffer_window_memory.buffer
+
+        return str_raw_conversation
 
     '''
     memoria en buffer y persistencia en binario

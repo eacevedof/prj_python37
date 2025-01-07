@@ -919,6 +919,27 @@ def ejemplo_buffer_en_memoria_completa(self) -> str:
 ![debug buffer memory](./images/debug-buffer-memory.png)
 ![postman buffer memory](./images/postman-buffer-memory.png)
 #### memoria en ventana
-
 ```python
+from langchain.memory import (
+    ConversationBufferWindowMemory
+)
+def ejemplo_buffer_en_memoria_con_ventana(self) -> str:
+    #k indica el número de últimas iteraciones (pareja de mensajes human-AI) que guardara
+    conversation_buffer_window_memory = ConversationBufferWindowMemory(k=1)
+    conversation_chain = ConversationChain(
+        llm=self._get_chat_openai(),
+        memory=conversation_buffer_window_memory,
+        verbose=True
+    )
+    human_query = "Hola, ¿Cómo estás?"
+    conversation_chain.predict(input=human_query)
+
+    human_query2 = "Necesito un consejo para tener un gran día"
+    conversation_chain.predict(input=human_query2)
+
+    str_raw_conversation = conversation_buffer_window_memory.buffer
+
+    return str_raw_conversation
 ```
+![window memory](./images/debug-window-memory.png)
+![postman window memory](./images/postman-window-memory.png)
