@@ -24,7 +24,7 @@ class AbstractSklearnRepository(ABC):
     __connection = None
     __cursor = None
 
-    def get_qa_db(self) -> SKLearnVectorStore:
+    def get_q_and_a_connection(self) -> SKLearnVectorStore:
         return SKLearnVectorStore(
             serializer = "parquet",
             embedding = self.__get_embeddings_openai(),
