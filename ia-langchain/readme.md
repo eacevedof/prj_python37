@@ -943,3 +943,7 @@ def ejemplo_buffer_en_memoria_con_ventana(self) -> str:
 ```
 ![window memory](./images/debug-window-memory.png)
 ![postman window memory](./images/postman-window-memory.png)
+
+#### buffer de memoria resumido
+```python
+```
