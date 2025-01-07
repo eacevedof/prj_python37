@@ -872,3 +872,49 @@ def ejemplo_chat_messge_history(self) -> str:
     return ai_message.content
 ```
 ![memory-chat-message-history](./images/debug-memory-chat-message-history.png)
+#### memoria completa en buffer
+```python
+from langchain.memory import (
+    ChatMessageHistory,
+    ConversationBufferMemory,
+)
+import pickle # serializador
+
+def ejemplo_buffer_en_memoria_completa(self) -> str:
+    conversation_buffer_memory = ConversationBufferMemory()
+    conversation_chain = ConversationChain(
+        llm = self._get_chat_openai(),
+        memory=conversation_buffer_memory,
+        verbose=True
+    )
+    human_query = "Hola, necesito saber cómo usar mis datos históricos para crear un bot de preguntas y respuestas"
+    conversation_chain.predict(input=human_query)
+
+    human_query2 = "Necesito más detalle de cómo implementarlo"
+    conversation_chain.predict(input=human_query2)
+
+    print(conversation_buffer_memory.buffer) # string se muestra todo el dialogo
+
+    # carga las variables de la memoria
+    dic_memory_vars = conversation_buffer_memory.load_memory_variables({})
+
+    # persistir el contenido de la memoria en un fichero en formato bin
+    conv_buffer_memory = conversation_chain.memory
+    # pickle (escabeche) es un serializador
+    str_bin_pickle = pickle.dumps(conv_buffer_memory)
+    path_mem_file = "./database/sk_learn/memory.pkl"
+    with open(path_mem_file, "wb") as f: # wb: write binary
+        f.write(str_bin_pickle)
+
+    str_bin_pickle = open(path_mem_file, "rb").read()
+    conv_buffer_memory = pickle.loads(str_bin_pickle)
+    conversation_from_memory = ConversationChain(
+        llm = self._get_chat_openai(),
+        memory=conv_buffer_memory,
+        verbose=True,
+    )
+    str_raw_conversation = conversation_from_memory.memory.buffer
+    return str_raw_conversation
+```
+![debug buffer memory](./images/debug-buffer-memory.png)
+![postman buffer memory](./images/postman-buffer-memory.png)
