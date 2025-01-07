@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from tabnanny import verbose
 from typing import List, final
 
 from langchain.chains.conversation.base import ConversationChain
