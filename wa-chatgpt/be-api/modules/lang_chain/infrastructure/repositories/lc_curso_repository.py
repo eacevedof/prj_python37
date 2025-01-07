@@ -63,6 +63,24 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_buffer_en_memoria_resumido(self) -> str:
+        #k indica el número de últimas iteraciones (pareja de mensajes human-AI) que guardara
+        conversation_buffer_window_memory = ConversationBufferWindowMemory(k=1)
+        conversation_chain = ConversationChain(
+            llm=self._get_chat_openai(),
+            memory=conversation_buffer_window_memory,
+            verbose=True
+        )
+        human_query = "Hola, ¿Cómo estás?"
+        conversation_chain.predict(input=human_query)
+
+        human_query2 = "Necesito un consejo para tener un gran día"
+        conversation_chain.predict(input=human_query2)
+
+        str_raw_conversation = conversation_buffer_window_memory.buffer
+
+        return str_raw_conversation
+
     '''
     window buffer memory k ultimas iteraciones
     '''
