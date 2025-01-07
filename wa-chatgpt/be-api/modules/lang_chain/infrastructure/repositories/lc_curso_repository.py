@@ -42,7 +42,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain #nos ayuda a identificar la fuente de la informacion
 
 from modules.shared.infrastructure.components.log import Log
-from modules.shared.infrastructure.components.files.filer import is_file, get_file_content
+from modules.shared.infrastructure.components.files.filer import get_file_content
 
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -55,6 +55,10 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    def ejemplo_chat_openai(self) -> str:
+        return ""
+
 
     def ejemplo_preguntas_y_respuestas_invoke(self) -> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
