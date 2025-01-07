@@ -1,1 +1,2 @@
 database/sk_learn/*.parquet
+database/sk_learn/*.pkl

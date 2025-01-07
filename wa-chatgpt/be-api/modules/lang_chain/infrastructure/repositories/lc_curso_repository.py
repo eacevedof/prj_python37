@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from tabnanny import verbose
 from typing import List, final
 
+from langchain.chains.conversation.base import ConversationChain
 from langchain_core.prompts import (
     BasePromptTemplate,
     PromptTemplate,
@@ -39,9 +40,12 @@ from langchain.chains.router.llm_router import (
 )
 from langchain.chains.router import MultiPromptChain
 from langchain.chains.question_answering import load_qa_chain
-from langchain.chains.qa_with_sources import load_qa_with_sources_chain #nos ayuda a identificar la fuente de la informacion
 
-from langchain.memory import ChatMessageHistory
+from langchain.memory import (
+    ChatMessageHistory,
+    ConversationBufferMemory,
+)
+import pickle
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
@@ -57,6 +61,46 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    '''
+    memoria en buffer y persistencia en binario
+    '''
+    def ejemplo_buffer_en_memoria_completa(self) -> str:
+        conversation_buffer_memory = ConversationBufferMemory()
+        conversation_chain = ConversationChain(
+            llm = self._get_chat_openai(),
+            memory=conversation_buffer_memory,
+            verbose=True
+        )
+        human_query = "Hola, necesito saber cómo usar mis datos históricos para crear un bot de preguntas y respuestas"
+        conversation_chain.predict(input=human_query)
+
+        human_query2 = "Necesito más detalle de cómo implementarlo"
+        conversation_chain.predict(input=human_query2)
+
+        print(conversation_buffer_memory.buffer) # string se muestra todo el dialogo
+
+        # carga las variables de la memoria
+        dic_memory_vars = conversation_buffer_memory.load_memory_variables({})
+
+        # persistir el contenido de la memoria en un fichero en formato bin
+        conv_buffer_memory = conversation_chain.memory
+        # pickle (escabeche) es un serializador
+        str_bin_pickle = pickle.dumps(conv_buffer_memory)
+        path_mem_file = "./database/sk_learn/memory.pkl"
+        with open(path_mem_file, "wb") as f: # wb: write binary
+            f.write(str_bin_pickle)
+
+        str_bin_pickle = open(path_mem_file, "rb").read()
+        conv_buffer_memory = pickle.loads(str_bin_pickle)
+        conversation_from_memory = ConversationChain(
+            llm = self._get_chat_openai(),
+            memory=conv_buffer_memory,
+            verbose=True,
+        )
+        str_raw_conversation = conversation_from_memory.memory.buffer
+        return str_raw_conversation
+
 
     '''
     gestion manual de la memoria
