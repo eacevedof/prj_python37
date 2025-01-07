@@ -56,7 +56,29 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_preguntas_y_respuestas(self) -> str:
+    def ejemplo_preguntas_y_respuestas_invoke(self) -> str:
+        sklearn_repository = EjemplosSklearnRepository.get_instance()
+        qa_db = sklearn_repository.get_q_and_a_connection()
+        chat_open_ai = self._get_chat_openai()
+
+        # stuff: se usa cuando se desea una manera simple y directa de cargar y procesar el contenido completo sin dividirlo
+        # en fragmentos más pequeños. Es ideal para situaciones donde el volumen de datos no es demasiado grande y se
+        # puede manejar de manera eficiente por el modelo de lenguaje en una sola operación.
+        qa_chain = load_qa_chain(llm=chat_open_ai, chain_type="stuff")
+
+        question = "Qúe pasó en el siglo de oro?"
+        # documentos ranqueados por busqueda de similitud seno
+        docs = qa_db.similarity_search(question)
+
+        # no usamos compresion como vimos en el ejemplo anterior
+        dic_response = qa_chain.invoke({
+            "input_documents": docs,
+            "question": question
+        })
+
+        return f"{dic_response.get("question")}\n{dic_response.get("output_text")}"
+
+    def ejemplo_preguntas_y_respuestas_run(self) -> str:
         sklearn_repository = EjemplosSklearnRepository.get_instance()
         qa_db = sklearn_repository.get_q_and_a_connection()
         chat_open_ai = self._get_chat_openai()
@@ -74,6 +96,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         str_ia_response = qa_chain.run(input_documents=docs, question=question)
 
         return str_ia_response
+
 
     def ejemplo_cadenas_transformacion(self) -> str:
         wikipedia_query = "Real Madrid"

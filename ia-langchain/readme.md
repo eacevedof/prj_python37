@@ -811,8 +811,8 @@ def ejemplo_cadenas_transformacion(self) -> str:
 
 #### cadenas para preguntas y respuestas de nuestros datos
 - ![Q & A chains](./images/q-and-a-chains.png)
+-  **ejemplo run**
 ```python
-
 def ejemplo_preguntas_y_respuestas(self) -> str:
     sklearn_repository = EjemplosSklearnRepository.get_instance()
     qa_db = sklearn_repository.get_q_and_a_connection()
@@ -834,3 +834,17 @@ def ejemplo_preguntas_y_respuestas(self) -> str:
 ```
 ![Q & A chains by run](./images/debug-q-and-a-chain-run.png)
 ![postman q and a](./images/postman-q-and-a-chain-run.png)
+- **ejemplo invoke**
+```python
+  question = "Qúe pasó en el siglo de oro?"
+  # documentos ranqueados por busqueda de similitud seno
+  docs = qa_db.similarity_search(question)
+  
+  # no usamos compresion como vimos en el ejemplo anterior
+  dic_response = qa_chain.invoke({
+      "input_documents": docs,
+      "question": question
+  })
+  
+  return f"{dic_response.get("question")}\n{dic_response.get("output_text")}"
+```
