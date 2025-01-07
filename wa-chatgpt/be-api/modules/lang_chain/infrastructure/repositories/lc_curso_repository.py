@@ -41,6 +41,11 @@ from langchain.chains.router import MultiPromptChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain #nos ayuda a identificar la fuente de la informacion
 
+from langchain.schema import (
+    SystemMessage,
+    HumanMessage,
+)
+
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
 
@@ -56,7 +61,12 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_chat_openai(self) -> str:
+    '''
+    gestion manual de la memoria
+    '''
+    def ejemplo_chat_messge_history(self) -> str:
+
+
         return ""
 
 
