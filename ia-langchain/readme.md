@@ -978,6 +978,7 @@ def ejemplo_buffer_en_memoria_resumido(self) -> str:
 
 ### Agentes
 ![agentes](./images/agents.png)
+![what are agents](./images/what-are-agents.png)
 - **ejemplo de agente**
 ```python
 ```
