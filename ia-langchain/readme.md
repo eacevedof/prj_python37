@@ -975,3 +975,9 @@ def ejemplo_buffer_en_memoria_resumido(self) -> str:
 ```
 ![debug summary memory](./images/debug-summary-memory.png)
 ![postman summary memory](./images/postman-summary-memory.png)
+
+### Agentes
+![agentes](./images/agents.png)
+- **ejemplo de agente**
+```python
+```
