@@ -918,3 +918,7 @@ def ejemplo_buffer_en_memoria_completa(self) -> str:
 ```
 ![debug buffer memory](./images/debug-buffer-memory.png)
 ![postman buffer memory](./images/postman-buffer-memory.png)
+#### memoria en ventana
+
+```python
+```
