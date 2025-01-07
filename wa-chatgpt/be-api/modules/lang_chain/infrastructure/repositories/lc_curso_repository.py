@@ -44,7 +44,8 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.memory import (
     ChatMessageHistory,
     ConversationBufferMemory,
-    ConversationBufferWindowMemory
+    ConversationBufferWindowMemory,
+    ConversationSummaryBufferMemory
 )
 import pickle
 
@@ -64,22 +65,28 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_buffer_en_memoria_resumido(self) -> str:
-        #k indica el número de últimas iteraciones (pareja de mensajes human-AI) que guardara
-        conversation_buffer_window_memory = ConversationBufferWindowMemory(k=1)
+        chat_open_ai = self._get_chat_openai()
+
+        conversation_buffer_summary_memory = ConversationSummaryBufferMemory(
+            llm=chat_open_ai,
+            max_token_limit=100
+        )
         conversation_chain = ConversationChain(
-            llm=self._get_chat_openai(),
-            memory=conversation_buffer_window_memory,
+            llm=chat_open_ai,
+            memory=conversation_buffer_summary_memory,
             verbose=True
         )
-        human_query = "Hola, ¿Cómo estás?"
-        conversation_chain.predict(input=human_query)
 
-        human_query2 = "Necesito un consejo para tener un gran día"
-        conversation_chain.predict(input=human_query2)
+        plan_viaje = '''
+        Este fin de semana me voy de vacaciones a la playa, estaba pensando algo que fuera bastante relajado, pero necesito,
+        un plan detallado por días con qué hacer en familia, extiendete todo lo que puedas
+        '''
+        conversation_chain.predict(input=plan_viaje)
+        dic_messages = conversation_buffer_summary_memory.load_memory_variables({})
 
-        str_raw_conversation = conversation_buffer_window_memory.buffer
+        str_summarized_conv = conversation_buffer_summary_memory.buffer
 
-        return str_raw_conversation
+        return str_summarized_conv
 
     '''
     window buffer memory k ultimas iteraciones

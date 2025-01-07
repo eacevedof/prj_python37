@@ -946,4 +946,32 @@ def ejemplo_buffer_en_memoria_con_ventana(self) -> str:
 
 #### buffer de memoria resumido
 ```python
+from langchain.memory import (
+    ConversationSummaryBufferMemory
+)
+def ejemplo_buffer_en_memoria_resumido(self) -> str:
+    chat_open_ai = self._get_chat_openai()
+
+    conversation_buffer_summary_memory = ConversationSummaryBufferMemory(
+        llm=chat_open_ai,
+        max_token_limit=100
+    )
+    conversation_chain = ConversationChain(
+        llm=chat_open_ai,
+        memory=conversation_buffer_summary_memory,
+        verbose=True
+    )
+
+    plan_viaje = '''
+    Este fin de semana me voy de vacaciones a la playa, estaba pensando algo que fuera bastante relajado, pero necesito,
+    un plan detallado por días con qué hacer en familia, extiendete todo lo que puedas
+    '''
+    conversation_chain.predict(input=plan_viaje)
+    dic_messages = conversation_buffer_summary_memory.load_memory_variables({})
+
+    str_summarized_conv = conversation_buffer_summary_memory.buffer
+
+    return str_summarized_conv
 ```
+![debug summary memory](./images/debug-summary-memory.png)
+![postman summary memory](./images/postman-summary-memory.png)
