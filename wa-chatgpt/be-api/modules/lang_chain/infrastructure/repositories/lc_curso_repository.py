@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, final
 
+from faiss.class_wrappers import handle_ParameterSpace
 from langchain.chains.conversation.base import ConversationChain
 from langchain_core.prompts import (
     BasePromptTemplate,
@@ -48,6 +49,14 @@ from langchain.memory import (
 )
 import pickle
 
+from langchain.agents import (
+    load_tools, # https://python.langchain.com/api_reference/community/tools.html#module-langchain_community.tools
+    initialize_agent,
+    AgentType,
+    create_react_agent,
+    AgentExecutor
+)
+
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
 
@@ -62,6 +71,27 @@ class LcCursoRepository(AbstractLangchainRepository):
     @staticmethod
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
+
+    def ejemplo_agente_primer_caso_de_uso(self) -> str:
+        chat_open_ai = self._get_chat_openai_no_creativity()
+
+        # list of BaseTool. Definimos el pool de herramientas que utilizará el agente para realizar el caso de uso
+        tools = load_tools(tool_names=["llm-math"], llm=chat_open_ai)
+        # dir(AgentType) # todos los tipos de agentes que hay
+
+        # se recomienda create_react_agent en lugar de initialize_agent
+        agent_executor = initialize_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION, # ZERO_SHOT significa que no estamos montando un modelo de pregunta respuesta
+            verbose=True,
+            handle_parsing_errors=True,
+        )
+        human_query = "Dime cuánto es 1598 multiplicado por 1983 y después sumas 1000"
+        str_response = agent_executor.run(human_query)
+
+        return f"{human_query}:\n{str_response}"
+
 
     def ejemplo_buffer_en_memoria_resumido(self) -> str:
         chat_open_ai = self._get_chat_openai()
