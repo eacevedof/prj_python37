@@ -81,8 +81,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=True,
         )
-        human_request = "¿En qué año nació Einstein? ¿Cuál es el resultado de ese año multiplicado por 3?"
-        dic_response = agent_executor.invoke(human_request)
+        human_query = "¿En qué año nació Einstein? ¿Cuál es el resultado de ese año multiplicado por 3?"
+        dic_response = agent_executor.invoke({"input": human_query})
 
         return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
 
