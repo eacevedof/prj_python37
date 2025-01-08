@@ -1146,5 +1146,31 @@ def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
 #### creacion de herramientas personalizadas
 ![custom tools](./images/agent-custom-tools.png)
 ```python
+def ejemplo_agente_herramientas_personalizadas(self) -> str:
+    chat_open_ai = self._get_chat_openai_no_creativity()
+    tools = load_tools(tool_names=["wikipedia", "llm-math"], llm=chat_open_ai)
 
+    # debe llvar argumento sino lanza The error indicates that the ZeroShotAgent does not support tools that require multiple inputs.
+    @tool
+    def persona_amable(text: str = "") -> str:
+        '''
+        Retorna la persona más amable. Se espera que la entrada esté vacía ""
+        y retorna la persona más amable del universo
+        '''
+        return "Miguel Celebres"
+
+    tools.append(persona_amable)
+
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=chat_open_ai,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True
+    )
+    human_query = "¿Quién es la persona más amable del universo?"
+
+    dic_response = agent_executor.invoke({"input": human_query})
+
+    return f"{dic_response.get('input')}:\n{dic_response.get('output')}"
 ```
+![debug agent custom tools](./images/debug-agent-custom-tools-vars.png)
