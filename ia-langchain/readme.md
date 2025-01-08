@@ -977,8 +977,38 @@ def ejemplo_buffer_en_memoria_resumido(self) -> str:
 ![postman summary memory](./images/postman-summary-memory.png)
 
 ### Agentes
+- Un agente es una herramienta con capacidad de razonamiento y toma de decisiones para resolver un problema apoyandose en un grupo de herramientas que se le indica.
 ![agentes](./images/agents.png)
 ![what are agents](./images/what-are-agents.png)
-- **ejemplo de agente**
+- **ejemplo calculando total a partir de un texto**
 ```python
+from langchain.agents import (
+    load_tools, # https://python.langchain.com/api_reference/community/tools.html#module-langchain_community.tools
+    initialize_agent,
+    AgentType,
+    create_react_agent,
+    AgentExecutor
+)
+def ejemplo_agente_primer_caso_de_uso(self) -> str:
+    chat_open_ai = self._get_chat_openai_no_creativity()
+
+    # list of BaseTool. Definimos el pool de herramientas que utilizará el agente para realizar el caso de uso
+    tools = load_tools(tool_names=["llm-math"], llm=chat_open_ai)
+    # dir(AgentType) # todos los tipos de agentes que hay
+
+    # se recomienda create_react_agent en lugar de initialize_agent
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=chat_open_ai,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION, # ZERO_SHOT significa que no estamos montando un modelo de pregunta respuesta
+        verbose=True,
+        handle_parsing_errors=True,
+    )
+    human_query = "Dime cuánto es 1598 multiplicado por 1983 y después sumas 1000"
+    str_response = agent_executor.run(human_query)
+
+    return f"{human_query}:\n{str_response}"
 ```
+![debug agent](./images/debug-agent-text-calculator.png)
+![debug agent vars](./images/debug-agent-text-calculator-vars.png)
+![postman agent](./images/postman-agent-text-calculator.png)
