@@ -53,7 +53,8 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_con_create_react_agent()
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_con_google_search()
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_programador_de_codigo_ordena_lista()
-        str_response = LcCursoRepository.get_instance().ejemplo_agente_programador_de_codigo_con_dataframe()
+        # str_response = LcCursoRepository.get_instance().ejemplo_agente_programador_de_codigo_con_dataframe()
+        str_response = LcCursoRepository.get_instance().ejemplo_agente_herramientas_personalizadas()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 
