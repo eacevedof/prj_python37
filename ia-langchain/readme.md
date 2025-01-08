@@ -1061,3 +1061,24 @@ def ejemplo_agente_con_create_react_agent(self) -> str:
 ![error create-react-agent](./images/error-ia-create-react-agent.png)
 #### agente potenciado con motores de busqueda
 - [Google Search API](https://serpapi.com/dashboard)
+```python
+# pip install google-search-results
+# os.environ["SERPAPI_API_KEY"] = GOOGLE_SEARCH_API_KEY
+
+def ejemplo_agente_con_google_search(self) -> str:
+    chat_open_ai = self._get_chat_openai()
+    tools = load_tools(tool_names=["serpapi", "llm-math"], llm=chat_open_ai)
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=chat_open_ai,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+    )
+    human_request = "¿En qué año nació Einstein? ¿Cuál es el resultado de ese año multiplicado por 3?"
+    dic_response = agent_executor.invoke(human_request)
+
+    return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+```
+![agent google search api](./images/debug-ia-agent-with-google-search.png)
+![agent google search api](./images/debug-agent-with-google-search-vars.png)
+![postman agent google search api](./images/postman-agent-with-google-search.png)
