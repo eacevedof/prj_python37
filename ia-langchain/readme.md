@@ -1084,7 +1084,7 @@ def ejemplo_agente_con_google_search(self) -> str:
 ![postman agent google search api](./images/postman-agent-with-google-search.png)
 
 #### agente programador de código
-- 
+- **ejemplo ordenar lista**
 ```python
 from langchain_experimental.agents.agent_toolkits import create_python_agent
 from langchain_experimental.tools.python.tool import PythonREPLTool
@@ -1106,4 +1106,4 @@ def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
     return f"{human_query}:\n{str_response}"
 ```
 ![postman programador codigo ordena lista](./images/postman-programador-codigo-ordena-lista.png)
-
+- **ejemplo dataframe**

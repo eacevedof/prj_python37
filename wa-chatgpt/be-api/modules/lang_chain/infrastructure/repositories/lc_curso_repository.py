@@ -75,6 +75,13 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
+        chat_open_ai = self._get_chat_openai_no_creativity()
+
+
+
+        return f"{human_query}:\n{str_response}"
+
     def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
 
