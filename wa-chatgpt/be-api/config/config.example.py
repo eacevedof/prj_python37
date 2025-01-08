@@ -9,6 +9,7 @@ PINECONE_INDEX_NAME = "pdf"
 
 ENCRYPT_SALT = ":)"
 
+# https://serpapi.com/dashboard
 GOOGLE_SEARCH_API = ":)"
 
 import os
