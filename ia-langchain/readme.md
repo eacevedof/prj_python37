@@ -1107,3 +1107,39 @@ def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
 ```
 ![postman programador codigo ordena lista](./images/postman-programador-codigo-ordena-lista.png)
 - **ejemplo dataframe**
+- Este codigo no esta del todo fino a veces funciona y otras da error.
+- El eval no lo he podido ejecutar correctamente
+```python
+def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
+    # una vez que se lee y se crea el df da error en la interpretacion quiza por algun separador.
+    # mejor leerlo como xlsx. Para eso he tenido que abrirlo en excel y guardarlo con su extensión
+    # path_xlsx = "./modules/lang_chain/application/lc_ask_question/curso/datos-ventas-small.csv"
+    path_xlsx = "./modules/lang_chain/application/lc_ask_question/curso/datos-ventas-small.xlsx"
+    df = pd.read_excel(path_xlsx) #tiene que llamarse df ya que la ia devuelve la sentencia con df.xxx
+    # df = pd.read_csv(path_xlsx)
+    # df.head() # muestra las primeras 5 filas
+
+    chat_open_ai = self._get_chat_openai_no_creativity()
+    agent_executor = create_python_agent(
+        tool=PythonREPLTool(),
+        llm=chat_open_ai,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+    )
+
+    human_query = f'''
+    ¿Qué sentencias de código tendría que ejecutar para obtener la suma de venta total agregada por Línea de Producto? 
+    Este sería el dataframe {df}, no tienes que ejecutar la sentencia, solo pasarme el código a ejecutar.
+    '''
+    # es raro. espera un diccionario pero si le paso uno da error. Con un string no lo da.
+    ia_response = agent_executor.invoke(human_query)
+    pandas_code = ia_response.get("output")
+    if "df." in pandas_code:
+        result = eval(pandas_code) # ejecuta la sentencia
+        print(result)
+
+    return f"{pandas_code}"
+```
+![debug-ia-agent-with-dataframe](./images/debug-ia-agent-with-dataframe.png)
+![debug-ia-agent-with-dataframe-vars](./images/debug-agent-with-dataframe-vars.png)
+![postman-ia-agent-with-dataframe](./images/postman-agent-with-dataframe.png)
