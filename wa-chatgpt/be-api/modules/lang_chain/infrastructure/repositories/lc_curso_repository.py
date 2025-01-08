@@ -72,6 +72,20 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_programador_de_codigo(self) -> str:
+        chat_open_ai = self._get_chat_openai()
+        tools = load_tools(tool_names=["serpapi", "llm-math"], llm=chat_open_ai)
+        agent_executor = initialize_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True,
+        )
+        human_query = "¿En qué año nació Einstein? ¿Cuál es el resultado de ese año multiplicado por 3?"
+        dic_response = agent_executor.invoke({"input": human_query})
+
+        return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+
     def ejemplo_agente_con_google_search(self) -> str:
         chat_open_ai = self._get_chat_openai()
         tools = load_tools(tool_names=["serpapi", "llm-math"], llm=chat_open_ai)
