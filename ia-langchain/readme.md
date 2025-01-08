@@ -1059,3 +1059,5 @@ def ejemplo_agente_con_create_react_agent(self) -> str:
 ![debug create-react-agent vars](./images/debug-ia-create-react-agent-vars.png)
 ![postman create-react-agent](./images/postman-ia-create-react-agent.png)
 ![error create-react-agent](./images/error-ia-create-react-agent.png)
+#### agente potenciado con motores de busqueda
+- [serpapi.com](https://serpapi.com/)
