@@ -1142,4 +1142,9 @@ def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
 ```
 ![debug-ia-agent-with-dataframe](./images/debug-ia-agent-with-dataframe.png)
 ![debug-ia-agent-with-dataframe-vars](./images/debug-agent-with-dataframe-vars.png)
-![postman-ia-agent-with-dataframe](./images/postman-agent-with-dataframe.png)
+
+#### creacion de herramientas personalizadas
+![custom tools](./images/agent-custom-tools.png)
+```python
+
+```
