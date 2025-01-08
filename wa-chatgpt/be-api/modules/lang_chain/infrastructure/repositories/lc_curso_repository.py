@@ -57,6 +57,9 @@ from langchain.agents import (
     AgentExecutor
 )
 
+from langchain_experimental.agents.agent_toolkits import create_python_agent
+from langchain_experimental.tools.python.tool import PythonREPLTool
+
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
 
@@ -72,17 +75,19 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
-    def ejemplo_agente_programador_de_codigo(self) -> str:
-        chat_open_ai = self._get_chat_openai()
-        tools = load_tools(tool_names=["serpapi", "llm-math"], llm=chat_open_ai)
-        agent_executor = initialize_agent(
-            tools=tools,
+    def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
+        chat_open_ai = self._get_chat_openai_no_creativity()
+
+        agent_executor = create_python_agent(
+            tool=PythonREPLTool(),
             llm=chat_open_ai,
             agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=True,
         )
-        human_query = "¿En qué año nació Einstein? ¿Cuál es el resultado de ese año multiplicado por 3?"
-        dic_response = agent_executor.invoke({"input": human_query})
+        lista_ejemplo = [3,1,5,3,5,6,7,3,5,10]
+
+        human_query = f"Ordena la lista {lista_ejemplo}"
+        dic_response = agent_executor.run(human_query)
 
         return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
 
