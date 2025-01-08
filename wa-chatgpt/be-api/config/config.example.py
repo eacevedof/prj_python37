@@ -9,8 +9,7 @@ PINECONE_INDEX_NAME = "pdf"
 
 ENCRYPT_SALT = ":)"
 
-# https://serpapi.com/dashboard
-GOOGLE_SEARCH_API = ":)"
+GOOGLE_SEARCH_API = "https://serpapi.com/dashboard :)"
 
 import os
 os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
