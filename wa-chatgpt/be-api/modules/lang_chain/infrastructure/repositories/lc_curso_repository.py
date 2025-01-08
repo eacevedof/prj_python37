@@ -100,11 +100,13 @@ class LcCursoRepository(AbstractLangchainRepository):
         # es raro. espera un diccionario pero si le paso uno da error. Con un string no lo da.
         ia_response = agent_executor.invoke(human_query)
         pandas_code = ia_response.get("output")
-        if "df." in pandas_code:
-            result = eval(pandas_code) # ejecuta la sentencia
-            print(result)
 
-        return f"{pandas_code}"
+        human_query = f'''
+        ¿Cuál es la suma agregada de la venta total para la línea de proudcto \"Motorcycles\"? Este sería el dataframe {df}
+        '''
+        barplot_code = ia_response.get("output")
+
+        return f"pandas:{pandas_code}, barplot: {barplot_code}"
 
 
     def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
