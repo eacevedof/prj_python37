@@ -1086,5 +1086,6 @@ def ejemplo_agente_con_google_search(self) -> str:
 #### agente programador de código
 - 
 ```python
+
 ```
 

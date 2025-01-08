@@ -20,7 +20,6 @@ class AbstractSklearnRepository(ABC):
     __path_db_spain = "./database/sk_learn/ejemplos_embedding_db.parquet" ## db historia de espana
     __path_db_python_history = "./database/sk_learn/optimization_db.parquet" ## contenido sobre python
 
-
     __connection = None
     __cursor = None
 
