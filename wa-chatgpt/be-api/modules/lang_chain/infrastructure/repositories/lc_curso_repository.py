@@ -76,6 +76,10 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_herramientas_personalizadas(self) -> str:
+
+        return ""
+
     def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
         # una vez que se lee y se crea el df da error en la interpretacion quiza por algun separador.
         # mejor leerlo como xlsx. Para eso he tenido que abrirlo en excel y guardarlo con su extensión
