@@ -69,14 +69,6 @@ from langchain.agents import tool
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
-@tool
-def persona_amable():
-    '''
-    Retorna la persona más amable. Se espera que la entrada esté vacía ""
-    y retorna la persona más amable del universo
-    '''
-    return "Miguel Celebres"
-
 
 @final
 @dataclass(frozen=True)
@@ -89,6 +81,18 @@ class LcCursoRepository(AbstractLangchainRepository):
     def ejemplo_agente_herramientas_personalizadas(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
         tools = load_tools(tool_names=["wikipedia", "llm-math"], llm=chat_open_ai)
+
+        # debe llvar argumento sino lanza The error indicates that the ZeroShotAgent does not support tools that require multiple inputs.
+        @tool
+        def persona_amable(text: str = "") -> str:
+            '''
+            Retorna la persona más amable. Se espera que la entrada esté vacía ""
+            y retorna la persona más amable del universo
+            '''
+            return "Miguel Celebres"
+
+        tools.append(persona_amable)
+
         agent_executor = initialize_agent(
             tools=tools,
             llm=chat_open_ai,
@@ -97,10 +101,9 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
         human_query = "¿Quién es la persona más amable del universo?"
 
-        # esto puede dar el error: Agent stopped due to iteration limit of time limit
-        dic_response = agent_executor.invoke(human_query)
+        dic_response = agent_executor.invoke({"input": human_query})
 
-        return dic_response
+        return f"{dic_response.get('input')}:\n{dic_response.get('output')}"
 
     def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
         # una vez que se lee y se crea el df da error en la interpretacion quiza por algun separador.
