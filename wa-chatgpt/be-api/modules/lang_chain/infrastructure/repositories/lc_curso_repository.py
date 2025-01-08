@@ -72,6 +72,11 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_con_google_search(self) -> str:
+
+        return ""
+
+
     def ejemplo_agente_con_create_react_agent(self) -> str:
         template = '''
         Responde lo mejor que puedas usando tu conocimiento como LLM o bien las siguientes herramientas:
