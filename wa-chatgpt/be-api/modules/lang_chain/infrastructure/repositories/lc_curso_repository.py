@@ -87,9 +87,10 @@ class LcCursoRepository(AbstractLangchainRepository):
         lista_ejemplo = [3,1,5,3,5,6,7,3,5,10]
 
         human_query = f"Ordena la lista {lista_ejemplo}"
-        dic_response = agent_executor.run(human_query)
+        dic_response = agent_executor.run({"input": human_query})
 
         return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+
 
     def ejemplo_agente_con_google_search(self) -> str:
         chat_open_ai = self._get_chat_openai()
