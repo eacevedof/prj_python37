@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from faiss.class_wrappers import handle_ParameterSpace
 from langchain.chains.conversation.base import ConversationChain
 from langchain_core.prompts import (
     BasePromptTemplate,
@@ -63,6 +62,8 @@ from langchain_experimental.tools.python.tool import PythonREPLTool
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
 
+import pandas as pd
+
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
@@ -76,11 +77,28 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
+        path_xlsx = "./modules/lang_chain/application/lc_ask_question/curso/datos-ventas-small.csv"
+        data_frame = pd.read_excel(path_xlsx)
+        print(data_frame.head())
+
         chat_open_ai = self._get_chat_openai_no_creativity()
+        agent_executor = create_python_agent(
+            tool=PythonREPLTool(),
+            llm=chat_open_ai,
+            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True,
+        )
+
+        human_query = f'''
+        ¿Qué sentencias de código tendría que ejecutar para obtener la suma de venta total agregada por Línea de Producto? 
+        Este sería el dataframe {data_frame}, no tienes que ejecutar la sentencia, solo pasarme el código a ejecutar
+        '''
+        ia_response = agent_executor.run({"input": human_query})
+
+        venta_total = data_frame.groupby("Línea Producto")["Venta Total"].sum()
 
 
-
-        return f"{human_query}:\n{str_response}"
+        return f"{human_query}:\n{ia_response}"
 
     def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
