@@ -111,7 +111,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
         human_query = "Dime cuánto es 1598 multiplicado por 1983"
         dic_response = agent_executor.invoke({"input": human_query})
-
+        print(dic_response)
         return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
 
     def ejemplo_agente_primer_caso_de_uso(self) -> str:
