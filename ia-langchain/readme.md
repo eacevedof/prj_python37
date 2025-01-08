@@ -1178,3 +1178,7 @@ def ejemplo_agente_herramientas_personalizadas(self) -> str:
     return f"{dic_response.get('input')}:\n{dic_response.get('output')}"
 ```
 ![debug agent custom tools](./images/debug-agent-custom-tools-vars.png)
+
+#### agentes conversacionales con memoria
+```python
+```
