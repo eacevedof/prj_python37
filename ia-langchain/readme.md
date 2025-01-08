@@ -1159,6 +1159,10 @@ def ejemplo_agente_herramientas_personalizadas(self) -> str:
         '''
         return "Miguel Celebres"
 
+    #otras tools
+    # nombre_api_interna(text: str = "") -> str:
+    # hora_actual(text: str = "") -> str:
+
     tools.append(persona_amable)
 
     agent_executor = initialize_agent(

@@ -91,6 +91,10 @@ class LcCursoRepository(AbstractLangchainRepository):
             '''
             return "Miguel Celebres"
 
+        #otras tools
+        # nombre_api_interna(text: str = "") -> str:
+        # hora_actual(text: str = "") -> str:
+
         tools.append(persona_amable)
 
         agent_executor = initialize_agent(
