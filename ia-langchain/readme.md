@@ -1082,3 +1082,9 @@ def ejemplo_agente_con_google_search(self) -> str:
 ![agent google search api](./images/debug-ia-agent-with-google-search.png)
 ![agent google search api](./images/debug-agent-with-google-search-vars.png)
 ![postman agent google search api](./images/postman-agent-with-google-search.png)
+
+#### agente programador de código
+- 
+```python
+```
+
