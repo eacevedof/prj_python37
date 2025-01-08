@@ -64,8 +64,18 @@ from modules.shared.infrastructure.components.files.filer import get_file_conten
 
 import pandas as pd
 
+from langchain.agents import tool
+
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
+
+@tool
+def persona_amable():
+    '''
+    Retorna la persona más amable. Se espera que la entrada esté vacía ""
+    y retorna la persona más amable del universo
+    '''
+    return "Miguel Celebres"
 
 
 @final
@@ -77,8 +87,20 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_agente_herramientas_personalizadas(self) -> str:
+        chat_open_ai = self._get_chat_openai_no_creativity()
+        tools = load_tools(tool_names=["wikipedia", "llm-math"], llm=chat_open_ai)
+        agent_executor = initialize_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True
+        )
+        human_query = "¿Quién es la persona más amable del universo?"
 
-        return ""
+        # esto puede dar el error: Agent stopped due to iteration limit of time limit
+        dic_response = agent_executor.invoke(human_query)
+
+        return dic_response
 
     def ejemplo_agente_programador_de_codigo_con_dataframe(self) -> str:
         # una vez que se lee y se crea el df da error en la interpretacion quiza por algun separador.
