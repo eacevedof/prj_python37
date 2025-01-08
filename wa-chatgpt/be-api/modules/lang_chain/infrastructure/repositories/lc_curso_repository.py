@@ -78,6 +78,21 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_conversacional_con_memoria(self) -> str:
+        chat_open_ai = self._get_chat_openai_no_creativity()
+        conversation_buffer_memory = ConversationBufferMemory()
+        tools = load_tools(tool_names=["wikipedia","llm-math"], llm=chat_open_ai)
+        agent_executor = initialize_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+            memory=conversation_buffer_memory,
+            verbose=True,
+        )
+        human_query = "Dime 5 productos escenciales para el mantenimiento de un vehiculo"
+        result = agent_executor.invoke(human_query)
+        pass
+
     def ejemplo_agente_herramientas_personalizadas(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
         tools = load_tools(tool_names=["wikipedia", "llm-math"], llm=chat_open_ai)
