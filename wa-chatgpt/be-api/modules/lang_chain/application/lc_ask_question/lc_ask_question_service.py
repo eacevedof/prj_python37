@@ -49,7 +49,8 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_buffer_en_memoria_completa()
         # str_response = LcCursoRepository.get_instance().ejemplo_buffer_en_memoria_con_ventana()
         # str_response = LcCursoRepository.get_instance().ejemplo_buffer_en_memoria_resumido()
-        str_response = LcCursoRepository.get_instance().ejemplo_agente_primer_caso_de_uso()
+        # str_response = LcCursoRepository.get_instance().ejemplo_agente_primer_caso_de_uso()
+        str_response = LcCursoRepository.get_instance().ejemplo_agente_con_create_react_agent()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 

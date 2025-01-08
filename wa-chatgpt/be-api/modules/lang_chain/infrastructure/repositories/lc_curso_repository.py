@@ -72,6 +72,48 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+    def ejemplo_agente_con_create_react_agent(self) -> str:
+
+        template = '''
+        Responde lo mejor que puedas usando tu conocimiento como LLM o bien las siguientes herramientas:
+        {tools}
+        Utiliza el siguiente formato:
+        Pregunta: la pregunta de entrada que debes responder
+        Pensamiento: siempre debes pensar en qué hacer
+        Acción: la acción a realizar debe ser una de [{tool_names}]
+        Entrada de acción: la entrada a la acción.
+        Observación: el resultado de la acción.
+        ... (este Pensamiento/Acción/Introducción de Acción/Observación puede repetirse N veces,si no consigues el resultado tras 5 intentos, para la jecución)
+        Pensamiento: ahora sé la respuesta final
+        Respuesta final: la respuesta final a la pregunta de entrada original
+        ¡Comenzar! Recuerda que no siempre es necesario usar las herramientas
+        Pregunta: {input}
+        Pensamiento:{agent_scratchpad}        
+        '''
+        # agent_scratchpad.  El agente no llama a una herramienta solo una vez para obtener la respuesta deseada, sino que tiene una
+        # estructura que llama a las herramientas repetidamente hasta obtener la respuesta deseada. Cada vez que llama a una herramienta,
+        # en este campo se almacena cómo fue la llamada anterior, información sobre la llamada anterior y el resultado.
+        chat_prompt_tpl = ChatPromptTemplate.from_template(template)
+
+        chat_open_ai = self._get_chat_openai_no_creativity()
+        tools = load_tools(tool_names=["llm-math"], llm=chat_open_ai)
+        runnable = create_react_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            prompt=chat_prompt_tpl,
+        )
+        agent_executor = AgentExecutor(
+            agent=runnable,
+            tools=tools,
+            verbose=True,
+            return_intermediate_steps=True,
+            handle_parsing_errors=True,
+        )
+        human_query = "Dime cuánto es 1598 multiplicado por 1983"
+        dic_response = agent_executor.invoke({"input": human_query})
+
+        return f"{dic_response.get("input")}:\n{dic_response.get("output")}"
+
     def ejemplo_agente_primer_caso_de_uso(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
 
