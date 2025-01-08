@@ -1086,6 +1086,24 @@ def ejemplo_agente_con_google_search(self) -> str:
 #### agente programador de código
 - 
 ```python
+from langchain_experimental.agents.agent_toolkits import create_python_agent
+from langchain_experimental.tools.python.tool import PythonREPLTool
 
+def ejemplo_agente_programador_de_codigo_ordena_lista(self) -> str:
+    chat_open_ai = self._get_chat_openai_no_creativity()
+
+    agent_executor = create_python_agent(
+        tool=PythonREPLTool(),
+        llm=chat_open_ai,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+    )
+    lista_ejemplo = [3,1,5,3,5,6,7,3,5,10]
+
+    human_query = f"Ordena la lista {lista_ejemplo}"
+    str_response = agent_executor.run({"input": human_query})
+
+    return f"{human_query}:\n{str_response}"
 ```
+![postman programador codigo ordena lista](./images/postman-programador-codigo-ordena-lista.png)
 
