@@ -1181,5 +1181,31 @@ def ejemplo_agente_herramientas_personalizadas(self) -> str:
 
 #### agentes conversacionales con memoria
 ```python
+def ejemplo_agente_conversacional_con_memoria(self) -> str:
+    chat_open_ai = self._get_chat_openai_no_creativity()
 
+    conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
+    tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=chat_open_ai,
+        agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+        memory=conversation_buffer_memory,
+        verbose=True,
+    )
+    human_query = "Dime 5 productos escenciales para el mantenimiento del vehiculo"
+    agent_executor.invoke(human_query)
+
+    human_query = "¿Cuál de los anteriores es el más importante?"
+    agent_executor.invoke(human_query)
+
+    human_query = "Necesito la respuesta anterior en castellano"
+    dic_result = agent_executor.invoke(human_query)
+
+    return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 ```
+![debug agent with memory 0](./images/debug-ia-agent-with-memory-0.png)
+![debug agent with memory 1](./images/debug-ia-agent-with-memory-1.png)
+![debug agent with memory 2](./images/debug-ia-agent-with-memory-2.png)
+![debug agent with memory vars](./images/debug-ia-agent-with-memory-vars.png)
+

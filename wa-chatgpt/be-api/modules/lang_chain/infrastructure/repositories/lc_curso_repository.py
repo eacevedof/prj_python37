@@ -94,9 +94,13 @@ class LcCursoRepository(AbstractLangchainRepository):
         agent_executor.invoke(human_query)
 
         human_query = "¿Cuál de los anteriores es el más importante?"
+        agent_executor.invoke(human_query)
+
+        human_query = "Necesito la respuesta anterior en castellano"
         dic_result = agent_executor.invoke(human_query)
 
         return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
+
 
     def ejemplo_agente_herramientas_personalizadas(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
