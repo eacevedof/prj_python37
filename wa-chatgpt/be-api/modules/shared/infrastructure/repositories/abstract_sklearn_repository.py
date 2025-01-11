@@ -87,6 +87,13 @@ class AbstractSklearnRepository(ABC):
             embedding = self.__get_embeddings_openai(),
         )
 
+    def get_spain_db_connection(self) -> SKLearnVectorStore:
+        return SKLearnVectorStore(
+            serializer = "parquet",
+            persist_path = self.__path_db_spain,
+            embedding = self.__get_embeddings_openai(),
+        )
+
     def __get_embeddings_openai(self) -> OpenAIEmbeddings:
         return OpenAIEmbeddings(
             openai_api_key=OPENAI_API_KEY
