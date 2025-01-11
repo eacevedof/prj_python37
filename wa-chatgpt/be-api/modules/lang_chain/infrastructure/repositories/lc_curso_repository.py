@@ -119,7 +119,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         human_query = "¿Qué pasó durante la misma etapa en Francia?"
         agent_executor.invoke(human_query)
 
-        # Pregunta que no podemos responder con nuestra BD Vectorial
+        # pregunta que no podemos responder con nuestra BD Vectorial
         human_query = "¿Cuáles son las marcas de vehículos más famosas hoy en día?\")"
         dic_result = agent_executor.invoke(human_query)
 
