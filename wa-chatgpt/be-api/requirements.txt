@@ -19,7 +19,7 @@ wikipedia
 lxml
 beautifulsoup4
 scikit-learn
-pandas
+pandas~=2.2.3
 pyarrow~=18.1.0
 
 langchain-openai~=0.2.3
@@ -29,3 +29,4 @@ torch~=2.4.1
 numexpr==2.10.2
 google-search-results==2.4.2
 langchain-experimental~=0.3.4
+mysql-connector-python~=9.1.0
