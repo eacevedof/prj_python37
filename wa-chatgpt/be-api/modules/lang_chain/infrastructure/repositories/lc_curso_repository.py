@@ -63,7 +63,6 @@ from langchain_experimental.tools.python.tool import PythonREPLTool
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
-from modules.shared.infrastructure.repositories.abstract_mysql_repository import AbstractMysqlRepository
 
 import pandas as pd
 
