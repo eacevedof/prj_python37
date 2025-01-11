@@ -63,6 +63,7 @@ from langchain_experimental.tools.python.tool import PythonREPLTool
 
 from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.files.filer import get_file_content
+from modules.shared.infrastructure.repositories.abstract_mysql_repository import AbstractMysqlRepository
 
 import pandas as pd
 
@@ -70,6 +71,7 @@ from langchain.agents import tool
 
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
+from modules.lang_chain.infrastructure.repositories.lc_mysql_repository import LcMysqlRepository
 
 
 @final
@@ -81,6 +83,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_agente_sql(self) -> str:
+        LcMysqlRepository.get_instance().get_connection()
 
 
 
