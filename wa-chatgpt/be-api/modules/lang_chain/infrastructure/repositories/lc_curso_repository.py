@@ -81,13 +81,13 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_proyecto_rag(self) -> str:
+        vectordb_spain = EjemplosSklearnRepository.get_instance().get_spain_db_connection()
+
         chat_open_ai = self._get_chat_openai_no_creativity()
-        sklearn_repository = EjemplosSklearnRepository.get_instance()
-        vector_store = sklearn_repository.get_spain_db_connection()
         llm_chain_extractor = LLMChainExtractor.from_llm(llm=chat_open_ai)
         compression_retriever = ContextualCompressionRetriever(
-            base_compressor=llm_chain_extractor,
-            base_retriever=vector_store.as_retriever()
+            base_compressor = llm_chain_extractor,
+            base_retriever = vectordb_spain.as_retriever()
         )
 
         @tool
