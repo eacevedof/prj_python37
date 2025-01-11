@@ -115,39 +115,5 @@ class AbstractSklearnRepository(ABC):
         return os.path.exists(self.__path_db_spain)
 
     def qa_db_exists(self) -> bool:
-        return os.path.exists(self.__persist_path_qa)
+        return os.path.exists(self.__path_db_spain)
 
-    def _query(self, sql: str) -> list[Dict[str, any]]:
-        self.__connection = self.__get_connection()
-        self.__cursor = self.__connection.cursor()
-        self.__cursor.execute(sql)
-        columns = [desc[0] for desc in self.__cursor.description]
-        results = [
-            {columns[i]: value for i, value in enumerate(row)}
-            for row in self.__cursor.fetchall()
-        ]
-        self.__close_all()
-        return results
-
-    def _command(self, sql: str) -> None:
-        try:
-            self.__connection = self.__get_connection()
-            self.__cursor = self.__connection.cursor()
-            self.__cursor.execute(sql)
-            self.__connection.commit()
-            self.__close_all()
-        except Exception as e:
-            Log.log_exception(e, "abstract_postgres_repository._execute")
-            self.__close_all()
-            raise e
-
-    def __close_all(self) -> None:
-        if self.__cursor:
-            self.__cursor.close()
-
-        if self.__connection:
-            self.__connection.close()
-
-    def _get_escaped_sql_string(self, string: str) -> str:
-        string = string.replace("\\", "\\\\")
-        return string.replace("'", "\\'")
