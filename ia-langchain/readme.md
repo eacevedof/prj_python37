@@ -1209,3 +1209,55 @@ def ejemplo_agente_conversacional_con_memoria(self) -> str:
 ![debug agent with memory 2](./images/debug-ia-agent-with-memory-2.png)
 ![debug agent with memory vars](./images/debug-ia-agent-with-memory-vars.png)
 
+#### agentes RAG
+- ![rag](./images/rag.png)
+- **ejemplo**
+```python
+def ejemplo_proyecto_rag(self) -> str:
+    vectordb_spain = EjemplosSklearnRepository.get_instance().get_spain_db_connection()
+
+    chat_open_ai = self._get_chat_openai_no_creativity()
+    llm_chain_extractor = LLMChainExtractor.from_llm(llm=chat_open_ai)
+    compression_retriever = ContextualCompressionRetriever(
+        base_compressor = llm_chain_extractor,
+        base_retriever = vectordb_spain.as_retriever()
+    )
+
+    @tool
+    def consulta_interna(text: str = "") -> str:
+        '''
+        Retorna respuestas sobre la historia de España. Se espera que la entrada sea una cadena de texto
+        y retorna una cadena con el resultado más relevante. Si la respuesta con esta herramienta es relevante,
+        no debes usar ninguna herramienta más
+        '''
+        compressed_docs = compression_retriever.invoke(text)
+        resultado = "No tengo respuesta"
+        if (isinstance(compressed_docs, list) and len(compressed_docs) > 0):
+            resultado = compressed_docs[0].page_content
+        return resultado
+
+    tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
+    tools = tools + [consulta_interna]
+
+    conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_spain_history")
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=chat_open_ai,
+        agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+        memory=conversation_buffer_memory,
+        verbose=True,
+        handle_parsing_errors=True,
+    )
+
+    human_query = "¿Qué periodo abarca cronológicamente en España el siglo de oro?"
+    agent_executor.invoke(human_query)
+
+    human_query = "¿Qué pasó durante la misma etapa en Francia?"
+    agent_executor.invoke(human_query)
+
+    # pregunta que no podemos responder con nuestra BD Vectorial
+    human_query = "¿Cuáles son las marcas de vehículos más famosas hoy en día?\")"
+    dic_result = agent_executor.invoke(human_query)
+
+    return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
+```
