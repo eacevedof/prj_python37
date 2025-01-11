@@ -106,7 +106,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
         tools = tools + [consulta_interna]
 
-        agent = initialize_agent(
+        agent_executor = initialize_agent(
             tools=tools,
             llm=chat_open_ai,
             agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
@@ -115,14 +115,14 @@ class LcCursoRepository(AbstractLangchainRepository):
         )
 
         human_query = "¿Qué periodo abarca cronológicamente en España el siglo de oro?"
-        result = agent.invoke(human_query)
+        agent_executor.invoke(human_query)
 
         human_query = "¿Qué pasó durante la misma etapa en Francia?"
-        result = agent.invoke(human_query)
+        agent_executor.invoke(human_query)
 
         # Pregunta que no podemos responder con nuestra BD Vectorial
         human_query = "¿Cuáles son las marcas de vehículos más famosas hoy en día?\")"
-        dic_result = agent.invoke(human_query)
+        dic_result = agent_executor.invoke(human_query)
 
         return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 
