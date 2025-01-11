@@ -94,7 +94,7 @@ class LcCursoRepository(AbstractLangchainRepository):
 
         agent = create_sql_agent(
             db=db_mysql,
-            llm=self._get_chat_openai(),
+            llm=self._get_chat_openai_no_creativity(),
             verbose=True
         )
 
