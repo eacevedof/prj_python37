@@ -104,7 +104,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
         tools = tools + [consulta_interna]
 
-        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
+        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_spain_history")
         agent_executor = initialize_agent(
             tools=tools,
             llm=chat_open_ai,
