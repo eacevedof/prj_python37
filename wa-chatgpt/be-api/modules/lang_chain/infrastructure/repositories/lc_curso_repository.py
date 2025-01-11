@@ -82,13 +82,13 @@ class LcCursoRepository(AbstractLangchainRepository):
     def get_instance() -> "LcCursoRepository":
         return LcCursoRepository()
 
+
     def ejemplo_agente_sql(self) -> str:
-        LcMysqlRepository.get_instance().get_connection()
-
-
-
+        mysql_repository = LcMysqlRepository.get_instance()
+        dic_result = mysql_repository.get_sum_population()
 
         return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
+
 
     def ejemplo_proyecto_agente_rag_con_memoria(self) -> str:
         vectordb_spain = EjemplosSklearnRepository.get_instance().get_spain_db_connection()
