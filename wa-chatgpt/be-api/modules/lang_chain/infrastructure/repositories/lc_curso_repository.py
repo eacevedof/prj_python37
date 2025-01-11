@@ -98,7 +98,9 @@ class LcCursoRepository(AbstractLangchainRepository):
             no debes usar ninguna herramienta más
             '''
             compressed_docs = compression_retriever.invoke(text)
-            resultado = compressed_docs[0].page_content
+            resultado = "No tengo respuesta"
+            if (isinstance(compressed_docs, list) and len(compressed_docs) > 0):
+                resultado = compressed_docs[0].page_content
             return resultado
 
         tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
@@ -110,7 +112,8 @@ class LcCursoRepository(AbstractLangchainRepository):
             llm=chat_open_ai,
             agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
             memory=conversation_buffer_memory,
-            verbose=True
+            verbose=True,
+            handle_parsing_errors=True,
         )
 
         human_query = "¿Qué periodo abarca cronológicamente en España el siglo de oro?"
