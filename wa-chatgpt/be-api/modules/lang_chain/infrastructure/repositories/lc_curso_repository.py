@@ -80,16 +80,10 @@ class LcCursoRepository(AbstractLangchainRepository):
 
     def ejemplo_proyecto_rag(self) -> str:
         chat_open_ai = self._get_chat_openai_no_creativity()
+        openai_embeddings = self._get_embeddings_openai()
+        sklearn_repository = EjemplosSklearnRepository.get_instance()
 
-        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
-        tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
-        agent_executor = initialize_agent(
-            tools=tools,
-            llm=chat_open_ai,
-            agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
-            memory=conversation_buffer_memory,
-            verbose=True,
-        )
+
 
         return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 
