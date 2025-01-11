@@ -1209,8 +1209,7 @@ def ejemplo_agente_conversacional_con_memoria(self) -> str:
 ![debug agent with memory 2](./images/debug-ia-agent-with-memory-2.png)
 ![debug agent with memory vars](./images/debug-ia-agent-with-memory-vars.png)
 
-#### agente RAG
-![debug-ia-rag-agent](./images/debug-ia-rag-agent.png)
+#### agente RAG con chat
 ```python
 def ejemplo_proyecto_rag(self) -> str:
     vectordb_spain = EjemplosSklearnRepository.get_instance().get_spain_db_connection()
@@ -1260,3 +1259,5 @@ def ejemplo_proyecto_rag(self) -> str:
 
     return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 ```
+![debug-ia-rag-agent](./images/debug-ia-rag-agent.png)
+![postman-ia-rag-agent-vars](./images/postman-ia-rag-agent-vars.png)
