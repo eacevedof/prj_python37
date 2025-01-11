@@ -67,6 +67,9 @@ from modules.shared.infrastructure.components.files.filer import get_file_conten
 import pandas as pd
 
 from langchain.agents import tool
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain.sql_database import SQLDatabase
+
 
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
@@ -85,6 +88,17 @@ class LcCursoRepository(AbstractLangchainRepository):
     def ejemplo_agente_sql(self) -> str:
         mysql_repository = LcMysqlRepository.get_instance()
         dic_result = mysql_repository.get_sum_population()
+        mysql_conn_string = mysql_repository.get_connection_string()
+
+        db_mysql = SQLDatabase.from_uri(mysql_conn_string)
+
+        agent = create_sql_agent(
+            db=db_mysql,
+            llm=self._get_chat_openai(),
+            verbose=True
+        )
+
+        dic_result = agent.invoke("Dime la población tottal de Asia")
 
         return f"{dic_result}"
 
