@@ -87,7 +87,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         mysql_repository = LcMysqlRepository.get_instance()
         dic_result = mysql_repository.get_sum_population()
 
-        return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
+        return f"{dic_result}"
 
 
     def ejemplo_proyecto_agente_rag_con_memoria(self) -> str:
