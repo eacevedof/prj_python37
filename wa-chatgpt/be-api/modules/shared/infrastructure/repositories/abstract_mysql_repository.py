@@ -22,6 +22,9 @@ class AbstractMysqlRepository(ABC):
         }
         return connect(**config)
 
+    def _get_connection_string(self) -> str:
+        return f"mysql+mysqlconnector://{MysqlDb.user}:{MysqlDb.password}@{MysqlDb.host}:{MysqlDb.port}/{MysqlDb.dbname}"
+
     def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()
         self.__cursor = self.__connection.cursor()
