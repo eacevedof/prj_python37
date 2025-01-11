@@ -1263,6 +1263,7 @@ def ejemplo_proyecto_rag(self) -> str:
 ![postman-ia-rag-agent-vars](./images/postman-ia-rag-agent.png)
 
 #### agente sql
+![sql agent](./images/sql-agent.png)
 ```python
 ```
 
