@@ -1,6 +1,6 @@
 import os
 from abc import ABC
-from typing import Dict, List
+from typing import List
 import pyarrow.parquet as pq
 
 from langchain_openai import (
@@ -19,9 +19,6 @@ class AbstractSklearnRepository(ABC):
 
     __path_db_spain = "./database/sk_learn/ejemplos_embedding_db.parquet" ## db historia de espana
     __path_db_python_history = "./database/sk_learn/optimization_db.parquet" ## contenido sobre python
-
-    __connection = None
-    __cursor = None
 
     def get_q_and_a_connection(self) -> SKLearnVectorStore:
         return SKLearnVectorStore(
