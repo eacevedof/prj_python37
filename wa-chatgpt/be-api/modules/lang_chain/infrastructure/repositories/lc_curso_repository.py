@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import List, final
 
 from langchain.chains.conversation.base import ConversationChain
+from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain_core.prompts import (
     BasePromptTemplate,
     PromptTemplate,
@@ -79,11 +81,48 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_proyecto_rag(self) -> str:
+        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
+
         chat_open_ai = self._get_chat_openai_no_creativity()
-        openai_embeddings = self._get_embeddings_openai()
         sklearn_repository = EjemplosSklearnRepository.get_instance()
+        vector_store = sklearn_repository.get_spain_db_connection()
+        llm_chain_extractor = LLMChainExtractor.from_llm(llm=chat_open_ai)
+        compression_retriever = ContextualCompressionRetriever(
+            base_compressor=llm_chain_extractor,
+            base_retriever=vector_store.as_retriever()
+        )
 
+        @tool
+        def consulta_interna(text: str = "") -> str:
+            '''
+            Retorna respuestas sobre la historia de España. Se espera que la entrada sea una cadena de texto
+            y retorna una cadena con el resultado más relevante. Si la respuesta con esta herramienta es relevante,
+            no debes usar ninguna herramienta más
+            '''
+            compressed_docs = compression_retriever.invoke(text)
+            resultado = compressed_docs[0].page_content
+            return resultado
 
+        tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
+        tools = tools + [consulta_interna]
+
+        agent = initialize_agent(
+            tools=tools,
+            llm=chat_open_ai,
+            agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+            memory=conversation_buffer_memory,
+            verbose=True
+        )
+
+        human_query = "¿Qué periodo abarca cronológicamente en España el siglo de oro?"
+        result = agent.invoke(human_query)
+
+        human_query = "¿Qué pasó durante la misma etapa en Francia?"
+        result = agent.invoke(human_query)
+
+        # Pregunta que no podemos responder con nuestra BD Vectorial
+        human_query = "¿Cuáles son las marcas de vehículos más famosas hoy en día?\")"
+        dic_result = agent.invoke(human_query)
 
         return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 
