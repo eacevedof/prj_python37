@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.51, for pc-linux-gnu (i686)
 --
--- Host: 127.0.0.1    Database: world
+-- Host: 127.0.0.1    Database: lc_sql_agent
 -- ------------------------------------------------------
 -- Server version       5.1.51-debug-log
 
@@ -15,9 +15,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DROP SCHEMA IF EXISTS world;
-CREATE SCHEMA world;
-USE world;
+DROP SCHEMA IF EXISTS lc_sql_agent;
+CREATE SCHEMA lc_sql_agent;
+USE lc_sql_agent;
 SET AUTOCOMMIT=0;
 
 --
