@@ -81,8 +81,6 @@ class LcCursoRepository(AbstractLangchainRepository):
         return LcCursoRepository()
 
     def ejemplo_proyecto_rag(self) -> str:
-        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
-
         chat_open_ai = self._get_chat_openai_no_creativity()
         sklearn_repository = EjemplosSklearnRepository.get_instance()
         vector_store = sklearn_repository.get_spain_db_connection()
@@ -106,6 +104,7 @@ class LcCursoRepository(AbstractLangchainRepository):
         tools = load_tools(tool_names=["wikipedia"], llm=chat_open_ai)
         tools = tools + [consulta_interna]
 
+        conversation_buffer_memory = ConversationBufferMemory(memory_key="chat_history")
         agent_executor = initialize_agent(
             tools=tools,
             llm=chat_open_ai,
