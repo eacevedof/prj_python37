@@ -56,7 +56,8 @@ class LcAskQuestionService:
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_programador_de_codigo_con_dataframe()
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_herramientas_personalizadas()
         # str_response = LcCursoRepository.get_instance().ejemplo_agente_conversacional_con_memoria()
-        str_response = LcCursoRepository.get_instance().ejemplo_proyecto_agente_rag_con_memoria()
+        # str_response = LcCursoRepository.get_instance().ejemplo_proyecto_agente_rag_con_memoria()
+        str_response = LcCursoRepository.get_instance().ejemplo_agente_sql()
 
         return LcAskedQuestionDTO(chat_response=f"{str_response}")
 

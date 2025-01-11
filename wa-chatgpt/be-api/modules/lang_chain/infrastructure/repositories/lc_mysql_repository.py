@@ -21,6 +21,19 @@ class LcMysqlRepository(AbstractMysqlRepository):
             Uuider.get_instance()
         )
 
+    def get_sum_population(self) -> int:
+        sql = """
+        SELECT 
+            SUM(population) as sum_population 
+        FROM Country
+        WHERE 1
+        AND Continent = 'Asia'
+        """
+        Log.log_sql(sql, "get_sum_population")
+        result = self._query(sql)
+        return result[0].get("sum_population")
+
+
     def create_user(self, create_user_entity: UserEntity) -> None:
         user_uuid = create_user_entity.user_uuid
         user_name = create_user_entity.user_name
