@@ -1260,4 +1260,4 @@ def ejemplo_proyecto_rag(self) -> str:
     return f"{dic_result.get("input")}:\n{dic_result.get("output")}"
 ```
 ![debug-ia-rag-agent](./images/debug-ia-rag-agent.png)
-![postman-ia-rag-agent-vars](./images/postman-ia-rag-agent-vars.png)
+![postman-ia-rag-agent-vars](./images/postman-ia-rag-agent.png)
