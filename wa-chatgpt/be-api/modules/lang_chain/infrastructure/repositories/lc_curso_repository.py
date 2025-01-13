@@ -98,8 +98,10 @@ class LcCursoRepository(AbstractLangchainRepository):
             verbose=True
         )
 
-        dic_result = agent.invoke("Dime la población tottal de Asia")
-
+        #dic_result = agent.invoke("Dime la población tottal de Asia")
+        dic_result = agent.invoke(
+            "Dime el promedio de la esperanza de vida por cada una de las regiones ordenadas de mayor a menor"
+        )
         return f"{dic_result}"
 
 
