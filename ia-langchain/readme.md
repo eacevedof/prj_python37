@@ -2,6 +2,16 @@
 - https://github.com/eacevedof/prj_python37/tree/master/wa-chatgpt/be-api/modules/lang_chain/application/lc_ask_question
 - [curso](https://www.udemy.com/course/langchain-y-llm-desarrolla-aplicaciones-de-ia-en-python/learn/lecture/45189465)
 
+### prompt formula
+```
+- escribe un resumen de lo que quieres que haga el modelo
+- Al GPT: 
+    - actua como un ingeniero em prompt
+    - revisa este prompt
+    - optimizalo para hacerlo mejor
+    - hazme preguntas antes de proceder
+```
+
 ### Neurona artificial:
 - ![Artificial neuron](./images/artificial-neuron.png)
 - Es una representacion matematica de una neurona biologica
