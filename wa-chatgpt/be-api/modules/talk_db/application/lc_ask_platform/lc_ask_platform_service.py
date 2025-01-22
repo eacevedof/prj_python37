@@ -1,10 +1,10 @@
 from typing import final
 from modules.shared.infrastructure.components.log import Log
 
-from modules.lang_chain.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
-from modules.lang_chain.application.lc_ask_question.lc_asked_question_dto import LcAskedQuestionDTO
+from modules.talk_db.application.lc_ask_question.lc_ask_question_dto import LcAskQuestionDTO
+from modules.talk_db.application.lc_ask_question.lc_asked_question_dto import LcAskedQuestionDTO
 
-from modules.lang_chain.infrastructure.repositories.lc_curso_repository import LcCursoRepository
+from modules.talk_db.infrastructure.repositories.lc_curso_repository import LcCursoRepository
 
 @final
 class LcAskPlatformService:
