@@ -4,17 +4,17 @@ from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.http.response.http_json_response import HttpJsonResponse
 from modules.shared.domain.enums.http_response_code_enum import HttpResponseCodeEnum
 
-from modules.talk_db.application.lc_ask_platform.lc_ask_platform_dto import LcAskQuestionDTO
-from modules.talk_db.application.lc_ask_platform.lc_ask_platform_service import LcAskQuestionService
+from modules.talk_db.application.lc_ask_platform.lc_ask_platform_dto import LcAskPlatformDTO
+from modules.talk_db.application.lc_ask_platform.lc_ask_platform_service import LcAskPlatformService
 from modules.talk_db.domain.exceptions.ask_platform_exception import AskPlatformException
 
 
 def invoke(http_request: Request) -> Response:
     try:
-        lc_ask_platform_dto = LcAskQuestionDTO(
+        lc_ask_platform_dto = LcAskPlatformDTO(
             question=http_request.args["question"]
         )
-        lc_asked_question_dto = LcAskQuestionService.get_instance().invoke(
+        lc_asked_question_dto = LcAskPlatformService.get_instance().invoke(
             lc_ask_platform_dto
         )
 
