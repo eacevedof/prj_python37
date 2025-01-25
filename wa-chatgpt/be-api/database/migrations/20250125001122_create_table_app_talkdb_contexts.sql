@@ -13,6 +13,6 @@ CREATE TABLE app_talk_db_contexts
     context_uuid VARCHAR(100) NOT NULL UNIQUE,
     owner_id INT NOT NULL,
     context_name VARCHAR(100) NOT NULL,
-    context_misc JSONB DEFAULT NULL,
+    context_misc JSONB DEFAULT NULL
 )
 ;

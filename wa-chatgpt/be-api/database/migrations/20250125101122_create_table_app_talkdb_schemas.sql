@@ -14,6 +14,6 @@ CREATE TABLE app_talk_db_schemas
     context_id INT NOT NULL,
 
     db_field VARCHAR(100) NOT NULL,
-    db_description VARCHAR(100) NOT NULL
+    db_description VARCHAR(500) NOT NULL
 )
 ;
