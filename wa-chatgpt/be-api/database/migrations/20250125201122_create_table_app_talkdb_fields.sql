@@ -11,9 +11,9 @@ CREATE TABLE app_talk_db_tables
     deleted_by VARCHAR(10) DEFAULT NULL,
 
     id SERIAL PRIMARY KEY,
-    context_id INT NOT NULL,
+    table_id INT NOT NULL,
 
-    table_name VARCHAR(100) NOT NULL,
-    table_description VARCHAR(500) NOT NULL
+    field_name VARCHAR(100) NOT NULL,
+    field_description VARCHAR(500) NOT NULL
 )
 ;
