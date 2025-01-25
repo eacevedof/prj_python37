@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS app_talk_db_tables
+DROP TABLE IF EXISTS app_talk_db_table_fields
 ;
 
-CREATE TABLE app_talk_db_tables
+CREATE TABLE app_talk_db_table_fields
 (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by VARCHAR(10) DEFAULT NULL,
