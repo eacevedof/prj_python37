@@ -32,6 +32,16 @@ pip install -r requirements.txt
 
 ## postgres db:
 - https://github.com/eacevedof/prj_docker_lamp/tree/main/postgres
+- [adminter](http://localhost:7000)
+```sh
+psql -U postgres -c "SHOW ALL;" -h localhost -d db_vector
+
+host: cont-db-postgres
+port: 5432
+user: postgres
+pass: root
+database: db_vector
+```
 
 ### commands
 ```sh
