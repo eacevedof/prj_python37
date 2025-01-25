@@ -94,11 +94,11 @@ class MigrationsPostgresRepository(AbstractPostgresRepository):
         results = self._query(sql)
         if not results:
             return None
-        return int(results[0][0])
+        return int(results[0]["batch"])
 
     def __get_all_migrations(self) -> list[str]:
         sql = f"""
         SELECT migration FROM {self.__MIGRATIONS_TABLE_NAME} ORDER BY id ASC;
         """
         results = self._query(sql)
-        return [result[0] for result in results]
+        return [result.get("migration") for result in results]
