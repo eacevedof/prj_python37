@@ -3,7 +3,8 @@ from typing import Dict
 
 from mysql.connector import connect
 
-from config.database import MysqlDb
+from config.database import MysqlDefaultDb
+from modules.shared.infrastructure.components.db.mysql_context_dto import MysqlContextDto
 from modules.shared.infrastructure.components.log import Log
 
 
@@ -13,13 +14,13 @@ class AbstractMysqlRepository(ABC):
     __cursor = None
     __context: Dict = None
 
-    def set_context(self, context: object|None = None) -> None:
+    def set_context(self, context: MysqlContextDto|None = None) -> None:
         self.__context = {
-            "user": MysqlDb.user,
-            "password": MysqlDb.password,
-            "host": MysqlDb.host,
-            "port": MysqlDb.port,
-            "database": MysqlDb.dbname
+            "user": MysqlDefaultDb.user,
+            "password": MysqlDefaultDb.password,
+            "host": MysqlDefaultDb.host,
+            "port": MysqlDefaultDb.port,
+            "database": MysqlDefaultDb.dbname
         }
         if context:
             self.__context = {
@@ -34,7 +35,7 @@ class AbstractMysqlRepository(ABC):
         return connect(**self.__context)
 
     def _get_connection_string(self) -> str:
-        return f"mysql+mysqlconnector://{MysqlDb.user}:{MysqlDb.password}@{MysqlDb.host}:{MysqlDb.port}/{MysqlDb.dbname}"
+        return f"mysql+mysqlconnector://{MysqlDefaultDb.user}:{MysqlDefaultDb.password}@{MysqlDefaultDb.host}:{MysqlDefaultDb.port}/{MysqlDefaultDb.dbname}"
 
     def _query(self, sql: str) -> list[Dict[str, any]]:
         self.__connection = self.__get_connection()
