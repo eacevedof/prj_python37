@@ -40,21 +40,3 @@ class LcMysqlRepository(AbstractMysqlRepository):
         return self._get_connection_string()
 
 
-    def create_user(self, create_user_entity: UserEntity) -> None:
-        user_uuid = create_user_entity.user_uuid
-        user_name = create_user_entity.user_name
-        user_login = create_user_entity.user_login
-        user_password = create_user_entity.user_password
-        user_email = create_user_entity.user_email
-        user_code = create_user_entity.user_code
-        created_at = self.__date_timer.get_now_ymd_his()
-        sql = f"""
-        INSERT INTO app_users 
-        (user_uuid, user_name, user_login, user_password, user_email, user_code, user_is_enabled, created_at)
-        VALUES 
-        ('{user_uuid}', '{user_name}', '{user_login}' , '{user_password}', '{user_email}', '{user_code}', 1, '{created_at}');
-        """
-        Log.log_sql(sql, "create_user")
-        self._command(sql)
-
-
