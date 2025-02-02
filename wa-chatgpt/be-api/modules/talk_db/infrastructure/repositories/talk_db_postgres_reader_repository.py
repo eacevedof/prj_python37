@@ -28,7 +28,7 @@ INNER JOIN app_talk_db_table_fields tf
 ON t.id = tf.table_id
 WHERE 1=1
 AND t.context_id = 1
-order by t.table_name, tf.field_name
+ORDER BY t.table_name, tf.field_name
 
         """
         Log.log_sql(sql, "get_user_by_uuid")
