@@ -5,7 +5,6 @@ from modules.shared.infrastructure.components.log import Log
 from modules.shared.infrastructure.components.uuider import Uuider
 from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_mysql_repository import AbstractMysqlRepository
-from modules.users.domain.entities.user_entity import UserEntity
 
 @final
 @dataclass(frozen=False)
