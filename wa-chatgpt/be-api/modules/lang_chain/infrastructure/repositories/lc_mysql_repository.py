@@ -16,10 +16,13 @@ class LcMysqlRepository(AbstractMysqlRepository):
 
     @staticmethod
     def get_instance() -> "LcMysqlRepository":
-        return LcMysqlRepository(
+        lc_mysql_repository = LcMysqlRepository(
             DateTimer.get_instance(),
             Uuider.get_instance()
         )
+        lc_mysql_repository.set_context()
+        return lc_mysql_repository
+
 
     def get_sum_population(self) -> int:
         sql = """
