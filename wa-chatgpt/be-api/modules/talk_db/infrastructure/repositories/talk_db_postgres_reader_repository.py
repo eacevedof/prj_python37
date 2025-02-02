@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from typing import final
 
 from modules.shared.infrastructure.components.log import Log
-from modules.users.domain.entities.user_entity import UserEntity
 from modules.shared.infrastructure.components.date_timer import DateTimer
 from modules.shared.infrastructure.repositories.abstract_postgres_repository import AbstractPostgresRepository
+from modules.talk_db.domain.entities.talk_db_entity import TalkDbEntity
 
 @final
 @dataclass(frozen=False)
@@ -14,12 +14,12 @@ class TalkDbPostgresReaderRepository(AbstractPostgresRepository):
     def get_instance() -> "TalkDbPostgresReaderRepository":
         return TalkDbPostgresReaderRepository()
 
-    def get_user_by_uuid(self, create_user_entity: UserEntity) -> UserEntity|None:
+    def get_user_by_uuid(self, talk_db_entity: TalkDbEntity) -> TalkDbEntity|None:
         sql = f"""
         SELECT *
         FROM app_users 
         WHERE 1=1 
-        AND user_uuid = '{create_user_entity.user_uuid}'
+        AND user_uuid = '{talk_db_entity.user_uuid}'
         """
         Log.log_sql(sql, "get_user_by_uuid")
         result = self._query(sql)
@@ -30,7 +30,7 @@ class TalkDbPostgresReaderRepository(AbstractPostgresRepository):
             result[0].get("created_at")
         )
 
-        return UserEntity.from_primitives(
+        return TalkDbEntity.from_primitives(
             id=result[0].get("id"),
             user_uuid=result[0].get("user_uuid"),
             user_name=result[0].get("user_name"),
