@@ -19,6 +19,12 @@ class LcAskPlatformService:
 
     def invoke(self, lc_ask_platform: LcAskPlatformDTO) -> LcAskedPlatformDTO:
         str_response = ":)"
+        # obtener los datos del contexto desde postgres
+        # montar el contexto en base a este resultado
+        # obtener el esquema de tablas con sus campos
+        # montar la informacion en sk_learn
+        # obtener la query a ejecutar en mysql
+        # ejecutar la query en mysql
 
 
 
