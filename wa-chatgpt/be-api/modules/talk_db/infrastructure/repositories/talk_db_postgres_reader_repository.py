@@ -14,12 +14,22 @@ class TalkDbPostgresReaderRepository(AbstractPostgresRepository):
     def get_instance() -> "TalkDbPostgresReaderRepository":
         return TalkDbPostgresReaderRepository()
 
-    def get_user_by_uuid(self, talk_db_entity: TalkDbEntity) -> TalkDbEntity|None:
+    def get_schema_definition(self, talk_db_entity: TalkDbEntity) -> TalkDbEntity | None:
         sql = f"""
-        SELECT *
-        FROM app_users 
-        WHERE 1=1 
-        AND user_uuid = '{talk_db_entity.user_uuid}'
+SELECT 
+t.table_name,
+t.table_description,
+tf.field_name, 
+tf.field_description
+FROM app_talk_db_contexts ctx
+INNER JOIN app_talk_db_tables t
+ON ctx.id = t.context_id
+INNER JOIN app_talk_db_table_fields tf
+ON t.id = tf.table_id
+WHERE 1=1
+AND t.context_id = 1
+order by t.table_name, tf.field_name
+
         """
         Log.log_sql(sql, "get_user_by_uuid")
         result = self._query(sql)
