@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Dict
 
 from mysql.connector import connect
+from sympy.categories import Object
 
 from config.database import MysqlDb
 from modules.shared.infrastructure.components.log import Log
@@ -11,16 +12,19 @@ class AbstractMysqlRepository(ABC):
 
     __connection = None
     __cursor = None
+    __context: Dict = None
 
-    def __get_connection(self) -> object:
-        config = {
+    def set_context(self, context: Dict|None = None) -> None:
+        self.__context = {
             "user": MysqlDb.user,
             "password": MysqlDb.password,
             "host": MysqlDb.host,
             "port": MysqlDb.port,
             "database": MysqlDb.dbname
         }
-        return connect(**config)
+
+    def __get_connection(self) -> object:
+        return connect(**self.__context)
 
     def _get_connection_string(self) -> str:
         return f"mysql+mysqlconnector://{MysqlDb.user}:{MysqlDb.password}@{MysqlDb.host}:{MysqlDb.port}/{MysqlDb.dbname}"
