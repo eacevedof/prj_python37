@@ -43,6 +43,8 @@ class SFTPHandler(FileSystemEventHandler):
         print(f"base_name: {base_name}")
 
         remote_file_path = os.path.join(self.remote_path, base_name)
+        print(f"remote_file_path: {remote_file_path}")
+
         self.sftp_client.put(upload_path, remote_file_path)
         print(f"Uploaded {upload_path} to {remote_file_path}")
 
@@ -51,7 +53,6 @@ def main():
     sftp_client = get_sftp_client()
 
     remote_path = os.getenv("PATH_REMOTE_FOLDER")
-    remote_path = os.path.realpath(remote_path)
     print(f"remote_path: {remote_path}")
     event_handler = SFTPHandler(sftp_client, remote_path)
 
