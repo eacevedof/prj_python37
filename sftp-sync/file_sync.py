@@ -49,6 +49,7 @@ def main():
             pass
     except KeyboardInterrupt:
         observer.stop()
+
     observer.join()
     sftp_client.close()
 
