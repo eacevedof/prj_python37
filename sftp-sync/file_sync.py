@@ -42,7 +42,7 @@ class SFTPHandler(FileSystemEventHandler):
         base_name = os.path.basename(upload_path)
         print(f"base_name: {base_name}")
 
-        remote_file_path = os.path.join(self.remote_path, base_name)
+        remote_file_path = f"./{self.remote_path}/{base_name}"
         print(f"remote_file_path: {remote_file_path}")
 
         self.sftp_client.put(upload_path, remote_file_path)
