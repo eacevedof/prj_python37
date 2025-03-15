@@ -9,7 +9,7 @@ from watchdog.events import FileSystemEventHandler
 load_dotenv()
 
 def pr(text):
-    print(f"[{time.strftime("%Y-%m-%d %H:%M:%S")}] {text}")
+    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {text}")
 
 def get_sftp_client():
     hostname = os.getenv("SFTP_HOST")
@@ -33,11 +33,30 @@ class SFTPHandler(FileSystemEventHandler):
             self.upload_file(event.src_path)
 
     def on_created(self, event):
-        if not event.is_directory:
+        if event.is_directory:
+            self.create_remote_directory(event.src_path)
+        else:
             self.upload_file(event.src_path)
 
+    def create_remote_directory(self, local_path):
+        relative_path = os.path.relpath(local_path, os.getenv("PATH_LOCAL_FOLDER"))
+        remote_directory_path = os.path.join(self.remote_path, relative_path).replace("\\", "/")
+        pr(f"Creating remote directory: {remote_directory_path}")
+        self.sftp_mkdirs(remote_directory_path)
+
+    def sftp_mkdirs(self, remote_directory_path):
+        dirs = remote_directory_path.split('/')
+        path = ""
+        for dir in dirs:
+            if dir:
+                path += f"/{dir}"
+                try:
+                    self.sftp_client.stat(path)
+                except FileNotFoundError:
+                    self.sftp_client.mkdir(path)
+                    pr(f"Created remote directory: {path}")
+
     def upload_file(self, upload_path):
-        # si es el fichero temporal se salta
         if "~" in upload_path:
             return
 
@@ -45,15 +64,15 @@ class SFTPHandler(FileSystemEventHandler):
 
         pr(f"upload_path: {upload_path}")
         pr(f"remote_path: {self.remote_path}")
-        base_name = os.path.basename(upload_path)
-        pr(f"base_name: {base_name}")
-
-        remote_file_path = f"./{self.remote_path}/{base_name}"
+        relative_path = os.path.relpath(upload_path, os.getenv("PATH_LOCAL_FOLDER"))
+        remote_file_path = os.path.join(self.remote_path, relative_path).replace("\\", "/")
         pr(f"remote_file_path: {remote_file_path}")
+
+        remote_directory = os.path.dirname(remote_file_path)
+        self.sftp_mkdirs(remote_directory)
 
         self.sftp_client.put(upload_path, remote_file_path)
         pr(f"Uploaded {upload_path} to {remote_file_path}")
-
 
 def main():
     sftp_client = get_sftp_client()
