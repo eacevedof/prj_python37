@@ -38,13 +38,12 @@ class SFTPHandler(FileSystemEventHandler):
 
 
 def main():
-    local_path = os.getenv("PATH_LOCAL")
-    remote_path = os.getenv("PATH_REMOTE")
-
     sftp_client = get_sftp_client()
+    remote_path = os.getenv("PATH_REMOTE_FOLDER")
     event_handler = SFTPHandler(sftp_client, remote_path)
 
     observer = Observer()
+    local_path = os.getenv("PATH_LOCAL_FOLDER")
     observer.schedule(event_handler, path=local_path, recursive=True)
     observer.start()
 
