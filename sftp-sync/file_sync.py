@@ -34,7 +34,10 @@ class SFTPHandler(FileSystemEventHandler):
             self.upload_file(event.src_path)
 
     def upload_file(self, upload_path):
-        upload_path = upload_path.replace("~", "")
+        # si es el fichero temporal se salta
+        if "~" in upload_path:
+            return
+
         time.sleep(1)
 
         print(f"upload_path: {upload_path}")
