@@ -9,7 +9,7 @@ from watchdog.events import FileSystemEventHandler
 load_dotenv()
 
 def pr(text):
-    pr(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {text}")
+    print(f"[{time.strftime("%Y-%m-%d %H:%M:%S")}] {text}")
 
 def get_sftp_client():
     hostname = os.getenv("SFTP_HOST")
