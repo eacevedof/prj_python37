@@ -6,6 +6,18 @@ from watchdog.events import FileSystemEventHandler
 
 load_dotenv()
 
+def get_sftp_client():
+    hostname = os.getenv("SFTP_HOST")
+    port = int(os.getenv("SFTP_PORT"))
+    username = os.getenv("SFTP_USERNAME")
+    password = os.getenv("SFTP_PASSWORD")
+
+    transport = paramiko.Transport((hostname, port))
+    transport.connect(username=username, password=password)
+
+    sftp_client = paramiko.SFTPClient.from_transport(transport)
+    return sftp_client
+
 class SFTPHandler(FileSystemEventHandler):
     def __init__(self, sftp_client, remote_path):
         self.sftp_client = sftp_client
@@ -24,22 +36,12 @@ class SFTPHandler(FileSystemEventHandler):
         self.sftp_client.put(local_path, remote_file_path)
         print(f"Uploaded {local_path} to {remote_file_path}")
 
-def setup_sftp_client(hostname, port, username, password):
-    transport = paramiko.Transport((hostname, port))
-    transport.connect(username=username, password=password)
-    sftp_client = paramiko.SFTPClient.from_transport(transport)
-    return sftp_client
 
 def main():
-    hostname = os.getenv("SFTP_HOST")
-    port = os.getenv("SFTP_PORT")
-    username = os.getenv("SFTP_USERNAME")
-    password = os.getenv("SFTP_PASSWORD")
     local_path = os.getenv("PATH_LOCAL")
     remote_path = os.getenv("PATH_REMOTE")
 
-    sftp_client = setup_sftp_client(hostname, port, username, password)
-
+    sftp_client = get_sftp_client()
     event_handler = SFTPHandler(sftp_client, remote_path)
 
     observer = Observer()
