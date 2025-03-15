@@ -31,17 +31,19 @@ def setup_sftp_client(hostname, port, username, password):
     return sftp_client
 
 def main():
-    hostname = os.getenv("hostname")
-    port = 22
-    username = os.getenv("username")
-    password = os.getenv("password")
-    remote_path = os.getenv("remote_path")
+    hostname = os.getenv("SFTP_HOST")
+    port = os.getenv("SFTP_PORT")
+    username = os.getenv("SFTP_USERNAME")
+    password = os.getenv("SFTP_PASSWORD")
+    local_path = os.getenv("PATH_LOCAL")
+    remote_path = os.getenv("PATH_REMOTE")
 
     sftp_client = setup_sftp_client(hostname, port, username, password)
 
     event_handler = SFTPHandler(sftp_client, remote_path)
+
     observer = Observer()
-    observer.schedule(event_handler, path='.', recursive=True)
+    observer.schedule(event_handler, path=local_path, recursive=True)
     observer.start()
 
     try:
