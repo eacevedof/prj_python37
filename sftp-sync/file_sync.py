@@ -1,4 +1,6 @@
 import os
+import time
+
 from dotenv import load_dotenv
 import paramiko
 from watchdog.observers import Observer
@@ -31,20 +33,34 @@ class SFTPHandler(FileSystemEventHandler):
         if not event.is_directory:
             self.upload_file(event.src_path)
 
-    def upload_file(self, local_path):
-        remote_file_path = os.path.join(self.remote_path, os.path.basename(local_path))
-        self.sftp_client.put(local_path, remote_file_path)
-        print(f"Uploaded {local_path} to {remote_file_path}")
+    def upload_file(self, upload_path):
+        upload_path = upload_path.replace("~", "")
+        time.sleep(1)
+
+        print(f"upload_path: {upload_path}")
+        print(f"remote_path: {self.remote_path}")
+        base_name = os.path.basename(upload_path)
+        print(f"base_name: {base_name}")
+
+        remote_file_path = os.path.join(self.remote_path, base_name)
+        self.sftp_client.put(upload_path, remote_file_path)
+        print(f"Uploaded {upload_path} to {remote_file_path}")
 
 
 def main():
     sftp_client = get_sftp_client()
+
     remote_path = os.getenv("PATH_REMOTE_FOLDER")
+    remote_path = os.path.realpath(remote_path)
+    print(f"remote_path: {remote_path}")
     event_handler = SFTPHandler(sftp_client, remote_path)
 
     observer = Observer()
     local_path = os.getenv("PATH_LOCAL_FOLDER")
+    local_path = os.path.realpath(local_path)
+    print(f"local_path: {local_path}")
     observer.schedule(event_handler, path=local_path, recursive=True)
+
     observer.start()
 
     try:
