@@ -1,7 +1,10 @@
 import os
+from dotenv import load_dotenv
 import paramiko
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
+load_dotenv()
 
 class SFTPHandler(FileSystemEventHandler):
     def __init__(self, sftp_client, remote_path):
@@ -28,11 +31,11 @@ def setup_sftp_client(hostname, port, username, password):
     return sftp_client
 
 def main():
-    hostname = 'your.sftp.server'
+    hostname = os.getenv("hostname")
     port = 22
-    username = 'your_username'
-    password = 'your_password'
-    remote_path = '/remote/directory'
+    username = os.getenv("username")
+    password = os.getenv("password")
+    remote_path = os.getenv("remote_path")
 
     sftp_client = setup_sftp_client(hostname, port, username, password)
 
