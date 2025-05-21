@@ -3,7 +3,7 @@ from tabulate import tabulate
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Carga el archivo .env
+load_dotenv()
 
 def __query(sql):
     url = os.getenv("API_ANUBIS_URL")
