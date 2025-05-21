@@ -2,18 +2,19 @@ import requests
 from tabulate import tabulate
 from dotenv import load_dotenv
 import os
-import readline
-import atexit
 
 load_dotenv()
 
-# Configura historial de consultas
-histfile = ".sql_query_history"
-try:
-    readline.read_history_file(histfile)
-except FileNotFoundError:
-    pass
-atexit.register(readline.write_history_file, histfile)
+def __query_history():
+    import readline
+    import atexit
+    # Configura historial de consultas
+    histfile = ".sql_query_history"
+    try:
+        readline.read_history_file(histfile)
+    except FileNotFoundError:
+        pass
+    atexit.register(readline.write_history_file, histfile)
 
 def __query(sql):
     url = os.getenv("API_ANUBIS_URL")
@@ -38,7 +39,7 @@ def __query(sql):
 def main():
     while True:
         try:
-            sql = input("Introduce tu consulta SQL (o 'salir' para terminar): ")
+            sql = input("Introduce tu consulta SQL (o 'salir' para terminar):\n\t> ")
         except EOFError:
             print()
             break
