@@ -21,3 +21,8 @@ def get_yellow(text):
 def pr_white(text):
     """Prints text in white."""
     print(f"\033[97m{text}\033[0m")
+
+def die(text):
+    """Prints text in red and exits the program."""
+    pr_red(text)
+    exit(1)
