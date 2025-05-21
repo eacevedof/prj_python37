@@ -43,10 +43,14 @@ def main():
     url = os.getenv("API_ANUBIS_URL")
     auth_token = os.getenv("API_ANUBIS_TOKEN")
     print(f"\nurl: {url}\ntoken: {auth_token}\n")
+    print("SQL or (quit + enter), (ctrl+c)")
 
     while True:
         try:
-            sql = input("SQL (quit + enter):\n\t> ")
+            sql = input("\nsql>")
+            if sql == "":
+                continue
+
             if sql.lower() == "quit" or (len(sql) == 1 and ord(sql) == 24):  # Ctrl+X es 24 en ASCII
                 break
 
@@ -57,7 +61,7 @@ def main():
 
             rows = result.get("result", [])
             if not rows:
-                print("Sin resultados.")
+                print("empty result")
                 continue
 
             headers = rows[0].keys()
