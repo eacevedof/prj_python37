@@ -38,12 +38,16 @@ def __query(sql):
 
 
 def main():
+    url = os.getenv("API_ANUBIS_URL")
+    auth_token = os.getenv("API_ANUBIS_TOKEN")
+    print(f"\nurl: {url}\ntoken: {auth_token}\n")
     while True:
         try:
             sql = input("Introduce tu consulta SQL (o 'salir' para terminar):\n\t> ")
         except EOFError:
-            print()
+            print("EOF")
             break
+
         if sql.lower() == "salir":
             break
 
