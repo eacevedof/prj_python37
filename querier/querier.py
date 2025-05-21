@@ -7,9 +7,10 @@ load_dotenv()
 
 def __query(sql):
     url = os.getenv("API_ANUBIS_URL")
+    auth_token = os.getenv("API_ANUBIS_TOKEN")
     headers = {
         "Content-Type": "application/json",
-        "Authorization": os.getenv("API_ANUBIS_TOKEN")
+        "Authorization": auth_token
     }
     data = {
         "sql": sql,
@@ -18,7 +19,7 @@ def __query(sql):
     response = requests.post(url, headers=headers, json=data)
     if response.status_code != 200:
         return {
-            "error": "Error en la petición",
+            "error": f"url: {url}, token: {auth_token}, consulta: {sql}",
             "status_code": response.status_code
         }
 
@@ -31,8 +32,12 @@ def main():
         if sql.lower() == "salir":
             break
 
-        data = __query(sql)
-        rows = data.get("result", [])
+        result = __query(sql)
+        if result.get("error"):
+            print(f"error: {result['status_code']} {result['error']}")
+            continue
+
+        rows = result.get("result", [])
         if not rows:
             print("Sin resultados.")
             continue
