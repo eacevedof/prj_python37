@@ -36,6 +36,7 @@ def __query(sql):
 
     return response.json()
 
+
 def main():
     while True:
         try:
