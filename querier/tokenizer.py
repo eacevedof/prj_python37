@@ -25,5 +25,5 @@ def get_anubis_auth_token():
         memlimit=pwhash.MEMLIMIT_INTERACTIVE
     ).decode("utf-8")
 
-    pr_white(auth_token)
+    # pr_white(auth_token)
     return auth_token
