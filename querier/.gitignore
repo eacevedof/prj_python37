@@ -1,2 +1,4 @@
+.dev
+.prod
 .env
 .env-prod
