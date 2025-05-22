@@ -28,11 +28,13 @@ def __query(sql):
 
     return response.json()
 
+
 def main():
     env_choice = input("select environment (dev or prod): ").strip()
 
     env_choice = f".{env_choice}" if env_choice in ["dev", "prod"] else ".dev"
 
+    os.system("cls")
     is_prod = False
     if env_choice == ".prod":
         is_prod = True
