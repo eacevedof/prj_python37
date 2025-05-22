@@ -1,23 +1,10 @@
+import os
 import sys
 from dotenv import load_dotenv
 import requests
 from tabulate import tabulate
 from printer import *
 from tokenizer import *
-
-load_dotenv()
-
-def __query_history():
-    import readline
-    import atexit
-    # Configura historial de consultas
-    histfile = ".sql_query_history"
-    try:
-        readline.read_history_file(histfile)
-    except FileNotFoundError:
-        pass
-    atexit.register(readline.write_history_file, histfile)
-
 
 def __query(sql):
     url = os.getenv("API_ANUBIS_DOMAIN") + os.getenv("API_ANUBIS_ENDPOINT")
@@ -41,14 +28,25 @@ def __query(sql):
 
     return response.json()
 
-
 def main():
+    env_choice = input("select environment (dev or prod): ").strip()
+
+    env_choice = f".{env_choice}" if env_choice in ["dev", "prod"] else ".dev"
+
+    if env_choice == ".prod":
+        pr_red("WARNING: You are in production environment")
+    else:
+        pr_green("You are in development environment")
+
+    load_dotenv(dotenv_path=env_choice)
+
     url = os.getenv("API_ANUBIS_DOMAIN") + os.getenv("API_ANUBIS_ENDPOINT")
     auth_token = get_anubis_auth_token()
     auth_token = get_auth_raw_token()
 
-    pr_blue(f"\nurl: {url}\ntoken: {auth_token}\n")
-    pr_yellow("SQL or (quit + enter), (ctrl+c)")
+    pr_lemon(f"\nurl: {url}")
+    pr_blue(f"token: {auth_token}\n")
+    pr_yellow("SQL o (quit + enter), (ctrl+c)")
 
     while True:
         try:
@@ -64,7 +62,7 @@ def main():
                 pr_blue(f"\nurl: {url}\ntoken: {auth_token}\n")
                 continue
 
-            if sql.lower() == "quit" or (len(sql) == 1 and ord(sql) == 24):  # Ctrl+X es 24 en ASCII
+            if sql.lower() == "quit" or (len(sql) == 1 and ord(sql) == 24):
                 break
 
             result = __query(sql)
@@ -85,7 +83,7 @@ def main():
             pr_red("EOF")
             break
         except KeyboardInterrupt:
-            pr_yellow("\nCtrl+C detected quiting...")
+            pr_yellow("\nCtrl+C detected, exiting...")
             sys.exit(0)
 
 
