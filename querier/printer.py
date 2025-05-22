@@ -2,6 +2,10 @@ def pr_red(text):
     """Prints text in red."""
     print(f"\033[91m{text}\033[0m")
 
+def get_red(text):
+    """Returns text in red."""
+    return f"\033[91m{text}\033[0m"
+
 def pr_green(text):
     """Prints text in green."""
     print(f"\033[92m{text}\033[0m")
@@ -9,6 +13,10 @@ def pr_green(text):
 def pr_lemon(text):
     """Prints text in lemon color."""
     print(f"\033[92;1m{text}\033[0m")
+
+def get_green(text):
+    """Returns text in green."""
+    return f"\033[92m{text}\033[0m"
 
 def pr_yellow(text):
     """Prints text in yellow."""

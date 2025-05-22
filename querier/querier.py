@@ -33,10 +33,12 @@ def main():
 
     env_choice = f".{env_choice}" if env_choice in ["dev", "prod"] else ".dev"
 
+    is_prod = False
     if env_choice == ".prod":
-        pr_red("WARNING: You are in production environment")
+        is_prod = True
+        pr_red("WARNING: You are in production environment\n")
     else:
-        pr_green("You are in development environment")
+        pr_green("You are in development environment\n")
 
     load_dotenv(dotenv_path=env_choice)
 
@@ -50,7 +52,8 @@ def main():
 
     while True:
         try:
-            sql = input(get_yellow("anubis> "))
+            prompt = get_red("anubis> ") if is_prod else get_green("anubis> ")
+            sql = input(prompt)
             if sql == "":
                 continue
 
