@@ -1,14 +1,10 @@
-import os
-from printer import *
 import sys
 from dotenv import load_dotenv
 import requests
+
 from tabulate import tabulate
+from printer import *
 from tokenizer import *
-from prompt_toolkit import PromptSession
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.formatted_text import HTML
-from prompt_toolkit.history import InMemoryHistory
 
 
 def __query(sql):
@@ -33,6 +29,19 @@ def __query(sql):
 
     return response.json()
 
+def __get_sql_from_prompt(is_prod):
+    lines = []
+    i = 0
+    while True:
+        prompt = get_red("anubis> ") if is_prod else get_green("anubis> ")
+        if i > 0: prompt = ""
+        line = input(prompt)
+        if line == "":
+            break
+        i += 1
+        lines.append(line)
+
+    return "\n".join(lines)
 
 def main():
     env_choice = input("select environment (dev or prod): ").strip()
@@ -56,22 +65,9 @@ def main():
     pr_blue(f"token: {auth_token}\n")
     pr_yellow("paste your sql. (quit para salir, clear para limpiar)")
 
-    history = InMemoryHistory()
-    prompt_session = PromptSession(multiline=True, history=history)
-    bindings = KeyBindings()
-
-    @bindings.add("c-m")
-    def _(event):
-        event.app.exit(result=event.app.current_buffer.text)
-
     while True:
         try:
-            prompt = get_red("anubis> ") if is_prod else get_green("anubis> ")
-            sql = input(prompt)
-
-            # no permite navegar por el historial :(
-            # html_prompt = HTML('<ansired>anubis&gt; </ansired>') if is_prod else HTML('<ansigreen>anubis&gt; </ansigreen>')
-            # sql = prompt_session.prompt(html_prompt, key_bindings=bindings)
+            sql = __get_sql_from_prompt(is_prod)
             if sql.strip() == "":
                 continue
 
