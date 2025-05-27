@@ -67,10 +67,11 @@ def main():
     while True:
         try:
             prompt = get_red("anubis> ") if is_prod else get_green("anubis> ")
-            # sql = input(prompt)
+            sql = input(prompt)
 
-            html_prompt = HTML('<ansired>anubis&gt; </ansired>') if is_prod else HTML('<ansigreen>anubis&gt; </ansigreen>')
-            sql = prompt_session.prompt(html_prompt, key_bindings=bindings)
+            # no permite navegar por el historial :(
+            # html_prompt = HTML('<ansired>anubis&gt; </ansired>') if is_prod else HTML('<ansigreen>anubis&gt; </ansigreen>')
+            # sql = prompt_session.prompt(html_prompt, key_bindings=bindings)
             if sql.strip() == "":
                 continue
 
