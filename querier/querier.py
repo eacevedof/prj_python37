@@ -73,6 +73,7 @@ def main():
 
             if sql.lower().strip() == "clear":
                 os.system("cls")
+                os.system("clear")
                 continue
 
             if sql.lower().strip() == "help":
@@ -84,7 +85,7 @@ def main():
 
             result = __query(sql)
             if result.get("error"):
-                pr_red(f"error: {result["status_code"]} {result["error"]}")
+                pr_red(f"error: {result['status_code']} {result['error']}")
                 continue
 
             rows = result.get("result", [])
