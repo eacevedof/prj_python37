@@ -1,18 +1,18 @@
-from typing import List, Optional
+from typing import List, Optional, final
 from fastapi import Request
-from app.shared.infrastructure.components.http.abstract_http_dto import AbstractHttpDto
+from dataclasses import dataclass, field
 from app.modules.authenticator.domain.enums.auth_key_enum import AuthKeyEnum
 
-class FailIfWrongAppAuthTokenDto(AbstractHttpDto):
+@final
+@dataclass(frozen=True)
+class FailIfWrongAppAuthTokenDto:
     app_auth_token: str
-    only_allowed_tokens: Optional[List[str]] = None
-    only_forbidden_tokens: Optional[List[str]] = None
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.app_auth_token = kwargs.get("app_auth_token", "").strip()
-        self.only_allowed_tokens = kwargs.get("only_allowed_tokens", [])
-        self.only_forbidden_tokens = kwargs.get("only_forbidden_tokens", [])
+    only_allowed_tokens: Optional[List[str]] = field(default_factory=list)
+    only_forbidden_tokens: Optional[List[str]] = field(default_factory=list)
+    request_method: str = ""
+    user_agent: str = ""
+    remote_ip: str = ""
+    request_uri: str = ""
     
     @classmethod
     def from_primitives(
@@ -63,6 +63,6 @@ class FailIfWrongAppAuthTokenDto(AbstractHttpDto):
     def get_only_forbidden_tokens(self) -> List[str]:
         return self.only_forbidden_tokens or []
     
-    def get_request_url(self) -> Optional[str]:
+    def get_request_url(self) -> str:
         """Get request URL (alias for request_uri for compatibility)"""
-        return self.get_request_uri()
+        return self.request_uri

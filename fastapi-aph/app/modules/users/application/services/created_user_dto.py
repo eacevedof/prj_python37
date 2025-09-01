@@ -1,13 +1,14 @@
 from typing import Dict, Any, final
+from dataclasses import dataclass
 
 @final
+@dataclass(frozen=True)
 class CreatedUserDto:
-    def __init__(self, user_uuid: str):
-        self.user_uuid = user_uuid
+    user_uuid: str
     
     @classmethod
     def from_primitives(cls, user_uuid: str) -> "CreatedUserDto":
-        return cls(user_uuid)
+        return cls(user_uuid=user_uuid)
     
     def get_user_uuid(self) -> str:
         return self.user_uuid
