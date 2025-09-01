@@ -3,7 +3,7 @@ import re
 import secrets
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, final
 
 from app.shared.infrastructure.components.mailer.mail_protocol_enum import MailProtocolEnum
 from app.shared.infrastructure.components.mailer.mail_sent_result_type import MailSentResultType
@@ -12,6 +12,7 @@ from app.shared.infrastructure.components.mailer.mail_smtp_config_type import Ma
 from app.shared.infrastructure.components.mailer.mail_result import MailResult
 
 
+@final
 class Mailer:
     def __init__(self):
         self.path_log_email_file = f"{Path.cwd()}/storage/logs/email-{datetime.now().strftime('%Y-%m-%d')}.log"

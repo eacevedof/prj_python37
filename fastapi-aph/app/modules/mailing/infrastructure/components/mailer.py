@@ -3,16 +3,18 @@ import smtplib
 import subprocess
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, final
 from jinja2 import Template
 from app.shared.infrastructure.components.logger import Logger
 
+@final
 class MailSentResult:
     def __init__(self, success: bool, error: Optional[str] = None, tmp_random_file: Optional[str] = None):
         self.success = success
         self.error = error
         self.tmp_random_file = tmp_random_file
 
+@final
 class Mailer:
     def __init__(self):
         self.logger = Logger.get_instance()

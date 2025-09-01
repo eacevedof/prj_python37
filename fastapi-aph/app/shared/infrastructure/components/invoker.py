@@ -1,4 +1,4 @@
-from typing import Any, Dict, Protocol
+from typing import Any, Dict, Protocol, final
 from fastapi import Request
 
 from app.shared.infrastructure.enums.environment_enum import EnvironmentEnum
@@ -13,6 +13,7 @@ class ControllerProtocol(Protocol):
         ...
 
 
+@final
 class Invoker:
     @staticmethod
     def get_instance():

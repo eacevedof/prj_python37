@@ -1,5 +1,6 @@
-from typing import Dict, Any
+from typing import Dict, Any, final
 
+@final
 class CreatedUserDto:
     def __init__(self, user_uuid: str):
         self.user_uuid = user_uuid

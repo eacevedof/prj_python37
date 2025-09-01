@@ -1,10 +1,11 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, final
 
 from app.shared.infrastructure.components.date_timer import DateTimer
 from app.shared.infrastructure.repositories.configuration.environment_reader_raw_repository import EnvironmentReaderRawRepository
 from app.modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
 
 
+@final
 class GetHealthCheckStatusService:
     """Health check service following the original Deno implementation"""
     

@@ -3,7 +3,7 @@ import json
 import asyncio
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Dict, Union
+from typing import Any, Optional, Dict, Union, final
 
 from app.shared.infrastructure.components.cli.cli_color import CliColor
 from app.shared.infrastructure.components.logger.log_extension_enum import LogExtensionEnum
@@ -26,6 +26,7 @@ async def file_put_contents(path_file: str, str_data: str) -> None:
         print(f"file_put_contents: error writing to file: {path_file}", error)
 
 
+@final
 class Logger:
     """Logger with Elasticsearch integration following original Deno implementation"""
     

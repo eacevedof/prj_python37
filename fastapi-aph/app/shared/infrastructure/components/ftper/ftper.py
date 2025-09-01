@@ -1,10 +1,12 @@
 import asyncio
 import os
 from pathlib import Path
+from typing import final
 
 from app.shared.infrastructure.components.ftper.ftper_credentials_type import FtperCredentialsType
 
 
+@final
 class Ftper:
     def __init__(self, credentials: FtperCredentialsType):
         self.is_ftps = credentials.is_ftps if credentials.is_ftps is not None else True

@@ -1,4 +1,5 @@
 from fastapi import Request
+from typing import final
 from app.shared.infrastructure.components.http.lz_response import LzResponse
 from app.shared.infrastructure.components.logger import Logger
 from app.shared.infrastructure.components.date_timer import DateTimer
@@ -6,6 +7,7 @@ from app.shared.infrastructure.enums.http_response_code_enum import HttpResponse
 from app.shared.infrastructure.enums.http_response_message_enum import HttpResponseMessageEnum
 from app.modules.healthcheck.application.services.get_health_check_status_service import GetHealthCheckStatusService
 
+@final
 class GetHealthCheckStatusController:
     """Health check controller following the original Deno implementation"""
     

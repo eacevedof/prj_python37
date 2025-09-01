@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, final
 
 from app.shared.infrastructure.components.filer import Filer
 from app.shared.infrastructure.components.cli.cli_color import CliColor
@@ -8,6 +8,7 @@ from app.modules.devops.infrastructure.repositories.run_migrations_writer_reposi
 from app.shared.infrastructure.types.generic_row_type import GenericRowType
 
 
+@final
 class RunMigrationsService:
     """Service to handle database migrations"""
     

@@ -1,8 +1,9 @@
 import subprocess
 import asyncio
-from typing import Dict, Union
+from typing import Dict, Union, final
 
 
+@final
 class Systemer:
     @staticmethod
     def get_instance():

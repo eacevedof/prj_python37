@@ -1,7 +1,8 @@
 import re
-from typing import Dict
+from typing import Dict, final
 
 
+@final
 class Replacer:
     @staticmethod
     def get_instance():

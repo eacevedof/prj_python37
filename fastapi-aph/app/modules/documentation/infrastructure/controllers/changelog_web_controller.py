@@ -3,8 +3,10 @@ from datetime import datetime
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from jinja2 import Template
+from typing import final
 from app.shared.infrastructure.components.logger import Logger
 
+@final
 class ChangelogWebController:
     def __init__(self):
         self.logger = Logger.get_instance()

@@ -1,4 +1,4 @@
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, final
 from dataclasses import dataclass
 
 
@@ -9,6 +9,7 @@ class ResponseDtoPrimitives:
     data: Optional[Any] = None
 
 
+@final
 class ResponseDto:
     def __init__(self, primitives: ResponseDtoPrimitives):
         self.code = primitives.code or 200
