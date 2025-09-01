@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Optional, final
 
 from app.console.commands.abstract_command import AbstractCommand
 from app.console.interface_console import InterfaceConsole
 from app.shared.infrastructure.components.cli.lz_cli_args import LzCliArgs
 
 
+@final
 class LzCheckEmailCommand(AbstractCommand, InterfaceConsole):
     """Email system check command"""
     
@@ -17,9 +18,9 @@ class LzCheckEmailCommand(AbstractCommand, InterfaceConsole):
     
     async def invoke(self, lz_cli_args: Optional[LzCliArgs] = None) -> None:
         """Execute the email check command"""
-        self.echo_start("LzCheckEmailCommand")
+        self._echo_start("LzCheckEmailCommand")
         
         # Implementation would depend on mailing module
-        self.echo_step("Email check - implementation pending")
+        self._echo_step("Email check - implementation pending")
         
-        self.echo_end("LzCheckEmailCommand")
+        self._echo_end("LzCheckEmailCommand")

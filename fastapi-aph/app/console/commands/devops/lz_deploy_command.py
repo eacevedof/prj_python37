@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, final
 
 from app.console.commands.abstract_command import AbstractCommand
 from app.console.interface_console import InterfaceConsole
@@ -6,6 +6,7 @@ from app.shared.infrastructure.components.cli.lz_cli_args import LzCliArgs
 from app.modules.devops.application.services.run_migrations.run_migrations_service import RunMigrationsService
 
 
+@final
 class LzDeployCommand(AbstractCommand, InterfaceConsole):
     """Deploy command that runs migrations"""
     
@@ -19,8 +20,8 @@ class LzDeployCommand(AbstractCommand, InterfaceConsole):
     
     async def invoke(self, lz_cli_args: Optional[LzCliArgs] = None) -> None:
         """Execute the deploy command"""
-        self.echo_start("LzDeployCommand")
+        self._echo_start("LzDeployCommand")
         
         await self.run_migrations_service.invoke()
         
-        self.echo_end("LzDeployCommand")
+        self._echo_end("LzDeployCommand")
