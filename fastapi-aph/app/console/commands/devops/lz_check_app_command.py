@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Optional, final
 
 from app.console.commands.abstract_command import AbstractCommand
 from app.console.interface_console import InterfaceConsole
 from app.shared.infrastructure.components.cli.lz_cli_args import LzCliArgs
 
 
+@final
 class LzCheckAppCommand(AbstractCommand, InterfaceConsole):
     """Application health check command"""
     
@@ -17,9 +18,9 @@ class LzCheckAppCommand(AbstractCommand, InterfaceConsole):
     
     async def invoke(self, lz_cli_args: Optional[LzCliArgs] = None) -> None:
         """Execute the app check command"""
-        self.echo_start("LzCheckAppCommand")
+        self._echo_start("LzCheckAppCommand")
         
         # Implementation would check various app components
-        self.echo_step("Application check - implementation pending")
+        self._echo_step("Application check - implementation pending")
         
-        self.echo_end("LzCheckAppCommand")
+        self._echo_end("LzCheckAppCommand")
