@@ -27,7 +27,7 @@ class AbstractPostgresRepository(ABC):
         self._postgres_client: Optional[asyncpg.Connection] = None
         self._redis_client = None
     
-    async def _load_db_clients(self):
+    async def __load_db_clients(self):
         """Initialize database clients if not already loaded"""
         if not self._postgres_client:
             postgres_client = PostgresClient.get_instance()
@@ -39,13 +39,13 @@ class AbstractPostgresRepository(ABC):
     
     async def query(self, sql: str) -> List[GenericRowType]:
         """Execute SELECT query against PostgreSQL"""
-        await self._load_db_clients()
-        return await self._get_from_postgres(sql)
+        await self.__load_db_clients()
+        return await self.__get_from_postgres(sql)
     
-    async def _get_from_postgres(self, sql: str) -> List[GenericRowType]:
+    async def __get_from_postgres(self, sql: str) -> List[GenericRowType]:
         """Execute raw query against PostgreSQL"""
         if not self._postgres_client:
-            await self._load_db_clients()
+            await self.__load_db_clients()
         
         try:
             rows = await self._postgres_client.fetch(sql)
@@ -60,26 +60,26 @@ class AbstractPostgresRepository(ABC):
         ttl: int = RedisMinuteEnum.ONE_HOUR
     ) -> List[GenericRowType]:
         """Execute query with Redis caching"""
-        await self._load_db_clients()
+        await self.__load_db_clients()
         
-        redis_result = await self._get_from_redis(sql)
+        redis_result = await self.__get_from_redis(sql)
         if redis_result:
             return json.loads(redis_result)
         
-        self._log_sql(sql, "query_redis")
-        rows = await self._get_from_postgres(sql)
+        self.__log_sql(sql, "query_redis")
+        rows = await self.__get_from_postgres(sql)
         if not rows:
             return []
         
-        await self._save_in_redis(sql, rows, ttl)
+        await self.__save_in_redis(sql, rows, ttl)
         return rows
     
-    async def _get_from_redis(self, sql: str) -> Optional[str]:
+    async def __get_from_redis(self, sql: str) -> Optional[str]:
         """Get cached query result from Redis"""
         if not self._redis_client:
             return None
         
-        main_table_name = self._get_table_name_from_sql(sql)
+        main_table_name = self.__get_table_name_from_sql(sql)
         redis_key = f"{self.environment}:sql:{main_table_name}:{self.encoder.get_md5_hash(sql)}"
         
         try:
@@ -88,12 +88,12 @@ class AbstractPostgresRepository(ABC):
             self.logger.log_error("Redis get failed", e)
             return None
     
-    def _get_table_name_from_sql(self, sql: str) -> str:
+    def __get_table_name_from_sql(self, sql: str) -> str:
         """Extract table name from SQL query"""
         match = re.search(r'from\s+([a-zA-Z0-9_\.]+)', sql, re.IGNORECASE)
         return match.group(1) if match else ""
     
-    async def _save_in_redis(
+    async def __save_in_redis(
         self, 
         sql: str, 
         result: List[GenericRowType], 
@@ -103,7 +103,7 @@ class AbstractPostgresRepository(ABC):
         if not self._redis_client:
             return
         
-        main_table_name = self._get_table_name_from_sql(sql)
+        main_table_name = self.__get_table_name_from_sql(sql)
         redis_key = f"{self.environment}:sql:{main_table_name}:{self.encoder.get_md5_hash(sql)}"
         
         try:
@@ -121,7 +121,7 @@ class AbstractPostgresRepository(ABC):
         if not re.match(r'^\s*(insert into |update |delete from )', cleaned_sql, re.IGNORECASE):
             raise ValueError("AbstractPostgresRepository.command: Only INSERT, UPDATE, or DELETE are allowed.")
         
-        await self._load_db_clients()
+        await self.__load_db_clients()
         
         try:
             if re.match(r'^\s*insert into ', sql, re.IGNORECASE):
@@ -144,11 +144,11 @@ class AbstractPostgresRepository(ABC):
             self.logger.log_error(f"SQL command failed: {sql}", e)
             raise
     
-    def get_escaped_sql_string(self, string: str) -> str:
+    def _get_escaped_sql_string(self, string: str) -> str:
         """Escape SQL string to prevent injection"""
         return string.replace("\\", "\\\\").replace("'", "\\'")
     
-    def map_column_to_int(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_int(self, objects: List[Dict[str, Any]], column: str):
         """Convert column values to integers"""
         for obj in objects:
             if column in obj:
@@ -156,43 +156,43 @@ class AbstractPostgresRepository(ABC):
                 obj[column] = int(value) if value is not None else None
         return self
     
-    def map_column_to_string(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_string(self, objects: List[Dict[str, Any]], column: str):
         """Convert column values to strings"""
         for obj in objects:
             if column in obj:
                 obj[column] = str(obj[column]) if obj[column] is not None else ""
         return self
     
-    def map_column_to_string_date(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_string_date(self, objects: List[Dict[str, Any]], column: str):
         """Convert datetime column values to string format"""
         for obj in objects:
             if column in obj:
                 obj[column] = self.date_timer.get_date_ymd_his_as_string(obj[column])
         return self
     
-    def get_integers_sql_in(self, entity_ids: List[int]) -> str:
+    def _get_integers_sql_in(self, entity_ids: List[int]) -> str:
         """Create SQL IN clause for integers"""
         if not entity_ids:
             return ''
         unique_ids = sorted(list(set(int(id) for id in entity_ids)))
         return ', '.join(map(str, unique_ids))
     
-    def get_strings_sql_in(self, entity_uuids: List[str]) -> str:
+    def _get_strings_sql_in(self, entity_uuids: List[str]) -> str:
         """Create SQL IN clause for strings"""
         if not entity_uuids:
             return ''
-        unique_uuids = sorted(list(set(self.get_escaped_sql_string(str(uuid)) for uuid in entity_uuids)))
+        unique_uuids = sorted(list(set(self._get_escaped_sql_string(str(uuid)) for uuid in entity_uuids)))
         return "'"+"', '".join(unique_uuids) + "'"
     
-    def get_last_id(self) -> Optional[int]:
+    def _get_last_id(self) -> Optional[int]:
         """Get last inserted ID"""
         return self.last_id
     
-    def get_affected_rows(self) -> int:
+    def _get_affected_rows(self) -> int:
         """Get number of affected rows"""
         return self.affected_rows
     
-    def _log_sql(self, sql: str, title: str = "") -> None:
+    def __log_sql(self, sql: str, title: str = "") -> None:
         """Log SQL query"""
         if not is_environment(EnvironmentEnum.PRODUCTION):
             now = self.date_timer.get_now_ymd_his()

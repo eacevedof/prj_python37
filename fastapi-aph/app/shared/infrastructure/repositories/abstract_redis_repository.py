@@ -16,16 +16,16 @@ class AbstractRedisRepository(ABC):
         self._redis_client: Optional[redis.Redis] = None
         self._connection_open = False
     
-    def _get_redis_client(self) -> redis.Redis:
+    def __get_redis_client(self) -> redis.Redis:
         """Get Redis client instance"""
         if not self._redis_client:
             redis_client = RedisClient.get_instance()
             self._redis_client = redis_client.get_client_by_env()
         return self._redis_client
     
-    async def get_hash_set(self, redis_key: str) -> Optional[GenericRowType]:
+    async def _get_hash_set(self, redis_key: str) -> Optional[GenericRowType]:
         """Get hash set from Redis"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             obj = await client.hgetall(redis_key)
@@ -36,9 +36,9 @@ class AbstractRedisRepository(ABC):
             # Log error but don't raise to maintain compatibility
             return None
     
-    async def get_hash_set_for_bulk(self, redis_key: str) -> Optional[GenericRowType]:
+    async def _get_hash_set_for_bulk(self, redis_key: str) -> Optional[GenericRowType]:
         """Get hash set for bulk operations (assumes connection is already open)"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             obj = await client.hgetall(redis_key)
@@ -48,14 +48,14 @@ class AbstractRedisRepository(ABC):
         except Exception as e:
             return None
     
-    async def save_single_hash_set(
+    async def _save_single_hash_set(
         self, 
         redis_key: str, 
         obj_data: GenericRowType, 
         ttl_minutes: int
     ) -> None:
         """Save single hash set to Redis with TTL"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             # Convert None values to empty strings for Redis compatibility
@@ -67,13 +67,13 @@ class AbstractRedisRepository(ABC):
             # Log error but don't raise to maintain compatibility
             pass
     
-    async def save_in_queue(
+    async def _save_in_queue(
         self, 
         redis_queue_name: str, 
         obj_data: GenericRowType
     ) -> None:
         """Save data to Redis queue (list)"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             json_data = json.dumps(obj_data, default=str)
@@ -82,9 +82,9 @@ class AbstractRedisRepository(ABC):
             # Log error but don't raise to maintain compatibility
             pass
     
-    async def delete_single_key(self, redis_key: str) -> None:
+    async def _delete_single_key(self, redis_key: str) -> None:
         """Delete single key from Redis"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             await client.delete(redis_key)
@@ -92,14 +92,14 @@ class AbstractRedisRepository(ABC):
             # Log error but don't raise to maintain compatibility
             pass
     
-    async def save_single_hash_set_for_bulk(
+    async def _save_single_hash_set_for_bulk(
         self, 
         redis_key: str, 
         obj_data: GenericRowType, 
         ttl_minutes: int
     ) -> None:
         """Save single hash set for bulk operations"""
-        client = self._get_redis_client()
+        client = self.__get_redis_client()
         
         try:
             # Convert None values to empty strings for Redis compatibility
@@ -111,13 +111,13 @@ class AbstractRedisRepository(ABC):
             # Log error but don't raise to maintain compatibility
             pass
     
-    async def open_connection(self) -> None:
+    async def _open_connection(self) -> None:
         """Open Redis connection (for bulk operations)"""
         # With redis-py, connections are managed automatically
         # This method is kept for compatibility
         self._connection_open = True
     
-    async def close_connection(self) -> None:
+    async def _close_connection(self) -> None:
         """Close Redis connection"""
         if self._redis_client:
             await self._redis_client.close()

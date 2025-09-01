@@ -15,21 +15,21 @@ class AbstractCommand(ABC):
         self.dt_start = ""
         self.dt_end = ""
     
-    def echo_start(self, message: str) -> None:
+    def _echo_start(self, message: str) -> None:
         """Print command start message"""
         self.dt_start = self._date_timer.get_now_ymd_his()
         CliColor.echo_orange(f"[{self.dt_start}] start: {message}")
     
-    def echo_end(self, message: str) -> None:
+    def _echo_end(self, message: str) -> None:
         """Print command end message"""
         self.dt_end = self._date_timer.get_now_ymd_his()
         CliColor.echo_orange(f"[{self.dt_start}] [{self.dt_end}] end: {message}")
     
-    def echo_step(self, message: str) -> None:
+    def _echo_step(self, message: str) -> None:
         """Print command step message"""
         now = self._date_timer.get_now_ymd_his()
         CliColor.echo_green(f"[{now}]: {message}")
     
-    async def sleep_seconds(self, secs: int = 1) -> None:
+    async def _sleep_seconds(self, secs: int = 1) -> None:
         """Sleep for specified seconds"""
         await asyncio.sleep(secs)
