@@ -1,31 +1,25 @@
 from abc import ABC
 from typing import Dict, Optional, Any
+from dataclasses import dataclass
 
 
+@dataclass(frozen=True)
 class AbstractHttpDto(ABC):
-    def __init__(self, primitives: Dict[str, Any]):
-        self.request_headers: Dict[str, str] = primitives.get("request_headers", {})
-        self.request_method: str = (primitives.get("request_method") or "").strip()
-        self.request_url: str = (primitives.get("request_url") or "").strip()
-        self.remote_ip: str = (primitives.get("remote_ip") or "").strip()
-        
-        self.os_name: str = (primitives.get("os_name") or "").strip()
-        self.os_version: str = (primitives.get("os_version") or "").strip()
-        self.user_agent: str = (primitives.get("user_agent") or "").strip()
-        
-        self.browser_name: str = (primitives.get("browser_name") or "").strip()
-        self.browser_version: str = (primitives.get("browser_version") or "").strip()
-        
-        self.cpu_architecture: str = (primitives.get("cpu_architecture") or "").strip()
-        
-        self.device_model: str = (primitives.get("device_model") or "").strip()
-        self.device_type: str = (primitives.get("device_type") or "").strip()
-        
-        self.engine_name: str = (primitives.get("engine_name") or "").strip()
-        self.engine_version: str = (primitives.get("engine_version") or "").strip()
+    request_method: str = ""
+    request_url: str = ""
+    remote_ip: str = ""
+    user_agent: str = ""
+    request_uri: str = ""
     
-    def _get_request_headers(self) -> Dict[str, str]:
-        return self.request_headers
+    os_name: str = ""
+    os_version: str = ""
+    browser_name: str = ""
+    browser_version: str = ""
+    cpu_architecture: str = ""
+    device_model: str = ""
+    device_type: str = ""
+    engine_name: str = ""
+    engine_version: str = ""
     
     def _get_request_method(self) -> str:
         return self.request_method

@@ -1,29 +1,29 @@
 from fastapi import Request
 from typing import final
-from app.shared.infrastructure.components.http.abstract_http_dto import AbstractHttpDto
+from dataclasses import dataclass
 
 @final
-class CreateUserDto(AbstractHttpDto):
+@dataclass(frozen=True)
+class CreateUserDto:
     project_uuid: str
     project_user_uuid: str
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.project_uuid = kwargs.get("project_uuid", "").strip()
-        self.project_user_uuid = kwargs.get("project_user_uuid", "").strip()
+    request_method: str = ""
+    user_agent: str = ""
+    remote_ip: str = ""
+    request_uri: str = ""
     
     @classmethod
     def from_primitives(cls, project_uuid: str, project_user_uuid: str) -> "CreateUserDto":
         return cls(
-            project_uuid=project_uuid,
-            project_user_uuid=project_user_uuid
+            project_uuid=project_uuid.strip(),
+            project_user_uuid=project_user_uuid.strip()
         )
     
     @classmethod
     def from_http_request(cls, request: Request, body_data: dict) -> "CreateUserDto":
         return cls(
-            project_uuid=body_data.get("project_uuid", ""),
-            project_user_uuid=body_data.get("project_user_uuid", ""),
+            project_uuid=body_data.get("project_uuid", "").strip(),
+            project_user_uuid=body_data.get("project_user_uuid", "").strip(),
             request_method=request.method,
             user_agent=request.headers.get("user-agent", ""),
             remote_ip=request.client.host if request.client else "",

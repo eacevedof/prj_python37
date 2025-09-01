@@ -2,7 +2,7 @@ from typing import Any, Optional, Dict, final
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class ResponseDtoPrimitives:
     code: Optional[int] = None
     message: Optional[str] = None
@@ -10,20 +10,28 @@ class ResponseDtoPrimitives:
 
 
 @final
+@dataclass(frozen=True)
 class ResponseDto:
-    def __init__(self, primitives: ResponseDtoPrimitives):
-        self.code = primitives.code or 200
-        self.status = self.__get_status_by_code()
-        self.message = primitives.message or ""
-        self.data = primitives.data or []
+    code: int = 200
+    message: str = ""
+    data: Any = None
     
-    def __get_status_by_code(self) -> str:
+    def __post_init__(self):
+        if self.data is None:
+            object.__setattr__(self, 'data', [])
+    
+    @property
+    def status(self) -> str:
         response_code = str(self.code)
         return "success" if response_code.startswith("2") else "error"
     
     @classmethod
     def from_primitives(cls, primitives: ResponseDtoPrimitives) -> 'ResponseDto':
-        return cls(primitives)
+        return cls(
+            code=primitives.code or 200,
+            message=primitives.message or "",
+            data=primitives.data or []
+        )
     
     def to_primitives(self) -> Dict[str, Any]:
         return {
