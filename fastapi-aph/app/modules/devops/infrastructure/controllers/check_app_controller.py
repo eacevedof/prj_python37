@@ -1,10 +1,12 @@
 from fastapi import Request
+from typing import final
 from app.shared.infrastructure.components.http.lz_response import LzResponse
 from app.shared.infrastructure.components.logger import Logger
 from app.shared.infrastructure.enums.http_response_code_enum import HttpResponseCodeEnum
 from app.shared.infrastructure.enums.http_response_message_enum import HttpResponseMessageEnum
 from app.modules.devops.application.services.check_app_service import CheckAppService
 
+@final
 class CheckAppController:
     def __init__(self):
         self.logger = Logger.get_instance()

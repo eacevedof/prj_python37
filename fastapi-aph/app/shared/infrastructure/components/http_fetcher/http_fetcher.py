@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 import json
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, final
 from dataclasses import dataclass
 from urllib.parse import urlencode
 
@@ -23,6 +23,7 @@ class HttpFetcherFullOptionType:
     is_url_encoded: Optional[bool] = None
 
 
+@final
 class HttpFetcher:
     def __init__(self):
         self.one_hundred_twenty_seconds = 120  # 120 seconds like PHP version

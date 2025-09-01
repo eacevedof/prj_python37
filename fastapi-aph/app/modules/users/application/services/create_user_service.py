@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, final
 
 from app.shared.infrastructure.components.uuider import Uuider
 from app.modules.projects.infrastructure.repositories.projects_reader_postgres_repository import ProjectsReaderPostgresRepository
@@ -9,6 +9,7 @@ from app.modules.users.application.services.created_user_dto import CreatedUserD
 from app.modules.users.domain.exceptions.users_exception import UsersException
 
 
+@final
 class CreateUserService:
     """User creation service following the original Deno implementation"""
     

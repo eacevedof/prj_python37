@@ -1,6 +1,8 @@
 import random
+from typing import final
 
 
+@final
 class Randomizer:
     @staticmethod
     def get_instance():

@@ -1,8 +1,10 @@
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
+from typing import final
 from app.shared.infrastructure.components.logger import Logger
 
+@final
 class AuthMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)

@@ -3,7 +3,7 @@ import json
 import os
 import secrets
 from datetime import datetime
-from typing import Optional
+from typing import Optional, final
 
 from app.shared.infrastructure.components.date_timer import DateTimer
 from app.shared.infrastructure.components.server import Server  
@@ -18,6 +18,7 @@ from app.modules.elastic.domain.types.elastic_response_type import ElasticRespon
 from app.modules.elastic.domain.types.elastic_doc_type import ElasticDocType
 
 
+@final
 class ElasticWriterApiRepository:
     _instance: Optional['ElasticWriterApiRepository'] = None
     _date_timer: Optional[DateTimer] = None

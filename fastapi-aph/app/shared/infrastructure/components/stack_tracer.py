@@ -1,8 +1,9 @@
 import traceback
 import inspect
-from typing import List
+from typing import List, final
 
 
+@final
 class StackTracer:
     @staticmethod
     def get_current_method() -> str:

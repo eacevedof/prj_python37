@@ -1,6 +1,8 @@
 from fastapi import Request
+from typing import final
 from app.shared.infrastructure.components.http.abstract_http_dto import AbstractHttpDto
 
+@final
 class CreateUserDto(AbstractHttpDto):
     project_uuid: str
     project_user_uuid: str

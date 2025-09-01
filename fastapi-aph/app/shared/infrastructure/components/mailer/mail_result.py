@@ -1,10 +1,11 @@
 import asyncio
 from pathlib import Path
-from typing import Dict
+from typing import Dict, final
 
 from app.shared.infrastructure.components.mailer.mail_sent_result_type import MailSentResultType
 
 
+@final
 class MailResult:
     def __init__(self):
         self.result_logs: Dict[str, str] = {}

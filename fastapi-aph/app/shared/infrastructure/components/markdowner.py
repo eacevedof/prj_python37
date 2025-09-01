@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict
+from typing import List, Dict, final
 from dataclasses import dataclass
 
 
@@ -10,6 +10,7 @@ class CodeBlockTmpType:
     html_inline_code_blocks: List[str]
 
 
+@final
 class Markdowner:
     @staticmethod
     def get_instance():

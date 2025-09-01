@@ -2,8 +2,9 @@ import os
 import platform
 import psutil
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, final
 
+@final
 class CheckAppService:
     def __init__(self):
         pass
