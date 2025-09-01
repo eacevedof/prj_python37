@@ -9,7 +9,7 @@ echo "🚀 Starting FastAPI APH API"
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
-    python -m venv ./.venv-wsl
+    python3 -m venv ./.venv-wsl
 fi
 
 # Activate virtual environment
