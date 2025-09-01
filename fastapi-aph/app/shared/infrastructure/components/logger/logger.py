@@ -46,7 +46,7 @@ class Logger:
     
     def log_debug(self, mixed: Any, title: str = "") -> None:
         """Log debug message to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_green(f"[logger-test-mode] DEBUG {title}:"), mixed)
             return
         
@@ -56,25 +56,25 @@ class Logger:
             content_arr.append(title)
         
         content_arr.append(
-            mixed if isinstance(mixed, str) else self._get_as_json(mixed)
+            mixed if isinstance(mixed, str) else self.__get_as_json(mixed)
         )
         
         content = "\n".join(content_arr)
         content = f"[DEBUG] {content}"
         
         # Log to file (async but don't wait)
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.DEBUG))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.DEBUG))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_debug(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_debug(content)))
     
     def log_sql(self, sql: str, title: str = "") -> None:
         """Log SQL query to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_blue(f"[logger-test-mode] SQL {title}:"), sql)
             return
         
@@ -88,18 +88,18 @@ class Logger:
         content = f"[SQL] {content}"
         
         # Log to file (async but don't wait)
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.SQL))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.SQL))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_sql(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_sql(content)))
     
     def log_error(self, mixed: Any, title: str = "") -> None:
         """Log error message to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_red(f"[logger-test-mode] ERROR {title}:"), mixed)
             return
         
@@ -109,25 +109,25 @@ class Logger:
             content_arr.append(title)
         
         content_arr.append(
-            mixed if isinstance(mixed, str) else self._get_as_json(mixed)
+            mixed if isinstance(mixed, str) else self.__get_as_json(mixed)
         )
         
         content = "\n".join(content_arr)
         content = f"[ERROR] {content}"
         
         # Log to file (async but don't wait)
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.ERROR))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.ERROR))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_error(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_error(content)))
     
     def log_security(self, mixed: Any, title: str = "") -> None:
         """Log security event to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_yellow(f"[logger-test-mode] SECURITY {title}:"), mixed)
             return
         
@@ -137,25 +137,25 @@ class Logger:
             content_arr.append(title)
         
         content_arr.append(
-            mixed if isinstance(mixed, str) else self._get_as_json(mixed)
+            mixed if isinstance(mixed, str) else self.__get_as_json(mixed)
         )
         
         content = "\n".join(content_arr)
         content = f"[SECURITY] {content}"
         
         # Log to file (async but don't wait) 
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.SECURITY))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.SECURITY))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_security(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_security(content)))
     
     def log_warning(self, mixed: Any, title: str = "") -> None:
         """Log warning message to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_orange(f"[logger-test-mode] WARNING {title}:"), mixed)
             return
         
@@ -165,25 +165,25 @@ class Logger:
             content_arr.append(title)
         
         content_arr.append(
-            mixed if isinstance(mixed, str) else self._get_as_json(mixed)
+            mixed if isinstance(mixed, str) else self.__get_as_json(mixed)
         )
         
         content = "\n".join(content_arr)
         content = f"[WARNING] {content}"
         
         # Log to file (async but don't wait)
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.WARNING))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.WARNING))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_warning(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_warning(content)))
     
     def log_exception(self, throwable: Any, title: str = "ERROR") -> None:
         """Log exception to file and Elasticsearch"""
-        if self._is_test_mode():
+        if self.__is_test_mode():
             print(CliColor.get_color_red(f"[logger-test-mode] {title}:"), throwable)
             return
         
@@ -195,37 +195,37 @@ class Logger:
         if isinstance(throwable, str):
             content_arr.append(throwable)
         else:
-            content_arr.append(self._get_as_json(throwable))
+            content_arr.append(self.__get_as_json(throwable))
         
         content = "\n".join(content_arr)
         content = f"[ERROR] {content}"
         
         # Log to file (async but don't wait)
-        asyncio.create_task(self._log_in_file(content, LogLevelEnum.ERROR))
+        asyncio.create_task(self.__log_in_file(content, LogLevelEnum.ERROR))
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
             "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
             "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
         })
-        asyncio.create_task(self._safe_elastic_log(elastic_repo.log_error(content)))
+        asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_error(content)))
     
-    def _is_test_mode(self) -> bool:
+    def __is_test_mode(self) -> bool:
         """Check if running in test mode"""
         return os.getenv("IS_TEST_MODE", "").lower() == "true"
     
-    def _get_today(self) -> str:
+    def __get_today(self) -> str:
         """Get current date in YYYY-MM-DD format"""
         return datetime.now().strftime("%Y-%m-%d")
     
-    def _get_now(self) -> str:
+    def __get_now(self) -> str:
         """Get current datetime in YYYY-MM-DD HH:MM:SS format"""
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    async def _log_in_file(self, content: str, file_name: str) -> None:
+    async def __log_in_file(self, content: str, file_name: str) -> None:
         """Write log content to file"""
-        today = self._get_today()
-        now = self._get_now()
+        today = self.__get_today()
+        now = self.__get_now()
         content = f"\n[{now}]\n{content}"
         
         extension = LogExtensionEnum.SQL if file_name == LogExtensionEnum.SQL else LogExtensionEnum.LOG
@@ -236,7 +236,7 @@ class Logger:
         
         await file_put_contents(str(path_log_file), content)
     
-    def _get_as_json(self, variable: Any) -> str:
+    def __get_as_json(self, variable: Any) -> str:
         """Convert variable to JSON string with special handling for exceptions"""
         if isinstance(variable, Exception):
             return json.dumps({
@@ -250,7 +250,7 @@ class Logger:
         except TypeError:
             return str(variable)
     
-    async def _safe_elastic_log(self, elastic_coroutine) -> None:
+    async def __safe_elastic_log(self, elastic_coroutine) -> None:
         """Safely execute Elasticsearch logging without blocking"""
         try:
             await elastic_coroutine
