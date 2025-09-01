@@ -9,15 +9,16 @@ echo "🚀 Starting FastAPI APH API"
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
-    python -m venv venv
+    python -m venv ./.venv-wsl
 fi
 
 # Activate virtual environment
 echo "🔧 Activating virtual environment..."
-source venv/bin/activate
+source ./.venv-wsl/bin/activate
 
 # Install dependencies
 echo "📥 Installing dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Load environment variables

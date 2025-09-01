@@ -36,11 +36,25 @@ Each module follows the structure:
 ### Local Development
 
 1. **Clone and setup:**
+```cmd
+cd fastapi-aph
+python -m venv .venv-win
+.venv-win\Scripts\activate
+.venv-win\Scripts\python.exe -m pip install --upgrade pip
+.venv-win\Scripts\python.exe -m pip install -r .\requirements.txt
+
+uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
+```
+
 ```bash
-cd /projects/tmp/py-fast-api
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-pip install -r requirements.txt
+cd $PROJECT_DIR/prj_python37/fastapi-aph
+python3 -m venv ./.venv-wsl
+source ./.venv-wsl/bin/activate
+
+.venv-wsl/bin/python -m pip install --upgrade pip
+.venv-wsl/bin/python -m pip install -r requirements.txt
+
+uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 ```
 
 2. **Configure environment:**
