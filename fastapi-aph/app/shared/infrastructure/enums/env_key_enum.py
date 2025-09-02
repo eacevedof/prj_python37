@@ -1,8 +1,9 @@
 import os
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, final
 from app.shared.infrastructure.enums.environment_enum import EnvironmentEnum
 
+@final
 class EnvKeyEnum(Enum):
     APP_ENV = "APP_ENV"
     APP_NAME = "APP_NAME"

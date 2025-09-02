@@ -1,5 +1,8 @@
-from typing import TypedDict
+from typing import final
+from dataclasses import dataclass
 
-class ElasticHttpMetaType(TypedDict):
+@final
+@dataclass(frozen=True)
+class ElasticHttpMetaType:
     request_ip: str
     request_uri: str

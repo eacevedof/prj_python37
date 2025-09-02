@@ -15,6 +15,7 @@ from app.shared.infrastructure.components.db.redis_client import RedisClient
 from app.shared.infrastructure.components.db.postgres_client import PostgresClient
 
 class AbstractPostgresRepository(ABC):
+
     def __init__(self):
         self.environment = get_env(EnvKeyEnum.APP_ENV) or EnvironmentEnum.DEVELOPMENT.value
         self.last_id: Optional[int] = None

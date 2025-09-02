@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from typing import final
 
 
-@dataclass
+@final
+@dataclass(frozen=True)
 class MailSmtpConfigType:
     email_from: str
     email_from_name: str

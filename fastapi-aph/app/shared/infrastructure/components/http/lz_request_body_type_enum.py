@@ -1,6 +1,8 @@
 from enum import Enum
+from typing import final
 
 
+@final
 class LzRequestBodyTypeEnum(Enum):
     UNKNOWN = "unknown"  # binary, DELETE, GET, PUT, PATCH
     FORM_DATA = "form-data"

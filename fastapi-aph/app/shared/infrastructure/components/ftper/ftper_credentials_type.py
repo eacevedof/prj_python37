@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, final
 from dataclasses import dataclass
 
 
-@dataclass
+@final
+@dataclass(frozen=True)
 class FtperCredentialsType:
     host: str
     port: int

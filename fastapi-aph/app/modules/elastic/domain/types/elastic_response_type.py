@@ -1,6 +1,9 @@
-from typing import TypedDict
+from typing import final
+from dataclasses import dataclass
 
-class ElasticResponseType(TypedDict):
+@final
+@dataclass(frozen=True)
+class ElasticResponseType:
     stdout: str
     stderr: str
     status: int
