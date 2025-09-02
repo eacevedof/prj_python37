@@ -14,7 +14,7 @@ from app.shared.infrastructure.components.mailer.mail_result import MailResult
 
 @final
 class Mailer:
-    def __init__(self):
+    def __init__(self) -> None:
         self.path_log_email_file = f"{Path.cwd()}/storage/logs/email-{datetime.now().strftime('%Y-%m-%d')}.log"
         self.default_tpl_view = f"{Path.cwd()}/App/Modules/Mailings/Infrastructure/Views/System/email-default-tpl.html"
         self.path_tmp_file = ""
@@ -34,7 +34,7 @@ class Mailer:
         self.sent_result: Optional[MailSentResultType] = None
     
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Mailer':
         return Mailer()
     
     def set_subject(self, subject: str) -> 'Mailer':

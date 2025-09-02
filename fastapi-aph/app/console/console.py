@@ -17,7 +17,7 @@ from app.shared.infrastructure.components.cli.cli_color import CliColor
 from app.console.commands.commands import COMMANDS
 
 
-async def main():
+async def main() -> None:
     """Main console command runner"""
     lz_cli_args = LzCliArgs.get_instance()
     date_timer = DateTimer.get_instance()

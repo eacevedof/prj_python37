@@ -5,7 +5,7 @@ from pathlib import Path
 
 class Zipper:
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Zipper':
         return Zipper()
     
     async def zip_files(self, raw_file_path: str, zip_file_path: str) -> None:

@@ -6,7 +6,7 @@ from typing import Optional
 class Server:
     _instance: Optional['Server'] = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @classmethod

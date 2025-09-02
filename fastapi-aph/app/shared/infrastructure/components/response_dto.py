@@ -16,7 +16,7 @@ class ResponseDto:
     message: str = ""
     data: Any = None
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.data is None:
             object.__setattr__(self, 'data', [])
     

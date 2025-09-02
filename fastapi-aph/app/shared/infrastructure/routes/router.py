@@ -19,32 +19,32 @@ router = APIRouter()
 
 # Documentation routes
 @router.get(DocumentationRouteEnum.V1_DOCUMENTATION.value, response_class=HTMLResponse)
-async def documentation(request: Request):
+async def documentation(request: Request) -> HTMLResponse:
     return await DocumentationWebController.get_instance().invoke(request)
 
 @router.get(DocumentationRouteEnum.CHANGELOG.value, response_class=HTMLResponse)
-async def changelog(request: Request):
+async def changelog(request: Request) -> HTMLResponse:
     return await ChangelogWebController.get_instance().invoke(request)
 
 # Health check route
 @router.get(HealthCheckRouteEnum.HEALTH_CHECK_V1.value)
-async def health_check(request: Request):
+async def health_check(request: Request) -> Dict[str, Any]:
     controller_response = await GetHealthCheckStatusController.get_instance().invoke(request)
     return controller_response.dict()
 
 # Users routes
 @router.post(UsersRouteEnum.CREATE_USER_V1.value)
-async def create_user(request: Request, body: Dict[str, Any]):
+async def create_user(request: Request, body: Dict[str, Any]) -> Dict[str, Any]:
     controller_response = await CreateUserController.get_instance().invoke(request, body)
     return controller_response.dict()
 
 # Devops routes
 @router.get("/devops/check-app")
-async def check_app(request: Request):
+async def check_app(request: Request) -> Dict[str, Any]:
     controller_response = await CheckAppController.get_instance().invoke(request)
     return controller_response.dict()
 
 # Static assets route
 @router.get("/static/{file_path:path}")
-async def static_assets(file_path: str):
+async def static_assets(file_path: str) -> FileResponse:
     return await StaticAssetsController.get_instance().serve_file(file_path)

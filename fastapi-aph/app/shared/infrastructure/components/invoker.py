@@ -16,7 +16,7 @@ class ControllerProtocol(Protocol):
 @final
 class Invoker:
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Invoker':
         return Invoker()
     
     async def async_invoke_controller(

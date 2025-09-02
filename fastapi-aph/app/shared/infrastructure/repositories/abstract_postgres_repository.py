@@ -16,7 +16,7 @@ from app.shared.infrastructure.components.db.postgres_client import PostgresClie
 
 class AbstractPostgresRepository(ABC):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.environment = get_env(EnvKeyEnum.APP_ENV) or EnvironmentEnum.DEVELOPMENT.value
         self.last_id: Optional[int] = None
         self.affected_rows: int = 0
@@ -28,7 +28,7 @@ class AbstractPostgresRepository(ABC):
         self.__postgres_client: Optional[asyncpg.Connection] = None
         self.__redis_client = None
     
-    async def __load_db_clients(self):
+    async def __load_db_clients(self) -> None:
         """Initialize database clients if not already loaded"""
         if not self.__postgres_client:
             postgres_client = PostgresClient.get_instance()
@@ -149,7 +149,7 @@ class AbstractPostgresRepository(ABC):
         """Escape SQL string to prevent injection"""
         return string.replace("\\", "\\\\").replace("'", "\\'")
     
-    def _map_column_to_int(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_int(self, objects: List[Dict[str, Any]], column: str) -> 'AbstractPostgresRepository':
         """Convert column values to integers"""
         for obj in objects:
             if column in obj:
@@ -157,14 +157,14 @@ class AbstractPostgresRepository(ABC):
                 obj[column] = int(value) if value is not None else None
         return self
     
-    def _map_column_to_string(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_string(self, objects: List[Dict[str, Any]], column: str) -> 'AbstractPostgresRepository':
         """Convert column values to strings"""
         for obj in objects:
             if column in obj:
                 obj[column] = str(obj[column]) if obj[column] is not None else ""
         return self
     
-    def _map_column_to_string_date(self, objects: List[Dict[str, Any]], column: str):
+    def _map_column_to_string_date(self, objects: List[Dict[str, Any]], column: str) -> 'AbstractPostgresRepository':
         """Convert datetime column values to string format"""
         for obj in objects:
             if column in obj:

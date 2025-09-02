@@ -4,7 +4,7 @@ services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "8123:8123"
     environment:
       - APP_ENV=development
       - DATABASE_URL=postgresql://user:password@postgres:5432/antiphishing
@@ -14,7 +14,7 @@ services:
       - redis
     volumes:
       - .:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 
   postgres:
     image: postgres:15

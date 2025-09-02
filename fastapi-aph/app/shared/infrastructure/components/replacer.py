@@ -5,7 +5,7 @@ from typing import Dict, final
 @final
 class Replacer:
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Replacer':
         return Replacer()
     
     def get_replaced_content(self, content: str, to_replace: Dict[str, str]) -> str:

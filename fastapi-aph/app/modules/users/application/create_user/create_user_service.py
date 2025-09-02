@@ -13,7 +13,7 @@ from app.modules.users.domain.exceptions.users_exception import UsersException
 class CreateUserService:
     """User creation service following the original Deno implementation"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.uuider = Uuider.get_instance()
         self.projects_reader_postgres_repository = ProjectsReaderPostgresRepository.get_instance()
         self.users_writer_postgres_repository = UsersWriterPostgresRepository.get_instance()
@@ -24,7 +24,7 @@ class CreateUserService:
         self.project_id: Optional[int] = None
     
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> 'CreateUserService':
         return cls()
     
     async def invoke(self, create_user_dto: CreateUserDto) -> CreatedUserDto:
@@ -37,7 +37,7 @@ class CreateUserService:
         
         return CreatedUserDto.from_primitives(self.created_user_uuid)
     
-    def __fail_if_wrong_input(self):
+    def __fail_if_wrong_input(self) -> None:
         """Validate input data"""
         if not self.create_user_dto.get_project_uuid():
             UsersException.bad_request_custom("project_uuid is required.")

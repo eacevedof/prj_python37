@@ -104,7 +104,7 @@ py-tests-coverage: ## Run pytest with coverage report
 # Health Check
 py-health: ## curl health-check endpoint
 	clear;
-	curl --location 'http://localhost:8000/v1/health-check' | python -m json.tool
+	curl --location 'http://localhost:8123/v1/health-check' | python -m json.tool
 
 # Docker Commands
 py-docker-build: ## Build Docker image
@@ -113,7 +113,7 @@ py-docker-build: ## Build Docker image
 
 py-docker-run: ## Run Docker container
 	clear;
-	docker run -d -p 8000:8000 --name py-fast-api-container py-fast-api
+	docker run -d -p 8000:8123 --name py-fast-api-container py-fast-api
 
 py-docker-stop: ## Stop Docker container
 	clear;
@@ -125,7 +125,7 @@ py-docker-test: ## Test Docker build and run
 	docker rm -f py-fast-api-test;
 	docker rmi -f py-fast-api-test;
 	docker build -t py-fast-api-test .;
-	docker run -d -p 8001:8000 --name py-fast-api-test py-fast-api-test;
+	docker run -d -p 8001:8123 --name py-fast-api-test py-fast-api-test;
 	sleep 5;
 	curl --location 'http://localhost:8001/v1/health-check' | python -m json.tool
 

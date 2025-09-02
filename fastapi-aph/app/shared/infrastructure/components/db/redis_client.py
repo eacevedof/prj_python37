@@ -6,7 +6,7 @@ class RedisClient:
     __instance: Optional['RedisClient'] = None
     __client: Optional[redis.Redis] = None
     
-    def __new__(cls):
+    def __new__(cls) -> 'RedisClient':
         if cls.__instance is None:
             cls.__instance = super(RedisClient, cls).__new__(cls)
         return cls.__instance

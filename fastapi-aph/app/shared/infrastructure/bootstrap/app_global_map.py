@@ -5,7 +5,7 @@ class AppGlobalMap:
     _instance: Optional['AppGlobalMap'] = None
     _dictionary: Dict[str, Any] = {}
     
-    def __new__(cls):
+    def __new__(cls) -> 'AppGlobalMap':
         if cls._instance is None:
             cls._instance = super(AppGlobalMap, cls).__new__(cls)
         return cls._instance

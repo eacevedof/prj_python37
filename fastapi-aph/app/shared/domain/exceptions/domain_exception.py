@@ -1,7 +1,7 @@
 class DomainException(Exception):
     """Base domain exception"""
     
-    def __init__(self, exception_type: str, status_code: int, message: str):
+    def __init__(self, exception_type: str, status_code: int, message: str) -> None:
         self.exception_type = exception_type
         self.status_code = status_code
         self.message = message
