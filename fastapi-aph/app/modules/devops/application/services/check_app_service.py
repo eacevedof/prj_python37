@@ -15,13 +15,13 @@ class CheckAppService:
     
     async def invoke(self) -> Dict[str, Any]:
         return {
-            "app_info": self._get_app_info(),
-            "system_info": self._get_system_info(),
-            "environment": self._get_environment_info(),
+            "app_info": self.__get_app_info(),
+            "system_info": self.__get_system_info(),
+            "environment": self.__get_environment_info(),
             "timestamp": datetime.now().isoformat()
         }
     
-    def _get_app_info(self) -> Dict[str, Any]:
+    def __get_app_info(self) -> Dict[str, Any]:
         return {
             "name": os.getenv("APP_NAME", "FastAPI APH"),
             "version": os.getenv("APP_VERSION", "1.0.0"),
@@ -29,7 +29,7 @@ class CheckAppService:
             "debug": os.getenv("APP_DEBUG", "False").lower() == "true"
         }
     
-    def _get_system_info(self) -> Dict[str, Any]:
+    def __get_system_info(self) -> Dict[str, Any]:
         try:
             memory = psutil.virtual_memory()
             disk = psutil.disk_usage('/')
@@ -57,7 +57,7 @@ class CheckAppService:
                 "error": str(e)
             }
     
-    def _get_environment_info(self) -> Dict[str, Any]:
+    def __get_environment_info(self) -> Dict[str, Any]:
         return {
             "database_url": bool(os.getenv("DATABASE_URL")),
             "redis_url": bool(os.getenv("REDIS_URL")),

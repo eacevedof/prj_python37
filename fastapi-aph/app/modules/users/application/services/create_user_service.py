@@ -31,13 +31,13 @@ class CreateUserService:
         """Execute user creation process following Deno implementation"""
         self.create_user_dto = create_user_dto
         
-        self._fail_if_wrong_input()
-        await self._fail_if_user_already_exists()
-        await self._create_user()
+        self.__fail_if_wrong_input()
+        await self.__fail_if_user_already_exists()
+        await self.__create_user()
         
         return CreatedUserDto.from_primitives(self.created_user_uuid)
     
-    def _fail_if_wrong_input(self):
+    def __fail_if_wrong_input(self):
         """Validate input data"""
         if not self.create_user_dto.get_project_uuid():
             UsersException.bad_request_custom("project_uuid is required.")
@@ -45,7 +45,7 @@ class CreateUserService:
         if not self.create_user_dto.get_project_user_uuid():
             UsersException.bad_request_custom("project_user_uuid is required.")
     
-    async def _fail_if_user_already_exists(self) -> None:
+    async def __fail_if_user_already_exists(self) -> None:
         """Check if user already exists for this project"""
         project_id = await self.projects_reader_postgres_repository.get_project_id_by_project_uuid(
             self.create_user_dto.get_project_uuid()
@@ -66,7 +66,7 @@ class CreateUserService:
                 f"user {user_uuid} already exists for this project {self.create_user_dto.get_project_uuid()} and user {self.create_user_dto.get_project_user_uuid()}"
             )
     
-    async def _create_user(self) -> None:
+    async def __create_user(self) -> None:
         """Create user in database"""
         self.created_user_uuid = await self.users_writer_postgres_repository.create_user({
             "project_id": self.project_id,

@@ -30,20 +30,20 @@ async def file_put_contents(path_file: str, str_data: str) -> None:
 class Logger:
     """Logger with Elasticsearch integration following original Deno implementation"""
     
-    _instance: Optional['Logger'] = None
-    _meta_data: Optional[LoggerMetaType] = None
+    __instance: Optional['Logger'] = None
+    __meta_data: Optional[LoggerMetaType] = None
     
     def __init__(self):
         pass
     
     @classmethod
     def get_instance(cls, meta_data: Optional[LoggerMetaType] = None) -> 'Logger':
-        if cls._instance:
-            return cls._instance
+        if cls.__instance:
+            return cls.__instance
         
-        cls._meta_data = meta_data
-        cls._instance = cls()
-        return cls._instance
+        cls.__meta_data = meta_data
+        cls.__instance = cls()
+        return cls.__instance
     
     def log_debug(self, mixed: Any, title: str = "") -> None:
         """Log debug message to file and Elasticsearch"""
@@ -51,7 +51,7 @@ class Logger:
             print(CliColor.get_color_green(f"[logger-test-mode] DEBUG {title}:"), mixed)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -68,8 +68,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_debug(content)))
     
@@ -79,7 +79,7 @@ class Logger:
             print(CliColor.get_color_blue(f"[logger-test-mode] SQL {title}:"), sql)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -93,8 +93,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_sql(content)))
     
@@ -104,7 +104,7 @@ class Logger:
             print(CliColor.get_color_red(f"[logger-test-mode] ERROR {title}:"), mixed)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -121,8 +121,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_error(content)))
     
@@ -132,7 +132,7 @@ class Logger:
             print(CliColor.get_color_yellow(f"[logger-test-mode] SECURITY {title}:"), mixed)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -149,8 +149,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_security(content)))
     
@@ -160,7 +160,7 @@ class Logger:
             print(CliColor.get_color_orange(f"[logger-test-mode] WARNING {title}:"), mixed)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -177,8 +177,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_warning(content)))
     
@@ -188,7 +188,7 @@ class Logger:
             print(CliColor.get_color_red(f"[logger-test-mode] {title}:"), throwable)
             return
         
-        content_arr = [f"request_ip: {self._meta_data['request_ip'] if self._meta_data else ''}"]
+        content_arr = [f"request_ip: {self.__meta_data['request_ip'] if self.__meta_data else ''}"]
         
         if title:
             content_arr.append(title)
@@ -206,8 +206,8 @@ class Logger:
         
         # Log to Elasticsearch (async but don't wait)
         elastic_repo = ElasticWriterApiRepository.get_instance({
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
         })
         asyncio.create_task(self.__safe_elastic_log(elastic_repo.log_error(content)))
     

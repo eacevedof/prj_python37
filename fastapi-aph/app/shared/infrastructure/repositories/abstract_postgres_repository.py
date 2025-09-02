@@ -24,18 +24,18 @@ class AbstractPostgresRepository(ABC):
         self.date_timer = DateTimer.get_instance()
         self.logger = Logger.get_instance()
         
-        self._postgres_client: Optional[asyncpg.Connection] = None
-        self._redis_client = None
+        self.__postgres_client: Optional[asyncpg.Connection] = None
+        self.__redis_client = None
     
     async def __load_db_clients(self):
         """Initialize database clients if not already loaded"""
-        if not self._postgres_client:
+        if not self.__postgres_client:
             postgres_client = PostgresClient.get_instance()
-            self._postgres_client = await postgres_client.get_client_by_env()
+            self.__postgres_client = await postgres_client.get_client_by_env()
         
-        if not self._redis_client:
+        if not self.__redis_client:
             redis_client = RedisClient.get_instance()
-            self._redis_client = redis_client.get_client_by_env()
+            self.__redis_client = redis_client.get_client_by_env()
     
     async def query(self, sql: str) -> List[GenericRowType]:
         """Execute SELECT query against PostgreSQL"""
@@ -44,11 +44,11 @@ class AbstractPostgresRepository(ABC):
     
     async def __get_from_postgres(self, sql: str) -> List[GenericRowType]:
         """Execute raw query against PostgreSQL"""
-        if not self._postgres_client:
+        if not self.__postgres_client:
             await self.__load_db_clients()
         
         try:
-            rows = await self._postgres_client.fetch(sql)
+            rows = await self.__postgres_client.fetch(sql)
             return [dict(row) for row in rows]
         except Exception as e:
             self.logger.log_error(f"PostgreSQL query failed: {sql}", e)
@@ -76,14 +76,14 @@ class AbstractPostgresRepository(ABC):
     
     async def __get_from_redis(self, sql: str) -> Optional[str]:
         """Get cached query result from Redis"""
-        if not self._redis_client:
+        if not self.__redis_client:
             return None
         
         main_table_name = self.__get_table_name_from_sql(sql)
         redis_key = f"{self.environment}:sql:{main_table_name}:{self.encoder.get_md5_hash(sql)}"
         
         try:
-            return await self._redis_client.get(redis_key)
+            return await self.__redis_client.get(redis_key)
         except Exception as e:
             self.logger.log_error("Redis get failed", e)
             return None
@@ -100,7 +100,7 @@ class AbstractPostgresRepository(ABC):
         ttl_minutes: int
     ) -> None:
         """Save query result to Redis cache"""
-        if not self._redis_client:
+        if not self.__redis_client:
             return
         
         main_table_name = self.__get_table_name_from_sql(sql)
@@ -108,7 +108,7 @@ class AbstractPostgresRepository(ABC):
         
         try:
             json_data = json.dumps(result, default=str)
-            await self._redis_client.set(redis_key, json_data, ex=ttl_minutes * 60)
+            await self.__redis_client.set(redis_key, json_data, ex=ttl_minutes * 60)
         except Exception as e:
             self.logger.log_error("Redis save failed", e)
     
@@ -126,17 +126,17 @@ class AbstractPostgresRepository(ABC):
         try:
             if re.match(r'^\s*insert into ', sql, re.IGNORECASE):
                 if 'RETURNING' in sql.upper():
-                    rows = await self._postgres_client.fetch(sql)
+                    rows = await self.__postgres_client.fetch(sql)
                     if rows and 'id' in rows[0]:
                         self.last_id = rows[0]['id']
                     self.affected_rows = len(rows)
                 else:
-                    result = await self._postgres_client.execute(sql)
+                    result = await self.__postgres_client.execute(sql)
                     self.affected_rows = int(result.split()[-1]) if result else 0
                     self.last_id = None
             else:
                 # UPDATE or DELETE
-                result = await self._postgres_client.execute(sql)
+                result = await self.__postgres_client.execute(sql)
                 self.affected_rows = int(result.split()[-1]) if result else 0
                 self.last_id = None
                 

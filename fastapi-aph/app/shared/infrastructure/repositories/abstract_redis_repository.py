@@ -13,15 +13,15 @@ class AbstractRedisRepository(ABC):
     
     def __init__(self):
         self.environment = get_env(EnvKeyEnum.APP_ENV) or EnvironmentEnum.DEVELOPMENT.value
-        self._redis_client: Optional[redis.Redis] = None
-        self._connection_open = False
+        self.__redis_client: Optional[redis.Redis] = None
+        self.__connection_open = False
     
     def __get_redis_client(self) -> redis.Redis:
         """Get Redis client instance"""
-        if not self._redis_client:
+        if not self.__redis_client:
             redis_client = RedisClient.get_instance()
-            self._redis_client = redis_client.get_client_by_env()
-        return self._redis_client
+            self.__redis_client = redis_client.get_client_by_env()
+        return self.__redis_client
     
     async def _get_hash_set(self, redis_key: str) -> Optional[GenericRowType]:
         """Get hash set from Redis"""
@@ -115,11 +115,11 @@ class AbstractRedisRepository(ABC):
         """Open Redis connection (for bulk operations)"""
         # With redis-py, connections are managed automatically
         # This method is kept for compatibility
-        self._connection_open = True
+        self.__connection_open = True
     
     async def _close_connection(self) -> None:
         """Close Redis connection"""
         if self._redis_client:
             await self._redis_client.close()
-            self._redis_client = None
-        self._connection_open = False
+            self.__redis_client = None
+        self.__connection_open = False

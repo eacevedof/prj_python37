@@ -22,7 +22,7 @@ class GetHealthCheckStatusService:
         date_timer = DateTimer.get_instance()
         
         # Test database connection by getting first user ID
-        db_user_id = await self._get_db_health_check()
+        db_user_id = await self.__get_db_health_check()
         
         return {
             "version": self.environment_reader_raw_repository.get_app_version(),
@@ -34,7 +34,7 @@ class GetHealthCheckStatusService:
             "db_ok": db_user_id,
         }
     
-    async def _get_db_health_check(self) -> Optional[int]:
+    async def __get_db_health_check(self) -> Optional[int]:
         """Test database connectivity by fetching first user ID"""
         try:
             return await self.users_reader_postgres_repository.get_first_user_id_for_health_check()
