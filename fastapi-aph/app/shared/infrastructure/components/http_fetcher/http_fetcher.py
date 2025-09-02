@@ -25,12 +25,12 @@ class HttpFetcherFullOptionType:
 
 @final
 class HttpFetcher:
-    def __init__(self):
+    def __init__(self) -> None:
         self.one_hundred_twenty_seconds = 120  # 120 seconds like PHP version
         self.thirty_seconds = 30  # 30 seconds like PHP version
     
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'HttpFetcher':
         return HttpFetcher()
     
     async def http_get(

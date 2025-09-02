@@ -6,7 +6,7 @@ from pathlib import Path
 
 class Csver:
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Csver':
         return Csver()
     
     async def create_csv_file_from_array(

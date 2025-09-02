@@ -5,7 +5,7 @@ from typing import Any, Optional, Dict
 from pathlib import Path
 
 class Cacher:
-    def __init__(self, cache_file_name: str):
+    def __init__(self, cache_file_name: str) -> None:
         self.cache_folder = Path.cwd() / "storage" / "cache"
         self.cache_file_path = self.cache_folder / cache_file_name
     

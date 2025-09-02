@@ -9,7 +9,7 @@ class PostgresClient:
     __connection: Optional[Connection] = None
     __pool: Optional[Pool] = None
     
-    def __new__(cls):
+    def __new__(cls) -> 'PostgresClient':
         if cls.__instance is None:
             cls.__instance = super(PostgresClient, cls).__new__(cls)
         return cls.__instance

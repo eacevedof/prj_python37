@@ -29,8 +29,8 @@ fi
 
 # Start the application using the front controller
 echo "🌟 Starting FastAPI application..."
-echo "📍 API will be available at: http://localhost:8000"
-echo "📖 Documentation will be available at: http://localhost:8000/docs"
-echo "🔍 Health check: http://localhost:8000/health"
+echo "📍 API will be available at: http://localhost:8123"
+echo "📖 Documentation will be available at: http://localhost:8123/docs"
+echo "🔍 Health check: http://localhost:8123/health"
 
 python public/index.py

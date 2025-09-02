@@ -12,11 +12,11 @@ from app.modules.users.application.create_user.created_user_dto import CreatedUs
 from app.modules.users.domain.exceptions.users_exception import UsersException
 
 class CreateUserController:
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = Logger.get_instance()
     
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> 'CreateUserController':
         return cls()
     
     async def invoke(self, request: Request, body_data: dict) -> LzResponse:
@@ -42,6 +42,7 @@ class CreateUserController:
                 "code": e.get_status_code(),
                 "message": e.get_message()
             })
+
         except Exception as error:
             self.logger.log_exception(error)
             return LzResponse.from_response_dto_primitives({

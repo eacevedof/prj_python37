@@ -9,7 +9,7 @@ from app.shared.infrastructure.components.logger import Logger
 class AbstractCommand(ABC):
     """Abstract base class for console commands"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.__date_timer = DateTimer.get_instance()
         self.logger = Logger.get_instance()
         self.dt_start = ""

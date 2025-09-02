@@ -3,7 +3,7 @@ import re
 from app.shared.infrastructure.components.logger import Logger
 
 class Decoder:
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = Logger.get_instance()
     
     @classmethod

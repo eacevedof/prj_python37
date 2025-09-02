@@ -11,17 +11,17 @@ from app.modules.authenticator.domain.exceptions.authenticator_exception import 
 class FailIfWrongAppAuthTokenService:
     """Authentication service following the original Deno implementation"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = Logger.get_instance()
         self.app_global_map = AppGlobalMap.get_instance()
         self.projects_reader_postgres_repository = ProjectsReaderPostgresRepository.get_instance()
         self.check_app_auth_token_dto: FailIfWrongAppAuthTokenDto = None
     
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> 'FailIfWrongAppAuthTokenService':
         return cls()
     
-    async def invoke(self, check_app_auth_token_dto: FailIfWrongAppAuthTokenDto):
+    async def invoke(self, check_app_auth_token_dto: FailIfWrongAppAuthTokenDto) -> None:
         """Execute authentication validation following Deno implementation"""
         self.check_app_auth_token_dto = check_app_auth_token_dto
         
@@ -29,13 +29,13 @@ class FailIfWrongAppAuthTokenService:
         await self._fail_if_wrong_app_auth_token()
         self._check_allowed_sys_auth_tokens_or_fail()
     
-    def _fail_if_wrong_input(self):
+    def _fail_if_wrong_input(self) -> None:
         """Validate input data"""
         if not self.check_app_auth_token_dto.get_app_auth_token():
             self._log_security_on_wrong_token()
             AuthenticatorException.unauthorized_custom("missing app auth token")
     
-    async def _fail_if_wrong_app_auth_token(self):
+    async def _fail_if_wrong_app_auth_token(self) -> None:
         """Validate auth token against database projects"""
         project_id = await self.projects_reader_postgres_repository.get_project_id_by_project_auth_token(
             self.check_app_auth_token_dto.get_app_auth_token()
@@ -48,7 +48,7 @@ class FailIfWrongAppAuthTokenService:
         # Store project ID in global map for later use
         self.app_global_map.set(AppKeyEnum.PROJECT_ID, project_id)
     
-    def _check_allowed_sys_auth_tokens_or_fail(self):
+    def _check_allowed_sys_auth_tokens_or_fail(self) -> None:
         """Check system token permissions"""
         if self.check_app_auth_token_dto.get_app_auth_token() == SysAuthTokenEnum.ROOT.value:
             return
@@ -63,7 +63,7 @@ class FailIfWrongAppAuthTokenService:
                 self._log_security_on_wrong_token("[app auth token not allowed (2)]")
                 AuthenticatorException.unauthorized_custom("app auth token not allowed (2)")
     
-    def _log_security_on_wrong_token(self, title: str = "[invalid app auth token]"):
+    def _log_security_on_wrong_token(self, title: str = "[invalid app auth token]") -> None:
         """Log security event for invalid token"""
         self.logger.log_security({
             "request": {

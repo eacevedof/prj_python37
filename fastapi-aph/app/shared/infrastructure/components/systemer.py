@@ -6,7 +6,7 @@ from typing import Dict, Union, final
 @final
 class Systemer:
     @staticmethod
-    def get_instance():
+    def get_instance() -> 'Systemer':
         return Systemer()
     
     async def run_command(self, command: str) -> Dict[str, Union[str, int]]:
