@@ -1,7 +1,10 @@
-from typing import TypedDict
+from typing import final
+from dataclasses import dataclass
 
 
-class EnvVarType(TypedDict):
+@final
+@dataclass(frozen=True)
+class EnvVarType:
     """Environment variables type definition"""
     environment: str
     app_name: str

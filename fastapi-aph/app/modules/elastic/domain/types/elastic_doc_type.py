@@ -1,6 +1,9 @@
-from typing import Union, TypedDict
+from typing import Union, final
+from dataclasses import dataclass
 
-class ElasticDocType(TypedDict):
+@final
+@dataclass(frozen=True)
+class ElasticDocType:
     domain: str
     environment: str
     level: str

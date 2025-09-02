@@ -1,16 +1,17 @@
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, final
 
 from app.shared.infrastructure.enums.env_key_enum import EnvKeyEnum
 from app.shared.infrastructure.enums.environment_enum import EnvironmentEnum
 from app.shared.infrastructure.repositories.configuration.env_var_type import EnvVarType
 
 
+@final
 class EnvironmentReaderRawRepository:
     """Repository for reading environment configuration"""
     
-    _instance: Optional['EnvironmentReaderRawRepository'] = None
+    __instance: Optional['EnvironmentReaderRawRepository'] = None
     
     def __init__(self):
         self.env_vars: EnvVarType = {
@@ -25,9 +26,9 @@ class EnvironmentReaderRawRepository:
     
     @classmethod
     def get_instance(cls) -> 'EnvironmentReaderRawRepository':
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
     
     def _get_env(self, key: EnvKeyEnum) -> Optional[str]:
         """Get environment variable by enum key"""

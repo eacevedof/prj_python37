@@ -1,5 +1,7 @@
 from enum import Enum
+from typing import final
 
+@final
 class HttpResponseMessageEnum(Enum):
     OK = "OK"
     CREATED = "Created"

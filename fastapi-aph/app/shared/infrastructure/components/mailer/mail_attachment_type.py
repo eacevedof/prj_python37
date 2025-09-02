@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from typing import final
 
 
-@dataclass
+@final
+@dataclass(frozen=True)
 class MailAttachmentType:
     path: str
     filename: str

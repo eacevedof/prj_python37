@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from typing import final
 
 
-@dataclass
+@final
+@dataclass(frozen=True)
 class MailSentResultType:
     success: bool
     error: str

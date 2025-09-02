@@ -1,6 +1,8 @@
 from enum import Enum
+from typing import final
 
 
+@final
 class HttpRequestMethodEnum(Enum):
     POST = "POST"
     GET = "GET"

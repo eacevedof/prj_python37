@@ -1,5 +1,7 @@
 from enum import IntEnum
+from typing import final
 
+@final
 class HttpResponseCodeEnum(IntEnum):
     OK = 200
     CREATED = 201
