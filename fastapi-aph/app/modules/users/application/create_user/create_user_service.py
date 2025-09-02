@@ -4,8 +4,8 @@ from app.shared.infrastructure.components.uuider import Uuider
 from app.modules.projects.infrastructure.repositories.projects_reader_postgres_repository import ProjectsReaderPostgresRepository
 from app.modules.users.infrastructure.repositories.users_writer_postgres_repository import UsersWriterPostgresRepository
 from app.modules.users.infrastructure.repositories.users_reader_postgres_repository import UsersReaderPostgresRepository
-from app.modules.users.application.services.create_user_dto import CreateUserDto
-from app.modules.users.application.services.created_user_dto import CreatedUserDto
+from app.modules.users.application.create_user.create_user_dto import CreateUserDto
+from app.modules.users.application.create_user.created_user_dto import CreatedUserDto
 from app.modules.users.domain.exceptions.users_exception import UsersException
 
 

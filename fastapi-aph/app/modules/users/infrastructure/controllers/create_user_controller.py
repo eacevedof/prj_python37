@@ -3,12 +3,12 @@ from app.shared.infrastructure.components.http.lz_response import LzResponse
 from app.shared.infrastructure.components.logger import Logger
 from app.shared.infrastructure.enums.http_response_code_enum import HttpResponseCodeEnum
 from app.shared.infrastructure.enums.http_response_message_enum import HttpResponseMessageEnum
-from app.modules.authenticator.application.services.fail_if_wrong_app_auth_token_service import FailIfWrongAppAuthTokenService
-from app.modules.authenticator.application.services.fail_if_wrong_app_auth_token_dto import FailIfWrongAppAuthTokenDto
+from app.modules.authenticator.application.fail_if_wrong_app_auth_token.fail_if_wrong_app_auth_token_service import FailIfWrongAppAuthTokenService
+from app.modules.authenticator.application.fail_if_wrong_app_auth_token.fail_if_wrong_app_auth_token_dto import FailIfWrongAppAuthTokenDto
 from app.modules.authenticator.domain.exceptions.authenticator_exception import AuthenticatorException
-from app.modules.users.application.services.create_user_service import CreateUserService
-from app.modules.users.application.services.create_user_dto import CreateUserDto
-from app.modules.users.application.services.created_user_dto import CreatedUserDto
+from app.modules.users.application.create_user.create_user_service import CreateUserService
+from app.modules.users.application.create_user.create_user_dto import CreateUserDto
+from app.modules.users.application.create_user.created_user_dto import CreatedUserDto
 from app.modules.users.domain.exceptions.users_exception import UsersException
 
 class CreateUserController:

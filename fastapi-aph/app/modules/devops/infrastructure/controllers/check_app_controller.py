@@ -4,7 +4,7 @@ from app.shared.infrastructure.components.http.lz_response import LzResponse
 from app.shared.infrastructure.components.logger import Logger
 from app.shared.infrastructure.enums.http_response_code_enum import HttpResponseCodeEnum
 from app.shared.infrastructure.enums.http_response_message_enum import HttpResponseMessageEnum
-from app.modules.devops.application.services.check_app_service import CheckAppService
+from app.modules.devops.application.check_app.check_app_service import CheckAppService
 
 @final
 class CheckAppController:

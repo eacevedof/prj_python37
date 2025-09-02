@@ -4,7 +4,7 @@ from app.shared.infrastructure.bootstrap.app_global_map import AppGlobalMap
 from app.shared.infrastructure.bootstrap.app_key_enum import AppKeyEnum
 from app.modules.projects.infrastructure.repositories.projects_reader_postgres_repository import ProjectsReaderPostgresRepository
 from app.modules.authenticator.domain.enums.sys_auth_token_enum import SysAuthTokenEnum
-from app.modules.authenticator.application.services.fail_if_wrong_app_auth_token_dto import FailIfWrongAppAuthTokenDto
+from app.modules.authenticator.application.fail_if_wrong_app_auth_token.fail_if_wrong_app_auth_token_dto import FailIfWrongAppAuthTokenDto
 from app.modules.authenticator.domain.exceptions.authenticator_exception import AuthenticatorException
 
 
