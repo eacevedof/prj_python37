@@ -5,7 +5,7 @@ from app.shared.infrastructure.components.logger import Logger
 from app.shared.infrastructure.components.date_timer import DateTimer
 from app.shared.infrastructure.enums.http_response_code_enum import HttpResponseCodeEnum
 from app.shared.infrastructure.enums.http_response_message_enum import HttpResponseMessageEnum
-from app.modules.healthcheck.application.services.get_health_check_status_service import GetHealthCheckStatusService
+from app.modules.healthcheck.application.get_health_check_status.get_health_check_status_service import GetHealthCheckStatusService
 
 @final
 class GetHealthCheckStatusController:

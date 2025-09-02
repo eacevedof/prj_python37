@@ -3,7 +3,7 @@ from typing import Optional, final
 from app.console.commands.abstract_command import AbstractCommand
 from app.console.interface_console import InterfaceConsole
 from app.shared.infrastructure.components.cli.lz_cli_args import LzCliArgs
-from app.modules.devops.application.services.run_migrations.run_migrations_service import RunMigrationsService
+from application.run_migrations.run_migrations_service import RunMigrationsService
 
 
 @final
