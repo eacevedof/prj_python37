@@ -5,6 +5,7 @@ from app.shared.infrastructure.enums.environment_enum import EnvironmentEnum
 
 @final
 class EnvKeyEnum(Enum):
+
     APP_ENV = "APP_ENV"
     APP_NAME = "APP_NAME"
     APP_URL = "APP_URL"

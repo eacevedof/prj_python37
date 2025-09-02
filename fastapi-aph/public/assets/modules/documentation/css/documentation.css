@@ -1,0 +1,161 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    line-height: 1.6;
+    background-color: #fafafa;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    border-bottom: 3px solid #007acc;
+    padding-bottom: 10px;
+}
+
+h2 {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+h3 {
+    color: #34495e;
+    margin-top: 25px;
+}
+
+h4 {
+    color: #555;
+    font-size: 1.1em;
+}
+
+/* Code blocks and curl examples */
+pre {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border-left: 4px solid #007acc;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 15px 0;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Inline code */
+code {
+    background-color: #f1f5f9;
+    color: #e53e3e;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+}
+
+/* Lists */
+ul, ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+li {
+    margin: 8px 0;
+}
+
+/* Strong/Bold text */
+strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Links */
+a {
+    color: #007acc;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Response examples */
+h4 + pre {
+    margin-top: 10px;
+}
+
+/* API sections */
+h3[id] {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 25px 0 20px 0;
+}
+
+/* Method indicators */
+strong:contains("POST") {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+strong:contains("GET") {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+strong:contains("DELETE") {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* Intro section */
+h3:first-of-type {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+/* TO-DO section */
+h3:contains("TO-DO") {
+    background-color: #f8d7da;
+    border-left-color: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    pre {
+        padding: 15px;
+        font-size: 13px;
+    }
+
+    h1, h2, h3 {
+        margin-top: 20px;
+    }
+}
