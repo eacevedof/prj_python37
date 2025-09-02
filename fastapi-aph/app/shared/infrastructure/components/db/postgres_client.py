@@ -5,51 +5,51 @@ import asyncpg
 from asyncpg import Connection, Pool
 
 class PostgresClient:
-    _instance: Optional['PostgresClient'] = None
-    _connection: Optional[Connection] = None
-    _pool: Optional[Pool] = None
+    __instance: Optional['PostgresClient'] = None
+    __connection: Optional[Connection] = None
+    __pool: Optional[Pool] = None
     
     def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(PostgresClient, cls).__new__(cls)
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = super(PostgresClient, cls).__new__(cls)
+        return cls.__instance
     
     @classmethod
     def get_instance(cls) -> 'PostgresClient':
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
     
     async def get_client_by_env(self) -> Connection:
         """Get database connection using environment configuration"""
-        if not self._connection:
+        if not self.__connection:
             config = self._get_conn_config_by_env()
-            self._connection = await asyncpg.connect(**config)
-        return self._connection
+            self.__connection = await asyncpg.connect(**config)
+        return self.__connection
     
     async def get_pool(self) -> Pool:
         """Get connection pool for better performance"""
-        if not self._pool:
+        if not self.__pool:
             config = self._get_conn_config_by_env()
-            self._pool = await asyncpg.create_pool(**config)
-        return self._pool
+            self.__pool = await asyncpg.create_pool(**config)
+        return self.__pool
     
     async def close_connection(self) -> None:
         """Close single connection"""
-        if self._connection:
-            await self._connection.close()
-            self._connection = None
+        if self.__connection:
+            await self.__connection.close()
+            self.__connection = None
     
     async def close_pool(self) -> None:
         """Close connection pool"""
-        if self._pool:
-            await self._pool.close()
-            self._pool = None
+        if self.__pool:
+            await self.__pool.close()
+            self.__pool = None
     
     @classmethod
     async def close_all_connections(cls) -> None:
         """Close all connections and pools"""
-        if cls._instance:
+        if cls.__instance:
             await cls._instance.close_connection()
             await cls._instance.close_pool()
     

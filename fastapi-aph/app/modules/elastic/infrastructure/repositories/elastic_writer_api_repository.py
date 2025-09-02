@@ -20,96 +20,96 @@ from app.modules.elastic.domain.types.elastic_doc_type import ElasticDocType
 
 @final
 class ElasticWriterApiRepository:
-    _instance: Optional['ElasticWriterApiRepository'] = None
-    _date_timer: Optional[DateTimer] = None
-    _env_vars: Optional[EnvVarType] = None
-    _path_log_elk_file: str = ""
-    _meta_data: Optional[ElasticMetaType] = None
+    __instance: Optional['ElasticWriterApiRepository'] = None
+    __date_timer: Optional[DateTimer] = None
+    __env_vars: Optional[EnvVarType] = None
+    __path_log_elk_file: str = ""
+    __meta_data: Optional[ElasticMetaType] = None
 
     def __init__(self):
         pass
 
     @classmethod
     def get_instance(cls, meta_data: Optional[ElasticMetaType] = None) -> 'ElasticWriterApiRepository':
-        if cls._instance:
-            return cls._instance
+        if cls.__instance:
+            return cls.__instance
 
-        cls._date_timer = DateTimer.get_instance()
-        cls._env_vars = EnvironmentReaderRawRepository.get_instance().get_env_vars()
-        today = cls._date_timer.get_today()
+        cls.__date_timer = DateTimer.get_instance()
+        cls.__env_vars = EnvironmentReaderRawRepository.get_instance().get_env_vars()
+        today = cls.__date_timer.get_today()
         
-        cls._path_log_elk_file = f"{cls._env_vars['log_paths']}/elk-{today}.log"
-        cls._meta_data = meta_data
+        cls.__path_log_elk_file = f"{cls.__env_vars['log_paths']}/elk-{today}.log"
+        cls.__meta_data = meta_data
         
-        cls._instance = cls()
-        return cls._instance
+        cls.__instance = cls()
+        return cls.__instance
 
     async def log_error(self, content: str) -> ElasticResponseType:
         """Log error level message"""
-        post_payload = await self._get_elastic_document(content, LogLevelEnum.ERROR)
-        return await self._get_post_request_async(post_payload)
+        post_payload = await self.__get_elastic_document(content, LogLevelEnum.ERROR)
+        return await self.__get_post_request_async(post_payload)
 
     async def log_debug(self, content: str) -> ElasticResponseType:
         """Log debug level message"""
-        post_payload = await self._get_elastic_document(content, LogLevelEnum.DEBUG)
-        return await self._get_post_request_async(post_payload)
+        post_payload = await self.__get_elastic_document(content, LogLevelEnum.DEBUG)
+        return await self.__get_post_request_async(post_payload)
 
     async def log_sql(self, content: str) -> ElasticResponseType:
         """Log SQL level message"""
-        post_payload = await self._get_elastic_document(content, LogLevelEnum.SQL)
-        return await self._get_post_request_async(post_payload)
+        post_payload = await self.__get_elastic_document(content, LogLevelEnum.SQL)
+        return await self.__get_post_request_async(post_payload)
 
     async def log_security(self, content: str) -> ElasticResponseType:
         """Log security level message"""
-        post_payload = await self._get_elastic_document(content, LogLevelEnum.SECURITY)
-        return await self._get_post_request_async(post_payload)
+        post_payload = await self.__get_elastic_document(content, LogLevelEnum.SECURITY)
+        return await self.__get_post_request_async(post_payload)
 
     async def log_warning(self, content: str) -> ElasticResponseType:
         """Log warning level message"""
-        post_payload = await self._get_elastic_document(content, LogLevelEnum.WARNING)
-        return await self._get_post_request_async(post_payload)
+        post_payload = await self.__get_elastic_document(content, LogLevelEnum.WARNING)
+        return await self.__get_post_request_async(post_payload)
 
-    async def _get_elastic_document(self, log_content: str, log_level: LogLevelEnum) -> ElasticDocType:
+    async def __get_elastic_document(self, log_content: str, log_level: LogLevelEnum) -> ElasticDocType:
         """Build Elasticsearch document from log content and level"""
         server_instance = Server.get_instance()
         server_ip = await server_instance.get_server_ip()
         
         elastic_doc: ElasticDocType = {
-            "domain": self._env_vars["base_url"],
-            "environment": self._env_vars["environment"],
+            "domain": self.__env_vars["base_url"],
+            "environment": self.__env_vars["environment"],
             "level": log_level.value,
-            "date_time": self._date_timer.get_now_ymd_his(),
+            "date_time": self.__date_timer.get_now_ymd_his(),
             "server_ip": server_ip,
-            "request_ip": self._meta_data["request_ip"] if self._meta_data else "",
-            "request_uri": self._meta_data["request_uri"] if self._meta_data else "",
-            "log_content": self._get_cleaned_log_content(log_content),
+            "request_ip": self.__meta_data["request_ip"] if self.__meta_data else "",
+            "request_uri": self.__meta_data["request_uri"] if self.__meta_data else "",
+            "log_content": self.__get_cleaned_log_content(log_content),
             "timestamp": datetime.utcnow().isoformat()
         }
         
         return elastic_doc
 
-    def _get_cleaned_log_content(self, log_content: str) -> str:
+    def __get_cleaned_log_content(self, log_content: str) -> str:
         """Clean and truncate log content"""
-        return self._substring_10000(log_content)
+        return self.__substring_10000(log_content)
 
-    def _substring_10000(self, text: str) -> str:
+    def __substring_10000(self, text: str) -> str:
         """Truncate string to max 100000 characters"""
         max_len = 100000
         if len(text) <= max_len:
             return text
         return text[:max_len] + f"... [string truncated to {max_len} chars]"
 
-    async def _get_post_request_async(self, post_payload: ElasticDocType) -> ElasticResponseType:
+    async def __get_post_request_async(self, post_payload: ElasticDocType) -> ElasticResponseType:
         """Send log data to Elasticsearch via curl command"""
-        database_name = self._get_database_name()
-        elastic_api_url = f"{self._env_vars['elastic_api_url']}/{database_name}/_doc"
+        database_name = self.__get_database_name()
+        elastic_api_url = f"{self.__env_vars['elastic_api_url']}/{database_name}/_doc"
         
-        curl_command = await self._get_nohup_command_in_single_line({
+        curl_command = await self.__get_nohup_command_in_single_line({
             "elasticApiUrl": elastic_api_url,
             "postPayload": post_payload
         })
         
-        await self._log_elk(post_payload, "get_post_request_async.post_payload")
+        await self.__log_elk(post_payload, "get_post_request_async.post_payload")
         
         # Execute curl command using subprocess
         proc = await asyncio.create_subprocess_shell(
@@ -128,16 +128,16 @@ class ElasticWriterApiRepository:
         
         return cmd_result
 
-    async def _get_nohup_command_in_single_line(self, elastic_request: dict) -> str:
+    async def __get_nohup_command_in_single_line(self, elastic_request: dict) -> str:
         """Build curl command with nohup for background execution"""
         json_payload = json.dumps(elastic_request["postPayload"])
-        path_tmp_file = self._get_random_tmp_file_path()
+        path_tmp_file = self.__get_random_tmp_file_path()
         
         # Write JSON payload to temporary file
         with open(path_tmp_file, 'w') as f:
             f.write(json_payload)
         
-        log_elk = self._path_log_elk_file
+        log_elk = self.__path_log_elk_file
         
         nohup_parts = [
             f"nohup sh -c 'curl --silent --location --request POST",
@@ -150,18 +150,18 @@ class ElasticWriterApiRepository:
         
         return " ".join(nohup_parts)
 
-    def _get_database_name(self) -> str:
+    def __get_database_name(self) -> str:
         """Get Elasticsearch database name based on environment and app name"""
-        app_env = EnvironmentEnum(self._env_vars["environment"])
-        app_name = self._env_vars["app_name"]
+        app_env = EnvironmentEnum(self.__env_vars["environment"])
+        app_name = self.__env_vars["app_name"]
         db_name = f"{app_env.value}-{app_name}"
         db_slug = Slugger.get_instance().get_slugged_text(db_name)
         return db_slug[:250]
 
-    async def _log_elk(self, mixed, title: str = "") -> None:
+    async def __log_elk(self, mixed, title: str = "") -> None:
         """Write log entry to ELK log file"""
-        log_elk_file = self._path_log_elk_file
-        now = self._date_timer.get_now_ymd_his()
+        log_elk_file = self.__path_log_elk_file
+        now = self.__date_timer.get_now_ymd_his()
         content = f"[{now}]"
         
         if title:
@@ -185,8 +185,8 @@ class ElasticWriterApiRepository:
         except Exception as e:
             print(f"ElasticWriterApiRepository._log_elk error: {e}")
 
-    def _get_random_tmp_file_path(self) -> str:
+    def __get_random_tmp_file_path(self) -> str:
         """Generate random temporary file path for curl data"""
-        today = self._date_timer.get_today()
+        today = self.__date_timer.get_today()
         random_hex = secrets.token_hex(10)
         return f"/tmp/elk-{today}-{random_hex}"
