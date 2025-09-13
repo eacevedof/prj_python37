@@ -1,0 +1,2 @@
+kafka-python==2.2.15
+flask==2.3.3
