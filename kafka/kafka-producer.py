@@ -34,8 +34,8 @@ class StandardKafkaProducer:
             linger_ms=10,
             buffer_memory=33554432,
             
-            # Compression
-            compression_type='snappy'
+            # Compression (disabled for compatibility)
+            compression_type=None
         )
         
     def send_user_event(self, user_id, event_type, event_data):
