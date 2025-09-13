@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-
 import json
 import signal
 import sys
+import logging
+
 from kafka import KafkaConsumer
 from kafka.errors import KafkaError
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 @echo off
-REM Kafka Python Environment Setup for Windows
-REM This script sets up a virtual environment and installs dependencies
+REM kafka cdc in python for windows
+REM create venv and install requirements
 
 echo Setting up Kafka Python environment for Windows...
 
@@ -41,24 +41,3 @@ echo.
 echo ========================================
 echo Setup completed successfully!
 echo ========================================
-echo.
-echo To run the applications:
-echo 1. Producer: python kafka-producer.py
-echo 2. Consumer: python kafka-consumer.py
-echo.
-echo To activate the virtual environment manually:
-echo .venv-win\Scripts\activate
-echo.
-echo Make sure your Kafka server is running on localhost:9092
-echo.
-
-REM Ask if user wants to test the installation
-set /p test_install="Do you want to test the consumer now? (y/n): "
-if /i "%test_install%"=="y" (
-    echo Starting consumer test...
-    python kafka-consumer.py
-) else (
-    echo Setup complete. You can run the applications manually.
-)
-
-pause
