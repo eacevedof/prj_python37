@@ -13,10 +13,10 @@ def __test_mysql_connection(mysql_id: str ="my-1") -> None:
             logger.error(f"MySQL configuration \"{mysql_id}\" not found")
             return
 
-        print(f"Testing connection to MySQL: {mysql_id}")
-        print(f"Host: {mysql_config["host"]}:{mysql_config["port"]}")
-        print(f"Database: {mysql_config["database"]}")
-        print(f"User: {mysql_config["user"]}")
+        print(f" - Testing connection to MySQL: {mysql_id}")
+        print(f" - Host: {mysql_config["host"]}:{mysql_config["port"]}")
+        print(f" - Database: {mysql_config["database"]}")
+        print(f" - User: {mysql_config["user"]}")
 
         pymysql_cnx = pymysql.connect(
             host=mysql_config["host"],
@@ -47,22 +47,22 @@ def __test_mysql_connection(mysql_id: str ="my-1") -> None:
                     if cursor.fetchone():
                         cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
                         count = cursor.fetchone()[0]
-                        print(f"✓ Table \"{table_name}\" exists with {count} records")
+                        print(f" - ✓ Table \"{table_name}\" exists with {count} records")
 
                         # Check timestamp column
                         cursor.execute(f"SHOW COLUMNS FROM {table_name} LIKE %s", (timestamp_col,))
                         if cursor.fetchone():
-                            print(f"  ✓ Timestamp column \"{timestamp_col}\" exists")
+                            print(f" -   ✓ Timestamp column \"{timestamp_col}\" exists")
                         else:
-                            print(f"  ✗ Timestamp column \"{timestamp_col}\" NOT found")
+                            print(f" -   ✗ Timestamp column \"{timestamp_col}\" NOT found")
                     else:
-                        print(f"✗ Table \"{table_name}\" does NOT exist")
+                        print(f" - ✗ Table \"{table_name}\" does NOT exist")
 
         pymysql_cnx.close()
         print("\n✅ MySQL connection test successful!")
     except Exception as e:
         logger.error(f"MySQL connection failed: {e}")
-        print(f"❌ MySQL connection test failed: {e}")
+        print(f" - ❌ MySQL connection test failed: {e}")
 
 
 def __show_mysql_configs() -> None:
@@ -70,11 +70,11 @@ def __show_mysql_configs() -> None:
     print("Available MySQL configurations:")
     print("=" * 50)
     for mysql_id, config in MYSQLS.items():
-        print(f"\nID: {mysql_id}")
-        print(f"  Host: {config["host"]}:{config["port"]}")
-        print(f"  Database: {config["database"]}")
-        print(f"  User: {config["user"]}")
-        print(f"  Tables: {list(config.get("tables_to_monitor", {}).keys())}")
+        print(f" - \nID: {mysql_id}")
+        print(f" -   Host: {config["host"]}:{config["port"]}")
+        print(f" -   Database: {config["database"]}")
+        print(f" -   User: {config["user"]}")
+        print(f" -   Tables: {list(config.get("tables_to_monitor", {}).keys())}")
 
 
 if __name__ == "__main__":
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     
     # Test all MySQL configurations
     for mysql_id in MYSQLS.keys():
-        print(f"\nTesting MySQL configuration: {mysql_id}")
+        print(f" - \nTesting MySQL configuration: {mysql_id}")
         __test_mysql_connection(mysql_id)
         print("-" * 30)
 
