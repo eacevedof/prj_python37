@@ -224,7 +224,7 @@ class MySqlCDCProducer:
         while self.__cdc_is_running:
             try:
                 for table_name, timestamp_column in listen_tables.items():
-                    self.__listen_mysql_changes(
+                    self.__mysql_table_to_kafka(
                         table_name,
                         timestamp_column,
                         last_timestamps
@@ -237,7 +237,7 @@ class MySqlCDCProducer:
                 time.sleep(5)
 
 
-    def __listen_mysql_changes(
+    def __mysql_table_to_kafka(
         self,
         table_name: str,
         timestamp_column: str,
