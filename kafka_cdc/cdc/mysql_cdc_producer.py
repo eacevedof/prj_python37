@@ -85,13 +85,13 @@ class MySqlCDCProducer:
         try:
             mysql_config = self.__mysql_config
             self.__pymysql = pymysql.connect(
-                host=mysql_config["host"],
-                port=mysql_config["port"],
-                database=mysql_config["database"],
-                user=mysql_config["user"],
-                password=mysql_config["password"],
-                charset="utf8mb4",
-                autocommit=True
+                host = mysql_config["host"],
+                port = mysql_config["port"],
+                database = mysql_config["database"],
+                user = mysql_config["user"],
+                password = mysql_config["password"],
+                charset = "utf8mb4",
+                autocommit = True
             )
             logger.info(f"MySQL connection established to {mysql_config['host']}:{mysql_config['port']}")
         except Exception as e:
