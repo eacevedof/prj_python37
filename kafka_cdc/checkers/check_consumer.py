@@ -12,10 +12,11 @@ def ___get_kafka_consumer() -> KafkaConsumer:
     kafka_host = KAFKAS.get("kafka-1").get("host")
     kafka_port = KAFKAS.get("kafka-1").get("port")
     kafka_socket = f"{kafka_host}:{kafka_port}"
+    kafka_topic_id = "topic.check_producer"
 
     print(f"connecting to kafka at {kafka_socket}")
     return KafkaConsumer(
-        "test",
+        kafka_topic_id,
         bootstrap_servers=[kafka_socket],
         auto_offset_reset="earliest",
         fetch_min_bytes=100,
@@ -47,7 +48,6 @@ ConsumerRecord(
 )
 """
 
-print(__name__)
 if __name__ == "__main__":
     print("check_consumer running\n")
 

@@ -22,8 +22,13 @@ def ___get_kafka_producer() -> KafkaProducer:
 if __name__ == "__main__":
     print("check_producer running\n")
     kafka_producer = ___get_kafka_producer()
-    for e in range(15):
-        data = {"produced_number": e}
-        kafka_producer.send("test", value=data)
+    kafka_topic_id = "topic.check_producer"
+
+    for i in range(15):
+        data = {"produced_number": i}
+        kafka_producer.send(
+            kafka_topic_id,
+            value=data
+        )
         print(f"sent: {data}")
         sleep(5)
