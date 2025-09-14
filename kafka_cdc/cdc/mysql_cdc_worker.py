@@ -2,7 +2,6 @@ import json
 import time
 import uuid
 import signal
-import logging
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
@@ -17,8 +16,7 @@ from pymysqlreplication.row_event import (
 
 from kafka import KafkaProducer
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from . import die, err, logger
 
 class MySQLCDCWorker:
     """

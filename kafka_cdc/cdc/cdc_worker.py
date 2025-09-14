@@ -1,8 +1,8 @@
 # python -m cdc.cdc_worker
 
-from . import die
 from typing import Dict, List, Optional, Any
 
+from . import die
 from config.mysql_config import MYSQLS
 from config.kafka_config import KAFKAS
 from .mysql_cdc_worker import MySQLCDCWorker
