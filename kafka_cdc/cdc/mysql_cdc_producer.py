@@ -142,21 +142,19 @@ class MySqlCDCProducer:
     def __start_binlog_monitoring(self) -> None:
         """Start MySQL binlog-based CDC monitoring"""
         try:
-            mysql_config = self.__mysql_config
-
             self.__binlog_stream = BinLogStreamReader(
-                connection_settings={
-                    "host": mysql_config["host"],
-                    "port": mysql_config["port"],
-                    "user": mysql_config["user"],
-                    "passwd": mysql_config["password"]
+                connection_settings = {
+                    "host": self.__mysql_config["host"],
+                    "port": self.__mysql_config["port"],
+                    "user": self.__mysql_config["user"],
+                    "passwd": self.__mysql_config["password"]
                 },
-                server_id=mysql_config.get("server_id", 100),
-                only_events=[DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent],
-                only_schemas=[mysql_config["database"]],
-                only_tables=self.__mysql_config.get("tables_to_monitor", []),
-                resume_stream=True,
-                blocking=True
+                server_id = self.__mysql_config.get("server_id", 100),
+                only_events = [DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent],
+                only_schemas = [self.__mysql_config["database"]],
+                only_tables = self.__mysql_config.get("tables_to_monitor", []),
+                resume_stream = True,
+                blocking = True
             )
 
             logger.info("Starting MySQL binlog monitoring...")
