@@ -41,7 +41,7 @@ def __get_separated_configs() -> Tuple[Dict[str, Any], Dict[str, Any]]:
     return mysql_cfg, kafka_cfg
 
 
-def __validate_mysql_config(mysql_config: Dict[str, Any]) -> None:
+def __die_if_wrong_mysql_config(mysql_config: Dict[str, Any]) -> None:
     """Validate MySQL configuration"""
     required_mysql_fields = ["host", "port", "user", "password", "database"]
     missing_fields = [field for field in required_mysql_fields if field not in mysql_config]
@@ -53,9 +53,8 @@ def __run_cdc_worker() -> None:
     """Main function"""
     mysql_config, kafka_config = __get_separated_configs()
     
-    __validate_mysql_config(mysql_config)
+    __die_if_wrong_mysql_config(mysql_config)
 
-    # Create CDC producer with separated configurations
     mysql_cdc_worker = MySqlCDCProducer(mysql_config, kafka_config)
 
     try:
