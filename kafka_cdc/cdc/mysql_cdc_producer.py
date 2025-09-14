@@ -4,7 +4,8 @@ import uuid
 import signal
 
 from datetime import datetime, timezone
-from typing import Dict, Optional, Any
+from typing import Dict, Any, Optional
+from typing import final
 
 import pymysql
 from pymysqlreplication import BinLogStreamReader
@@ -18,6 +19,7 @@ from kafka import KafkaProducer
 
 from config import die, err, logger
 
+@final
 class MySqlCDCProducer:
     """
     MySQL Change Data Capture Worker
