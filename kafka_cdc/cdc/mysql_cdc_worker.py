@@ -33,20 +33,20 @@ class MySQLCDCWorker:
         self.__binlog_stream = None
 
         # detecta el ctrl + c
-        signal.signal(signal.SIGINT, self.__shutdown_handler)
-        signal.signal(signal.SIGTERM, self.__shutdown_handler)
+        signal.signal(signal.SIGINT, self.__shutdown_listener)
+        signal.signal(signal.SIGTERM, self.__shutdown_listener)
         
-        self.__setup_kafka_producer()
+        self.__load_kafka_producer()
         self.__setup_mysql_connection()
 
 
-    def __shutdown_handler(self, signum, frame):
+    def __shutdown_listener(self, signum, frame):
         """Handle graceful shutdown"""
         logger.info(f"Received signal {signum}, initiating shutdown...")
         self.__cdc_is_running = False
 
 
-    def __setup_kafka_producer(self):
+    def __load_kafka_producer(self):
         """Setup Kafka producer"""
         try:
             self.__kafka_producer = KafkaProducer(

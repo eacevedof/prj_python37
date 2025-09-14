@@ -1,5 +1,2 @@
 kafka-python==2.2.15
 pymysql==1.1.2
-protobuf==6.32.1
-mysql-connector-python==9.4.0
-mysql-replication==1.0.9
