@@ -16,7 +16,7 @@ from pymysqlreplication.row_event import (
 
 from kafka import KafkaProducer
 
-from . import die, err, logger
+from config import die, err, logger
 
 class MySQLCDCWorker:
     """

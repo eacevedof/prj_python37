@@ -1,11 +1,8 @@
 # python -m checkers.check_mysql
 
-import logging
 import pymysql
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+from config import die, err, logger
 from config.mysql_config import MYSQLS
 
 def __test_mysql_connection(mysql_id: str ="my-1") -> None:

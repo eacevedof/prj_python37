@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Any
 
-from . import die
+from config import die
 from config.mysql_config import MYSQLS
 from config.kafka_config import KAFKAS
 from .mysql_cdc_worker import MySQLCDCWorker
