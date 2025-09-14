@@ -86,13 +86,13 @@ class MySQLCDCWorker:
 
     def __send_to_kafka(
         self,
-        topic: str,
-        key: str,
+        kafka_topic: str,
+        message_key: str,
         message: Dict[str, Any]
     ) -> None:
         """Send message to Kafka"""
         try:
-            future = self.__kafka_producer.send(topic, key=key, value=message)
+            future = self.__kafka_producer.send(kafka_topic, key=message_key, value=message)
             record_metadata = future.get(timeout=10)
             logger.debug(f"Message sent to {record_metadata.topic} partition {record_metadata.partition}")
         except Exception as e:
