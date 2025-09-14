@@ -29,7 +29,7 @@ class MySQLCDCWorker:
         # pprint(self.__kaf_my_config)
         self.__cdc_is_running = True
         self.__kafka_producer = None
-        self.__mysql_connection = None
+        self.__pymysql = None
         self.__binlog_stream = None
 
         # detecta el ctrl + c
@@ -37,7 +37,7 @@ class MySQLCDCWorker:
         signal.signal(signal.SIGTERM, self.__shutdown_listener)
         
         self.__load_kafka_producer()
-        self.__setup_mysql_connection()
+        self.__load_pymysql()
 
 
     def __shutdown_listener(self, signum, frame):
@@ -65,11 +65,11 @@ class MySQLCDCWorker:
             raise
 
 
-    def __setup_mysql_connection(self):
+    def __load_pymysql(self):
         """Setup MySQL connection"""
         try:
             mysql_config = self.__kaf_my_config["mysql"]
-            self.__mysql_connection = pymysql.connect(
+            self.__pymysql = pymysql.connect(
                 host=mysql_config["host"],
                 port=mysql_config["port"],
                 database=mysql_config["database"],
@@ -163,14 +163,14 @@ class MySQLCDCWorker:
         if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
             return
 
-        topic = f"mysql.cdc.{table_name}"
+        kafka_topic = f"mysql.cdc.{table_name}"
 
         if isinstance(binlog_event, WriteRowsEvent):
             # INSERT
             for row in binlog_event.rows:
                 event = self.__create_change_event(table_name, "INSERT", row["values"])
-                key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(topic, key, event)
+                kafka_key = self.__get_primary_key(table_name, row["values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, event)
                 logger.info(f"INSERT event sent for table {table_name}")
 
         elif isinstance(binlog_event, UpdateRowsEvent):
@@ -181,16 +181,16 @@ class MySQLCDCWorker:
                     row["after_values"],
                     row["before_values"]
                 )
-                key = self.__get_primary_key(table_name, row["after_values"])
-                self.__send_to_kafka(topic, key, event)
+                kafka_key = self.__get_primary_key(table_name, row["after_values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, event)
                 logger.info(f"UPDATE event sent for table {table_name}")
 
         elif isinstance(binlog_event, DeleteRowsEvent):
             # DELETE
             for row in binlog_event.rows:
                 event = self.__create_change_event(table_name, "DELETE", row["values"])
-                key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(topic, key, event)
+                kafka_key = self.__get_primary_key(table_name, row["values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, event)
                 logger.info(f"DELETE event sent for table {table_name}")
 
 
@@ -229,7 +229,7 @@ class MySQLCDCWorker:
         """Poll a specific table for changes"""
         try:
             # pprint(pymysql.cursors.DictCursor)
-            with self.__mysql_connection.cursor(pymysql.cursors.DictCursor) as cursor:
+            with self.__pymysql.cursor(pymysql.cursors.DictCursor) as cursor:
                 last_timestamp = last_timestamps.get(table_name)
                 if last_timestamp:
                     query = f"""
@@ -316,8 +316,8 @@ class MySQLCDCWorker:
         if self.__binlog_stream:
             self.__binlog_stream.close()
         
-        if self.__mysql_connection:
-            self.__mysql_connection.close()
+        if self.__pymysql:
+            self.__pymysql.close()
         
         if self.__kafka_producer:
             self.__kafka_producer.flush()
