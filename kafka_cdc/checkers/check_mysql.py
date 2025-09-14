@@ -8,20 +8,20 @@ logger = logging.getLogger(__name__)
 
 from config.mysql_config import MYSQLS
 
-def __test_mysql_connection(mysql_id="my-1"):
+def __test_mysql_connection(mysql_id: str ="my-1") -> None:
     """Test MySQL connection using MYSQLS configuration"""
     try:
         mysql_config = MYSQLS.get(mysql_id)
         if not mysql_config:
             logger.error(f"MySQL configuration \"{mysql_id}\" not found")
-            return False
+            return
 
         print(f"Testing connection to MySQL: {mysql_id}")
         print(f"Host: {mysql_config["host"]}:{mysql_config["port"]}")
         print(f"Database: {mysql_config["database"]}")
         print(f"User: {mysql_config["user"]}")
 
-        conn = pymysql.connect(
+        pymysql_cnx = pymysql.connect(
             host=mysql_config["host"],
             port=mysql_config["port"],
             user=mysql_config["user"],
@@ -30,7 +30,7 @@ def __test_mysql_connection(mysql_id="my-1"):
             charset="utf8mb4"
         )
 
-        with conn.cursor() as cursor:
+        with pymysql_cnx.cursor() as cursor:
             # Test basic connection
             cursor.execute("SELECT VERSION()")
             version = cursor.fetchone()
@@ -61,16 +61,14 @@ def __test_mysql_connection(mysql_id="my-1"):
                     else:
                         print(f"✗ Table \"{table_name}\" does NOT exist")
 
-        conn.close()
+        pymysql_cnx.close()
         print("\n✅ MySQL connection test successful!")
-        return True
-
     except Exception as e:
         logger.error(f"MySQL connection failed: {e}")
         print(f"❌ MySQL connection test failed: {e}")
-        return False
 
-def __show_mysql_configs():
+
+def __show_mysql_configs() -> None:
     """Show all available MySQL configurations"""
     print("Available MySQL configurations:")
     print("=" * 50)
