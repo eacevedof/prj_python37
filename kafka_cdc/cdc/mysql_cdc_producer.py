@@ -139,7 +139,7 @@ class MySqlCDCProducer:
         }
 
 
-    def __start_binlog_monitoring(self) -> None:
+    def __listen_mysql_binlog(self) -> None:
         """Start MySQL binlog-based CDC monitoring"""
         try:
             self.__binlog_stream = BinLogStreamReader(
@@ -167,7 +167,7 @@ class MySqlCDCProducer:
 
         except Exception as e:
             err(f"Binlog monitoring error: {e}")
-            self.__start_polling_monitoring()
+            self.__polling_mysql_changes()
         finally:
             if self.__binlog_stream:
                 self.__binlog_stream.close()
@@ -211,7 +211,7 @@ class MySqlCDCProducer:
                 logger.info(f"DELETE event sent for table {table_name}")
 
 
-    def __start_polling_monitoring(self) -> None:
+    def __polling_mysql_changes(self) -> None:
         """Start polling-based CDC monitoring"""
         logger.info("Starting MySQL polling monitoring...")
 
@@ -307,10 +307,10 @@ class MySqlCDCProducer:
             # Try binlog monitoring first
             if self.__mysql_config.get("use_binlog", True):
                 logger.info("Attempting binlog-based monitoring...")
-                self.__start_binlog_monitoring()
+                self.__listen_mysql_binlog()
             else:
                 logger.info("Using polling-based monitoring...")
-                self.__start_polling_monitoring()
+                self.__polling_mysql_changes()
 
         except KeyboardInterrupt:
             logger.info("Shutdown requested by user")
