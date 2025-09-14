@@ -167,7 +167,7 @@ class MySQLCDCWorker:
         if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
             return
 
-        kafka_topic = f"mysql.cdc.{self.__kaf_my_config["mysql"]["database"]}.{table_name}"
+        kafka_topic = f"mysql.cdc.{self.__kaf_my_config["mysql"]["database"]}"
 
         if isinstance(binlog_event, WriteRowsEvent):
             # INSERT
