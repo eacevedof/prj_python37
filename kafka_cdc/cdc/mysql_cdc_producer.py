@@ -250,6 +250,12 @@ class MySqlCDCProducer:
         """Poll a specific table for changes"""
         try:
             with self.__pymysql.cursor(pymysql.cursors.DictCursor) as cursor:
+                query = f"""
+                SELECT * 
+                FROM {table_name} 
+                WHERE {timestamp_column} > DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+                ORDER BY {timestamp_column}
+                """
                 last_timestamp = last_timestamps.get(table_name)
                 if last_timestamp:
                     query = f"""
@@ -260,13 +266,6 @@ class MySqlCDCProducer:
                     """
                     cursor.execute(query, (last_timestamp,))
                 else:
-                    # First run - get recent records (last 1 minute)
-                    query = f"""
-                    SELECT * 
-                    FROM {table_name} 
-                    WHERE {timestamp_column} > DATE_SUB(NOW(), INTERVAL 1 MINUTE)
-                    ORDER BY {timestamp_column}
-                    """
                     cursor.execute(query)
 
                 changed_rows = cursor.fetchall()
@@ -276,9 +275,9 @@ class MySqlCDCProducer:
                 for changed_row in changed_rows:
                     kafka_topic = self.__mysql_config.get("kafka").get("topic")
                     kafka_key = self.__get_primary_key(table_name, dict(changed_row))
-                    kafka_event = self.__create_change_event(table_name, "UPSERT", dict(changed_row))
+                    upsert_event = self.__create_change_event(table_name, "UPSERT", dict(changed_row))
 
-                    if self.__send_to_kafka(kafka_topic, kafka_key, kafka_event):
+                    if self.__send_to_kafka(kafka_topic, kafka_key, upsert_event):
                         current_timestamp = changed_row.get(timestamp_column)
                         if current_timestamp:
                             last_timestamps[table_name] = current_timestamp
