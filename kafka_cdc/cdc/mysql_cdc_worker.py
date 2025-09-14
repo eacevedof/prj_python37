@@ -160,7 +160,6 @@ class MySQLCDCWorker:
         """Process binlog event and send to Kafka"""
         table_name = binlog_event.table
 
-        # Skip tables not in monitoring list if specified
         if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
             return
 
@@ -285,23 +284,22 @@ class MySQLCDCWorker:
             if value is not None:
                 return str(value)
 
-        # Fallback
         return str(hash(str(row_data)))
 
 
     def start(self) -> None:
         """Start CDC monitoring"""
         logger.info("Starting MySQL CDC Worker...")
-        
+
         try:
             # Try binlog monitoring first
-            if self.__kaf_my_config.get('use_binlog', True):
+            if self.__kaf_my_config.get("use_binlog", True):
                 logger.info("Attempting binlog-based monitoring...")
                 self.__start_binlog_monitoring()
             else:
                 logger.info("Using polling-based monitoring...")
                 self.__start_polling_monitoring()
-                
+
         except KeyboardInterrupt:
             logger.info("Shutdown requested by user")
         except Exception as e:
