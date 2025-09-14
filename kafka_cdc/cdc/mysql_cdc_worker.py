@@ -68,14 +68,14 @@ class MySQLCDCWorker:
     def __setup_mysql_connection(self):
         """Setup MySQL connection"""
         try:
-            mysql_config = self.__kaf_my_config['mysql']
+            mysql_config = self.__kaf_my_config["mysql"]
             self.__mysql_connection = pymysql.connect(
-                host=mysql_config['host'],
-                port=mysql_config['port'],
-                database=mysql_config['database'],
-                user=mysql_config['user'],
-                password=mysql_config['password'],
-                charset='utf8mb4',
+                host=mysql_config["host"],
+                port=mysql_config["port"],
+                database=mysql_config["database"],
+                user=mysql_config["user"],
+                password=mysql_config["password"],
+                charset="utf8mb4",
                 autocommit=True
             )
             logger.info(f"MySQL connection established to {mysql_config['host']}:{mysql_config['port']}")
