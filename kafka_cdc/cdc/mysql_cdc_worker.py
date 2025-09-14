@@ -270,16 +270,14 @@ class MySQLCDCWorker:
             err(f"Error polling table {table_name}: {e}")
 
 
-    def __get_primary_key(self, table_name: str, row_data: Dict[str, Any]) -> str:
+    @staticmethod
+    def __get_primary_key(table_name: str, row_data: Dict[str, Any]) -> str:
         """Extract primary key from row data"""
-        # Try common primary key column names
         pk_candidates = ["id", "user_id", "primary_key", f"{table_name}_id"]
-
         for pk_col in pk_candidates:
             if pk_col in row_data and row_data[pk_col] is not None:
                 return str(row_data[pk_col])
 
-        # If no obvious PK, use first column with a value
         for col, value in row_data.items():
             if value is not None:
                 return str(value)

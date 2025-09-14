@@ -46,29 +46,7 @@ def load_default_config():
         'topic_prefix': 'mysql.cdc'
     }
 
-def test_mysql_connection(config):
-    """Test MySQL connection before starting worker"""
-    try:
-        import pymysql
-        conn = pymysql.connect(
-            host=config['mysql']['host'],
-            port=config['mysql']['port'],
-            user=config['mysql']['user'],
-            password=config['mysql']['password'],
-            database=config['mysql']['database']
-        )
-        
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT VERSION()")
-            version = cursor.fetchone()
-            logger.info(f"MySQL connection successful. Version: {version[0]}")
-        
-        conn.close()
-        return True
-        
-    except Exception as e:
-        logger.error(f"MySQL connection failed: {e}")
-        return False
+
 
 def main():
     """Main function to start CDC worker"""
