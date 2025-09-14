@@ -207,7 +207,7 @@ class MySQLCDCWorker:
         while self.__cdc_is_running:
             try:
                 for table_name, timestamp_column in tables_config.items():
-                    self.__poll_table_changes(
+                    self.__listen_mysql_changes(
                         table_name,
                         timestamp_column,
                         last_timestamps
@@ -220,7 +220,7 @@ class MySQLCDCWorker:
                 time.sleep(5)
 
 
-    def __poll_table_changes(
+    def __listen_mysql_changes(
         self,
         table_name: str,
         timestamp_column: str,
