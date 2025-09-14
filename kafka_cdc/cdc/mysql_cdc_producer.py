@@ -321,7 +321,7 @@ class MySqlCDCProducer:
 
     def stop(self) -> None:
         """Stop CDC monitoring and cleanup resources"""
-        logger.info("Stopping MySQL CDC Worker...")
+        logger.info("Stopping MySQL CDC producer...")
         self.__cdc_is_running = False
         
         if self.__binlog_stream:
@@ -334,6 +334,6 @@ class MySqlCDCProducer:
             self.__kafka_producer.flush()
             self.__kafka_producer.close()
         
-        logger.info("MySQL CDC Worker stopped")
+        logger.info("MySQL CDC producer stopped")
 
 
