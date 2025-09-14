@@ -11,29 +11,28 @@ def __get_separated_configs() -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Load and separate MySQL and Kafka configurations"""
     mysql_config = MYSQLS.get("my-1")
     if not mysql_config:
-        die("MySQL configuration 'my-1' not found")
+        die("MySQL configuration \"my-1\" not found")
         return {}, {}
 
     kafka_config = KAFKAS.get("kafka-1")
     if not kafka_config:
-        die("Kafka configuration 'kafka-1' not found")
+        die("Kafka configuration \"kafka-1\" not found")
         return {}, {}
 
-    # Build MySQL configuration
     mysql_cfg = {
+        "server_id": mysql_config.get("id"),
         "host": mysql_config.get("host"),
         "port": mysql_config.get("port"),
         "database": mysql_config.get("database"),
         "user": mysql_config.get("user"),
         "password": mysql_config.get("password"),
-        "server_id": mysql_config.get("id"),
         "tables_to_monitor": mysql_config.get("tables_to_monitor", {}),
         "use_binlog": mysql_config.get("use_binlog"),
         "polling_interval": mysql_config.get("polling_interval"),
     }
 
     # Build Kafka configuration
-    kafka_socket = f"{kafka_config.get('host')}:{kafka_config.get('port')}"
+    kafka_socket = f"{kafka_config.get("host")}:{kafka_config.get("port")}"
     kafka_cfg = {
         "bootstrap_servers": [kafka_socket]
     }
