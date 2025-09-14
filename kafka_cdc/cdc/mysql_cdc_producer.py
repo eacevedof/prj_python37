@@ -27,9 +27,9 @@ class MySqlCDCProducer:
     """
     
     def __init__(
-            self,
-            mysql_config: Dict[str, Any],
-            kafka_config: Dict[str, Any]
+        self,
+        mysql_config: Dict[str, Any],
+        kafka_config: Dict[str, Any]
     ):
         self.__mysql_config = mysql_config
         self.__kafka_config = kafka_config
