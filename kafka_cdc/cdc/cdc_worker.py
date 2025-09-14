@@ -1,6 +1,6 @@
 # python -m cdc.cdc_worker
 
-from typing import Dict, List, Optional, Any
+from typing import Dict, Any
 
 from config import die
 from config.mysql_config import MYSQLS
