@@ -25,9 +25,9 @@ class MySQLCDCWorker:
     """
     
     def __init__(self, config: Dict[str, Any]):
-        self.config = config
-        # pprint(self.config)
-        self.running = True
+        self.__kaf_my_config = config
+        # pprint(self.__kaf_my_config)
+        self.__cdc_is_running = True
         self.__kafka_producer = None
         self.__mysql_connection = None
         self.__binlog_stream = None
@@ -43,14 +43,14 @@ class MySQLCDCWorker:
     def __shutdown_handler(self, signum, frame):
         """Handle graceful shutdown"""
         logger.info(f"Received signal {signum}, initiating shutdown...")
-        self.running = False
+        self.__cdc_is_running = False
 
 
     def __setup_kafka_producer(self):
         """Setup Kafka producer"""
         try:
             self.__kafka_producer = KafkaProducer(
-                bootstrap_servers=self.config['kafka']['bootstrap_servers'],
+                bootstrap_servers=self.__kaf_my_config['kafka']['bootstrap_servers'],
                 value_serializer=lambda v: json.dumps(v, default=str).encode('utf-8'),
                 key_serializer=lambda k: str(k).encode('utf-8') if k else None,
                 acks='all',
@@ -68,7 +68,7 @@ class MySQLCDCWorker:
     def __setup_mysql_connection(self):
         """Setup MySQL connection"""
         try:
-            mysql_config = self.config['mysql']
+            mysql_config = self.__kaf_my_config['mysql']
             self.__mysql_connection = pymysql.connect(
                 host=mysql_config['host'],
                 port=mysql_config['port'],
@@ -111,7 +111,7 @@ class MySQLCDCWorker:
             "event_id": str(uuid.uuid4()),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "source": "mysql-cdc-worker",
-            "database": self.config["mysql"]["database"],
+            "database": self.__kaf_my_config["mysql"]["database"],
             "table": table,
             "operation": operation,  # INSERT, UPDATE, DELETE
             "data": data,
@@ -123,7 +123,7 @@ class MySQLCDCWorker:
     def __start_binlog_monitoring(self) -> None:
         """Start MySQL binlog-based CDC monitoring"""
         try:
-            mysql_config = self.config["mysql"]
+            mysql_config = self.__kaf_my_config["mysql"]
 
             self.__binlog_stream = BinLogStreamReader(
                 connection_settings={
@@ -135,7 +135,7 @@ class MySQLCDCWorker:
                 server_id=mysql_config.get("server_id", 100),
                 only_events=[DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent],
                 only_schemas=[mysql_config["database"]],
-                only_tables=self.config.get("tables_to_monitor", []),
+                only_tables=self.__kaf_my_config.get("tables_to_monitor", []),
                 resume_stream=True,
                 blocking=True
             )
@@ -143,7 +143,7 @@ class MySQLCDCWorker:
             logger.info("Starting MySQL binlog monitoring...")
 
             for binlog_event in self.__binlog_stream:
-                if not self.running:
+                if not self.__cdc_is_running:
                     break
 
                 self.__process_binlog_event(binlog_event)
@@ -161,7 +161,7 @@ class MySQLCDCWorker:
         table_name = binlog_event.table
 
         # Skip tables not in monitoring list if specified
-        if self.config.get("tables_to_monitor") and table_name not in self.config["tables_to_monitor"]:
+        if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
             return
 
         topic = f"mysql.cdc.{table_name}"
@@ -199,13 +199,13 @@ class MySQLCDCWorker:
         """Start polling-based CDC monitoring"""
         logger.info("Starting MySQL polling monitoring...")
 
-        tables_config = self.config.get('tables_to_monitor', {})
+        tables_config = self.__kaf_my_config.get('tables_to_monitor', {})
         if isinstance(tables_config, list):
             tables_config = {table: "updated_at" for table in tables_config}
 
         last_timestamps = {}
 
-        while self.running:
+        while self.__cdc_is_running:
             try:
                 for table_name, timestamp_column in tables_config.items():
                     self.__poll_table_changes(
@@ -214,7 +214,7 @@ class MySQLCDCWorker:
                         last_timestamps
                     )
 
-                time.sleep(self.config.get("polling_interval", 30))
+                time.sleep(self.__kaf_my_config.get("polling_interval", 30))
 
             except Exception as e:
                 err(f"Polling monitoring error: {e}")
@@ -295,7 +295,7 @@ class MySQLCDCWorker:
         
         try:
             # Try binlog monitoring first
-            if self.config.get('use_binlog', True):
+            if self.__kaf_my_config.get('use_binlog', True):
                 logger.info("Attempting binlog-based monitoring...")
                 self.__start_binlog_monitoring()
             else:
@@ -313,7 +313,7 @@ class MySQLCDCWorker:
     def stop(self) -> None:
         """Stop CDC monitoring and cleanup resources"""
         logger.info("Stopping MySQL CDC Worker...")
-        self.running = False
+        self.__cdc_is_running = False
         
         if self.__binlog_stream:
             self.__binlog_stream.close()
