@@ -46,6 +46,15 @@ class MySqlCDCProducer:
         self.__load_pymysql()
 
 
+    @staticmethod
+    def get_instance(
+        mysql_config: Dict[str, Any],
+        kafka_config: Dict[str, Any]
+    ) -> "MySqlCDCProducer":
+        """Factory method to create MySqlCDCProducer instance"""
+        return MySqlCDCProducer(mysql_config, kafka_config)
+
+
     def __shutdown_listener(self, signum, frame):
         """Handle graceful shutdown"""
         logger.info(f"Received signal {signum}, initiating shutdown...")

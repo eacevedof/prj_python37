@@ -55,14 +55,17 @@ def __run_cdc_worker() -> None:
     
     __die_if_wrong_mysql_config(mysql_config)
 
-    mysql_cdc_worker = MySqlCDCProducer(mysql_config, kafka_config)
+    mysql_cdc_producer = MySqlCDCProducer.get_instance(
+        mysql_config,
+        kafka_config
+    )
 
     try:
-        mysql_cdc_worker.start()
+        mysql_cdc_producer.start()
     except Exception as e:
         die(f"Failed to start worker: {e}")
     finally:
-        mysql_cdc_worker.stop()
+        mysql_cdc_producer.stop()
 
 
 if __name__ == "__main__":
