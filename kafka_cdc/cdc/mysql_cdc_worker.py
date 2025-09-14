@@ -106,7 +106,7 @@ class MySQLCDCWorker:
     def __create_change_event(
         self,
         table_name: str,
-        operation: str,
+        cud_operation: str,
         new_data: Dict[str, Any],
         old_data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
@@ -117,7 +117,7 @@ class MySQLCDCWorker:
             "source": "mysql-cdc-worker",
             "database": self.__kaf_my_config["mysql"]["database"],
             "table": table_name,
-            "operation": operation,  # INSERT, UPDATE, DELETE
+            "operation": cud_operation,  # INSERT, UPDATE, DELETE
             "data": new_data,
             "old_data": old_data,
             "version": "1.0"
