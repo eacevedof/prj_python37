@@ -92,7 +92,11 @@ class MySQLCDCWorker:
     ) -> None:
         """Send message to Kafka"""
         try:
-            future = self.__kafka_producer.send(kafka_topic, key=message_key, value=message)
+            future = self.__kafka_producer.send(
+                kafka_topic,
+                key=message_key,
+                value=message
+            )
             record_metadata = future.get(timeout=10)
             logger.debug(f"Message sent to {record_metadata.topic} partition {record_metadata.partition}")
         except Exception as e:
@@ -101,9 +105,9 @@ class MySQLCDCWorker:
 
     def __create_change_event(
         self,
-        table: str,
+        table_name: str,
         operation: str,
-        data: Dict[str, Any],
+        new_data: Dict[str, Any],
         old_data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Create standardized change event"""
@@ -112,9 +116,9 @@ class MySQLCDCWorker:
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "source": "mysql-cdc-worker",
             "database": self.__kaf_my_config["mysql"]["database"],
-            "table": table,
+            "table": table_name,
             "operation": operation,  # INSERT, UPDATE, DELETE
-            "data": data,
+            "data": new_data,
             "old_data": old_data,
             "version": "1.0"
         }
