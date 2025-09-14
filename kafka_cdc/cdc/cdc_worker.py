@@ -7,6 +7,7 @@ from config.mysql_config import MYSQLS
 from config.kafka_config import KAFKAS
 from .mysql_cdc_producer import MySqlCDCProducer
 
+
 def __get_separated_configs() -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Load and separate MySQL and Kafka configurations"""
     mysql_config = MYSQLS.get("my-1")
