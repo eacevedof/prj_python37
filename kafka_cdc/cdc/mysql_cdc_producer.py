@@ -163,7 +163,7 @@ class MySqlCDCProducer:
                 if not self.__cdc_is_running:
                     break
 
-                self.__process_binlog_event(binlog_event)
+                self.__binlog_event_to_kafka(binlog_event)
 
         except Exception as e:
             err(f"Binlog monitoring error: {e}")
@@ -173,7 +173,7 @@ class MySqlCDCProducer:
                 self.__binlog_stream.close()
 
 
-    def __process_binlog_event(self, binlog_event: object) -> None:
+    def __binlog_event_to_kafka(self, binlog_event: object) -> None:
         """Process binlog event and send to Kafka"""
         table_name = binlog_event.table
 
@@ -183,7 +183,6 @@ class MySqlCDCProducer:
         kafka_topic = self.__mysql_config.get("kafka").get("topic")
 
         if isinstance(binlog_event, WriteRowsEvent):
-            # INSERT
             for row_insert in binlog_event.rows:
                 kafka_key = self.__get_primary_key(table_name, row_insert["values"])
                 insert_event = self.__create_change_event(table_name, "INSERT", row_insert["values"])
@@ -205,7 +204,6 @@ class MySqlCDCProducer:
             return
 
         if isinstance(binlog_event, DeleteRowsEvent):
-            # DELETE
             for row_delete in binlog_event.rows:
                 delete_event = self.__create_change_event(table_name, "DELETE", row_delete["values"])
                 kafka_key = self.__get_primary_key(table_name, row_delete["values"])
