@@ -160,41 +160,44 @@ class MySQLCDCWorker:
                 self.__binlog_stream.close()
 
 
-    def __process_binlog_event(self, binlog_event):
+    def __process_binlog_event(self, binlog_event: object) -> None:
         """Process binlog event and send to Kafka"""
         table_name = binlog_event.table
 
         if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
             return
 
-        kafka_topic = f"mysql.cdc.{table_name}"
+        kafka_topic = f"mysql.cdc.{self.__kaf_my_config["mysql"]["database"]}.{table_name}"
 
         if isinstance(binlog_event, WriteRowsEvent):
             # INSERT
             for row in binlog_event.rows:
-                event = self.__create_change_event(table_name, "INSERT", row["values"])
+                change_event = self.__create_change_event(table_name, "INSERT", row["values"])
                 kafka_key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, event)
+                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
                 logger.info(f"INSERT event sent for table {table_name}")
 
-        elif isinstance(binlog_event, UpdateRowsEvent):
+            return
+
+        if isinstance(binlog_event, UpdateRowsEvent):
             # UPDATE
             for row in binlog_event.rows:
-                event = self.__create_change_event(
+                change_event = self.__create_change_event(
                     table_name, "UPDATE",
                     row["after_values"],
                     row["before_values"]
                 )
                 kafka_key = self.__get_primary_key(table_name, row["after_values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, event)
+                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
                 logger.info(f"UPDATE event sent for table {table_name}")
+            return
 
-        elif isinstance(binlog_event, DeleteRowsEvent):
+        if isinstance(binlog_event, DeleteRowsEvent):
             # DELETE
             for row in binlog_event.rows:
-                event = self.__create_change_event(table_name, "DELETE", row["values"])
+                change_event = self.__create_change_event(table_name, "DELETE", row["values"])
                 kafka_key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, event)
+                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
                 logger.info(f"DELETE event sent for table {table_name}")
 
 

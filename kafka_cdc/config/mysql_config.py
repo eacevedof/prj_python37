@@ -7,7 +7,7 @@ MYSQLS = {
         "user": "root",
         "password": "root",
 
-        "use_binlog": False,
+        "use_binlog": True,
         "polling_interval": 30,
         "topic_prefix": "mysql.cdc",
 
