@@ -55,13 +55,13 @@ class MySqlCDCProducer:
         return MySqlCDCProducer(mysql_config, kafka_config)
 
 
-    def __shutdown_listener(self, signum, frame):
+    def __shutdown_listener(self, signum, frame) -> None:
         """Handle graceful shutdown"""
         logger.info(f"Received signal {signum}, initiating shutdown...")
         self.__cdc_is_running = False
 
 
-    def __load_kafka_producer(self):
+    def __load_kafka_producer(self) -> None:
         """Setup Kafka producer"""
         try:
             self.__kafka_producer = KafkaProducer(
@@ -80,7 +80,7 @@ class MySqlCDCProducer:
             raise e
 
 
-    def __load_pymysql(self):
+    def __load_pymysql(self) -> None:
         """Setup MySQL connection"""
         try:
             mysql_config = self.__mysql_config
@@ -96,7 +96,7 @@ class MySqlCDCProducer:
             logger.info(f"MySQL connection established to {mysql_config['host']}:{mysql_config['port']}")
         except Exception as e:
             die(f"Failed to connect to MySQL: {e}")
-            raise
+            raise e
 
 
     def __send_to_kafka(
@@ -215,7 +215,7 @@ class MySqlCDCProducer:
                 logger.info(f"DELETE event sent for table {table_name}")
 
 
-    def __start_polling_monitoring(self):
+    def __start_polling_monitoring(self) -> None:
         """Start polling-based CDC monitoring"""
         logger.info("Starting MySQL polling monitoring...")
 
