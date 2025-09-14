@@ -5,7 +5,7 @@ import pymysql
 from config import die, err, logger
 from config.mysql_config import MYSQLS
 
-def __test_mysql_connection(mysql_id: str ="my-1") -> None:
+def __check_mysql_by_mysql_id(mysql_id: str = "my-1") -> None:
     """Test MySQL connection using MYSQLS configuration"""
     try:
         mysql_config = MYSQLS.get(mysql_id)
@@ -77,6 +77,7 @@ def __show_mysql_configs() -> None:
     """Show all available MySQL configurations"""
     print("Available MySQL configurations:")
     print("=" * 50)
+
     for mysql_id, config in MYSQLS.items():
         print(f" - \nID: {mysql_id}")
         print(f" -   Host: {config["host"]}:{config["port"]}")
@@ -91,10 +92,9 @@ if __name__ == "__main__":
     
     __show_mysql_configs()
     print("\n" + "=" * 50)
-    
-    # Test all MySQL configurations
+
     for mysql_id in MYSQLS.keys():
         print(f" - \nTesting MySQL configuration: {mysql_id}")
-        __test_mysql_connection(mysql_id)
+        __check_mysql_by_mysql_id(mysql_id)
         print("-" * 30)
 
