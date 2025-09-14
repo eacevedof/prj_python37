@@ -24,15 +24,15 @@ class MySQLCDCWorker:
     Monitors MySQL database changes and publishes them to Kafka
     """
     
-    def __init__(self, config: Dict[str, Any]):
-        self.__kaf_my_config = config
+    def __init__(self, kaf_my_config: Dict[str, Any]):
+        self.__kaf_my_config = kaf_my_config
         # pprint(self.__kaf_my_config)
         self.__cdc_is_running = True
         self.__kafka_producer = None
         self.__mysql_connection = None
         self.__binlog_stream = None
-        
-        # Setup graceful shutdown
+
+        # detecta el ctrl + c
         signal.signal(signal.SIGINT, self.__shutdown_handler)
         signal.signal(signal.SIGTERM, self.__shutdown_handler)
         
