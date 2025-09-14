@@ -167,7 +167,6 @@ class MySqlCDCProducer:
 
         except Exception as e:
             err(f"Binlog monitoring error: {e}")
-            self.__polling_mysql_changes()
         finally:
             if self.__binlog_stream:
                 self.__binlog_stream.close()
@@ -304,18 +303,18 @@ class MySqlCDCProducer:
         logger.info("Starting MySQL CDC Worker...")
 
         try:
-            # Try binlog monitoring first
             if self.__mysql_config.get("use_binlog", True):
                 logger.info("Attempting binlog-based monitoring...")
                 self.__listen_mysql_binlog()
-            else:
-                logger.info("Using polling-based monitoring...")
-                self.__polling_mysql_changes()
+                return
+
+            logger.info("Using polling-based monitoring...")
+            self.__polling_mysql_changes()
 
         except KeyboardInterrupt:
             logger.info("Shutdown requested by user")
         except Exception as e:
-            die(f"CDC Worker error: {e}")
+            err(f"CDC Worker error: {e}")
         finally:
             self.stop()
 
