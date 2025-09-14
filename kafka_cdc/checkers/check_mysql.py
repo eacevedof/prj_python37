@@ -48,19 +48,23 @@ def __test_mysql_connection(mysql_id: str ="my-1") -> None:
             print("\nChecking monitored tables:")
             for table_name, timestamp_col in tables_to_monitor.items():
                 pymy_cursor.execute("SHOW TABLES LIKE %s", (table_name,))
-                if pymy_cursor.fetchone():
-                    pymy_cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
-                    count = pymy_cursor.fetchone()[0]
-                    print(f" - ✓ Table \"{table_name}\" exists with {count} records")
 
-                    # Check timestamp column
-                    pymy_cursor.execute(f"SHOW COLUMNS FROM {table_name} LIKE %s", (timestamp_col,))
-                    if pymy_cursor.fetchone():
-                        print(f" -   ✓ Timestamp column \"{timestamp_col}\" exists")
-                    else:
-                        print(f" -   ✗ Timestamp column \"{timestamp_col}\" NOT found")
-                else:
+                if not pymy_cursor.fetchone():
                     print(f" - ✗ Table \"{table_name}\" does NOT exist")
+                    continue
+
+                pymy_cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+                count = pymy_cursor.fetchone()[0]
+                print(f" - ✓ Table \"{table_name}\" exists with {count} records")
+
+                pymy_cursor.execute(f"SHOW COLUMNS FROM {table_name} LIKE %s", (timestamp_col,))
+                if not pymy_cursor.fetchone():
+                    print(f" - ✗ Timestamp column \"{timestamp_col}\" NOT found")
+                    continue
+
+                print(f" - ✓ Timestamp column \"{timestamp_col}\" exists")
+
+            # end for tables_to_monitor
 
         pymysql_cnx.close()
         print("\n✅ MySQL connection test successful!")
