@@ -114,7 +114,7 @@ class MySqlCDCProducer:
         return {
             "event_id": str(uuid.uuid4()),
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "source": "mysql-cdc-worker",
+            "source": "mysql-cdc-producer",
             "database": self.__kaf_my_config["mysql"]["database"],
             "table": table_name,
             "operation": cud_operation,  # INSERT, UPDATE, DELETE
