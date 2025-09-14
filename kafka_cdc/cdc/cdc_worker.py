@@ -42,14 +42,14 @@ def __run_worker() -> None:
         die(f"Missing required MySQL configuration fields: {missing_fields}")
         return
 
-    cdc_worker = MySQLCDCWorker(kafka_and_mysql_config)
+    mysql_cdc_worker = MySQLCDCWorker(kafka_and_mysql_config)
 
     try:
-        cdc_worker.start()
+        mysql_cdc_worker.start()
     except Exception as e:
         die(f"Failed to start worker: {e}")
     finally:
-        cdc_worker.stop()
+        mysql_cdc_worker.stop()
 
 
 if __name__ == "__main__":
