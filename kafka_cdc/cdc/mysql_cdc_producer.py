@@ -18,7 +18,7 @@ from kafka import KafkaProducer
 
 from config import die, err, logger
 
-class MySQLCDCWorker:
+class MySqlCDCProducer:
     """
     MySQL Change Data Capture Worker
     Monitors MySQL database changes and publishes them to Kafka

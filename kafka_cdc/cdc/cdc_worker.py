@@ -5,7 +5,7 @@ from typing import Dict, Any
 from config import die
 from config.mysql_config import MYSQLS
 from config.kafka_config import KAFKAS
-from .mysql_cdc_worker import MySQLCDCWorker
+from .mysql_cdc_producer import MySqlCDCProducer
 
 def __get_kafka_and_mysql_config() -> Dict[str, Any]:
     """Load configuration"""
@@ -42,7 +42,7 @@ def __run_cdc_worker() -> None:
         die(f"Missing required MySQL configuration fields: {missing_fields}")
         return
 
-    mysql_cdc_worker = MySQLCDCWorker(kafka_and_mysql_config)
+    mysql_cdc_worker = MySqlCDCProducer(kafka_and_mysql_config)
 
     try:
         mysql_cdc_worker.start()
