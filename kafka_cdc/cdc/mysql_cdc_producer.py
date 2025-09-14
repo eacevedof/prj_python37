@@ -26,9 +26,13 @@ class MySqlCDCProducer:
     Monitors MySQL database changes and publishes them to Kafka
     """
     
-    def __init__(self, kaf_my_config: Dict[str, Any]):
-        self.__kaf_my_config = kaf_my_config
-        # pprint(self.__kaf_my_config)
+    def __init__(
+            self,
+            mysql_config: Dict[str, Any],
+            kafka_config: Dict[str, Any]
+    ):
+        self.__mysql_config = mysql_config
+        self.__kafka_config = kafka_config
         self.__cdc_is_running = True
         self.__kafka_producer = None
         self.__pymysql = None
