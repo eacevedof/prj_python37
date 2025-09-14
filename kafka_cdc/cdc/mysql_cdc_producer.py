@@ -56,7 +56,7 @@ class MySqlCDCProducer:
         """Setup Kafka producer"""
         try:
             self.__kafka_producer = KafkaProducer(
-                bootstrap_servers=self.__kaf_my_config["kafka"]["bootstrap_servers"],
+                bootstrap_servers=self.__kafka_config["bootstrap_servers"],
                 value_serializer=lambda v: json.dumps(v, default=str).encode("utf-8"),
                 key_serializer=lambda k: str(k).encode("utf-8") if k else None,
                 acks="all",
@@ -74,7 +74,7 @@ class MySqlCDCProducer:
     def __load_pymysql(self):
         """Setup MySQL connection"""
         try:
-            mysql_config = self.__kaf_my_config["mysql"]
+            mysql_config = self.__mysql_config
             self.__pymysql = pymysql.connect(
                 host=mysql_config["host"],
                 port=mysql_config["port"],
@@ -121,7 +121,7 @@ class MySqlCDCProducer:
             "event_id": str(uuid.uuid4()),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "source": "mysql-cdc-producer",
-            "database": self.__kaf_my_config["mysql"]["database"],
+            "database": self.__mysql_config["database"],
             "table": table_name,
             "operation": cud_operation,  # INSERT, UPDATE, DELETE
             "data": new_data,
@@ -133,7 +133,7 @@ class MySqlCDCProducer:
     def __start_binlog_monitoring(self) -> None:
         """Start MySQL binlog-based CDC monitoring"""
         try:
-            mysql_config = self.__kaf_my_config["mysql"]
+            mysql_config = self.__mysql_config
 
             self.__binlog_stream = BinLogStreamReader(
                 connection_settings={
@@ -145,7 +145,7 @@ class MySqlCDCProducer:
                 server_id=mysql_config.get("server_id", 100),
                 only_events=[DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent],
                 only_schemas=[mysql_config["database"]],
-                only_tables=self.__kaf_my_config.get("tables_to_monitor", []),
+                only_tables=self.__mysql_config.get("tables_to_monitor", []),
                 resume_stream=True,
                 blocking=True
             )
@@ -170,10 +170,10 @@ class MySqlCDCProducer:
         """Process binlog event and send to Kafka"""
         table_name = binlog_event.table
 
-        if self.__kaf_my_config.get("tables_to_monitor") and table_name not in self.__kaf_my_config["tables_to_monitor"]:
+        if self.__mysql_config.get("tables_to_monitor") and table_name not in self.__mysql_config["tables_to_monitor"]:
             return
 
-        kafka_topic = f"mysql.cdc.{self.__kaf_my_config["mysql"]["database"]}"
+        kafka_topic = f"mysql.cdc.{self.__mysql_config["database"]}"
 
         if isinstance(binlog_event, WriteRowsEvent):
             # INSERT
@@ -211,7 +211,7 @@ class MySqlCDCProducer:
         """Start polling-based CDC monitoring"""
         logger.info("Starting MySQL polling monitoring...")
 
-        tables_config = self.__kaf_my_config.get('tables_to_monitor', {})
+        tables_config = self.__mysql_config.get('tables_to_monitor', {})
         if isinstance(tables_config, list):
             tables_config = {table: "updated_at" for table in tables_config}
 
@@ -226,7 +226,7 @@ class MySqlCDCProducer:
                         last_timestamps
                     )
 
-                time.sleep(self.__kaf_my_config.get("polling_interval", 30))
+                time.sleep(self.__mysql_config.get("polling_interval", 30))
 
             except Exception as e:
                 err(f"Polling monitoring error: {e}")
@@ -304,7 +304,7 @@ class MySqlCDCProducer:
 
         try:
             # Try binlog monitoring first
-            if self.__kaf_my_config.get("use_binlog", True):
+            if self.__mysql_config.get("use_binlog", True):
                 logger.info("Attempting binlog-based monitoring...")
                 self.__start_binlog_monitoring()
             else:
