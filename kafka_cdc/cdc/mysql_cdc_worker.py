@@ -4,7 +4,7 @@ import uuid
 import signal
 
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 
 import pymysql
 from pymysqlreplication import BinLogStreamReader
