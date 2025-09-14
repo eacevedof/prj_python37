@@ -50,21 +50,23 @@ def __die_if_wrong_mysql_config(mysql_config: Dict[str, Any]) -> None:
 
 def __run_cdc_worker() -> None:
     """Main function"""
-    mysql_config, kafka_config = __get_separated_configs()
-    
-    __die_if_wrong_mysql_config(mysql_config)
 
-    mysql_cdc_producer = MySqlCDCProducer.get_instance(
-        mysql_config,
-        kafka_config
-    )
-
+    mysql_cdc_producer = None
     try:
+        mysql_config, kafka_config = __get_separated_configs()
+
+        __die_if_wrong_mysql_config(mysql_config)
+
+        mysql_cdc_producer = MySqlCDCProducer.get_instance(
+            mysql_config,
+            kafka_config
+        )
         mysql_cdc_producer.start()
     except Exception as e:
         die(f"Failed to start worker: {e}")
     finally:
-        mysql_cdc_producer.stop()
+        if isinstance(mysql_cdc_producer, object):
+            mysql_cdc_producer.stop()
 
 
 if __name__ == "__main__":
