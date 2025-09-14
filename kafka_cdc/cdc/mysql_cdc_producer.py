@@ -182,37 +182,36 @@ class MySqlCDCProducer:
         if self.__mysql_config.get("tables_to_monitor") and table_name not in self.__mysql_config["tables_to_monitor"]:
             return
 
-        kafka_topic = f"mysql.cdc.{self.__mysql_config["database"]}"
+        kafka_topic = self.__mysql_config.get("kafka").get("topic")
 
         if isinstance(binlog_event, WriteRowsEvent):
             # INSERT
-            for row in binlog_event.rows:
-                change_event = self.__create_change_event(table_name, "INSERT", row["values"])
-                kafka_key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
+            for row_insert in binlog_event.rows:
+                kafka_key = self.__get_primary_key(table_name, row_insert["values"])
+                insert_event = self.__create_change_event(table_name, "INSERT", row_insert["values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, insert_event)
                 logger.info(f"INSERT event sent for table {table_name}")
 
             return
 
         if isinstance(binlog_event, UpdateRowsEvent):
-            # UPDATE
-            for row in binlog_event.rows:
-                change_event = self.__create_change_event(
+            for row_update in binlog_event.rows:
+                update_event = self.__create_change_event(
                     table_name, "UPDATE",
-                    row["after_values"],
-                    row["before_values"]
+                    row_update["after_values"],
+                    row_update["before_values"]
                 )
-                kafka_key = self.__get_primary_key(table_name, row["after_values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
+                kafka_key = self.__get_primary_key(table_name, row_update["after_values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, update_event)
                 logger.info(f"UPDATE event sent for table {table_name}")
             return
 
         if isinstance(binlog_event, DeleteRowsEvent):
             # DELETE
-            for row in binlog_event.rows:
-                change_event = self.__create_change_event(table_name, "DELETE", row["values"])
-                kafka_key = self.__get_primary_key(table_name, row["values"])
-                self.__send_to_kafka(kafka_topic, kafka_key, change_event)
+            for row_delete in binlog_event.rows:
+                delete_event = self.__create_change_event(table_name, "DELETE", row_delete["values"])
+                kafka_key = self.__get_primary_key(table_name, row_delete["values"])
+                self.__send_to_kafka(kafka_topic, kafka_key, delete_event)
                 logger.info(f"DELETE event sent for table {table_name}")
 
 
@@ -220,15 +219,15 @@ class MySqlCDCProducer:
         """Start polling-based CDC monitoring"""
         logger.info("Starting MySQL polling monitoring...")
 
-        tables_config = self.__mysql_config.get('tables_to_monitor', {})
-        if isinstance(tables_config, list):
-            tables_config = {table: "updated_at" for table in tables_config}
+        listen_tables = self.__mysql_config.get("tables_to_monitor", {})
+        if isinstance(listen_tables, list):
+            listen_tables = {table: "updated_at" for table in listen_tables}
 
         last_timestamps = {}
 
         while self.__cdc_is_running:
             try:
-                for table_name, timestamp_column in tables_config.items():
+                for table_name, timestamp_column in listen_tables.items():
                     self.__listen_mysql_changes(
                         table_name,
                         timestamp_column,
@@ -250,7 +249,6 @@ class MySqlCDCProducer:
     ) -> None:
         """Poll a specific table for changes"""
         try:
-            # pprint(pymysql.cursors.DictCursor)
             with self.__pymysql.cursor(pymysql.cursors.DictCursor) as cursor:
                 last_timestamp = last_timestamps.get(table_name)
                 if last_timestamp:
@@ -271,22 +269,21 @@ class MySqlCDCProducer:
                     """
                     cursor.execute(query)
 
-                rows = cursor.fetchall()
+                changed_rows = cursor.fetchall()
+                if not changed_rows:
+                    return
 
-                for row in rows:
-                    # Send to Kafka
-                    event = self.__create_change_event(table_name, "UPSERT", dict(row))
-                    topic = f"mysql.cdc.{table_name}"
-                    key = self.__get_primary_key(table_name, dict(row))
+                for changed_row in changed_rows:
+                    kafka_topic = self.__mysql_config.get("kafka").get("topic")
+                    kafka_key = self.__get_primary_key(table_name, dict(changed_row))
+                    kafka_event = self.__create_change_event(table_name, "UPSERT", dict(changed_row))
 
-                    if self.__send_to_kafka(topic, key, event):
-                        # Update last timestamp
-                        current_timestamp = row.get(timestamp_column)
+                    if self.__send_to_kafka(kafka_topic, kafka_key, kafka_event):
+                        current_timestamp = changed_row.get(timestamp_column)
                         if current_timestamp:
                             last_timestamps[table_name] = current_timestamp
 
-                if rows:
-                    logger.info(f"Processed {len(rows)} changes from table {table_name}")
+                logger.info(f"Processed {len(changed_rows)} changes from table {table_name}")
 
         except Exception as e:
             err(f"Error polling table {table_name}: {e}")

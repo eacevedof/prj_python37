@@ -9,7 +9,6 @@ MYSQLS = {
 
         "use_binlog": True,
         "polling_interval": 30,
-        "topic_prefix": "mysql.cdc",
 
         "kafka": {
             "topic": "mysql.cdc.db_kafka_cdc",
