@@ -34,16 +34,16 @@ class MySqlCDCProducer:
         self.__mysql_config = mysql_config
         self.__kafka_config = kafka_config
         self.__cdc_is_running = True
-        self.__kafka_producer = None
         self.__pymysql = None
         self.__binlog_stream = None
+        self.__kafka_producer = None
 
         # detecta el ctrl + c
         signal.signal(signal.SIGINT, self.__shutdown_listener)
         signal.signal(signal.SIGTERM, self.__shutdown_listener)
         
-        self.__load_kafka_producer()
         self.__load_pymysql()
+        self.__load_kafka_producer()
 
 
     @staticmethod
@@ -65,7 +65,7 @@ class MySqlCDCProducer:
         """Setup Kafka producer"""
         try:
             self.__kafka_producer = KafkaProducer(
-                bootstrap_servers=self.__kafka_config["bootstrap_servers"],
+                bootstrap_servers = f"{self.__kafka_config["host"]}:{self.__kafka_config["port"]}",
                 value_serializer=lambda v: json.dumps(v, default=str).encode("utf-8"),
                 key_serializer=lambda k: str(k).encode("utf-8") if k else None,
                 acks="all",
@@ -77,7 +77,7 @@ class MySqlCDCProducer:
             logger.info("Kafka producer initialized successfully")
         except Exception as e:
             die(f"Failed to initialize Kafka producer: {e}")
-            raise
+            raise e
 
 
     def __load_pymysql(self):

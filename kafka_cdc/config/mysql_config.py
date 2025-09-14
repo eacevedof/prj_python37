@@ -1,6 +1,6 @@
 MYSQLS = {
     "my-1": {
-        "id": 1,
+        "server_id": 1,
         "host": "localhost",
         "port": 3306,
         "database": "db_kafka_cdc",

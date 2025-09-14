@@ -20,25 +20,7 @@ def __get_separated_configs() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         die("Kafka configuration \"kafka-1\" not found")
         return {}, {}
 
-    mysql_cfg = {
-        "server_id": mysql_config.get("id"),
-        "host": mysql_config.get("host"),
-        "port": mysql_config.get("port"),
-        "database": mysql_config.get("database"),
-        "user": mysql_config.get("user"),
-        "password": mysql_config.get("password"),
-        "tables_to_monitor": mysql_config.get("tables_to_monitor", {}),
-        "use_binlog": mysql_config.get("use_binlog"),
-        "polling_interval": mysql_config.get("polling_interval"),
-    }
-
-    # Build Kafka configuration
-    kafka_socket = f"{kafka_config.get("host")}:{kafka_config.get("port")}"
-    kafka_cfg = {
-        "bootstrap_servers": [kafka_socket]
-    }
-
-    return mysql_cfg, kafka_cfg
+    return mysql_config, kafka_config
 
 
 def __die_if_wrong_mysql_config(mysql_config: Dict[str, Any]) -> None:
