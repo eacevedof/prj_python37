@@ -13,7 +13,7 @@ MYSQLS = {
 
         "kafka": {
             "topic": "mysql.cdc.db_kafka_cdc",
-            "partitions": 2,
+            "partitions": 3,
         },
 
         "tables_to_monitor": {
