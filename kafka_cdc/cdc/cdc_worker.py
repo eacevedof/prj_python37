@@ -31,7 +31,7 @@ def __get_kafka_and_mysql_config() -> Dict[str, Any]:
     }
 
 
-def __run_worker() -> None:
+def __run_cdc_worker() -> None:
     """Main function"""
     kafka_and_mysql_config = __get_kafka_and_mysql_config()
     mysql_config = kafka_and_mysql_config.get("mysql", {})
@@ -53,4 +53,4 @@ def __run_worker() -> None:
 
 
 if __name__ == "__main__":
-    __run_worker()
+    __run_cdc_worker()
