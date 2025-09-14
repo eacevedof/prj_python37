@@ -66,13 +66,13 @@ class MySqlCDCProducer:
         try:
             self.__kafka_producer = KafkaProducer(
                 bootstrap_servers = f"{self.__kafka_config["host"]}:{self.__kafka_config["port"]}",
-                value_serializer=lambda v: json.dumps(v, default=str).encode("utf-8"),
-                key_serializer=lambda k: str(k).encode("utf-8") if k else None,
-                acks="all",
-                retries=3,
-                compression_type=None,
-                batch_size=16384,
-                linger_ms=10
+                value_serializer = lambda v: json.dumps(v, default=str).encode("utf-8"),
+                key_serializer = lambda k: str(k).encode("utf-8") if k else None,
+                acks = "all",
+                retries = 3,
+                compression_type = None,
+                batch_size = 16384,
+                linger_ms = 10
             )
             logger.info("Kafka producer initialized successfully")
         except Exception as e:
