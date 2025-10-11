@@ -10,7 +10,7 @@ from tokenizer import *
 def __query(sql):
     url = os.getenv("API_ANUBIS_DOMAIN") + os.getenv("API_ANUBIS_ENDPOINT")
     auth_token = get_anubis_auth_token()
-    auth_token = get_auth_raw_token()
+    # auth_token = get_auth_raw_token()
 
     headers = {
         "Content-Type": "application/json",

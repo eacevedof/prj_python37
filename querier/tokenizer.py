@@ -12,7 +12,11 @@ def get_anubis_auth_token():
 
     anubis_tz = pytz.timezone(anubis_timezone)
     today = datetime.now(anubis_tz).strftime("%Y-%m-%d")
-    today_timestamp = int(datetime.strptime(today, "%Y-%m-%d").timestamp())
+
+    # Fix: Create timezone-aware datetime and convert to timestamp like PHP does
+    today_datetime = datetime.strptime(today, "%Y-%m-%d")
+    today_datetime = anubis_tz.localize(today_datetime)
+    today_timestamp = int(today_datetime.timestamp())
 
     anubis_domain = os.getenv("API_ANUBIS_DOMAIN")
     anubis_salt_encrypt = os.getenv("API_ANUBIS_SALT")
