@@ -59,7 +59,7 @@ def main():
 
     url = os.getenv("API_ANUBIS_DOMAIN") + os.getenv("API_ANUBIS_ENDPOINT")
     auth_token = get_anubis_auth_token()
-    auth_token = get_auth_raw_token()
+    # auth_token = get_auth_raw_token()
 
     pr_lemon(f"\nurl: {url}")
     pr_blue(f"token: {auth_token}\n")
