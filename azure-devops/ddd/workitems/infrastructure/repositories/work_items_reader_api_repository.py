@@ -5,6 +5,15 @@ from .abstract_work_items_api_repository import AbstractWorkItemsApiRepository
 @final
 class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
 
+    @staticmethod
+    def get_instance() -> "WorkItemsReaderApiRepository":
+        return WorkItemsReaderApiRepository(
+            organization=config.organization,
+            project=config.project,
+            pat=config.pat
+        )
+
+
     async def get(self, work_item_id: int) -> Optional[dict]:
         """Get a single work item by ID."""
         url = f"{self._base_url}/{work_item_id}?api-version=7.0"
