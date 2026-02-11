@@ -2,7 +2,7 @@ import aiohttp
 import base64
 from abc import ABC
 
-from shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
 
 class AbstractWorkItemsApiRepository(ABC):

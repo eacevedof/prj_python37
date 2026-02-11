@@ -2,6 +2,8 @@ import aiohttp
 import base64
 from typing import final
 
+from infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+
 
 @final
 class ProjectsReaderApiRepository:
@@ -10,6 +12,15 @@ class ProjectsReaderApiRepository:
         self._organization = organization
         self._base_url = f"https://dev.azure.com/{organization}/_apis"
         self._auth = base64.b64encode(f":{pat}".encode()).decode()
+
+    @staticmethod
+    def get_instance() -> "ProjectsReaderApiRepository":
+        env = EnvironmentReaderRawRepository.get_instance()
+        return ProjectsReaderApiRepository(
+            organization=env.get_azure_organization_name(),
+            pat=env.get_azure_pat()
+        )
+
 
     def _get_headers(self) -> dict:
         return {

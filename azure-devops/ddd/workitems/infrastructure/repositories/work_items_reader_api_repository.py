@@ -1,6 +1,6 @@
 from typing import Optional, final
-from .abstract_work_items_api_repository import AbstractWorkItemsApiRepository
-from ...shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.workitems.infrastructure.repositories.abstract_work_items_api_repository import AbstractWorkItemsApiRepository
+from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
 
 @final
