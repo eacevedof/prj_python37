@@ -14,7 +14,7 @@ class WorkItemsWriterApiRepository(AbstractWorkItemsApiRepository):
             title: Title of the work item
             **fields: Additional fields (e.g., System.Description, System.AssignedTo)
         """
-        url = f"{self.base_url}/${item_type}?api-version=7.0"
+        url = f"{self._base_url}/${item_type}?api-version=7.0"
         payload = [{"op": "add", "path": "/fields/System.Title", "value": title}]
         for field, value in fields.items():
             payload.append({"op": "add", "path": f"/fields/{field}", "value": value})
@@ -28,7 +28,7 @@ class WorkItemsWriterApiRepository(AbstractWorkItemsApiRepository):
             work_item_id: ID of the work item to update
             **fields: Fields to update (e.g., System.State="Active", System.Title="New Title")
         """
-        url = f"{self.base_url}/{work_item_id}?api-version=7.0"
+        url = f"{self._base_url}/{work_item_id}?api-version=7.0"
         payload = [
             {"op": "replace", "path": f"/fields/{field}", "value": value}
             for field, value in fields.items()
@@ -43,7 +43,7 @@ class WorkItemsWriterApiRepository(AbstractWorkItemsApiRepository):
             work_item_id: ID of the work item to delete
             permanent: If True, permanently destroys the work item
         """
-        url = f"{self.base_url}/{work_item_id}?api-version=7.0"
+        url = f"{self._base_url}/{work_item_id}?api-version=7.0"
         if permanent:
             url += "&destroy=true"
         return await self._request("DELETE", url)

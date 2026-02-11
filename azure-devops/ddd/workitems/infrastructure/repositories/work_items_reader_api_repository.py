@@ -7,13 +7,13 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
 
     async def get(self, work_item_id: int) -> Optional[dict]:
         """Get a single work item by ID."""
-        url = f"{self.base_url}/{work_item_id}?api-version=7.0"
+        url = f"{self._base_url}/{work_item_id}?api-version=7.0"
         return await self._request("GET", url)
 
     async def get_many(self, ids: list[int]) -> Optional[dict]:
         """Get multiple work items by IDs."""
         ids_str = ",".join(map(str, ids))
-        url = f"{self.base_url}?ids={ids_str}&api-version=7.0"
+        url = f"{self._base_url}?ids={ids_str}&api-version=7.0"
         return await self._request("GET", url)
 
     async def query(self, wiql: str) -> list[dict]:
@@ -26,6 +26,6 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         Example:
             await repo.query("SELECT [Id], [Title] FROM WorkItems WHERE [State] = 'Active'")
         """
-        url = f"{self.wiql_url}?api-version=7.0"
+        url = f"{self._wiql_url}?api-version=7.0"
         result = await self._request("POST", url, {"query": wiql}, "application/json")
         return result.get("workItems", []) if result else []
