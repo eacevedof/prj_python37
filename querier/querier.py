@@ -45,7 +45,7 @@ def __get_sql_from_prompt(is_prod):
 
 def main():
     env_choice = input("select environment (dev or prod): ").strip()
-    env_choice = f".{env_choice}" if env_choice in ["dev", "prod"] else ".dev"
+    env_choice = f".{env_choice}" if env_choice in ["dev", "prod"] else ".env"
 
     os.system("cls")
     is_prod = False
