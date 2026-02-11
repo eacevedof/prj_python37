@@ -1,16 +1,17 @@
 from typing import Optional, final
 from .abstract_work_items_api_repository import AbstractWorkItemsApiRepository
+from ...shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
 
 @final
 class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
 
     @staticmethod
-    def get_instance() -> "WorkItemsReaderApiRepository":
+    def get_instance(project: str) -> "WorkItemsReaderApiRepository":
+        env = EnvironmentReaderRawRepository.get_instance()
         return WorkItemsReaderApiRepository(
-            organization=config.organization,
-            project=config.project,
-            pat=config.pat
+            organization=env.get_azure_organization_name(),
+            project=project
         )
 
 

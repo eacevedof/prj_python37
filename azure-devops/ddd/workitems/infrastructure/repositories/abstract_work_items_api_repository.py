@@ -2,15 +2,19 @@ import aiohttp
 import base64
 from abc import ABC
 
+from shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+
 
 class AbstractWorkItemsApiRepository(ABC):
 
-    def __init__(self, organization: str, project: str, pat: str):
+    def __init__(self, organization: str, project: str):
+        azure_path = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
+        self._auth = base64.b64encode(f":{azure_path}".encode()).decode()
         self._organization = organization
+
         self._project = project
         self._base_url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/workitems"
         self._wiql_url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/wiql"
-        self._auth = base64.b64encode(f":{pat}".encode()).decode()
 
     def _get_headers(self, content_type: str = "application/json-patch+json") -> dict:
         return {
