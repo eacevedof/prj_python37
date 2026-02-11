@@ -8,8 +8,6 @@ python -m venv .venv-win
 .venv-win\Scripts\python.exe -m pip install -r .\requirements.txt
 python querier.py
 
-bashrc
-anubis
 ```
 
 ### linux
