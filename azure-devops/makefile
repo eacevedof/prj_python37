@@ -16,10 +16,6 @@ gp-def: ## git push with default azure-devops message
 	clear;
 	git add .; git commit -m "azure-devops"; git push;
 
-ssh-be: ## cont-php-fpm-7.4
-	clear;
-	winpty docker exec -it --user root cont-php-fpm-7.4 bash
-
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 update-branch:  ## update master branch
 	git fetch --all;
