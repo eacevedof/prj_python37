@@ -1,3 +1,6 @@
+.idea
+.vscode
+.claude
 .dev
 .prod
 .env
