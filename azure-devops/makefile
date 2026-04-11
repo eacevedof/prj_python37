@@ -12,6 +12,10 @@ gitpush: ## git push m=any message
 	clear;
 	git add .; git commit -m "$(m)"; git push;
 
+gp-def: ## git push with default azure-devops message
+	clear;
+	git add .; git commit -m "azure-devops"; git push;
+
 ssh-be: ## cont-php-fpm-7.4
 	clear;
 	winpty docker exec -it --user root cont-php-fpm-7.4 bash
