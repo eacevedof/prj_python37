@@ -23,4 +23,4 @@ update-branch:  ## update master branch
 	git checkout master; git reset --hard origin/master;
 
 	git checkout $(CURRENT_BRANCH);
-	git diff --name-only preproduccion master
+	git diff --name-only develop master
