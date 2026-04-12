@@ -13,7 +13,7 @@ class EpicsWriterApiRepository(AbstractWorkItemsApiRepository):
         env = EnvironmentReaderRawRepository.get_instance()
         return cls(
             organization=env.get_azure_organization_name(),
-            project=project
+            project_name=project
         )
 
     async def create_work_item(self, item_type: str, title: str, **fields: Any) -> dict[str, Any]:

@@ -23,18 +23,18 @@ class CallToolService:
     """Service that routes MCP tool calls to work item operations."""
 
     _logger: Logger
-    _payload_dic: dict[str, Any]
+    _payload_dict: dict[str, Any]
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._payload_dic = {}
+        self._payload_dict = {}
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
-        self._payload_dic = call_tool_dto.payload_dic
+        self._payload_dict = call_tool_dto.payload_dict
 
         try:
             if call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC.value:
@@ -64,7 +64,7 @@ class CallToolService:
     async def __get_create_epic_text_content(self) -> list[TextContent]:
         result = await CreateEpicService.get_instance()(
             CreateEpicDto.from_primitives(
-                self._payload_dic
+                self._payload_dict
             )
         )
 
@@ -76,7 +76,7 @@ class CallToolService:
     async def __get_create_task_text_content(self) -> list[TextContent]:
         result = await CreateTaskService.get_instance()(
             CreateTaskDto.from_primitives(
-                self._payload_dic
+                self._payload_dict
             )
         )
 
@@ -94,7 +94,7 @@ class CallToolService:
 
     async def __get_tasks_as_text_content(self) -> list[TextContent]:
         get_tasks_result_dto = await GetTasksService.get_instance()(
-            GetTasksDto.from_primitives(self._payload_dic)
+            GetTasksDto.from_primitives(self._payload_dict)
         )
         if not get_tasks_result_dto.tasks:
             return [TextContent(type="text", text="no tasks found.")]
@@ -111,7 +111,7 @@ class CallToolService:
     async def __get_update_task_text_content(self) -> list[TextContent]:
         update_task_result_dto = await UpdateTaskService.get_instance()(
             UpdateTaskDto.from_primitives(
-                self._payload_dic
+                self._payload_dict
             )
         )
 

@@ -13,7 +13,7 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         env = EnvironmentReaderRawRepository.get_instance()
         return WorkItemsReaderApiRepository(
             organization=env.get_azure_organization_name(),
-            project=project
+            project_name=project
         )
 
     async def get(self, work_item_id: int) -> dict[str, Any] | None:
