@@ -52,11 +52,23 @@ class SearchWorkItemsService:
 
     def _map_single_result(self, result: dict[str, Any]) -> dict[str, Any]:
         fields = result.get("fields", {})
+
+        created_date = fields.get("system.createddate", "")
+        if created_date:
+            created_date = created_date[:10]
+
+        changed_date = fields.get("system.changeddate", "")
+        if changed_date:
+            changed_date = changed_date[:10]
+
         return {
             "id": fields.get("system.id", 0),
             "title": fields.get("system.title", ""),
             "work_item_type": fields.get("system.workitemtype", ""),
             "state": fields.get("system.state", ""),
             "project": fields.get("system.teamproject", ""),
+            "assigned_to": fields.get("system.assignedto", ""),
+            "created_date": created_date,
+            "changed_date": changed_date,
             "url": result.get("url", ""),
         }

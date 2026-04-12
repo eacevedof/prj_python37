@@ -11,6 +11,9 @@ class SearchWorkItemDto:
     work_item_type: str
     state: str
     project: str
+    assigned_to: str
+    created_date: str
+    changed_date: str
     url: str
 
     @classmethod
@@ -21,6 +24,9 @@ class SearchWorkItemDto:
             work_item_type=primitives.get("work_item_type", ""),
             state=primitives.get("state", ""),
             project=primitives.get("project", ""),
+            assigned_to=primitives.get("assigned_to", ""),
+            created_date=primitives.get("created_date", ""),
+            changed_date=primitives.get("changed_date", ""),
             url=primitives.get("url", ""),
         )
 

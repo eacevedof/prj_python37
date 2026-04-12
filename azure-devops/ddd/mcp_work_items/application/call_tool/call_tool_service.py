@@ -150,7 +150,8 @@ class CallToolService:
         for item in search_result_dto.items:
             lines.append(
                 f"- #{item.id} [{item.state}] {item.title}\n"
-                f"  type: {item.work_item_type} | project: {item.project}"
+                f"  type: {item.work_item_type} | project: {item.project}\n"
+                f"  assigned_to: {item.assigned_to or 'n/a'} | created: {item.created_date} | changed: {item.changed_date}"
             )
 
         return [TextContent(type="text", text="\n".join(lines))]
