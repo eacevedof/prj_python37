@@ -11,3 +11,4 @@
 # Logs (except .gitkeep)
 logs/*
 !logs/.gitkeep
+.claude/*.png
