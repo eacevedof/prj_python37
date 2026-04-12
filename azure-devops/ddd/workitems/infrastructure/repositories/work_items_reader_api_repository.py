@@ -16,14 +16,14 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
             project_name=project
         )
 
-    async def get(self, work_item_id: int) -> dict[str, Any] | None:
+    async def get_work_item_by_work_item_id(self, work_item_id: int) -> dict[str, Any] | None:
         """Get a single work item by ID."""
         url = f"{self._base_url}/{work_item_id}?api-version=7.0"
         return await self._request("GET", url)
 
-    async def get_many(self, ids: list[int]) -> dict[str, Any] | None:
+    async def get_work_items_by_work_items_ids(self, work_items_ids: list[int]) -> dict[str, Any] | None:
         """Get multiple work items by IDs."""
-        ids_str = ",".join(map(str, ids))
+        ids_str = ",".join(map(str, work_items_ids))
         url = f"{self._base_url}?ids={ids_str}&api-version=7.0"
         return await self._request("GET", url)
 

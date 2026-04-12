@@ -186,14 +186,15 @@ class ApiError(Exception):
     """Base exception for API errors."""
 
     def __init__(
-        self,
-        message: str,
-        status_code: int,
-        response_body: str | None = None,
+            self,
+            message: str,
+            status_code: int,
+            response_body: str | None = None,
     ) -> None:
         self.status_code = status_code
         self.response_body = response_body
         super().__init__(message)
+
 
 class RateLimitError(ApiError):
     """Raised when rate limit is exceeded."""
@@ -205,6 +206,7 @@ class RateLimitError(ApiError):
             status_code=429,
         )
 
+
 # Usage
 def handle_response(response: Response) -> dict:
     match response.status_code:
@@ -215,7 +217,7 @@ def handle_response(response: Response) -> dict:
         case 404:
             raise ApiError(f"Resource not found: {response.url}", 404)
         case 429:
-            retry_after = int(response.headers.get("Retry-After", 60))
+            retry_after = int(response.headers.get_work_item_by_work_item_id("Retry-After", 60))
             raise RateLimitError(retry_after)
         case code if 400 <= code < 500:
             raise ApiError(f"Client error: {response.text}", code)

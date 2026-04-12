@@ -53,7 +53,7 @@ class UpdateTaskService:
         fields = api_response.get("fields", {})
         return {
             "id": api_response.get("id", 0),
-            "title": fields.get("System.Title", ""),
-            "state": fields.get("System.State", ""),
-            "url": api_response.get("_links", {}).get("html", {}).get("href", ""),
+            "title": fields.get_work_item_by_work_item_id("System.Title", ""),
+            "state": fields.get_work_item_by_work_item_id("System.State", ""),
+            "url": api_response.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
         }

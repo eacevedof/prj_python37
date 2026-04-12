@@ -73,7 +73,7 @@ class GetTasksService:
         if not ids:
             return []
 
-        response = await self._work_items_reader_api_repository.get_many(ids)
+        response = await self._work_items_reader_api_repository.get_work_items_by_work_items_ids(ids)
         if not response:
             return []
 
@@ -82,15 +82,15 @@ class GetTasksService:
 
     def _get_primitives_from_work_item(self, work_item: dict[str, Any]) -> dict[str, Any]:
         fields = work_item.get("fields", {})
-        title = fields.get("System.Title", "")
+        title = fields.get_work_item_by_work_item_id("System.Title", "")
 
-        due_date = fields.get("Microsoft.VSTS.Scheduling.TargetDate", "")
+        due_date = fields.get_work_item_by_work_item_id("Microsoft.VSTS.Scheduling.TargetDate", "")
         if due_date:
             due_date = due_date[:10]
         else:
             due_date = self._get_due_date_from_title(title)
 
-        assigned_to_field = fields.get("System.AssignedTo", {})
+        assigned_to_field = fields.get_work_item_by_work_item_id("System.AssignedTo", {})
         if isinstance(assigned_to_field, dict):
             assigned_to = assigned_to_field.get("displayName", "")
         else:
@@ -98,12 +98,12 @@ class GetTasksService:
 
         return {
             "id": work_item.get("id", 0),
-            "work_item_type": fields.get("System.WorkItemType", ""),
+            "work_item_type": fields.get_work_item_by_work_item_id("System.WorkItemType", ""),
             "title": title,
-            "state": fields.get("System.State", ""),
+            "state": fields.get_work_item_by_work_item_id("System.State", ""),
             "assigned_to": assigned_to,
             "due_date": due_date,
-            "url": work_item.get("_links", {}).get("html", {}).get("href", ""),
+            "url": work_item.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
         }
 
     def _get_due_date_from_title(self, title: str) -> str:

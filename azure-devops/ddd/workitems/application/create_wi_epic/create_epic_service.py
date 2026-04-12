@@ -61,7 +61,7 @@ class CreateEpicService:
     def _get_primitives_from_api_response(self, api_response: dict[str, Any]) -> dict[str, Any]:
         return {
             "id": api_response.get("id", 0),
-            "title": api_response.get("fields", {}).get("System.Title", ""),
-            "url": api_response.get("_links", {}).get("html", {}).get("href", ""),
+            "title": api_response.get("fields", {}).get_work_item_by_work_item_id("System.Title", ""),
+            "url": api_response.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
             "project": self._create_epic_dto.project,
         }

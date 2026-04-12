@@ -3,6 +3,7 @@ from typing import final, Self, Any
 from ddd.workitems.application.create_wi_task.create_task_dto import CreateTaskDto
 from ddd.workitems.application.create_wi_task.create_task_result_dto import CreateTaskResultDto
 from ddd.workitems.domain.enums import WorkItemTypeEnum
+from ddd.workitems.domain.exceptions.work_items_exception import WorkItemsException
 from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.infrastructure.repositories.epics_writer_api_repository import EpicsWriterApiRepository
 from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
@@ -27,7 +28,7 @@ class CreateTaskService:
     async def __call__(self, create_task_dto: CreateTaskDto) -> CreateTaskResultDto:
         """
         Raises:
-            WorkItemsException: When task creation fails
+            WorkItemsException: When epic not found or task creation fails
         """
         self._create_task_dto = create_task_dto
         self._tasks_writer_api_repository = TasksWriterApiRepository.get_instance(
@@ -41,9 +42,9 @@ class CreateTaskService:
         )
 
         epic_url = await self._get_epic_url()
-        api_response = await self._create_task_in_azure_devops(epic_url)
+        api_resp_dict = await self._create_task_in_azure_devops(epic_url)
         create_task_result_dto = CreateTaskResultDto.from_primitives(
-            self._get_primitives_from_api_response(api_response)
+            self._get_primitives_from_api_response(api_resp_dict)
         )
 
         await self._add_task_reference_to_epic(create_task_result_dto.id)
@@ -51,15 +52,22 @@ class CreateTaskService:
         return create_task_result_dto
 
     async def _get_epic_url(self) -> str:
-        epic = await self._work_items_reader_api_repository.get(self._create_task_dto.epic_id)
-        if epic:
-            return epic.get("_links", {}).get("html", {}).get("href", "")
-        return ""
+        epic_entity = await self._work_items_reader_api_repository.get_work_item_by_work_item_id(
+            self._create_task_dto.epic_id
+        )
+        if not epic_entity:
+            raise WorkItemsException.epic_not_found(self._create_task_dto.epic_id)
+
+        return (
+            epic_entity.get("_links", {}).
+                get_work_item_by_work_item_id("html", {}).
+                get_work_item_by_work_item_id("href", "")
+        )
 
     async def _create_task_in_azure_devops(self, epic_url: str) -> dict:
         fields = {}
 
-        description = f"Épica: {epic_url}\n\n{self._create_task_dto.description}".strip()
+        description = f"epic: {epic_url}\n\n{self._create_task_dto.description}".strip()
         fields["System.Description"] = description
 
         if self._create_task_dto.assigned_to:
@@ -80,11 +88,13 @@ class CreateTaskService:
         )
 
     async def _add_task_reference_to_epic(self, task_id: int) -> None:
-        epic = await self._work_items_reader_api_repository.get(self._create_task_dto.epic_id)
-        if not epic:
+        epic_entity = await self._work_items_reader_api_repository.get_work_item_by_work_item_id(
+            self._create_task_dto.epic_id
+        )
+        if not epic_entity:
             return
 
-        current_description = epic.get("fields", {}).get("System.Description", "")
+        current_description = epic_entity.get("fields", {}).get_work_item_by_work_item_id("System.Description", "")
         task_reference = f"#{task_id}"
 
         if task_reference not in current_description:
@@ -94,16 +104,16 @@ class CreateTaskService:
                 **{"System.Description": updated_description}
             )
 
-    def _get_primitives_from_api_response(self, api_response: dict[str, Any]) -> dict[str, Any]:
-        fields = api_response.get("fields", {})
-        due_date = fields.get("Microsoft.VSTS.Scheduling.TargetDate", "")
+    def _get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
+        fields = api_resp_dict.get("fields", {})
+        due_date = fields.get_work_item_by_work_item_id("Microsoft.VSTS.Scheduling.TargetDate", "")
         if due_date:
             due_date = due_date[:10]
 
         return {
-            "id": api_response.get("id", 0),
-            "title": fields.get("System.Title", ""),
-            "url": api_response.get("_links", {}).get("html", {}).get("href", ""),
+            "id": api_resp_dict.get("id", 0),
+            "title": fields.get_work_item_by_work_item_id("System.Title", ""),
+            "url": api_resp_dict.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
             "epic_id": self._create_task_dto.epic_id,
             "project": self._create_task_dto.project,
             "due_date": due_date,

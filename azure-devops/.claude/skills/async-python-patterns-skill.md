@@ -605,10 +605,12 @@ async def fetch_data_bad():
     import time
     import requests
     time.sleep(1)  # Blocks!
-    response = requests.get(url)  # Also blocks!
+    response = requests.get_work_item_by_work_item_id(url)  # Also blocks!
+
 
 # GOOD - use async-native libraries (e.g., httpx for async HTTP)
 import httpx
+
 
 async def fetch_data_good(url: str):
     await asyncio.sleep(1)
