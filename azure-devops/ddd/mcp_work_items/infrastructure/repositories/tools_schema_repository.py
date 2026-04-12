@@ -19,6 +19,7 @@ class ToolsSchemaRepository:
             self._get_tasks_schema(),
             self._get_update_task_schema(),
             self._get_search_schema(),
+            self._get_detail_schema(),
         ]
 
     def _get_create_epic_schema(self) -> Tool:
@@ -182,5 +183,25 @@ class ToolsSchemaRepository:
                     },
                 },
                 "required": ["search_text"],
+            },
+        )
+
+    def _get_detail_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.WI_GET_DETAIL.value,
+            description="get work item detail including description and comments",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "work_item_id": {
+                        "type": "integer",
+                        "description": "work item id to get details for",
+                    },
+                    "project": {
+                        "type": "string",
+                        "description": "azure devops project name",
+                    },
+                },
+                "required": ["work_item_id"],
             },
         )

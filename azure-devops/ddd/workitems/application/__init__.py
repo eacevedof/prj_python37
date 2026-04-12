@@ -25,6 +25,12 @@ from ddd.workitems.application.search_work_items import (
     SearchWorkItemDto,
     SearchWorkItemsService,
 )
+from ddd.workitems.application.get_wi_detail import (
+    GetWorkItemDetailDto,
+    GetWorkItemDetailResultDto,
+    CommentDto,
+    GetWorkItemDetailService,
+)
 
 __all__ = [
     "CreateEpicDto",
@@ -44,4 +50,8 @@ __all__ = [
     "SearchWorkItemsResultDto",
     "SearchWorkItemDto",
     "SearchWorkItemsService",
+    "GetWorkItemDetailDto",
+    "GetWorkItemDetailResultDto",
+    "CommentDto",
+    "GetWorkItemDetailService",
 ]

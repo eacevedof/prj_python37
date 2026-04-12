@@ -66,3 +66,17 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         }
         result = await self._request("POST", url, payload, "application/json")
         return result.get("results", []) if result else []
+
+    async def get_comments_by_work_item_id(self, work_item_id: int) -> list[dict[str, Any]]:
+        """
+        Get comments for a work item.
+
+        Args:
+            work_item_id: The work item ID
+
+        Returns:
+            List of comments
+        """
+        url = f"{self._base_url}/{work_item_id}/comments?api-version=7.0-preview"
+        result = await self._request("GET", url, content_type="application/json")
+        return result.get("comments", []) if result else []

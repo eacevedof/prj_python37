@@ -11,3 +11,4 @@ class ToolNameEnum(str, Enum):
     WI_GET_TASKS = "get_tasks"
     WI_UPDATE_TASK = "update_task"
     WI_SEARCH = "search_work_items"
+    WI_GET_DETAIL = "get_work_item_detail"

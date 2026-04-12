@@ -17,6 +17,8 @@ from ddd.workitems.application import (
     UpdateTaskService,
     SearchWorkItemsDto,
     SearchWorkItemsService,
+    GetWorkItemDetailDto,
+    GetWorkItemDetailService,
 )
 
 
@@ -53,6 +55,9 @@ class CallToolService:
 
             elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH.value:
                 text_contents = await self.__get_search_text_content()
+
+            elif call_tool_dto.event_name == ToolNameEnum.WI_GET_DETAIL.value:
+                text_contents = await self.__get_detail_text_content()
 
             else:
                 text_contents = [
@@ -153,5 +158,33 @@ class CallToolService:
                 f"  type: {item.work_item_type} | project: {item.project}\n"
                 f"  assigned_to: {item.assigned_to or 'n/a'} | created: {item.created_date} | changed: {item.changed_date}"
             )
+
+        return [TextContent(type="text", text="\n".join(lines))]
+
+    async def __get_detail_text_content(self) -> list[TextContent]:
+        detail_result_dto = await GetWorkItemDetailService.get_instance()(
+            GetWorkItemDetailDto.from_primitives(self._payload_dict)
+        )
+
+        lines = [
+            f"work item #{detail_result_dto.id}",
+            f"title: {detail_result_dto.title}",
+            f"type: {detail_result_dto.work_item_type}",
+            f"state: {detail_result_dto.state}",
+            f"assigned_to: {detail_result_dto.assigned_to or 'n/a'}",
+            f"created: {detail_result_dto.created_date}",
+            f"changed: {detail_result_dto.changed_date}",
+            f"url: {detail_result_dto.url}",
+            "",
+            "description:",
+            detail_result_dto.description or "(empty)",
+        ]
+
+        if detail_result_dto.comments:
+            lines.append("")
+            lines.append(f"comments ({len(detail_result_dto.comments)}):")
+            for comment in detail_result_dto.comments:
+                lines.append(f"  [{comment.created_date}] {comment.created_by}:")
+                lines.append(f"    {comment.text}")
 
         return [TextContent(type="text", text="\n".join(lines))]
