@@ -50,13 +50,19 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
             limit: Maximum number of results
 
         Returns:
-            List of work item search results
+            List of work item search results ordered by ID desc
         """
         url = f"{self._search_url}?api-version=7.0"
         payload = {
             "searchText": search_text,
             "$top": limit,
             "$skip": 0,
+            "$orderBy": [
+                {
+                    "field": "system.id",
+                    "sortOrder": "DESC"
+                }
+            ],
         }
         result = await self._request("POST", url, payload, "application/json")
         return result.get("results", []) if result else []

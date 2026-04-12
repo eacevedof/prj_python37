@@ -40,7 +40,6 @@ class SearchWorkItemsService:
         )
 
         items_primitives = self._map_search_results_to_primitives(search_results)
-        items_primitives.sort(key=lambda x: x["id"], reverse=True)
 
         return SearchWorkItemsResultDto.from_primitives({
             "items": items_primitives,
