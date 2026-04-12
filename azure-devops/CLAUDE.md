@@ -26,6 +26,7 @@ Al escribir o modificar código en este proyecto, SIEMPRE sigue estas guías:
 @.claude/skills/python-error-handling-skill.md
 @.claude/skills/python-type-safety-skill.md
 @.claude/skills/async-python-patterns-skill.md
+@.claude/skills/workitems-conventions-skill.md
 
 ## Agentes Especializados
 
