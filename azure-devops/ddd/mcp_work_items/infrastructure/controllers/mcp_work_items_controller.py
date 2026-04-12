@@ -14,13 +14,13 @@ from ddd.mcp_work_items.application import CallToolDto, ListToolsService, CallTo
 @final
 class McpServerController:
     _logger: Logger
-    _server: Server
+    _mcp_server: Server
     _list_tools_service: ListToolsService
     _call_tool_service: CallToolService
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._server = Server(McpServerNameEnum.AZURE_DEVOPS_WORK_ITEMS.value)
+        self._mcp_server = Server(McpServerNameEnum.AZURE_DEVOPS_WORK_ITEMS.value)
         self._list_tools_service = ListToolsService.get_instance()
         self._call_tool_service = CallToolService.get_instance()
         self.__register_services_as_handlers()
@@ -30,20 +30,16 @@ class McpServerController:
         return cls()
 
     async def __call__(self) -> None:
-        try:
-            async with stdio_server() as (read_stream, write_stream):
-                self._logger.write_info(
-                    module="mcp_server_controller",
-                    message="__call__"
-                )
-                await self._server.run(
-                    read_stream,
-                    write_stream,
-                    self._server.create_initialization_options(),
-                )
-        except BaseException as e:
-            self.__log_exception(module="server", base_exception=e, context={"phase": "run"})
-            raise
+        async with stdio_server() as (mcp_read_stream, mcp_write_stream):
+            self._logger.write_info(
+                module="mcp_server_controller",
+                message="__call__"
+            )
+            await self._mcp_server.run(
+                mcp_read_stream,
+                mcp_write_stream,
+                self._mcp_server.create_initialization_options(),
+            )
 
 
     def __register_services_as_handlers(self) -> None:
@@ -52,33 +48,33 @@ class McpServerController:
             message="_register_handlers"
         )
 
-        @self._server.list_tools()
+        @self._mcp_server.list_tools()
         async def list_tools() -> list[Tool]:
             try:
                 result_dto = await self._list_tools_service()
                 return result_dto.to_list()
-            except BaseException as e:
+            except Exception as e:
                 self.__log_exception(
                     module="mcp_server_controller._register_handlers.list_tools",
                     base_exception=e
                 )
-                raise
+                return []
 
-        @self._server.call_tool()
-        async def call_tool(event_name: str, arguments: dict) -> list[TextContent]:
+        @self._mcp_server.call_tool()
+        async def call_tool(event_name: str, payload_dict: dict) -> list[TextContent]:
             try:
                 result_dto = await self._call_tool_service(
                     CallToolDto.from_primitives({
                         "event_name": event_name,
-                        "arguments": arguments,
+                        "arguments": payload_dict,
                     })
                 )
                 return result_dto.to_list()
-            except BaseException as e:
+            except Exception as e:
                 self.__log_exception(
                     module="mcp_server_controller._register_handlers.call_tool",
                     base_exception=e,
-                    context={"event_name": event_name, "arguments": arguments},
+                    context={"event_name": event_name, "arguments": payload_dict},
                 )
                 return [
                     TextContent(
@@ -103,15 +99,20 @@ class McpServerController:
         )
 
 
-if __name__ == "__main__":
+def start_mcp_or_fail() -> None:
+    """Start the MCP server for Azure DevOps work items."""
     try:
         asyncio.run(McpServerController.get_instance()())
     except BaseException as error:
         Logger.get_instance().write_error(
-            module="mcp_server_controller.__main__",
+            module="mcp_server_controller.start_mcp",
             message=(
                 f"Unhandled error: {type(error).__name__}: {error}\n"
                 f"{"".join(traceback.format_exception(type(error), error, error.__traceback__))}"
             ),
         )
         raise
+
+
+if __name__ == "__main__":
+    start_mcp_or_fail()
