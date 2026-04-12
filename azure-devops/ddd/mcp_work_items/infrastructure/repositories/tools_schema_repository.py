@@ -20,6 +20,7 @@ class ToolsSchemaRepository:
             self._get_update_task_schema(),
             self._get_search_schema(),
             self._get_detail_schema(),
+            self._get_search_projects_schema(),
         ]
 
     def _get_create_epic_schema(self) -> Tool:
@@ -212,5 +213,26 @@ class ToolsSchemaRepository:
                     },
                 },
                 "required": ["work_item_id"],
+            },
+        )
+
+    def _get_search_projects_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.WI_SEARCH_PROJECTS.value,
+            description="search projects by name or description in the azure devops organization",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "search_text": {
+                        "type": "string",
+                        "description": "text to search for in project name or description",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "max number of results",
+                        "default": 25,
+                    },
+                },
+                "required": ["search_text"],
             },
         )

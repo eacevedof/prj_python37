@@ -31,6 +31,12 @@ from ddd.workitems.application.get_wi_detail import (
     CommentDto,
     GetWorkItemDetailService,
 )
+from ddd.workitems.application.search_projects import (
+    SearchProjectsDto,
+    SearchProjectsResultDto,
+    ProjectDto,
+    SearchProjectsService,
+)
 
 __all__ = [
     "CreateEpicDto",
@@ -54,4 +60,8 @@ __all__ = [
     "GetWorkItemDetailResultDto",
     "CommentDto",
     "GetWorkItemDetailService",
+    "SearchProjectsDto",
+    "SearchProjectsResultDto",
+    "ProjectDto",
+    "SearchProjectsService",
 ]

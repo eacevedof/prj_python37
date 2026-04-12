@@ -19,6 +19,8 @@ from ddd.workitems.application import (
     SearchWorkItemsService,
     GetWorkItemDetailDto,
     GetWorkItemDetailService,
+    SearchProjectsDto,
+    SearchProjectsService,
 )
 
 
@@ -58,6 +60,9 @@ class CallToolService:
 
             elif call_tool_dto.event_name == ToolNameEnum.WI_GET_DETAIL.value:
                 text_contents = await self.__get_detail_text_content()
+
+            elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH_PROJECTS.value:
+                text_contents = await self.__get_search_projects_text_content()
 
             else:
                 text_contents = [
@@ -186,5 +191,23 @@ class CallToolService:
             for comment in detail_result_dto.comments:
                 lines.append(f"  [{comment.created_date}] {comment.created_by}:")
                 lines.append(f"    {comment.text}")
+
+        return [TextContent(type="text", text="\n".join(lines))]
+
+    async def __get_search_projects_text_content(self) -> list[TextContent]:
+        search_result_dto = await SearchProjectsService.get_instance()(
+            SearchProjectsDto.from_primitives(self._payload_dict)
+        )
+
+        if not search_result_dto.projects:
+            return [TextContent(type="text", text="no projects found.")]
+
+        lines = [f"projects found: {search_result_dto.total}\n"]
+        for project in search_result_dto.projects:
+            lines.append(
+                f"- {project.name} [{project.state}]\n"
+                f"  id: {project.id}\n"
+                f"  description: {project.description or 'n/a'}"
+            )
 
         return [TextContent(type="text", text="\n".join(lines))]
