@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__azure-devops__create_wi_epic"
+    ]
+  }
+}
