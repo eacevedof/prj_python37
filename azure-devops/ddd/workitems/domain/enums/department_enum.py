@@ -4,6 +4,8 @@ from typing import final
 
 @final
 class DepartmentEnum(str, Enum):
+    """Department names for work item assignment."""
+
     DESARROLLO = "desarrollo"
     SISOPS = "sisops"
     HELPDESK = "helpdesk"

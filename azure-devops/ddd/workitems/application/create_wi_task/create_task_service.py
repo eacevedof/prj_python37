@@ -10,6 +10,8 @@ from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository 
 
 @final
 class CreateTaskService:
+    """Service for creating Task work items linked to Epics in Azure DevOps."""
+
     _create_task_dto: CreateTaskDto
     _tasks_writer_api_repository: TasksWriterApiRepository
     _epics_writer_api_repository: EpicsWriterApiRepository

@@ -6,6 +6,8 @@ from mcp.types import Tool
 
 @dataclass(frozen=True, slots=True)
 class ListToolsResultDto:
+    """Output DTO containing available MCP tools list."""
+
     tools: list[Tool] = field(default_factory=list)
 
     @classmethod

@@ -7,6 +7,8 @@ from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
 
 @dataclass(frozen=True, slots=True)
 class ResponseDto:
+    """Standard API response wrapper with status code and data."""
+
     code: int = ResponseCodeEnum.OK
     message: str = ""
     data: Any = field(default_factory=dict)
@@ -40,6 +42,8 @@ class ResponseDto:
 
 @dataclass(frozen=True, slots=True)
 class SuccessResponseDto(ResponseDto):
+    """Response DTO for successful operations (2xx)."""
+
     code: int = ResponseCodeEnum.OK
 
     @classmethod
@@ -49,6 +53,8 @@ class SuccessResponseDto(ResponseDto):
 
 @dataclass(frozen=True, slots=True)
 class ErrorResponseDto(ResponseDto):
+    """Response DTO for error operations (4xx, 5xx)."""
+
     code: int = ResponseCodeEnum.BAD_REQUEST
 
     @classmethod

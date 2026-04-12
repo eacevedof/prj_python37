@@ -4,6 +4,8 @@ from typing import final
 
 @final
 class ResponseCodeEnum(IntEnum):
+    """HTTP response status codes for API responses."""
+
     # 2xx Success
     OK = 200
     CREATED = 201

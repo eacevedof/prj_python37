@@ -6,6 +6,8 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 
 @dataclass(frozen=True, slots=True)
 class UpdateTaskDto:
+    """Input DTO for updating a Task work item."""
+
     project: str
     task_id: int
     state: str | None = None

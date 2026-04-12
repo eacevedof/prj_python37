@@ -6,6 +6,8 @@ from mcp.types import TextContent
 
 @dataclass(frozen=True, slots=True)
 class CallToolResultDto:
+    """Output DTO containing MCP tool execution results."""
+
     contents: list[TextContent] = field(default_factory=list)
 
     @classmethod

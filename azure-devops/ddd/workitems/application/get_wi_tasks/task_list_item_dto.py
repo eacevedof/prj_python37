@@ -4,6 +4,8 @@ from typing import Self, Any
 
 @dataclass(frozen=True, slots=True)
 class TaskListItemDto:
+    """DTO representing a single work item in a list."""
+
     id: int
     work_item_type: str
     title: str

@@ -20,6 +20,8 @@ from ddd.workitems.application import (
 
 @final
 class CallToolService:
+    """Service that routes MCP tool calls to work item operations."""
+
     _logger: Logger
     _payload_dic: dict[str, Any]
 

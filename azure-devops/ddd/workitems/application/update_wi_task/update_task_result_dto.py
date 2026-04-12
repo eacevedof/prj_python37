@@ -4,6 +4,8 @@ from typing import Self, Any
 
 @dataclass(frozen=True, slots=True)
 class UpdateTaskResultDto:
+    """Output DTO containing updated Task details."""
+
     id: int
     title: str
     state: str

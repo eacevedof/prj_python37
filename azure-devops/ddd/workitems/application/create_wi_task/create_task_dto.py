@@ -7,6 +7,8 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 
 @dataclass(frozen=True, slots=True)
 class CreateTaskDto:
+    """Input DTO for creating a Task work item linked to an Epic."""
+
     project: str
     epic_id: int
     title: str

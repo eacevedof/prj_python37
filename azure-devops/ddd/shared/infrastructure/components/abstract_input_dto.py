@@ -4,6 +4,8 @@ from typing import Any
 
 @dataclass(frozen=True, slots=True)
 class AbstractInputDto:
+    """Base DTO with common user context fields."""
+
     user_ip_address: str = ""
     user_browser: str = ""
     user_browser_version: str = ""

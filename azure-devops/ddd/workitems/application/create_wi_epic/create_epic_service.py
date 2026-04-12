@@ -8,6 +8,8 @@ from ddd.workitems.infrastructure.repositories.epics_writer_api_repository impor
 
 @final
 class CreateEpicService:
+    """Service for creating Epic work items in Azure DevOps."""
+
     _create_epic_dto: CreateEpicDto
     _epics_writer_api_repository: EpicsWriterApiRepository
 

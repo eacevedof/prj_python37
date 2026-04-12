@@ -4,6 +4,8 @@ from typing import Self, Any
 
 @dataclass(frozen=True, slots=True)
 class CallToolDto:
+    """Input DTO for MCP tool invocation requests."""
+
     event_name: str
     payload_dic: dict[str, Any] = field(default_factory=dict)
 

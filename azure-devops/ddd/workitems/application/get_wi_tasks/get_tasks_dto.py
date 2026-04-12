@@ -6,6 +6,8 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 
 @dataclass(frozen=True, slots=True)
 class GetTasksDto:
+    """Input DTO for querying work items with filters."""
+
     project: str
     epic_id: int | None = None
     state: str | None = None

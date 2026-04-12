@@ -4,6 +4,8 @@ from typing import Self, Any
 
 @dataclass(frozen=True, slots=True)
 class CreateEpicResultDto:
+    """Output DTO containing created Epic details."""
+
     id: int
     title: str
     url: str

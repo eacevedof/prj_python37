@@ -6,6 +6,8 @@ from ddd.workitems.application.get_wi_tasks.task_list_item_dto import TaskListIt
 
 @dataclass(frozen=True, slots=True)
 class GetTasksResultDto:
+    """Output DTO containing queried work items list."""
+
     tasks: list[TaskListItemDto] = field(default_factory=list)
     total: int = 0
 

@@ -8,6 +8,8 @@ from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository 
 
 @final
 class GetTasksService:
+    """Service for querying work items from Azure DevOps with filters."""
+
     _get_tasks_dto: GetTasksDto
     _work_items_reader_api_repository: WorkItemsReaderApiRepository
 

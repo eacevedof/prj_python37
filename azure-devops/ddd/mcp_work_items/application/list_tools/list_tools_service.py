@@ -7,6 +7,8 @@ from ddd.mcp_work_items.infrastructure.repositories.tools_schema_repository impo
 
 @final
 class ListToolsService:
+    """Service that returns available MCP tools for work item management."""
+
     _logger: Logger
     _tools_schema_repository: ToolsSchemaRepository
 

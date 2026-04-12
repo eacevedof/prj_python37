@@ -4,6 +4,8 @@ from typing import final
 
 @final
 class EnvvarsKeysEnum(StrEnum):
+    """Environment variable keys used by the application."""
+
     AZURE_API_VERSION = "AZURE_API_VERSION"
     AZURE_ORGANIZATION_NAME = "AZURE_ORGANIZATION_NAME"
     AZURE_PAT = "AZURE_PAT"

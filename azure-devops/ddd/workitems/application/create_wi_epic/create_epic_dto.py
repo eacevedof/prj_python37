@@ -6,6 +6,8 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 
 @dataclass(frozen=True, slots=True)
 class CreateEpicDto:
+    """Input DTO for creating an Epic work item in Azure DevOps."""
+
     project: str
     title: str
     description: str = ""

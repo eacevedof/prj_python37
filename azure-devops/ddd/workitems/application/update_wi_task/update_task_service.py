@@ -7,6 +7,8 @@ from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository impor
 
 @final
 class UpdateTaskService:
+    """Service for updating Task work items in Azure DevOps."""
+
     _update_task_dto: UpdateTaskDto
     _tasks_writer_api_repository: TasksWriterApiRepository
 

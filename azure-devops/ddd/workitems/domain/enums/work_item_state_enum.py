@@ -4,6 +4,8 @@ from typing import final
 
 @final
 class WorkItemStateEnum(str, Enum):
+    """Azure DevOps work item lifecycle states."""
+
     NEW = "New"
     ACTIVE = "Active"
     RESOLVED = "Resolved"
