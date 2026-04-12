@@ -16,7 +16,7 @@ class ToolsSchemaRepository:
         return [
             self._get_create_epic_schema(),
             self._get_create_task_schema(),
-            self._get_get_tasks_schema(),
+            self._get_tasks_schema(),
             self._get_update_task_schema(),
         ]
 
@@ -94,7 +94,7 @@ class ToolsSchemaRepository:
             },
         )
 
-    def _get_get_tasks_schema(self) -> Tool:
+    def _get_tasks_schema(self) -> Tool:
         return Tool(
             name=ToolNameEnum.WI_GET_TASKS.value,
             description="list tasks from azure devops with optional filters",

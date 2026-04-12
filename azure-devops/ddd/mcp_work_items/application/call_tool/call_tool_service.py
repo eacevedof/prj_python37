@@ -55,11 +55,18 @@ class CallToolService:
                 ]
 
         except Exception as e:
+            self._logger.write_error(
+                module="CallToolService.__call__",
+                message=str(e),
+                context={"tool": call_tool_dto.event_name, "payload": self._payload_dict}
+            )
             text_contents = [
                 TextContent(type="text", text=f"error: {str(e)}")
             ]
 
-        return CallToolResultDto(contents=text_contents)
+        return CallToolResultDto.from_primitives({
+            "contents": text_contents
+        })
 
     async def __get_create_epic_text_content(self) -> list[TextContent]:
         result = await CreateEpicService.get_instance()(

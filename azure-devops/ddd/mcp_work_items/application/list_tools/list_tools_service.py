@@ -22,4 +22,6 @@ class ListToolsService:
 
     async def __call__(self) -> ListToolsResultDto:
         tools = self._tools_schema_repository.get_all_work_items_tools()
-        return ListToolsResultDto(tools=tools)
+        return ListToolsResultDto.from_primitives({
+            "tools": tools
+        })
