@@ -5,6 +5,8 @@ import aiohttp
 
 @final
 class Curler:
+    """Async HTTP client wrapper for making API requests."""
+
     _DEFAULT_TIMEOUT: int = 120
 
     @classmethod

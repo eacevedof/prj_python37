@@ -1,10 +1,12 @@
-from typing import Optional, final
+from typing import final, Any
+
 from ddd.workitems.infrastructure.repositories.abstract_work_items_api_repository import AbstractWorkItemsApiRepository
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
 
 @final
 class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
+    """Repository for reading work items from Azure DevOps API."""
 
     @staticmethod
     def get_instance(project: str) -> "WorkItemsReaderApiRepository":
@@ -14,19 +16,18 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
             project=project
         )
 
-
-    async def get(self, work_item_id: int) -> Optional[dict]:
+    async def get(self, work_item_id: int) -> dict[str, Any] | None:
         """Get a single work item by ID."""
         url = f"{self._base_url}/{work_item_id}?api-version=7.0"
         return await self._request("GET", url)
 
-    async def get_many(self, ids: list[int]) -> Optional[dict]:
+    async def get_many(self, ids: list[int]) -> dict[str, Any] | None:
         """Get multiple work items by IDs."""
         ids_str = ",".join(map(str, ids))
         url = f"{self._base_url}?ids={ids_str}&api-version=7.0"
         return await self._request("GET", url)
 
-    async def query(self, wiql: str) -> list[dict]:
+    async def query(self, wiql: str) -> list[dict[str, Any]]:
         """
         Query work items using WIQL.
 

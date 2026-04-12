@@ -86,5 +86,5 @@ fast_api.include_router(workitems_router)
 
 
 @fast_api.get("/health", tags=["health"])
-async def health_check():
+def health_check() -> dict[str, str]:
     return {"status": "ok"}

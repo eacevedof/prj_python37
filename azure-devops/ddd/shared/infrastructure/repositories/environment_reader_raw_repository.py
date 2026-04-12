@@ -6,6 +6,7 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
 @final
 class EnvironmentReaderRawRepository:
+    """Repository for reading environment variables required by the application."""
 
     @staticmethod
     def get_instance() -> "EnvironmentReaderRawRepository":

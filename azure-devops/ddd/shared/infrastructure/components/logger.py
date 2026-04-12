@@ -9,6 +9,8 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
 @final
 class Logger:
+    """Simple file-based logger for application events and errors."""
+
     _DEFAULT_LOG_PATH: str = str(Path(__file__).resolve().parents[4] / "logs")
 
     @classmethod

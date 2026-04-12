@@ -1,13 +1,15 @@
 import aiohttp
 import base64
 from abc import ABC
+from typing import Any
 
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
 
 class AbstractWorkItemsApiRepository(ABC):
+    """Base repository for Azure DevOps Work Items API operations."""
 
-    def __init__(self, organization: str, project: str):
+    def __init__(self, organization: str, project: str) -> None:
         azure_path = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
         self._auth = base64.b64encode(f":{azure_path}".encode()).decode()
         self._organization = organization
@@ -16,7 +18,7 @@ class AbstractWorkItemsApiRepository(ABC):
         self._base_url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/workitems"
         self._wiql_url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/wiql"
 
-    def _get_headers(self, content_type: str = "application/json-patch+json") -> dict:
+    def _get_headers(self, content_type: str = "application/json-patch+json") -> dict[str, str]:
         return {
             "Authorization": f"Basic {self._auth}",
             "Content-Type": content_type
@@ -26,9 +28,9 @@ class AbstractWorkItemsApiRepository(ABC):
         self,
         method: str,
         url: str,
-        json_data=None,
+        json_data: list[dict[str, Any]] | dict[str, Any] | None = None,
         content_type: str = "application/json-patch+json"
-    ):
+    ) -> dict[str, Any] | None:
         async with aiohttp.ClientSession() as session:
             async with session.request(
                 method,

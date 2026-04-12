@@ -6,6 +6,7 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 
 @final
 class TasksWriterApiRepository(AbstractWorkItemsApiRepository):
+    """Repository for creating and updating Task work items in Azure DevOps."""
 
     @classmethod
     def get_instance(cls, project: str) -> Self:
@@ -21,9 +22,9 @@ class TasksWriterApiRepository(AbstractWorkItemsApiRepository):
         title: str,
         parent_id: int | None = None,
         **fields: Any
-    ) -> dict:
+    ) -> dict[str, Any]:
         url = f"{self._base_url}/${item_type}?api-version=7.0"
-        payload = [{"op": "add", "path": "/fields/System.Title", "value": title}]
+        payload: list[dict[str, Any]] = [{"op": "add", "path": "/fields/System.Title", "value": title}]
 
         for field, value in fields.items():
             payload.append({"op": "add", "path": f"/fields/{field}", "value": value})
@@ -40,12 +41,14 @@ class TasksWriterApiRepository(AbstractWorkItemsApiRepository):
                 }
             })
 
-        return await self._request("POST", url, payload)
+        result = await self._request("POST", url, payload)
+        return result or {}
 
-    async def update_work_item(self, work_item_id: int, **fields: Any) -> dict:
+    async def update_work_item(self, work_item_id: int, **fields: Any) -> dict[str, Any]:
         url = f"{self._base_url}/{work_item_id}?api-version=7.0"
-        payload = [
+        payload: list[dict[str, Any]] = [
             {"op": "replace", "path": f"/fields/{field}", "value": value}
             for field, value in fields.items()
         ]
-        return await self._request("PATCH", url, payload)
+        result = await self._request("PATCH", url, payload)
+        return result or {}
