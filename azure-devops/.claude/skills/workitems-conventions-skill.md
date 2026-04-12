@@ -42,6 +42,53 @@ Reglas y convenciones para crear work items en Azure DevOps.
 - Formato en título: `Título de la tarea 2024-12-31`
 - El MCP extrae automáticamente la fecha del título
 
+## Enlaces entre Work Items (HTML)
+
+Para que los enlaces a work items se muestren correctamente en Azure DevOps, **NUNCA** usar `#ID` como texto plano. Usar el formato HTML completo con `data-vss-mention`:
+
+```html
+<a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{ID}/" data-vss-mention="version:1.0">#{ID}</a>
+```
+
+### Ejemplo real
+
+```html
+<a href="https://dev.azure.com/lazarustechnology/caser-helvetia-telemetria/_workitems/edit/1991/" data-vss-mention="version:1.0">#1991</a>
+```
+
+## Estructura de Descripciones
+
+### Épicas - Descripción
+
+La descripción de una épica DEBE incluir la lista de tareas hijas con enlaces:
+
+```html
+<h2>Tareas</h2>
+<ol>
+  <li><a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{ID}/" data-vss-mention="version:1.0">#{ID}</a> - descripción breve (dd/mm)</li>
+  <li>...</li>
+</ol>
+```
+
+### Tareas - Descripción
+
+La descripción de una tarea DEBE comenzar con el enlace a la épica:
+
+```html
+<p>Épica: <a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{EPIC_ID}/" data-vss-mention="version:1.0">#{EPIC_ID}</a></p>
+<h2>Descripción</h2>
+<ol>
+  <li>Punto 1</li>
+  <li>Punto 2</li>
+</ol>
+```
+
+## Proceso de Creación
+
+1. Crear la épica primero
+2. Crear cada tarea con `epic_id` y enlace a la épica en descripción
+3. Actualizar la épica agregando los enlaces a todas las tareas hijas
+
 ## Ejemplos
 
 ### Crear tarea correctamente

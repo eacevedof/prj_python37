@@ -164,6 +164,33 @@ az boards iteration project show-default-team-iteration
 | User Story | New → Active → Resolved → Closed |
 | Feature | New → Active → Resolved → Closed |
 
+## Enlaces HTML en Descripciones
+
+**IMPORTANTE:** Para que los enlaces a work items funcionen en Azure DevOps, usar el formato HTML con `data-vss-mention`:
+
+```html
+<a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{ID}/" data-vss-mention="version:1.0">#{ID}</a>
+```
+
+### Estructura de Épicas
+
+```html
+<h2>Tareas</h2>
+<ol>
+  <li><a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{ID}/" data-vss-mention="version:1.0">#{ID}</a> - descripción (dd/mm)</li>
+</ol>
+```
+
+### Estructura de Tareas
+
+```html
+<p>Épica: <a href="https://dev.azure.com/{org}/{project}/_workitems/edit/{EPIC_ID}/" data-vss-mention="version:1.0">#{EPIC_ID}</a></p>
+<h2>Descripción</h2>
+<ol>
+  <li>Punto 1</li>
+</ol>
+```
+
 ## Behavioral Traits
 
 - Always verifies Azure CLI and DevOps extension are available

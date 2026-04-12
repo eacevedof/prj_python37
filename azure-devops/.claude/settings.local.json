@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__azure-devops__create_wi_epic"
+      "mcp__azure-devops__create_wi_epic",
+      "mcp__azure-devops__create_wi_task",
+      "mcp__azure-devops__update_task"
     ]
   }
 }
