@@ -80,30 +80,30 @@ class GetTasksService:
         items = response.get("value", [])
         return [self._get_primitives_from_work_item(item) for item in items]
 
-    def _get_primitives_from_work_item(self, work_item: dict[str, Any]) -> dict[str, Any]:
-        fields = work_item.get("fields", {})
-        title = fields.get_work_item_by_work_item_id("System.Title", "")
+    def _get_primitives_from_work_item(self, work_item_dict: dict[str, Any]) -> dict[str, Any]:
+        fields_dict = work_item_dict.get("fields", {})
+        title = fields_dict.get("System.Title", "")
 
-        due_date = fields.get_work_item_by_work_item_id("Microsoft.VSTS.Scheduling.TargetDate", "")
+        due_date = fields_dict.get("Microsoft.VSTS.Scheduling.TargetDate", "")
         if due_date:
             due_date = due_date[:10]
         else:
             due_date = self._get_due_date_from_title(title)
 
-        assigned_to_field = fields.get_work_item_by_work_item_id("System.AssignedTo", {})
+        assigned_to_field = fields_dict.get("System.AssignedTo", {})
         if isinstance(assigned_to_field, dict):
             assigned_to = assigned_to_field.get("displayName", "")
         else:
             assigned_to = str(assigned_to_field) if assigned_to_field else ""
 
         return {
-            "id": work_item.get("id", 0),
-            "work_item_type": fields.get_work_item_by_work_item_id("System.WorkItemType", ""),
+            "id": work_item_dict.get("id", 0),
+            "work_item_type": fields_dict.get("System.WorkItemType", ""),
             "title": title,
-            "state": fields.get_work_item_by_work_item_id("System.State", ""),
+            "state": fields_dict.get("System.State", ""),
             "assigned_to": assigned_to,
             "due_date": due_date,
-            "url": work_item.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
+            "url": work_item_dict.get("_links", {}).get("html", {}).get("href", ""),
         }
 
     def _get_due_date_from_title(self, title: str) -> str:

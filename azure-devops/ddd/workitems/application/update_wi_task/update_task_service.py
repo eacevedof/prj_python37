@@ -25,17 +25,17 @@ class UpdateTaskService:
             project=update_task_dto.project
         )
 
-        fields = self._build_fields()
+        fields = self.__get_fields_updated()
         api_response = await self._tasks_writer_api_repository.update_work_item(
             work_item_id=update_task_dto.task_id,
             **fields
         )
 
         return UpdateTaskResultDto.from_primitives(
-            self._get_primitives_from_api_response(api_response)
+            self.__get_primitives_from_api_response(api_response)
         )
 
-    def _build_fields(self) -> dict[str, Any]:
+    def __get_fields_updated(self) -> dict[str, Any]:
         fields: dict[str, Any] = {}
 
         if self._update_task_dto.state:
@@ -52,11 +52,11 @@ class UpdateTaskService:
 
         return fields
 
-    def _get_primitives_from_api_response(self, api_response: dict[str, Any]) -> dict[str, Any]:
-        fields = api_response.get("fields", {})
+    def __get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
+        fields_dict = api_resp_dict.get("fields", {})
         return {
-            "id": api_response.get("id", 0),
-            "title": fields.get_work_item_by_work_item_id("System.Title", ""),
-            "state": fields.get_work_item_by_work_item_id("System.State", ""),
-            "url": api_response.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
+            "id": api_resp_dict.get("id", 0),
+            "title": fields_dict.get("System.Title", ""),
+            "state": fields_dict.get("System.State", ""),
+            "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
         }

@@ -52,16 +52,16 @@ class CreateTaskService:
         return create_task_result_dto
 
     async def _get_epic_url(self) -> str:
-        epic_entity = await self._work_items_reader_api_repository.get_work_item_by_work_item_id(
+        epic_entity_dict = await self._work_items_reader_api_repository.get_work_item_by_work_item_id(
             self._create_task_dto.epic_id
         )
-        if not epic_entity:
+        if not epic_entity_dict:
             raise WorkItemsException.epic_not_found(self._create_task_dto.epic_id)
 
         return (
-            epic_entity.get("_links", {}).
-                get_work_item_by_work_item_id("html", {}).
-                get_work_item_by_work_item_id("href", "")
+            epic_entity_dict.get("_links", {}).
+                get("html", {}).
+                get("href", "")
         )
 
     async def _create_task_in_azure_devops(self, epic_url: str) -> dict:
@@ -94,7 +94,7 @@ class CreateTaskService:
         if not epic_entity:
             return
 
-        current_description = epic_entity.get("fields", {}).get_work_item_by_work_item_id("System.Description", "")
+        current_description = epic_entity.get("fields", {}).get("System.Description", "")
         task_reference = f"#{task_id}"
 
         if task_reference not in current_description:
@@ -106,14 +106,14 @@ class CreateTaskService:
 
     def _get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
         fields = api_resp_dict.get("fields", {})
-        due_date = fields.get_work_item_by_work_item_id("Microsoft.VSTS.Scheduling.TargetDate", "")
+        due_date = fields.get("Microsoft.VSTS.Scheduling.TargetDate", "")
         if due_date:
             due_date = due_date[:10]
 
         return {
             "id": api_resp_dict.get("id", 0),
-            "title": fields.get_work_item_by_work_item_id("System.Title", ""),
-            "url": api_resp_dict.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
+            "title": fields.get("System.Title", ""),
+            "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
             "epic_id": self._create_task_dto.epic_id,
             "project": self._create_task_dto.project,
             "due_date": due_date,

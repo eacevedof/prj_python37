@@ -30,12 +30,12 @@ class CreateEpicService:
             project=create_epic_dto.project
         )
 
-        api_response = await self._create_epic_in_azure_devops()
+        api_resp_dict = await self.__get_epic_after_creation()
         return CreateEpicResultDto.from_primitives(
-            self._get_primitives_from_api_response(api_response)
+            self.__get_primitives_from_api_response(api_resp_dict)
         )
 
-    async def _create_epic_in_azure_devops(self) -> dict:
+    async def __get_epic_after_creation(self) -> dict:
         fields = {}
 
         if self._create_epic_dto.description:
@@ -58,10 +58,10 @@ class CreateEpicService:
             **fields
         )
 
-    def _get_primitives_from_api_response(self, api_response: dict[str, Any]) -> dict[str, Any]:
+    def __get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
         return {
-            "id": api_response.get("id", 0),
-            "title": api_response.get("fields", {}).get_work_item_by_work_item_id("System.Title", ""),
-            "url": api_response.get("_links", {}).get_work_item_by_work_item_id("html", {}).get_work_item_by_work_item_id("href", ""),
+            "id": api_resp_dict.get("id", 0),
+            "title": api_resp_dict.get("fields", {}).get("System.Title", ""),
+            "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
             "project": self._create_epic_dto.project,
         }
