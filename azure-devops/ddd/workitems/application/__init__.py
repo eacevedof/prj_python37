@@ -31,7 +31,7 @@ from ddd.workitems.application.get_wi_detail import (
     CommentDto,
     GetWorkItemDetailService,
 )
-from ddd.workitems.application.search_projects import (
+from ddd.workitems.application.search_wi_projects import (
     SearchProjectsDto,
     SearchProjectsResultDto,
     ProjectDto,
