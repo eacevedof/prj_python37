@@ -18,6 +18,7 @@ class AbstractWorkItemsApiRepository(ABC):
         self._project = project_name
         self._base_url = f"https://dev.azure.com/{organization}/{project_name}/_apis/wit/workitems"
         self._wiql_url = f"https://dev.azure.com/{organization}/{project_name}/_apis/wit/wiql"
+        self._search_url = f"https://almsearch.dev.azure.com/{organization}/_apis/search/workitemsearchresults"
 
     def _get_headers(self, content_type: str = "application/json-patch+json") -> dict[str, str]:
         return {

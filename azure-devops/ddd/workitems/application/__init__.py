@@ -19,6 +19,12 @@ from ddd.workitems.application.update_wi_task import (
     UpdateTaskResultDto,
     UpdateTaskService,
 )
+from ddd.workitems.application.search_work_items import (
+    SearchWorkItemsDto,
+    SearchWorkItemsResultDto,
+    SearchWorkItemDto,
+    SearchWorkItemsService,
+)
 
 __all__ = [
     "CreateEpicDto",
@@ -34,4 +40,8 @@ __all__ = [
     "UpdateTaskDto",
     "UpdateTaskResultDto",
     "UpdateTaskService",
+    "SearchWorkItemsDto",
+    "SearchWorkItemsResultDto",
+    "SearchWorkItemDto",
+    "SearchWorkItemsService",
 ]

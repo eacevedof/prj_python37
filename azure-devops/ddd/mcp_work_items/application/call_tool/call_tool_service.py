@@ -15,6 +15,8 @@ from ddd.workitems.application import (
     GetTasksService,
     UpdateTaskDto,
     UpdateTaskService,
+    SearchWorkItemsDto,
+    SearchWorkItemsService,
 )
 
 
@@ -48,6 +50,9 @@ class CallToolService:
 
             elif call_tool_dto.event_name == ToolNameEnum.WI_UPDATE_TASK.value:
                 text_contents = await self.__get_update_task_text_content()
+
+            elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH.value:
+                text_contents = await self.__get_search_text_content()
 
             else:
                 text_contents = [
@@ -132,3 +137,20 @@ class CallToolService:
                 f"- url: {update_task_result_dto.url}"
             )
         )]
+
+    async def __get_search_text_content(self) -> list[TextContent]:
+        search_result_dto = await SearchWorkItemsService.get_instance()(
+            SearchWorkItemsDto.from_primitives(self._payload_dict)
+        )
+
+        if not search_result_dto.items:
+            return [TextContent(type="text", text="no work items found.")]
+
+        lines = [f"work items found: {search_result_dto.total}\n"]
+        for item in search_result_dto.items:
+            lines.append(
+                f"- #{item.id} [{item.state}] {item.title}\n"
+                f"  type: {item.work_item_type} | project: {item.project}"
+            )
+
+        return [TextContent(type="text", text="\n".join(lines))]
