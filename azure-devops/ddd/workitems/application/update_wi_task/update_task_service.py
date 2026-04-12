@@ -47,6 +47,9 @@ class UpdateTaskService:
         if self._update_task_dto.title:
             fields["System.Title"] = self._update_task_dto.title
 
+        if self._update_task_dto.description:
+            fields["System.Description"] = self._update_task_dto.description
+
         return fields
 
     def _get_primitives_from_api_response(self, api_response: dict[str, Any]) -> dict[str, Any]:

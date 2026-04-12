@@ -13,6 +13,7 @@ class UpdateTaskDto:
     state: str | None = None
     assigned_to: str | None = None
     title: str | None = None
+    description: str | None = None
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -26,4 +27,5 @@ class UpdateTaskDto:
             state=primitives.get("state"),
             assigned_to=primitives.get("assigned_to"),
             title=primitives.get("title"),
+            description=primitives.get("description"),
         )

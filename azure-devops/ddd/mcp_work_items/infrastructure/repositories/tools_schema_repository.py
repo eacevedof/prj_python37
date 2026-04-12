@@ -136,7 +136,7 @@ class ToolsSchemaRepository:
     def _get_update_task_schema(self) -> Tool:
         return Tool(
             name=ToolNameEnum.WI_UPDATE_TASK.value,
-            description="update a task in azure devops (state, assigned_to, title)",
+            description="update a task in azure devops (state, assigned_to, title, description)",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -159,6 +159,10 @@ class ToolsSchemaRepository:
                     "title": {
                         "type": "string",
                         "description": "new title",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "new description (supports html)",
                     },
                 },
                 "required": ["project", "task_id"],
