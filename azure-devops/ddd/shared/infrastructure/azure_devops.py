@@ -28,7 +28,7 @@ fast_api.add_middleware(
 async def pydantic_validation_exception_handler(
     http_request: Request,
     request_validation_error: RequestValidationError
-):
+) -> JSONResponse:
     logger = Logger.get_instance()
     try:
         body = await http_request.body()
@@ -61,7 +61,7 @@ async def pydantic_validation_exception_handler(
 async def general_exception_handler(
     http_request: Request,
     exception_obj: Exception
-):
+) -> JSONResponse:
     logger = Logger.get_instance()
     logger.write_error(
         module="azure_devops.py general_exception_handler",
