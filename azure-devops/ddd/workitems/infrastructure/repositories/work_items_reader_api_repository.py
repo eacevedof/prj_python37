@@ -41,19 +41,25 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         result = await self._request("POST", url, {"query": wiql}, "application/json")
         return result.get("workItems", []) if result else []
 
-    async def search(self, search_text: str, limit: int = 25) -> list[dict[str, Any]]:
+    async def search(
+        self,
+        search_text: str,
+        limit: int = 25,
+        work_item_type: str = "",
+    ) -> list[dict[str, Any]]:
         """
         Search work items by text.
 
         Args:
             search_text: Text to search for in work items
             limit: Maximum number of results
+            work_item_type: Filter by work item type (task, bug, epic, issue, etc.)
 
         Returns:
             List of work item search results ordered by ID desc
         """
         url = f"{self._search_url}?api-version=7.0"
-        payload = {
+        payload: dict[str, Any] = {
             "searchText": search_text,
             "$top": limit,
             "$skip": 0,
@@ -64,6 +70,9 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
                 }
             ],
         }
+        if work_item_type:
+            payload["filters"] = {"System.WorkItemType": [work_item_type]}
+
         result = await self._request("POST", url, payload, "application/json")
         return result.get("results", []) if result else []
 

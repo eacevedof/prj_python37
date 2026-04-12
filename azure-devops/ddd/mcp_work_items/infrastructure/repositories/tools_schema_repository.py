@@ -176,6 +176,11 @@ class ToolsSchemaRepository:
                         "type": "string",
                         "description": "text to search for in work items",
                     },
+                    "work_item_type": {
+                        "type": "string",
+                        "description": "filter by work item type (task, bug, epic, issue, feature, user story, etc.)",
+                        "default": "",
+                    },
                     "limit": {
                         "type": "integer",
                         "description": "max number of results",

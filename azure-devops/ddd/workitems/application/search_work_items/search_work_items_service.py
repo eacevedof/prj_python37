@@ -37,6 +37,7 @@ class SearchWorkItemsService:
         search_results = await self._work_items_reader_api_repository.search(
             search_text=search_dto.search_text,
             limit=search_dto.limit,
+            work_item_type=search_dto.work_item_type,
         )
 
         items_primitives = self._map_search_results_to_primitives(search_results)
