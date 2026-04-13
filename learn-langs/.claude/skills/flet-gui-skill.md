@@ -292,6 +292,32 @@ async def main(page: ft.Page):
     page.add(content_area)
 ```
 
+## FilePicker (Flet 0.84+)
+
+FilePicker is now async-based:
+
+```python
+def _pick_file(self) -> None:
+    async def do_pick():
+        file_picker = ft.FilePicker()
+        self.page.overlay.append(file_picker)
+        self.page.update()
+
+        files = await file_picker.pick_files(
+            allowed_extensions=["png", "jpg", "jpeg"],
+            allow_multiple=False,
+        )
+
+        self.page.overlay.remove(file_picker)
+        self.page.update()
+
+        if files:
+            file = files[0]
+            print(f"Selected: {file.name}, path: {file.path}")
+
+    self.page.run_task(do_pick)
+```
+
 ## Common Pitfalls
 
 1. **Don't use `ft.app()`** - Use `ft.run(main)` instead (0.80+)
@@ -303,6 +329,7 @@ async def main(page: ft.Page):
 7. **Button uses `content`** - Not `text` (use `content=ft.Text("label")`)
 8. **Alignment uses class constants** - `ft.Alignment.CENTER` not `ft.alignment.center`
 9. **run_task needs coroutine function** - NOT `lambda: coro()`, use inline `async def`
+10. **Dialogs use show_dialog/pop_dialog** - NOT `page.open()`/`page.close()`
 
 ## Colors Reference
 

@@ -37,18 +37,12 @@ class WordCrudView(ft.Container):
         self._tags_row: ft.Row | None = None
         self._selected_tags: list[str] = []
 
-        # File picker
-        self._file_picker: ft.FilePicker | None = None
+        # Current word for image operations
         self._current_word_for_image: int | None = None
 
         self._build_ui()
 
     def _build_ui(self) -> None:
-        # File picker para imagenes
-        self._file_picker = ft.FilePicker(
-            on_result=self._on_file_picked,
-        )
-
         # Search
         self._search_field = ft.TextField(
             hint_text="Buscar palabras...",
@@ -137,8 +131,6 @@ class WordCrudView(ft.Container):
 
         self.content = ft.Column(
             controls=[
-                # File picker (overlay invisible)
-                self._file_picker,
                 # Header
                 ft.Row(
                     controls=[
@@ -319,12 +311,15 @@ class WordCrudView(ft.Container):
             width=350,
         )
 
+        def close_dialog(e=None):
+            self.page.pop_dialog()
+
         def add_from_url(e):
             url = url_field.value
             if url and url.strip():
                 async def save_url():
                     await self._add_image_from_url(word["id"], url.strip())
-                    self.page.close(dialog)
+                    close_dialog()
                 self.page.run_task(save_url)
 
         dialog = ft.AlertDialog(
@@ -359,33 +354,35 @@ class WordCrudView(ft.Container):
                 width=400,
             ),
             actions=[
-                ft.TextButton(content=ft.Text("Cerrar"), on_click=lambda e: self.page.close(dialog)),
+                ft.TextButton(content=ft.Text("Cerrar"), on_click=close_dialog),
             ],
         )
 
-        self.page.open(dialog)
+        self.page.show_dialog(dialog)
 
     def _pick_image_file(self) -> None:
         """Abre el file picker para seleccionar imagen."""
-        if self._file_picker:
-            self._file_picker.pick_files(
+        async def do_pick():
+            file_picker = ft.FilePicker()
+            self.page.overlay.append(file_picker)
+            self.page.update()
+
+            files = await file_picker.pick_files(
                 allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
                 allow_multiple=False,
             )
 
-    def _on_file_picked(self, e) -> None:
-        """Maneja el archivo seleccionado."""
-        if e.files and len(e.files) > 0 and self._current_word_for_image:
-            file = e.files[0]
-            word_id = self._current_word_for_image
+            self.page.overlay.remove(file_picker)
+            self.page.update()
 
-            async def save_file():
+            if files and len(files) > 0 and self._current_word_for_image:
+                file = files[0]
+                word_id = self._current_word_for_image
                 await self._add_image_from_file(word_id, file.path, file.name)
-                # Recargar lista para actualizar conteo
                 await self._load_words()
                 self._show_snackbar("Imagen agregada")
 
-            self.page.run_task(save_file)
+        self.page.run_task(do_pick)
 
     async def _add_image_from_file(self, word_id: int, file_path: str, filename: str) -> None:
         """Agrega imagen desde archivo local."""
