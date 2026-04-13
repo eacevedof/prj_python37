@@ -36,6 +36,21 @@ class EnvironmentReaderRawRepository:
     def get_sharepoint_site_id(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_SITE_ID)
 
+    def get_local_docker_lamp_path(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_DOCKER_LAMP_PATH)
+
+    def get_local_www_path(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_WWW_PATH)
+
+    def get_local_vhosts_file(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_VHOSTS_FILE)
+
+    def get_local_hosts_file(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_HOSTS_FILE)
+
+    def get_local_base_env_file(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_BASE_ENV_FILE)
+
     def __get_required(self, key: EnvvarsKeysEnum) -> str:
         value = os.getenv(key)
         if value is None:
