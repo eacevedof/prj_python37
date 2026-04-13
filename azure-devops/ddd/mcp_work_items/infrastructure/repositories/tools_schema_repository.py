@@ -15,7 +15,8 @@ class ToolsSchemaRepository:
     def get_all_work_items_tools(self) -> list[Tool]:
         return [
             self._get_create_epic_schema(),
-            self._get_create_task_schema(),
+            self._get_create_epic_and_tasks_schema(),
+            self._get_create_work_item_schema(),
             self._get_tasks_schema(),
             self._get_update_task_schema(),
             self._get_search_schema(),
@@ -58,10 +59,10 @@ class ToolsSchemaRepository:
             },
         )
 
-    def _get_create_task_schema(self) -> Tool:
+    def _get_create_epic_and_tasks_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.WI_CREATE_TASK.value,
-            description="create a task linked to an epic in azure devops. title can end with yyyy-mm-dd for due_date.",
+            name=ToolNameEnum.WI_CREATE_EPIC_AND_TASKS.value,
+            description="create a task linked to an existing epic in azure devops. the task will be added as child of the epic. title can end with yyyy-mm-dd for due_date.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -71,7 +72,7 @@ class ToolsSchemaRepository:
                     },
                     "epic_id": {
                         "type": "integer",
-                        "description": "parent epic id",
+                        "description": "parent epic id (required - task will be linked to this epic)",
                     },
                     "title": {
                         "type": "string",
@@ -94,6 +95,46 @@ class ToolsSchemaRepository:
                     },
                 },
                 "required": ["project", "epic_id", "title"],
+            },
+        )
+
+    def _get_create_work_item_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.WI_CREATE_WORK_ITEM.value,
+            description="create a standalone work item (task, issue, epic, or bug) in azure devops without linking to a parent. title can end with yyyy-mm-dd for due_date.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project": {
+                        "type": "string",
+                        "description": "azure devops project name",
+                    },
+                    "work_item_type": {
+                        "type": "string",
+                        "description": "type of work item: task, issue, epic, or bug",
+                        "default": "task",
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "work item title (can end with yyyy-mm-dd for due date)",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "work item description",
+                        "default": "",
+                    },
+                    "assigned_to": {
+                        "type": "string",
+                        "description": "assigned user email",
+                        "default": "",
+                    },
+                    "tags": {
+                        "type": "string",
+                        "description": "comma separated tags",
+                        "default": "",
+                    },
+                },
+                "required": ["project", "title"],
             },
         )
 

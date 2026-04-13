@@ -11,6 +11,8 @@ from ddd.workitems.application import (
     CreateEpicService,
     CreateTaskDto,
     CreateTaskService,
+    CreateWorkItemDto,
+    CreateWorkItemService,
     GetTasksDto,
     GetTasksService,
     UpdateTaskDto,
@@ -46,8 +48,11 @@ class CallToolService:
             if call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC.value:
                 text_contents = await self.__get_create_epic_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_TASK.value:
-                text_contents = await self.__get_create_task_text_content()
+            elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC_AND_TASKS.value:
+                text_contents = await self.__get_create_linked_task_text_content()
+
+            elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_WORK_ITEM.value:
+                text_contents = await self.__get_create_work_item_text_content()
 
             elif call_tool_dto.event_name == ToolNameEnum.WI_GET_TASKS.value:
                 text_contents = await self.__get_tasks_as_text_content()
@@ -95,7 +100,7 @@ class CallToolService:
             text=f"epic created:\n- id: {result.id}\n- title: {result.title}\n- url: {result.url}"
         )]
 
-    async def __get_create_task_text_content(self) -> list[TextContent]:
+    async def __get_create_linked_task_text_content(self) -> list[TextContent]:
         result = await CreateTaskService.get_instance()(
             CreateTaskDto.from_primitives(
                 self._payload_dict
@@ -105,11 +110,30 @@ class CallToolService:
         return [TextContent(
             type="text",
             text=(
-                f"task created:\n"
+                f"task created (linked to epic):\n"
                 f"- id: {result.id}\n"
                 f"- title: {result.title}\n"
                 f"- url: {result.url}\n"
                 f"- epic_id: {result.epic_id}\n"
+                f"- due_date: {result.due_date or 'n/a'}"
+            )
+        )]
+
+    async def __get_create_work_item_text_content(self) -> list[TextContent]:
+        result = await CreateWorkItemService.get_instance()(
+            CreateWorkItemDto.from_primitives(
+                self._payload_dict
+            )
+        )
+
+        return [TextContent(
+            type="text",
+            text=(
+                f"work item created:\n"
+                f"- id: {result.id}\n"
+                f"- type: {result.work_item_type}\n"
+                f"- title: {result.title}\n"
+                f"- url: {result.url}\n"
                 f"- due_date: {result.due_date or 'n/a'}"
             )
         )]
