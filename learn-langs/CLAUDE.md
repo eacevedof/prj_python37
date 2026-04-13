@@ -29,6 +29,8 @@ learn-langs/
 │   │   ├── python-pro-ag.md
 │   │   └── fastapi-pro-ag.md
 │   └── skills/                          # Skills de referencia
+│       ├── flet-gui-skill.md            # Flet 0.80+ GUI framework
+│       ├── sqlite-database-skill.md     # SQLite patterns
 │       ├── async-python-patterns-skill.md
 │       ├── python-code-style-skill.md
 │       ├── python-error-handling-skill.md
@@ -471,6 +473,15 @@ class VocabularyException(Exception):
 ---
 
 ## Skills Disponibles
+
+### flet-gui (Flet 0.80+)
+- Creación de apps desktop/web/mobile con Python
+- Custom controls (herencia directa, NO UserControl)
+- Event handlers: on_select (Dropdown, Chip), on_change (TextField)
+- Async patterns: page.run_task(), did_mount()
+- Layout: Container, Column, Row, Stack, ListView
+- Navegación entre vistas
+- Snackbar notifications
 
 ### sqlite-database
 - Patrones SQLite para Python con aiosqlite
