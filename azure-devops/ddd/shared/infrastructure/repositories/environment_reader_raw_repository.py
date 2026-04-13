@@ -24,6 +24,18 @@ class EnvironmentReaderRawRepository:
     def get_app_default_project(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.APP_DEFAULT_PROJECT)
 
+    def get_sharepoint_client_id(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_CLIENT_ID)
+
+    def get_sharepoint_client_secret(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_CLIENT_SECRET)
+
+    def get_sharepoint_tenant_id(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_TENANT_ID)
+
+    def get_sharepoint_site_id(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_SITE_ID)
+
     def __get_required(self, key: EnvvarsKeysEnum) -> str:
         value = os.getenv(key)
         if value is None:
