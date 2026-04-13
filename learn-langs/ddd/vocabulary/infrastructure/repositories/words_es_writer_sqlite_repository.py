@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import final, Self
 
 from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.vocabulary.domain.entities import WordEsEntity
 
 
 @final
@@ -17,14 +18,8 @@ class WordsEsWriterSqliteRepository:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def create(
-        self,
-        text: str,
-        word_type: str = "WORD",
-        image_path: str = "",
-        notes: str = "",
-    ) -> dict:
-        """Crea una nueva palabra."""
+    async def create(self, word_es_entity: WordEsEntity) -> int:
+        """Crea una nueva palabra y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         query = """
@@ -33,77 +28,45 @@ class WordsEsWriterSqliteRepository:
         """
         word_id = await self._sqlite.insert(
             query,
-            (text.strip(), word_type, image_path, notes, now, now)
+            (
+                word_es_entity.text.strip(),
+                word_es_entity.word_type.value,
+                word_es_entity.image_path,
+                word_es_entity.notes,
+                now,
+                now,
+            ),
         )
 
-        return {
-            "id": word_id,
-            "text": text.strip(),
-            "word_type": word_type,
-            "image_path": image_path,
-            "notes": notes,
-            "created_at": now,
-            "updated_at": now,
-        }
+        return word_id
 
-    async def update(
-        self,
-        word_id: int,
-        text: str | None = None,
-        word_type: str | None = None,
-        image_path: str | None = None,
-        notes: str | None = None,
-    ) -> dict | None:
+    async def update(self, word_es_entity: WordEsEntity) -> bool:
         """Actualiza una palabra existente."""
-        updates: list[str] = []
-        params: list = []
-
-        if text is not None:
-            updates.append("text = ?")
-            params.append(text.strip())
-
-        if word_type is not None:
-            updates.append("word_type = ?")
-            params.append(word_type)
-
-        if image_path is not None:
-            updates.append("image_path = ?")
-            params.append(image_path)
-
-        if notes is not None:
-            updates.append("notes = ?")
-            params.append(notes)
-
-        if not updates:
-            return None
-
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        updates.append("updated_at = ?")
-        params.append(now)
-        params.append(word_id)
 
-        query = f"""
+        query = """
             UPDATE words_es
-            SET {', '.join(updates)}
+            SET text = ?, word_type = ?, image_path = ?, notes = ?, updated_at = ?
             WHERE id = ?
         """
-        rows_affected = await self._sqlite.update(query, tuple(params))
+        rows_affected = await self._sqlite.update(
+            query,
+            (
+                word_es_entity.text.strip(),
+                word_es_entity.word_type.value,
+                word_es_entity.image_path,
+                word_es_entity.notes,
+                now,
+                word_es_entity.id,
+            ),
+        )
 
-        if rows_affected == 0:
-            return None
+        return rows_affected > 0
 
-        # Retornar el registro actualizado
-        select_query = """
-            SELECT id, text, word_type, image_path, notes, created_at, updated_at
-            FROM words_es
-            WHERE id = ?
-        """
-        return await self._sqlite.fetch_one(select_query, (word_id,))
-
-    async def delete(self, word_id: int) -> bool:
+    async def delete(self, word_es_entity: WordEsEntity) -> bool:
         """Elimina una palabra."""
         query = "DELETE FROM words_es WHERE id = ?"
-        rows_affected = await self._sqlite.delete(query, (word_id,))
+        rows_affected = await self._sqlite.delete(query, (word_es_entity.id,))
         return rows_affected > 0
 
     async def add_tag(self, word_id: int, tag_id: int) -> bool:
@@ -126,11 +89,9 @@ class WordsEsWriterSqliteRepository:
 
     async def set_tags(self, word_id: int, tag_ids: list[int]) -> bool:
         """Reemplaza todos los tags de una palabra."""
-        # Eliminar tags existentes
         delete_query = "DELETE FROM word_es_tags WHERE word_es_id = ?"
         await self._sqlite.delete(delete_query, (word_id,))
 
-        # Añadir nuevos tags
         for tag_id in tag_ids:
             await self.add_tag(word_id, tag_id)
 
@@ -162,6 +123,6 @@ class WordsEsWriterSqliteRepository:
         """
         rows_affected = await self._sqlite.delete(
             query,
-            (word_id_a, word_id_b, word_id_b, word_id_a)
+            (word_id_a, word_id_b, word_id_b, word_id_a),
         )
         return rows_affected > 0

@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import final, Self
 
 from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.vocabulary.domain.entities import TagEntity
 
 
 @final
@@ -17,55 +18,29 @@ class TagsWriterSqliteRepository:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def create(self, name: str, color: str = "#6B7280") -> dict:
-        """Crea un nuevo tag."""
+    async def create(self, tag_entity: TagEntity) -> int:
+        """Crea un nuevo tag y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         query = "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)"
-        tag_id = await self._sqlite.insert(query, (name.strip(), color, now))
-
-        return {
-            "id": tag_id,
-            "name": name.strip(),
-            "color": color,
-            "created_at": now,
-        }
-
-    async def update(
-        self,
-        tag_id: int,
-        name: str | None = None,
-        color: str | None = None,
-    ) -> dict | None:
-        """Actualiza un tag existente."""
-        updates: list[str] = []
-        params: list = []
-
-        if name is not None:
-            updates.append("name = ?")
-            params.append(name.strip())
-
-        if color is not None:
-            updates.append("color = ?")
-            params.append(color)
-
-        if not updates:
-            return None
-
-        params.append(tag_id)
-        query = f"UPDATE tags SET {', '.join(updates)} WHERE id = ?"
-        rows_affected = await self._sqlite.update(query, tuple(params))
-
-        if rows_affected == 0:
-            return None
-
-        return await self._sqlite.fetch_one(
-            "SELECT id, name, color, created_at FROM tags WHERE id = ?",
-            (tag_id,)
+        tag_id = await self._sqlite.insert(
+            query,
+            (tag_entity.name.strip(), tag_entity.color, now),
         )
 
-    async def delete(self, tag_id: int) -> bool:
+        return tag_id
+
+    async def update(self, tag_entity: TagEntity) -> bool:
+        """Actualiza un tag existente."""
+        query = "UPDATE tags SET name = ?, color = ? WHERE id = ?"
+        rows_affected = await self._sqlite.update(
+            query,
+            (tag_entity.name.strip(), tag_entity.color, tag_entity.id),
+        )
+        return rows_affected > 0
+
+    async def delete(self, tag_entity: TagEntity) -> bool:
         """Elimina un tag."""
         query = "DELETE FROM tags WHERE id = ?"
-        rows_affected = await self._sqlite.delete(query, (tag_id,))
+        rows_affected = await self._sqlite.delete(query, (tag_entity.id,))
         return rows_affected > 0

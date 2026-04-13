@@ -5,6 +5,7 @@ from ddd.vocabulary.domain.entities.word_metric_entity import WordMetricEntity
 from ddd.vocabulary.domain.entities.study_session_entity import StudySessionEntity
 from ddd.vocabulary.domain.entities.session_answer_entity import SessionAnswerEntity
 from ddd.vocabulary.domain.entities.language_entity import LanguageEntity
+from ddd.vocabulary.domain.entities.word_image_entity import WordImageEntity
 
 __all__ = [
     "WordEsEntity",
@@ -14,4 +15,5 @@ __all__ = [
     "StudySessionEntity",
     "SessionAnswerEntity",
     "LanguageEntity",
+    "WordImageEntity",
 ]

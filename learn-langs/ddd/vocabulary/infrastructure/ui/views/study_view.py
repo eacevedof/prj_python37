@@ -14,6 +14,8 @@ from ddd.vocabulary.application.record_answer import (
     RecordAnswerDto,
     RecordAnswerService,
 )
+from ddd.vocabulary.domain.entities import StudySessionEntity
+from ddd.vocabulary.domain.enums import StudyModeEnum
 from ddd.vocabulary.infrastructure.repositories import SessionsWriterSqliteRepository
 from ddd.vocabulary.infrastructure.ui.components.flashcard_comp import FlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
@@ -310,8 +312,13 @@ class StudyView(ft.Container):
     async def _finish_session(self) -> None:
         """Finaliza la sesion en la base de datos."""
         if self.session_id:
+            study_session_entity = StudySessionEntity(
+                id=self.session_id,
+                lang_code=self.lang_code,
+                study_mode=StudyModeEnum.TYPING,
+            )
             writer = SessionsWriterSqliteRepository.get_instance()
-            await writer.finish(self.session_id)
+            await writer.finish(study_session_entity)
 
     def _finish_and_back(self) -> None:
         """Finaliza y vuelve al inicio."""

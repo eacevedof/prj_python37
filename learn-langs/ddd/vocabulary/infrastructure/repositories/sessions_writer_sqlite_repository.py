@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import final, Self
 
 from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.vocabulary.domain.entities import StudySessionEntity
 
 
 @final
@@ -18,15 +19,10 @@ class SessionsWriterSqliteRepository:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def create(
-        self,
-        lang_code: str,
-        study_mode: str,
-        tags_filter: list[str] | None = None,
-    ) -> dict:
-        """Crea una nueva sesión de estudio."""
+    async def create(self, study_session_entity: StudySessionEntity) -> int:
+        """Crea una nueva sesión de estudio y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        tags_json = json.dumps(tags_filter) if tags_filter else None
+        tags_json = json.dumps(study_session_entity.tags_filter) if study_session_entity.tags_filter else None
 
         query = """
             INSERT INTO study_sessions
@@ -35,44 +31,43 @@ class SessionsWriterSqliteRepository:
         """
         session_id = await self._sqlite.insert(
             query,
-            (lang_code, study_mode, now, tags_json)
+            (
+                study_session_entity.lang_code,
+                study_session_entity.study_mode.value,
+                now,
+                tags_json,
+            ),
         )
 
-        return {
-            "id": session_id,
-            "lang_code": lang_code,
-            "study_mode": study_mode,
-            "started_at": now,
-            "finished_at": None,
-            "total_words": 0,
-            "total_score": 0.0,
-            "average_score": 0.0,
-            "tags_filter": tags_filter or [],
-        }
+        return session_id
 
-    async def update_progress(
-        self,
-        session_id: int,
-        total_words: int,
-        total_score: float,
-    ) -> bool:
-        """Actualiza el progreso de una sesión."""
-        average_score = total_score / total_words if total_words > 0 else 0.0
+    async def update(self, study_session_entity: StudySessionEntity) -> bool:
+        """Actualiza una sesión existente."""
+        tags_json = json.dumps(study_session_entity.tags_filter) if study_session_entity.tags_filter else None
 
         query = """
             UPDATE study_sessions
             SET total_words = ?,
                 total_score = ?,
-                average_score = ?
+                average_score = ?,
+                finished_at = ?,
+                tags_filter = ?
             WHERE id = ?
         """
         rows = await self._sqlite.update(
             query,
-            (total_words, total_score, round(average_score, 2), session_id)
+            (
+                study_session_entity.total_words,
+                study_session_entity.total_score,
+                study_session_entity.average_score,
+                study_session_entity.finished_at if study_session_entity.finished_at else None,
+                tags_json,
+                study_session_entity.id,
+            ),
         )
         return rows > 0
 
-    async def finish(self, session_id: int) -> dict | None:
+    async def finish(self, study_session_entity: StudySessionEntity) -> bool:
         """Finaliza una sesión de estudio."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -81,22 +76,11 @@ class SessionsWriterSqliteRepository:
             SET finished_at = ?
             WHERE id = ? AND finished_at IS NULL
         """
-        rows = await self._sqlite.update(query, (now, session_id))
+        rows = await self._sqlite.update(query, (now, study_session_entity.id))
+        return rows > 0
 
-        if rows == 0:
-            return None
-
-        # Retornar sesión actualizada
-        select_query = """
-            SELECT id, lang_code, study_mode, started_at, finished_at,
-                   total_words, total_score, average_score, tags_filter
-            FROM study_sessions
-            WHERE id = ?
-        """
-        return await self._sqlite.fetch_one(select_query, (session_id,))
-
-    async def delete(self, session_id: int) -> bool:
+    async def delete(self, study_session_entity: StudySessionEntity) -> bool:
         """Elimina una sesión (y sus respuestas por CASCADE)."""
         query = "DELETE FROM study_sessions WHERE id = ?"
-        rows = await self._sqlite.delete(query, (session_id,))
+        rows = await self._sqlite.delete(query, (study_session_entity.id,))
         return rows > 0

@@ -2,6 +2,7 @@ from typing import final, Self
 
 from ddd.vocabulary.application.record_answer.record_answer_dto import RecordAnswerDto
 from ddd.vocabulary.application.record_answer.record_answer_result_dto import RecordAnswerResultDto
+from ddd.vocabulary.domain.entities import WordMetricEntity, SessionAnswerEntity, StudySessionEntity
 from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.domain.services import ScoreCalculatorService, SpacedRepetitionService
 from ddd.vocabulary.infrastructure.repositories import (
@@ -84,35 +85,48 @@ class RecordAnswerService:
                 easiness_factor=current_metrics["easiness_factor"],
                 interval_days=current_metrics["interval_days"],
             )
+            total_attempts = current_metrics["total_attempts"] + 1
+            total_score = current_metrics["total_score"] + score
         else:
             sm2_result = SpacedRepetitionService.calculate_from_score(score=score)
+            total_attempts = 1
+            total_score = score
 
-        # Guardar metricas
-        await self._metrics_writer.create_or_update(
+        # Crear entidad de metricas
+        word_metric_entity = WordMetricEntity(
+            id=current_metrics["id"] if current_metrics else 0,
             word_es_id=record_answer_dto.word_es_id,
             lang_code=lang_code,
             repetitions=sm2_result.repetitions,
             easiness_factor=sm2_result.easiness_factor,
             interval_days=sm2_result.interval_days,
             next_review_at=sm2_result.next_review_at,
+            total_attempts=total_attempts,
+            total_score=total_score,
+        )
+
+        # Guardar metricas
+        await self._metrics_writer.create_or_update(word_metric_entity)
+
+        # Crear entidad de respuesta
+        session_answer_entity = SessionAnswerEntity(
+            id=0,
+            session_id=record_answer_dto.session_id,
+            word_es_id=record_answer_dto.word_es_id,
+            user_input=record_answer_dto.user_input or "",
+            expected_text=record_answer_dto.expected_text,
             score=score,
+            response_time_ms=record_answer_dto.response_time_ms or 0,
         )
 
         # Guardar respuesta
-        answer_data = await self._answers_writer.create(
-            session_id=record_answer_dto.session_id,
-            word_es_id=record_answer_dto.word_es_id,
-            expected_text=record_answer_dto.expected_text,
-            user_input=record_answer_dto.user_input,
-            score=score,
-            response_time_ms=record_answer_dto.response_time_ms,
-        )
+        answer_id = await self._answers_writer.create(session_answer_entity)
 
         # Actualizar progreso de sesion
         await self._update_session_progress(record_answer_dto.session_id)
 
         return RecordAnswerResultDto.from_primitives({
-            "answer_id": answer_data["id"],
+            "answer_id": answer_id,
             "session_id": record_answer_dto.session_id,
             "word_es_id": record_answer_dto.word_es_id,
             "user_input": record_answer_dto.user_input,
@@ -132,8 +146,21 @@ class RecordAnswerService:
         answers_reader = AnswersReaderSqliteRepository.get_instance()
         summary = await answers_reader.get_session_summary(session_id)
 
-        await self._sessions_writer.update_progress(
-            session_id=session_id,
-            total_words=summary["total_answers"],
-            total_score=summary["average_score"] * summary["total_answers"],
-        )
+        # Leer sesion actual
+        session_data = await self._sessions_reader.get_by_id(session_id)
+        if not session_data:
+            return
+
+        total_words = summary["total_answers"]
+        total_score = summary["average_score"] * summary["total_answers"]
+        average_score = summary["average_score"]
+
+        # Crear entidad de sesion con datos actualizados
+        study_session_entity = StudySessionEntity.from_primitives({
+            **session_data,
+            "total_words": total_words,
+            "total_score": total_score,
+            "average_score": round(average_score, 2),
+        })
+
+        await self._sessions_writer.update(study_session_entity)

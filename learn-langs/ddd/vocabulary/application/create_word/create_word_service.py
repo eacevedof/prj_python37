@@ -2,6 +2,8 @@ from typing import final, Self
 
 from ddd.vocabulary.application.create_word.create_word_dto import CreateWordDto
 from ddd.vocabulary.application.create_word.create_word_result_dto import CreateWordResultDto
+from ddd.vocabulary.domain.entities import WordEsEntity, WordLangEntity
+from ddd.vocabulary.domain.enums import WordTypeEnum
 from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
@@ -57,14 +59,17 @@ class CreateWordService:
         if existing:
             raise VocabularyException.word_already_exists(create_word_dto.text)
 
-        # Crear palabra
-        word_data = await self._words_es_writer.create(
+        # Crear entidad de palabra
+        word_es_entity = WordEsEntity(
+            id=0,
             text=create_word_dto.text,
-            word_type=create_word_dto.word_type,
+            word_type=WordTypeEnum(create_word_dto.word_type),
             image_path=create_word_dto.image_path,
             notes=create_word_dto.notes,
         )
-        word_id = word_data["id"]
+
+        # Crear palabra
+        word_id = await self._words_es_writer.create(word_es_entity)
 
         # Anadir tags
         tags_added = await self._add_tags(word_id, create_word_dto.tags)
@@ -73,7 +78,11 @@ class CreateWordService:
         translations_added = await self._add_translations(word_id, create_word_dto.translations)
 
         return CreateWordResultDto.from_primitives({
-            **word_data,
+            "id": word_id,
+            "text": create_word_dto.text,
+            "word_type": create_word_dto.word_type,
+            "image_path": create_word_dto.image_path,
+            "notes": create_word_dto.notes,
             "tags": tags_added,
             "translations": translations_added,
         })
@@ -106,11 +115,13 @@ class CreateWordService:
 
         for lang_code, text in translations.items():
             if text and text.strip():
-                await self._words_lang_writer.create(
+                word_lang_entity = WordLangEntity(
+                    id=0,
                     word_es_id=word_id,
                     lang_code=lang_code,
                     text=text.strip(),
                 )
+                await self._words_lang_writer.create(word_lang_entity)
                 added_translations[lang_code] = text.strip()
 
         return added_translations

@@ -1,12 +1,13 @@
 """Repository de escritura de imagenes."""
 
-import hashlib
 import uuid
 from pathlib import Path
 from typing import final, Self
 from datetime import datetime
 
 from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.vocabulary.domain.entities import WordImageEntity
+from ddd.vocabulary.domain.enums import ImageSourceEnum
 
 
 @final
@@ -30,7 +31,7 @@ class ImagesWriterSqliteRepository:
             self._images_dir = base_path / "data" / "images"
             self._images_dir.mkdir(parents=True, exist_ok=True)
 
-    def _generate_filename(self, word_es_id: int, mime_type: str, original_name: str = "") -> str:
+    def _generate_filename(self, word_es_id: int, mime_type: str) -> str:
         """Genera un nombre de archivo unico."""
         ext_map = {
             "image/png": ".png",
@@ -46,29 +47,15 @@ class ImagesWriterSqliteRepository:
         timestamp = datetime.now().strftime("%Y%m%d")
         return f"word_{word_es_id}_{timestamp}_{unique_id}{ext}"
 
-    async def create(
-        self,
-        word_es_id: int,
-        source_type: str,
-        file_path: str,
-        mime_type: str,
-        original_url: str | None = None,
-        original_filename: str | None = None,
-        width: int | None = None,
-        height: int | None = None,
-        file_size: int | None = None,
-        svg_content: str | None = None,
-        caption: str | None = None,
-        alt_text: str | None = None,
-        is_primary: bool = False,
-    ) -> dict:
-        """Crea un registro de imagen."""
+    async def create(self, word_image_entity: WordImageEntity) -> int:
+        """Crea un registro de imagen y retorna el ID generado."""
         sqlite = SqliteConnection.get_instance()
 
         # Si es la primera imagen de la palabra, hacerla primaria
+        is_primary = word_image_entity.is_primary
         count_result = await sqlite.fetch_one(
             "SELECT COUNT(*) as count FROM word_es_images WHERE word_es_id = ? AND is_active = 1",
-            (word_es_id,),
+            (word_image_entity.word_es_id,),
         )
         if count_result and count_result["count"] == 0:
             is_primary = True
@@ -82,165 +69,150 @@ class ImagesWriterSqliteRepository:
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                word_es_id, source_type, file_path, mime_type,
-                original_url, original_filename, width, height, file_size,
-                svg_content, caption, alt_text, 1 if is_primary else 0,
+                word_image_entity.word_es_id,
+                word_image_entity.source_type.value,
+                word_image_entity.file_path,
+                word_image_entity.mime_type,
+                word_image_entity.original_url,
+                word_image_entity.original_filename,
+                word_image_entity.width,
+                word_image_entity.height,
+                word_image_entity.file_size,
+                word_image_entity.svg_content,
+                word_image_entity.caption,
+                word_image_entity.alt_text,
+                1 if is_primary else 0,
             ),
         )
 
-        return await sqlite.fetch_one(
-            "SELECT * FROM word_es_images WHERE id = ?",
-            (image_id,),
-        )
+        return image_id
 
     async def save_image_bytes(
         self,
-        word_es_id: int,
-        source_type: str,
+        word_image_entity: WordImageEntity,
         image_bytes: bytes,
-        mime_type: str,
-        original_filename: str | None = None,
-        original_url: str | None = None,
-        caption: str | None = None,
-        is_primary: bool = False,
-    ) -> dict:
-        """Guarda bytes de imagen en disco y crea el registro."""
+    ) -> int:
+        """Guarda bytes de imagen en disco y crea el registro. Retorna el ID."""
         self._ensure_images_dir()
 
-        filename = self._generate_filename(word_es_id, mime_type, original_filename or "")
+        filename = self._generate_filename(word_image_entity.word_es_id, word_image_entity.mime_type)
         file_path = self._images_dir / filename
 
         # Escribir archivo
         file_path.write_bytes(image_bytes)
 
         # Obtener dimensiones si es posible
-        width, height = None, None
-        try:
-            from PIL import Image
-            import io
-            img = Image.open(io.BytesIO(image_bytes))
-            width, height = img.size
-        except ImportError:
-            pass
-        except Exception:
-            pass
+        width, height = word_image_entity.width, word_image_entity.height
+        if width is None or height is None:
+            try:
+                from PIL import Image
+                import io
+                img = Image.open(io.BytesIO(image_bytes))
+                width, height = img.size
+            except ImportError:
+                pass
+            except Exception:
+                pass
 
-        return await self.create(
-            word_es_id=word_es_id,
-            source_type=source_type,
+        # Crear entidad actualizada con el path y dimensiones
+        updated_entity = WordImageEntity(
+            id=0,
+            word_es_id=word_image_entity.word_es_id,
+            source_type=word_image_entity.source_type,
             file_path=filename,
-            mime_type=mime_type,
-            original_url=original_url,
-            original_filename=original_filename,
+            mime_type=word_image_entity.mime_type,
+            original_url=word_image_entity.original_url,
+            original_filename=word_image_entity.original_filename,
             width=width,
             height=height,
             file_size=len(image_bytes),
-            caption=caption,
-            is_primary=is_primary,
+            svg_content=word_image_entity.svg_content,
+            caption=word_image_entity.caption,
+            alt_text=word_image_entity.alt_text,
+            is_primary=word_image_entity.is_primary,
         )
 
-    async def save_svg_content(
-        self,
-        word_es_id: int,
-        svg_content: str,
-        caption: str | None = None,
-        is_primary: bool = False,
-    ) -> dict:
-        """Guarda contenido SVG."""
+        return await self.create(updated_entity)
+
+    async def save_svg_content(self, word_image_entity: WordImageEntity, svg_content: str) -> int:
+        """Guarda contenido SVG y retorna el ID."""
         self._ensure_images_dir()
 
-        filename = self._generate_filename(word_es_id, "image/svg+xml")
+        filename = self._generate_filename(word_image_entity.word_es_id, "image/svg+xml")
         file_path = self._images_dir / filename
 
         # Escribir archivo SVG
         file_path.write_text(svg_content, encoding="utf-8")
 
-        return await self.create(
-            word_es_id=word_es_id,
-            source_type="VECTORIAL",
+        # Crear entidad actualizada
+        updated_entity = WordImageEntity(
+            id=0,
+            word_es_id=word_image_entity.word_es_id,
+            source_type=ImageSourceEnum.VECTORIAL,
             file_path=filename,
             mime_type="image/svg+xml",
             file_size=len(svg_content.encode("utf-8")),
             svg_content=svg_content if len(svg_content) < 10000 else None,
-            caption=caption,
-            is_primary=is_primary,
+            caption=word_image_entity.caption,
+            alt_text=word_image_entity.alt_text,
+            is_primary=word_image_entity.is_primary,
         )
 
-    async def set_primary(self, image_id: int) -> bool:
-        """Establece una imagen como primaria."""
-        sqlite = SqliteConnection.get_instance()
+        return await self.create(updated_entity)
 
-        # El trigger en la BD se encarga de quitar el primary de las otras
-        rows = await sqlite.update(
-            "UPDATE word_es_images SET is_primary = 1, updated_at = datetime('now') WHERE id = ?",
-            (image_id,),
-        )
-        return rows > 0
-
-    async def update_caption(self, image_id: int, caption: str, alt_text: str | None = None) -> bool:
-        """Actualiza caption y alt_text de una imagen."""
+    async def update(self, word_image_entity: WordImageEntity) -> bool:
+        """Actualiza caption, alt_text, sort_order, is_primary de una imagen."""
         sqlite = SqliteConnection.get_instance()
         rows = await sqlite.update(
             """
             UPDATE word_es_images
-            SET caption = ?, alt_text = ?, updated_at = datetime('now')
+            SET caption = ?, alt_text = ?, sort_order = ?, is_primary = ?, updated_at = datetime('now')
             WHERE id = ?
             """,
-            (caption, alt_text, image_id),
+            (
+                word_image_entity.caption,
+                word_image_entity.alt_text,
+                word_image_entity.sort_order,
+                1 if word_image_entity.is_primary else 0,
+                word_image_entity.id,
+            ),
         )
         return rows > 0
 
-    async def update_sort_order(self, image_id: int, sort_order: int) -> bool:
-        """Actualiza el orden de una imagen."""
-        sqlite = SqliteConnection.get_instance()
-        rows = await sqlite.update(
-            "UPDATE word_es_images SET sort_order = ?, updated_at = datetime('now') WHERE id = ?",
-            (sort_order, image_id),
-        )
-        return rows > 0
-
-    async def soft_delete(self, image_id: int) -> bool:
+    async def soft_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Soft delete de una imagen."""
         sqlite = SqliteConnection.get_instance()
         rows = await sqlite.update(
             "UPDATE word_es_images SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-            (image_id,),
+            (word_image_entity.id,),
         )
         return rows > 0
 
-    async def hard_delete(self, image_id: int) -> bool:
+    async def hard_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Elimina permanentemente una imagen y su archivo."""
         sqlite = SqliteConnection.get_instance()
 
-        # Obtener info del archivo
-        image = await sqlite.fetch_one(
-            "SELECT file_path FROM word_es_images WHERE id = ?",
-            (image_id,),
+        # Eliminar archivo
+        self._ensure_images_dir()
+        file_path = self._images_dir / word_image_entity.file_path
+        if file_path.exists():
+            file_path.unlink()
+
+        # Eliminar registro
+        rows = await sqlite.delete(
+            "DELETE FROM word_es_images WHERE id = ?",
+            (word_image_entity.id,),
         )
+        return rows > 0
 
-        if image:
-            # Eliminar archivo
-            self._ensure_images_dir()
-            file_path = self._images_dir / image["file_path"]
-            if file_path.exists():
-                file_path.unlink()
-
-            # Eliminar registro
-            rows = await sqlite.delete(
-                "DELETE FROM word_es_images WHERE id = ?",
-                (image_id,),
-            )
-            return rows > 0
-        return False
-
-    async def delete_all_by_word_id(self, word_es_id: int) -> int:
+    async def delete_all_by_word(self, word_es_entity_id: int) -> int:
         """Elimina todas las imagenes de una palabra."""
         sqlite = SqliteConnection.get_instance()
 
         # Obtener archivos a eliminar
         images = await sqlite.fetch_all(
             "SELECT file_path FROM word_es_images WHERE word_es_id = ?",
-            (word_es_id,),
+            (word_es_entity_id,),
         )
 
         # Eliminar archivos
@@ -253,5 +225,5 @@ class ImagesWriterSqliteRepository:
         # Eliminar registros
         return await sqlite.delete(
             "DELETE FROM word_es_images WHERE word_es_id = ?",
-            (word_es_id,),
+            (word_es_entity_id,),
         )

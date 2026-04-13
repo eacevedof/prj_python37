@@ -5,6 +5,8 @@ from ddd.vocabulary.application.start_study_session.start_study_session_result_d
     StartStudySessionResultDto,
     StudyWordDto,
 )
+from ddd.vocabulary.domain.entities import StudySessionEntity
+from ddd.vocabulary.domain.enums import StudyModeEnum
 from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.infrastructure.repositories import (
     MetricsReaderSqliteRepository,
@@ -59,22 +61,26 @@ class StartStudySessionService:
         if not words_data:
             raise VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
 
-        # Crear sesión
-        session_data = await self._sessions_writer.create(
+        # Crear entidad de sesion
+        study_session_entity = StudySessionEntity(
+            id=0,
             lang_code=start_study_session_dto.lang_code,
-            study_mode=start_study_session_dto.study_mode,
-            tags_filter=start_study_session_dto.tags if start_study_session_dto.tags else None,
+            study_mode=StudyModeEnum(start_study_session_dto.study_mode),
+            tags_filter=start_study_session_dto.tags if start_study_session_dto.tags else [],
         )
+
+        # Crear sesión
+        session_id = await self._sessions_writer.create(study_session_entity)
 
         # Construir resultado
         words = [StudyWordDto.from_primitives(w) for w in words_data]
 
         return StartStudySessionResultDto(
-            session_id=session_data["id"],
-            lang_code=session_data["lang_code"],
-            study_mode=session_data["study_mode"],
-            started_at=session_data["started_at"],
+            session_id=session_id,
+            lang_code=start_study_session_dto.lang_code,
+            study_mode=start_study_session_dto.study_mode,
+            started_at="",  # Se establece en el repository
             total_words=len(words),
             words=words,
-            tags_filter=dto.tags,
+            tags_filter=start_study_session_dto.tags,
         )

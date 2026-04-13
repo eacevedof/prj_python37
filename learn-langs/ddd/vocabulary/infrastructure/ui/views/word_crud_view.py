@@ -8,10 +8,11 @@ from ddd.vocabulary.application.create_word import (
     CreateWordDto,
     CreateWordService,
 )
+from ddd.vocabulary.domain.entities import WordEsEntity, WordImageEntity
+from ddd.vocabulary.domain.enums import ImageSourceEnum
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsEsWriterSqliteRepository,
-    WordsLangWriterSqliteRepository,
     TagsReaderSqliteRepository,
     ImagesReaderSqliteRepository,
     ImagesWriterSqliteRepository,
@@ -408,14 +409,16 @@ class WordCrudView(ft.Container):
             }
             mime_type = mime_map.get(ext, "image/png")
 
-            writer = ImagesWriterSqliteRepository.get_instance()
-            await writer.save_image_bytes(
+            word_image_entity = WordImageEntity(
+                id=0,
                 word_es_id=word_id,
-                source_type="LOCAL",
-                image_bytes=image_bytes,
+                source_type=ImageSourceEnum.LOCAL,
+                file_path="",
                 mime_type=mime_type,
                 original_filename=filename,
             )
+            writer = ImagesWriterSqliteRepository.get_instance()
+            await writer.save_image_bytes(word_image_entity, image_bytes)
         except Exception as e:
             self._show_snackbar(f"Error: {e}", error=True)
 
@@ -439,14 +442,16 @@ class WordCrudView(ft.Container):
             if mime_type not in ["image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml"]:
                 mime_type = "image/png"
 
-            writer = ImagesWriterSqliteRepository.get_instance()
-            await writer.save_image_bytes(
+            word_image_entity = WordImageEntity(
+                id=0,
                 word_es_id=word_id,
-                source_type="URL",
-                image_bytes=image_bytes,
+                source_type=ImageSourceEnum.URL,
+                file_path="",
                 mime_type=mime_type,
                 original_url=url,
             )
+            writer = ImagesWriterSqliteRepository.get_instance()
+            await writer.save_image_bytes(word_image_entity, image_bytes)
 
             await self._load_words()
             self._show_snackbar("Imagen agregada desde URL")
@@ -457,8 +462,13 @@ class WordCrudView(ft.Container):
     def _delete_image(self, image_id: int) -> None:
         """Elimina una imagen."""
         async def do_delete():
-            writer = ImagesWriterSqliteRepository.get_instance()
-            await writer.hard_delete(image_id)
+            # Leer imagen para obtener datos necesarios
+            images_reader = ImagesReaderSqliteRepository.get_instance()
+            image_data = await images_reader.get_by_id(image_id)
+            if image_data:
+                word_image_entity = WordImageEntity.from_primitives(image_data)
+                writer = ImagesWriterSqliteRepository.get_instance()
+                await writer.hard_delete(word_image_entity)
             await self._load_words()
             self._show_snackbar("Imagen eliminada")
             # Cerrar y reabrir dialogo
@@ -560,11 +570,15 @@ class WordCrudView(ft.Container):
         """Ejecuta la eliminacion."""
         # Eliminar imagenes primero
         images_writer = ImagesWriterSqliteRepository.get_instance()
-        await images_writer.delete_all_by_word_id(word_id)
+        await images_writer.delete_all_by_word(word_id)
 
-        # Eliminar palabra
-        writer = WordsEsWriterSqliteRepository.get_instance()
-        await writer.delete(word_id)
+        # Leer palabra para crear entidad
+        reader = WordsEsReaderSqliteRepository.get_instance()
+        word_data = await reader.get_by_id(word_id)
+        if word_data:
+            word_es_entity = WordEsEntity.from_primitives(word_data)
+            writer = WordsEsWriterSqliteRepository.get_instance()
+            await writer.delete(word_es_entity)
         await self._load_words()
         self._show_snackbar("Palabra eliminada")
 
