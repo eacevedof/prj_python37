@@ -203,7 +203,7 @@ ft.Row(
 )
 ```
 
-### Container with Shadow
+### Container with Shadow and Alignment
 ```python
 ft.Container(
     content=...,
@@ -212,6 +212,7 @@ ft.Container(
     bgcolor=ft.Colors.WHITE,
     border_radius=16,
     padding=32,
+    alignment=ft.Alignment.CENTER,  # NOT ft.alignment.center
     shadow=ft.BoxShadow(
         spread_radius=1,
         blur_radius=15,
@@ -219,6 +220,19 @@ ft.Container(
         offset=ft.Offset(0, 4),
     ),
 )
+```
+
+### Alignment Constants
+```python
+ft.Alignment.CENTER       # (0, 0)
+ft.Alignment.TOP_LEFT     # (-1, -1)
+ft.Alignment.TOP_CENTER   # (0, -1)
+ft.Alignment.TOP_RIGHT    # (1, -1)
+ft.Alignment.CENTER_LEFT  # (-1, 0)
+ft.Alignment.CENTER_RIGHT # (1, 0)
+ft.Alignment.BOTTOM_LEFT  # (-1, 1)
+ft.Alignment.BOTTOM_CENTER# (0, 1)
+ft.Alignment.BOTTOM_RIGHT # (1, 1)
 ```
 
 ## Page Configuration
