@@ -66,24 +66,24 @@ class HomeView(ft.Container):
 
         # Botones de accion
         start_btn = ft.ElevatedButton(
-            text="Comenzar estudio",
-            icon=ft.Icons.PLAY_ARROW,
+            content=ft.Row(
+                [ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Comenzar estudio")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             on_click=self._start_study,
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
                 padding=20,
             ),
-            width=200,
-            height=50,
         )
 
-        manage_btn = ft.OutlinedButton(
-            text="Gestionar palabras",
-            icon=ft.Icons.EDIT,
+        manage_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.EDIT), ft.Text("Gestionar palabras")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             on_click=lambda _: self.on_manage_words(),
-            width=200,
-            height=50,
         )
 
         self.content = ft.Column(
@@ -101,7 +101,7 @@ class HomeView(ft.Container):
                 # Seleccion de idioma
                 ft.Container(
                     content=self._lang_dropdown,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=20),
 
@@ -122,7 +122,7 @@ class HomeView(ft.Container):
                         ),
                     ),
                     width=400,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=30),
 

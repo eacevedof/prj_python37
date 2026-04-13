@@ -37,8 +37,10 @@ class InputFieldComp(ft.Container):
         )
 
         self._submit_btn = ft.ElevatedButton(
-            text="Verificar",
-            icon=ft.Icons.CHECK,
+            content=ft.Row(
+                [ft.Icon(ft.Icons.CHECK), ft.Text("Verificar")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             on_click=self._handle_submit,
             disabled=self.disabled,
             style=ft.ButtonStyle(
@@ -48,7 +50,7 @@ class InputFieldComp(ft.Container):
         )
 
         skip_btn = ft.TextButton(
-            text="Saltar (Enter vacio)",
+            content=ft.Text("Saltar (Enter vacio)"),
             on_click=self._handle_skip,
             disabled=self.disabled,
         )
@@ -65,7 +67,7 @@ class InputFieldComp(ft.Container):
                 ),
                 ft.Container(
                     content=skip_btn,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,

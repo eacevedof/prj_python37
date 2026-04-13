@@ -81,8 +81,10 @@ class WordCrudView(ft.Container):
         )
 
         add_btn = ft.ElevatedButton(
-            text="Anadir",
-            icon=ft.Icons.ADD,
+            content=ft.Row(
+                [ft.Icon(ft.Icons.ADD), ft.Text("Anadir")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             on_click=self._add_word,
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
@@ -217,7 +219,7 @@ class WordCrudView(ft.Container):
                         italic=True,
                     ),
                     padding=20,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 )
             )
 

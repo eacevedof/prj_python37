@@ -46,7 +46,7 @@ class TimerComp(ft.Container):
                 self._progress,
                 ft.Container(
                     content=self._timer_text,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     width=60,
                     height=60,
                 ),

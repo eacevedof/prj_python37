@@ -23,7 +23,7 @@ async def main(page: ft.Page):
     page.add(ft.Text("Hello, Flet!"))
 
 if __name__ == "__main__":
-    ft.run(target=main)  # NOT ft.app() - deprecated
+    ft.run(main)  # NOT ft.app() - deprecated
 ```
 
 **Important**: Use `ft.run()` instead of `ft.app()` (deprecated since 0.80).
@@ -112,16 +112,31 @@ def _handle_chip_select(self, e):
     is_selected = e.control.selected  # Already toggled
 ```
 
-### Button
+### Button (Flet 0.84+)
 ```python
+# Simple button
 ft.ElevatedButton(
-    text="Click me",  # Use 'text' not 'label' for buttons
-    icon=ft.Icons.ADD,
+    content=ft.Text("Click me"),
+    on_click=self._handle_click,
+)
+
+# Button with icon
+ft.ElevatedButton(
+    content=ft.Row(
+        [ft.Icon(ft.Icons.ADD), ft.Text("Add item")],
+        alignment=ft.MainAxisAlignment.CENTER,
+    ),
     on_click=self._handle_click,
     style=ft.ButtonStyle(
         bgcolor=ft.Colors.BLUE_700,
         color=ft.Colors.WHITE,
     ),
+)
+
+# TextButton
+ft.TextButton(
+    content=ft.Text("Cancel"),
+    on_click=self._handle_cancel,
 )
 ```
 
@@ -256,12 +271,14 @@ async def main(page: ft.Page):
 
 ## Common Pitfalls
 
-1. **Don't use `ft.app()`** - Use `ft.run()` instead (0.80+)
+1. **Don't use `ft.app()`** - Use `ft.run(main)` instead (0.80+)
 2. **Don't inherit from `UserControl`** - Inherit from specific controls
 3. **Dropdown uses `on_select`** - Not `on_change`
 4. **Chip `on_select` auto-toggles** - Don't manually toggle in handler
 5. **Always call `self.update()`** - After modifying control properties
 6. **Use `page.run_task()`** - For async operations from sync handlers
+7. **Button uses `content`** - Not `text` (use `content=ft.Text("label")`)
+8. **Alignment uses class constants** - `ft.Alignment.CENTER` not `ft.alignment.center`
 
 ## Colors Reference
 

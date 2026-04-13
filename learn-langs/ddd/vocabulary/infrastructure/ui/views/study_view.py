@@ -59,7 +59,7 @@ class StudyView(ft.Container):
             controls=[
                 ft.Container(
                     content=ft.ProgressRing(),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     expand=True,
                 ),
             ],
@@ -166,13 +166,13 @@ class StudyView(ft.Container):
                 # Timer
                 ft.Container(
                     content=self._timer,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=20),
                 # Flashcard
                 ft.Container(
                     content=self._flashcard,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=30),
                 # Input
@@ -288,8 +288,10 @@ class StudyView(ft.Container):
                 ),
                 ft.Container(height=40),
                 ft.ElevatedButton(
-                    text="Volver al inicio",
-                    icon=ft.Icons.HOME,
+                    content=ft.Row(
+                        [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
                     on_click=lambda _: self.on_back(),
                     style=ft.ButtonStyle(
                         bgcolor=ft.Colors.BLUE_700,
@@ -334,7 +336,7 @@ class StudyView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.ElevatedButton(
-                    text="Volver",
+                    content=ft.Text("Volver"),
                     on_click=lambda _: self.on_back(),
                 ),
             ])
@@ -360,7 +362,7 @@ class StudyView(ft.Container):
                 ft.Text(message, size=14, color=ft.Colors.GREY_600),
                 ft.Container(height=30),
                 ft.ElevatedButton(
-                    text="Volver",
+                    content=ft.Text("Volver"),
                     on_click=lambda _: self.on_back(),
                 ),
             ])

@@ -96,7 +96,7 @@ class FlashcardComp(ft.Container):
             color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK),
             offset=ft.Offset(0, 4),
         )
-        self.alignment = ft.alignment.center
+        self.alignment = ft.Alignment.CENTER
 
     def _get_type_color(self) -> str:
         """Retorna color segun tipo de palabra."""
