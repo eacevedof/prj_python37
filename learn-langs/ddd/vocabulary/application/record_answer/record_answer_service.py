@@ -15,9 +15,9 @@ from ddd.vocabulary.infrastructure.repositories import (
 
 @final
 class RecordAnswerService:
-    """Servicio para registrar respuestas y actualizar métricas SM-2."""
+    """Servicio para registrar respuestas y actualizar metricas SM-2."""
 
-    _dto: RecordAnswerDto
+    _record_answer_dto: RecordAnswerDto
     _sessions_reader: SessionsReaderSqliteRepository
     _sessions_writer: SessionsWriterSqliteRepository
     _metrics_reader: MetricsReaderSqliteRepository
@@ -31,20 +31,20 @@ class RecordAnswerService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: RecordAnswerDto) -> RecordAnswerResultDto:
+    async def __call__(self, record_answer_dto: RecordAnswerDto) -> RecordAnswerResultDto:
         """
-        Registra una respuesta, calcula score y actualiza métricas SM-2.
+        Registra una respuesta, calcula score y actualiza metricas SM-2.
 
         Args:
-            dto: Datos de la respuesta.
+            record_answer_dto: Datos de la respuesta.
 
         Returns:
-            RecordAnswerResultDto con score y métricas actualizadas.
+            RecordAnswerResultDto con score y metricas actualizadas.
 
         Raises:
-            VocabularyException: Si la sesión no existe o está finalizada.
+            VocabularyException: Si la sesion no existe o esta finalizada.
         """
-        self._dto = dto
+        self._record_answer_dto = record_answer_dto
         self._sessions_reader = SessionsReaderSqliteRepository.get_instance()
         self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
         self._metrics_reader = MetricsReaderSqliteRepository.get_instance()
@@ -52,28 +52,31 @@ class RecordAnswerService:
         self._answers_writer = AnswersWriterSqliteRepository.get_instance()
 
         # Validar DTO
-        errors = dto.validate()
+        errors = record_answer_dto.validate()
         if errors:
             raise VocabularyException.word_creation_failed(", ".join(errors))
 
-        # Verificar sesión
-        session = await self._sessions_reader.get_by_id(dto.session_id)
+        # Verificar sesion
+        session = await self._sessions_reader.get_by_id(record_answer_dto.session_id)
         if not session:
-            raise VocabularyException.session_not_found(dto.session_id)
+            raise VocabularyException.session_not_found(record_answer_dto.session_id)
 
         if session.get("finished_at"):
-            raise VocabularyException.session_already_finished(dto.session_id)
+            raise VocabularyException.session_already_finished(record_answer_dto.session_id)
 
         # Calcular score
-        score = ScoreCalculatorService.calculate(dto.expected_text, dto.user_input)
-
-        # Obtener métricas actuales
-        lang_code = session["lang_code"]
-        current_metrics = await self._metrics_reader.get_by_word_and_lang(
-            dto.word_es_id, lang_code
+        score = ScoreCalculatorService.calculate(
+            record_answer_dto.expected_text,
+            record_answer_dto.user_input,
         )
 
-        # Calcular nuevas métricas SM-2
+        # Obtener metricas actuales
+        lang_code = session["lang_code"]
+        current_metrics = await self._metrics_reader.get_by_word_and_lang(
+            record_answer_dto.word_es_id, lang_code
+        )
+
+        # Calcular nuevas metricas SM-2
         if current_metrics:
             sm2_result = SpacedRepetitionService.calculate_from_score(
                 score=score,
@@ -84,9 +87,9 @@ class RecordAnswerService:
         else:
             sm2_result = SpacedRepetitionService.calculate_from_score(score=score)
 
-        # Guardar métricas
+        # Guardar metricas
         await self._metrics_writer.create_or_update(
-            word_es_id=dto.word_es_id,
+            word_es_id=record_answer_dto.word_es_id,
             lang_code=lang_code,
             repetitions=sm2_result.repetitions,
             easiness_factor=sm2_result.easiness_factor,
@@ -97,25 +100,25 @@ class RecordAnswerService:
 
         # Guardar respuesta
         answer_data = await self._answers_writer.create(
-            session_id=dto.session_id,
-            word_es_id=dto.word_es_id,
-            expected_text=dto.expected_text,
-            user_input=dto.user_input,
+            session_id=record_answer_dto.session_id,
+            word_es_id=record_answer_dto.word_es_id,
+            expected_text=record_answer_dto.expected_text,
+            user_input=record_answer_dto.user_input,
             score=score,
-            response_time_ms=dto.response_time_ms,
+            response_time_ms=record_answer_dto.response_time_ms,
         )
 
-        # Actualizar progreso de sesión
-        await self._update_session_progress(dto.session_id)
+        # Actualizar progreso de sesion
+        await self._update_session_progress(record_answer_dto.session_id)
 
         return RecordAnswerResultDto.from_primitives({
             "answer_id": answer_data["id"],
-            "session_id": dto.session_id,
-            "word_es_id": dto.word_es_id,
-            "user_input": dto.user_input,
-            "expected_text": dto.expected_text,
+            "session_id": record_answer_dto.session_id,
+            "word_es_id": record_answer_dto.word_es_id,
+            "user_input": record_answer_dto.user_input,
+            "expected_text": record_answer_dto.expected_text,
             "score": score,
-            "response_time_ms": dto.response_time_ms,
+            "response_time_ms": record_answer_dto.response_time_ms,
             "new_repetitions": sm2_result.repetitions,
             "new_easiness_factor": sm2_result.easiness_factor,
             "new_interval_days": sm2_result.interval_days,
@@ -123,7 +126,7 @@ class RecordAnswerService:
         })
 
     async def _update_session_progress(self, session_id: int) -> None:
-        """Actualiza el progreso de la sesión con las respuestas actuales."""
+        """Actualiza el progreso de la sesion con las respuestas actuales."""
         from ddd.vocabulary.infrastructure.repositories import AnswersReaderSqliteRepository
 
         answers_reader = AnswersReaderSqliteRepository.get_instance()

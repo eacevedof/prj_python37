@@ -102,7 +102,7 @@ class StudyView(ft.Container):
     async def _start_session(self) -> None:
         """Inicia la sesion de estudio."""
         try:
-            dto = StartStudySessionDto.from_primitives({
+            start_study_session_dto = StartStudySessionDto.from_primitives({
                 "lang_code": self.lang_code,
                 "study_mode": "TYPING",
                 "tags": self.tags,
@@ -110,7 +110,7 @@ class StudyView(ft.Container):
             })
 
             service = StartStudySessionService.get_instance()
-            result = await service(dto)
+            result = await service(start_study_session_dto)
 
             self.session_id = result.session_id
             self.words = list(result.words)
@@ -195,7 +195,7 @@ class StudyView(ft.Container):
         response_time = int((time.time() - self.start_time) * 1000)
 
         try:
-            dto = RecordAnswerDto.from_primitives({
+            record_answer_dto = RecordAnswerDto.from_primitives({
                 "session_id": self.session_id,
                 "word_es_id": word.word_es_id,
                 "user_input": user_input,
@@ -204,7 +204,7 @@ class StudyView(ft.Container):
             })
 
             service = RecordAnswerService.get_instance()
-            result = await service(dto)
+            result = await service(record_answer_dto)
 
             # Actualizar score
             self.total_score += result.score

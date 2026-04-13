@@ -16,7 +16,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class StartStudySessionService:
     """Servicio para iniciar una sesión de estudio."""
 
-    _dto: StartStudySessionDto
+    _start_study_session_dto: StartStudySessionDto
     _metrics_reader: MetricsReaderSqliteRepository
     _sessions_writer: SessionsWriterSqliteRepository
 
@@ -27,12 +27,12 @@ class StartStudySessionService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: StartStudySessionDto) -> StartStudySessionResultDto:
+    async def __call__(self, start_study_session_dto: StartStudySessionDto) -> StartStudySessionResultDto:
         """
         Inicia una nueva sesión de estudio.
 
         Args:
-            dto: Configuración de la sesión.
+            start_study_session_dto: Configuración de la sesión.
 
         Returns:
             StartStudySessionResultDto con la sesión y palabras a estudiar.
@@ -40,30 +40,30 @@ class StartStudySessionService:
         Raises:
             VocabularyException: Si no hay palabras disponibles.
         """
-        self._dto = dto
+        self._start_study_session_dto = start_study_session_dto
         self._metrics_reader = MetricsReaderSqliteRepository.get_instance()
         self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
 
         # Validar
-        errors = dto.validate()
+        errors = start_study_session_dto.validate()
         if errors:
             raise VocabularyException.word_creation_failed(", ".join(errors))
 
         # Obtener palabras para repaso (SM-2)
         words_data = await self._metrics_reader.get_words_for_review(
-            lang_code=dto.lang_code,
-            tag_names=dto.tags if dto.tags else None,
-            limit=dto.limit,
+            lang_code=start_study_session_dto.lang_code,
+            tag_names=start_study_session_dto.tags if start_study_session_dto.tags else None,
+            limit=start_study_session_dto.limit,
         )
 
         if not words_data:
-            raise VocabularyException.no_words_for_study(dto.lang_code)
+            raise VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
 
         # Crear sesión
         session_data = await self._sessions_writer.create(
-            lang_code=dto.lang_code,
-            study_mode=dto.study_mode,
-            tags_filter=dto.tags if dto.tags else None,
+            lang_code=start_study_session_dto.lang_code,
+            study_mode=start_study_session_dto.study_mode,
+            tags_filter=start_study_session_dto.tags if start_study_session_dto.tags else None,
         )
 
         # Construir resultado

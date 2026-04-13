@@ -526,7 +526,7 @@ class WordCrudView(ft.Container):
             if text_nl.strip():
                 translations["nl_NL"] = text_nl.strip()
 
-            dto = CreateWordDto.from_primitives({
+            create_word_dto = CreateWordDto.from_primitives({
                 "text": text_es,
                 "word_type": word_type,
                 "tags": self._selected_tags,
@@ -534,7 +534,7 @@ class WordCrudView(ft.Container):
             })
 
             service = CreateWordService.get_instance()
-            await service(dto)
+            await service(create_word_dto)
 
             # Limpiar form
             self._text_es_field.value = ""
