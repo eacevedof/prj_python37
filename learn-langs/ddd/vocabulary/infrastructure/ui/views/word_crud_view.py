@@ -4,12 +4,9 @@ import flet as ft
 from typing import Callable
 from pathlib import Path
 
-from ddd.vocabulary.application.create_word import (
-    CreateWordDto,
-    CreateWordService,
-)
 from ddd.vocabulary.domain.entities import WordEsEntity, WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
+from ddd.vocabulary.infrastructure.controllers import CreateWordController
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsEsWriterSqliteRepository,
