@@ -114,7 +114,7 @@ class ToolsSchemaRepository:
                     },
                     "state": {
                         "type": "string",
-                        "description": "filter by state (new, active, resolved, closed)",
+                        "description": "filter by state(s). single: 'active' or multiple comma-separated: 'new,active'. valid: new, active, resolved, closed",
                     },
                     "assigned_to": {
                         "type": "string",

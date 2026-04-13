@@ -48,8 +48,9 @@ class GetTasksService:
         if self._get_tasks_dto.work_item_type:
             conditions.append(f"[System.WorkItemType] = '{self._get_tasks_dto.work_item_type}'")
 
-        if self._get_tasks_dto.state:
-            conditions.append(f"[System.State] = '{self._get_tasks_dto.state}'")
+        if self._get_tasks_dto.states:
+            state_condition = self._build_states_condition(self._get_tasks_dto.states)
+            conditions.append(state_condition)
 
         if self._get_tasks_dto.assigned_to:
             conditions.append(f"[System.AssignedTo] = '{self._get_tasks_dto.assigned_to}'")
@@ -64,6 +65,18 @@ class GetTasksService:
             WHERE {where_clause}
             ORDER BY [System.CreatedDate] DESC
         """
+
+    def _build_states_condition(self, states: list[str]) -> str:
+        """Build WIQL condition for multiple states.
+
+        Single state: [System.State] = 'Active'
+        Multiple states: ([System.State] = 'New' OR [System.State] = 'Active')
+        """
+        if len(states) == 1:
+            return f"[System.State] = '{states[0]}'"
+
+        state_clauses = [f"[System.State] = '{state}'" for state in states]
+        return f"({' OR '.join(state_clauses)})"
 
     async def _get_tasks_primitives(self, work_items: list[dict]) -> list[dict[str, Any]]:
         if not work_items:
