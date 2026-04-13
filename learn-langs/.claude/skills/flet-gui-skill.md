@@ -165,6 +165,15 @@ async def _async_operation(self):
     # Update UI
     self.some_text.value = "Done!"
     self.update()
+
+# WRONG - lambda returns coroutine, not a coroutine function
+# self.page.run_task(lambda: self._async_operation(param))  # TypeError!
+
+# CORRECT - define async function inline
+def _handle_with_param(self, param: str):
+    async def do_work():
+        await self._async_operation(param)
+    self.page.run_task(do_work)
 ```
 
 ### Loading data on mount
@@ -293,6 +302,7 @@ async def main(page: ft.Page):
 6. **Use `page.run_task()`** - For async operations from sync handlers
 7. **Button uses `content`** - Not `text` (use `content=ft.Text("label")`)
 8. **Alignment uses class constants** - `ft.Alignment.CENTER` not `ft.alignment.center`
+9. **run_task needs coroutine function** - NOT `lambda: coro()`, use inline `async def`
 
 ## Colors Reference
 

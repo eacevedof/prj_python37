@@ -182,7 +182,9 @@ class StudyView(ft.Container):
 
     def _handle_answer(self, user_input: str) -> None:
         """Procesa la respuesta del usuario."""
-        self.page.run_task(lambda: self._process_answer(user_input))
+        async def process():
+            await self._process_answer(user_input)
+        self.page.run_task(process)
 
     async def _process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta."""
@@ -218,11 +220,15 @@ class StudyView(ft.Container):
 
     def _handle_skip(self) -> None:
         """Maneja cuando el usuario salta la pregunta."""
-        self.page.run_task(lambda: self._process_answer(""))
+        async def skip():
+            await self._process_answer("")
+        self.page.run_task(skip)
 
     def _handle_timeout(self) -> None:
         """Maneja cuando se acaba el tiempo."""
-        self.page.run_task(lambda: self._process_answer(""))
+        async def timeout():
+            await self._process_answer("")
+        self.page.run_task(timeout)
 
     def _show_result(self, is_correct: bool, score: float, correct_answer: str) -> None:
         """Muestra el resultado y continua."""

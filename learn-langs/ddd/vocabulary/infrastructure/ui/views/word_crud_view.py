@@ -255,7 +255,9 @@ class WordCrudView(ft.Container):
     def _on_search(self, e) -> None:
         """Maneja busqueda."""
         search_text = e.control.value or ""
-        self.page.run_task(lambda: self._load_words(search_text))
+        async def search():
+            await self._load_words(search_text)
+        self.page.run_task(search)
 
     def _add_word(self, e) -> None:
         """Anade una nueva palabra."""
@@ -305,7 +307,9 @@ class WordCrudView(ft.Container):
 
     def _delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
-        self.page.run_task(lambda: self._do_delete(word_id))
+        async def do_delete():
+            await self._do_delete(word_id)
+        self.page.run_task(do_delete)
 
     async def _do_delete(self, word_id: int) -> None:
         """Ejecuta la eliminacion."""
