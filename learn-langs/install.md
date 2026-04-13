@@ -1,7 +1,7 @@
 ### windows
 
 ```
-cd azure-devops
+cd learn-langs
 python -m venv .venv-win
 .venv-win\Scripts\activate
 .venv-win\Scripts\python.exe -m pip install --upgrade pip
@@ -10,7 +10,7 @@ python -m venv .venv-win
 
 ### linux
 ```
-cd $PROJECT_DIR/prj_python37/azure-devops
+cd $PROJECT_DIR/prj_python37/learn-langs
 python3 -m venv ./.venv-wsl
 source ./.venv-wsl/bin/activate
 

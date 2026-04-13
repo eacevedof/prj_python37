@@ -13,7 +13,7 @@ Aplicación de aprendizaje de idiomas con sistema de repetición espaciada (Spac
 - **Base de datos**: SQLite
 - **Arquitectura**: Domain-Driven Design (DDD)
 - **Validación**: Pydantic V2
-- **Async**: asyncio + aiohttp
+- **Async**: asyncio + aiosqlite
 
 ## Estructura del Proyecto
 
@@ -51,8 +51,6 @@ learn-langs/
     │       └── repositories/
     │           ├── environment_reader_raw_repository.py
     │           └── sqlite_connection.py
-    │
-    ├── workitems/                       # Módulo Azure DevOps (referencia DDD)
     │
     └── vocabulary/                      # Bounded Context principal
         │
