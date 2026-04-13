@@ -472,6 +472,13 @@ class VocabularyException(Exception):
 
 ## Skills Disponibles
 
+### sqlite-database
+- Patrones SQLite para Python con aiosqlite
+- Queries parametrizadas (prevención SQL injection)
+- PRAGMAs de rendimiento (WAL, cache, foreign keys)
+- Migraciones versionadas
+- Full-Text Search (FTS5)
+
 ### python-code-style
 - Estándares de código y documentación
 - Configuración de ruff, mypy, pyright

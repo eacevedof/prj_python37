@@ -4,6 +4,12 @@ from ddd.vocabulary.infrastructure.repositories.words_lang_reader_sqlite_reposit
 from ddd.vocabulary.infrastructure.repositories.words_lang_writer_sqlite_repository import WordsLangWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.tags_reader_sqlite_repository import TagsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.tags_writer_sqlite_repository import TagsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.metrics_reader_sqlite_repository import MetricsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.metrics_writer_sqlite_repository import MetricsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.sessions_reader_sqlite_repository import SessionsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.sessions_writer_sqlite_repository import SessionsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.answers_reader_sqlite_repository import AnswersReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.answers_writer_sqlite_repository import AnswersWriterSqliteRepository
 
 __all__ = [
     "WordsEsReaderSqliteRepository",
@@ -12,4 +18,10 @@ __all__ = [
     "WordsLangWriterSqliteRepository",
     "TagsReaderSqliteRepository",
     "TagsWriterSqliteRepository",
+    "MetricsReaderSqliteRepository",
+    "MetricsWriterSqliteRepository",
+    "SessionsReaderSqliteRepository",
+    "SessionsWriterSqliteRepository",
+    "AnswersReaderSqliteRepository",
+    "AnswersWriterSqliteRepository",
 ]
