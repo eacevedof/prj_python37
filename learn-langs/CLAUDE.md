@@ -36,6 +36,10 @@ learn-langs/
 │       ├── python-error-handling-skill.md
 │       └── python-type-safety-skill.md
 │
+├── data/
+│   ├── learn_lang.db                    # Base de datos SQLite
+│   └── images/                          # Imagenes de palabras
+│
 └── ddd/
     ├── __init__.py
     │
@@ -81,12 +85,14 @@ learn-langs/
         │   │   ├── word_metric_entity.py
         │   │   ├── study_session_entity.py
         │   │   ├── session_answer_entity.py
-        │   │   └── language_entity.py
+        │   │   ├── language_entity.py
+        │   │   └── word_image_entity.py
         │   ├── enums/
         │   │   ├── language_code_enum.py
         │   │   ├── word_type_enum.py
         │   │   ├── study_mode_enum.py
-        │   │   └── relation_type_enum.py
+        │   │   ├── relation_type_enum.py
+        │   │   └── image_source_enum.py
         │   ├── exceptions/
         │   │   └── vocabulary_exception.py
         │   └── services/
@@ -109,7 +115,9 @@ learn-langs/
             │   ├── answers_reader_sqlite_repository.py
             │   ├── answers_writer_sqlite_repository.py
             │   ├── word_relations_reader_sqlite_repository.py
-            │   └── word_relations_writer_sqlite_repository.py
+            │   ├── word_relations_writer_sqlite_repository.py
+            │   ├── images_reader_sqlite_repository.py
+            │   └── images_writer_sqlite_repository.py
             │
             ├── ui/
             │   ├── views/
@@ -124,7 +132,8 @@ learn-langs/
             │
             └── persistence/
                 └── migrations/
-                    └── 001_initial_schema.sql
+                    ├── 001_initial_schema.sql
+                    └── 002_word_images.sql
 ```
 
 ---
@@ -140,11 +149,30 @@ learn-langs/
 │ id (PK)             │
 │ text                │  ← Texto en español
 │ word_type           │  ← WORD, PHRASE, SENTENCE
-│ image_path          │  ← Imagen asociada (nullable)
 │ notes               │  ← Notas/contexto (nullable)
 │ created_at          │
 │ updated_at          │
 └────────┬────────────┘
+         │
+         ├──── 1:N ────┐
+         │             ▼
+         │   ┌─────────────────────┐
+         │   │   word_es_images    │  ← Imagenes de la palabra
+         │   ├─────────────────────┤
+         │   │ id (PK)             │
+         │   │ word_es_id (FK)     │
+         │   │ source_type         │  ← SCREENSHOT, CLIPBOARD, CAMERA, URL, LOCAL, VECTORIAL
+         │   │ file_path           │  ← Ruta relativa en data/images/
+         │   │ original_url        │  ← URL original (si aplica)
+         │   │ mime_type           │  ← image/png, image/jpeg, image/svg+xml...
+         │   │ width, height       │  ← Dimensiones (nullable para SVG)
+         │   │ file_size           │  ← Tamano en bytes
+         │   │ svg_content         │  ← Contenido SVG inline (opcional)
+         │   │ caption, alt_text   │  ← Metadatos descriptivos
+         │   │ sort_order          │  ← Orden de visualizacion
+         │   │ is_primary          │  ← 1 = imagen principal
+         │   │ is_active           │  ← 0 = soft delete
+         │   └─────────────────────┘
          │
          │ 1:N
          ▼

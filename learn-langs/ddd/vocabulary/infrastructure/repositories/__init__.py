@@ -10,6 +10,8 @@ from ddd.vocabulary.infrastructure.repositories.sessions_reader_sqlite_repositor
 from ddd.vocabulary.infrastructure.repositories.sessions_writer_sqlite_repository import SessionsWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.answers_reader_sqlite_repository import AnswersReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.answers_writer_sqlite_repository import AnswersWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.images_reader_sqlite_repository import ImagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.images_writer_sqlite_repository import ImagesWriterSqliteRepository
 
 __all__ = [
     "WordsEsReaderSqliteRepository",
@@ -24,4 +26,6 @@ __all__ = [
     "SessionsWriterSqliteRepository",
     "AnswersReaderSqliteRepository",
     "AnswersWriterSqliteRepository",
+    "ImagesReaderSqliteRepository",
+    "ImagesWriterSqliteRepository",
 ]
