@@ -116,9 +116,9 @@ learn-langs/
             │   │   ├── word_crud_view.py
             │   │   └── stats_view.py
             │   └── components/
-            │       ├── flashcard_component.py
-            │       ├── timer_component.py
-            │       └── input_field_component.py
+            │       ├── flashcard_comp.py
+            │       ├── timer_comp.py
+            │       └── input_field_comp.py
             │
             └── persistence/
                 └── migrations/
