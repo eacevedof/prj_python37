@@ -11,6 +11,11 @@ mcp
 cryptography==46.0.7
 pynacl==1.6.2
 
+# Learn Languages App
+flet>=0.21.0
+aiosqlite>=0.19.0
+pydantic>=2.5.0
+
 # Dev
 ruff==0.15.10
 mypy==1.20.0
