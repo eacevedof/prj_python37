@@ -1,4 +1,7 @@
 ### skills:
+- https://github.com/forrestchang/andrej-karpathy-skills
+  - `/plugin marketplace add forrestchang/andrej-karpathy-skills`
+  - `/plugin install andrej-karpathy-skills@karpathy-skills`
 - https://skills.sh/
 - https://github.com/richardxzl/ai-dev-team
 
