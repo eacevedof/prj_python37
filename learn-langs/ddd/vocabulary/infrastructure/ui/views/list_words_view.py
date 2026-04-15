@@ -1,48 +1,62 @@
-"""Vista de gestion de palabras (listado, busqueda, eliminacion)."""
+"""Vista para listar palabras."""
 
 import flet as ft
 from typing import Callable
 from pathlib import Path
 
-from ddd.vocabulary.domain.entities import WordEsEntity, WordImageEntity
+from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
+from ddd.vocabulary.infrastructure.controllers.list_words_controller import ListWordsController
+from ddd.vocabulary.infrastructure.controllers.list_words_view_dto import WordListItemViewDto
 from ddd.vocabulary.infrastructure.repositories import (
-    WordsEsReaderSqliteRepository,
-    WordsEsWriterSqliteRepository,
     ImagesReaderSqliteRepository,
     ImagesWriterSqliteRepository,
 )
 
 
-class WordCrudView(ft.Container):
-    """Vista para listar y gestionar palabras existentes."""
+class ListWordsView(ft.Container):
+    """Vista para listar y gestionar palabras."""
 
     def __init__(
         self,
         on_back: Callable[[], None],
         on_create: Callable[[], None] | None = None,
+        on_edit: Callable[[int], None] | None = None,
     ):
         super().__init__()
         self.on_back = on_back
         self.on_create = on_create
-        self.words: list[dict] = []
+        self.on_edit = on_edit
 
+        self._controller = ListWordsController.get_instance()
+        self._words: list[WordListItemViewDto] = []
+        self._current_search: str = ""
+
+        # UI components
         self._words_list: ft.ListView | None = None
         self._search_field: ft.TextField | None = None
+        self._loading: ft.ProgressRing | None = None
+        self._count_text: ft.Text | None = None
 
-        # Current word for image operations
+        # Image dialog state
         self._current_word_for_image: int | None = None
 
         self._build_ui()
 
     def _build_ui(self) -> None:
-        # Search
+        # Search field
         self._search_field = ft.TextField(
             hint_text="Buscar palabras...",
             prefix_icon=ft.Icons.SEARCH,
             width=300,
             on_change=self._on_search,
         )
+
+        # Loading indicator
+        self._loading = ft.ProgressRing(width=20, height=20, visible=False)
+
+        # Count text
+        self._count_text = ft.Text("", size=12, color=ft.Colors.GREY_600)
 
         # Words list
         self._words_list = ft.ListView(
@@ -85,10 +99,16 @@ class WordCrudView(ft.Container):
                         add_btn,
                         ft.Container(width=16),
                         self._search_field,
+                        self._loading,
+                    ],
+                ),
+                ft.Row(
+                    controls=[
+                        ft.Container(expand=True),
+                        self._count_text,
                     ],
                 ),
                 ft.Divider(height=1),
-                ft.Container(height=10),
                 # List
                 ft.Container(
                     content=self._words_list,
@@ -106,107 +126,51 @@ class WordCrudView(ft.Container):
         """Carga datos al montar."""
         self.page.run_task(self._load_words)
 
-    def reload_words(self) -> None:
-        """Recarga la lista de palabras (llamado externamente)."""
+    def reload(self) -> None:
+        """Recarga la lista de palabras."""
         self.page.run_task(self._load_words)
 
-    async def _load_words(self, search: str = "") -> None:
-        """Carga la lista de palabras."""
-        try:
-            reader = WordsEsReaderSqliteRepository.get_instance()
-            images_reader = ImagesReaderSqliteRepository.get_instance()
+    async def _load_words(self) -> None:
+        """Carga la lista de palabras usando el controlador."""
+        if self._loading:
+            self._loading.visible = True
+            self.update()
 
-            if search:
-                self.words = await reader.search(search)
+        result = await self._controller.list_words(
+            search=self._current_search,
+            limit=100,
+        )
+
+        if self._loading:
+            self._loading.visible = False
+
+        if result.success:
+            self._words = result.words
+            self._update_count_text(result.total_count)
+            self._render_words_list()
+        else:
+            self._show_snackbar(result.error_message or "Error desconocido", error=True)
+            self._words = []
+            self._render_words_list()
+
+    def _update_count_text(self, total: int) -> None:
+        """Actualiza el texto del contador."""
+        if self._count_text:
+            showing = len(self._words)
+            if self._current_search:
+                self._count_text.value = f"Mostrando {showing} resultados"
             else:
-                self.words = await reader.get_all(limit=100)
+                self._count_text.value = f"Mostrando {showing} de {total} palabras"
+            self.update()
 
-            # Validar que self.words sea una lista
-            if not isinstance(self.words, list):
-                self.words = []
-                self._show_snackbar("Error: formato de datos inválido", error=True)
-                return
-
-            # Cargar conteo de imagenes para cada palabra
-            for word in self.words:
-                if isinstance(word, dict) and "id" in word:
-                    word["image_count"] = await images_reader.count_by_word_id(word["id"])
-                else:
-                    word["image_count"] = 0
-
-            self._update_words_list()
-        except Exception as e:
-            self.words = []
-            self._show_snackbar(f"Error al cargar palabras: {e}", error=True)
-            self._update_words_list()
-
-    def _update_words_list(self) -> None:
-        """Actualiza la lista visual de palabras."""
+    def _render_words_list(self) -> None:
+        """Renderiza la lista de palabras."""
         if not self._words_list:
             return
 
         self._words_list.controls.clear()
 
-        # Validar que self.words sea una lista
-        if not isinstance(self.words, list):
-            self.words = []
-            self._words_list.controls.append(
-                ft.Container(
-                    content=ft.Text(
-                        "Error: formato de datos inválido",
-                        color=ft.Colors.RED_500,
-                        weight=ft.FontWeight.BOLD,
-                    ),
-                    padding=20,
-                    alignment=ft.Alignment.CENTER,
-                )
-            )
-            self.update()
-            return
-
-        for word in self.words:
-            # Validar que cada palabra sea un diccionario
-            if not isinstance(word, dict) or "text" not in word:
-                continue
-
-            image_count = word.get("image_count", 0)
-            image_badge = f" ({image_count})" if image_count > 0 else ""
-
-            tile = ft.ListTile(
-                leading=ft.Icon(
-                    ft.Icons.ABC if word.get("word_type") == "WORD"
-                    else ft.Icons.SHORT_TEXT if word.get("word_type") == "PHRASE"
-                    else ft.Icons.NOTES,
-                    color=ft.Colors.BLUE_700,
-                ),
-                title=ft.Text(word["text"], weight=ft.FontWeight.W_500),
-                subtitle=ft.Text(
-                    f"{word.get('word_type', 'UNKNOWN')} - {word.get('created_at', '')[:10]}",
-                    size=12,
-                ),
-                trailing=ft.Row(
-                    controls=[
-                        # Boton de imagenes
-                        ft.IconButton(
-                            icon=ft.Icons.IMAGE,
-                            icon_color=ft.Colors.GREEN_600 if image_count > 0 else ft.Colors.GREY_400,
-                            on_click=lambda e, w=word: self._show_images_dialog(w),
-                            tooltip=f"Imagenes{image_badge}",
-                        ),
-                        # Boton de eliminar
-                        ft.IconButton(
-                            icon=ft.Icons.DELETE_OUTLINE,
-                            icon_color=ft.Colors.RED_400,
-                            on_click=lambda e, w=word: self._delete_word(w["id"]),
-                            tooltip="Eliminar",
-                        ),
-                    ],
-                    spacing=0,
-                ),
-            )
-            self._words_list.controls.append(tile)
-
-        if not self.words:
+        if not self._words:
             self._words_list.controls.append(
                 ft.Container(
                     content=ft.Text(
@@ -215,34 +179,109 @@ class WordCrudView(ft.Container):
                         italic=True,
                     ),
                     padding=20,
-                    alignment=ft.Alignment.CENTER,
+                    alignment=ft.alignment.center,
                 )
             )
+            self.update()
+            return
+
+        for word in self._words:
+            tile = self._build_word_tile(word)
+            self._words_list.controls.append(tile)
 
         self.update()
 
-    def _show_images_dialog(self, word: dict) -> None:
-        """Muestra dialogo para gestionar imagenes de una palabra."""
-        self._current_word_for_image = word["id"]
+    def _build_word_tile(self, word: WordListItemViewDto) -> ft.ListTile:
+        """Construye un tile para una palabra."""
+        # Icono segun tipo
+        icon = ft.Icons.ABC
+        if word.word_type == "PHRASE":
+            icon = ft.Icons.SHORT_TEXT
+        elif word.word_type == "SENTENCE":
+            icon = ft.Icons.NOTES
+
+        # Badge de imagenes
+        image_badge = f" ({word.image_count})" if word.image_count > 0 else ""
+
+        # Subtitulo con traduccion
+        subtitle_parts = [word.word_type, word.created_at]
+        if word.translation_nl:
+            subtitle_parts.append(f"NL: {word.translation_nl}")
+        subtitle = " | ".join(subtitle_parts)
+
+        return ft.ListTile(
+            leading=ft.Icon(icon, color=ft.Colors.BLUE_700),
+            title=ft.Text(word.text, weight=ft.FontWeight.W_500),
+            subtitle=ft.Text(subtitle, size=12),
+            trailing=ft.Row(
+                controls=[
+                    # Editar
+                    ft.IconButton(
+                        icon=ft.Icons.EDIT_OUTLINED,
+                        icon_color=ft.Colors.BLUE_600,
+                        on_click=lambda e, w=word: self._on_edit_click(w.id),
+                        tooltip="Editar",
+                    ),
+                    # Imagenes
+                    ft.IconButton(
+                        icon=ft.Icons.IMAGE,
+                        icon_color=ft.Colors.GREEN_600 if word.image_count > 0 else ft.Colors.GREY_400,
+                        on_click=lambda e, w=word: self._show_images_dialog(w),
+                        tooltip=f"Imagenes{image_badge}",
+                    ),
+                    # Eliminar
+                    ft.IconButton(
+                        icon=ft.Icons.DELETE_OUTLINE,
+                        icon_color=ft.Colors.RED_400,
+                        on_click=lambda e, w=word: self._on_delete_click(w.id),
+                        tooltip="Eliminar",
+                    ),
+                ],
+                spacing=0,
+            ),
+        )
+
+    def _on_edit_click(self, word_id: int) -> None:
+        """Maneja click en editar."""
+        if self.on_edit:
+            self.on_edit(word_id)
+
+    def _on_delete_click(self, word_id: int) -> None:
+        """Maneja click en eliminar."""
+        self.page.run_task(lambda: self._delete_word(word_id))
+
+    async def _delete_word(self, word_id: int) -> None:
+        """Elimina una palabra."""
+        success, message = await self._controller.delete_word(word_id)
+
+        if success:
+            self._show_snackbar(message)
+            await self._load_words()
+        else:
+            self._show_snackbar(message, error=True)
+
+    def _on_search(self, e) -> None:
+        """Maneja cambio en busqueda."""
+        self._current_search = e.control.value or ""
+        self.page.run_task(self._load_words)
+
+    # ============ Image Dialog Methods ============
+
+    def _show_images_dialog(self, word: WordListItemViewDto) -> None:
+        """Muestra dialogo para gestionar imagenes."""
+        self._current_word_for_image = word.id
 
         async def load_and_show():
             try:
                 images_reader = ImagesReaderSqliteRepository.get_instance()
-                images = await images_reader.get_by_word_id(word["id"])
-                
-                # Validar que images sea una lista
-                if not isinstance(images, list):
-                    images = []
-                    self._show_snackbar("Error: formato de imágenes inválido", error=True)
-                
-                self._display_images_dialog(word, images)
+                images = await images_reader.get_by_word_id(word.id)
+                self._display_images_dialog(word, images or [])
             except Exception as e:
-                self._show_snackbar(f"Error al cargar imágenes: {e}", error=True)
-                self._display_images_dialog(word, [])
+                self._show_snackbar(f"Error al cargar imagenes: {e}", error=True)
 
         self.page.run_task(load_and_show)
 
-    def _display_images_dialog(self, word: dict, images: list[dict]) -> None:
+    def _display_images_dialog(self, word: WordListItemViewDto, images: list[dict]) -> None:
         """Muestra el dialogo con las imagenes."""
         images_column = ft.Column(
             controls=[],
@@ -251,14 +290,8 @@ class WordCrudView(ft.Container):
             height=300,
         )
 
-        # Validar que images sea una lista
-        if not isinstance(images, list):
-            images = []
-
-        # Mostrar imagenes existentes
         if images:
             for img in images:
-                # Validar que cada imagen sea un diccionario válido
                 if not isinstance(img, dict) or "file_path" not in img:
                     continue
 
@@ -291,7 +324,6 @@ class WordCrudView(ft.Container):
                 ft.Text("No hay imagenes", italic=True, color=ft.Colors.GREY_500)
             )
 
-        # URL input
         url_field = ft.TextField(
             label="URL de imagen",
             hint_text="https://...",
@@ -299,18 +331,18 @@ class WordCrudView(ft.Container):
         )
 
         def close_dialog(e=None):
-            self.page.pop_dialog()
+            self.page.close(dialog)
 
         def add_from_url(e):
             url = url_field.value
             if url and url.strip():
                 async def save_url():
-                    await self._add_image_from_url(word["id"], url.strip())
+                    await self._add_image_from_url(word.id, url.strip())
                     close_dialog()
                 self.page.run_task(save_url)
 
         dialog = ft.AlertDialog(
-            title=ft.Text(f"Imagenes: {word['text']}"),
+            title=ft.Text(f"Imagenes: {word.text}"),
             content=ft.Container(
                 content=ft.Column(
                     controls=[
@@ -345,7 +377,7 @@ class WordCrudView(ft.Container):
             ],
         )
 
-        self.page.show_dialog(dialog)
+        self.page.open(dialog)
 
     def _pick_image_file(self) -> None:
         """Abre el file picker para seleccionar imagen."""
@@ -354,7 +386,7 @@ class WordCrudView(ft.Container):
             self.page.overlay.append(file_picker)
             self.page.update()
 
-            files = await file_picker.pick_files(
+            files = await file_picker.pick_files_async(
                 allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
                 allow_multiple=False,
             )
@@ -364,8 +396,11 @@ class WordCrudView(ft.Container):
 
             if files and len(files) > 0 and self._current_word_for_image:
                 file = files[0]
-                word_id = self._current_word_for_image
-                await self._add_image_from_file(word_id, file.path, file.name)
+                await self._add_image_from_file(
+                    self._current_word_for_image,
+                    file.path,
+                    file.name,
+                )
                 await self._load_words()
                 self._show_snackbar("Imagen agregada")
 
@@ -374,7 +409,6 @@ class WordCrudView(ft.Container):
     async def _add_image_from_file(self, word_id: int, file_path: str, filename: str) -> None:
         """Agrega imagen desde archivo local."""
         try:
-            # Leer archivo
             path = Path(file_path)
             if not path.exists():
                 self._show_snackbar("Archivo no encontrado", error=True)
@@ -382,7 +416,6 @@ class WordCrudView(ft.Container):
 
             image_bytes = path.read_bytes()
 
-            # Determinar mime type
             ext = path.suffix.lower()
             mime_map = {
                 ".png": "image/png",
@@ -414,7 +447,6 @@ class WordCrudView(ft.Container):
             import urllib.request
             import ssl
 
-            # Descargar imagen
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -423,7 +455,6 @@ class WordCrudView(ft.Container):
                 image_bytes = response.read()
                 content_type = response.headers.get("Content-Type", "image/png")
 
-            # Extraer mime type
             mime_type = content_type.split(";")[0].strip()
             if mime_type not in ["image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml"]:
                 mime_type = "image/png"
@@ -448,7 +479,6 @@ class WordCrudView(ft.Container):
     def _delete_image(self, image_id: int) -> None:
         """Elimina una imagen."""
         async def do_delete():
-            # Leer imagen para obtener datos necesarios
             images_reader = ImagesReaderSqliteRepository.get_instance()
             image_data = await images_reader.get_by_id(image_id)
             if image_data:
@@ -457,43 +487,8 @@ class WordCrudView(ft.Container):
                 await writer.hard_delete(word_image_entity)
             await self._load_words()
             self._show_snackbar("Imagen eliminada")
-            # Cerrar y reabrir dialogo
-            if self._current_word_for_image:
-                for word in self.words:
-                    if word["id"] == self._current_word_for_image:
-                        self._show_images_dialog(word)
-                        break
 
         self.page.run_task(do_delete)
-
-    def _on_search(self, e) -> None:
-        """Maneja busqueda."""
-        search_text = e.control.value or ""
-        async def search():
-            await self._load_words(search_text)
-        self.page.run_task(search)
-
-    def _delete_word(self, word_id: int) -> None:
-        """Elimina una palabra."""
-        async def do_delete():
-            await self._do_delete(word_id)
-        self.page.run_task(do_delete)
-
-    async def _do_delete(self, word_id: int) -> None:
-        """Ejecuta la eliminacion."""
-        # Eliminar imagenes primero
-        images_writer = ImagesWriterSqliteRepository.get_instance()
-        await images_writer.delete_all_by_word(word_id)
-
-        # Leer palabra para crear entidad
-        reader = WordsEsReaderSqliteRepository.get_instance()
-        word_data = await reader.get_by_id(word_id)
-        if word_data:
-            word_es_entity = WordEsEntity.from_primitives(word_data)
-            writer = WordsEsWriterSqliteRepository.get_instance()
-            await writer.delete(word_es_entity)
-        await self._load_words()
-        self._show_snackbar("Palabra eliminada")
 
     def _show_snackbar(self, message: str, error: bool = False) -> None:
         """Muestra un snackbar."""

@@ -36,6 +36,10 @@ class VocabularyException(Exception):
     def word_creation_failed(cls, error: str) -> "VocabularyException":
         return cls(f"Word creation failed: {error}", ResponseCodeEnum.BAD_REQUEST)
 
+    @classmethod
+    def word_update_failed(cls, error: str) -> "VocabularyException":
+        return cls(f"Word update failed: {error}", ResponseCodeEnum.BAD_REQUEST)
+
     # Translation errors
     @classmethod
     def translation_not_found(cls, word_id: int, lang_code: str) -> "VocabularyException":

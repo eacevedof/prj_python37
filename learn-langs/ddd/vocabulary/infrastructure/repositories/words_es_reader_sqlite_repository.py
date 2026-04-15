@@ -123,6 +123,16 @@ class WordsEsReaderSqliteRepository:
 
         return word
 
+    async def get_tags_for_word(self, word_id: int) -> list[dict]:
+        """Obtiene los tags de una palabra."""
+        query = """
+            SELECT t.id, t.name, t.color
+            FROM tags t
+            INNER JOIN word_es_tags wt ON t.id = wt.tag_id
+            WHERE wt.word_es_id = ?
+        """
+        return await self._sqlite.fetch_all(query, (word_id,))
+
     async def search(self, text: str, limit: int = 50) -> list[dict]:
         """Busca palabras por texto (búsqueda parcial)."""
         query = """

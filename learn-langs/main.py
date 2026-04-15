@@ -11,8 +11,9 @@ if sys.platform == "win32":
 from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
-from ddd.vocabulary.infrastructure.ui.views.word_crud_view import WordCrudView
 from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
+from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordView
+from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 
 
 async def main(page: ft.Page) -> None:
@@ -54,14 +55,21 @@ async def main(page: ft.Page) -> None:
                 on_back=lambda: navigate_to("home"),
             )
         elif view_name == "words":
-            content_area.content = WordCrudView(
+            content_area.content = ListWordsView(
                 on_back=lambda: navigate_to("home"),
                 on_create=lambda: navigate_to("create_word"),
+                on_edit=lambda word_id: navigate_to("update_word", word_id=word_id),
             )
         elif view_name == "create_word":
             content_area.content = CreateWordView(
                 on_back=lambda: navigate_to("words"),
                 on_word_created=lambda: None,  # Stay in create view for batch adding
+            )
+        elif view_name == "update_word":
+            content_area.content = UpdateWordView(
+                word_id=kwargs.get("word_id", 0),
+                on_back=lambda: navigate_to("words"),
+                on_word_updated=lambda: None,
             )
 
         page.update()

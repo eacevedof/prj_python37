@@ -1,6 +1,13 @@
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
-from ddd.vocabulary.infrastructure.ui.views.word_crud_view import WordCrudView
 from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
+from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordView
+from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 
-__all__ = ["HomeView", "StudyView", "WordCrudView", "CreateWordView"]
+__all__ = [
+    "HomeView",
+    "StudyView",
+    "CreateWordView",
+    "UpdateWordView",
+    "ListWordsView",
+]
