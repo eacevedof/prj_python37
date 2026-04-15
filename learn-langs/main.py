@@ -12,6 +12,7 @@ from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConne
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
 from ddd.vocabulary.infrastructure.ui.views.word_crud_view import WordCrudView
+from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
 
 
 async def main(page: ft.Page) -> None:
@@ -55,6 +56,12 @@ async def main(page: ft.Page) -> None:
         elif view_name == "words":
             content_area.content = WordCrudView(
                 on_back=lambda: navigate_to("home"),
+                on_create=lambda: navigate_to("create_word"),
+            )
+        elif view_name == "create_word":
+            content_area.content = CreateWordView(
+                on_back=lambda: navigate_to("words"),
+                on_word_created=lambda: None,  # Stay in create view for batch adding
             )
 
         page.update()
