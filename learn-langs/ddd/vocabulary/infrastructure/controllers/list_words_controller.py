@@ -3,15 +3,9 @@
 from typing import final, Self
 
 from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
-from ddd.vocabulary.domain.entities import WordEsEntity
 from ddd.vocabulary.infrastructure.controllers.list_words_view_dto import (
     ListWordsViewDto,
     WordListItemViewDto,
-)
-from ddd.vocabulary.infrastructure.repositories import (
-    WordsEsReaderSqliteRepository,
-    WordsEsWriterSqliteRepository,
-    ImagesWriterSqliteRepository,
 )
 
 
@@ -84,34 +78,3 @@ class ListWordsController:
             return ListWordsViewDto.error(
                 message=f"Error al listar palabras: {e}",
             )
-
-    async def delete_word(self, word_id: int) -> tuple[bool, str]:
-        """
-        Elimina una palabra y sus imagenes asociadas.
-
-        Args:
-            word_id: ID de la palabra a eliminar.
-
-        Returns:
-            Tupla (exito, mensaje).
-        """
-        try:
-            # Eliminar imagenes primero
-            images_writer = ImagesWriterSqliteRepository.get_instance()
-            await images_writer.delete_all_by_word(word_id)
-
-            # Leer palabra para crear entidad
-            reader = WordsEsReaderSqliteRepository.get_instance()
-            word_data = await reader.get_by_id(word_id)
-
-            if not word_data:
-                return False, "Palabra no encontrada"
-
-            word_entity = WordEsEntity.from_primitives(word_data)
-            writer = WordsEsWriterSqliteRepository.get_instance()
-            await writer.delete(word_entity)
-
-            return True, "Palabra eliminada"
-
-        except Exception as e:
-            return False, f"Error al eliminar: {e}"
