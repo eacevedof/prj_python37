@@ -7,6 +7,7 @@ from pathlib import Path
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
 from ddd.vocabulary.infrastructure.controllers.list_words_controller import ListWordsController
+from ddd.vocabulary.infrastructure.controllers.delete_word_controller import DeleteWordController
 from ddd.vocabulary.infrastructure.controllers.list_words_view_dto import WordListItemViewDto
 from ddd.vocabulary.infrastructure.repositories import (
     ImagesReaderSqliteRepository,
@@ -28,7 +29,8 @@ class ListWordsView(ft.Container):
         self.on_create = on_create
         self.on_edit = on_edit
 
-        self._controller = ListWordsController.get_instance()
+        self._list_controller = ListWordsController.get_instance()
+        self._delete_controller = DeleteWordController.get_instance()
         self._words: list[WordListItemViewDto] = []
         self._current_search: str = ""
 
@@ -136,7 +138,7 @@ class ListWordsView(ft.Container):
             self._loading.visible = True
             self.update()
 
-        result = await self._controller.list_words(
+        result = await self._list_controller.list_words(
             search=self._current_search,
             limit=100,
         )
@@ -252,13 +254,13 @@ class ListWordsView(ft.Container):
 
     async def _delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
-        success, message = await self._controller.delete_word(word_id)
+        result = await self._delete_controller.delete(word_id)
 
-        if success:
-            self._show_snackbar(message)
+        if result.success:
+            self._show_snackbar(result.message)
             await self._load_words()
         else:
-            self._show_snackbar(message, error=True)
+            self._show_snackbar(result.message, error=True)
 
     def _on_search(self, e) -> None:
         """Maneja cambio en busqueda."""
