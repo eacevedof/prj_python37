@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(if [ -f \".venv-win/Scripts/activate\" ])",
+      "Bash(then source .venv-win/Scripts/activate)",
+      "Bash(else echo \"No venv found\")",
+      "Bash(fi)"
+    ]
+  }
+}
