@@ -12,3 +12,4 @@
 logs/*
 !logs/.gitkeep
 .claude/*.png
+/data/images/

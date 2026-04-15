@@ -176,19 +176,33 @@ class WordCrudView(ft.Container):
 
     async def _load_words(self, search: str = "") -> None:
         """Carga la lista de palabras."""
-        reader = WordsEsReaderSqliteRepository.get_instance()
-        images_reader = ImagesReaderSqliteRepository.get_instance()
+        try:
+            reader = WordsEsReaderSqliteRepository.get_instance()
+            images_reader = ImagesReaderSqliteRepository.get_instance()
 
-        if search:
-            self.words = await reader.search(search)
-        else:
-            self.words = await reader.get_all(limit=100)
+            if search:
+                self.words = await reader.search(search)
+            else:
+                self.words = await reader.get_all(limit=100)
 
-        # Cargar conteo de imagenes para cada palabra
-        for word in self.words:
-            word["image_count"] = await images_reader.count_by_word_id(word["id"])
+            # Validar que self.words sea una lista
+            if not isinstance(self.words, list):
+                self.words = []
+                self._show_snackbar("Error: formato de datos inválido", error=True)
+                return
 
-        self._update_words_list()
+            # Cargar conteo de imagenes para cada palabra
+            for word in self.words:
+                if isinstance(word, dict) and "id" in word:
+                    word["image_count"] = await images_reader.count_by_word_id(word["id"])
+                else:
+                    word["image_count"] = 0
+
+            self._update_words_list()
+        except Exception as e:
+            self.words = []
+            self._show_snackbar(f"Error al cargar palabras: {e}", error=True)
+            self._update_words_list()
 
     def _update_words_list(self) -> None:
         """Actualiza la lista visual de palabras."""
@@ -197,20 +211,41 @@ class WordCrudView(ft.Container):
 
         self._words_list.controls.clear()
 
+        # Validar que self.words sea una lista
+        if not isinstance(self.words, list):
+            self.words = []
+            self._words_list.controls.append(
+                ft.Container(
+                    content=ft.Text(
+                        "Error: formato de datos inválido",
+                        color=ft.Colors.RED_500,
+                        weight=ft.FontWeight.BOLD,
+                    ),
+                    padding=20,
+                    alignment=ft.Alignment.CENTER,
+                )
+            )
+            self.update()
+            return
+
         for word in self.words:
+            # Validar que cada palabra sea un diccionario
+            if not isinstance(word, dict) or "text" not in word:
+                continue
+
             image_count = word.get("image_count", 0)
             image_badge = f" ({image_count})" if image_count > 0 else ""
 
             tile = ft.ListTile(
                 leading=ft.Icon(
-                    ft.Icons.ABC if word["word_type"] == "WORD"
-                    else ft.Icons.SHORT_TEXT if word["word_type"] == "PHRASE"
+                    ft.Icons.ABC if word.get("word_type") == "WORD"
+                    else ft.Icons.SHORT_TEXT if word.get("word_type") == "PHRASE"
                     else ft.Icons.NOTES,
                     color=ft.Colors.BLUE_700,
                 ),
                 title=ft.Text(word["text"], weight=ft.FontWeight.W_500),
                 subtitle=ft.Text(
-                    f"{word['word_type']} - {word.get('created_at', '')[:10]}",
+                    f"{word.get('word_type', 'UNKNOWN')} - {word.get('created_at', '')[:10]}",
                     size=12,
                 ),
                 trailing=ft.Row(
@@ -255,9 +290,19 @@ class WordCrudView(ft.Container):
         self._current_word_for_image = word["id"]
 
         async def load_and_show():
-            images_reader = ImagesReaderSqliteRepository.get_instance()
-            images = await images_reader.get_by_word_id(word["id"])
-            self._display_images_dialog(word, images)
+            try:
+                images_reader = ImagesReaderSqliteRepository.get_instance()
+                images = await images_reader.get_by_word_id(word["id"])
+                
+                # Validar que images sea una lista
+                if not isinstance(images, list):
+                    images = []
+                    self._show_snackbar("Error: formato de imágenes inválido", error=True)
+                
+                self._display_images_dialog(word, images)
+            except Exception as e:
+                self._show_snackbar(f"Error al cargar imágenes: {e}", error=True)
+                self._display_images_dialog(word, [])
 
         self.page.run_task(load_and_show)
 
@@ -270,14 +315,22 @@ class WordCrudView(ft.Container):
             height=300,
         )
 
+        # Validar que images sea una lista
+        if not isinstance(images, list):
+            images = []
+
         # Mostrar imagenes existentes
         if images:
             for img in images:
+                # Validar que cada imagen sea un diccionario válido
+                if not isinstance(img, dict) or "file_path" not in img:
+                    continue
+
                 img_row = ft.Row(
                     controls=[
                         ft.Icon(
-                            ft.Icons.STAR if img["is_primary"] else ft.Icons.IMAGE,
-                            color=ft.Colors.AMBER_500 if img["is_primary"] else ft.Colors.GREY_500,
+                            ft.Icons.STAR if img.get("is_primary") else ft.Icons.IMAGE,
+                            color=ft.Colors.AMBER_500 if img.get("is_primary") else ft.Colors.GREY_500,
                             size=20,
                         ),
                         ft.Text(
@@ -285,12 +338,12 @@ class WordCrudView(ft.Container):
                             size=12,
                             expand=True,
                         ),
-                        ft.Text(img["source_type"], size=10, color=ft.Colors.GREY_600),
+                        ft.Text(img.get("source_type", ""), size=10, color=ft.Colors.GREY_600),
                         ft.IconButton(
                             icon=ft.Icons.DELETE,
                             icon_color=ft.Colors.RED_400,
                             icon_size=18,
-                            on_click=lambda e, i=img: self._delete_image(i["id"]),
+                            on_click=lambda e, i=img: self._delete_image(i.get("id")),
                             tooltip="Eliminar imagen",
                         ),
                     ],
@@ -528,21 +581,19 @@ class WordCrudView(ft.Container):
             self._show_snackbar("La palabra en espanol es obligatoria", error=True)
             return
 
-        try:
-            translations = {}
-            if text_nl.strip():
-                translations["nl_NL"] = text_nl.strip()
+        translations = {}
+        if text_nl.strip():
+            translations["nl_NL"] = text_nl.strip()
 
-            create_word_dto = CreateWordDto.from_primitives({
-                "text": text_es,
-                "word_type": word_type,
-                "tags": self._selected_tags,
-                "translations": translations,
-            })
+        controller = CreateWordController.get_instance()
+        result = await controller.create(
+            text=text_es,
+            word_type=word_type,
+            tags=self._selected_tags,
+            translations=translations,
+        )
 
-            service = CreateWordService.get_instance()
-            await service(create_word_dto)
-
+        if result.success:
             # Limpiar form
             self._text_es_field.value = ""
             self._text_nl_field.value = ""
@@ -552,10 +603,9 @@ class WordCrudView(ft.Container):
             # Recargar lista
             await self._load_words()
 
-            self._show_snackbar(f"Palabra '{text_es}' anadida")
-
-        except Exception as e:
-            self._show_snackbar(str(e), error=True)
+            self._show_snackbar(f"Palabra '{result.text}' anadida")
+        else:
+            self._show_snackbar(result.error_message or "Error desconocido", error=True)
 
     def _delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""

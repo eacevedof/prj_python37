@@ -19,7 +19,7 @@ class WordsEsReaderSqliteRepository:
     async def get_by_id(self, word_id: int) -> dict | None:
         """Obtiene una palabra por su ID."""
         query = """
-            SELECT id, text, word_type, image_path, notes, created_at, updated_at
+            SELECT id, text, word_type, notes, created_at, updated_at
             FROM words_es
             WHERE id = ?
         """
@@ -28,7 +28,7 @@ class WordsEsReaderSqliteRepository:
     async def get_by_text(self, text: str) -> dict | None:
         """Obtiene una palabra por su texto exacto."""
         query = """
-            SELECT id, text, word_type, image_path, notes, created_at, updated_at
+            SELECT id, text, word_type, notes, created_at, updated_at
             FROM words_es
             WHERE text = ?
         """
@@ -51,7 +51,7 @@ class WordsEsReaderSqliteRepository:
         where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
         query = f"""
-            SELECT id, text, word_type, image_path, notes, created_at, updated_at
+            SELECT id, text, word_type, notes, created_at, updated_at
             FROM words_es
             {where_sql}
             ORDER BY updated_at DESC
@@ -73,7 +73,7 @@ class WordsEsReaderSqliteRepository:
 
         placeholders = ",".join(["?" for _ in tag_names])
         query = f"""
-            SELECT DISTINCT w.id, w.text, w.word_type, w.image_path, w.notes,
+            SELECT DISTINCT w.id, w.text, w.word_type, w.notes,
                    w.created_at, w.updated_at
             FROM words_es w
             INNER JOIN word_es_tags wt ON w.id = wt.word_es_id
@@ -126,7 +126,7 @@ class WordsEsReaderSqliteRepository:
     async def search(self, text: str, limit: int = 50) -> list[dict]:
         """Busca palabras por texto (búsqueda parcial)."""
         query = """
-            SELECT id, text, word_type, image_path, notes, created_at, updated_at
+            SELECT id, text, word_type, notes, created_at, updated_at
             FROM words_es
             WHERE text LIKE ?
             ORDER BY text
