@@ -1,4 +1,4 @@
-"""Vista de gestion de palabras (CRUD)."""
+"""Vista de gestion de palabras (listado, busqueda, eliminacion)."""
 
 import flet as ft
 from typing import Callable
@@ -6,34 +6,29 @@ from pathlib import Path
 
 from ddd.vocabulary.domain.entities import WordEsEntity, WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
-from ddd.vocabulary.infrastructure.controllers import CreateWordController
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsEsWriterSqliteRepository,
-    TagsReaderSqliteRepository,
     ImagesReaderSqliteRepository,
     ImagesWriterSqliteRepository,
 )
 
 
 class WordCrudView(ft.Container):
-    """Vista para gestionar palabras."""
+    """Vista para listar y gestionar palabras existentes."""
 
-    def __init__(self, on_back: Callable[[], None]):
+    def __init__(
+        self,
+        on_back: Callable[[], None],
+        on_create: Callable[[], None] | None = None,
+    ):
         super().__init__()
         self.on_back = on_back
+        self.on_create = on_create
         self.words: list[dict] = []
-        self.available_tags: list[dict] = []
 
         self._words_list: ft.ListView | None = None
         self._search_field: ft.TextField | None = None
-
-        # Form fields
-        self._text_es_field: ft.TextField | None = None
-        self._text_nl_field: ft.TextField | None = None
-        self._word_type_dropdown: ft.Dropdown | None = None
-        self._tags_row: ft.Row | None = None
-        self._selected_tags: list[str] = []
 
         # Current word for image operations
         self._current_word_for_image: int | None = None
@@ -56,40 +51,13 @@ class WordCrudView(ft.Container):
             padding=10,
         )
 
-        # Form fields
-        self._text_es_field = ft.TextField(
-            label="Palabra en espanol",
-            width=300,
-        )
-
-        self._text_nl_field = ft.TextField(
-            label="Traduccion (Nederlands)",
-            width=300,
-        )
-
-        self._word_type_dropdown = ft.Dropdown(
-            label="Tipo",
-            width=150,
-            options=[
-                ft.dropdown.Option("WORD", "Palabra"),
-                ft.dropdown.Option("PHRASE", "Frase"),
-                ft.dropdown.Option("SENTENCE", "Oracion"),
-            ],
-            value="WORD",
-        )
-
-        self._tags_row = ft.Row(
-            controls=[],
-            wrap=True,
-            spacing=4,
-        )
-
+        # Add button
         add_btn = ft.ElevatedButton(
             content=ft.Row(
-                [ft.Icon(ft.Icons.ADD), ft.Text("Anadir")],
+                [ft.Icon(ft.Icons.ADD), ft.Text("Nueva palabra")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=self._add_word,
+            on_click=lambda _: self.on_create() if self.on_create else None,
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -100,31 +68,6 @@ class WordCrudView(ft.Container):
             icon=ft.Icons.ARROW_BACK,
             on_click=lambda _: self.on_back(),
             tooltip="Volver",
-        )
-
-        # Form section
-        form_section = ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Text("Anadir nueva palabra", weight=ft.FontWeight.BOLD, size=16),
-                    ft.Row(
-                        controls=[
-                            self._text_es_field,
-                            self._text_nl_field,
-                            self._word_type_dropdown,
-                        ],
-                        wrap=True,
-                        spacing=10,
-                    ),
-                    ft.Text("Tags:", size=12),
-                    self._tags_row,
-                    add_btn,
-                ],
-                spacing=10,
-            ),
-            padding=16,
-            bgcolor=ft.Colors.GREY_100,
-            border_radius=8,
         )
 
         self.content = ft.Column(
@@ -139,15 +82,14 @@ class WordCrudView(ft.Container):
                             weight=ft.FontWeight.BOLD,
                         ),
                         ft.Container(expand=True),
+                        add_btn,
+                        ft.Container(width=16),
                         self._search_field,
                     ],
                 ),
                 ft.Divider(height=1),
-                # Form
-                form_section,
                 ft.Container(height=10),
                 # List
-                ft.Text("Palabras existentes:", weight=ft.FontWeight.BOLD),
                 ft.Container(
                     content=self._words_list,
                     expand=True,
@@ -162,17 +104,11 @@ class WordCrudView(ft.Container):
 
     def did_mount(self) -> None:
         """Carga datos al montar."""
-        self.page.run_task(self._load_data)
+        self.page.run_task(self._load_words)
 
-    async def _load_data(self) -> None:
-        """Carga palabras y tags."""
-        # Tags
-        tags_reader = TagsReaderSqliteRepository.get_instance()
-        self.available_tags = await tags_reader.get_all()
-        self._update_tags_ui()
-
-        # Words
-        await self._load_words()
+    def reload_words(self) -> None:
+        """Recarga la lista de palabras (llamado externamente)."""
+        self.page.run_task(self._load_words)
 
     async def _load_words(self, search: str = "") -> None:
         """Carga la lista de palabras."""
@@ -530,82 +466,12 @@ class WordCrudView(ft.Container):
 
         self.page.run_task(do_delete)
 
-    def _update_tags_ui(self) -> None:
-        """Actualiza los chips de tags."""
-        if not self._tags_row:
-            return
-
-        self._tags_row.controls.clear()
-
-        for tag in self.available_tags:
-            is_selected = tag["name"] in self._selected_tags
-            chip = ft.Chip(
-                label=ft.Text(tag["name"], size=12),
-                selected=is_selected,
-                on_select=lambda e, t=tag["name"]: self._toggle_tag(t),
-                bgcolor=tag.get("color") if is_selected else None,
-            )
-            self._tags_row.controls.append(chip)
-
-        self.update()
-
-    def _toggle_tag(self, tag_name: str) -> None:
-        """Alterna seleccion de tag."""
-        if tag_name in self._selected_tags:
-            self._selected_tags.remove(tag_name)
-        else:
-            self._selected_tags.append(tag_name)
-        self._update_tags_ui()
-
     def _on_search(self, e) -> None:
         """Maneja busqueda."""
         search_text = e.control.value or ""
         async def search():
             await self._load_words(search_text)
         self.page.run_task(search)
-
-    def _add_word(self, e) -> None:
-        """Anade una nueva palabra."""
-        self.page.run_task(self._create_word)
-
-    async def _create_word(self) -> None:
-        """Crea la palabra en la base de datos."""
-        if not self._text_es_field or not self._text_nl_field:
-            return
-
-        text_es = self._text_es_field.value or ""
-        text_nl = self._text_nl_field.value or ""
-        word_type = self._word_type_dropdown.value if self._word_type_dropdown else "WORD"
-
-        if not text_es.strip():
-            self._show_snackbar("La palabra en espanol es obligatoria", error=True)
-            return
-
-        translations = {}
-        if text_nl.strip():
-            translations["nl_NL"] = text_nl.strip()
-
-        controller = CreateWordController.get_instance()
-        result = await controller.create(
-            text=text_es,
-            word_type=word_type,
-            tags=self._selected_tags,
-            translations=translations,
-        )
-
-        if result.success:
-            # Limpiar form
-            self._text_es_field.value = ""
-            self._text_nl_field.value = ""
-            self._selected_tags.clear()
-            self._update_tags_ui()
-
-            # Recargar lista
-            await self._load_words()
-
-            self._show_snackbar(f"Palabra '{result.text}' anadida")
-        else:
-            self._show_snackbar(result.error_message or "Error desconocido", error=True)
 
     def _delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
