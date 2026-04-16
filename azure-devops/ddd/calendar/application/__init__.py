@@ -24,6 +24,11 @@ from ddd.calendar.application.delete_event import (
     DeleteEventResultDto,
     DeleteEventService,
 )
+from ddd.calendar.application.add_holiday import (
+    AddHolidayDto,
+    AddHolidayResultDto,
+    AddHolidayService,
+)
 
 __all__ = [
     "ListEventsDto",
@@ -42,4 +47,7 @@ __all__ = [
     "DeleteEventDto",
     "DeleteEventResultDto",
     "DeleteEventService",
+    "AddHolidayDto",
+    "AddHolidayResultDto",
+    "AddHolidayService",
 ]

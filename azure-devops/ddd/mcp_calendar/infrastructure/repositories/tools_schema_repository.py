@@ -20,11 +20,12 @@ class ToolsSchemaRepository:
             self._get_create_event_schema(),
             self._get_update_event_schema(),
             self._get_delete_event_schema(),
+            self._get_add_holiday_schema(),
         ]
 
     def _get_list_events_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.CAL_LIST_EVENTS.value,
+            name=ToolNameEnum.LIST_CAL_EVENTS.value,
             description="list calendar events for a user using microsoft graph api",
             inputSchema={
                 "type": "object",
@@ -53,7 +54,7 @@ class ToolsSchemaRepository:
 
     def _get_get_event_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.CAL_GET_EVENT.value,
+            name=ToolNameEnum.GET_CAL_EVENT.value,
             description="get a specific calendar event by id using microsoft graph api",
             inputSchema={
                 "type": "object",
@@ -73,7 +74,7 @@ class ToolsSchemaRepository:
 
     def _get_create_event_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.CAL_CREATE_EVENT.value,
+            name=ToolNameEnum.CREATE_CAL_EVENT.value,
             description="create a new calendar event using microsoft graph api",
             inputSchema={
                 "type": "object",
@@ -128,7 +129,7 @@ class ToolsSchemaRepository:
 
     def _get_update_event_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.CAL_UPDATE_EVENT.value,
+            name=ToolNameEnum.UPDATE_CAL_EVENT.value,
             description="update an existing calendar event using microsoft graph api",
             inputSchema={
                 "type": "object",
@@ -184,7 +185,7 @@ class ToolsSchemaRepository:
 
     def _get_delete_event_schema(self) -> Tool:
         return Tool(
-            name=ToolNameEnum.CAL_DELETE_EVENT.value,
+            name=ToolNameEnum.DELETE_CAL_EVENT.value,
             description="delete a calendar event using microsoft graph api",
             inputSchema={
                 "type": "object",
@@ -199,5 +200,41 @@ class ToolsSchemaRepository:
                     },
                 },
                 "required": ["user_id", "event_id"],
+            },
+        )
+
+    def _get_add_holiday_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.ADD_CAL_HOLIDAY.value,
+            description="add a holiday (all-day event) to a specific calendar by name",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "description": "user id or email (UPN) who owns the calendar",
+                    },
+                    "calendar_name": {
+                        "type": "string",
+                        "description": "name of the calendar to add the holiday to (e.g., 'Holidays', 'Festivos')",
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "holiday title/name (e.g., 'Christmas Day', 'New Year')",
+                    },
+                    "day": {
+                        "type": "integer",
+                        "description": "day of the month (1-31)",
+                    },
+                    "month": {
+                        "type": "integer",
+                        "description": "month number (1-12)",
+                    },
+                    "year": {
+                        "type": "integer",
+                        "description": "year (optional, defaults to current year)",
+                    },
+                },
+                "required": ["user_id", "calendar_name", "title", "day", "month"],
             },
         )
