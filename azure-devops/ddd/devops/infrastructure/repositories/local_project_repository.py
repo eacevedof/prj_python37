@@ -30,7 +30,9 @@ class LocalProjectRepository:
 
         return max(ports) + 1
 
-    async def clone_repository(self, www_path: str, repo_url: str, project_name: str) -> str:
+    async def clone_repository(
+        self, www_path: str, repo_url: str, project_name: str
+    ) -> str:
         """Clone a repository to the www directory."""
         app_folder = f"app-{project_name}"
         app_path = Path(www_path) / app_folder
@@ -43,7 +45,10 @@ class LocalProjectRepository:
             return str(app_path)
 
         process = await asyncio.create_subprocess_exec(
-            "git", "clone", repo_url, app_folder,
+            "git",
+            "clone",
+            repo_url,
+            app_folder,
             cwd=www_path,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
@@ -55,7 +60,9 @@ class LocalProjectRepository:
 
         return str(app_path)
 
-    async def add_virtualhost(self, vhosts_file: str, project_name: str, port: int) -> None:
+    async def add_virtualhost(
+        self, vhosts_file: str, project_name: str, port: int
+    ) -> None:
         """Add VirtualHost configuration to ci-apps.conf."""
         app_folder = f"app-{project_name}"
         server_name = f"local-{port}"
@@ -105,20 +112,30 @@ TimeOut 900
 
     async def create_database(self, db_name: str) -> None:
         """Create MySQL database using Docker exec."""
-        cmd = f'CREATE DATABASE IF NOT EXISTS `{db_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+        cmd = f"CREATE DATABASE IF NOT EXISTS `{db_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
         process = await asyncio.create_subprocess_exec(
-            "docker", "exec", "cont-lr-mysql",
-            "mysql", "-uroot", "-proot", "-e", cmd,
+            "docker",
+            "exec",
+            "cont-lr-mysql",
+            "mysql",
+            "-uroot",
+            "-proot",
+            "-e",
+            cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
         _, stderr = await process.communicate()
 
         if process.returncode != 0:
-            raise RuntimeError(f"Failed to create database '{db_name}': {stderr.decode()}")
+            raise RuntimeError(
+                f"Failed to create database '{db_name}': {stderr.decode()}"
+            )
 
-    async def add_hosts_entry(self, hosts_file: str, port: int, project_name: str) -> None:
+    async def add_hosts_entry(
+        self, hosts_file: str, port: int, project_name: str
+    ) -> None:
         """Add entry to Windows hosts file."""
         server_name = f"local-{port}"
         host_entry = f"127.0.0.1 {server_name} #{port} {project_name}"
@@ -180,7 +197,9 @@ TimeOut 900
     async def restart_apache(self, docker_lamp_path: str) -> None:
         """Restart Apache container using docker-compose."""
         process = await asyncio.create_subprocess_exec(
-            "docker-compose", "restart", "apache",
+            "docker-compose",
+            "restart",
+            "apache",
             cwd=docker_lamp_path,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,

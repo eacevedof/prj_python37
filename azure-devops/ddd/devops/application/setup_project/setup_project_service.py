@@ -3,7 +3,9 @@ from typing import final, Self
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
 from ddd.devops.application.setup_project.setup_project_dto import SetupProjectDto
-from ddd.devops.application.setup_project.setup_project_result_dto import SetupProjectResultDto
+from ddd.devops.application.setup_project.setup_project_result_dto import (
+    SetupProjectResultDto,
+)
 from ddd.devops.infrastructure.repositories import LocalProjectRepository
 
 
@@ -24,7 +26,9 @@ class SetupProjectService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, setup_project_dto: SetupProjectDto) -> SetupProjectResultDto:
+    async def __call__(
+        self, setup_project_dto: SetupProjectDto
+    ) -> SetupProjectResultDto:
         steps_completed: list[str] = []
 
         port = await self._resolve_port(setup_project_dto.port)
@@ -34,13 +38,27 @@ class SetupProjectService:
         self._log_start(setup_project_dto.project_name, port, setup_project_dto.db_name)
 
         app_path = await self.__git_clone_repository(setup_project_dto, steps_completed)
-        await self.__add_apache_virtualhost(setup_project_dto.project_name, port, steps_completed)
+        await self.__add_apache_virtualhost(
+            setup_project_dto.project_name, port, steps_completed
+        )
         await self.__create_mysql_database(setup_project_dto.db_name, steps_completed)
-        await self.__add_into_file_hosts_entry(port, setup_project_dto.project_name, steps_completed)
-        env_path = await self.__create_dot_env_file(setup_project_dto, port, steps_completed)
+        await self.__add_into_file_hosts_entry(
+            port, setup_project_dto.project_name, steps_completed
+        )
+        env_path = await self.__create_dot_env_file(
+            setup_project_dto, port, steps_completed
+        )
         await self.__restart_apache_in_docker(steps_completed)
 
-        return self._get_built_result(setup_project_dto, app_folder, app_path, port, server_name, env_path, steps_completed)
+        return self._get_built_result(
+            setup_project_dto,
+            app_folder,
+            app_path,
+            port,
+            server_name,
+            env_path,
+            steps_completed,
+        )
 
     def _get_built_result(
         self,
@@ -52,17 +70,19 @@ class SetupProjectService:
         env_path: str,
         steps_completed: list[str],
     ) -> SetupProjectResultDto:
-        return SetupProjectResultDto.from_primitives({
-            "project_name": setup_project_dto.project_name,
-            "app_folder": app_folder,
-            "app_path": app_path,
-            "port": port,
-            "server_name": server_name,
-            "db_name": setup_project_dto.db_name,
-            "url": f"http://{server_name}:{port}/",
-            "env_path": env_path,
-            "steps_completed": steps_completed,
-        })
+        return SetupProjectResultDto.from_primitives(
+            {
+                "project_name": setup_project_dto.project_name,
+                "app_folder": app_folder,
+                "app_path": app_path,
+                "port": port,
+                "server_name": server_name,
+                "db_name": setup_project_dto.db_name,
+                "url": f"http://{server_name}:{port}/",
+                "env_path": env_path,
+                "steps_completed": steps_completed,
+            }
+        )
 
     async def _resolve_port(self, port: int | None) -> int:
         if port:
@@ -96,7 +116,9 @@ class SetupProjectService:
         steps_completed: list[str],
     ) -> None:
         vhosts_file = self._env_reader_raw_repository.get_local_vhosts_file()
-        await self._local_project_repository.add_virtualhost(vhosts_file, project_name, port)
+        await self._local_project_repository.add_virtualhost(
+            vhosts_file, project_name, port
+        )
         steps_completed.append("virtualhost_added")
 
     async def __create_mysql_database(
@@ -115,7 +137,9 @@ class SetupProjectService:
     ) -> None:
         hosts_file = self._env_reader_raw_repository.get_local_hosts_file()
         try:
-            await self._local_project_repository.add_hosts_entry(hosts_file, port, project_name)
+            await self._local_project_repository.add_hosts_entry(
+                hosts_file, port, project_name
+            )
             steps_completed.append("hosts_entry_added")
         except PermissionError:
             self._logger.write_error(
@@ -133,7 +157,11 @@ class SetupProjectService:
         www_path = self._env_reader_raw_repository.get_local_www_path()
         base_env_file = self._env_reader_raw_repository.get_local_base_env_file()
         env_path = await self._local_project_repository.create_env_file(
-            www_path, base_env_file, setup_project_dto.project_name, port, setup_project_dto.db_name
+            www_path,
+            base_env_file,
+            setup_project_dto.project_name,
+            port,
+            setup_project_dto.db_name,
         )
         steps_completed.append("env_file_created")
         return env_path
