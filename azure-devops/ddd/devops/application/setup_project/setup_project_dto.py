@@ -20,7 +20,7 @@ class SetupProjectDto:
 
         db_name = primitives_dict.get("db_name") or ""
         if not db_name:
-            db_name = f"ci_{normalized_proj_name.replace("-", "_")}"
+            db_name = f"ci_{normalized_proj_name.replace('-', '_')}"
 
         return cls(
             project_name=normalized_proj_name,
