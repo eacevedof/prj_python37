@@ -3,7 +3,11 @@
     "allow": [
       "mcp__azure-devops__create_wi_epic",
       "mcp__azure-devops__create_wi_task",
-      "mcp__azure-devops__update_task"
+      "mcp__azure-devops__update_task",
+      "Bash(ls:*)",
+      "Bash(.venv-win/Scripts/python.exe -m ruff check:*)",
+      "Bash(.venv-win/Scripts/python.exe -m ruff format:*)",
+      "Bash(.venv-win/Scripts/python.exe:*)"
     ]
   }
 }
