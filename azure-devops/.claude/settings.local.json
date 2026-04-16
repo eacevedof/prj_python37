@@ -14,7 +14,8 @@
       "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/python.exe:*)",
       "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/ruff.exe check ddd/devops/infrastructure/repositories/anubis_api_repository.py ddd/devops/application/request_anubis/ ddd/mcp_anubis/)",
       "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/mypy.exe ddd/devops/infrastructure/repositories/anubis_api_repository.py ddd/devops/application/request_anubis/ ddd/mcp_anubis/ --ignore-missing-imports)",
-      "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/mypy.exe ddd/mcp_anubis/ ddd/devops/application/request_anubis/ ddd/devops/infrastructure/repositories/anubis_api_repository.py ddd/devops/domain/enums/ --ignore-missing-imports --follow-imports=skip)"
+      "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/mypy.exe ddd/mcp_anubis/ ddd/devops/application/request_anubis/ ddd/devops/infrastructure/repositories/anubis_api_repository.py ddd/devops/domain/enums/ --ignore-missing-imports --follow-imports=skip)",
+      "Bash(C:/projects/prj_python37/azure-devops/.venv-win/Scripts/pip.exe install:*)"
     ]
   }
 }
