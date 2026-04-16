@@ -1,16 +1,16 @@
 from typing import final, Self
 
-from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
 
 
 @final
 class WordsLangReaderSqliteRepository:
     """Repositorio de lectura para traducciones."""
 
-    _sqlite: SqliteConnection
+    _sqlite: SqliteConnector
 
     def __init__(self) -> None:
-        self._sqlite = SqliteConnection.get_instance()
+        self._sqlite = SqliteConnector.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:

@@ -4,10 +4,10 @@ from typing import final, Self
 
 
 @final
-class SqliteConnection:
+class SqliteConnector:
     """Gestiona la conexión a SQLite."""
 
-    _instance: "SqliteConnection | None" = None
+    _instance: "SqliteConnector | None" = None
     _db_path: str = ""
     _initialized: bool = False
 

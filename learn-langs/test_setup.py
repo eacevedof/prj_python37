@@ -10,11 +10,10 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 # Añadir el directorio raíz al path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
-    TagsReaderSqliteRepository,
 )
 from ddd.vocabulary.domain.services import ScoreCalculatorService, SpacedRepetitionService
 
@@ -24,7 +23,7 @@ async def test_database_setup():
     print("=" * 50)
     print("1. Inicializando base de datos...")
 
-    sqlite = SqliteConnection.get_instance()
+    sqlite = SqliteConnector.get_instance()
     await sqlite.initialize_database()
 
     print("   Base de datos inicializada correctamente")

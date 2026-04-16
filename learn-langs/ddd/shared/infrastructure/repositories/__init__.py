@@ -1,3 +1,4 @@
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.abstract_sqlite_repository import AbstractSqliteRepository
 
-__all__ = ["EnvironmentReaderRawRepository"]
+__all__ = ["EnvironmentReaderRawRepository", "AbstractSqliteRepository"]

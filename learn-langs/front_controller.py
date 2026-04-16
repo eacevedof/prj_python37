@@ -8,11 +8,11 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
-from ddd.shared.domain.enums import ViewRouteEnum
+from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.domain.enums import ControllerRouteEnum
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views import (
-    HomeView,
+    HomeController,
     StudyView,
     CreateWordView,
     UpdateWordView,
@@ -41,58 +41,58 @@ async def main(page: ft.Page) -> None:
     page.padding = 0
 
     # Inicializar base de datos
-    sqlite = SqliteConnection.get_instance()
+    sqlite = SqliteConnector.get_instance()
     await sqlite.initialize_database()
 
     # Estado de navegacion
-    current_view: ViewRouteEnum = ViewRouteEnum.HOME
+    current_view: ControllerRouteEnum = ControllerRouteEnum.HOME
 
     # Contenedor principal
     content_area = ft.Container(expand=True)
 
-    def navigate_to(view_name: ViewRouteEnum | str, **kwargs) -> None:
+    def navigate_to(view_name: ControllerRouteEnum | str, **kwargs) -> None:
         """Navega a una vista especifica."""
         nonlocal current_view
 
         # Convertir string a enum si es necesario
         if isinstance(view_name, str):
-            view_name = ViewRouteEnum(view_name)
+            view_name = ControllerRouteEnum(view_name)
 
         current_view = view_name
 
-        if view_name == ViewRouteEnum.HOME:
-            content_area.content = HomeView(
-                on_start_study=lambda lang, tags: navigate_to(ViewRouteEnum.STUDY, lang_code=lang, tags=tags),
-                on_manage_words=lambda: navigate_to(ViewRouteEnum.WORDS),
+        if view_name == ControllerRouteEnum.HOME:
+            content_area.content = HomeController(
+                on_start_study=lambda lang, tags: navigate_to(ControllerRouteEnum.STUDY, lang_code=lang, tags=tags),
+                on_manage_words=lambda: navigate_to(ControllerRouteEnum.WORDS),
             )
-        elif view_name == ViewRouteEnum.STUDY:
+        elif view_name == ControllerRouteEnum.STUDY:
             content_area.content = StudyView(
                 lang_code=kwargs.get("lang_code", LanguageCodeEnum.default()),
                 tags=kwargs.get("tags", []),
-                on_back=lambda: navigate_to(ViewRouteEnum.HOME),
+                on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
             )
-        elif view_name == ViewRouteEnum.WORDS:
+        elif view_name == ControllerRouteEnum.WORDS:
             content_area.content = ListWordsView(
-                on_back=lambda: navigate_to(ViewRouteEnum.HOME),
-                on_create=lambda: navigate_to(ViewRouteEnum.CREATE_WORD),
-                on_edit=lambda word_id: navigate_to(ViewRouteEnum.UPDATE_WORD, word_id=word_id),
+                on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
+                on_create=lambda: navigate_to(ControllerRouteEnum.CREATE_WORD),
+                on_edit=lambda word_id: navigate_to(ControllerRouteEnum.UPDATE_WORD, word_id=word_id),
             )
-        elif view_name == ViewRouteEnum.CREATE_WORD:
+        elif view_name == ControllerRouteEnum.CREATE_WORD:
             content_area.content = CreateWordView(
-                on_back=lambda: navigate_to(ViewRouteEnum.WORDS),
+                on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
                 on_word_created=lambda: None,  # Stay in create view for batch adding
             )
-        elif view_name == ViewRouteEnum.UPDATE_WORD:
+        elif view_name == ControllerRouteEnum.UPDATE_WORD:
             content_area.content = UpdateWordView(
                 word_id=kwargs.get("word_id", 0),
-                on_back=lambda: navigate_to(ViewRouteEnum.WORDS),
+                on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
                 on_word_updated=lambda: None,
             )
 
         page.update()
 
     # Navegacion inicial
-    navigate_to(ViewRouteEnum.HOME)
+    navigate_to(ControllerRouteEnum.HOME)
 
     # Layout principal
     page.add(
