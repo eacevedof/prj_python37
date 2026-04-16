@@ -1,16 +1,16 @@
+"""Repositorio de lectura para palabras en español."""
+
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
 @final
-class WordsEsReaderSqliteRepository:
+class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
     """Repositorio de lectura para palabras en español."""
 
-    _sqlite: SqliteConnector
-
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -23,7 +23,7 @@ class WordsEsReaderSqliteRepository:
             FROM words_es
             WHERE id = ?
         """
-        return await self._sqlite.fetch_one(query, (word_id,))
+        return await self._query_one(query, (word_id,))
 
     async def get_by_text(self, text: str) -> dict | None:
         """Obtiene una palabra por su texto exacto."""
@@ -32,7 +32,7 @@ class WordsEsReaderSqliteRepository:
             FROM words_es
             WHERE text = ?
         """
-        return await self._sqlite.fetch_one(query, (text.strip(),))
+        return await self._query_one(query, (text.strip(),))
 
     async def get_all(
         self,
@@ -59,7 +59,7 @@ class WordsEsReaderSqliteRepository:
         """
         params.extend([limit, offset])
 
-        return await self._sqlite.fetch_all(query, tuple(params))
+        return await self._query(query, tuple(params))
 
     async def get_by_tags(
         self,
@@ -71,7 +71,7 @@ class WordsEsReaderSqliteRepository:
         if not tag_names:
             return await self.get_all(limit=limit, offset=offset)
 
-        placeholders = ",".join(["?" for _ in tag_names])
+        placeholders = self._get_placeholders(len(tag_names))
         query = f"""
             SELECT DISTINCT w.id, w.text, w.word_type, w.notes,
                    w.created_at, w.updated_at
@@ -84,7 +84,7 @@ class WordsEsReaderSqliteRepository:
         """
         params = tuple(tag_names) + (limit, offset)
 
-        return await self._sqlite.fetch_all(query, params)
+        return await self._query(query, params)
 
     async def get_with_translations(self, word_id: int) -> dict | None:
         """Obtiene una palabra con todas sus traducciones."""
@@ -97,7 +97,7 @@ class WordsEsReaderSqliteRepository:
             FROM words_lang
             WHERE word_es_id = ?
         """
-        translations = await self._sqlite.fetch_all(translations_query, (word_id,))
+        translations = await self._query(translations_query, (word_id,))
 
         word["translations"] = {t["lang_code"]: t["text"] for t in translations}
         word["translations_detail"] = translations
@@ -110,13 +110,7 @@ class WordsEsReaderSqliteRepository:
         if not word:
             return None
 
-        tags_query = """
-            SELECT t.id, t.name, t.color
-            FROM tags t
-            INNER JOIN word_es_tags wt ON t.id = wt.tag_id
-            WHERE wt.word_es_id = ?
-        """
-        tags = await self._sqlite.fetch_all(tags_query, (word_id,))
+        tags = await self.get_tags_for_word(word_id)
 
         word["tags"] = [t["name"] for t in tags]
         word["tags_detail"] = tags
@@ -131,7 +125,7 @@ class WordsEsReaderSqliteRepository:
             INNER JOIN word_es_tags wt ON t.id = wt.tag_id
             WHERE wt.word_es_id = ?
         """
-        return await self._sqlite.fetch_all(query, (word_id,))
+        return await self._query(query, (word_id,))
 
     async def search(self, text: str, limit: int = 50) -> list[dict]:
         """Busca palabras por texto (búsqueda parcial)."""
@@ -142,15 +136,13 @@ class WordsEsReaderSqliteRepository:
             ORDER BY text
             LIMIT ?
         """
-        return await self._sqlite.fetch_all(query, (f"%{text}%", limit))
+        return await self._query(query, (f"%{text}%", limit))
 
     async def count(self, word_type: str | None = None) -> int:
         """Cuenta el total de palabras."""
         if word_type:
             query = "SELECT COUNT(*) as count FROM words_es WHERE word_type = ?"
-            result = await self._sqlite.fetch_one(query, (word_type,))
+            return await self._query_scalar(query, (word_type,), "count") or 0
         else:
             query = "SELECT COUNT(*) as count FROM words_es"
-            result = await self._sqlite.fetch_one(query)
-
-        return result["count"] if result else 0
+            return await self._query_scalar(query, (), "count") or 0

@@ -5,17 +5,20 @@ from pathlib import Path
 from typing import final, Self
 from datetime import datetime
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
 
 
 @final
-class ImagesWriterSqliteRepository:
+class ImagesWriterSqliteRepository(AbstractSqliteRepository):
     """Repository para escribir imagenes de palabras."""
 
     _instance: "ImagesWriterSqliteRepository | None" = None
     _images_dir: Path | None = None
+
+    def __init__(self) -> None:
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -49,18 +52,17 @@ class ImagesWriterSqliteRepository:
 
     async def create(self, word_image_entity: WordImageEntity) -> int:
         """Crea un registro de imagen y retorna el ID generado."""
-        sqlite = SqliteConnector.get_instance()
-
         # Si es la primera imagen de la palabra, hacerla primaria
         is_primary = word_image_entity.is_primary
-        count_result = await sqlite.fetch_one(
+        count = await self._query_scalar(
             "SELECT COUNT(*) as count FROM word_es_images WHERE word_es_id = ? AND is_active = 1",
             (word_image_entity.word_es_id,),
+            "count",
         )
-        if count_result and count_result["count"] == 0:
+        if count == 0:
             is_primary = True
 
-        image_id = await sqlite.insert(
+        return await self._sqlite.insert(
             """
             INSERT INTO word_es_images (
                 word_es_id, source_type, file_path, mime_type,
@@ -84,8 +86,6 @@ class ImagesWriterSqliteRepository:
                 1 if is_primary else 0,
             ),
         )
-
-        return image_id
 
     async def save_image_bytes(
         self,
@@ -162,8 +162,7 @@ class ImagesWriterSqliteRepository:
 
     async def update(self, word_image_entity: WordImageEntity) -> bool:
         """Actualiza caption, alt_text, sort_order, is_primary de una imagen."""
-        sqlite = SqliteConnector.get_instance()
-        rows = await sqlite.update(
+        rows = await self._sqlite.update(
             """
             UPDATE word_es_images
             SET caption = ?, alt_text = ?, sort_order = ?, is_primary = ?, updated_at = datetime('now')
@@ -181,8 +180,7 @@ class ImagesWriterSqliteRepository:
 
     async def soft_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Soft delete de una imagen."""
-        sqlite = SqliteConnector.get_instance()
-        rows = await sqlite.update(
+        rows = await self._sqlite.update(
             "UPDATE word_es_images SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
             (word_image_entity.id,),
         )
@@ -190,8 +188,6 @@ class ImagesWriterSqliteRepository:
 
     async def hard_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Elimina permanentemente una imagen y su archivo."""
-        sqlite = SqliteConnector.get_instance()
-
         # Eliminar archivo
         self._ensure_images_dir()
         file_path = self._images_dir / word_image_entity.file_path
@@ -199,18 +195,13 @@ class ImagesWriterSqliteRepository:
             file_path.unlink()
 
         # Eliminar registro
-        rows = await sqlite.delete(
-            "DELETE FROM word_es_images WHERE id = ?",
-            (word_image_entity.id,),
-        )
+        rows = await self._delete_where("word_es_images", "id = ?", (word_image_entity.id,))
         return rows > 0
 
     async def delete_all_by_word(self, word_es_entity_id: int) -> int:
         """Elimina todas las imagenes de una palabra."""
-        sqlite = SqliteConnector.get_instance()
-
         # Obtener archivos a eliminar
-        images = await sqlite.fetch_all(
+        images = await self._query(
             "SELECT file_path FROM word_es_images WHERE word_es_id = ?",
             (word_es_entity_id,),
         )
@@ -223,7 +214,4 @@ class ImagesWriterSqliteRepository:
                 file_path.unlink()
 
         # Eliminar registros
-        return await sqlite.delete(
-            "DELETE FROM word_es_images WHERE word_es_id = ?",
-            (word_es_entity_id,),
-        )
+        return await self._delete_where("word_es_images", "word_es_id = ?", (word_es_entity_id,))
