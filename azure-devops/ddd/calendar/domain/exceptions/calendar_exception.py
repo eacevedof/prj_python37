@@ -55,3 +55,7 @@ class CalendarException(Exception):
     @classmethod
     def invalid_date_range(cls, start: str, end: str) -> "CalendarException":
         return cls(f"Invalid date range: start={start}, end={end}")
+
+    @classmethod
+    def calendar_not_found(cls, calendar_name: str) -> "CalendarException":
+        return cls(f"Calendar not found: {calendar_name}")

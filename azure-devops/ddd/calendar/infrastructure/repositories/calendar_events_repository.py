@@ -329,3 +329,105 @@ class CalendarEventsRepository:
             return True
 
         raise CalendarException.delete_failed(event_id)
+
+    async def list_calendars(self, user_id: str) -> list[dict[str, Any]]:
+        """List all calendars for a user.
+
+        Args:
+            user_id: User ID or email (UPN).
+
+        Returns:
+            List of calendar dictionaries.
+
+        Raises:
+            CalendarException: If listing fails.
+        """
+        url = f"{self._graph_base_url}/users/{user_id}/calendars"
+
+        result = await self._request("GET", url)
+        if result is None:
+            raise CalendarException.user_not_found(user_id)
+
+        if isinstance(result, dict):
+            return result.get("value", [])
+        return []
+
+    async def get_calendar_id_by_name(
+        self, user_id: str, calendar_name: str
+    ) -> str | None:
+        """Find a calendar ID by its name.
+
+        Args:
+            user_id: User ID or email (UPN).
+            calendar_name: Name of the calendar to find.
+
+        Returns:
+            Calendar ID if found, None otherwise.
+        """
+        calendars = await self.list_calendars(user_id)
+        for calendar in calendars:
+            if calendar.get("name", "").lower() == calendar_name.lower():
+                return calendar.get("id")
+        return None
+
+    async def create_event_in_calendar(
+        self,
+        user_id: str,
+        calendar_id: str,
+        subject: str,
+        start_datetime: str,
+        end_datetime: str,
+        time_zone: str = "UTC",
+        body: str | None = None,
+        is_all_day: bool = False,
+        show_as: str = "free",
+    ) -> dict[str, Any]:
+        """Create an event in a specific calendar.
+
+        Args:
+            user_id: User ID or email (UPN).
+            calendar_id: ID of the calendar to create event in.
+            subject: Event subject/title.
+            start_datetime: ISO 8601 start datetime (date only for all-day).
+            end_datetime: ISO 8601 end datetime (date only for all-day).
+            time_zone: Timezone for the event (default: UTC).
+            body: Event body/description (HTML supported).
+            is_all_day: Whether this is an all-day event.
+            show_as: How to show time: free, busy, tentative, oof, workingElsewhere.
+
+        Returns:
+            Created event dictionary.
+
+        Raises:
+            CalendarException: If creation fails.
+        """
+        url = f"{self._graph_base_url}/users/{user_id}/calendars/{calendar_id}/events"
+
+        event_data: dict[str, Any] = {
+            "subject": subject,
+            "start": {
+                "dateTime": start_datetime,
+                "timeZone": time_zone,
+            },
+            "end": {
+                "dateTime": end_datetime,
+                "timeZone": time_zone,
+            },
+            "isAllDay": is_all_day,
+            "showAs": show_as,
+        }
+
+        if body:
+            event_data["body"] = {
+                "contentType": "HTML",
+                "content": body,
+            }
+
+        result = await self._request("POST", url, json_data=event_data)
+        if result is None:
+            raise CalendarException.create_failed("No response from API")
+
+        if isinstance(result, dict):
+            return result
+
+        raise CalendarException.create_failed("Unexpected response format")

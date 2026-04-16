@@ -19,6 +19,8 @@ from ddd.calendar.application import (
     UpdateEventService,
     DeleteEventDto,
     DeleteEventService,
+    AddHolidayDto,
+    AddHolidayService,
 )
 
 
@@ -41,20 +43,23 @@ class CallToolService:
         self._payload_dict = call_tool_dto.payload_dict
 
         try:
-            if call_tool_dto.event_name == ToolNameEnum.CAL_LIST_EVENTS.value:
+            if call_tool_dto.event_name == ToolNameEnum.LIST_CAL_EVENTS.value:
                 text_contents = await self.__get_list_events_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.CAL_GET_EVENT.value:
+            elif call_tool_dto.event_name == ToolNameEnum.GET_CAL_EVENT.value:
                 text_contents = await self.__get_get_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.CAL_CREATE_EVENT.value:
+            elif call_tool_dto.event_name == ToolNameEnum.CREATE_CAL_EVENT.value:
                 text_contents = await self.__get_create_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.CAL_UPDATE_EVENT.value:
+            elif call_tool_dto.event_name == ToolNameEnum.UPDATE_CAL_EVENT.value:
                 text_contents = await self.__get_update_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.CAL_DELETE_EVENT.value:
+            elif call_tool_dto.event_name == ToolNameEnum.DELETE_CAL_EVENT.value:
                 text_contents = await self.__get_delete_event_text_content()
+
+            elif call_tool_dto.event_name == ToolNameEnum.ADD_CAL_HOLIDAY.value:
+                text_contents = await self.__get_add_holiday_text_content()
 
             else:
                 text_contents = [
@@ -177,3 +182,21 @@ class CallToolService:
 
         status = "deleted successfully" if result.deleted else "deletion failed"
         return [TextContent(type="text", text=f"event {result.event_id}: {status}")]
+
+    async def __get_add_holiday_text_content(self) -> list[TextContent]:
+        result = await AddHolidayService.get_instance()(
+            AddHolidayDto.from_primitives(self._payload_dict)
+        )
+
+        return [
+            TextContent(
+                type="text",
+                text=(
+                    f"holiday added:\n"
+                    f"- id: {result.id}\n"
+                    f"- title: {result.title}\n"
+                    f"- date: {result.date}\n"
+                    f"- calendar: {result.calendar_name}"
+                ),
+            )
+        ]
