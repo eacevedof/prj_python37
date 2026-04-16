@@ -28,7 +28,7 @@ WINDOW_MIN_WIDTH = 600
 WINDOW_MIN_HEIGHT = 500
 
 
-async def main(page: ft.Page) -> None:
+async def fn_render(page: ft.Page) -> None:
     """Entry point de la aplicacion Flet."""
 
     # Configuracion de la pagina
@@ -125,4 +125,4 @@ async def main(page: ft.Page) -> None:
 
 
 if __name__ == "__main__":
-    ft.run(main)
+    ft.run(fn_render)

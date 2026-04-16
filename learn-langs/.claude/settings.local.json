@@ -6,7 +6,8 @@
       "Bash(if [ -f \".venv-win/Scripts/activate\" ])",
       "Bash(then source .venv-win/Scripts/activate)",
       "Bash(else echo \"No venv found\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(dir:*)"
     ]
   }
 }
