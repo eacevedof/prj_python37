@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import final, Self
 
-from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
 from ddd.vocabulary.domain.entities import WordMetricEntity
 
 
@@ -9,10 +9,10 @@ from ddd.vocabulary.domain.entities import WordMetricEntity
 class MetricsWriterSqliteRepository:
     """Repositorio de escritura para métricas SM-2."""
 
-    _sqlite: SqliteConnection
+    _sqlite: SqliteConnector
 
     def __init__(self) -> None:
-        self._sqlite = SqliteConnection.get_instance()
+        self._sqlite = SqliteConnector.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:

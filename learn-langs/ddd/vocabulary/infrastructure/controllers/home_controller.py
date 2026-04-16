@@ -2,15 +2,9 @@
 
 import flet as ft
 from typing import Callable
+import ddd.vocabulary.infrastructure.ui.views.home_view
 
-from ddd.vocabulary.infrastructure.repositories import (
-    TagsReaderSqliteRepository,
-    MetricsReaderSqliteRepository,
-    WordsEsReaderSqliteRepository,
-)
-
-
-class HomeView(ft.Container):
+class HomeController(ft.Container):
     """Vista de inicio con selección de idioma y opciones."""
 
     def __init__(

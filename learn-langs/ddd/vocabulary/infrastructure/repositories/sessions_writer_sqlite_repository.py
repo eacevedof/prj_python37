@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from typing import final, Self
 
-from ddd.shared.infrastructure.repositories.sqlite_connection import SqliteConnection
+from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
 from ddd.vocabulary.domain.entities import StudySessionEntity
 
 
@@ -10,10 +10,10 @@ from ddd.vocabulary.domain.entities import StudySessionEntity
 class SessionsWriterSqliteRepository:
     """Repositorio de escritura para sesiones de estudio."""
 
-    _sqlite: SqliteConnection
+    _sqlite: SqliteConnector
 
     def __init__(self) -> None:
-        self._sqlite = SqliteConnection.get_instance()
+        self._sqlite = SqliteConnector.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:

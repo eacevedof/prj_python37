@@ -500,7 +500,7 @@ python -m venv .venv-win
 pip install -r requirements.txt
 
 # Ejecutar app
-python main.py
+python front_controller.py
 
 # Linting y formato
 ruff check --fix .

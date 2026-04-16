@@ -71,3 +71,12 @@ class Logger:
         if data:
             log_content += f"\nData: {data}"
         self.write_log("debug/debug.log", log_content)
+
+    # Shortcuts for repository logging
+    def sql(self, query: str) -> None:
+        """Log SQL query."""
+        self.write_log("sql/queries.sql", query)
+
+    def error(self, message: str, context: dict | None = None) -> None:
+        """Log error message."""
+        self.write_error("Repository", message, context)
