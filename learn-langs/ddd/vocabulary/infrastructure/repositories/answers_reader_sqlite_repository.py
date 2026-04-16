@@ -1,16 +1,16 @@
+"""Repositorio de lectura para respuestas de sesión."""
+
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
 @final
-class AnswersReaderSqliteRepository:
+class AnswersReaderSqliteRepository(AbstractSqliteRepository):
     """Repositorio de lectura para respuestas de sesión."""
 
-    _sqlite: SqliteConnector
-
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -18,7 +18,8 @@ class AnswersReaderSqliteRepository:
 
     async def get_by_session(self, session_id: int) -> list[dict]:
         """Obtiene todas las respuestas de una sesión."""
-        query = """
+        return await self._query(
+            """
             SELECT sa.id, sa.session_id, sa.word_es_id, sa.user_input,
                    sa.expected_text, sa.score, sa.response_time_ms, sa.answered_at,
                    we.text as text_es
@@ -26,12 +27,14 @@ class AnswersReaderSqliteRepository:
             INNER JOIN words_es we ON sa.word_es_id = we.id
             WHERE sa.session_id = ?
             ORDER BY sa.answered_at
-        """
-        return await self._sqlite.fetch_all(query, (session_id,))
+            """,
+            (session_id,),
+        )
 
     async def get_session_summary(self, session_id: int) -> dict:
         """Obtiene resumen de respuestas de una sesión."""
-        query = """
+        result = await self._query_one(
+            """
             SELECT
                 COUNT(*) as total_answers,
                 SUM(CASE WHEN score >= 1.0 THEN 1 ELSE 0 END) as correct,
@@ -41,8 +44,9 @@ class AnswersReaderSqliteRepository:
                 AVG(response_time_ms) as avg_response_time
             FROM session_answers
             WHERE session_id = ?
-        """
-        result = await self._sqlite.fetch_one(query, (session_id,))
+            """,
+            (session_id,),
+        )
         return result or {
             "total_answers": 0,
             "correct": 0,
@@ -58,7 +62,8 @@ class AnswersReaderSqliteRepository:
         limit: int = 20,
     ) -> list[dict]:
         """Obtiene historial de respuestas para una palabra."""
-        query = """
+        return await self._query(
+            """
             SELECT sa.id, sa.session_id, sa.user_input, sa.expected_text,
                    sa.score, sa.response_time_ms, sa.answered_at,
                    ss.lang_code, ss.study_mode
@@ -67,5 +72,6 @@ class AnswersReaderSqliteRepository:
             WHERE sa.word_es_id = ?
             ORDER BY sa.answered_at DESC
             LIMIT ?
-        """
-        return await self._sqlite.fetch_all(query, (word_es_id, limit))
+            """,
+            (word_es_id, limit),
+        )

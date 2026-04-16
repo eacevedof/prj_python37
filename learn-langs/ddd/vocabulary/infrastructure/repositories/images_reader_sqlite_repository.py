@@ -2,14 +2,17 @@
 
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
 @final
-class ImagesReaderSqliteRepository:
+class ImagesReaderSqliteRepository(AbstractSqliteRepository):
     """Repository para leer imagenes de palabras."""
 
     _instance: "ImagesReaderSqliteRepository | None" = None
+
+    def __init__(self) -> None:
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -19,16 +22,14 @@ class ImagesReaderSqliteRepository:
 
     async def get_by_id(self, image_id: int) -> dict | None:
         """Obtiene una imagen por ID."""
-        sqlite = SqliteConnector.get_instance()
-        return await sqlite.fetch_one(
+        return await self._query_one(
             "SELECT * FROM word_es_images WHERE id = ? AND is_active = 1",
             (image_id,),
         )
 
     async def get_by_word_id(self, word_es_id: int) -> list[dict]:
         """Obtiene todas las imagenes de una palabra."""
-        sqlite = SqliteConnector.get_instance()
-        return await sqlite.fetch_all(
+        return await self._query(
             """
             SELECT * FROM word_es_images
             WHERE word_es_id = ? AND is_active = 1
@@ -39,8 +40,7 @@ class ImagesReaderSqliteRepository:
 
     async def get_primary_by_word_id(self, word_es_id: int) -> dict | None:
         """Obtiene la imagen principal de una palabra."""
-        sqlite = SqliteConnector.get_instance()
-        return await sqlite.fetch_one(
+        return await self._query_one(
             """
             SELECT * FROM word_es_images
             WHERE word_es_id = ? AND is_primary = 1 AND is_active = 1
@@ -50,8 +50,7 @@ class ImagesReaderSqliteRepository:
 
     async def get_by_source_type(self, source_type: str, limit: int = 50) -> list[dict]:
         """Obtiene imagenes por tipo de fuente."""
-        sqlite = SqliteConnector.get_instance()
-        return await sqlite.fetch_all(
+        return await self._query(
             """
             SELECT * FROM word_es_images
             WHERE source_type = ? AND is_active = 1
@@ -63,17 +62,15 @@ class ImagesReaderSqliteRepository:
 
     async def count_by_word_id(self, word_es_id: int) -> int:
         """Cuenta las imagenes de una palabra."""
-        sqlite = SqliteConnector.get_instance()
-        result = await sqlite.fetch_one(
+        return await self._query_scalar(
             "SELECT COUNT(*) as count FROM word_es_images WHERE word_es_id = ? AND is_active = 1",
             (word_es_id,),
-        )
-        return result["count"] if result else 0
+            "count",
+        ) or 0
 
     async def get_words_with_images(self, limit: int = 50) -> list[dict]:
         """Obtiene palabras que tienen imagenes con su imagen principal."""
-        sqlite = SqliteConnector.get_instance()
-        return await sqlite.fetch_all(
+        return await self._query(
             """
             SELECT w.*, i.file_path as primary_image_path, i.mime_type as primary_image_mime
             FROM words_es w

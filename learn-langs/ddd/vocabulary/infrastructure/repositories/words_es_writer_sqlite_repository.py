@@ -1,18 +1,18 @@
+"""Repositorio de escritura para palabras en español."""
+
 from datetime import datetime
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 from ddd.vocabulary.domain.entities import WordEsEntity
 
 
 @final
-class WordsEsWriterSqliteRepository:
+class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
     """Repositorio de escritura para palabras en español."""
 
-    _sqlite: SqliteConnector
-
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -22,75 +22,66 @@ class WordsEsWriterSqliteRepository:
         """Crea una nueva palabra y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        query = """
-            INSERT INTO words_es (text, word_type, image_path, notes, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """
-        word_id = await self._sqlite.insert(
-            query,
-            (
-                word_es_entity.text.strip(),
-                word_es_entity.word_type.value,
-                word_es_entity.image_path,
-                word_es_entity.notes,
-                now,
-                now,
-            ),
-        )
-
-        return word_id
+        return await self._insert_into("words_es", {
+            "text": word_es_entity.text.strip(),
+            "word_type": word_es_entity.word_type.value,
+            "image_path": word_es_entity.image_path,
+            "notes": word_es_entity.notes,
+            "created_at": now,
+            "updated_at": now,
+        })
 
     async def update(self, word_es_entity: WordEsEntity) -> bool:
         """Actualiza una palabra existente."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        query = """
-            UPDATE words_es
-            SET text = ?, word_type = ?, image_path = ?, notes = ?, updated_at = ?
-            WHERE id = ?
-        """
-        rows_affected = await self._sqlite.update(
-            query,
-            (
-                word_es_entity.text.strip(),
-                word_es_entity.word_type.value,
-                word_es_entity.image_path,
-                word_es_entity.notes,
-                now,
-                word_es_entity.id,
-            ),
+        rows_affected = await self._update_where(
+            "words_es",
+            {
+                "text": word_es_entity.text.strip(),
+                "word_type": word_es_entity.word_type.value,
+                "image_path": word_es_entity.image_path,
+                "notes": word_es_entity.notes,
+                "updated_at": now,
+            },
+            "id = ?",
+            (word_es_entity.id,),
         )
 
         return rows_affected > 0
 
     async def delete(self, word_es_entity: WordEsEntity) -> bool:
         """Elimina una palabra."""
-        query = "DELETE FROM words_es WHERE id = ?"
-        rows_affected = await self._sqlite.delete(query, (word_es_entity.id,))
+        rows_affected = await self._delete_where(
+            "words_es",
+            "id = ?",
+            (word_es_entity.id,),
+        )
         return rows_affected > 0
 
     async def add_tag(self, word_id: int, tag_id: int) -> bool:
         """Añade un tag a una palabra."""
-        query = """
-            INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id)
-            VALUES (?, ?)
-        """
         try:
-            await self._sqlite.insert(query, (word_id, tag_id))
+            await self._sqlite.insert(
+                "INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES (?, ?)",
+                (word_id, tag_id),
+            )
             return True
         except Exception:
             return False
 
     async def remove_tag(self, word_id: int, tag_id: int) -> bool:
         """Elimina un tag de una palabra."""
-        query = "DELETE FROM word_es_tags WHERE word_es_id = ? AND tag_id = ?"
-        rows_affected = await self._sqlite.delete(query, (word_id, tag_id))
+        rows_affected = await self._delete_where(
+            "word_es_tags",
+            "word_es_id = ? AND tag_id = ?",
+            (word_id, tag_id),
+        )
         return rows_affected > 0
 
     async def set_tags(self, word_id: int, tag_ids: list[int]) -> bool:
         """Reemplaza todos los tags de una palabra."""
-        delete_query = "DELETE FROM word_es_tags WHERE word_es_id = ?"
-        await self._sqlite.delete(delete_query, (word_id,))
+        await self._delete_where("word_es_tags", "word_es_id = ?", (word_id,))
 
         for tag_id in tag_ids:
             await self.add_tag(word_id, tag_id)
@@ -104,12 +95,11 @@ class WordsEsWriterSqliteRepository:
         relation_type: str,
     ) -> bool:
         """Añade una relación entre dos palabras."""
-        query = """
-            INSERT OR IGNORE INTO word_es_relations (word_es_id_a, word_es_id_b, relation_type)
-            VALUES (?, ?, ?)
-        """
         try:
-            await self._sqlite.insert(query, (word_id_a, word_id_b, relation_type))
+            await self._sqlite.insert(
+                "INSERT OR IGNORE INTO word_es_relations (word_es_id_a, word_es_id_b, relation_type) VALUES (?, ?, ?)",
+                (word_id_a, word_id_b, relation_type),
+            )
             return True
         except Exception:
             return False

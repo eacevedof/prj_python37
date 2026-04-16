@@ -1,16 +1,16 @@
+"""Repositorio de lectura para métricas SM-2."""
+
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
 @final
-class MetricsReaderSqliteRepository:
+class MetricsReaderSqliteRepository(AbstractSqliteRepository):
     """Repositorio de lectura para métricas SM-2."""
 
-    _sqlite: SqliteConnector
-
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -18,14 +18,16 @@ class MetricsReaderSqliteRepository:
 
     async def get_by_word_and_lang(self, word_es_id: int, lang_code: str) -> dict | None:
         """Obtiene métricas de una palabra en un idioma específico."""
-        query = """
+        return await self._query_one(
+            """
             SELECT id, word_es_id, lang_code, repetitions, easiness_factor,
                    interval_days, next_review_at, last_reviewed_at,
                    total_attempts, total_score, created_at, updated_at
             FROM word_metrics
             WHERE word_es_id = ? AND lang_code = ?
-        """
-        return await self._sqlite.fetch_one(query, (word_es_id, lang_code))
+            """,
+            (word_es_id, lang_code),
+        )
 
     async def get_words_for_review(
         self,
@@ -38,7 +40,7 @@ class MetricsReaderSqliteRepository:
         Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
         """
         if tag_names:
-            placeholders = ",".join(["?" for _ in tag_names])
+            placeholders = self._get_placeholders(len(tag_names))
             query = f"""
                 SELECT DISTINCT
                     we.id as word_es_id,
@@ -91,11 +93,12 @@ class MetricsReaderSqliteRepository:
             """
             params = (lang_code, lang_code, limit)
 
-        return await self._sqlite.fetch_all(query, params)
+        return await self._query(query, params)
 
     async def get_stats_for_lang(self, lang_code: str) -> dict:
         """Obtiene estadísticas generales para un idioma."""
-        query = """
+        result = await self._query_one(
+            """
             SELECT
                 COUNT(*) as total_words,
                 SUM(CASE WHEN next_review_at <= datetime('now') THEN 1 ELSE 0 END) as due_for_review,
@@ -104,8 +107,9 @@ class MetricsReaderSqliteRepository:
                 AVG(CASE WHEN total_attempts > 0 THEN total_score / total_attempts ELSE 0 END) as avg_score
             FROM word_metrics
             WHERE lang_code = ?
-        """
-        result = await self._sqlite.fetch_one(query, (lang_code,))
+            """,
+            (lang_code,),
+        )
         return result or {
             "total_words": 0,
             "due_for_review": 0,

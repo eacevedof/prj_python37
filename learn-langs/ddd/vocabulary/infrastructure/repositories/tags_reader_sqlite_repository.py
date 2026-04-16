@@ -1,16 +1,16 @@
+"""Repositorio de lectura para tags."""
+
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
 @final
-class TagsReaderSqliteRepository:
+class TagsReaderSqliteRepository(AbstractSqliteRepository):
     """Repositorio de lectura para tags."""
 
-    _sqlite: SqliteConnector
-
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -19,26 +19,26 @@ class TagsReaderSqliteRepository:
     async def get_by_id(self, tag_id: int) -> dict | None:
         """Obtiene un tag por su ID."""
         query = "SELECT id, name, color, created_at FROM tags WHERE id = ?"
-        return await self._sqlite.fetch_one(query, (tag_id,))
+        return await self._query_one(query, (tag_id,))
 
     async def get_by_name(self, name: str) -> dict | None:
         """Obtiene un tag por su nombre."""
         query = "SELECT id, name, color, created_at FROM tags WHERE name = ?"
-        return await self._sqlite.fetch_one(query, (name.strip(),))
+        return await self._query_one(query, (name.strip(),))
 
     async def get_all(self) -> list[dict]:
         """Obtiene todos los tags."""
         query = "SELECT id, name, color, created_at FROM tags ORDER BY name"
-        return await self._sqlite.fetch_all(query)
+        return await self._query(query)
 
     async def get_by_names(self, names: list[str]) -> list[dict]:
         """Obtiene tags por lista de nombres."""
         if not names:
             return []
 
-        placeholders = ",".join(["?" for _ in names])
+        placeholders = self._get_placeholders(len(names))
         query = f"SELECT id, name, color, created_at FROM tags WHERE name IN ({placeholders})"
-        return await self._sqlite.fetch_all(query, tuple(names))
+        return await self._query(query, tuple(names))
 
     async def get_for_word(self, word_es_id: int) -> list[dict]:
         """Obtiene todos los tags de una palabra."""
@@ -49,4 +49,4 @@ class TagsReaderSqliteRepository:
             WHERE wt.word_es_id = ?
             ORDER BY t.name
         """
-        return await self._sqlite.fetch_all(query, (word_es_id,))
+        return await self._query(query, (word_es_id,))
