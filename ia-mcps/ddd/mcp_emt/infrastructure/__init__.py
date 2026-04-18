@@ -1,0 +1,1 @@
+# MCP EMT infrastructure layer
