@@ -10,7 +10,11 @@
       "WebFetch(domain:pypi.org)",
       "WebFetch(domain:publicapis.io)",
       "Bash(ruff check:*)",
-      "Bash(mypy:*)"
+      "Bash(mypy:*)",
+      "Bash(for file in curler date_timer encoder hasher printer response_dto slugger texter tokenizer abstract_input_dto azure_devops)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)"
     ]
   }
 }

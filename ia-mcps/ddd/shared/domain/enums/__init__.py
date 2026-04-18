@@ -1,3 +1,5 @@
-from .response_code_enum import ResponseCodeEnum
+from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
-__all__ = ["ResponseCodeEnum"]
+__all__ = [
+    "EnvvarsKeysEnum",
+]
