@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:datos.emtmadrid.es)",
+      "WebFetch(domain:mobilitylabs.emtmadrid.es)",
+      "WebSearch",
+      "WebFetch(domain:apidocs.emtmadrid.es)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:publicapis.io)",
+      "Bash(ruff check:*)",
+      "Bash(mypy:*)"
+    ]
+  }
+}
