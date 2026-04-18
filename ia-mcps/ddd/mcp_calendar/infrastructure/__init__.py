@@ -1,1 +1,0 @@
-# MCP Calendar infrastructure layer.
