@@ -50,39 +50,49 @@ async def fn_render(page: ft.Page) -> None:
     # Contenedor principal
     content_area = ft.Container(expand=True)
 
-    def navigate_to(view_name: ControllerRouteEnum | str, **kwargs) -> None:
+    def navigate_to(
+        route_name: ControllerRouteEnum | str,
+        **kwargs
+    ) -> None:
         """Navega a una vista especifica."""
         nonlocal current_view
 
         # Convertir string a enum si es necesario
-        if isinstance(view_name, str):
-            view_name = ControllerRouteEnum(view_name)
+        if isinstance(route_name, str):
+            route_name = ControllerRouteEnum(route_name)
 
-        current_view = view_name
+        current_view = route_name
 
-        if view_name == ControllerRouteEnum.HOME:
+        if route_name == ControllerRouteEnum.HOME:
             content_area.content = HomeController(
-                on_start_study=lambda lang, tags: navigate_to(ControllerRouteEnum.STUDY, lang_code=lang, tags=tags),
-                on_manage_words=lambda: navigate_to(ControllerRouteEnum.WORDS),
+                on_start_study=lambda lang,
+                tags: navigate_to(
+                    ControllerRouteEnum.STUDY,
+                    lang_code=lang,
+                    tags=tags
+                ),
+                on_manage_words=lambda: navigate_to(
+                    ControllerRouteEnum.WORDS
+                ),
             )
-        elif view_name == ControllerRouteEnum.STUDY:
+        elif route_name == ControllerRouteEnum.STUDY:
             content_area.content = StudyView(
                 lang_code=kwargs.get("lang_code", LanguageCodeEnum.default()),
                 tags=kwargs.get("tags", []),
                 on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
             )
-        elif view_name == ControllerRouteEnum.WORDS:
+        elif route_name == ControllerRouteEnum.WORDS:
             content_area.content = ListWordsView(
                 on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
                 on_create=lambda: navigate_to(ControllerRouteEnum.CREATE_WORD),
                 on_edit=lambda word_id: navigate_to(ControllerRouteEnum.UPDATE_WORD, word_id=word_id),
             )
-        elif view_name == ControllerRouteEnum.CREATE_WORD:
+        elif route_name == ControllerRouteEnum.CREATE_WORD:
             content_area.content = CreateWordView(
                 on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
                 on_word_created=lambda: None,  # Stay in create view for batch adding
             )
-        elif view_name == ControllerRouteEnum.UPDATE_WORD:
+        elif route_name == ControllerRouteEnum.UPDATE_WORD:
             content_area.content = UpdateWordView(
                 word_id=kwargs.get("word_id", 0),
                 on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
