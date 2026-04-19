@@ -1,9 +1,8 @@
 """DTO de vista para el Home."""
 
 from dataclasses import dataclass, field
-from typing import Self
+from typing import Self, Any
 
-from ddd.vocabulary.application.load_home import LoadHomeResultDto, TagItemDto, StatsDto
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 
 
@@ -15,8 +14,18 @@ class LanguageOptionViewDto:
     display_name: str
 
     @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        return cls(
+            code=str(primitives.get("code", "")),
+            display_name=str(primitives.get("display_name", "")),
+        )
+
+    @classmethod
     def from_enum(cls, lang: LanguageCodeEnum) -> Self:
-        return cls(code=lang.value, display_name=lang.display_name)
+        return cls.from_primitives({
+            "code": lang.value,
+            "display_name": lang.display_name,
+        })
 
 
 @dataclass(slots=True)
@@ -29,12 +38,12 @@ class TagViewDto:
     is_selected: bool = False
 
     @classmethod
-    def from_item_dto(cls, item: TagItemDto, selected_tags: list[str]) -> Self:
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            id=item.id,
-            name=item.name,
-            color=item.color,
-            is_selected=item.name in selected_tags,
+            id=int(primitives.get("id", 0)),
+            name=str(primitives.get("name", "")),
+            color=str(primitives.get("color", "#6B7280") or "#6B7280"),
+            is_selected=bool(primitives.get("is_selected", False)),
         )
 
 
@@ -42,16 +51,17 @@ class TagViewDto:
 class StatsViewDto:
     """DTO para las estadísticas en la vista."""
 
-    total_words: int
-    due_for_review: int
-    avg_score_percent: int  # Ya calculado como porcentaje
+    total_words: int = 0
+    due_for_review: int = 0
+    avg_score_percent: int = 0
 
     @classmethod
-    def from_stats_dto(cls, stats: StatsDto) -> Self:
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        avg_score = float(primitives.get("avg_score", 0.0) or 0.0)
         return cls(
-            total_words=stats.total_words,
-            due_for_review=stats.due_for_review,
-            avg_score_percent=int(stats.avg_score * 100),
+            total_words=int(primitives.get("total_words", 0) or 0),
+            due_for_review=int(primitives.get("due_for_review", 0) or 0),
+            avg_score_percent=int(avg_score * 100),
         )
 
 
@@ -76,50 +86,78 @@ class HomeViewDto:
     error_message: str | None = None
 
     @classmethod
-    def initial(cls) -> Self:
-        """Crea el DTO inicial con opciones de idioma."""
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        # Language options
+        lang_options_raw = primitives.get("language_options", []) or []
+        language_options = [
+            LanguageOptionViewDto.from_primitives(opt) if isinstance(opt, dict)
+            else LanguageOptionViewDto.from_enum(opt)
+            for opt in lang_options_raw
+        ]
+
+        # Tags
+        tags_raw = primitives.get("tags", []) or []
+        selected_tags = list(primitives.get("selected_tags", []) or [])
+        tags = [
+            TagViewDto.from_primitives({
+                **tag,
+                "is_selected": tag.get("name", "") in selected_tags,
+            }) if isinstance(tag, dict)
+            else tag
+            for tag in tags_raw
+        ]
+
+        # Stats
+        stats_raw = primitives.get("stats")
+        stats = StatsViewDto.from_primitives(stats_raw) if stats_raw else None
+
         return cls(
-            language_options=[
-                LanguageOptionViewDto.from_enum(lang)
-                for lang in LanguageCodeEnum.ui_options()
-            ],
-            default_lang_code=LanguageCodeEnum.default().value,
-            selected_lang_code=LanguageCodeEnum.default().value,
-            is_loading=True,
+            language_options=language_options,
+            default_lang_code=str(primitives.get("default_lang_code", LanguageCodeEnum.default().value)),
+            selected_lang_code=str(primitives.get("selected_lang_code", "")),
+            selected_tags=selected_tags,
+            tags=tags,
+            stats=stats,
+            is_loading=bool(primitives.get("is_loading", False)),
+            error_message=primitives.get("error_message"),
         )
 
     @classmethod
-    def from_result(
+    def initial(cls) -> Self:
+        """Crea el DTO inicial con opciones de idioma."""
+        return cls.from_primitives({
+            "language_options": LanguageCodeEnum.ui_options(),
+            "default_lang_code": LanguageCodeEnum.default().value,
+            "selected_lang_code": LanguageCodeEnum.default().value,
+            "is_loading": True,
+        })
+
+    @classmethod
+    def ok(
         cls,
-        result: LoadHomeResultDto,
+        tags: list[dict[str, Any]],
+        stats: dict[str, Any],
         selected_lang_code: str,
         selected_tags: list[str],
     ) -> Self:
-        """Crea el DTO desde el resultado del servicio."""
-        if not result.success:
-            return cls(
-                language_options=[
-                    LanguageOptionViewDto.from_enum(lang)
-                    for lang in LanguageCodeEnum.ui_options()
-                ],
-                default_lang_code=LanguageCodeEnum.default().value,
-                selected_lang_code=selected_lang_code,
-                is_loading=False,
-                error_message=result.error_message,
-            )
+        """Crea el DTO de éxito."""
+        return cls.from_primitives({
+            "language_options": LanguageCodeEnum.ui_options(),
+            "default_lang_code": LanguageCodeEnum.default().value,
+            "selected_lang_code": selected_lang_code,
+            "selected_tags": selected_tags,
+            "tags": tags,
+            "stats": stats,
+            "is_loading": False,
+        })
 
-        return cls(
-            language_options=[
-                LanguageOptionViewDto.from_enum(lang)
-                for lang in LanguageCodeEnum.ui_options()
-            ],
-            default_lang_code=LanguageCodeEnum.default().value,
-            selected_lang_code=selected_lang_code,
-            selected_tags=selected_tags,
-            tags=[
-                TagViewDto.from_item_dto(tag, selected_tags)
-                for tag in result.tags
-            ],
-            stats=StatsViewDto.from_stats_dto(result.stats),
-            is_loading=False,
-        )
+    @classmethod
+    def error(cls, message: str, selected_lang_code: str = "") -> Self:
+        """Crea el DTO de error."""
+        return cls.from_primitives({
+            "language_options": LanguageCodeEnum.ui_options(),
+            "default_lang_code": LanguageCodeEnum.default().value,
+            "selected_lang_code": selected_lang_code or LanguageCodeEnum.default().value,
+            "is_loading": False,
+            "error_message": message,
+        })

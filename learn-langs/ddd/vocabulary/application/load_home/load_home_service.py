@@ -49,11 +49,11 @@ class LoadHomeService:
             stats_raw = await metrics_reader.get_stats_for_lang(dto.lang_code)
             total_words = await words_reader.count()
 
-            stats = StatsDto(
-                total_words=total_words,
-                due_for_review=int(stats_raw.get("due_for_review", 0) or 0),
-                avg_score=float(stats_raw.get("avg_score", 0.0) or 0.0),
-            )
+            stats = StatsDto.from_primitives({
+                "total_words": total_words,
+                "due_for_review": stats_raw.get("due_for_review", 0),
+                "avg_score": stats_raw.get("avg_score", 0.0),
+            })
 
             return LoadHomeResultDto.ok(tags=tags, stats=stats)
 

@@ -1,7 +1,7 @@
 """Vista del Home - Solo renderizado, sin lógica de negocio."""
 
 import flet as ft
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, Any, Self, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ddd.vocabulary.infrastructure.controllers.home_view_dto import HomeViewDto
@@ -33,6 +33,16 @@ class HomeView(ft.Container):
         self._on_start_study = on_start_study
         self._on_manage_words = on_manage_words
 
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
+        return cls(
+            on_lang_change=primitives.get("on_lang_change", lambda x: None),
+            on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
+            on_start_study=primitives.get("on_start_study", lambda: None),
+            on_manage_words=primitives.get("on_manage_words", lambda: None),
+        )
+
         # Componentes UI (se crean en _build_ui)
         self._lang_dropdown: ft.Dropdown | None = None
         self._tags_row: ft.Row | None = None
@@ -52,8 +62,8 @@ class HomeView(ft.Container):
             label="Idioma a practicar",
             width=250,
             options=[],
-            on_change=self._handle_lang_change,
         )
+        self._lang_dropdown.on_change = self._handle_lang_change
 
         # Tags row
         self._tags_row = ft.Row(

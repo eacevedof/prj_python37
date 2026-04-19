@@ -46,12 +46,12 @@ class HomeController(ft.Container):
 
     def _build_ui(self) -> None:
         """Construye la vista con el DTO inicial."""
-        self._home_view = HomeView(
-            on_lang_change=self._handle_lang_change,
-            on_tag_toggle=self._handle_tag_toggle,
-            on_start_study=self._handle_start_study,
-            on_manage_words=self._handle_manage_words,
-        )
+        self._home_view = HomeView.from_primitives({
+            "on_lang_change": self._handle_lang_change,
+            "on_tag_toggle": self._handle_tag_toggle,
+            "on_start_study": self._handle_start_study,
+            "on_manage_words": self._handle_manage_words,
+        })
         self.content = self._home_view
         self.expand = True
 
@@ -61,14 +61,30 @@ class HomeController(ft.Container):
 
     async def _load_data(self) -> None:
         """Carga datos del servicio y actualiza la vista."""
-        dto = LoadHomeDto(lang_code=self._selected_lang.value)
-        result = await self._load_home_service(dto)
+        load_home_dto = LoadHomeDto.from_primitives({
+            "lang_code": self._selected_lang.value,
+        })
+        result = await self._load_home_service(load_home_dto)
 
-        home_view_dto = HomeViewDto.from_result(
-            result=result,
-            selected_lang_code=self._selected_lang.value,
-            selected_tags=self._selected_tags,
-        )
+        if not result.success:
+            home_view_dto = HomeViewDto.error(
+                message=result.error_message or "Error desconocido",
+                selected_lang_code=self._selected_lang.value,
+            )
+        else:
+            home_view_dto = HomeViewDto.ok(
+                tags=[
+                    {"id": t.id, "name": t.name, "color": t.color}
+                    for t in result.tags
+                ],
+                stats={
+                    "total_words": result.stats.total_words,
+                    "due_for_review": result.stats.due_for_review,
+                    "avg_score": result.stats.avg_score,
+                },
+                selected_lang_code=self._selected_lang.value,
+                selected_tags=self._selected_tags,
+            )
 
         if self._home_view:
             self._home_view.render(home_view_dto)

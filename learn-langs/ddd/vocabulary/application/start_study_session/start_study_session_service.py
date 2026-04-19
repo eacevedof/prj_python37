@@ -62,25 +62,22 @@ class StartStudySessionService:
             raise VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
 
         # Crear entidad de sesion
-        study_session_entity = StudySessionEntity(
-            id=0,
-            lang_code=start_study_session_dto.lang_code,
-            study_mode=StudyModeEnum(start_study_session_dto.study_mode),
-            tags_filter=start_study_session_dto.tags if start_study_session_dto.tags else [],
-        )
+        study_session_entity = StudySessionEntity.from_primitives({
+            "id": 0,
+            "lang_code": start_study_session_dto.lang_code,
+            "study_mode": start_study_session_dto.study_mode,
+            "tags_filter": start_study_session_dto.tags if start_study_session_dto.tags else [],
+        })
 
         # Crear sesión
         session_id = await self._sessions_writer.create(study_session_entity)
 
         # Construir resultado
-        words = [StudyWordDto.from_primitives(w) for w in words_data]
-
-        return StartStudySessionResultDto(
-            session_id=session_id,
-            lang_code=start_study_session_dto.lang_code,
-            study_mode=start_study_session_dto.study_mode,
-            started_at="",  # Se establece en el repository
-            total_words=len(words),
-            words=words,
-            tags_filter=start_study_session_dto.tags,
-        )
+        return StartStudySessionResultDto.from_primitives({
+            "session_id": session_id,
+            "lang_code": start_study_session_dto.lang_code,
+            "study_mode": start_study_session_dto.study_mode,
+            "started_at": "",
+            "words": words_data,
+            "tags_filter": start_study_session_dto.tags,
+        })
