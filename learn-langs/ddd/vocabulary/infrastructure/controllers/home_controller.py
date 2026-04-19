@@ -61,10 +61,11 @@ class HomeController(ft.Container):
 
     async def _load_data(self) -> None:
         """Carga datos del servicio y actualiza la vista."""
-        load_home_dto = LoadHomeDto.from_primitives({
-            "lang_code": self._selected_lang.value,
-        })
-        result = await self._load_home_service(load_home_dto)
+        result = await self._load_home_service(
+            LoadHomeDto.from_primitives({
+                "lang_code": self._selected_lang.value,
+            })
+        )
 
         if not result.success:
             home_view_dto = HomeViewDto.error(
