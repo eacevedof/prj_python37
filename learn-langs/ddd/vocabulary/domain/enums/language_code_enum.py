@@ -1,6 +1,7 @@
 """Enumerado de codigos de idioma."""
 
 from enum import StrEnum
+from typing import Self
 
 
 class LanguageCodeEnum(StrEnum):
@@ -22,3 +23,34 @@ class LanguageCodeEnum(StrEnum):
     def default(cls) -> "LanguageCodeEnum":
         """Idioma por defecto."""
         return cls.NL_NL
+
+    @property
+    def display_name(self) -> str:
+        """Nombre para mostrar en UI."""
+        names = {
+            self.NL_NL: "Nederlands",
+            self.NL_BE: "Vlaams",
+            self.EN_US: "English (US)",
+            self.EN_GB: "English (UK)",
+            self.DE_DE: "Deutsch",
+            self.FR_FR: "Français",
+            self.PT_BR: "Português",
+            self.IT_IT: "Italiano",
+        }
+        return names.get(self, self.value)
+
+    @classmethod
+    def ui_options(cls) -> list["LanguageCodeEnum"]:
+        """Idiomas disponibles para la UI (excluyendo variantes poco usadas)."""
+        return [
+            cls.NL_NL,
+            cls.EN_US,
+            cls.EN_GB,
+            cls.DE_DE,
+            cls.FR_FR,
+        ]
+
+    @classmethod
+    def all_options(cls) -> list["LanguageCodeEnum"]:
+        """Todos los idiomas disponibles."""
+        return list(cls)

@@ -3,6 +3,7 @@
 import flet as ft
 from typing import Callable
 
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.controllers import CreateWordController
 from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
 
@@ -230,7 +231,7 @@ class CreateWordView(ft.Container):
 
         translations = {}
         if text_nl.strip():
-            translations["nl_NL"] = text_nl.strip()
+            translations[LanguageCodeEnum.NL_NL.value] = text_nl.strip()
 
         controller = CreateWordController.get_instance()
         result = await controller.create(

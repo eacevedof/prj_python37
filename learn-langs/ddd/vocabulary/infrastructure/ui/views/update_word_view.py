@@ -3,6 +3,7 @@
 import flet as ft
 from typing import Callable
 
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.controllers.update_word_controller import UpdateWordController
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
@@ -228,7 +229,7 @@ class UpdateWordView(ft.Container):
             self._text_es_field.value = self.word_data.get("text", "")
 
         if self._text_nl_field:
-            self._text_nl_field.value = self._current_translations.get("nl_NL", "")
+            self._text_nl_field.value = self._current_translations.get(LanguageCodeEnum.NL_NL.value, "")
 
         if self._word_type_dropdown:
             self._word_type_dropdown.value = self.word_data.get("word_type", "WORD")
@@ -303,7 +304,7 @@ class UpdateWordView(ft.Container):
 
         translations = {}
         if text_nl.strip():
-            translations["nl_NL"] = text_nl.strip()
+            translations[LanguageCodeEnum.NL_NL.value] = text_nl.strip()
 
         controller = UpdateWordController.get_instance()
         result = await controller.update(
