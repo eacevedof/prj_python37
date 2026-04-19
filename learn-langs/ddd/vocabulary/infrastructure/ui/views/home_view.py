@@ -1,53 +1,61 @@
-"""Vista para listar palabras."""
+"""Vista del Home - Solo renderizado, sin lógica de negocio."""
 
 import flet as ft
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
-from ddd.vocabulary.infrastructure.repositories import (
-    TagsReaderSqliteRepository,
-    MetricsReaderSqliteRepository,
-    WordsEsReaderSqliteRepository,
-)
+if TYPE_CHECKING:
+    from ddd.vocabulary.infrastructure.controllers.home_view_dto import HomeViewDto
 
 
 class HomeView(ft.Container):
-    """Vista para listar palabras."""
+    """
+    Vista del Home.
+
+    Responsabilidades:
+    - Renderizar UI basada en HomeViewDto
+    - Emitir eventos al Controller via callbacks
+    - NO tiene lógica de negocio
+    - NO importa repositorios ni servicios
+    """
 
     def __init__(
-            self,
-            on_start_study: Callable[[str, list[str]], None],
-            on_manage_words: Callable[[], None],
+        self,
+        on_lang_change: Callable[[str], None],
+        on_tag_toggle: Callable[[str], None],
+        on_start_study: Callable[[], None],
+        on_manage_words: Callable[[], None],
     ):
         super().__init__()
-        self.on_start_study = on_start_study
-        self.on_manage_words = on_manage_words
 
-        self.selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
-        self.selected_tags: list[str] = []
-        self.available_tags: list[dict] = []
-        self.stats: dict = {}
+        # Callbacks al controller
+        self._on_lang_change = on_lang_change
+        self._on_tag_toggle = on_tag_toggle
+        self._on_start_study = on_start_study
+        self._on_manage_words = on_manage_words
 
+        # Componentes UI (se crean en _build_ui)
         self._lang_dropdown: ft.Dropdown | None = None
         self._tags_row: ft.Row | None = None
         self._stats_column: ft.Column | None = None
+        self._loading_indicator: ft.ProgressRing | None = None
+        self._content_column: ft.Column | None = None
 
-        self._build_ui()
+        self._build_initial_ui()
 
-    def _build_ui(self) -> None:
-        # Dropdown de idiomas
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
+        # Loading indicator
+        self._loading_indicator = ft.ProgressRing(visible=True)
+
+        # Dropdown de idiomas (se llena en render)
         self._lang_dropdown = ft.Dropdown(
             label="Idioma a practicar",
             width=250,
-            options=[
-                ft.dropdown.Option(key=lang.value, text=lang.display_name)
-                for lang in LanguageCodeEnum.ui_options()
-            ],
-            value=LanguageCodeEnum.default().value,
-            on_change=self._on_lang_change,
+            options=[],
+            on_change=self._handle_lang_change,
         )
 
-        # Tags
+        # Tags row
         self._tags_row = ft.Row(
             controls=[],
             wrap=True,
@@ -55,7 +63,7 @@ class HomeView(ft.Container):
             run_spacing=8,
         )
 
-        # Stats
+        # Stats column
         self._stats_column = ft.Column(
             controls=[
                 ft.Text("Cargando estadisticas...", italic=True),
@@ -63,13 +71,13 @@ class HomeView(ft.Container):
             spacing=8,
         )
 
-        # Botones de accion
+        # Botones de acción
         start_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Comenzar estudio")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=self._start_study,
+            on_click=lambda _: self._on_start_study(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -82,10 +90,11 @@ class HomeView(ft.Container):
                 [ft.Icon(ft.Icons.EDIT), ft.Text("Gestionar palabras")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self.on_manage_words(),
+            on_click=lambda _: self._on_manage_words(),
         )
 
-        self.content = ft.Column(
+        # Layout principal
+        self._content_column = ft.Column(
             controls=[
                 ft.Container(height=20),
                 # Titulo
@@ -97,7 +106,13 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
 
-                # Seleccion de idioma
+                # Loading
+                ft.Row(
+                    controls=[self._loading_indicator],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                # Selección de idioma
                 ft.Container(
                     content=self._lang_dropdown,
                     alignment=ft.Alignment.CENTER,
@@ -112,7 +127,7 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=20),
 
-                # Estadisticas
+                # Estadísticas
                 ft.Container(
                     content=ft.Card(
                         content=ft.Container(
@@ -135,84 +150,107 @@ class HomeView(ft.Container):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             scroll=ft.ScrollMode.AUTO,
         )
+
+        self.content = self._content_column
         self.expand = True
         self.padding = 20
 
-    def did_mount(self) -> None:
-        """Carga datos al montar el componente."""
-        self.page.run_task(self._load_data)
+    def render(self, home_view_dto: "HomeViewDto") -> None:
+        """
+        Renderiza la vista con los datos del DTO.
 
-    async def _load_data(self) -> None:
-        """Carga tags y estadisticas."""
-        # Cargar tags
-        tags_reader = TagsReaderSqliteRepository.get_instance()
-        self.available_tags = await tags_reader.get_all()
-        self._update_tags_ui()
+        Este es el único punto de entrada de datos desde el Controller.
+        """
+        # Loading state
+        if self._loading_indicator:
+            self._loading_indicator.visible = home_view_dto.is_loading
 
-        # Cargar estadisticas
-        await self._load_stats()
+        # Error state
+        if home_view_dto.error_message:
+            self._show_error(home_view_dto.error_message)
+            return
 
-    def _update_tags_ui(self) -> None:
-        """Actualiza la UI de tags."""
+        # Dropdown de idiomas
+        self._render_language_dropdown(home_view_dto)
+
+        # Tags
+        self._render_tags(home_view_dto)
+
+        # Stats
+        self._render_stats(home_view_dto)
+
+        self.update()
+
+    def _render_language_dropdown(self, dto: "HomeViewDto") -> None:
+        """Renderiza el dropdown de idiomas."""
+        if not self._lang_dropdown:
+            return
+
+        self._lang_dropdown.options = [
+            ft.dropdown.Option(key=lang.code, text=lang.display_name)
+            for lang in dto.language_options
+        ]
+        self._lang_dropdown.value = dto.selected_lang_code
+
+    def _render_tags(self, dto: "HomeViewDto") -> None:
+        """Renderiza los chips de tags."""
         if not self._tags_row:
             return
 
         self._tags_row.controls.clear()
 
-        for tag in self.available_tags:
-            is_selected = tag["name"] in self.selected_tags
-            chip = ft.Chip(
-                label=ft.Text(tag["name"]),
-                selected=is_selected,
-                on_select=lambda e, t=tag["name"]: self._toggle_tag(t),
-                bgcolor=tag.get("color", "#6B7280") if is_selected else None,
-                selected_color=ft.Colors.WHITE,
+        if not dto.tags:
+            self._tags_row.controls.append(
+                ft.Text(
+                    "No hay tags disponibles",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=12,
+                )
             )
-            self._tags_row.controls.append(chip)
-
-        self.update()
-
-    def _toggle_tag(self, tag_name: str) -> None:
-        """Alterna la seleccion de un tag."""
-        if tag_name in self.selected_tags:
-            self.selected_tags.remove(tag_name)
         else:
-            self.selected_tags.append(tag_name)
-        self._update_tags_ui()
+            for tag in dto.tags:
+                chip = ft.Chip(
+                    label=ft.Text(tag.name),
+                    selected=tag.is_selected,
+                    on_select=lambda e, t=tag.name: self._on_tag_toggle(t),
+                    bgcolor=tag.color if tag.is_selected else None,
+                    selected_color=ft.Colors.WHITE,
+                )
+                self._tags_row.controls.append(chip)
 
-    def _on_lang_change(self, e) -> None:
-        """Maneja cambio de idioma."""
-        self.selected_lang = LanguageCodeEnum(e.control.value)
-        self.page.run_task(self._load_stats)
+    def _render_stats(self, dto: "HomeViewDto") -> None:
+        """Renderiza las estadísticas."""
+        if not self._stats_column or not dto.stats:
+            return
 
-    async def _load_stats(self) -> None:
-        """Carga estadisticas del idioma seleccionado."""
-        metrics_reader = MetricsReaderSqliteRepository.get_instance()
-        words_reader = WordsEsReaderSqliteRepository.get_instance()
+        self._stats_column.controls.clear()
+        self._stats_column.controls.extend([
+            ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
+            ft.Divider(height=1),
+            ft.Row([
+                ft.Text("Total palabras:"),
+                ft.Text(str(dto.stats.total_words), weight=ft.FontWeight.BOLD),
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+            ft.Row([
+                ft.Text("Pendientes de repaso:"),
+                ft.Text(str(dto.stats.due_for_review), weight=ft.FontWeight.BOLD),
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+            ft.Row([
+                ft.Text("Score promedio:"),
+                ft.Text(f"{dto.stats.avg_score_percent}%", weight=ft.FontWeight.BOLD),
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        ])
 
-        stats = await metrics_reader.get_stats_for_lang(self.selected_lang.value)
-        total_words = await words_reader.count()
-
+    def _show_error(self, message: str) -> None:
+        """Muestra un mensaje de error."""
         if self._stats_column:
             self._stats_column.controls.clear()
-            self._stats_column.controls.extend([
-                ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
-                ft.Divider(height=1),
-                ft.Row([
-                    ft.Text("Total palabras:"),
-                    ft.Text(str(total_words), weight=ft.FontWeight.BOLD),
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                ft.Row([
-                    ft.Text("Pendientes de repaso:"),
-                    ft.Text(str(stats.get("due_for_review", 0) or 0), weight=ft.FontWeight.BOLD),
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                ft.Row([
-                    ft.Text("Score promedio:"),
-                    ft.Text(f"{(stats.get('avg_score', 0) or 0) * 100:.0f}%", weight=ft.FontWeight.BOLD),
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            ])
-            self.update()
+            self._stats_column.controls.append(
+                ft.Text(f"Error: {message}", color=ft.Colors.RED_700)
+            )
+        self.update()
 
-    def _start_study(self, e) -> None:
-        """Inicia la sesion de estudio."""
-        self.on_start_study(self.selected_lang.value, self.selected_tags)
+    def _handle_lang_change(self, e: ft.ControlEvent) -> None:
+        """Maneja el cambio de idioma y notifica al controller."""
+        self._on_lang_change(e.control.value)
