@@ -2,7 +2,14 @@
 
 import flet as ft
 from typing import Callable
-import ddd.vocabulary.infrastructure.ui.views.home_view
+
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.infrastructure.repositories import (
+    TagsReaderSqliteRepository,
+    MetricsReaderSqliteRepository,
+    WordsEsReaderSqliteRepository,
+)
+
 
 class HomeController(ft.Container):
     """Vista de inicio con selección de idioma y opciones."""
@@ -16,7 +23,7 @@ class HomeController(ft.Container):
         self.on_start_study = on_start_study
         self.on_manage_words = on_manage_words
 
-        self.selected_lang = "nl_NL"
+        self.selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
         self.selected_tags: list[str] = []
         self.available_tags: list[dict] = []
         self.stats: dict = {}
@@ -33,14 +40,11 @@ class HomeController(ft.Container):
             label="Idioma a practicar",
             width=250,
             options=[
-                ft.dropdown.Option(key="nl_NL", text="Nederlands"),
-                ft.dropdown.Option(key="en_US", text="English (US)"),
-                ft.dropdown.Option(key="en_GB", text="English (UK)"),
-                ft.dropdown.Option(key="de_DE", text="Deutsch"),
-                ft.dropdown.Option(key="fr_FR", text="Francais"),
+                ft.dropdown.Option(key=lang.value, text=lang.display_name)
+                for lang in LanguageCodeEnum.ui_options()
             ],
-            value="nl_NL",
-            on_select=self._on_lang_change,
+            value=LanguageCodeEnum.default().value,
+            on_change=self._on_lang_change,
         )
 
         # Tags
@@ -178,7 +182,7 @@ class HomeController(ft.Container):
 
     def _on_lang_change(self, e) -> None:
         """Maneja cambio de idioma."""
-        self.selected_lang = e.control.value
+        self.selected_lang = LanguageCodeEnum(e.control.value)
         self.page.run_task(self._load_stats)
 
     async def _load_stats(self) -> None:
@@ -186,7 +190,7 @@ class HomeController(ft.Container):
         metrics_reader = MetricsReaderSqliteRepository.get_instance()
         words_reader = WordsEsReaderSqliteRepository.get_instance()
 
-        stats = await metrics_reader.get_stats_for_lang(self.selected_lang)
+        stats = await metrics_reader.get_stats_for_lang(self.selected_lang.value)
         total_words = await words_reader.count()
 
         if self._stats_column:
@@ -211,4 +215,4 @@ class HomeController(ft.Container):
 
     def _start_study(self, e) -> None:
         """Inicia la sesion de estudio."""
-        self.on_start_study(self.selected_lang, self.selected_tags)
+        self.on_start_study(self.selected_lang.value, self.selected_tags)

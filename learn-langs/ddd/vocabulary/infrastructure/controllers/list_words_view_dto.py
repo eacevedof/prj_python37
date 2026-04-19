@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
+
 
 @dataclass(slots=True)
 class WordListItemViewDto:
@@ -28,7 +30,7 @@ class WordListItemViewDto:
             created_at=str(primitives.get("created_at", "") or "")[:10],
             image_count=int(primitives.get("image_count", 0)),
             tags=list(primitives.get("tags", []) or []),
-            translation_nl=translations.get("nl_NL", ""),
+            translation_nl=translations.get(LanguageCodeEnum.NL_NL.value, ""),
         )
 
 
