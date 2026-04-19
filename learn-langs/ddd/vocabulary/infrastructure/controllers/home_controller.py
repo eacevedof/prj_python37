@@ -20,6 +20,7 @@ class HomeController(ft.Container):
     - Actualizar la vista
     """
 
+    # este constructor se define en front_controller.py
     def __init__(
         self,
         on_start_study: Callable[[str, list[str]], None],

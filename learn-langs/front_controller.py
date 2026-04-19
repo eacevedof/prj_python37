@@ -65,8 +65,7 @@ async def fn_render(page: ft.Page) -> None:
 
         if route_name == ControllerRouteEnum.HOME:
             content_area.content = HomeController(
-                on_start_study=lambda lang,
-                tags: navigate_to(
+                on_start_study=lambda lang, tags: navigate_to(
                     ControllerRouteEnum.STUDY,
                     lang_code=lang,
                     tags=tags
