@@ -1,12 +1,12 @@
 # CLAUDE.md - ia-mcps
 
-MCP servers con arquitectura DDD en Python 3.12+ / FastAPI.
+MCP servers con arquitectura DDD en Python 3.12+.
 
 ---
 
 ## Stack
 
-- **Python 3.12+**, FastAPI, uvicorn, aiohttp
+- **Python 3.12+**, aiohttp
 - **MCP SDK** para servidores MCP
 - **Linting**: ruff, mypy
 - **Testing**: pytest, pytest-asyncio, pytest-cov
@@ -17,19 +17,31 @@ Proyecto organizado en **DDD** (Domain-Driven Design):
 
 ```
 ddd/
-├── calendar/              # Dominio Calendar
-│   ├── application/
-│   ├── domain/
+├── emt/                   # Dominio EMT Madrid (lógica de negocio)
+│   ├── application/       # Casos de uso (get_stop_arrivals, get_lines_info, etc.)
+│   ├── domain/            # Enums, exceptions
+│   └── infrastructure/    # Repository API EMT
+├── mcp_emt/               # MCP Server EMT
+│   ├── application/       # list_tools, call_tool
+│   ├── domain/            # ToolNameEnum
 │   └── infrastructure/
-├── mcp_calendar/          # MCP Server Calendar
-│   ├── application/
-│   ├── domain/
-│   └── infrastructure/
-│       ├── controllers/
-│       └── repositories/
+│       ├── controllers/   # McpEmtController
+│       └── repositories/  # ToolsSchemaRepository
 └── shared/                # Shared kernel
-    ├── domain/
+    ├── domain/enums/      # EnvvarsKeysEnum
     └── infrastructure/
+        └── components/    # Logger
+```
+
+## Variables de entorno
+
+```bash
+# Application (opcional)
+APP_LOG_PATH=./logs
+
+# EMT Madrid API (https://mobilitylabs.emtmadrid.es)
+EMT_CLIENT_ID=your-client-id
+EMT_PASSKEY=your-passkey
 ```
 
 ## Comandos
@@ -42,14 +54,18 @@ mypy .
 # Tests
 pytest --cov
 
-# Run MCP Calendar
-python -m ddd.mcp_calendar
+# Run MCP EMT
+python -m ddd.mcp_emt
 ```
 
-## API (Azure DevOps Work Items)
+## MCP Tools (mcp_emt)
 
-- Base: `http://localhost:8303`
-- Endpoints: `/workitems/tasks`, `/workitems/epics`
+| Tool | Descripción |
+|------|-------------|
+| `emt_get_stop_arrivals` | Llegadas en tiempo real a una parada |
+| `emt_get_lines_info` | Información de todas las líneas |
+| `emt_get_stops_around` | Paradas cercanas a coordenadas |
+| `emt_get_stop_detail` | Detalle de una parada específica |
 
 ---
 
@@ -65,7 +81,6 @@ Cargar skills desde `C:/projects/temper/ai/obsidian/dev-ops/skills/` según la t
 | DDD Architecture | `_base/ddd-architecture/` | Diseño de módulos, servicios, DTOs |
 | Git Flow | `_base/git-flow/` | Branching, PRs, merges |
 | Python Pro | `python/python-pro/` | Desarrollo Python 3.12+ |
-| FastAPI Pro | `python/fastapi-pro/` | APIs con FastAPI |
 | Clean Code | `python/clean-code/` | Refactoring, code review |
 | Async Patterns | `python/async-patterns/` | asyncio, concurrencia |
 | Type Safety | `python/type-safety/` | Type hints, mypy, generics |
