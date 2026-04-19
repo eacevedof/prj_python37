@@ -69,25 +69,25 @@ class ListWordsService:
             translations_data = await lang_reader.get_all_for_word(word_id)
             translations = {t["lang_code"]: t["text"] for t in translations_data}
 
-            word_item = WordItemDto(
-                id=word_id,
-                text=word["text"],
-                word_type=word.get("word_type", "WORD"),
-                notes=word.get("notes", "") or "",
-                created_at=word.get("created_at", "") or "",
-                updated_at=word.get("updated_at", "") or "",
-                image_count=image_count,
-                tags=tags,
-                translations=translations,
-            )
+            word_item = WordItemDto.from_primitives({
+                "id": word_id,
+                "text": word["text"],
+                "word_type": word.get("word_type", "WORD"),
+                "notes": word.get("notes", ""),
+                "created_at": word.get("created_at", ""),
+                "updated_at": word.get("updated_at", ""),
+                "image_count": image_count,
+                "tags": tags,
+                "translations": translations,
+            })
             words.append(word_item)
 
         # Obtener total para paginacion
         total_count = await words_reader.count(word_type=dto.word_type)
         has_more = (dto.offset + len(words)) < total_count
 
-        return ListWordsResultDto(
-            words=words,
-            total_count=total_count,
-            has_more=has_more,
-        )
+        return ListWordsResultDto.from_primitives({
+            "words": [w.to_dict() for w in words],
+            "total_count": total_count,
+            "has_more": has_more,
+        })

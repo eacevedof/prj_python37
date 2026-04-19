@@ -78,9 +78,9 @@ class DeleteWordService:
         word_entity = WordEsEntity.from_primitives(word_data)
         await words_writer.delete(word_entity)
 
-        return DeleteWordResultDto(
-            word_id=dto.word_id,
-            text=word_text,
-            images_deleted=images_count,
-            translations_deleted=translations_count,
-        )
+        return DeleteWordResultDto.from_primitives({
+            "word_id": dto.word_id,
+            "text": word_text,
+            "images_deleted": images_count,
+            "translations_deleted": translations_count,
+        })
