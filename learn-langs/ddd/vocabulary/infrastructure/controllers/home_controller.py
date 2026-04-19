@@ -111,6 +111,7 @@ class HomeController(ft.Container):
 
     def _handle_start_study(self) -> None:
         """Inicia el estudio con el idioma y tags seleccionados."""
+        # esto dispara front_controller: navigate_to(STUDY, lang_code=lang, tags=tags)
         self._on_start_study(str(self._selected_lang), self._selected_tags)
 
     def _handle_manage_words(self) -> None:
