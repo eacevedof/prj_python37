@@ -10,12 +10,7 @@ from ddd.vocabulary.infrastructure.controllers.list_words_view_dto import (
     WordListItemViewDto,
 )
 from ddd.vocabulary.infrastructure.controllers.home_controller import HomeController
-from ddd.vocabulary.infrastructure.controllers.home_view_dto import (
-    HomeViewDto,
-    LanguageOptionViewDto,
-    TagViewDto,
-    StatsViewDto,
-)
+from ddd.vocabulary.infrastructure.controllers.home_view_dto import HomeViewDto
 
 __all__ = [
     "CreateWordController",
@@ -29,7 +24,4 @@ __all__ = [
     "WordListItemViewDto",
     "HomeController",
     "HomeViewDto",
-    "LanguageOptionViewDto",
-    "TagViewDto",
-    "StatsViewDto",
 ]
