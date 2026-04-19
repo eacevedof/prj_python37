@@ -33,6 +33,15 @@ class HomeView(ft.Container):
         self._on_start_study = on_start_study
         self._on_manage_words = on_manage_words
 
+        # Componentes UI
+        self._lang_dropdown: ft.Dropdown | None = None
+        self._tags_row: ft.Row | None = None
+        self._stats_column: ft.Column | None = None
+        self._loading_indicator: ft.ProgressRing | None = None
+        self._content_column: ft.Column | None = None
+
+        self._build_initial_ui()
+
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         """Crea la vista desde un diccionario de callbacks."""
@@ -42,15 +51,6 @@ class HomeView(ft.Container):
             on_start_study=primitives.get("on_start_study", lambda: None),
             on_manage_words=primitives.get("on_manage_words", lambda: None),
         )
-
-        # Componentes UI (se crean en _build_ui)
-        self._lang_dropdown: ft.Dropdown | None = None
-        self._tags_row: ft.Row | None = None
-        self._stats_column: ft.Column | None = None
-        self._loading_indicator: ft.ProgressRing | None = None
-        self._content_column: ft.Column | None = None
-
-        self._build_initial_ui()
 
     def _build_initial_ui(self) -> None:
         """Construye la estructura inicial de la UI."""
@@ -107,7 +107,6 @@ class HomeView(ft.Container):
         self._content_column = ft.Column(
             controls=[
                 ft.Container(height=20),
-                # Titulo
                 ft.Text(
                     "Que quieres practicar hoy?",
                     size=28,
@@ -115,29 +114,21 @@ class HomeView(ft.Container):
                     text_align=ft.TextAlign.CENTER,
                 ),
                 ft.Container(height=30),
-
-                # Loading
                 ft.Row(
                     controls=[self._loading_indicator],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-
-                # Selección de idioma
                 ft.Container(
                     content=self._lang_dropdown,
                     alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=20),
-
-                # Tags
                 ft.Text("Filtrar por tags (opcional):", size=14),
                 ft.Container(
                     content=self._tags_row,
                     padding=10,
                 ),
                 ft.Container(height=20),
-
-                # Estadísticas
                 ft.Container(
                     content=ft.Card(
                         content=ft.Container(
@@ -149,8 +140,6 @@ class HomeView(ft.Container):
                     alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=30),
-
-                # Botones
                 ft.Row(
                     controls=[start_btn, manage_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -165,30 +154,18 @@ class HomeView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def render(self, home_view_dto: "HomeViewDto") -> None:
-        """
-        Renderiza la vista con los datos del DTO.
-
-        Este es el único punto de entrada de datos desde el Controller.
-        """
-        # Loading state
+    def render(self, dto: "HomeViewDto") -> None:
+        """Renderiza la vista con los datos del DTO."""
         if self._loading_indicator:
-            self._loading_indicator.visible = home_view_dto.is_loading
+            self._loading_indicator.visible = dto.is_loading
 
-        # Error state
-        if home_view_dto.error_message:
-            self._show_error(home_view_dto.error_message)
+        if dto.error_message:
+            self._show_error(dto.error_message)
             return
 
-        # Dropdown de idiomas
-        self._render_language_dropdown(home_view_dto)
-
-        # Tags
-        self._render_tags(home_view_dto)
-
-        # Stats
-        self._render_stats(home_view_dto)
-
+        self._render_language_dropdown(dto)
+        self._render_tags(dto)
+        self._render_stats(dto)
         self.update()
 
     def _render_language_dropdown(self, dto: "HomeViewDto") -> None:
@@ -197,7 +174,7 @@ class HomeView(ft.Container):
             return
 
         self._lang_dropdown.options = [
-            ft.dropdown.Option(key=lang.code, text=lang.display_name)
+            ft.dropdown.Option(key=lang["code"], text=lang["display_name"])
             for lang in dto.language_options
         ]
         self._lang_dropdown.value = dto.selected_lang_code
@@ -220,11 +197,15 @@ class HomeView(ft.Container):
             )
         else:
             for tag in dto.tags:
+                tag_name = tag.get("name", "")
+                is_selected = tag.get("is_selected", False)
+                color = tag.get("color", "#6B7280")
+
                 chip = ft.Chip(
-                    label=ft.Text(tag.name),
-                    selected=tag.is_selected,
-                    on_select=lambda e, t=tag.name: self._on_tag_toggle(t),
-                    bgcolor=tag.color if tag.is_selected else None,
+                    label=ft.Text(tag_name),
+                    selected=is_selected,
+                    on_select=lambda e, t=tag_name: self._on_tag_toggle(t),
+                    bgcolor=color if is_selected else None,
                     selected_color=ft.Colors.WHITE,
                 )
                 self._tags_row.controls.append(chip)
@@ -234,21 +215,26 @@ class HomeView(ft.Container):
         if not self._stats_column or not dto.stats:
             return
 
+        total_words = dto.stats.get("total_words", 0)
+        due_for_review = dto.stats.get("due_for_review", 0)
+        avg_score = float(dto.stats.get("avg_score", 0) or 0)
+        avg_score_percent = int(avg_score * 100)
+
         self._stats_column.controls.clear()
         self._stats_column.controls.extend([
             ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
             ft.Divider(height=1),
             ft.Row([
                 ft.Text("Total palabras:"),
-                ft.Text(str(dto.stats.total_words), weight=ft.FontWeight.BOLD),
+                ft.Text(str(total_words), weight=ft.FontWeight.BOLD),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ft.Row([
                 ft.Text("Pendientes de repaso:"),
-                ft.Text(str(dto.stats.due_for_review), weight=ft.FontWeight.BOLD),
+                ft.Text(str(due_for_review), weight=ft.FontWeight.BOLD),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ft.Row([
                 ft.Text("Score promedio:"),
-                ft.Text(f"{dto.stats.avg_score_percent}%", weight=ft.FontWeight.BOLD),
+                ft.Text(f"{avg_score_percent}%", weight=ft.FontWeight.BOLD),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
         ])
 
