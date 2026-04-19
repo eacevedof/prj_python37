@@ -81,6 +81,7 @@ class HomeView(ft.Container):
             spacing=8,
         )
 
+
         # Botones de acción
         start_btn = ft.ElevatedButton(
             content=ft.Row(
