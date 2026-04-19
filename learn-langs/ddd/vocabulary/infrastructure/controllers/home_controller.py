@@ -63,14 +63,14 @@ class HomeController(ft.Container):
         """Carga datos del servicio y actualiza la vista."""
         result = await self._load_home_service(
             LoadHomeDto.from_primitives({
-                "lang_code": self._selected_lang.value,
+                "lang_code": str(self._selected_lang),
             })
         )
 
         if not result.success:
             home_view_dto = HomeViewDto.error(
                 message=result.error_message or "Error desconocido",
-                selected_lang_code=self._selected_lang.value,
+                selected_lang_code=str(self._selected_lang),
             )
         else:
             home_view_dto = HomeViewDto.ok(
@@ -83,7 +83,7 @@ class HomeController(ft.Container):
                     "due_for_review": result.stats.due_for_review,
                     "avg_score": result.stats.avg_score,
                 },
-                selected_lang_code=self._selected_lang.value,
+                selected_lang_code=str(self._selected_lang),
                 selected_tags=self._selected_tags,
             )
 
@@ -111,7 +111,7 @@ class HomeController(ft.Container):
 
     def _handle_start_study(self) -> None:
         """Inicia el estudio con el idioma y tags seleccionados."""
-        self._on_start_study(self._selected_lang.value, self._selected_tags)
+        self._on_start_study(str(self._selected_lang), self._selected_tags)
 
     def _handle_manage_words(self) -> None:
         """Navega a la gestión de palabras."""

@@ -20,7 +20,7 @@ class LanguageCodeEnum(StrEnum):
     IT_IT = "it_IT"  # Italian
 
     @classmethod
-    def default(cls) -> "LanguageCodeEnum":
+    def default(cls) -> Self:
         """Idioma por defecto."""
         return cls.NL_NL
 
