@@ -39,14 +39,10 @@ async def fn_render(ft_page: ft.Page) -> None:
         })
     )
 
-    # Contenedor principal y router
-    content_area = ft.Container(expand=True)
-    router = AppRouter(ft_page, content_area)
-
-    # Navegacion inicial
+    ft_container = ft.Container(expand=True)
+    router = AppRouter(ft_page, ft_container)
     router.navigate_to(ControllerRouteEnum.HOME)
 
-    # Layout principal
     ft_page.add(
         ft.Column(
             controls=[
@@ -66,7 +62,7 @@ async def fn_render(ft_page: ft.Page) -> None:
                     bgcolor=ft.Colors.BLUE_700,
                     padding=16,
                 ),
-                content_area,
+                ft_container,
             ],
             spacing=0,
             expand=True,
