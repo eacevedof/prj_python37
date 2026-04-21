@@ -4,9 +4,9 @@ from dataclasses import dataclass, field
 from typing import Self, Any
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class StudyViewDto:
-    """DTO que el Controller pasa a la Vista de estudio."""
+    """DTO inmutable que el Controller pasa a la Vista de estudio."""
 
     # Estado de la sesion
     session_id: int = 0
@@ -14,7 +14,7 @@ class StudyViewDto:
     total_words: int = 0
     current_index: int = 0
 
-    # Palabra actual
+    # Palabra actual (inmutable)
     current_word: dict[str, Any] | None = None
 
     # Stats acumulados
@@ -22,7 +22,7 @@ class StudyViewDto:
     answers_count: int = 0
     avg_score_percent: int = 0
 
-    # Resultado de ultima respuesta
+    # Resultado de ultima respuesta (inmutable)
     last_result: dict[str, Any] | None = None
 
     # Estados de la vista
@@ -37,16 +37,20 @@ class StudyViewDto:
         answers_count = int(primitives.get("answers_count", 0))
         avg_score_percent = int((total_score / answers_count * 100)) if answers_count > 0 else 0
 
+        # Congelar dicts internos
+        current_word = primitives.get("current_word")
+        last_result = primitives.get("last_result")
+
         return cls(
             session_id=int(primitives.get("session_id", 0)),
             lang_code=str(primitives.get("lang_code", "")),
             total_words=int(primitives.get("total_words", 0)),
             current_index=int(primitives.get("current_index", 0)),
-            current_word=primitives.get("current_word"),
+            current_word=dict(current_word) if current_word else None,
             total_score=total_score,
             answers_count=answers_count,
             avg_score_percent=avg_score_percent,
-            last_result=primitives.get("last_result"),
+            last_result=dict(last_result) if last_result else None,
             is_loading=bool(primitives.get("is_loading", False)),
             is_session_complete=bool(primitives.get("is_session_complete", False)),
             has_no_words=bool(primitives.get("has_no_words", False)),
@@ -56,9 +60,7 @@ class StudyViewDto:
     @classmethod
     def initial(cls) -> Self:
         """DTO inicial - cargando."""
-        return cls.from_primitives({
-            "is_loading": True,
-        })
+        return cls.from_primitives({"is_loading": True})
 
     @classmethod
     def no_words(cls) -> Self:
@@ -137,3 +139,17 @@ class StudyViewDto:
             "is_loading": False,
             "is_session_complete": True,
         })
+
+    @property
+    def progress_text(self) -> str:
+        """Texto de progreso."""
+        if self.is_loading:
+            return "Cargando..."
+        if self.total_words == 0:
+            return ""
+        return f"Palabra {self.current_index + 1} de {self.total_words}"
+
+    @property
+    def score_text(self) -> str:
+        """Texto de score."""
+        return f"Score: {self.avg_score_percent}%"

@@ -1,40 +1,50 @@
-"""Controlador para eliminacion de palabras."""
+"""Controller para eliminacion de palabras."""
 
 from typing import final, Self
 
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
 from ddd.vocabulary.domain.exceptions import VocabularyException
-from ddd.vocabulary.infrastructure.controllers.delete_word_view_dto import DeleteWordViewDto
+from ddd.vocabulary.infrastructure.ui.views.delete_word_view_dto import DeleteWordViewDto
 
 
 @final
 class DeleteWordController:
-    """Controlador que gestiona la eliminacion de palabras."""
+    """
+    Controller para eliminacion de palabras.
+
+    Nota: Este controller es usado internamente por ListWordsController,
+    no tiene vista propia.
+    """
+
+    _instance: "DeleteWordController | None" = None
 
     def __init__(self) -> None:
-        pass
+        self._delete_service = DeleteWordService.get_instance()
+        self._logger = Logger.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
-        return cls()
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
     async def delete(self, word_id: int) -> DeleteWordViewDto:
         """
-        Elimina una palabra y retorna el resultado para la vista.
+        Elimina una palabra y retorna el resultado.
 
         Args:
             word_id: ID de la palabra a eliminar.
 
         Returns:
-            DeleteWordViewDto con el resultado (exito o error).
+            DeleteWordViewDto con el resultado.
         """
         try:
             dto = DeleteWordDto.from_primitives({
                 "word_id": word_id,
             })
 
-            service = DeleteWordService.get_instance()
-            result = await service(dto)
+            result = await self._delete_service(dto)
 
             return DeleteWordViewDto.ok(
                 word_id=result.word_id,
@@ -44,12 +54,22 @@ class DeleteWordController:
             )
 
         except VocabularyException as e:
+            self._logger.write_error(
+                "DeleteWordController",
+                f"Error de vocabulario: {e.message}",
+                {"word_id": word_id, "code": e.code},
+            )
             return DeleteWordViewDto.error(
                 message=e.message,
                 code=e.code,
             )
 
         except Exception as e:
+            self._logger.write_error(
+                "DeleteWordController",
+                f"Error inesperado: {e}",
+                {"word_id": word_id},
+            )
             return DeleteWordViewDto.error(
                 message=f"Error inesperado: {e}",
                 code=500,
