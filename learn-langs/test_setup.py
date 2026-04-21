@@ -10,10 +10,13 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 # Añadir el directorio raíz al path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
+from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
+from ddd.vocabulary.application.get_app_config import GetAppConfigService
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
+    TagsReaderSqliteRepository,
+    LanguagesReaderSqliteRepository,
 )
 from ddd.vocabulary.domain.services import ScoreCalculatorService, SpacedRepetitionService
 
@@ -23,19 +26,35 @@ async def test_database_setup():
     print("=" * 50)
     print("1. Inicializando base de datos...")
 
-    sqlite = SqliteConnector.get_instance()
-    await sqlite.initialize_database()
+    app_config = GetAppConfigService.get_instance()()
 
-    print("   Base de datos inicializada correctamente")
+    # Ejecutar migraciones
+    result = await RunMigrationsService.get_instance()(
+        RunMigrationsDto.from_primitives({
+            "migrations_path": app_config.migrations_path,
+            "force": False,
+        })
+    )
+
+    print(f"   Migraciones: {result.applied_count} aplicadas, {result.skipped_count} omitidas")
+    if result.failed_count > 0:
+        print(f"   ERRORES: {result.failed_count}")
+        for m in result.migrations:
+            if m.status == "failed":
+                print(f"      - {m.filename}: {m.error}")
+    else:
+        print("   Base de datos inicializada correctamente")
 
     # Verificar idiomas
-    languages = await sqlite.fetch_all("SELECT code, name, flag_emoji FROM languages")
+    languages_reader = LanguagesReaderSqliteRepository.get_instance()
+    languages = await languages_reader.get_all()
     print(f"   Idiomas disponibles: {len(languages)}")
     for lang in languages[:3]:
         print(f"      - {lang['flag_emoji']} {lang['code']}: {lang['name']}")
 
     # Verificar tags
-    tags = await sqlite.fetch_all("SELECT name, color FROM tags")
+    tags_reader = TagsReaderSqliteRepository.get_instance()
+    tags = await tags_reader.get_all()
     print(f"   Tags creados: {len(tags)}")
 
 

@@ -10,8 +10,9 @@ if sys.platform == "win32":
 
 from ddd.shared.domain.enums import ControllerRouteEnum
 from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
-from ddd.vocabulary.application.get_app_config import GetAppConfigService
+
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.application.get_app_config import GetAppConfigService
 from ddd.vocabulary.infrastructure.ui.views import (
     HomeController,
     StudyView,
@@ -24,10 +25,8 @@ from ddd.vocabulary.infrastructure.ui.views import (
 async def fn_render(ft_page: ft.Page) -> None:
     """Entry point de la aplicacion Flet."""
 
-    # Obtener configuracion de la aplicacion
     app_config = GetAppConfigService.get_instance()()
 
-    # Configuracion de la pagina
     ft_page.title = app_config.app_title
     ft_page.theme_mode = ft.ThemeMode.LIGHT
     ft_page.window.width = app_config.window_width
@@ -46,9 +45,7 @@ async def fn_render(ft_page: ft.Page) -> None:
 
     # Estado de navegacion
     current_view: ControllerRouteEnum = ControllerRouteEnum.HOME
-
-    # Contenedor principal
-    content_area = ft.Container(expand=True)
+    ft_container = ft.Container(expand=True)
 
     def navigate_to(
         route_name: ControllerRouteEnum | str,
@@ -64,7 +61,7 @@ async def fn_render(ft_page: ft.Page) -> None:
         current_view = route_name
 
         if route_name == ControllerRouteEnum.HOME:
-            content_area.content = HomeController(
+            ft_container.content = HomeController(
                 on_start_study=lambda lang, tags: navigate_to(
                     ControllerRouteEnum.STUDY,
                     lang_code=lang,
@@ -75,24 +72,24 @@ async def fn_render(ft_page: ft.Page) -> None:
                 ),
             )
         elif route_name == ControllerRouteEnum.STUDY:
-            content_area.content = StudyView(
+            ft_container.content = StudyView(
                 lang_code=kwargs.get("lang_code", LanguageCodeEnum.default()),
                 tags=kwargs.get("tags", []),
                 on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
             )
         elif route_name == ControllerRouteEnum.WORDS:
-            content_area.content = ListWordsView(
+            ft_container.content = ListWordsView(
                 on_back=lambda: navigate_to(ControllerRouteEnum.HOME),
                 on_create=lambda: navigate_to(ControllerRouteEnum.CREATE_WORD),
                 on_edit=lambda word_id: navigate_to(ControllerRouteEnum.UPDATE_WORD, word_id=word_id),
             )
         elif route_name == ControllerRouteEnum.CREATE_WORD:
-            content_area.content = CreateWordView(
+            ft_container.content = CreateWordView(
                 on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
                 on_word_created=lambda: None,  # Stay in create view for batch adding
             )
         elif route_name == ControllerRouteEnum.UPDATE_WORD:
-            content_area.content = UpdateWordView(
+            ft_container.content = UpdateWordView(
                 word_id=kwargs.get("word_id", 0),
                 on_back=lambda: navigate_to(ControllerRouteEnum.WORDS),
                 on_word_updated=lambda: None,
@@ -103,7 +100,6 @@ async def fn_render(ft_page: ft.Page) -> None:
     # Navegacion inicial
     navigate_to(ControllerRouteEnum.HOME)
 
-    # Layout principal
     ft_page.add(
         ft.Column(
             controls=[
@@ -124,8 +120,7 @@ async def fn_render(ft_page: ft.Page) -> None:
                     bgcolor=ft.Colors.BLUE_700,
                     padding=16,
                 ),
-                # Content
-                content_area,
+                ft_container,
             ],
             spacing=0,
             expand=True,
