@@ -5,11 +5,12 @@ import flet as ft
 
 # Fix encoding for Windows console
 if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-from ddd.shared.infrastructure.components.sqlite_connector import SqliteConnector
 from ddd.shared.domain.enums import ControllerRouteEnum
+from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
+from ddd.vocabulary.application.get_app_config import GetAppConfigService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views import (
     HomeController,
@@ -20,29 +21,28 @@ from ddd.vocabulary.infrastructure.ui.views import (
 )
 
 
-# Constantes de la aplicacion
-APP_TITLE = "Learn Languages"
-WINDOW_WIDTH = 900
-WINDOW_HEIGHT = 700
-WINDOW_MIN_WIDTH = 600
-WINDOW_MIN_HEIGHT = 500
-
-
-async def fn_render(page: ft.Page) -> None:
+async def fn_render(ft_page: ft.Page) -> None:
     """Entry point de la aplicacion Flet."""
 
-    # Configuracion de la pagina
-    page.title = APP_TITLE
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.window.width = WINDOW_WIDTH
-    page.window.height = WINDOW_HEIGHT
-    page.window.min_width = WINDOW_MIN_WIDTH
-    page.window.min_height = WINDOW_MIN_HEIGHT
-    page.padding = 0
+    # Obtener configuracion de la aplicacion
+    app_config = GetAppConfigService.get_instance()()
 
-    # Inicializar base de datos
-    sqlite = SqliteConnector.get_instance()
-    await sqlite.initialize_database()
+    # Configuracion de la pagina
+    ft_page.title = app_config.app_title
+    ft_page.theme_mode = ft.ThemeMode.LIGHT
+    ft_page.window.width = app_config.window_width
+    ft_page.window.height = app_config.window_height
+    ft_page.window.min_width = app_config.window_min_width
+    ft_page.window.min_height = app_config.window_min_height
+    ft_page.padding = 0
+
+    # Inicializar base de datos (force=True para reset completo)
+    await RunMigrationsService.get_instance()(
+        RunMigrationsDto.from_primitives({
+            "migrations_path": app_config.migrations_path,
+            "force": False,
+        })
+    )
 
     # Estado de navegacion
     current_view: ControllerRouteEnum = ControllerRouteEnum.HOME
@@ -98,13 +98,13 @@ async def fn_render(page: ft.Page) -> None:
                 on_word_updated=lambda: None,
             )
 
-        page.update()
+        ft_page.update()
 
     # Navegacion inicial
     navigate_to(ControllerRouteEnum.HOME)
 
     # Layout principal
-    page.add(
+    ft_page.add(
         ft.Column(
             controls=[
                 # Header
@@ -113,7 +113,7 @@ async def fn_render(page: ft.Page) -> None:
                         controls=[
                             ft.Icon(ft.Icons.SCHOOL, size=32, color=ft.Colors.WHITE),
                             ft.Text(
-                                APP_TITLE,
+                                app_config.app_title,
                                 size=24,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.WHITE,

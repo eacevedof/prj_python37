@@ -12,6 +12,7 @@ from ddd.vocabulary.infrastructure.repositories.answers_reader_sqlite_repository
 from ddd.vocabulary.infrastructure.repositories.answers_writer_sqlite_repository import AnswersWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.images_reader_sqlite_repository import ImagesReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.images_writer_sqlite_repository import ImagesWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.app_config_reader_raw_repository import AppConfigReaderRawRepository
 
 __all__ = [
     "WordsEsReaderSqliteRepository",
@@ -28,4 +29,5 @@ __all__ = [
     "AnswersWriterSqliteRepository",
     "ImagesReaderSqliteRepository",
     "ImagesWriterSqliteRepository",
+    "AppConfigReaderRawRepository",
 ]
