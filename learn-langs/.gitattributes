@@ -1,0 +1,11 @@
+# Forzar LF para todos los archivos de texto
+* text=auto eol=lf
+
+# Archivos específicos
+*.py    text eol=lf
+*.sql   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.json  text eol=lf
+*.toml  text eol=lf
+*.env   text eol=lf
