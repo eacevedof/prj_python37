@@ -40,14 +40,19 @@ class HomeController(ft.Container):
 
         self._build_ui()
 
+
     def _build_ui(self) -> None:
         """Construye la estructura UI con callbacks. Sin lógica de negocio."""
         self._home_view = HomeView.from_primitives({
             "on_lang_change": self._handle_lang_change,
             "on_tag_toggle": self._handle_tag_toggle,
-            "on_start_study": self._handle_start_study,
-            "on_manage_words": self._handle_manage_words,
+            "on_manage_words": self._on_manage_words,
+            "on_start_study": lambda: self._on_start_study(
+                str(self._selected_lang),
+                self._selected_tags,
+            ),
         })
+
         self.content = self._home_view
         self.expand = True
 
@@ -61,27 +66,27 @@ class HomeController(ft.Container):
 
     async def _async_load_data(self) -> None:
         """Carga datos del servicio y actualiza la vista."""
-        result = await self._load_home_service(
+        load_home_result_dto = await self._load_home_service(
             LoadHomeDto.from_primitives({
                 "lang_code": str(self._selected_lang),
             })
         )
 
-        if not result.success:
+        if not load_home_result_dto.success:
             home_view_dto = HomeViewDto.error(
-                message=result.error_message or "Error desconocido",
+                message=load_home_result_dto.error_message or "Error desconocido",
                 selected_lang_code=str(self._selected_lang),
             )
         else:
             home_view_dto = HomeViewDto.ok(
                 tags=[
                     {"id": t.id, "name": t.name, "color": t.color}
-                    for t in result.tags
+                    for t in load_home_result_dto.tags
                 ],
                 stats={
-                    "total_words": result.stats.total_words,
-                    "due_for_review": result.stats.due_for_review,
-                    "avg_score": result.stats.avg_score,
+                    "total_words": load_home_result_dto.stats.total_words,
+                    "due_for_review": load_home_result_dto.stats.due_for_review,
+                    "avg_score": load_home_result_dto.stats.avg_score,
                 },
                 selected_lang_code=str(self._selected_lang),
                 selected_tags=self._selected_tags,
@@ -108,15 +113,3 @@ class HomeController(ft.Container):
 
         # Re-render con el nuevo estado
         self.page.run_task(self._async_load_data)
-
-    def _handle_start_study(self) -> None:
-        """Inicia el estudio con el idioma y tags seleccionados."""
-        # esto dispara front_controller: navigate_to(STUDY, lang_code=lang, tags=tags)
-        self._on_start_study(
-            str(self._selected_lang),
-            self._selected_tags
-        )
-
-    def _handle_manage_words(self) -> None:
-        """Navega a la gestión de palabras."""
-        self._on_manage_words()
