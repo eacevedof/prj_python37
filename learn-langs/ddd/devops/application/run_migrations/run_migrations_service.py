@@ -21,12 +21,12 @@ class RunMigrationsService:
     """
 
     _SCHEMA_MIGRATIONS_TABLE = """
-        CREATE TABLE IF NOT EXISTS schema_migrations (
-            version TEXT PRIMARY KEY,
-            filename TEXT NOT NULL,
-            applied_at TEXT DEFAULT (datetime('now')),
-            checksum TEXT
-        )
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+        version TEXT PRIMARY KEY,
+        filename TEXT NOT NULL,
+        applied_at TEXT DEFAULT (datetime('now')),
+        checksum TEXT
+    )
     """
 
     _VERSION_PATTERN = re.compile(r"^(\d+)[_-]")
