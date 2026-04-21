@@ -1,75 +1,118 @@
-"""Controlador para creación de palabras."""
+"""Controller para crear palabra."""
 
-from typing import final, Self
+from typing import Callable, Any
+
+import flet as ft
 
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
-from ddd.vocabulary.domain.exceptions import VocabularyException
-from ddd.vocabulary.infrastructure.controllers.create_word_view_dto import CreateWordViewDto
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
+from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
 
-@final
 class CreateWordController:
-    """Controlador que gestiona la creación de palabras."""
+    """
+    Controller para crear palabra.
 
-    def __init__(self) -> None:
-        pass
+    Responsabilidades:
+    - Orquestar flujo entre Vista y Servicios
+    - Crear ViewDTOs y pasarlos a la Vista
+    - Manejar callbacks de la Vista
+    - NO hereda de ft.Container
+    """
 
-    @classmethod
-    def get_instance(cls) -> Self:
-        return cls()
-
-    async def create(
+    def __init__(
         self,
-        text: str,
-        word_type: str,
-        tags: list[str],
-        translations: dict[str, str],
-        image_path: str = "",
-        notes: str = "",
-    ) -> CreateWordViewDto:
-        """
-        Crea una palabra y retorna el resultado para la vista.
+        on_success: Callable[[], None],
+        on_back: Callable[[], None],
+    ):
+        self._on_success = on_success
+        self._on_back = on_back
 
-        Args:
-            text: Texto de la palabra en español.
-            word_type: Tipo de palabra (WORD, PHRASE, SENTENCE).
-            tags: Lista de nombres de tags.
-            translations: Diccionario lang_code -> texto traducido.
-            image_path: Ruta de imagen opcional.
-            notes: Notas opcionales.
+        # Servicios
+        self._create_word_service = CreateWordService.get_instance()
+        self._tags_reader = TagsReaderSqliteRepository.get_instance()
 
-        Returns:
-            CreateWordViewDto con el resultado (éxito o error).
-        """
+        # Cache de tags
+        self._available_tags: list[dict[str, Any]] = []
+
+        # Vista
+        self._view = CreateWordView.from_primitives({
+            "on_submit": self._handle_submit,
+            "on_back": on_back,
+            "on_mount": self._handle_mount,
+        })
+
+    @property
+    def view(self) -> ft.Container:
+        """Vista para montar en el árbol de Flet."""
+        return self._view
+
+    def _handle_mount(self) -> None:
+        """Callback cuando la vista se monta. Carga datos iniciales."""
+        self._view.page.run_task(self._async_load_initial_data)
+
+    async def _async_load_initial_data(self) -> None:
+        """Carga tags y renderiza formulario vacío."""
+        # Cargar tags
+        self._available_tags = await self._tags_reader.get_all()
+
+        # Renderizar formulario vacío con tags
+        dto = CreateWordViewDto.empty(available_tags=self._available_tags)
+        self._view.render(dto)
+
+    def _handle_submit(self, form_data: dict[str, Any]) -> None:
+        """Callback cuando la vista hace submit."""
+        self._view.page.run_task(lambda: self._async_submit(form_data))
+
+    async def _async_submit(self, form_data: dict[str, Any]) -> None:
+        """Procesa el submit del formulario."""
+        # Validación básica
+        text_es = (form_data.get("text_es") or "").strip()
+        if not text_es:
+            dto = CreateWordViewDto.error(
+                message="La palabra en español es obligatoria",
+                form_values=form_data,
+                available_tags=self._available_tags,
+                error_field="text_es",
+            )
+            self._view.render(dto)
+            return
+
+        # Preparar traducciones
+        translations = {}
+        text_lang = (form_data.get("text_lang") or "").strip()
+        if text_lang:
+            translations[LanguageCodeEnum.NL_NL.value] = text_lang
+
         try:
-            create_word_dto = CreateWordDto.from_primitives({
-                "text": text,
-                "word_type": word_type,
-                "tags": tags,
+            # Llamar servicio
+            create_dto = CreateWordDto.from_primitives({
+                "text": text_es,
+                "word_type": form_data.get("word_type", "WORD"),
+                "tags": form_data.get("selected_tags", []),
                 "translations": translations,
-                "image_path": image_path,
-                "notes": notes,
+                "notes": (form_data.get("notes") or "").strip(),
             })
 
-            service = CreateWordService.get_instance()
-            result = await service(create_word_dto)
+            result = await self._create_word_service(create_dto)
 
-            return CreateWordViewDto.ok(
-                word_id=result.id,
-                text=result.text,
-                word_type=result.word_type,
-                tags=result.tags,
-                translations=result.translations,
+            # Éxito: mostrar mensaje y limpiar form
+            dto = CreateWordViewDto.success(
+                message=f"Palabra '{result.text}' creada correctamente",
+                available_tags=self._available_tags,
             )
+            self._view.render(dto)
 
-        except VocabularyException as e:
-            return CreateWordViewDto.error(
-                message=e.message,
-                code=e.code,
-            )
+            # Opcional: navegar después de éxito
+            # self._on_success()
 
         except Exception as e:
-            return CreateWordViewDto.error(
-                message=f"Error inesperado: {e}",
-                code=500,
+            # Error: mostrar mensaje y restaurar valores
+            dto = CreateWordViewDto.error(
+                message=str(e),
+                form_values=form_data,
+                available_tags=self._available_tags,
             )
+            self._view.render(dto)

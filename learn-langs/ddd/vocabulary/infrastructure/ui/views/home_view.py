@@ -4,7 +4,7 @@ import flet as ft
 from typing import Callable, Any, Self, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.controllers.home_view_dto import HomeViewDto
+    from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
 
 class HomeView(ft.Container):
@@ -24,6 +24,7 @@ class HomeView(ft.Container):
         on_tag_toggle: Callable[[str], None],
         on_start_study: Callable[[], None],
         on_manage_words: Callable[[], None],
+        on_mount: Callable[[], None] | None = None,
     ):
         super().__init__()
 
@@ -32,6 +33,7 @@ class HomeView(ft.Container):
         self._on_tag_toggle = on_tag_toggle
         self._on_start_study = on_start_study
         self._on_manage_words = on_manage_words
+        self._on_mount = on_mount
 
         # Componentes UI
         self._lang_dropdown: ft.Dropdown | None = None
@@ -50,7 +52,13 @@ class HomeView(ft.Container):
             on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
             on_start_study=primitives.get("on_start_study", lambda: None),
             on_manage_words=primitives.get("on_manage_words", lambda: None),
+            on_mount=primitives.get("on_mount"),
         )
+
+    def did_mount(self) -> None:
+        """Flet llama esto al montar. Notifica al Controller."""
+        if self._on_mount:
+            self._on_mount()
 
     def _build_initial_ui(self) -> None:
         """Construye la estructura inicial de la UI."""
