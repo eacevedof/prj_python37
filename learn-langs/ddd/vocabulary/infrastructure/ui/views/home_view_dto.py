@@ -6,42 +6,42 @@ from typing import Self, Any
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class HomeViewDto:
-    """DTO que el Controller pasa a la Vista."""
+    """DTO inmutable que el Controller pasa a la Vista."""
 
     # Opciones de idioma
-    language_options: list[dict[str, str]] = field(default_factory=list)
+    language_options: tuple[dict[str, str], ...] = field(default_factory=tuple)
     default_lang_code: str = ""
     selected_lang_code: str = ""
 
     # Tags
-    tags: list[dict[str, Any]] = field(default_factory=list)
-    selected_tags: list[str] = field(default_factory=list)
+    tags: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+    selected_tags: tuple[str, ...] = field(default_factory=tuple)
 
     # Stats
     stats: dict[str, Any] | None = None
 
     # Estado
-    is_loading: bool = True
+    is_loading: bool = False
     error_message: str | None = None
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            language_options=list(primitives.get("language_options", []) or []),
+            language_options=tuple(primitives.get("language_options", []) or []),
             default_lang_code=str(primitives.get("default_lang_code", LanguageCodeEnum.default().value)),
             selected_lang_code=str(primitives.get("selected_lang_code", "")),
-            tags=list(primitives.get("tags", []) or []),
-            selected_tags=list(primitives.get("selected_tags", []) or []),
+            tags=tuple(primitives.get("tags", []) or []),
+            selected_tags=tuple(primitives.get("selected_tags", []) or []),
             stats=primitives.get("stats"),
             is_loading=bool(primitives.get("is_loading", False)),
             error_message=primitives.get("error_message"),
         )
 
     @classmethod
-    def initial(cls) -> Self:
-        """DTO inicial con opciones de idioma."""
+    def loading(cls) -> Self:
+        """DTO estado cargando."""
         return cls.from_primitives({
             "language_options": [
                 {"code": lang.value, "display_name": lang.display_name}

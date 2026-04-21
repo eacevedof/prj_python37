@@ -1,48 +1,76 @@
-"""Vista para crear nuevas palabras."""
+"""Vista para crear palabras - Solo renderizado."""
 
 import flet as ft
-from typing import Callable
+from typing import Callable, Any, Self, TYPE_CHECKING
 
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
-from ddd.vocabulary.infrastructure.controllers import CreateWordController
-from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
+if TYPE_CHECKING:
+    from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
 
 class CreateWordView(ft.Container):
-    """Vista para crear nuevas palabras."""
+    """
+    Vista de creación de palabra.
+
+    Responsabilidades:
+    - Renderizar UI basada en CreateWordViewDto
+    - Emitir eventos al Controller via callbacks
+    - NO tiene lógica de negocio
+    - NO importa repositorios ni servicios
+    """
 
     def __init__(
         self,
+        on_submit: Callable[[dict[str, Any]], None],
         on_back: Callable[[], None],
-        on_word_created: Callable[[], None] | None = None,
+        on_mount: Callable[[], None] | None = None,
     ):
         super().__init__()
-        self.on_back = on_back
-        self.on_word_created = on_word_created
-        self.available_tags: list[dict] = []
-        self._selected_tags: list[str] = []
+
+        self._on_submit = on_submit
+        self._on_back = on_back
+        self._on_mount = on_mount
 
         # Form fields
         self._text_es_field: ft.TextField | None = None
-        self._text_nl_field: ft.TextField | None = None
+        self._text_lang_field: ft.TextField | None = None
         self._word_type_dropdown: ft.Dropdown | None = None
-        self._tags_row: ft.Row | None = None
         self._notes_field: ft.TextField | None = None
+        self._tags_row: ft.Row | None = None
+        self._error_text: ft.Text | None = None
+        self._success_text: ft.Text | None = None
+        self._loading_ring: ft.ProgressRing | None = None
+
+        # Estado local de tags seleccionados
+        self._selected_tags: list[str] = []
+        self._available_tags: list[dict[str, Any]] = []
 
         self._build_ui()
 
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        return cls(
+            on_submit=primitives.get("on_submit", lambda x: None),
+            on_back=primitives.get("on_back", lambda: None),
+            on_mount=primitives.get("on_mount"),
+        )
+
+    def did_mount(self) -> None:
+        """Flet llama esto al montar. Notifica al Controller."""
+        if self._on_mount:
+            self._on_mount()
+
     def _build_ui(self) -> None:
-        # Form fields
+        """Construye la estructura UI."""
         self._text_es_field = ft.TextField(
-            label="Palabra en espanol *",
-            hint_text="Escribe la palabra en espanol",
+            label="Palabra en español *",
+            hint_text="Escribe la palabra en español",
             width=400,
             autofocus=True,
         )
 
-        self._text_nl_field = ft.TextField(
-            label="Traduccion (Nederlands)",
-            hint_text="Escribe la traduccion en holandes",
+        self._text_lang_field = ft.TextField(
+            label="Traducción (Nederlands)",
+            hint_text="Escribe la traducción",
             width=400,
         )
 
@@ -52,7 +80,7 @@ class CreateWordView(ft.Container):
             options=[
                 ft.dropdown.Option("WORD", "Palabra"),
                 ft.dropdown.Option("PHRASE", "Frase"),
-                ft.dropdown.Option("SENTENCE", "Oracion"),
+                ft.dropdown.Option("SENTENCE", "Oración"),
             ],
             value="WORD",
         )
@@ -72,13 +100,28 @@ class CreateWordView(ft.Container):
             spacing=8,
         )
 
-        # Buttons
+        self._error_text = ft.Text(
+            color=ft.Colors.RED_700,
+            visible=False,
+        )
+
+        self._success_text = ft.Text(
+            color=ft.Colors.GREEN_700,
+            visible=False,
+        )
+
+        self._loading_ring = ft.ProgressRing(
+            visible=False,
+            width=20,
+            height=20,
+        )
+
         save_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=self._save_word,
+            on_click=lambda _: self._handle_submit(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -91,39 +134,35 @@ class CreateWordView(ft.Container):
                 [ft.Icon(ft.Icons.CLOSE), ft.Text("Cancelar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self.on_back(),
+            on_click=lambda _: self._on_back(),
             width=150,
         )
 
         back_btn = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
-            on_click=lambda _: self.on_back(),
+            on_click=lambda _: self._on_back(),
             tooltip="Volver",
         )
 
-        # Form card
         form_card = ft.Container(
             content=ft.Column(
                 controls=[
-                    # Palabra espanol
                     self._text_es_field,
                     ft.Container(height=10),
-                    # Traduccion
-                    self._text_nl_field,
+                    self._text_lang_field,
                     ft.Container(height=10),
-                    # Tipo
                     self._word_type_dropdown,
                     ft.Container(height=10),
-                    # Notas
                     self._notes_field,
                     ft.Container(height=16),
-                    # Tags
                     ft.Text("Tags:", size=14, weight=ft.FontWeight.W_500),
                     self._tags_row,
-                    ft.Container(height=24),
-                    # Buttons
+                    ft.Container(height=16),
+                    self._error_text,
+                    self._success_text,
+                    ft.Container(height=8),
                     ft.Row(
-                        controls=[save_btn, cancel_btn],
+                        controls=[save_btn, cancel_btn, self._loading_ring],
                         spacing=16,
                     ),
                 ],
@@ -139,7 +178,6 @@ class CreateWordView(ft.Container):
 
         self.content = ft.Column(
             controls=[
-                # Header
                 ft.Row(
                     controls=[
                         back_btn,
@@ -152,7 +190,6 @@ class CreateWordView(ft.Container):
                 ),
                 ft.Divider(height=1),
                 ft.Container(height=20),
-                # Form centered
                 ft.Row(
                     controls=[form_card],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -164,24 +201,51 @@ class CreateWordView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def did_mount(self) -> None:
-        """Carga datos al montar."""
-        self.page.run_task(self._load_tags)
+    def render(self, dto: "CreateWordViewDto") -> None:
+        """Renderiza la vista basado en el DTO."""
+        # Loading state
+        if self._loading_ring:
+            self._loading_ring.visible = dto.is_loading
 
-    async def _load_tags(self) -> None:
-        """Carga los tags disponibles."""
-        tags_reader = TagsReaderSqliteRepository.get_instance()
-        self.available_tags = await tags_reader.get_all()
-        self._update_tags_ui()
+        # Restaurar valores del formulario
+        self._render_form_values(dto.form_values)
 
-    def _update_tags_ui(self) -> None:
-        """Actualiza los chips de tags."""
+        # Tags disponibles
+        self._available_tags = list(dto.available_tags)
+        self._selected_tags = list(dto.form_values.get("selected_tags", []))
+        self._render_tags()
+
+        # Mensajes
+        self._render_messages(dto)
+
+        # Highlight campo con error
+        if dto.error_field:
+            self._highlight_error_field(dto.error_field)
+
+        self.update()
+
+    def _render_form_values(self, form_values: dict[str, Any]) -> None:
+        """Restaura valores del formulario."""
+        if self._text_es_field:
+            self._text_es_field.value = form_values.get("text_es", "")
+
+        if self._text_lang_field:
+            self._text_lang_field.value = form_values.get("text_lang", "")
+
+        if self._word_type_dropdown:
+            self._word_type_dropdown.value = form_values.get("word_type", "WORD")
+
+        if self._notes_field:
+            self._notes_field.value = form_values.get("notes", "")
+
+    def _render_tags(self) -> None:
+        """Renderiza los chips de tags."""
         if not self._tags_row:
             return
 
         self._tags_row.controls.clear()
 
-        if not self.available_tags:
+        if not self._available_tags:
             self._tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
@@ -191,88 +255,65 @@ class CreateWordView(ft.Container):
                 )
             )
         else:
-            for tag in self.available_tags:
-                is_selected = tag["name"] in self._selected_tags
+            for tag in self._available_tags:
+                tag_name = tag.get("name", "")
+                is_selected = tag_name in self._selected_tags
                 chip = ft.Chip(
-                    label=ft.Text(tag["name"], size=12),
+                    label=ft.Text(tag_name, size=12),
                     selected=is_selected,
-                    on_select=lambda e, t=tag["name"]: self._toggle_tag(t),
+                    on_select=lambda e, t=tag_name: self._toggle_tag(t),
                     bgcolor=tag.get("color") if is_selected else None,
                 )
                 self._tags_row.controls.append(chip)
 
-        self.update()
+    def _render_messages(self, dto: "CreateWordViewDto") -> None:
+        """Renderiza mensajes de error/éxito."""
+        if self._error_text:
+            if dto.error_message:
+                self._error_text.value = dto.error_message
+                self._error_text.visible = True
+            else:
+                self._error_text.visible = False
+
+        if self._success_text:
+            if dto.success_message:
+                self._success_text.value = dto.success_message
+                self._success_text.visible = True
+            else:
+                self._success_text.visible = False
+
+    def _highlight_error_field(self, field_name: str) -> None:
+        """Destaca el campo con error."""
+        field_map = {
+            "text_es": self._text_es_field,
+            "text_lang": self._text_lang_field,
+            "notes": self._notes_field,
+        }
+        target_field = field_map.get(field_name)
+        if target_field:
+            target_field.border_color = ft.Colors.RED_700
+            target_field.focus()
 
     def _toggle_tag(self, tag_name: str) -> None:
-        """Alterna seleccion de tag."""
+        """Alterna selección de tag (estado local)."""
         if tag_name in self._selected_tags:
             self._selected_tags.remove(tag_name)
         else:
             self._selected_tags.append(tag_name)
-        self._update_tags_ui()
-
-    def _save_word(self, e) -> None:
-        """Guarda la nueva palabra."""
-        self.page.run_task(self._create_word)
-
-    async def _create_word(self) -> None:
-        """Crea la palabra en la base de datos."""
-        if not self._text_es_field or not self._text_nl_field:
-            return
-
-        text_es = self._text_es_field.value or ""
-        text_nl = self._text_nl_field.value or ""
-        word_type = self._word_type_dropdown.value if self._word_type_dropdown else "WORD"
-        notes = self._notes_field.value if self._notes_field else ""
-
-        if not text_es.strip():
-            self._show_snackbar("La palabra en espanol es obligatoria", error=True)
-            return
-
-        translations = {}
-        if text_nl.strip():
-            translations[LanguageCodeEnum.NL_NL.value] = text_nl.strip()
-
-        controller = CreateWordController.get_instance()
-        result = await controller.create(
-            text=text_es.strip(),
-            word_type=word_type,
-            tags=self._selected_tags,
-            translations=translations,
-            notes=notes.strip() if notes else None,
-        )
-
-        if result.success:
-            self._show_snackbar(f"Palabra '{result.text}' creada")
-
-            # Notify parent
-            if self.on_word_created:
-                self.on_word_created()
-
-            # Clear form for next word
-            self._clear_form()
-        else:
-            self._show_snackbar(result.error_message or "Error desconocido", error=True)
-
-    def _clear_form(self) -> None:
-        """Limpia el formulario."""
-        if self._text_es_field:
-            self._text_es_field.value = ""
-        if self._text_nl_field:
-            self._text_nl_field.value = ""
-        if self._word_type_dropdown:
-            self._word_type_dropdown.value = "WORD"
-        if self._notes_field:
-            self._notes_field.value = ""
-        self._selected_tags.clear()
-        self._update_tags_ui()
+        self._render_tags()
         self.update()
 
-    def _show_snackbar(self, message: str, error: bool = False) -> None:
-        """Muestra un snackbar."""
-        self.page.snack_bar = ft.SnackBar(
-            content=ft.Text(message),
-            bgcolor=ft.Colors.RED_700 if error else ft.Colors.GREEN_700,
-        )
-        self.page.snack_bar.open = True
-        self.page.update()
+    def _handle_submit(self) -> None:
+        """Recopila datos del form y emite callback."""
+        form_data = self._get_form_data()
+        self._on_submit(form_data)
+
+    def _get_form_data(self) -> dict[str, Any]:
+        """Obtiene los datos actuales del formulario."""
+        return {
+            "text_es": self._text_es_field.value if self._text_es_field else "",
+            "text_lang": self._text_lang_field.value if self._text_lang_field else "",
+            "word_type": self._word_type_dropdown.value if self._word_type_dropdown else "WORD",
+            "notes": self._notes_field.value if self._notes_field else "",
+            "selected_tags": list(self._selected_tags),
+        }

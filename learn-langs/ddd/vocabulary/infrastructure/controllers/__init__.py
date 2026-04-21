@@ -1,5 +1,4 @@
 from ddd.vocabulary.infrastructure.controllers.create_word_controller import CreateWordController
-from ddd.vocabulary.infrastructure.controllers.create_word_view_dto import CreateWordViewDto
 from ddd.vocabulary.infrastructure.controllers.update_word_controller import UpdateWordController
 from ddd.vocabulary.infrastructure.controllers.update_word_view_dto import UpdateWordViewDto
 from ddd.vocabulary.infrastructure.controllers.delete_word_controller import DeleteWordController
@@ -10,11 +9,9 @@ from ddd.vocabulary.infrastructure.controllers.list_words_view_dto import (
     WordListItemViewDto,
 )
 from ddd.vocabulary.infrastructure.controllers.home_controller import HomeController
-from ddd.vocabulary.infrastructure.controllers.home_view_dto import HomeViewDto
 
 __all__ = [
     "CreateWordController",
-    "CreateWordViewDto",
     "UpdateWordController",
     "UpdateWordViewDto",
     "DeleteWordController",
@@ -23,5 +20,4 @@ __all__ = [
     "ListWordsViewDto",
     "WordListItemViewDto",
     "HomeController",
-    "HomeViewDto",
 ]

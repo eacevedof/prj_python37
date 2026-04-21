@@ -5,10 +5,12 @@ from typing import Any
 
 from ddd.shared.domain.enums import ControllerRouteEnum
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
-from ddd.vocabulary.infrastructure.ui.views import (
+from ddd.vocabulary.infrastructure.controllers import (
     HomeController,
+    CreateWordController,
+)
+from ddd.vocabulary.infrastructure.ui.views import (
     StudyView,
-    CreateWordView,
     UpdateWordView,
     ListWordsView,
 )
@@ -52,7 +54,7 @@ class AppRouter:
     ) -> ft.Control:
         """Construye la vista correspondiente a la ruta."""
         if route_name == ControllerRouteEnum.HOME:
-            return HomeController(
+            controller = HomeController(
                 on_start_study=lambda lang, tags: self.navigate_to(
                     ControllerRouteEnum.STUDY,
                     lang_code=lang,
@@ -62,6 +64,7 @@ class AppRouter:
                     ControllerRouteEnum.WORDS,
                 ),
             )
+            return controller.view
 
         if route_name == ControllerRouteEnum.STUDY:
             return StudyView(
@@ -81,10 +84,11 @@ class AppRouter:
             )
 
         if route_name == ControllerRouteEnum.CREATE_WORD:
-            return CreateWordView(
+            controller = CreateWordController(
+                on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
-                on_word_created=lambda: None,
             )
+            return controller.view
 
         if route_name == ControllerRouteEnum.UPDATE_WORD:
             return UpdateWordView(
