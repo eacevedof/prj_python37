@@ -38,17 +38,22 @@ class RunMigrationsService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: RunMigrationsDto) -> RunMigrationsResultDto:
+    async def __call__(
+        self,
+        run_migrations_dto: RunMigrationsDto
+    ) -> RunMigrationsResultDto:
         """
-        Ejecuta las migraciones pendientes.
+        Ejecuta las migraciones.
 
         Args:
-            dto: Datos con la ruta de migraciones y base de datos.
+            run_migrations_dto: Datos con la ruta de migraciones y base de datos.
+                - force=False: Solo aplica migraciones pendientes (diferencial)
+                - force=True: Drop BD, crea BD, ejecuta TODAS las migraciones
 
         Returns:
             RunMigrationsResultDto con el resultado de las migraciones.
         """
-        errors = dto.validate()
+        errors = run_migrations_dto.validate()
         if errors:
             return RunMigrationsResultDto.from_primitives({
                 "total_migrations": 0,
@@ -65,8 +70,12 @@ class RunMigrationsService:
                 ],
             })
 
-        db_path = dto.db_path or self._get_default_db_path()
+        db_path = run_migrations_dto.db_path or self._get_default_db_path()
         db_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Force mode: eliminar BD existente
+        if run_migrations_dto.force and db_path.exists():
+            db_path.unlink()
 
         conn = await aiosqlite.connect(str(db_path))
         try:
@@ -74,8 +83,13 @@ class RunMigrationsService:
             await conn.execute(self._SCHEMA_MIGRATIONS_TABLE)
             await conn.commit()
 
+            # Force mode: limpiar registro de migraciones (por si la BD no se eliminó)
+            if run_migrations_dto.force:
+                await conn.execute("DELETE FROM schema_migrations")
+                await conn.commit()
+
             applied_versions = await self._get_applied_versions(conn)
-            migration_files = self._get_migration_files(dto.migrations_path)
+            migration_files = self._get_migration_files(run_migrations_dto.migrations_path)
 
             results: list[MigrationResultDto] = []
             applied_count = 0

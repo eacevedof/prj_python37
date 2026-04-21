@@ -35,6 +35,14 @@ class SqliteConnector:
             self._db_path = str(base_path / "data" / "learn_lang.db")
         return self._db_path
 
+    @property
+    def migrations_path(self) -> Path:
+        """Ruta de las migraciones."""
+        return (
+            Path(__file__).parent.parent.parent.parent /
+            "vocabulary" / "infrastructure" / "persistence" / "migrations"
+        )
+
     async def _create_connection(self) -> aiosqlite.Connection:
         """Crea una nueva conexión a la base de datos."""
         db_file = Path(self.db_path)
@@ -45,26 +53,35 @@ class SqliteConnector:
         await conn.execute("PRAGMA foreign_keys = ON")
         return conn
 
-    async def initialize_database(self) -> None:
-        """Inicializa la base de datos ejecutando las migraciones."""
-        if self._initialized:
+    async def initialize_database(self, force: bool = False) -> None:
+        """
+        Inicializa la base de datos ejecutando las migraciones.
+
+        Args:
+            force: Si True, elimina la BD y ejecuta todas las migraciones.
+                   Si False, solo ejecuta migraciones pendientes (diferencial).
+        """
+        if self._initialized and not force:
             return
 
-        migrations_path = (
-            Path(__file__).parent.parent.parent.parent /
-            "vocabulary" / "infrastructure" / "persistence" / "migrations"
+        from ddd.devops.application.run_migrations import (
+            RunMigrationsDto,
+            RunMigrationsService,
         )
 
-        conn = await self._create_connection()
-        try:
-            migration_files = sorted(migrations_path.glob("*.sql"))
-            for migration_file in migration_files:
-                sql = migration_file.read_text(encoding="utf-8")
-                await conn.executescript(sql)
-            await conn.commit()
-            self._initialized = True
-        finally:
-            await conn.close()
+        service = RunMigrationsService.get_instance()
+        result = await service(RunMigrationsDto.from_primitives({
+            "migrations_path": self.migrations_path,
+            "db_path": self.db_path,
+            "force": force,
+        }))
+
+        if result.failed_count > 0:
+            failed = [m for m in result.migrations if m.status == "failed"]
+            errors = "; ".join(m.error or m.filename for m in failed)
+            raise RuntimeError(f"Migration failed: {errors}")
+
+        self._initialized = True
 
     async def fetch_one(self, query: str, params: tuple = ()) -> dict | None:
         """Ejecuta una query y retorna una fila como dict."""

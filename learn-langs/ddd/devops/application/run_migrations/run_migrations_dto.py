@@ -9,6 +9,7 @@ class RunMigrationsDto:
 
     migrations_path: Path
     db_path: Path | None = None
+    force: bool = False  # True = drop + create + all migrations
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -25,6 +26,7 @@ class RunMigrationsDto:
         return cls(
             migrations_path=migrations_path,
             db_path=db_path,
+            force=bool(primitives.get("force", False)),
         )
 
     def validate(self) -> list[str]:
