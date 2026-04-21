@@ -13,6 +13,7 @@ from ddd.shared.infrastructure.components.response_dto import (
     ErrorResponseDto,
 )
 from ddd.shared.infrastructure.components.abstract_input_dto import AbstractInputDto
+from ddd.shared.infrastructure.components.app_router import AppRouter
 
 __all__ = [
     "Printer",
@@ -28,4 +29,5 @@ __all__ = [
     "SuccessResponseDto",
     "ErrorResponseDto",
     "AbstractInputDto",
+    "AppRouter",
 ]
