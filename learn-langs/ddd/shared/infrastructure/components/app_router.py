@@ -4,15 +4,12 @@ import flet as ft
 from typing import Any
 
 from ddd.shared.domain.enums import ControllerRouteEnum
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.controllers import (
     HomeController,
     CreateWordController,
-)
-from ddd.vocabulary.infrastructure.ui.views import (
-    StudyView,
-    UpdateWordView,
-    ListWordsView,
+    UpdateWordController,
+    ListWordsController,
+    StudyController,
 )
 
 
@@ -67,14 +64,15 @@ class AppRouter:
             return controller.view
 
         if route_name == ControllerRouteEnum.STUDY:
-            return StudyView(
-                lang_code=kwargs.get("lang_code", LanguageCodeEnum.default()),
+            controller = StudyController(
+                lang_code=kwargs.get("lang_code", "nl_NL"),
                 tags=kwargs.get("tags", []),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
             )
+            return controller.view
 
         if route_name == ControllerRouteEnum.WORDS:
-            return ListWordsView(
+            controller = ListWordsController(
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
                 on_create=lambda: self.navigate_to(ControllerRouteEnum.CREATE_WORD),
                 on_edit=lambda word_id: self.navigate_to(
@@ -82,6 +80,7 @@ class AppRouter:
                     word_id=word_id,
                 ),
             )
+            return controller.view
 
         if route_name == ControllerRouteEnum.CREATE_WORD:
             controller = CreateWordController(
@@ -91,10 +90,11 @@ class AppRouter:
             return controller.view
 
         if route_name == ControllerRouteEnum.UPDATE_WORD:
-            return UpdateWordView(
+            controller = UpdateWordController(
                 word_id=kwargs.get("word_id", 0),
+                on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
-                on_word_updated=lambda: None,
             )
+            return controller.view
 
         return self._build_view(ControllerRouteEnum.HOME)

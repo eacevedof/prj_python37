@@ -4,6 +4,7 @@ from typing import Callable, Any
 
 import flet as ft
 
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
@@ -33,6 +34,7 @@ class CreateWordController:
         # Servicios
         self._create_word_service = CreateWordService.get_instance()
         self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._logger = Logger.get_instance()
 
         # Cache de tags
         self._available_tags: list[dict[str, Any]] = []
@@ -109,7 +111,11 @@ class CreateWordController:
             # self._on_success()
 
         except Exception as e:
-            # Error: mostrar mensaje y restaurar valores
+            self._logger.write_error(
+                "CreateWordController",
+                f"Error creando palabra: {e}",
+                {"form_data": form_data},
+            )
             dto = CreateWordViewDto.error(
                 message=str(e),
                 form_values=form_data,

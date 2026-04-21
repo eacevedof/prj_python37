@@ -2,9 +2,11 @@
 
 import asyncio
 import time
-import flet as ft
 from typing import Callable, Any
 
+import flet as ft
+
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.start_study_session import (
     StartStudySessionDto,
     StartStudySessionService,
@@ -16,20 +18,20 @@ from ddd.vocabulary.application.record_answer import (
 )
 from ddd.vocabulary.domain.entities import StudySessionEntity
 from ddd.vocabulary.domain.enums import StudyModeEnum
-from ddd.vocabulary.infrastructure.controllers.study_view_dto import StudyViewDto
 from ddd.vocabulary.infrastructure.repositories import SessionsWriterSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
+from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
 
 
-class StudyController(ft.Container):
+class StudyController:
     """
     Controller del Study.
 
     Responsabilidades:
+    - Orquestar flujo entre Vista y Servicios
     - Manejar estado (sesion, palabras, scores)
-    - Llamar a los servicios (StartStudySession, RecordAnswer)
-    - Transformar resultados a StudyViewDto
-    - Actualizar la vista
+    - Crear ViewDTOs y pasarlos a la Vista
+    - NO hereda de ft.Container
     """
 
     def __init__(
@@ -38,8 +40,6 @@ class StudyController(ft.Container):
         tags: list[str],
         on_back: Callable[[], None],
     ):
-        super().__init__()
-
         # Parametros de la sesion
         self._lang_code = lang_code
         self._tags = tags
@@ -57,29 +57,31 @@ class StudyController(ft.Container):
         self._start_session_service = StartStudySessionService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
         self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
+        self._logger = Logger.get_instance()
 
         # Vista
-        self._study_view: StudyView | None = None
-
-        self._build_ui()
-
-    def _build_ui(self) -> None:
-        """Construye la vista con callbacks."""
-        self._study_view = StudyView.from_primitives({
+        self._view = StudyView.from_primitives({
             "on_answer": self._handle_answer,
             "on_skip": self._handle_skip,
             "on_timeout": self._handle_timeout,
             "on_back": self._handle_back,
+            "on_mount": self._handle_mount,
         })
-        self.content = self._study_view
-        self.expand = True
 
-    def did_mount(self) -> None:
-        """Se llama cuando el controller se monta en la página."""
-        self.page.run_task(self._start_session)
+    @property
+    def view(self) -> ft.Container:
+        """Vista para montar en el arbol de Flet."""
+        return self._view
 
-    async def _start_session(self) -> None:
-        """Inicia la sesión de estudio."""
+    def _handle_mount(self) -> None:
+        """Callback cuando la vista se monta."""
+        self._view.page.run_task(self._async_start_session)
+
+    async def _async_start_session(self) -> None:
+        """Inicia la sesion de estudio."""
+        # Mostrar loading
+        self._view.render(StudyViewDto.initial())
+
         try:
             start_dto = StartStudySessionDto.from_primitives({
                 "lang_code": self._lang_code,
@@ -94,13 +96,18 @@ class StudyController(ft.Container):
             self._words = list(result.words)
 
             if not self._words:
-                self._render_view(StudyViewDto.no_words())
+                self._view.render(StudyViewDto.no_words())
                 return
 
             self._show_current_word()
 
         except Exception as e:
-            self._render_view(StudyViewDto.error(str(e)))
+            self._logger.write_error(
+                "StudyController",
+                f"Error iniciando sesion: {e}",
+                {"lang_code": self._lang_code, "tags": self._tags},
+            )
+            self._view.render(StudyViewDto.error(str(e)))
 
     def _show_current_word(self) -> None:
         """Muestra la palabra actual."""
@@ -120,7 +127,7 @@ class StudyController(ft.Container):
             total_score=self._total_score,
             answers_count=self._answers_count,
         )
-        self._render_view(dto)
+        self._view.render(dto)
 
     def _word_to_dict(self, word: StudyWordDto) -> dict[str, Any]:
         """Convierte StudyWordDto a dict para la vista."""
@@ -134,17 +141,17 @@ class StudyController(ft.Container):
 
     def _handle_answer(self, user_input: str) -> None:
         """Maneja la respuesta del usuario."""
-        self.page.run_task(lambda: self._process_answer(user_input))
+        self._view.page.run_task(lambda: self._async_process_answer(user_input))
 
     def _handle_skip(self) -> None:
         """Maneja cuando el usuario salta."""
-        self.page.run_task(lambda: self._process_answer(""))
+        self._view.page.run_task(lambda: self._async_process_answer(""))
 
     def _handle_timeout(self) -> None:
         """Maneja cuando se acaba el tiempo."""
-        self.page.run_task(lambda: self._process_answer(""))
+        self._view.page.run_task(lambda: self._async_process_answer(""))
 
-    async def _process_answer(self, user_input: str) -> None:
+    async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta."""
         word = self._words[self._current_index]
         response_time = int((time.time() - self._start_time) * 1000)
@@ -179,7 +186,7 @@ class StudyController(ft.Container):
                     "correct_answer": word.text_lang,
                 },
             )
-            self._render_view(dto)
+            self._view.render(dto)
 
             # Esperar y continuar
             wait_time = 2 if result.is_correct else 5
@@ -187,7 +194,15 @@ class StudyController(ft.Container):
             self._next_word()
 
         except Exception as e:
-            print(f"Error recording answer: {e}")
+            self._logger.write_error(
+                "StudyController",
+                f"Error registrando respuesta: {e}",
+                {
+                    "session_id": self._session_id,
+                    "word_es_id": word.word_es_id,
+                    "user_input": user_input,
+                },
+            )
             self._next_word()
 
     def _next_word(self) -> None:
@@ -197,30 +212,32 @@ class StudyController(ft.Container):
 
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesion completada."""
-        self.page.run_task(self._finish_session)
+        self._view.page.run_task(self._async_finish_session)
 
         dto = StudyViewDto.session_complete(
             total_score=self._total_score,
             answers_count=self._answers_count,
         )
-        self._render_view(dto)
+        self._view.render(dto)
 
-    async def _finish_session(self) -> None:
+    async def _async_finish_session(self) -> None:
         """Finaliza la sesion en la base de datos."""
         if self._session_id:
-            entity = StudySessionEntity.from_primitives({
-                "id": self._session_id,
-                "lang_code": self._lang_code,
-                "study_mode": StudyModeEnum.TYPING.value,
-            })
-            await self._sessions_writer.finish(entity)
+            try:
+                entity = StudySessionEntity.from_primitives({
+                    "id": self._session_id,
+                    "lang_code": self._lang_code,
+                    "study_mode": StudyModeEnum.TYPING.value,
+                })
+                await self._sessions_writer.finish(entity)
+            except Exception as e:
+                self._logger.write_error(
+                    "StudyController",
+                    f"Error finalizando sesion: {e}",
+                    {"session_id": self._session_id},
+                )
 
     def _handle_back(self) -> None:
         """Finaliza y vuelve al inicio."""
-        self.page.run_task(self._finish_session)
+        self._view.page.run_task(self._async_finish_session)
         self._on_back()
-
-    def _render_view(self, dto: StudyViewDto) -> None:
-        """Renderiza la vista con el DTO."""
-        if self._study_view:
-            self._study_view.render(dto)

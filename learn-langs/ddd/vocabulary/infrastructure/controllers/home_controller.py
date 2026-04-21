@@ -4,6 +4,7 @@ from typing import Callable
 
 import flet as ft
 
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.load_home import LoadHomeDto, LoadHomeService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
@@ -36,6 +37,7 @@ class HomeController:
 
         # Servicios
         self._load_home_service = LoadHomeService.get_instance()
+        self._logger = Logger.get_instance()
 
         # Vista
         self._view = HomeView.from_primitives({
@@ -64,33 +66,46 @@ class HomeController:
 
     async def _async_load_data(self) -> None:
         """Carga datos del servicio y actualiza la vista."""
-        load_home_result_dto = await self._load_home_service(
-            LoadHomeDto.from_primitives({
-                "lang_code": str(self._selected_lang),
-            })
-        )
+        try:
+            load_home_result_dto = await self._load_home_service(
+                LoadHomeDto.from_primitives({
+                    "lang_code": str(self._selected_lang),
+                })
+            )
 
-        if not load_home_result_dto.success:
+            if not load_home_result_dto.success:
+                home_view_dto = HomeViewDto.error(
+                    message=load_home_result_dto.error_message or "Error desconocido",
+                    selected_lang_code=str(self._selected_lang),
+                )
+            else:
+                home_view_dto = HomeViewDto.ok(
+                    tags=[
+                        {"id": t.id, "name": t.name, "color": t.color}
+                        for t in load_home_result_dto.tags
+                    ],
+                    stats={
+                        "total_words": load_home_result_dto.stats.total_words,
+                        "due_for_review": load_home_result_dto.stats.due_for_review,
+                        "avg_score": load_home_result_dto.stats.avg_score,
+                    },
+                    selected_lang_code=str(self._selected_lang),
+                    selected_tags=self._selected_tags,
+                )
+
+            self._view.render(home_view_dto)
+
+        except Exception as e:
+            self._logger.write_error(
+                "HomeController",
+                f"Error cargando datos: {e}",
+                {"lang_code": str(self._selected_lang)},
+            )
             home_view_dto = HomeViewDto.error(
-                message=load_home_result_dto.error_message or "Error desconocido",
+                message=str(e),
                 selected_lang_code=str(self._selected_lang),
             )
-        else:
-            home_view_dto = HomeViewDto.ok(
-                tags=[
-                    {"id": t.id, "name": t.name, "color": t.color}
-                    for t in load_home_result_dto.tags
-                ],
-                stats={
-                    "total_words": load_home_result_dto.stats.total_words,
-                    "due_for_review": load_home_result_dto.stats.due_for_review,
-                    "avg_score": load_home_result_dto.stats.avg_score,
-                },
-                selected_lang_code=str(self._selected_lang),
-                selected_tags=self._selected_tags,
-            )
-
-        self._view.render(home_view_dto)
+            self._view.render(home_view_dto)
 
     def _handle_lang_change(self, lang_code: str) -> None:
         """Maneja el cambio de idioma."""
