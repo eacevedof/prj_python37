@@ -6,13 +6,12 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.update_word import UpdateWordDto, UpdateWordService
+from ddd.vocabulary.application.get_word_for_edit import (
+    GetWordForEditDto,
+    GetWordForEditService,
+)
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.domain.exceptions import VocabularyException
-from ddd.vocabulary.infrastructure.repositories import (
-    WordsEsReaderSqliteRepository,
-    WordsLangReaderSqliteRepository,
-    TagsReaderSqliteRepository,
-)
 from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordView
 from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
 
@@ -26,6 +25,7 @@ class UpdateWordController:
     - Crear ViewDTOs y pasarlos a la Vista
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
+    - NO usa repositorios directamente
     """
 
     def __init__(
@@ -40,13 +40,10 @@ class UpdateWordController:
 
         # Estado interno
         self._available_tags: list[dict[str, Any]] = []
-        self._current_form_values: dict[str, Any] = {}
 
         # Servicios
         self._update_word_service = UpdateWordService.get_instance()
-        self._words_reader = WordsEsReaderSqliteRepository.get_instance()
-        self._lang_reader = WordsLangReaderSqliteRepository.get_instance()
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._get_word_for_edit_service = GetWordForEditService.get_instance()
         self._logger = Logger.get_instance()
 
         # Vista
@@ -71,46 +68,27 @@ class UpdateWordController:
         self._view.render(UpdateWordViewDto.loading())
 
         try:
-            # Cargar palabra
-            word_data = await self._words_reader.get_by_id(self._word_id)
+            # Cargar palabra via servicio
+            result = await self._get_word_for_edit_service(
+                GetWordForEditDto.from_primitives({"word_id": self._word_id})
+            )
 
-            if not word_data:
-                self._view.show_snackbar("Palabra no encontrada", error=True)
+            if not result.success:
+                self._view.show_snackbar(result.error_message or "Error", error=True)
                 self._on_back()
                 return
 
-            # Cargar traducciones
-            translations = await self._lang_reader.get_all_for_word(self._word_id)
-            translation_nl = ""
-            for t in translations:
-                if t.get("lang_code") == LanguageCodeEnum.NL_NL.value:
-                    translation_nl = t.get("text", "")
-                    break
-
-            # Cargar tags disponibles
-            self._available_tags = await self._tags_reader.get_all()
-
-            # Cargar tags de la palabra
-            word_tags = await self._words_reader.get_tags_for_word(self._word_id)
-            selected_tags = [t["name"] for t in word_tags]
-
-            # Guardar valores actuales
-            self._current_form_values = {
-                "text_es": word_data.get("text", ""),
-                "text_nl": translation_nl,
-                "word_type": word_data.get("word_type", "WORD"),
-                "notes": word_data.get("notes", "") or "",
-                "selected_tags": selected_tags,
-            }
+            # Guardar tags disponibles
+            self._available_tags = result.available_tags_as_dicts()
 
             # Renderizar
             dto = UpdateWordViewDto.with_data(
                 word_id=self._word_id,
-                text=word_data.get("text", ""),
-                word_type=word_data.get("word_type", "WORD"),
-                notes=word_data.get("notes", "") or "",
-                translation_nl=translation_nl,
-                selected_tags=selected_tags,
+                text=result.text,
+                word_type=result.word_type,
+                notes=result.notes,
+                translation_nl=result.translations.get(LanguageCodeEnum.NL_NL.value, ""),
+                selected_tags=list(result.selected_tags),
                 available_tags=self._available_tags,
             )
             self._view.render(dto)

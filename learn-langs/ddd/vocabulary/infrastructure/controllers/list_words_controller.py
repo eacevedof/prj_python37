@@ -1,18 +1,23 @@
 """Controller para listado de palabras."""
 
-from typing import Callable, Any
-from pathlib import Path
+from typing import Callable
 
 import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
-from ddd.vocabulary.domain.entities import WordImageEntity
-from ddd.vocabulary.domain.enums import ImageSourceEnum
-from ddd.vocabulary.infrastructure.repositories import (
-    ImagesReaderSqliteRepository,
-    ImagesWriterSqliteRepository,
+from ddd.vocabulary.application.get_word_images import (
+    GetWordImagesDto,
+    GetWordImagesService,
+)
+from ddd.vocabulary.application.add_word_image import (
+    AddWordImageDto,
+    AddWordImageService,
+)
+from ddd.vocabulary.application.delete_word_image import (
+    DeleteWordImageDto,
+    DeleteWordImageService,
 )
 from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
@@ -31,6 +36,7 @@ class ListWordsController:
     - Manejar callbacks de la Vista
     - Gestionar dialogos de imagenes
     - NO hereda de ft.Container
+    - NO usa repositorios directamente
     """
 
     def __init__(
@@ -51,8 +57,9 @@ class ListWordsController:
         # Servicios
         self._list_words_service = ListWordsService.get_instance()
         self._delete_word_service = DeleteWordService.get_instance()
-        self._images_reader = ImagesReaderSqliteRepository.get_instance()
-        self._images_writer = ImagesWriterSqliteRepository.get_instance()
+        self._get_word_images_service = GetWordImagesService.get_instance()
+        self._add_word_image_service = AddWordImageService.get_instance()
+        self._delete_word_image_service = DeleteWordImageService.get_instance()
         self._logger = Logger.get_instance()
 
         # Vista
@@ -133,9 +140,7 @@ class ListWordsController:
             dto = DeleteWordDto.from_primitives({"word_id": word_id})
             result = await self._delete_word_service(dto)
 
-            self._view.show_snackbar(
-                f"Palabra '{result.text}' eliminada"
-            )
+            self._view.show_snackbar(f"Palabra '{result.text}' eliminada")
             await self._async_load_words()
 
         except Exception as e:
@@ -159,13 +164,23 @@ class ListWordsController:
             if not word:
                 return
 
-            images = await self._images_reader.get_by_word_id(word_id)
-            self._display_images_dialog(word, images or [])
+            # Obtener imagenes via servicio
+            result = await self._get_word_images_service(
+                GetWordImagesDto.from_primitives({"word_id": word_id})
+            )
+
+            if result.success:
+                self._display_images_dialog(word, result.to_list_of_dicts())
+            else:
+                self._view.show_snackbar(
+                    result.error_message or "Error cargando imagenes",
+                    error=True,
+                )
 
         except Exception as e:
             self._logger.write_error(
                 "ListWordsController",
-                f"Error cargando imagenes: {e}",
+                f"Error mostrando imagenes: {e}",
                 {"word_id": word_id},
             )
             self._view.show_snackbar(f"Error al cargar imagenes: {e}", error=True)
@@ -185,9 +200,6 @@ class ListWordsController:
 
         if images:
             for img in images:
-                if not isinstance(img, dict) or "file_path" not in img:
-                    continue
-
                 img_row = ft.Row(
                     controls=[
                         ft.Icon(
@@ -196,7 +208,7 @@ class ListWordsController:
                             size=20,
                         ),
                         ft.Text(
-                            img["file_path"][:30] + "..." if len(img["file_path"]) > 30 else img["file_path"],
+                            img["file_path"][:30] + "..." if len(img.get("file_path", "")) > 30 else img.get("file_path", ""),
                             size=12,
                             expand=True,
                         ),
@@ -303,36 +315,13 @@ class ListWordsController:
         self._view.page.run_task(do_pick)
 
     async def _add_image_from_file(self, word_id: int, file_path: str, filename: str) -> None:
-        """Agrega imagen desde archivo local."""
+        """Agrega imagen desde archivo local via servicio."""
         try:
-            path = Path(file_path)
-            if not path.exists():
-                self._view.show_snackbar("Archivo no encontrado", error=True)
-                return
+            dto = AddWordImageDto.from_file(word_id, file_path, filename)
+            result = await self._add_word_image_service(dto)
 
-            image_bytes = path.read_bytes()
-
-            ext = path.suffix.lower()
-            mime_map = {
-                ".png": "image/png",
-                ".jpg": "image/jpeg",
-                ".jpeg": "image/jpeg",
-                ".gif": "image/gif",
-                ".webp": "image/webp",
-                ".svg": "image/svg+xml",
-                ".bmp": "image/bmp",
-            }
-            mime_type = mime_map.get(ext, "image/png")
-
-            word_image_entity = WordImageEntity(
-                id=0,
-                word_es_id=word_id,
-                source_type=ImageSourceEnum.LOCAL,
-                file_path="",
-                mime_type=mime_type,
-                original_filename=filename,
-            )
-            await self._images_writer.save_image_bytes(word_image_entity, image_bytes)
+            if not result.success:
+                self._view.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
             self._logger.write_error(
@@ -343,35 +332,16 @@ class ListWordsController:
             self._view.show_snackbar(f"Error: {e}", error=True)
 
     async def _add_image_from_url(self, word_id: int, url: str) -> None:
-        """Agrega imagen desde URL."""
+        """Agrega imagen desde URL via servicio."""
         try:
-            import urllib.request
-            import ssl
+            dto = AddWordImageDto.from_url(word_id, url)
+            result = await self._add_word_image_service(dto)
 
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
-
-            with urllib.request.urlopen(url, context=ctx, timeout=10) as response:
-                image_bytes = response.read()
-                content_type = response.headers.get("Content-Type", "image/png")
-
-            mime_type = content_type.split(";")[0].strip()
-            if mime_type not in ["image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml"]:
-                mime_type = "image/png"
-
-            word_image_entity = WordImageEntity(
-                id=0,
-                word_es_id=word_id,
-                source_type=ImageSourceEnum.URL,
-                file_path="",
-                mime_type=mime_type,
-                original_url=url,
-            )
-            await self._images_writer.save_image_bytes(word_image_entity, image_bytes)
-
-            await self._async_load_words()
-            self._view.show_snackbar("Imagen agregada desde URL")
+            if result.success:
+                await self._async_load_words()
+                self._view.show_snackbar("Imagen agregada desde URL")
+            else:
+                self._view.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
             self._logger.write_error(
@@ -382,15 +352,18 @@ class ListWordsController:
             self._view.show_snackbar(f"Error descargando imagen: {e}", error=True)
 
     def _delete_image(self, image_id: int) -> None:
-        """Elimina una imagen."""
+        """Elimina una imagen via servicio."""
         async def do_delete():
             try:
-                image_data = await self._images_reader.get_by_id(image_id)
-                if image_data:
-                    word_image_entity = WordImageEntity.from_primitives(image_data)
-                    await self._images_writer.hard_delete(word_image_entity)
-                await self._async_load_words()
-                self._view.show_snackbar("Imagen eliminada")
+                dto = DeleteWordImageDto.from_primitives({"image_id": image_id})
+                result = await self._delete_word_image_service(dto)
+
+                if result.success:
+                    await self._async_load_words()
+                    self._view.show_snackbar("Imagen eliminada")
+                else:
+                    self._view.show_snackbar(result.error_message or "Error", error=True)
+
             except Exception as e:
                 self._logger.write_error(
                     "ListWordsController",
