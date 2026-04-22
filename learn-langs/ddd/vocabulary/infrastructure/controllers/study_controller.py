@@ -16,9 +16,10 @@ from ddd.vocabulary.application.record_answer import (
     RecordAnswerDto,
     RecordAnswerService,
 )
-from ddd.vocabulary.domain.entities import StudySessionEntity
-from ddd.vocabulary.domain.enums import StudyModeEnum
-from ddd.vocabulary.infrastructure.repositories import SessionsWriterSqliteRepository
+from ddd.vocabulary.application.finish_study_session import (
+    FinishStudySessionDto,
+    FinishStudySessionService,
+)
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
 from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
 
@@ -32,6 +33,7 @@ class StudyController:
     - Manejar estado (sesion, palabras, scores)
     - Crear ViewDTOs y pasarlos a la Vista
     - NO hereda de ft.Container
+    - NO usa repositorios directamente
     """
 
     def __init__(
@@ -56,7 +58,7 @@ class StudyController:
         # Servicios
         self._start_session_service = StartStudySessionService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
-        self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
+        self._finish_session_service = FinishStudySessionService.get_instance()
         self._logger = Logger.get_instance()
 
         # Vista
@@ -221,21 +223,21 @@ class StudyController:
         self._view.render(dto)
 
     async def _async_finish_session(self) -> None:
-        """Finaliza la sesion en la base de datos."""
-        if self._session_id:
-            try:
-                entity = StudySessionEntity.from_primitives({
-                    "id": self._session_id,
-                    "lang_code": self._lang_code,
-                    "study_mode": StudyModeEnum.TYPING.value,
-                })
-                await self._sessions_writer.finish(entity)
-            except Exception as e:
-                self._logger.write_error(
-                    "StudyController",
-                    f"Error finalizando sesion: {e}",
-                    {"session_id": self._session_id},
-                )
+        """Finaliza la sesion via servicio."""
+        try:
+            dto = FinishStudySessionDto.from_primitives({
+                "session_id": self._session_id,
+                "lang_code": self._lang_code,
+                "study_mode": "TYPING",
+            })
+            await self._finish_session_service(dto)
+
+        except Exception as e:
+            self._logger.write_error(
+                "StudyController",
+                f"Error finalizando sesion: {e}",
+                {"session_id": self._session_id},
+            )
 
     def _handle_back(self) -> None:
         """Finaliza y vuelve al inicio."""

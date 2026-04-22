@@ -6,8 +6,8 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
+from ddd.vocabulary.application.get_tags import GetTagsService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
-from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
 from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
@@ -21,6 +21,7 @@ class CreateWordController:
     - Crear ViewDTOs y pasarlos a la Vista
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
+    - NO usa repositorios directamente
     """
 
     def __init__(
@@ -32,9 +33,9 @@ class CreateWordController:
         self._on_back = on_back
 
         # Servicios
-        self._create_word_service = CreateWordService.get_instance()
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
+        self._create_word_service = CreateWordService.get_instance()
+        self._get_tags_service = GetTagsService.get_instance()
 
         # Cache de tags
         self._available_tags: list[dict[str, Any]] = []
@@ -48,7 +49,7 @@ class CreateWordController:
 
     @property
     def view(self) -> ft.Container:
-        """Vista para montar en el árbol de Flet."""
+        """Vista para montar en el arbol de Flet."""
         return self._view
 
     def _handle_mount(self) -> None:
@@ -56,13 +57,27 @@ class CreateWordController:
         self._view.page.run_task(self._async_load_initial_data)
 
     async def _async_load_initial_data(self) -> None:
-        """Carga tags y renderiza formulario vacío."""
-        # Cargar tags
-        self._available_tags = await self._tags_reader.get_all()
+        """Carga tags y renderiza formulario vacio."""
+        try:
+            # Cargar tags via servicio
+            tags_result = await self._get_tags_service()
 
-        # Renderizar formulario vacío con tags
-        dto = CreateWordViewDto.empty(available_tags=self._available_tags)
-        self._view.render(dto)
+            if tags_result.success:
+                self._available_tags = tags_result.to_list_of_dicts()
+            else:
+                self._available_tags = []
+
+            # Renderizar formulario vacio con tags
+            dto = CreateWordViewDto.empty(available_tags=self._available_tags)
+            self._view.render(dto)
+
+        except Exception as e:
+            self._logger.write_error(
+                "CreateWordController",
+                f"Error cargando datos iniciales: {e}",
+            )
+            dto = CreateWordViewDto.empty(available_tags=[])
+            self._view.render(dto)
 
     def _handle_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
@@ -70,11 +85,11 @@ class CreateWordController:
 
     async def _async_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""
-        # Validación básica
+        # Validacion basica
         text_es = (form_data.get("text_es") or "").strip()
         if not text_es:
             dto = CreateWordViewDto.error(
-                message="La palabra en español es obligatoria",
+                message="La palabra en espanol es obligatoria",
                 form_values=form_data,
                 available_tags=self._available_tags,
                 error_field="text_es",
@@ -100,15 +115,12 @@ class CreateWordController:
 
             result = await self._create_word_service(create_dto)
 
-            # Éxito: mostrar mensaje y limpiar form
+            # Exito: mostrar mensaje y limpiar form
             dto = CreateWordViewDto.success(
                 message=f"Palabra '{result.text}' creada correctamente",
                 available_tags=self._available_tags,
             )
             self._view.render(dto)
-
-            # Opcional: navegar después de éxito
-            # self._on_success()
 
         except Exception as e:
             self._logger.write_error(
