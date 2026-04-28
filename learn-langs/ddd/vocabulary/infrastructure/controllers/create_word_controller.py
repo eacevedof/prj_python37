@@ -67,17 +67,18 @@ class CreateWordController:
             else:
                 self._available_tags = []
 
-            # Renderizar formulario vacio con tags
-            create_word_view_dto = CreateWordViewDto.empty(available_tags=self._available_tags)
-            self._ft_container.render(create_word_view_dto)
+            self._ft_container.render(
+                CreateWordViewDto.empty(available_tags=self._available_tags)
+            )
 
         except Exception as e:
             self._logger.write_error(
                 "CreateWordController",
                 f"Error cargando datos iniciales: {e}",
             )
-            create_word_view_dto = CreateWordViewDto.empty(available_tags=[])
-            self._ft_container.render(create_word_view_dto)
+            self._ft_container.render(
+                CreateWordViewDto.empty(available_tags=[])
+            )
 
     def _on_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
