@@ -16,8 +16,8 @@ class InputFieldComp(ft.Container):
     ):
         super().__init__()
         self.placeholder = placeholder
-        self.on_submit = on_submit
-        self.on_skip = on_skip
+        self._route_on_submit = on_submit
+        self._route_on_skip = on_skip
         self.disabled = disabled
         self._text_field: ft.TextField | None = None
         self._submit_btn: ft.ElevatedButton | None = None
@@ -31,7 +31,7 @@ class InputFieldComp(ft.Container):
             text_size=18,
             border_radius=8,
             focused_border_color=ft.Colors.BLUE_700,
-            on_submit=self._handle_submit,
+            on_submit=self._on_submit_btn_click,
             disabled=self.disabled,
             autofocus=True,
         )
@@ -41,7 +41,7 @@ class InputFieldComp(ft.Container):
                 [ft.Icon(ft.Icons.CHECK), ft.Text("Verificar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=self._handle_submit,
+            on_click=self._on_submit_btn_click,
             disabled=self.disabled,
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.BLUE_700,
@@ -74,19 +74,19 @@ class InputFieldComp(ft.Container):
             spacing=8,
         )
 
-    def _handle_submit(self, e) -> None:
+    def _on_submit_btn_click(self, e) -> None:
         """Maneja el envio de respuesta."""
-        if self._text_field and self.on_submit:
+        if self._text_field and self._route_on_submit:
             value = self._text_field.value or ""
             if value.strip():
-                self.on_submit(value.strip())
-            elif self.on_skip:
-                self.on_skip()
+                self._route_on_submit(value.strip())
+            elif self._route_on_skip:
+                self._route_on_skip()
 
     def _handle_skip(self, e) -> None:
         """Maneja el salto de pregunta."""
-        if self.on_skip:
-            self.on_skip()
+        if self._route_on_skip:
+            self._route_on_skip()
 
     def clear(self) -> None:
         """Limpia el campo de texto."""
