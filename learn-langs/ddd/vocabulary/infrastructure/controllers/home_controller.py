@@ -64,12 +64,16 @@ class HomeController:
             )
 
             if not load_home_result_dto.success:
-                home_view_dto = HomeViewDto.error(
-                    message=load_home_result_dto.error_message or "Error desconocido",
-                    selected_lang_code=str(self._selected_lang),
+                self._ft_container.render(
+                    HomeViewDto.error(
+                        message=load_home_result_dto.error_message or "Error desconocido",
+                        selected_lang_code=str(self._selected_lang),
+                    )
                 )
-            else:
-                home_view_dto = HomeViewDto.ok(
+                return
+
+            self._ft_container.render(
+                HomeViewDto.ok(
                     tags=[
                         {"id": t.id, "name": t.name, "color": t.color}
                         for t in load_home_result_dto.tags
@@ -82,8 +86,8 @@ class HomeController:
                     selected_lang_code=str(self._selected_lang),
                     selected_tags=self._selected_tags,
                 )
+            )
 
-            self._ft_container.render(home_view_dto)
 
         except Exception as e:
             self._logger.write_error(
@@ -91,11 +95,12 @@ class HomeController:
                 f"Error cargando datos: {e}",
                 {"lang_code": str(self._selected_lang)},
             )
-            home_view_dto = HomeViewDto.error(
-                message=str(e),
-                selected_lang_code=str(self._selected_lang),
+            self._ft_container.render(
+                HomeViewDto.error(
+                    message=str(e),
+                    selected_lang_code=str(self._selected_lang),
+                )
             )
-            self._ft_container.render(home_view_dto)
 
     def refresh(self) -> None:
         """Recarga datos. Usar para refresh externo si se necesita."""
