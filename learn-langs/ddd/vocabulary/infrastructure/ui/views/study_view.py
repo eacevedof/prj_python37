@@ -32,19 +32,19 @@ class StudyView(ft.Container):
     ):
         super().__init__()
 
-        self._on_answer = on_answer
-        self._on_skip = on_skip
-        self._on_timeout = on_timeout
-        self._on_back = on_back
-        self._on_mount = on_mount
+        self._route_on_answer = on_answer
+        self._route_on_skip = on_skip
+        self._route_on_timeout = on_timeout
+        self._route_on_back = on_back
+        self._route_on_mount = on_mount
 
         # UI components
-        self._content_area: ft.Column | None = None
-        self._flashcard: FlashcardComp | None = None
-        self._input_field: InputFieldComp | None = None
-        self._timer: TimerComp | None = None
-        self._progress_text: ft.Text | None = None
-        self._score_text: ft.Text | None = None
+        self._ft_content_area: ft.Column | None = None
+        self._ft_flashcard: FlashcardComp | None = None
+        self._ft_input_field: InputFieldComp | None = None
+        self._ft_timer: TimerComp | None = None
+        self._ft_progress_text: ft.Text | None = None
+        self._ft_score_text: ft.Text | None = None
 
         self._build_ui()
 
@@ -60,14 +60,14 @@ class StudyView(ft.Container):
 
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
-        if self._on_mount:
-            self._on_mount()
+        if self._route_on_mount:
+            self._route_on_mount()
 
     def _build_ui(self) -> None:
-        self._progress_text = ft.Text("Cargando...", size=14)
-        self._score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
+        self._ft_progress_text = ft.Text("Cargando...", size=14)
+        self._ft_score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
 
-        self._content_area = ft.Column(
+        self._ft_content_area = ft.Column(
             controls=[
                 ft.Container(
                     content=ft.ProgressRing(),
@@ -82,7 +82,7 @@ class StudyView(ft.Container):
 
         back_btn = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
-            on_click=lambda _: self._on_back(),
+            on_click=lambda _: self._route_on_back(),
             tooltip="Volver",
         )
 
@@ -91,14 +91,14 @@ class StudyView(ft.Container):
                 ft.Row(
                     controls=[
                         back_btn,
-                        self._progress_text,
+                        self._ft_progress_text,
                         ft.Container(expand=True),
-                        self._score_text,
+                        self._ft_score_text,
                     ],
                     alignment=ft.MainAxisAlignment.START,
                 ),
                 ft.Divider(height=1),
-                self._content_area,
+                self._ft_content_area,
             ],
             expand=True,
         )
@@ -108,11 +108,11 @@ class StudyView(ft.Container):
     def render(self, dto: "StudyViewDto") -> None:
         """Renderiza la vista basado en el DTO."""
         # Actualizar header
-        if self._progress_text:
-            self._progress_text.value = dto.progress_text
+        if self._ft_progress_text:
+            self._ft_progress_text.value = dto.progress_text
 
-        if self._score_text:
-            self._score_text.value = dto.score_text
+        if self._ft_score_text:
+            self._ft_score_text.value = dto.score_text
 
         # Renderizar segun estado
         if dto.is_loading:
@@ -132,11 +132,11 @@ class StudyView(ft.Container):
 
     def _render_loading(self) -> None:
         """Renderiza estado de carga."""
-        if not self._content_area:
+        if not self._ft_content_area:
             return
 
-        self._content_area.controls.clear()
-        self._content_area.controls.append(
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.append(
             ft.Container(
                 content=ft.ProgressRing(),
                 alignment=ft.Alignment.CENTER,
@@ -146,13 +146,13 @@ class StudyView(ft.Container):
 
     def _render_studying(self, dto: "StudyViewDto") -> None:
         """Renderiza palabra actual para estudiar."""
-        if not self._content_area or not dto.current_word:
+        if not self._ft_content_area or not dto.current_word:
             return
 
         word = dto.current_word
 
         # Crear flashcard
-        self._flashcard = FlashcardComp(
+        self._ft_flashcard = FlashcardComp(
             text_es=word.get("text_es", ""),
             text_lang=word.get("text_lang", ""),
             word_type=word.get("word_type", ""),
@@ -161,61 +161,61 @@ class StudyView(ft.Container):
         )
 
         # Crear input
-        self._input_field = InputFieldComp(
+        self._ft_input_field = InputFieldComp(
             placeholder="Escribe la traduccion...",
-            on_submit=self._on_answer,
-            on_skip=self._on_skip,
+            on_submit=self._route_on_answer,
+            on_skip=self._route_on_skip,
         )
 
         # Crear timer
-        self._timer = TimerComp(
+        self._ft_timer = TimerComp(
             seconds=30,
-            on_timeout=self._on_timeout,
+            on_timeout=self._route_on_timeout,
             auto_start=True,
         )
 
-        self._content_area.controls.clear()
-        self._content_area.controls.extend([
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend([
             ft.Container(height=20),
             ft.Container(
-                content=self._timer,
+                content=self._ft_timer,
                 alignment=ft.Alignment.CENTER,
             ),
             ft.Container(height=20),
             ft.Container(
-                content=self._flashcard,
+                content=self._ft_flashcard,
                 alignment=ft.Alignment.CENTER,
             ),
             ft.Container(height=30),
-            self._input_field,
+            self._ft_input_field,
         ])
 
     def _render_with_result(self, dto: "StudyViewDto") -> None:
         """Renderiza resultado de respuesta."""
-        if not dto.last_result or not self._input_field or not self._flashcard:
+        if not dto.last_result or not self._ft_input_field or not self._ft_flashcard:
             return
 
         # Detener timer
-        if self._timer:
-            self._timer.stop()
+        if self._ft_timer:
+            self._ft_timer.stop()
 
         # Mostrar resultado en input
         is_correct = dto.last_result.get("is_correct", False)
         correct_answer = dto.last_result.get("correct_answer", "")
 
-        self._input_field.set_disabled(True)
-        self._input_field.show_result(is_correct, correct_answer)
+        self._ft_input_field.set_disabled(True)
+        self._ft_input_field.show_result(is_correct, correct_answer)
 
         # Revelar traduccion en flashcard
-        self._flashcard.reveal_translation()
+        self._ft_flashcard.reveal_translation()
 
     def _render_no_words(self) -> None:
         """Renderiza mensaje cuando no hay palabras."""
-        if not self._content_area:
+        if not self._ft_content_area:
             return
 
-        self._content_area.controls.clear()
-        self._content_area.controls.extend([
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend([
             ft.Container(height=40),
             ft.Icon(
                 ft.Icons.INFO_OUTLINE,
@@ -236,17 +236,17 @@ class StudyView(ft.Container):
             ft.Container(height=30),
             ft.ElevatedButton(
                 content=ft.Text("Volver"),
-                on_click=lambda _: self._on_back(),
+                on_click=lambda _: self._route_on_back(),
             ),
         ])
 
     def _render_session_complete(self, dto: "StudyViewDto") -> None:
         """Renderiza sesion completada."""
-        if not self._content_area:
+        if not self._ft_content_area:
             return
 
-        self._content_area.controls.clear()
-        self._content_area.controls.extend([
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend([
             ft.Container(height=40),
             ft.Icon(
                 ft.Icons.CELEBRATION,
@@ -276,7 +276,7 @@ class StudyView(ft.Container):
                     [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                on_click=lambda _: self._on_back(),
+                on_click=lambda _: self._route_on_back(),
                 style=ft.ButtonStyle(
                     bgcolor=ft.Colors.BLUE_700,
                     color=ft.Colors.WHITE,
@@ -286,11 +286,11 @@ class StudyView(ft.Container):
 
     def _render_error(self, message: str) -> None:
         """Renderiza mensaje de error."""
-        if not self._content_area:
+        if not self._ft_content_area:
             return
 
-        self._content_area.controls.clear()
-        self._content_area.controls.extend([
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend([
             ft.Container(height=40),
             ft.Icon(
                 ft.Icons.ERROR_OUTLINE,
@@ -307,6 +307,6 @@ class StudyView(ft.Container):
             ft.Container(height=30),
             ft.ElevatedButton(
                 content=ft.Text("Volver"),
-                on_click=lambda _: self._on_back(),
+                on_click=lambda _: self._route_on_back(),
             ),
         ])

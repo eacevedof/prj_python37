@@ -26,24 +26,24 @@ class UpdateWordView(ft.Container):
     ):
         super().__init__()
 
-        self._on_submit = on_submit
-        self._on_back = on_back
-        self._on_mount = on_mount
+        self._route_on_submit = on_submit
+        self._route_on_back = on_back
+        self._route_on_mount = on_mount
 
         # Estado local de tags seleccionados
         self._selected_tags: list[str] = []
         self._available_tags: list[dict[str, Any]] = []
 
         # Form fields
-        self._text_es_field: ft.TextField | None = None
-        self._text_nl_field: ft.TextField | None = None
-        self._word_type_dropdown: ft.Dropdown | None = None
-        self._notes_field: ft.TextField | None = None
-        self._tags_row: ft.Row | None = None
-        self._loading_indicator: ft.ProgressRing | None = None
-        self._form_container: ft.Container | None = None
-        self._error_text: ft.Text | None = None
-        self._success_text: ft.Text | None = None
+        self._ft_text_es_field: ft.TextField | None = None
+        self._ft_text_nl_field: ft.TextField | None = None
+        self._ft_word_type_dropdown: ft.Dropdown | None = None
+        self._ft_notes_field: ft.TextField | None = None
+        self._ft_tags_row: ft.Row | None = None
+        self._ft_loading_indicator: ft.ProgressRing | None = None
+        self._ft_form_container: ft.Container | None = None
+        self._ft_error_text: ft.Text | None = None
+        self._ft_success_text: ft.Text | None = None
 
         self._build_ui()
 
@@ -57,27 +57,27 @@ class UpdateWordView(ft.Container):
 
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
-        if self._on_mount:
-            self._on_mount()
+        if self._route_on_mount:
+            self._route_on_mount()
 
     def _build_ui(self) -> None:
         # Loading indicator
-        self._loading_indicator = ft.ProgressRing(visible=True)
+        self._ft_loading_indicator = ft.ProgressRing(visible=True)
 
         # Form fields
-        self._text_es_field = ft.TextField(
+        self._ft_text_es_field = ft.TextField(
             label="Palabra en espanol *",
             hint_text="Escribe la palabra en espanol",
             width=400,
         )
 
-        self._text_nl_field = ft.TextField(
+        self._ft_text_nl_field = ft.TextField(
             label="Traduccion (Nederlands)",
             hint_text="Escribe la traduccion en holandes",
             width=400,
         )
 
-        self._word_type_dropdown = ft.Dropdown(
+        self._ft_word_type_dropdown = ft.Dropdown(
             label="Tipo",
             width=200,
             options=[
@@ -88,7 +88,7 @@ class UpdateWordView(ft.Container):
             value="WORD",
         )
 
-        self._notes_field = ft.TextField(
+        self._ft_notes_field = ft.TextField(
             label="Notas (opcional)",
             hint_text="Contexto, ejemplos de uso...",
             width=400,
@@ -97,18 +97,18 @@ class UpdateWordView(ft.Container):
             max_lines=4,
         )
 
-        self._tags_row = ft.Row(
+        self._ft_tags_row = ft.Row(
             controls=[],
             wrap=True,
             spacing=8,
         )
 
-        self._error_text = ft.Text(
+        self._ft_error_text = ft.Text(
             color=ft.Colors.RED_700,
             visible=False,
         )
 
-        self._success_text = ft.Text(
+        self._ft_success_text = ft.Text(
             color=ft.Colors.GREEN_700,
             visible=False,
         )
@@ -132,33 +132,33 @@ class UpdateWordView(ft.Container):
                 [ft.Icon(ft.Icons.CLOSE), ft.Text("Cancelar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._on_back(),
+            on_click=lambda _: self._route_on_back(),
             width=150,
         )
 
         back_btn = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
-            on_click=lambda _: self._on_back(),
+            on_click=lambda _: self._route_on_back(),
             tooltip="Volver",
         )
 
         # Form card
-        self._form_container = ft.Container(
+        self._ft_form_container = ft.Container(
             content=ft.Column(
                 controls=[
-                    self._text_es_field,
+                    self._ft_text_es_field,
                     ft.Container(height=10),
-                    self._text_nl_field,
+                    self._ft_text_nl_field,
                     ft.Container(height=10),
-                    self._word_type_dropdown,
+                    self._ft_word_type_dropdown,
                     ft.Container(height=10),
-                    self._notes_field,
+                    self._ft_notes_field,
                     ft.Container(height=16),
                     ft.Text("Tags:", size=14, weight=ft.FontWeight.W_500),
-                    self._tags_row,
+                    self._ft_tags_row,
                     ft.Container(height=16),
-                    self._error_text,
-                    self._success_text,
+                    self._ft_error_text,
+                    self._ft_success_text,
                     ft.Container(height=8),
                     ft.Row(
                         controls=[save_btn, cancel_btn],
@@ -193,14 +193,14 @@ class UpdateWordView(ft.Container):
                 ft.Row(
                     controls=[
                         ft.Column(
-                            controls=[self._loading_indicator],
+                            controls=[self._ft_loading_indicator],
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Row(
-                    controls=[self._form_container],
+                    controls=[self._ft_form_container],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ],
@@ -213,11 +213,11 @@ class UpdateWordView(ft.Container):
     def render(self, dto: "UpdateWordViewDto") -> None:
         """Renderiza la vista basado en el DTO."""
         # Loading state
-        if self._loading_indicator:
-            self._loading_indicator.visible = dto.is_loading
+        if self._ft_loading_indicator:
+            self._ft_loading_indicator.visible = dto.is_loading
 
-        if self._form_container:
-            self._form_container.visible = not dto.is_loading
+        if self._ft_form_container:
+            self._ft_form_container.visible = not dto.is_loading
 
         if dto.is_loading:
             self.update()
@@ -242,30 +242,30 @@ class UpdateWordView(ft.Container):
 
     def _render_form_values(self, form_values: dict[str, Any]) -> None:
         """Restaura valores del formulario."""
-        if self._text_es_field:
-            self._text_es_field.value = form_values.get("text_es", "")
-            self._text_es_field.border_color = None
+        if self._ft_text_es_field:
+            self._ft_text_es_field.value = form_values.get("text_es", "")
+            self._ft_text_es_field.border_color = None
 
-        if self._text_nl_field:
-            self._text_nl_field.value = form_values.get("text_nl", "")
-            self._text_nl_field.border_color = None
+        if self._ft_text_nl_field:
+            self._ft_text_nl_field.value = form_values.get("text_nl", "")
+            self._ft_text_nl_field.border_color = None
 
-        if self._word_type_dropdown:
-            self._word_type_dropdown.value = form_values.get("word_type", "WORD")
+        if self._ft_word_type_dropdown:
+            self._ft_word_type_dropdown.value = form_values.get("word_type", "WORD")
 
-        if self._notes_field:
-            self._notes_field.value = form_values.get("notes", "")
-            self._notes_field.border_color = None
+        if self._ft_notes_field:
+            self._ft_notes_field.value = form_values.get("notes", "")
+            self._ft_notes_field.border_color = None
 
     def _render_tags(self) -> None:
         """Renderiza los chips de tags."""
-        if not self._tags_row:
+        if not self._ft_tags_row:
             return
 
-        self._tags_row.controls.clear()
+        self._ft_tags_row.controls.clear()
 
         if not self._available_tags:
-            self._tags_row.controls.append(
+            self._ft_tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
                     italic=True,
@@ -283,30 +283,30 @@ class UpdateWordView(ft.Container):
                     on_select=lambda e, t=tag_name: self._toggle_tag(t),
                     bgcolor=tag.get("color") if is_selected else None,
                 )
-                self._tags_row.controls.append(chip)
+                self._ft_tags_row.controls.append(chip)
 
     def _render_messages(self, dto: "UpdateWordViewDto") -> None:
         """Renderiza mensajes de error/exito."""
-        if self._error_text:
+        if self._ft_error_text:
             if dto.error_message:
-                self._error_text.value = dto.error_message
-                self._error_text.visible = True
+                self._ft_error_text.value = dto.error_message
+                self._ft_error_text.visible = True
             else:
-                self._error_text.visible = False
+                self._ft_error_text.visible = False
 
-        if self._success_text:
+        if self._ft_success_text:
             if dto.success_message:
-                self._success_text.value = dto.success_message
-                self._success_text.visible = True
+                self._ft_success_text.value = dto.success_message
+                self._ft_success_text.visible = True
             else:
-                self._success_text.visible = False
+                self._ft_success_text.visible = False
 
     def _highlight_error_field(self, field_name: str) -> None:
         """Destaca el campo con error."""
         field_map = {
-            "text_es": self._text_es_field,
-            "text_nl": self._text_nl_field,
-            "notes": self._notes_field,
+            "text_es": self._ft_text_es_field,
+            "text_nl": self._ft_text_nl_field,
+            "notes": self._ft_notes_field,
         }
         target_field = field_map.get(field_name)
         if target_field:
@@ -325,15 +325,15 @@ class UpdateWordView(ft.Container):
     def _handle_submit(self) -> None:
         """Recopila datos del form y emite callback."""
         form_data = self._get_form_data()
-        self._on_submit(form_data)
+        self._route_on_submit(form_data)
 
     def _get_form_data(self) -> dict[str, Any]:
         """Obtiene los datos actuales del formulario."""
         return {
-            "text_es": self._text_es_field.value if self._text_es_field else "",
-            "text_nl": self._text_nl_field.value if self._text_nl_field else "",
-            "word_type": self._word_type_dropdown.value if self._word_type_dropdown else "WORD",
-            "notes": self._notes_field.value if self._notes_field else "",
+            "text_es": self._ft_text_es_field.value if self._ft_text_es_field else "",
+            "text_nl": self._ft_text_nl_field.value if self._ft_text_nl_field else "",
+            "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else "WORD",
+            "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "selected_tags": list(self._selected_tags),
         }
 

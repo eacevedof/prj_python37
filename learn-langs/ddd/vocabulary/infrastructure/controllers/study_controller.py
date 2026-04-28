@@ -45,7 +45,7 @@ class StudyController:
         # Parametros de la sesion
         self._lang_code = lang_code
         self._tags = tags
-        self._on_back = on_back
+        self._route_on_back = on_back
 
         # Estado interno
         self._session_id: int = 0
@@ -242,4 +242,4 @@ class StudyController:
     def _handle_back(self) -> None:
         """Finaliza y vuelve al inicio."""
         self._view.page.run_task(self._async_finish_session)
-        self._on_back()
+        self._route_on_back()
