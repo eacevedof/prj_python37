@@ -41,20 +41,20 @@ class CreateWordController:
         self._available_tags: list[dict[str, Any]] = []
 
         # Vista
-        self._view = CreateWordView.from_primitives({
-            "on_submit": self._handle_submit,
+        self._ft_container = CreateWordView.from_primitives({
+            "on_submit": self._on_submit,
             "on_back": self._route_on_back,
-            "on_mount": self._handle_mount,
+            "on_mount": self._on_mount,
         })
 
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
-        return self._view
+        return self._ft_container
 
-    def _handle_mount(self) -> None:
+    def _on_mount(self) -> None:
         """Callback cuando la vista se monta. Carga datos iniciales."""
-        self._view.page.run_task(self._async_load_initial_data)
+        self._ft_container.page.run_task(self._async_load_initial_data)
 
     async def _async_load_initial_data(self) -> None:
         """Carga tags y renderiza formulario vacio."""
@@ -68,33 +68,33 @@ class CreateWordController:
                 self._available_tags = []
 
             # Renderizar formulario vacio con tags
-            dto = CreateWordViewDto.empty(available_tags=self._available_tags)
-            self._view.render(dto)
+            create_word_view_dto = CreateWordViewDto.empty(available_tags=self._available_tags)
+            self._ft_container.render(create_word_view_dto)
 
         except Exception as e:
             self._logger.write_error(
                 "CreateWordController",
                 f"Error cargando datos iniciales: {e}",
             )
-            dto = CreateWordViewDto.empty(available_tags=[])
-            self._view.render(dto)
+            create_word_view_dto = CreateWordViewDto.empty(available_tags=[])
+            self._ft_container.render(create_word_view_dto)
 
-    def _handle_submit(self, form_data: dict[str, Any]) -> None:
+    def _on_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
-        self._view.page.run_task(lambda: self._async_submit(form_data))
+        self._ft_container.page.run_task(lambda: self._async_on_submit(form_data))
 
-    async def _async_submit(self, form_data: dict[str, Any]) -> None:
+    async def _async_on_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""
         # Validacion basica
         text_es = (form_data.get("text_es") or "").strip()
         if not text_es:
-            dto = CreateWordViewDto.error(
+            create_word_view_dto = CreateWordViewDto.error(
                 message="La palabra en espanol es obligatoria",
                 form_values=form_data,
                 available_tags=self._available_tags,
                 error_field="text_es",
             )
-            self._view.render(dto)
+            self._ft_container.render(create_word_view_dto)
             return
 
         # Preparar traducciones
@@ -104,23 +104,22 @@ class CreateWordController:
             translations[LanguageCodeEnum.NL_NL.value] = text_lang
 
         try:
-            # Llamar servicio
-            create_dto = CreateWordDto.from_primitives({
-                "text": text_es,
-                "word_type": form_data.get("word_type", "WORD"),
-                "tags": form_data.get("selected_tags", []),
-                "translations": translations,
-                "notes": (form_data.get("notes") or "").strip(),
-            })
-
-            result = await self._create_word_service(create_dto)
-
-            # Exito: mostrar mensaje y limpiar form
-            dto = CreateWordViewDto.success(
-                message=f"Palabra '{result.text}' creada correctamente",
-                available_tags=self._available_tags,
+            result = await self._create_word_service(
+                CreateWordDto.from_primitives({
+                    "text": text_es,
+                    "word_type": form_data.get("word_type", "WORD"),
+                    "tags": form_data.get("selected_tags", []),
+                    "translations": translations,
+                    "notes": (form_data.get("notes") or "").strip(),
+                })
             )
-            self._view.render(dto)
+
+            self._ft_container.render(
+                CreateWordViewDto.success(
+                    message=f"Palabra '{result.text}' creada correctamente",
+                    available_tags=self._available_tags,
+                )
+            )
 
         except Exception as e:
             self._logger.write_error(
@@ -128,9 +127,10 @@ class CreateWordController:
                 f"Error creando palabra: {e}",
                 {"form_data": form_data},
             )
-            dto = CreateWordViewDto.error(
-                message=str(e),
-                form_values=form_data,
-                available_tags=self._available_tags,
+            self._ft_container.render(
+                CreateWordViewDto.error(
+                    message=str(e),
+                    form_values=form_data,
+                    available_tags=self._available_tags,
+                )
             )
-            self._view.render(dto)

@@ -62,7 +62,7 @@ class StudyController:
         self._logger = Logger.get_instance()
 
         # Vista
-        self._view = StudyView.from_primitives({
+        self._ft_container = StudyView.from_primitives({
             "on_answer": self._handle_answer,
             "on_skip": self._handle_skip,
             "on_timeout": self._handle_timeout,
@@ -73,16 +73,16 @@ class StudyController:
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
-        return self._view
+        return self._ft_container
 
     def _handle_mount(self) -> None:
         """Callback cuando la vista se monta."""
-        self._view.page.run_task(self._async_start_session)
+        self._ft_container.page.run_task(self._async_start_session)
 
     async def _async_start_session(self) -> None:
         """Inicia la sesion de estudio."""
         # Mostrar loading
-        self._view.render(StudyViewDto.initial())
+        self._ft_container.render(StudyViewDto.initial())
 
         try:
             start_dto = StartStudySessionDto.from_primitives({
@@ -98,7 +98,7 @@ class StudyController:
             self._words = list(result.words)
 
             if not self._words:
-                self._view.render(StudyViewDto.no_words())
+                self._ft_container.render(StudyViewDto.no_words())
                 return
 
             self._show_current_word()
@@ -109,7 +109,7 @@ class StudyController:
                 f"Error iniciando sesion: {e}",
                 {"lang_code": self._lang_code, "tags": self._tags},
             )
-            self._view.render(StudyViewDto.error(str(e)))
+            self._ft_container.render(StudyViewDto.error(str(e)))
 
     def _show_current_word(self) -> None:
         """Muestra la palabra actual."""
@@ -129,7 +129,7 @@ class StudyController:
             total_score=self._total_score,
             answers_count=self._answers_count,
         )
-        self._view.render(dto)
+        self._ft_container.render(dto)
 
     def _word_to_dict(self, word: StudyWordDto) -> dict[str, Any]:
         """Convierte StudyWordDto a dict para la vista."""
@@ -143,15 +143,15 @@ class StudyController:
 
     def _handle_answer(self, user_input: str) -> None:
         """Maneja la respuesta del usuario."""
-        self._view.page.run_task(lambda: self._async_process_answer(user_input))
+        self._ft_container.page.run_task(lambda: self._async_process_answer(user_input))
 
     def _handle_skip(self) -> None:
         """Maneja cuando el usuario salta."""
-        self._view.page.run_task(lambda: self._async_process_answer(""))
+        self._ft_container.page.run_task(lambda: self._async_process_answer(""))
 
     def _handle_timeout(self) -> None:
         """Maneja cuando se acaba el tiempo."""
-        self._view.page.run_task(lambda: self._async_process_answer(""))
+        self._ft_container.page.run_task(lambda: self._async_process_answer(""))
 
     async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta."""
@@ -188,7 +188,7 @@ class StudyController:
                     "correct_answer": word.text_lang,
                 },
             )
-            self._view.render(dto)
+            self._ft_container.render(dto)
 
             # Esperar y continuar
             wait_time = 2 if result.is_correct else 5
@@ -214,13 +214,13 @@ class StudyController:
 
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesion completada."""
-        self._view.page.run_task(self._async_finish_session)
+        self._ft_container.page.run_task(self._async_finish_session)
 
         dto = StudyViewDto.session_complete(
             total_score=self._total_score,
             answers_count=self._answers_count,
         )
-        self._view.render(dto)
+        self._ft_container.render(dto)
 
     async def _async_finish_session(self) -> None:
         """Finaliza la sesion via servicio."""
@@ -241,5 +241,5 @@ class StudyController:
 
     def _handle_back(self) -> None:
         """Finaliza y vuelve al inicio."""
-        self._view.page.run_task(self._async_finish_session)
+        self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()
