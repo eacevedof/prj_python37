@@ -20,13 +20,13 @@ class CreateWordView(ft.Container):
 
     def __init__(
         self,
-        on_submit: Callable[[dict[str, Any]], None],
+        on_save_btn_click: Callable[[dict[str, Any]], None],
         on_back: Callable[[], None],
         on_mount: Callable[[], None] | None = None,
     ):
         super().__init__()
 
-        self._route_on_submit = on_submit
+        self._route_on_save_btn_click = on_save_btn_click
         self._route_on_back = on_back
         self._route_on_mount = on_mount
 
@@ -49,7 +49,7 @@ class CreateWordView(ft.Container):
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            on_submit=primitives.get("on_submit", lambda x: None),
+            on_save_btn_click=primitives.get("on_submit", lambda x: None),
             on_back=primitives.get("on_back", lambda: None),
             on_mount=primitives.get("on_mount"),
         )
@@ -121,7 +121,7 @@ class CreateWordView(ft.Container):
                 [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._handle_submit(),
+            on_click=lambda _: self._on_save_btn_click(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -303,10 +303,10 @@ class CreateWordView(ft.Container):
         self._render_tags()
         self.update()
 
-    def _handle_submit(self) -> None:
+    def _on_save_btn_click(self) -> None:
         """Recopila datos del form y emite callback."""
         form_data = self._get_form_data()
-        self._route_on_submit(form_data)
+        self._route_on_save_btn_click(form_data)
 
     def _get_form_data(self) -> dict[str, Any]:
         """Obtiene los datos actuales del formulario."""

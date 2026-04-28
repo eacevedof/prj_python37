@@ -71,7 +71,7 @@ class HomeView(ft.Container):
             width=250,
             options=[],
         )
-        self._ft_lang_dropdown.on_change = self._handle_lang_change
+        self._ft_lang_dropdown.on_change = self._on_lang_dropdown_change
 
         # Tags row
         self._ft_tags_row = ft.Row(
@@ -255,6 +255,6 @@ class HomeView(ft.Container):
             )
         self.update()
 
-    def _handle_lang_change(self, e: ft.ControlEvent) -> None:
+    def _on_lang_dropdown_change(self, e: ft.ControlEvent) -> None:
         """Maneja el cambio de idioma y notifica al controller."""
         self._route_on_lang_change(e.control.value)
