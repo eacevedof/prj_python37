@@ -35,8 +35,8 @@ class UpdateWordController:
         on_back: Callable[[], None],
     ):
         self._word_id = word_id
-        self._on_success = on_success
-        self._on_back = on_back
+        self._route_on_success = on_success
+        self._route_on_back = on_back
 
         # Estado interno
         self._available_tags: list[dict[str, Any]] = []
@@ -49,7 +49,7 @@ class UpdateWordController:
         # Vista
         self._view = UpdateWordView.from_primitives({
             "on_submit": self._handle_submit,
-            "on_back": on_back,
+            "on_back": self._route_on_back,
             "on_mount": self._handle_mount,
         })
 
@@ -75,7 +75,7 @@ class UpdateWordController:
 
             if not result.success:
                 self._view.show_snackbar(result.error_message or "Error", error=True)
-                self._on_back()
+                self._route_on_back()
                 return
 
             # Guardar tags disponibles
@@ -142,7 +142,7 @@ class UpdateWordController:
             self._view.show_snackbar(f"Palabra '{result.text}' actualizada")
 
             # Navegar de vuelta
-            self._on_success()
+            self._route_on_success()
 
         except VocabularyException as e:
             self._logger.write_error(

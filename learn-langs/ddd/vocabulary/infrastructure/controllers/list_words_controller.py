@@ -45,9 +45,9 @@ class ListWordsController:
         on_create: Callable[[], None],
         on_edit: Callable[[int], None],
     ):
-        self._on_back = on_back
-        self._on_create = on_create
-        self._on_edit = on_edit
+        self._route_on_back = on_back
+        self._route_on_create = on_create
+        self._route_on_edit = on_edit
 
         # Estado interno
         self._current_search: str = ""
@@ -64,9 +64,9 @@ class ListWordsController:
 
         # Vista
         self._ft_container = ListWordsView.from_primitives({
-            "on_back": on_back,
-            "on_create": on_create,
-            "on_edit": on_edit,
+            "on_back": self._route_on_back,
+            "on_create": self._route_on_create,
+            "on_edit": self._route_on_edit,
             "on_delete": self._handle_delete,
             "on_search": self._handle_search,
             "on_show_images": self._handle_show_images,

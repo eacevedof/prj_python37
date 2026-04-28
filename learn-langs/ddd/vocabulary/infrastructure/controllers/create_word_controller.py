@@ -29,8 +29,8 @@ class CreateWordController:
         on_success: Callable[[], None],
         on_back: Callable[[], None],
     ):
-        self._on_success = on_success
-        self._on_back = on_back
+        self._route_on_success = on_success
+        self._route_on_back = on_back
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -43,7 +43,7 @@ class CreateWordController:
         # Vista
         self._view = CreateWordView.from_primitives({
             "on_submit": self._handle_submit,
-            "on_back": on_back,
+            "on_back": self._route_on_back,
             "on_mount": self._handle_mount,
         })
 

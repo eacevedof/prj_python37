@@ -33,20 +33,20 @@ class ListWordsView(ft.Container):
     ):
         super().__init__()
 
-        self._on_back = on_back
-        self._on_create = on_create
-        self._on_edit = on_edit
-        self._on_delete = on_delete
-        self._on_search = on_search
-        self._on_show_images = on_show_images
-        self._on_mount = on_mount
+        self._route_on_back = on_back
+        self._route_on_create = on_create
+        self._route_on_edit = on_edit
+        self._route_on_delete = on_delete
+        self._route_on_search = on_search
+        self._route_on_show_images = on_show_images
+        self._route_on_mount = on_mount
 
         # UI components
-        self._words_list: ft.ListView | None = None
-        self._search_field: ft.TextField | None = None
-        self._loading: ft.ProgressRing | None = None
-        self._count_text: ft.Text | None = None
-        self._error_text: ft.Text | None = None
+        self._ft_words_list: ft.ListView | None = None
+        self._ft_search_field: ft.TextField | None = None
+        self._ft_loading: ft.ProgressRing | None = None
+        self._ft_count_text: ft.Text | None = None
+        self._ft_error_text: ft.Text | None = None
 
         self._build_ui()
 
@@ -64,29 +64,29 @@ class ListWordsView(ft.Container):
 
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
-        if self._on_mount:
-            self._on_mount()
+        if self._route_on_mount:
+            self._route_on_mount()
 
     def _build_ui(self) -> None:
         # Search field
-        self._search_field = ft.TextField(
+        self._ft_search_field = ft.TextField(
             hint_text="Buscar palabras...",
             prefix_icon=ft.Icons.SEARCH,
             width=300,
-            on_change=lambda e: self._on_search(e.control.value or ""),
+            on_change=lambda e: self._route_on_search(e.control.value or ""),
         )
 
         # Loading indicator
-        self._loading = ft.ProgressRing(width=20, height=20, visible=False)
+        self._ft_loading = ft.ProgressRing(width=20, height=20, visible=False)
 
         # Count text
-        self._count_text = ft.Text("", size=12, color=ft.Colors.GREY_600)
+        self._ft_count_text = ft.Text("", size=12, color=ft.Colors.GREY_600)
 
         # Error text
-        self._error_text = ft.Text("", color=ft.Colors.RED_700, visible=False)
+        self._ft_error_text = ft.Text("", color=ft.Colors.RED_700, visible=False)
 
         # Words list
-        self._words_list = ft.ListView(
+        self._ft_words_list = ft.ListView(
             expand=True,
             spacing=4,
             padding=10,
@@ -98,7 +98,7 @@ class ListWordsView(ft.Container):
                 [ft.Icon(ft.Icons.ADD), ft.Text("Nueva palabra")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._on_create(),
+            on_click=lambda _: self._route_on_create(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -107,7 +107,7 @@ class ListWordsView(ft.Container):
 
         back_btn = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
-            on_click=lambda _: self._on_back(),
+            on_click=lambda _: self._route_on_back(),
             tooltip="Volver",
         )
 
@@ -125,21 +125,21 @@ class ListWordsView(ft.Container):
                         ft.Container(expand=True),
                         add_btn,
                         ft.Container(width=16),
-                        self._search_field,
-                        self._loading,
+                        self._ft_search_field,
+                        self._ft_loading,
                     ],
                 ),
                 ft.Row(
                     controls=[
-                        self._error_text,
+                        self._ft_error_text,
                         ft.Container(expand=True),
-                        self._count_text,
+                        self._ft_count_text,
                     ],
                 ),
                 ft.Divider(height=1),
                 # List
                 ft.Container(
-                    content=self._words_list,
+                    content=self._ft_words_list,
                     expand=True,
                     border=ft.border.all(1, ft.Colors.GREY_300),
                     border_radius=8,
@@ -153,16 +153,16 @@ class ListWordsView(ft.Container):
     def render(self, dto: "ListWordsViewDto") -> None:
         """Renderiza la vista con los datos del DTO."""
         # Loading
-        if self._loading:
-            self._loading.visible = dto.is_loading
+        if self._ft_loading:
+            self._ft_loading.visible = dto.is_loading
 
         # Error
-        if self._error_text:
+        if self._ft_error_text:
             if dto.error_message:
-                self._error_text.value = dto.error_message
-                self._error_text.visible = True
+                self._ft_error_text.value = dto.error_message
+                self._ft_error_text.visible = True
             else:
-                self._error_text.visible = False
+                self._ft_error_text.visible = False
 
         # Count
         self._render_count(dto)
@@ -174,26 +174,26 @@ class ListWordsView(ft.Container):
 
     def _render_count(self, dto: "ListWordsViewDto") -> None:
         """Renderiza el contador de palabras."""
-        if not self._count_text:
+        if not self._ft_count_text:
             return
 
         if dto.is_loading:
-            self._count_text.value = "Cargando..."
+            self._ft_count_text.value = "Cargando..."
         elif dto.error_message:
-            self._count_text.value = ""
+            self._ft_count_text.value = ""
         else:
             showing = len(dto.words)
-            self._count_text.value = f"Mostrando {showing} de {dto.total_count} palabras"
+            self._ft_count_text.value = f"Mostrando {showing} de {dto.total_count} palabras"
 
     def _render_words_list(self, dto: "ListWordsViewDto") -> None:
         """Renderiza la lista de palabras."""
-        if not self._words_list:
+        if not self._ft_words_list:
             return
 
-        self._words_list.controls.clear()
+        self._ft_words_list.controls.clear()
 
         if dto.is_loading:
-            self._words_list.controls.append(
+            self._ft_words_list.controls.append(
                 ft.Container(
                     content=ft.ProgressRing(),
                     padding=20,
@@ -203,7 +203,7 @@ class ListWordsView(ft.Container):
             return
 
         if dto.is_empty and not dto.error_message:
-            self._words_list.controls.append(
+            self._ft_words_list.controls.append(
                 ft.Container(
                     content=ft.Text(
                         "No hay palabras. Anade la primera!",
@@ -218,7 +218,7 @@ class ListWordsView(ft.Container):
 
         for word in dto.words:
             tile = self._build_word_tile(word)
-            self._words_list.controls.append(tile)
+            self._ft_words_list.controls.append(tile)
 
     def _build_word_tile(self, word: "WordListItemViewDto") -> ft.ListTile:
         """Construye un tile para una palabra."""
@@ -248,21 +248,21 @@ class ListWordsView(ft.Container):
                     ft.IconButton(
                         icon=ft.Icons.EDIT_OUTLINED,
                         icon_color=ft.Colors.BLUE_600,
-                        on_click=lambda e, w=word: self._on_edit(w.id),
+                        on_click=lambda e, w=word: self._route_on_edit(w.id),
                         tooltip="Editar",
                     ),
                     # Imagenes
                     ft.IconButton(
                         icon=ft.Icons.IMAGE,
                         icon_color=ft.Colors.GREEN_600 if word.image_count > 0 else ft.Colors.GREY_400,
-                        on_click=lambda e, w=word: self._on_show_images(w.id),
+                        on_click=lambda e, w=word: self._route_on_show_images(w.id),
                         tooltip=f"Imagenes{image_badge}",
                     ),
                     # Eliminar
                     ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINE,
                         icon_color=ft.Colors.RED_400,
-                        on_click=lambda e, w=word: self._on_delete(w.id),
+                        on_click=lambda e, w=word: self._route_on_delete(w.id),
                         tooltip="Eliminar",
                     ),
                 ],
