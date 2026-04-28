@@ -20,27 +20,27 @@ class HomeView(ft.Container):
 
     def __init__(
         self,
-        on_lang_change: Callable[[str], None],
-        on_tag_toggle: Callable[[str], None],
-        on_start_study: Callable[[], None],
-        on_manage_words: Callable[[], None],
-        on_mount: Callable[[], None] | None = None,
+        route_on_lang_change: Callable[[str], None],
+        route_on_tag_toggle: Callable[[str], None],
+        route_on_start_study: Callable[[], None],
+        route_on_manage_words: Callable[[], None],
+        route_on_mount: Callable[[], None] | None = None,
     ):
         super().__init__()
 
         # Callbacks al controller
-        self._on_lang_change = on_lang_change
-        self._on_tag_toggle = on_tag_toggle
-        self._on_start_study = on_start_study
-        self._on_manage_words = on_manage_words
-        self._on_mount = on_mount
+        self._route_on_lang_change = route_on_lang_change
+        self._route_on_tag_toggle = route_on_tag_toggle
+        self._route_on_start_study = route_on_start_study
+        self._route_on_manage_words = route_on_manage_words
+        self._route_on_mount = route_on_mount
 
         # Componentes UI
-        self._lang_dropdown: ft.Dropdown | None = None
-        self._tags_row: ft.Row | None = None
-        self._stats_column: ft.Column | None = None
-        self._loading_indicator: ft.ProgressRing | None = None
-        self._content_column: ft.Column | None = None
+        self._ft_lang_dropdown: ft.Dropdown | None = None
+        self._ft_tags_row: ft.Row | None = None
+        self._ft_stats_column: ft.Column | None = None
+        self._ft_loading_indicator: ft.ProgressRing | None = None
+        self._ft_content_column: ft.Column | None = None
 
         self._build_initial_ui()
 
@@ -48,33 +48,33 @@ class HomeView(ft.Container):
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         """Crea la vista desde un diccionario de callbacks."""
         return cls(
-            on_lang_change=primitives.get("on_lang_change", lambda x: None),
-            on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
-            on_start_study=primitives.get("on_start_study", lambda: None),
-            on_manage_words=primitives.get("on_manage_words", lambda: None),
-            on_mount=primitives.get("on_mount"),
+            route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
+            route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
+            route_on_start_study=primitives.get("on_start_study", lambda: None),
+            route_on_manage_words=primitives.get("on_manage_words", lambda: None),
+            route_on_mount=primitives.get("on_mount"),
         )
 
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
-        if self._on_mount:
-            self._on_mount()
+        if self._route_on_mount:
+            self._route_on_mount()
 
     def _build_initial_ui(self) -> None:
         """Construye la estructura inicial de la UI."""
         # Loading indicator
-        self._loading_indicator = ft.ProgressRing(visible=True)
+        self._ft_loading_indicator = ft.ProgressRing(visible=True)
 
         # Dropdown de idiomas (se llena en render)
-        self._lang_dropdown = ft.Dropdown(
+        self._ft_lang_dropdown = ft.Dropdown(
             label="Idioma a practicar",
             width=250,
             options=[],
         )
-        self._lang_dropdown.on_change = self._handle_lang_change
+        self._ft_lang_dropdown.on_change = self._handle_lang_change
 
         # Tags row
-        self._tags_row = ft.Row(
+        self._ft_tags_row = ft.Row(
             controls=[],
             wrap=True,
             spacing=8,
@@ -82,7 +82,7 @@ class HomeView(ft.Container):
         )
 
         # Stats column
-        self._stats_column = ft.Column(
+        self._ft_stats_column = ft.Column(
             controls=[
                 ft.Text("Cargando estadisticas...", italic=True),
             ],
@@ -95,7 +95,7 @@ class HomeView(ft.Container):
                 [ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Comenzar estudio")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._on_start_study(),
+            on_click=lambda _: self._route_on_start_study(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.GREEN_600,
                 color=ft.Colors.WHITE,
@@ -108,11 +108,11 @@ class HomeView(ft.Container):
                 [ft.Icon(ft.Icons.EDIT), ft.Text("Gestionar palabras")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._on_manage_words(),
+            on_click=lambda _: self._route_on_manage_words(),
         )
 
         # Layout principal
-        self._content_column = ft.Column(
+        self._ft_content_column = ft.Column(
             controls=[
                 ft.Container(height=20),
                 ft.Text(
@@ -123,24 +123,24 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[self._loading_indicator],
+                    controls=[self._ft_loading_indicator],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Container(
-                    content=self._lang_dropdown,
+                    content=self._ft_lang_dropdown,
                     alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=20),
                 ft.Text("Filtrar por tags (opcional):", size=14),
                 ft.Container(
-                    content=self._tags_row,
+                    content=self._ft_tags_row,
                     padding=10,
                 ),
                 ft.Container(height=20),
                 ft.Container(
                     content=ft.Card(
                         content=ft.Container(
-                            content=self._stats_column,
+                            content=self._ft_stats_column,
                             padding=16,
                         ),
                     ),
@@ -158,14 +158,14 @@ class HomeView(ft.Container):
             scroll=ft.ScrollMode.AUTO,
         )
 
-        self.content = self._content_column
+        self.content = self._ft_content_column
         self.expand = True
         self.padding = 20
 
     def render(self, dto: "HomeViewDto") -> None:
         """Renderiza la vista con los datos del DTO."""
-        if self._loading_indicator:
-            self._loading_indicator.visible = dto.is_loading
+        if self._ft_loading_indicator:
+            self._ft_loading_indicator.visible = dto.is_loading
 
         if dto.error_message:
             self._show_error(dto.error_message)
@@ -178,24 +178,24 @@ class HomeView(ft.Container):
 
     def _render_language_dropdown(self, dto: "HomeViewDto") -> None:
         """Renderiza el dropdown de idiomas."""
-        if not self._lang_dropdown:
+        if not self._ft_lang_dropdown:
             return
 
-        self._lang_dropdown.options = [
+        self._ft_lang_dropdown.options = [
             ft.dropdown.Option(key=lang["code"], text=lang["display_name"])
             for lang in dto.language_options
         ]
-        self._lang_dropdown.value = dto.selected_lang_code
+        self._ft_lang_dropdown.value = dto.selected_lang_code
 
     def _render_tags(self, dto: "HomeViewDto") -> None:
         """Renderiza los chips de tags."""
-        if not self._tags_row:
+        if not self._ft_tags_row:
             return
 
-        self._tags_row.controls.clear()
+        self._ft_tags_row.controls.clear()
 
         if not dto.tags:
-            self._tags_row.controls.append(
+            self._ft_tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
                     italic=True,
@@ -212,15 +212,15 @@ class HomeView(ft.Container):
                 chip = ft.Chip(
                     label=ft.Text(tag_name),
                     selected=is_selected,
-                    on_select=lambda e, t=tag_name: self._on_tag_toggle(t),
+                    on_select=lambda e, t=tag_name: self._route_on_tag_toggle(t),
                     bgcolor=color if is_selected else None,
                     selected_color=ft.Colors.WHITE,
                 )
-                self._tags_row.controls.append(chip)
+                self._ft_tags_row.controls.append(chip)
 
     def _render_stats(self, dto: "HomeViewDto") -> None:
         """Renderiza las estadísticas."""
-        if not self._stats_column or not dto.stats:
+        if not self._ft_stats_column or not dto.stats:
             return
 
         total_words = dto.stats.get("total_words", 0)
@@ -228,8 +228,8 @@ class HomeView(ft.Container):
         avg_score = float(dto.stats.get("avg_score", 0) or 0)
         avg_score_percent = int(avg_score * 100)
 
-        self._stats_column.controls.clear()
-        self._stats_column.controls.extend([
+        self._ft_stats_column.controls.clear()
+        self._ft_stats_column.controls.extend([
             ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
             ft.Divider(height=1),
             ft.Row([
@@ -248,13 +248,13 @@ class HomeView(ft.Container):
 
     def _show_error(self, message: str) -> None:
         """Muestra un mensaje de error."""
-        if self._stats_column:
-            self._stats_column.controls.clear()
-            self._stats_column.controls.append(
+        if self._ft_stats_column:
+            self._ft_stats_column.controls.clear()
+            self._ft_stats_column.controls.append(
                 ft.Text(f"Error: {message}", color=ft.Colors.RED_700)
             )
         self.update()
 
     def _handle_lang_change(self, e: ft.ControlEvent) -> None:
         """Maneja el cambio de idioma y notifica al controller."""
-        self._on_lang_change(e.control.value)
+        self._route_on_lang_change(e.control.value)

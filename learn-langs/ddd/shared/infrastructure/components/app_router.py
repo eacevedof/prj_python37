@@ -41,10 +41,10 @@ class AppRouter:
             route_name_enum = ControllerRouteEnum(route_name_enum)
 
         self._route_name_enum = route_name_enum
-        self._ft_container.content = self._build_view(route_name_enum, **kwargs)
+        self._ft_container.content = self._get_ft_control_by_route_name(route_name_enum, **kwargs)
         self._ft_page.update()
 
-    def _build_view(
+    def _get_ft_control_by_route_name(
         self,
         route_name: ControllerRouteEnum,
         **kwargs: Any,
@@ -52,16 +52,16 @@ class AppRouter:
         """Construye la vista correspondiente a la ruta."""
         if route_name == ControllerRouteEnum.HOME:
             controller = HomeController(
-                on_start_study=lambda lang, tags: self.navigate_to(
+                route_on_start_study=lambda lang, tags: self.navigate_to(
                     ControllerRouteEnum.STUDY,
                     lang_code=lang,
                     tags=tags,
                 ),
-                on_manage_words=lambda: self.navigate_to(
+                route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
                 ),
             )
-            return controller.view
+            return controller.ft_container
 
         if route_name == ControllerRouteEnum.STUDY:
             controller = StudyController(
@@ -69,7 +69,7 @@ class AppRouter:
                 tags=kwargs.get("tags", []),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
             )
-            return controller.view
+            return controller.ft_container
 
         if route_name == ControllerRouteEnum.WORDS:
             controller = ListWordsController(
@@ -80,14 +80,14 @@ class AppRouter:
                     word_id=word_id,
                 ),
             )
-            return controller.view
+            return controller.ft_container
 
         if route_name == ControllerRouteEnum.CREATE_WORD:
             controller = CreateWordController(
                 on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
             )
-            return controller.view
+            return controller.ft_container
 
         if route_name == ControllerRouteEnum.UPDATE_WORD:
             controller = UpdateWordController(
@@ -95,6 +95,9 @@ class AppRouter:
                 on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
             )
-            return controller.view
+            return controller.ft_container
 
-        return self._build_view(ControllerRouteEnum.HOME)
+        # recursivo
+        return self._get_ft_control_by_route_name(
+            ControllerRouteEnum.HOME
+        )
