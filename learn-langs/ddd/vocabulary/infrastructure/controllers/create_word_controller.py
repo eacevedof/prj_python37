@@ -82,7 +82,7 @@ class CreateWordController:
 
     def _on_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
-        self._ft_container.page.run_task(lambda: self._async_on_submit(form_data))
+        self._ft_container.page.run_task(self._async_on_submit(form_data))
 
     async def _async_on_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""

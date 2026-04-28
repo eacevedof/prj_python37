@@ -132,7 +132,7 @@ class ListWordsController:
 
     def _handle_delete(self, word_id: int) -> None:
         """Maneja click en eliminar."""
-        self._ft_container.page.run_task(lambda: self._async_delete_word(word_id))
+        self._ft_container.page.run_task(self._async_delete_word(word_id))
 
     async def _async_delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
@@ -154,7 +154,7 @@ class ListWordsController:
     def _handle_show_images(self, word_id: int) -> None:
         """Maneja click en imagenes."""
         self._current_word_for_image = word_id
-        self._ft_container.page.run_task(lambda: self._async_show_images_dialog(word_id))
+        self._ft_container.page.run_task(self._async_show_images_dialog(word_id))
 
     async def _async_show_images_dialog(self, word_id: int) -> None:
         """Muestra dialogo de imagenes."""
