@@ -185,24 +185,24 @@ class ListWordsView(ft.Container):
             showing = len(dto.words)
             self._ft_count_text.value = f"Mostrando {showing} de {dto.total_count} palabras"
 
-    def _render_words_list(self, dto: "ListWordsViewDto") -> None:
+    def _render_words_list(self, list_words_view_dto: "ListWordsViewDto") -> None:
         """Renderiza la lista de palabras."""
         if not self._ft_words_list:
             return
 
         self._ft_words_list.controls.clear()
 
-        if dto.is_loading:
+        if list_words_view_dto.is_loading:
             self._ft_words_list.controls.append(
                 ft.Container(
                     content=ft.ProgressRing(),
                     padding=20,
-                    alignment=ft.alignment.center,
+                    alignment=ft.alignment.Alignment.CENTER,
                 )
             )
             return
 
-        if dto.is_empty and not dto.error_message:
+        if list_words_view_dto.is_empty and not list_words_view_dto.error_message:
             self._ft_words_list.controls.append(
                 ft.Container(
                     content=ft.Text(
@@ -211,12 +211,12 @@ class ListWordsView(ft.Container):
                         italic=True,
                     ),
                     padding=20,
-                    alignment=ft.alignment.center,
+                    alignment=ft.alignment.Alignment.CENTER,
                 )
             )
             return
 
-        for word in dto.words:
+        for word in list_words_view_dto.words:
             tile = self._build_word_tile(word)
             self._ft_words_list.controls.append(tile)
 
