@@ -63,11 +63,11 @@ class StudyController:
 
         # Vista
         self._ft_container = StudyView.from_primitives({
-            "on_answer": self._handle_answer,
-            "on_skip": self._handle_skip,
-            "on_timeout": self._handle_timeout,
-            "on_back": self._handle_back,
-            "on_mount": self._handle_mount,
+            "on_answer": self._on_input_answer,
+            "on_skip": self._on_skip_btn_click,
+            "on_timeout": self._on_timer_timeout,
+            "on_back": self._on_back_btn_click,
+            "on_mount": self._on_mount,
         })
 
     @property
@@ -75,7 +75,7 @@ class StudyController:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
-    def _handle_mount(self) -> None:
+    def _on_mount(self) -> None:
         """Callback cuando la vista se monta."""
         self._ft_container.page.run_task(self._async_start_session)
 
@@ -141,17 +141,23 @@ class StudyController:
             "pronunciation": word.pronunciation,
         }
 
-    def _handle_answer(self, user_input: str) -> None:
+    def _on_input_answer(self, user_input: str) -> None:
         """Maneja la respuesta del usuario."""
-        self._ft_container.page.run_task(self._async_process_answer(user_input))
+        async def _task():
+            await self._async_process_answer(user_input)
+        self._ft_container.page.run_task(_task)
 
-    def _handle_skip(self) -> None:
+    def _on_skip_btn_click(self) -> None:
         """Maneja cuando el usuario salta."""
-        self._ft_container.page.run_task(self._async_process_answer(""))
+        async def _task():
+            await self._async_process_answer("")
+        self._ft_container.page.run_task(_task)
 
-    def _handle_timeout(self) -> None:
+    def _on_timer_timeout(self) -> None:
         """Maneja cuando se acaba el tiempo."""
-        self._ft_container.page.run_task(self._async_process_answer(""))
+        async def _task():
+            await self._async_process_answer("")
+        self._ft_container.page.run_task(_task)
 
     async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta."""
@@ -239,7 +245,7 @@ class StudyController:
                 {"session_id": self._session_id},
             )
 
-    def _handle_back(self) -> None:
+    def _on_back_btn_click(self) -> None:
         """Finaliza y vuelve al inicio."""
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()

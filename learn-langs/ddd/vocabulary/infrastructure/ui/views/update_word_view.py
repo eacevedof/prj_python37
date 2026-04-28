@@ -119,7 +119,7 @@ class UpdateWordView(ft.Container):
                 [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar cambios")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._handle_submit(),
+            on_click=lambda _: self._on_save_btn_click(),
             style=ft.ButtonStyle(
                 bgcolor=ft.Colors.BLUE_600,
                 color=ft.Colors.WHITE,
@@ -322,7 +322,7 @@ class UpdateWordView(ft.Container):
         self._render_tags()
         self.update()
 
-    def _handle_submit(self) -> None:
+    def _on_save_btn_click(self) -> None:
         """Recopila datos del form y emite callback."""
         form_data = self._get_form_data()
         self._route_on_submit(form_data)

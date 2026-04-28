@@ -67,10 +67,10 @@ class ListWordsController:
             "on_back": self._route_on_back,
             "on_create": self._route_on_create,
             "on_edit": self._route_on_edit,
-            "on_delete": self._handle_delete,
-            "on_search": self._handle_search,
-            "on_show_images": self._handle_show_images,
-            "on_mount": self._handle_mount,
+            "on_delete": self._on_delete_btn_click,
+            "on_search": self._on_search_input,
+            "on_show_images": self._on_images_btn_click,
+            "on_mount": self._on_mount,
         })
 
     @property
@@ -78,7 +78,7 @@ class ListWordsController:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
-    def _handle_mount(self) -> None:
+    def _on_mount(self) -> None:
         """Callback cuando la vista se monta."""
         self._ft_container.page.run_task(self._async_load_words)
 
@@ -125,14 +125,16 @@ class ListWordsController:
             )
             self._ft_container.render(ListWordsViewDto.error(f"Error al cargar: {e}"))
 
-    def _handle_search(self, search_text: str) -> None:
+    def _on_search_input(self, search_text: str) -> None:
         """Maneja cambio en busqueda."""
         self._current_search = search_text
         self._ft_container.page.run_task(self._async_load_words)
 
-    def _handle_delete(self, word_id: int) -> None:
+    def _on_delete_btn_click(self, word_id: int) -> None:
         """Maneja click en eliminar."""
-        self._ft_container.page.run_task(self._async_delete_word(word_id))
+        async def _task():
+            await self._async_delete_word(word_id)
+        self._ft_container.page.run_task(_task)
 
     async def _async_delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
@@ -151,10 +153,12 @@ class ListWordsController:
             )
             self._ft_container.show_snackbar(f"Error: {e}", error=True)
 
-    def _handle_show_images(self, word_id: int) -> None:
+    def _on_images_btn_click(self, word_id: int) -> None:
         """Maneja click en imagenes."""
         self._current_word_for_image = word_id
-        self._ft_container.page.run_task(self._async_show_images_dialog(word_id))
+        async def _task():
+            await self._async_show_images_dialog(word_id)
+        self._ft_container.page.run_task(_task)
 
     async def _async_show_images_dialog(self, word_id: int) -> None:
         """Muestra dialogo de imagenes."""

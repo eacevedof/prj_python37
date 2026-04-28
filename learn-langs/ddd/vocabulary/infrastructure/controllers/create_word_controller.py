@@ -42,7 +42,7 @@ class CreateWordController:
 
         # Vista
         self._ft_container = CreateWordView.from_primitives({
-            "on_submit": self._on_submit,
+            "on_submit": self._on_save_btn_click,
             "on_back": self._route_on_back,
             "on_mount": self._on_mount,
         })
@@ -80,9 +80,11 @@ class CreateWordController:
                 CreateWordViewDto.empty(available_tags=[])
             )
 
-    def _on_submit(self, form_data: dict[str, Any]) -> None:
+    def _on_save_btn_click(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
-        self._ft_container.page.run_task(self._async_on_submit(form_data))
+        async def _task():
+            await self._async_on_submit(form_data)
+        self._ft_container.page.run_task(_task)
 
     async def _async_on_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""
