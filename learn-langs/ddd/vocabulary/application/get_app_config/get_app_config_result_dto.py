@@ -24,9 +24,9 @@ class GetAppConfigResultDto:
         return cls(
             app_title=str(primitives.get("app_title", "Learn Languages")),
             window_width=int(primitives.get("window_width", 900)),
-            window_height=int(primitives.get("window_height", 700)),
+            window_height=int(primitives.get("window_height", 800)),
             window_min_width=int(primitives.get("window_min_width", 600)),
-            window_min_height=int(primitives.get("window_min_height", 500)),
+            window_min_height=int(primitives.get("window_min_height", 800)),
             migrations_path=str(primitives.get("migrations_path", "")),
             db_path=str(primitives.get("db_path", "")),
         )
