@@ -240,7 +240,7 @@ class ListWordsView(ft.Container):
 
         return ft.ListTile(
             leading=ft.Icon(icon, color=ft.Colors.BLUE_700),
-            title=ft.Text(word.text, weight=ft.FontWeight.W_500),
+            title=ft.Text(word.text, weight=ft.FontWeight.W_500, expand=True),
             subtitle=ft.Text(subtitle, size=12),
             trailing=ft.Row(
                 controls=[
@@ -267,6 +267,7 @@ class ListWordsView(ft.Container):
                     ),
                 ],
                 spacing=0,
+                tight=True,
             ),
         )
 
