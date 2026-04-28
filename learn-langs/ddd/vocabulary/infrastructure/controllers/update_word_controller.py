@@ -54,7 +54,7 @@ class UpdateWordController:
         })
 
     @property
-    def view(self) -> ft.Container:
+    def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._view
 

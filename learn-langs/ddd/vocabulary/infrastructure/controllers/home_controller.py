@@ -24,45 +24,35 @@ class HomeController:
 
     def __init__(
         self,
-        on_start_study: Callable[[str, list[str]], None],
-        on_manage_words: Callable[[], None],
+        route_on_start_study: Callable[[str, list[str]], None],
+        route_on_manage_words: Callable[[], None],
     ):
         # Lambdas de navegacion en app_router
-        self._on_start_study = on_start_study
-        self._on_manage_words = on_manage_words
+        self._route_on_start_study = route_on_start_study
+        self._route_on_manage_words = route_on_manage_words
 
-        # Estado interno
+        self._logger = Logger.get_instance()
+        self._load_home_service = LoadHomeService.get_instance()
+
         self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
         self._selected_tags: list[str] = []
 
-        # Servicios
-        self._load_home_service = LoadHomeService.get_instance()
-        self._logger = Logger.get_instance()
-
-        # Vista
-        self._view = HomeView.from_primitives({
-            "on_lang_change": self._handle_lang_change,
-            "on_tag_toggle": self._handle_tag_toggle,
-            "on_manage_words": self._on_manage_words,
-            "on_start_study": lambda: self._on_start_study(
-                str(self._selected_lang),
-                self._selected_tags,
-            ),
-            "on_mount": self._handle_mount,
+        self._ft_container = HomeView.from_primitives({
+            "on_manage_words": self._route_on_manage_words,
+            "on_start_study": self._route_on_start_study_click,
+            "on_lang_change": self._on_lang_change,
+            "on_tag_toggle": self._on_tag_toggle,
+            "on_mount": self._on_mount,
         })
 
     @property
-    def view(self) -> ft.Container:
+    def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
-        return self._view
+        return self._ft_container
 
-    def _handle_mount(self) -> None:
+    def _on_mount(self) -> None:
         """Callback cuando la vista se monta. Carga datos iniciales."""
-        self._view.page.run_task(self._async_load_data)
-
-    def refresh(self) -> None:
-        """Recarga datos. Usar para refresh externo si se necesita."""
-        self._view.page.run_task(self._async_load_data)
+        self._ft_container.page.run_task(self._async_load_data)
 
     async def _async_load_data(self) -> None:
         """Carga datos del servicio y actualiza la vista."""
@@ -93,7 +83,7 @@ class HomeController:
                     selected_tags=self._selected_tags,
                 )
 
-            self._view.render(home_view_dto)
+            self._ft_container.render(home_view_dto)
 
         except Exception as e:
             self._logger.write_error(
@@ -105,23 +95,33 @@ class HomeController:
                 message=str(e),
                 selected_lang_code=str(self._selected_lang),
             )
-            self._view.render(home_view_dto)
+            self._ft_container.render(home_view_dto)
 
-    def _handle_lang_change(self, lang_code: str) -> None:
+    def refresh(self) -> None:
+        """Recarga datos. Usar para refresh externo si se necesita."""
+        self._ft_container.page.run_task(self._async_load_data)
+
+    def _on_lang_change(self, lang_code: str) -> None:
         """Maneja el cambio de idioma."""
         try:
             self._selected_lang = LanguageCodeEnum(lang_code)
         except ValueError:
             self._selected_lang = LanguageCodeEnum.default()
 
-        self._view.page.run_task(self._async_load_data)
+        self._ft_container.page.run_task(self._async_load_data)
 
-    def _handle_tag_toggle(self, tag_name: str) -> None:
+    def _on_tag_toggle(self, tag_name: str) -> None:
         """Alterna la seleccion de un tag."""
         if tag_name in self._selected_tags:
             self._selected_tags.remove(tag_name)
         else:
             self._selected_tags.append(tag_name)
 
-        # Re-render con el nuevo estado
-        self._view.page.run_task(self._async_load_data)
+        self._ft_container.page.run_task(self._async_load_data)
+
+    def _route_on_start_study_click(self) -> None:
+        """Maneja click en comenzar estudio."""
+        self._route_on_start_study(
+            str(self._selected_lang),
+            self._selected_tags
+        )

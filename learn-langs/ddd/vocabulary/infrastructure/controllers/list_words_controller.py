@@ -63,7 +63,7 @@ class ListWordsController:
         self._logger = Logger.get_instance()
 
         # Vista
-        self._view = ListWordsView.from_primitives({
+        self._ft_container = ListWordsView.from_primitives({
             "on_back": on_back,
             "on_create": on_create,
             "on_edit": on_edit,
@@ -74,18 +74,18 @@ class ListWordsController:
         })
 
     @property
-    def view(self) -> ft.Container:
+    def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
-        return self._view
+        return self._ft_container
 
     def _handle_mount(self) -> None:
         """Callback cuando la vista se monta."""
-        self._view.page.run_task(self._async_load_words)
+        self._ft_container.page.run_task(self._async_load_words)
 
     async def _async_load_words(self) -> None:
         """Carga la lista de palabras."""
         # Mostrar loading
-        self._view.render(ListWordsViewDto.loading())
+        self._ft_container.render(ListWordsViewDto.loading())
 
         try:
             dto = ListWordsDto.from_primitives({
@@ -115,7 +115,7 @@ class ListWordsController:
                 total_count=result.total_count,
                 has_more=result.has_more,
             )
-            self._view.render(view_dto)
+            self._ft_container.render(view_dto)
 
         except Exception as e:
             self._logger.write_error(
@@ -123,16 +123,16 @@ class ListWordsController:
                 f"Error cargando palabras: {e}",
                 {"search": self._current_search},
             )
-            self._view.render(ListWordsViewDto.error(f"Error al cargar: {e}"))
+            self._ft_container.render(ListWordsViewDto.error(f"Error al cargar: {e}"))
 
     def _handle_search(self, search_text: str) -> None:
         """Maneja cambio en busqueda."""
         self._current_search = search_text
-        self._view.page.run_task(self._async_load_words)
+        self._ft_container.page.run_task(self._async_load_words)
 
     def _handle_delete(self, word_id: int) -> None:
         """Maneja click en eliminar."""
-        self._view.page.run_task(lambda: self._async_delete_word(word_id))
+        self._ft_container.page.run_task(lambda: self._async_delete_word(word_id))
 
     async def _async_delete_word(self, word_id: int) -> None:
         """Elimina una palabra."""
@@ -140,7 +140,7 @@ class ListWordsController:
             dto = DeleteWordDto.from_primitives({"word_id": word_id})
             result = await self._delete_word_service(dto)
 
-            self._view.show_snackbar(f"Palabra '{result.text}' eliminada")
+            self._ft_container.show_snackbar(f"Palabra '{result.text}' eliminada")
             await self._async_load_words()
 
         except Exception as e:
@@ -149,12 +149,12 @@ class ListWordsController:
                 f"Error eliminando palabra: {e}",
                 {"word_id": word_id},
             )
-            self._view.show_snackbar(f"Error: {e}", error=True)
+            self._ft_container.show_snackbar(f"Error: {e}", error=True)
 
     def _handle_show_images(self, word_id: int) -> None:
         """Maneja click en imagenes."""
         self._current_word_for_image = word_id
-        self._view.page.run_task(lambda: self._async_show_images_dialog(word_id))
+        self._ft_container.page.run_task(lambda: self._async_show_images_dialog(word_id))
 
     async def _async_show_images_dialog(self, word_id: int) -> None:
         """Muestra dialogo de imagenes."""
@@ -172,7 +172,7 @@ class ListWordsController:
             if result.success:
                 self._display_images_dialog(word, result.to_list_of_dicts())
             else:
-                self._view.show_snackbar(
+                self._ft_container.show_snackbar(
                     result.error_message or "Error cargando imagenes",
                     error=True,
                 )
@@ -183,7 +183,7 @@ class ListWordsController:
                 f"Error mostrando imagenes: {e}",
                 {"word_id": word_id},
             )
-            self._view.show_snackbar(f"Error al cargar imagenes: {e}", error=True)
+            self._ft_container.show_snackbar(f"Error al cargar imagenes: {e}", error=True)
 
     def _display_images_dialog(
         self,
@@ -239,7 +239,7 @@ class ListWordsController:
 
         def close_dialog(e=None):
             if dialog:
-                self._view.page.close(dialog)
+                self._ft_container.page.close(dialog)
 
         def add_from_url(e):
             url = url_field.value
@@ -247,7 +247,7 @@ class ListWordsController:
                 async def save_url():
                     await self._add_image_from_url(word.id, url.strip())
                     close_dialog()
-                self._view.page.run_task(save_url)
+                self._ft_container.page.run_task(save_url)
 
         dialog = ft.AlertDialog(
             title=ft.Text(f"Imagenes: {word.text}"),
@@ -285,22 +285,22 @@ class ListWordsController:
             ],
         )
 
-        self._view.page.open(dialog)
+        self._ft_container.page.open(dialog)
 
     def _pick_image_file(self) -> None:
         """Abre el file picker para seleccionar imagen."""
         async def do_pick():
             file_picker = ft.FilePicker()
-            self._view.page.overlay.append(file_picker)
-            self._view.page.update()
+            self._ft_container.page.overlay.append(file_picker)
+            self._ft_container.page.update()
 
             files = await file_picker.pick_files_async(
                 allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
                 allow_multiple=False,
             )
 
-            self._view.page.overlay.remove(file_picker)
-            self._view.page.update()
+            self._ft_container.page.overlay.remove(file_picker)
+            self._ft_container.page.update()
 
             if files and len(files) > 0 and self._current_word_for_image:
                 file = files[0]
@@ -310,9 +310,9 @@ class ListWordsController:
                     file.name,
                 )
                 await self._async_load_words()
-                self._view.show_snackbar("Imagen agregada")
+                self._ft_container.show_snackbar("Imagen agregada")
 
-        self._view.page.run_task(do_pick)
+        self._ft_container.page.run_task(do_pick)
 
     async def _add_image_from_file(self, word_id: int, file_path: str, filename: str) -> None:
         """Agrega imagen desde archivo local via servicio."""
@@ -321,7 +321,7 @@ class ListWordsController:
             result = await self._add_word_image_service(dto)
 
             if not result.success:
-                self._view.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
             self._logger.write_error(
@@ -329,7 +329,7 @@ class ListWordsController:
                 f"Error agregando imagen desde archivo: {e}",
                 {"word_id": word_id, "file_path": file_path},
             )
-            self._view.show_snackbar(f"Error: {e}", error=True)
+            self._ft_container.show_snackbar(f"Error: {e}", error=True)
 
     async def _add_image_from_url(self, word_id: int, url: str) -> None:
         """Agrega imagen desde URL via servicio."""
@@ -339,9 +339,9 @@ class ListWordsController:
 
             if result.success:
                 await self._async_load_words()
-                self._view.show_snackbar("Imagen agregada desde URL")
+                self._ft_container.show_snackbar("Imagen agregada desde URL")
             else:
-                self._view.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
             self._logger.write_error(
@@ -349,7 +349,7 @@ class ListWordsController:
                 f"Error agregando imagen desde URL: {e}",
                 {"word_id": word_id, "url": url},
             )
-            self._view.show_snackbar(f"Error descargando imagen: {e}", error=True)
+            self._ft_container.show_snackbar(f"Error descargando imagen: {e}", error=True)
 
     def _delete_image(self, image_id: int) -> None:
         """Elimina una imagen via servicio."""
@@ -360,9 +360,9 @@ class ListWordsController:
 
                 if result.success:
                     await self._async_load_words()
-                    self._view.show_snackbar("Imagen eliminada")
+                    self._ft_container.show_snackbar("Imagen eliminada")
                 else:
-                    self._view.show_snackbar(result.error_message or "Error", error=True)
+                    self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
             except Exception as e:
                 self._logger.write_error(
@@ -370,6 +370,6 @@ class ListWordsController:
                     f"Error eliminando imagen: {e}",
                     {"image_id": image_id},
                 )
-                self._view.show_snackbar(f"Error: {e}", error=True)
+                self._ft_container.show_snackbar(f"Error: {e}", error=True)
 
-        self._view.page.run_task(do_delete)
+        self._ft_container.page.run_task(do_delete)
