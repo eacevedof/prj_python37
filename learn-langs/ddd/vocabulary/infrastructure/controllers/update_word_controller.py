@@ -47,7 +47,7 @@ class UpdateWordController:
         self._logger = Logger.get_instance()
 
         # Vista
-        self._view = UpdateWordView.from_primitives({
+        self._ft_container = UpdateWordView.from_primitives({
             "on_submit": self._handle_submit,
             "on_back": self._route_on_back,
             "on_mount": self._handle_mount,
@@ -56,16 +56,16 @@ class UpdateWordController:
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
-        return self._view
+        return self._ft_container
 
     def _handle_mount(self) -> None:
         """Callback cuando la vista se monta."""
-        self._view.page.run_task(self._async_load_data)
+        self._ft_container.page.run_task(self._async_load_data)
 
     async def _async_load_data(self) -> None:
         """Carga la palabra y datos iniciales."""
         # Mostrar loading
-        self._view.render(UpdateWordViewDto.loading())
+        self._ft_container.render(UpdateWordViewDto.loading())
 
         try:
             # Cargar palabra via servicio
@@ -74,7 +74,7 @@ class UpdateWordController:
             )
 
             if not result.success:
-                self._view.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
                 self._route_on_back()
                 return
 
@@ -91,7 +91,7 @@ class UpdateWordController:
                 selected_tags=list(result.selected_tags),
                 available_tags=self._available_tags,
             )
-            self._view.render(dto)
+            self._ft_container.render(dto)
 
         except Exception as e:
             self._logger.write_error(
@@ -99,11 +99,11 @@ class UpdateWordController:
                 f"Error cargando palabra: {e}",
                 {"word_id": self._word_id},
             )
-            self._view.show_snackbar(f"Error al cargar: {e}", error=True)
+            self._ft_container.show_snackbar(f"Error al cargar: {e}", error=True)
 
     def _handle_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
-        self._view.page.run_task(lambda: self._async_submit(form_data))
+        self._ft_container.page.run_task(lambda: self._async_submit(form_data))
 
     async def _async_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""
@@ -116,7 +116,7 @@ class UpdateWordController:
                 available_tags=self._available_tags,
                 error_field="text_es",
             )
-            self._view.render(dto)
+            self._ft_container.render(dto)
             return
 
         # Preparar traducciones
@@ -139,7 +139,7 @@ class UpdateWordController:
             result = await self._update_word_service(update_dto)
 
             # Exito: mostrar mensaje
-            self._view.show_snackbar(f"Palabra '{result.text}' actualizada")
+            self._ft_container.show_snackbar(f"Palabra '{result.text}' actualizada")
 
             # Navegar de vuelta
             self._route_on_success()
@@ -155,7 +155,7 @@ class UpdateWordController:
                 form_values=form_data,
                 available_tags=self._available_tags,
             )
-            self._view.render(dto)
+            self._ft_container.render(dto)
 
         except Exception as e:
             self._logger.write_error(
@@ -168,4 +168,4 @@ class UpdateWordController:
                 form_values=form_data,
                 available_tags=self._available_tags,
             )
-            self._view.render(dto)
+            self._ft_container.render(dto)
