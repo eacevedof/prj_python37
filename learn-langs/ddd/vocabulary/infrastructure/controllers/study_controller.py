@@ -143,15 +143,15 @@ class StudyController:
 
     def _handle_answer(self, user_input: str) -> None:
         """Maneja la respuesta del usuario."""
-        self._ft_container.page.run_task(lambda: self._async_process_answer(user_input))
+        self._ft_container.page.run_task(self._async_process_answer(user_input))
 
     def _handle_skip(self) -> None:
         """Maneja cuando el usuario salta."""
-        self._ft_container.page.run_task(lambda: self._async_process_answer(""))
+        self._ft_container.page.run_task(self._async_process_answer(""))
 
     def _handle_timeout(self) -> None:
         """Maneja cuando se acaba el tiempo."""
-        self._ft_container.page.run_task(lambda: self._async_process_answer(""))
+        self._ft_container.page.run_task(self._async_process_answer(""))
 
     async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta."""

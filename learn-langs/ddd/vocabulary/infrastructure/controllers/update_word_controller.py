@@ -103,7 +103,7 @@ class UpdateWordController:
 
     def _handle_submit(self, form_data: dict[str, Any]) -> None:
         """Callback cuando la vista hace submit."""
-        self._ft_container.page.run_task(lambda: self._async_submit(form_data))
+        self._ft_container.page.run_task(self._async_submit(form_data))
 
     async def _async_submit(self, form_data: dict[str, Any]) -> None:
         """Procesa el submit del formulario."""
