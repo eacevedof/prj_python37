@@ -88,13 +88,14 @@ class CreateWordController:
         # Validacion basica
         text_es = (form_data.get("text_es") or "").strip()
         if not text_es:
-            create_word_view_dto = CreateWordViewDto.error(
-                message="La palabra en espanol es obligatoria",
-                form_values=form_data,
-                available_tags=self._available_tags,
-                error_field="text_es",
+            self._ft_container.render(
+                CreateWordViewDto.error(
+                    message="La palabra en espanol es obligatoria",
+                    form_values=form_data,
+                    available_tags=self._available_tags,
+                    error_field="text_es",
+                )
             )
-            self._ft_container.render(create_word_view_dto)
             return
 
         # Preparar traducciones
