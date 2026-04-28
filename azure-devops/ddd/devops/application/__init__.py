@@ -23,6 +23,11 @@ from ddd.devops.application.request_anubis import (
     RequestAnubisResultDto,
     RequestAnubisService,
 )
+from ddd.devops.application.admin_loc_mysql import (
+    AdminLocMysqlDto,
+    AdminLocMysqlResultDto,
+    AdminLocMysqlService,
+)
 
 __all__ = [
     "SetupProjectDto",
@@ -38,4 +43,7 @@ __all__ = [
     "RequestAnubisDto",
     "RequestAnubisResultDto",
     "RequestAnubisService",
+    "AdminLocMysqlDto",
+    "AdminLocMysqlResultDto",
+    "AdminLocMysqlService",
 ]
