@@ -106,7 +106,7 @@ class CreateWordController:
             translations[LanguageCodeEnum.NL_NL.value] = text_lang
 
         try:
-            result = await self._create_word_service(
+            create_word_result_dto = await self._create_word_service(
                 CreateWordDto.from_primitives({
                     "text": text_es,
                     "word_type": form_data.get("word_type", "WORD"),
@@ -118,7 +118,7 @@ class CreateWordController:
 
             self._ft_container.render(
                 CreateWordViewDto.success(
-                    message=f"Palabra '{result.text}' creada correctamente",
+                    message=f"Palabra '{create_word_result_dto.text}' creada correctamente",
                     available_tags=self._available_tags,
                 )
             )
