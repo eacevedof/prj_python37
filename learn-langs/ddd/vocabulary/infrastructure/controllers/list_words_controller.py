@@ -1,8 +1,11 @@
 """Controller para listado de palabras."""
 
+from pathlib import Path
 from typing import Callable
 
 import flet as ft
+from mypy.build import initial_gc_freeze_done
+from mypy.checker import is_more_general_arg_prefix
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
@@ -81,6 +84,11 @@ class ListWordsController:
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
+
+    def _get_image_full_path(self, filename: str) -> str:
+        """Obtiene la ruta completa de una imagen."""
+        base_path = Path(__file__).parent.parent.parent.parent.parent
+        return str(base_path / "data" / "images" / filename)
 
     def _on_mount(self) -> None:
         """Callback cuando la vista se monta."""
@@ -202,16 +210,29 @@ class ListWordsController:
 
         if images:
             for img in images:
+                img_file_name = img.get("file_path", "")
+                img_full_path = self._get_image_full_path(img_file_name)
+
+                # Thumbnail de la imagen
+                thumbnail = ft.Image(
+                    src=img_full_path,
+                    width=50,
+                    height=50,
+                    fit=ft.BoxFit.COVER,
+                    border_radius=4,
+                )
+
                 img_row = ft.Row(
                     controls=[
+                        thumbnail,
                         ft.Icon(
                             ft.Icons.STAR if img.get("is_primary") else ft.Icons.IMAGE,
                             color=ft.Colors.AMBER_500 if img.get("is_primary") else ft.Colors.GREY_500,
-                            size=20,
+                            size=16,
                         ),
                         ft.Text(
-                            img["file_path"][:30] + "..." if len(img.get("file_path", "")) > 30 else img.get("file_path", ""),
-                            size=12,
+                            img_full_path[:25] + "..." if len(img_full_path) > 25 else img_full_path,
+                            size=11,
                             expand=True,
                         ),
                         ft.Text(img.get("source_type", ""), size=10, color=ft.Colors.GREY_600),
@@ -224,6 +245,7 @@ class ListWordsController:
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
+                    spacing=8,
                 )
                 self._current_images_column.controls.append(img_row)
         else:

@@ -13,10 +13,12 @@ class AppConfigReaderRawRepository:
 
     # Defaults
     _DEFAULT_APP_TITLE = "Learn Languages"
-    _DEFAULT_WINDOW_WIDTH = 900
-    _DEFAULT_WINDOW_HEIGHT = 800
+
+    _DEFAULT_WINDOW_WIDTH = 600
+    _DEFAULT_WINDOW_HEIGHT = 900
+
     _DEFAULT_WINDOW_MIN_WIDTH = 600
-    _DEFAULT_WINDOW_MIN_HEIGHT = 800
+    _DEFAULT_WINDOW_MIN_HEIGHT = 900
 
     def __init__(self) -> None:
         self._base_path = Path(__file__).parent.parent.parent.parent.parent
