@@ -276,7 +276,7 @@ class ListWordsController:
             controls=[],
             spacing=10,
             scroll=ft.ScrollMode.AUTO,
-            height=300,
+            height=450,
         )
 
         self._render_images_list(images)
@@ -284,7 +284,7 @@ class ListWordsController:
         url_field = ft.TextField(
             label="URL de imagen",
             hint_text="https://...",
-            width=350,
+            width=550,
         )
 
         dialog: ft.AlertDialog | None = None
@@ -332,7 +332,7 @@ class ListWordsController:
                     ],
                     spacing=10,
                 ),
-                width=400,
+                width=600,
             ),
             actions=[
                 ft.TextButton(content=ft.Text("Cerrar"), on_click=close_dialog),
