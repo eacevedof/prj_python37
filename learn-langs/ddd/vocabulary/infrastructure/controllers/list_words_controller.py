@@ -271,6 +271,7 @@ class ListWordsController:
                                     # on_click=lambda e: self._pick_image_file(),
                                     on_click=self.handle_pick_files,
                                 ),
+                                # selected_files := ft.Text("Seleccione una imagen"),
                                 ft.ElevatedButton(
                                     content=ft.Row([ft.Icon(ft.Icons.LINK), ft.Text("URL")]),
                                     on_click=lambda e: url_field.focus(),
@@ -296,7 +297,22 @@ class ListWordsController:
         self._ft_container.page.show_dialog(dialog)
 
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
-        files = await self._ft_file_picker.pick_files(allow_multiple=True)
+        ft_file_picker_files = await self._ft_file_picker.pick_files(
+            allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
+            allow_multiple=False,
+        )
+
+        if ft_file_picker_files and self._current_word_for_image:
+            ft_file_picker_file = ft_file_picker_files[0]
+            await self._add_image_from_file(
+                self._current_word_for_image,
+                ft_file_picker_file.path,
+                ft_file_picker_file.name,
+            )
+            await self._async_load_words()
+            self._ft_container.show_snackbar("Imagen agregada")
+
+
 
 
     def _pick_image_file(self) -> None:
