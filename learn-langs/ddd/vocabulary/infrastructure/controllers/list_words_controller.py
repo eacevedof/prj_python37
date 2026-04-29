@@ -55,12 +55,14 @@ class ListWordsController:
         self._current_word_for_image: int | None = None
 
         # Servicios
+        self._ft_file_picker = ft.FilePicker()
+        self._logger = Logger.get_instance()
         self._list_words_service = ListWordsService.get_instance()
         self._delete_word_service = DeleteWordService.get_instance()
         self._get_word_images_service = GetWordImagesService.get_instance()
         self._add_word_image_service = AddWordImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
-        self._logger = Logger.get_instance()
+
 
         # Vista
         self._ft_container = ListWordsView.from_primitives({
@@ -243,7 +245,8 @@ class ListWordsController:
 
         def close_dialog(e=None):
             if dialog:
-                self._ft_container.page.close(dialog)
+                dialog.open = False
+                self._ft_container.page.update()
 
         def add_from_url(e):
             url = url_field.value
@@ -265,7 +268,8 @@ class ListWordsController:
                             controls=[
                                 ft.ElevatedButton(
                                     content=ft.Row([ft.Icon(ft.Icons.FOLDER_OPEN), ft.Text("Archivo")]),
-                                    on_click=lambda e: self._pick_image_file(),
+                                    # on_click=lambda e: self._pick_image_file(),
+                                    on_click=self.handle_pick_files,
                                 ),
                                 ft.ElevatedButton(
                                     content=ft.Row([ft.Icon(ft.Icons.LINK), ft.Text("URL")]),
@@ -289,27 +293,31 @@ class ListWordsController:
             ],
         )
 
-        self._ft_container.page.open(dialog)
+        self._ft_container.page.show_dialog(dialog)
+
+    async def handle_pick_files(self, e: ft.Event[ft.Button]):
+        files = await self._ft_file_picker.pick_files(allow_multiple=True)
+
 
     def _pick_image_file(self) -> None:
         """Abre el file picker para seleccionar imagen."""
         self._ft_container.show_snackbar("Abriendo selector de archivos...")
 
         async def do_pick():
-            file_picker = ft.FilePicker()
-            self._ft_container.page.overlay.append(file_picker)
+            ft_file_picker = ft.FilePicker()
+            self._ft_container.page.overlay.append(ft_file_picker)
             self._ft_container.page.update()
 
-            result = await file_picker.pick_files_async(
+            list_ob_files = await ft_file_picker.pick_files(
                 allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
                 allow_multiple=False,
             )
 
-            self._ft_container.page.overlay.remove(file_picker)
+            self._ft_container.page.overlay.remove(ft_file_picker)
             self._ft_container.page.update()
 
-            if result and result.files and len(result.files) > 0 and self._current_word_for_image:
-                file = result.files[0]
+            if list_ob_files and list_ob_files.files and len(list_ob_files.files) > 0 and self._current_word_for_image:
+                file = list_ob_files.files[0]
                 await self._add_image_from_file(
                     self._current_word_for_image,
                     file.path,
