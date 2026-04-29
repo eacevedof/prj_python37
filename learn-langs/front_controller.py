@@ -29,7 +29,6 @@ async def fn_render(ft_page: ft.Page) -> None:
     ft_page.window.height = app_config.window_height
     ft_page.window.min_width = app_config.window_min_width
     ft_page.window.min_height = app_config.window_min_height
-    ft_page.padding = 0
 
     # Inicializar base de datos
     await RunMigrationsService.get_instance()(
