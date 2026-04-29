@@ -293,10 +293,8 @@ class ListWordsController:
                             controls=[
                                 ft.ElevatedButton(
                                     content=ft.Row([ft.Icon(ft.Icons.FOLDER_OPEN), ft.Text("Archivo")]),
-                                    # on_click=lambda e: self._pick_image_file(),
                                     on_click=self.handle_pick_files,
                                 ),
-                                # selected_files := ft.Text("Seleccione una imagen"),
                                 ft.ElevatedButton(
                                     content=ft.Row([ft.Icon(ft.Icons.LINK), ft.Text("URL")]),
                                     on_click=lambda e: url_field.focus(),
@@ -322,13 +320,6 @@ class ListWordsController:
         self._current_dialog = dialog
         self._ft_container.page.show_dialog(dialog)
 
-    def _close_current_dialog(self) -> None:
-        """Cierra el dialogo actual si existe."""
-        if self._current_dialog:
-            self._current_dialog.open = False
-            self._ft_container.page.update()
-            self._current_dialog = None
-
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
         ft_file_picker_files = await self._ft_file_picker.pick_files(
             allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
@@ -346,37 +337,6 @@ class ListWordsController:
             await self._async_load_words()
             self._ft_container.show_snackbar(f"Imagen '{ft_file_picker_file.name}' agregada")
 
-
-
-
-    def _pick_image_file(self) -> None:
-        """Abre el file picker para seleccionar imagen."""
-        self._ft_container.show_snackbar("Abriendo selector de archivos...")
-
-        async def do_pick():
-            ft_file_picker = ft.FilePicker()
-            self._ft_container.page.overlay.append(ft_file_picker)
-            self._ft_container.page.update()
-
-            list_ob_files = await ft_file_picker.pick_files(
-                allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
-                allow_multiple=False,
-            )
-
-            self._ft_container.page.overlay.remove(ft_file_picker)
-            self._ft_container.page.update()
-
-            if list_ob_files and list_ob_files.files and len(list_ob_files.files) > 0 and self._current_word_for_image:
-                file = list_ob_files.files[0]
-                await self._add_image_from_file(
-                    self._current_word_for_image,
-                    file.path,
-                    file.name,
-                )
-                await self._async_load_words()
-                self._ft_container.show_snackbar("Imagen agregada")
-
-        self._ft_container.page.run_task(do_pick)
 
     async def _add_image_from_file(self, word_id: int, file_path: str, filename: str) -> None:
         """Agrega imagen desde archivo local via servicio."""
