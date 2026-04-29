@@ -293,12 +293,14 @@ class ListWordsController:
 
     def _pick_image_file(self) -> None:
         """Abre el file picker para seleccionar imagen."""
+        self._ft_container.show_snackbar("Abriendo selector de archivos...")
+
         async def do_pick():
             file_picker = ft.FilePicker()
             self._ft_container.page.overlay.append(file_picker)
             self._ft_container.page.update()
 
-            files = await file_picker.pick_files_async(
+            result = await file_picker.pick_files_async(
                 allowed_extensions=["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
                 allow_multiple=False,
             )
@@ -306,8 +308,8 @@ class ListWordsController:
             self._ft_container.page.overlay.remove(file_picker)
             self._ft_container.page.update()
 
-            if files and len(files) > 0 and self._current_word_for_image:
-                file = files[0]
+            if result and result.files and len(result.files) > 0 and self._current_word_for_image:
+                file = result.files[0]
                 await self._add_image_from_file(
                     self._current_word_for_image,
                     file.path,
