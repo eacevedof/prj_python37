@@ -273,9 +273,10 @@ class ListWordsView(ft.Container):
 
     def show_snackbar(self, message: str, error: bool = False) -> None:
         """Muestra un snackbar."""
-        self.page.snack_bar = ft.SnackBar(
+        snackbar = ft.SnackBar(
             content=ft.Text(message),
             bgcolor=ft.Colors.RED_700 if error else ft.Colors.GREEN_700,
+            open=True,
         )
-        self.page.snack_bar.open = True
+        self.page.overlay.append(snackbar)
         self.page.update()

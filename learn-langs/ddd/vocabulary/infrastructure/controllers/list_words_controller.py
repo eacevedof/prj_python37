@@ -53,6 +53,8 @@ class ListWordsController:
         self._current_search: str = ""
         self._words: list[WordListItemViewDto] = []
         self._current_word_for_image: int | None = None
+        self._current_dialog: ft.AlertDialog | None = None
+        self._current_images_column: ft.Column | None = None
 
         # Servicios
         self._ft_file_picker = ft.FilePicker()
@@ -191,18 +193,12 @@ class ListWordsController:
             )
             self._ft_container.show_snackbar(f"Error al cargar imagenes: {e}", error=True)
 
-    def _display_images_dialog(
-        self,
-        word: WordListItemViewDto,
-        images: list[dict],
-    ) -> None:
-        """Muestra el dialogo con las imagenes."""
-        images_column = ft.Column(
-            controls=[],
-            spacing=10,
-            scroll=ft.ScrollMode.AUTO,
-            height=300,
-        )
+    def _render_images_list(self, images: list[dict]) -> None:
+        """Renderiza la lista de imagenes en el column actual."""
+        if not self._current_images_column:
+            return
+
+        self._current_images_column.controls.clear()
 
         if images:
             for img in images:
@@ -229,11 +225,39 @@ class ListWordsController:
                     ],
                     alignment=ft.MainAxisAlignment.START,
                 )
-                images_column.controls.append(img_row)
+                self._current_images_column.controls.append(img_row)
         else:
-            images_column.controls.append(
+            self._current_images_column.controls.append(
                 ft.Text("No hay imagenes", italic=True, color=ft.Colors.GREY_500)
             )
+
+    async def _refresh_images_dialog(self) -> None:
+        """Recarga las imagenes en el dialogo actual."""
+        if not self._current_word_for_image or not self._current_images_column:
+            return
+
+        result = await self._get_word_images_service(
+            GetWordImagesDto.from_primitives({"word_id": self._current_word_for_image})
+        )
+
+        if result.success:
+            self._render_images_list(result.to_list_of_dicts())
+            self._ft_container.page.update()
+
+    def _display_images_dialog(
+        self,
+        word: WordListItemViewDto,
+        images: list[dict],
+    ) -> None:
+        """Muestra el dialogo con las imagenes."""
+        self._current_images_column = ft.Column(
+            controls=[],
+            spacing=10,
+            scroll=ft.ScrollMode.AUTO,
+            height=300,
+        )
+
+        self._render_images_list(images)
 
         url_field = ft.TextField(
             label="URL de imagen",
@@ -253,7 +277,8 @@ class ListWordsController:
             if url and url.strip():
                 async def save_url():
                     await self._add_image_from_url(word.id, url.strip())
-                    close_dialog()
+                    url_field.value = ""
+                    self._ft_container.page.update()
                 self._ft_container.page.run_task(save_url)
 
         dialog = ft.AlertDialog(
@@ -261,7 +286,7 @@ class ListWordsController:
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        images_column,
+                        self._current_images_column,
                         ft.Divider(),
                         ft.Text("Agregar imagen:", weight=ft.FontWeight.BOLD, size=14),
                         ft.Row(
@@ -294,7 +319,15 @@ class ListWordsController:
             ],
         )
 
+        self._current_dialog = dialog
         self._ft_container.page.show_dialog(dialog)
+
+    def _close_current_dialog(self) -> None:
+        """Cierra el dialogo actual si existe."""
+        if self._current_dialog:
+            self._current_dialog.open = False
+            self._ft_container.page.update()
+            self._current_dialog = None
 
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
         ft_file_picker_files = await self._ft_file_picker.pick_files(
@@ -309,8 +342,9 @@ class ListWordsController:
                 ft_file_picker_file.path,
                 ft_file_picker_file.name,
             )
+            await self._refresh_images_dialog()
             await self._async_load_words()
-            self._ft_container.show_snackbar("Imagen agregada")
+            self._ft_container.show_snackbar(f"Imagen '{ft_file_picker_file.name}' agregada")
 
 
 
@@ -368,6 +402,7 @@ class ListWordsController:
             result = await self._add_word_image_service(dto)
 
             if result.success:
+                await self._refresh_images_dialog()
                 await self._async_load_words()
                 self._ft_container.show_snackbar("Imagen agregada desde URL")
             else:
@@ -389,6 +424,7 @@ class ListWordsController:
                 result = await self._delete_word_image_service(dto)
 
                 if result.success:
+                    await self._refresh_images_dialog()
                     await self._async_load_words()
                     self._ft_container.show_snackbar("Imagen eliminada")
                 else:
