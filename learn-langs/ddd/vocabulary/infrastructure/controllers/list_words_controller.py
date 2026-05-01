@@ -52,14 +52,12 @@ class ListWordsController:
         self._route_on_create = on_create
         self._route_on_edit = on_edit
 
-        # Estado interno
         self._current_search: str = ""
         self._words: list[WordListItemViewDto] = []
         self._current_word_for_image: int | None = None
         self._current_dialog: ft.AlertDialog | None = None
         self._current_images_column: ft.Column | None = None
 
-        # Servicios
         self._ft_file_picker = ft.FilePicker()
         self._logger = Logger.get_instance()
         self._list_words_service = ListWordsService.get_instance()
@@ -68,8 +66,6 @@ class ListWordsController:
         self._add_word_image_service = AddWordImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
 
-
-        # Vista
         self._ft_container = ListWordsView.from_primitives({
             "on_back": self._route_on_back,
             "on_create": self._route_on_create,
@@ -100,14 +96,13 @@ class ListWordsController:
         self._ft_container.render(ListWordsViewDto.loading())
 
         try:
-            dto = ListWordsDto.from_primitives({
-                "search": self._current_search,
-                "limit": 100,
-            })
+            result = await self._list_words_service(
+                ListWordsDto.from_primitives({
+                    "search": self._current_search,
+                    "limit": 100,
+                })
+            )
 
-            result = await self._list_words_service(dto)
-
-            # Convertir a DTOs de vista
             self._words = [
                 WordListItemViewDto.from_primitives({
                     "id": w.id,
@@ -209,12 +204,11 @@ class ListWordsController:
         self._current_images_column.controls.clear()
 
         if images:
-            for img in images:
-                img_file_name = img.get("file_path", "")
+            for img_dict in images:
+                img_file_name = img_dict.get("file_path", "")
                 img_full_path = self._get_image_full_path(img_file_name)
 
-                # Thumbnail de la imagen
-                thumbnail = ft.Image(
+                ft_image = ft.Image(
                     src=img_full_path,
                     width=50,
                     height=50,
@@ -222,12 +216,12 @@ class ListWordsController:
                     border_radius=4,
                 )
 
-                img_row = ft.Row(
+                ft_row = ft.Row(
                     controls=[
-                        thumbnail,
+                        ft_image,
                         ft.Icon(
-                            ft.Icons.STAR if img.get("is_primary") else ft.Icons.IMAGE,
-                            color=ft.Colors.AMBER_500 if img.get("is_primary") else ft.Colors.GREY_500,
+                            ft.Icons.STAR if img_dict.get("is_primary") else ft.Icons.IMAGE,
+                            color=ft.Colors.AMBER_500 if img_dict.get("is_primary") else ft.Colors.GREY_500,
                             size=16,
                         ),
                         ft.Text(
@@ -235,19 +229,19 @@ class ListWordsController:
                             size=11,
                             expand=True,
                         ),
-                        ft.Text(img.get("source_type", ""), size=10, color=ft.Colors.GREY_600),
+                        ft.Text(img_dict.get("source_type", ""), size=10, color=ft.Colors.GREY_600),
                         ft.IconButton(
                             icon=ft.Icons.DELETE,
                             icon_color=ft.Colors.RED_400,
                             icon_size=18,
-                            on_click=lambda e, i=img: self._delete_image(i.get("id")),
+                            on_click=lambda e, i=img_dict: self._delete_image(i.get("id")),
                             tooltip="Eliminar imagen",
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.START,
                     spacing=8,
                 )
-                self._current_images_column.controls.append(img_row)
+                self._current_images_column.controls.append(ft_row)
         else:
             self._current_images_column.controls.append(
                 ft.Text("No hay imagenes", italic=True, color=ft.Colors.GREY_500)
@@ -287,11 +281,11 @@ class ListWordsController:
             width=550,
         )
 
-        dialog: ft.AlertDialog | None = None
+        ft_dialog: ft.AlertDialog | None = None
 
         def close_dialog(e=None):
-            if dialog:
-                dialog.open = False
+            if ft_dialog:
+                ft_dialog.open = False
                 self._ft_container.page.update()
 
         def add_from_url(e):
@@ -303,7 +297,7 @@ class ListWordsController:
                     self._ft_container.page.update()
                 self._ft_container.page.run_task(save_url)
 
-        dialog = ft.AlertDialog(
+        ft_dialog = ft.AlertDialog(
             title=ft.Text(f"Imagenes: {word.text}"),
             content=ft.Container(
                 content=ft.Column(
@@ -339,8 +333,8 @@ class ListWordsController:
             ],
         )
 
-        self._current_dialog = dialog
-        self._ft_container.page.show_dialog(dialog)
+        self._current_dialog = ft_dialog
+        self._ft_container.page.show_dialog(ft_dialog)
 
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
         ft_file_picker_files = await self._ft_file_picker.pick_files(
