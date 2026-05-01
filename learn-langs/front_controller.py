@@ -4,6 +4,7 @@ import sys
 import traceback
 
 import flet as ft
+from flet import app_async
 
 # fix encoding for windows console
 if sys.platform == "win32":
@@ -19,31 +20,30 @@ from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigration
 from ddd.vocabulary.application.get_app_config import GetAppConfigService
 
 
-async def fn_render(ft_page: ft.Page) -> None:
+async def fn_render(
+    ft_page: ft.Page
+) -> None:
     """Entry point de la aplicacion Flet."""
 
-    # Configuracion
-    app_config = GetAppConfigService.get_instance()()
+    get_app_config_result_dto = GetAppConfigService.get_instance()()
 
-    # Configurar pagina
-    ft_page.title = app_config.app_title
+    ft_page.title = get_app_config_result_dto.app_title
     ft_page.theme_mode = ft.ThemeMode.LIGHT
-    ft_page.window.width = app_config.window_width
-    ft_page.window.height = app_config.window_height
-    ft_page.window.min_width = app_config.window_min_width
-    ft_page.window.min_height = app_config.window_min_height
+    ft_page.window.width = get_app_config_result_dto.window_width
+    ft_page.window.height = get_app_config_result_dto.window_height
+    ft_page.window.min_width = get_app_config_result_dto.window_min_width
+    ft_page.window.min_height = get_app_config_result_dto.window_min_height
 
-    # Inicializar base de datos
     await RunMigrationsService.get_instance()(
         RunMigrationsDto.from_primitives({
-            "migrations_path": app_config.migrations_path,
+            "migrations_path": get_app_config_result_dto.migrations_path,
             "force": False,
         })
     )
 
     ft_container = ft.Container(expand=True)
-    router = AppRouter(ft_page, ft_container)
-    router.navigate_to(ControllerRouteEnum.HOME)
+    app_router = AppRouter(ft_page, ft_container)
+    app_router.navigate_to(ControllerRouteEnum.HOME)
 
     ft_page.add(
         ft.Column(
@@ -53,7 +53,7 @@ async def fn_render(ft_page: ft.Page) -> None:
                         controls=[
                             ft.Icon(ft.Icons.SCHOOL, size=32, color=ft.Colors.WHITE),
                             ft.Text(
-                                app_config.app_title,
+                                get_app_config_result_dto.app_title,
                                 size=24,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.WHITE,
