@@ -19,27 +19,29 @@ from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigration
 
 from ddd.vocabulary.application.get_app_config import GetAppConfigService
 
-
-async def fn_render(
-    ft_page: ft.Page
-) -> None:
-    """Entry point de la aplicacion Flet."""
-
+async def _fn_run_migrations() -> None:
     get_app_config_result_dto = GetAppConfigService.get_instance()()
-
-    ft_page.title = get_app_config_result_dto.app_title
-    ft_page.theme_mode = ft.ThemeMode.LIGHT
-    ft_page.window.width = get_app_config_result_dto.window_width
-    ft_page.window.height = get_app_config_result_dto.window_height
-    ft_page.window.min_width = get_app_config_result_dto.window_min_width
-    ft_page.window.min_height = get_app_config_result_dto.window_min_height
-
     await RunMigrationsService.get_instance()(
         RunMigrationsDto.from_primitives({
             "migrations_path": get_app_config_result_dto.migrations_path,
             "force": False,
         })
     )
+
+async def fn_render(
+    ft_page: ft.Page
+) -> None:
+    """Entry point de la aplicacion Flet."""
+    await _fn_run_migrations()
+
+    get_app_config_result_dto = GetAppConfigService.get_instance()()
+
+    ft_page.theme_mode = ft.ThemeMode.LIGHT
+    ft_page.title = get_app_config_result_dto.app_title
+    ft_page.window.width = get_app_config_result_dto.window_width
+    ft_page.window.height = get_app_config_result_dto.window_height
+    ft_page.window.min_width = get_app_config_result_dto.window_min_width
+    ft_page.window.min_height = get_app_config_result_dto.window_min_height
 
     ft_container = ft.Container(expand=True)
     app_router = AppRouter(ft_page, ft_container)
