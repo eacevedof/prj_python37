@@ -4,10 +4,9 @@ from pathlib import Path
 from typing import Callable
 
 import flet as ft
-from mypy.build import initial_gc_freeze_done
-from mypy.checker import is_more_general_arg_prefix
 
 from ddd.shared.infrastructure.components.logger import Logger
+
 from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
 from ddd.vocabulary.application.get_word_images import (
