@@ -44,6 +44,8 @@ class Logger:
             content = self.__get_normalized_margin_for_sql(content)
 
         log_entry = f"\n[{now}]\n{content}"
+        if ext == "sql":
+            log_entry = f"\n-- [{now}]\n{content}"
 
         with open(final_log_path, "a", encoding="utf-8") as f:
             f.write(log_entry)
