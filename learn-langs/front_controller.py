@@ -1,6 +1,8 @@
 """Learn Languages - Aplicacion de aprendizaje de idiomas con repeticion espaciada."""
 
 import sys
+import traceback
+
 import flet as ft
 
 # fix encoding for windows console
@@ -9,6 +11,7 @@ if sys.platform == "win32":
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 from ddd.shared.domain.enums import ControllerRouteEnum
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.components import AppRouter
 
 from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
@@ -70,4 +73,12 @@ async def fn_render(ft_page: ft.Page) -> None:
 
 
 if __name__ == "__main__":
-    ft.run(fn_render)
+    try:
+        ft.run(fn_render)
+    except Exception as e:
+        Logger.get_instance().write_error(
+            module="front_controller.fn_render",
+            message=str(e),
+            context={"traceback": traceback.format_exc()},
+        )
+        raise
