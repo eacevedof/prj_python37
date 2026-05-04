@@ -12,3 +12,6 @@
 logs/*
 !logs/.gitkeep
 .claude/*.png
+
+# ChromaDB data (sensitive project memory)
+data/
