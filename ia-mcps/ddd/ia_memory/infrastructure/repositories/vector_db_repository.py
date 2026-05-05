@@ -262,3 +262,70 @@ class VectorDbRepository:
         except Exception as e:
             raise MemoryException.storage_error(str(e))
 
+
+    def delete(self, chunk_id: str, project: str) -> dict[str, Any]:
+        try:
+            collection = self._get_collection(project)
+            existing = collection.get(ids=[chunk_id])
+            if not existing["ids"]:
+                raise MemoryException.chunk_not_found(chunk_id)
+            collection.delete(ids=[chunk_id])
+            return {
+                "id": chunk_id,
+                "project": project,
+                "deleted": True,
+                "source": "chromadb",
+            }
+        except MemoryException:
+            raise
+        except Exception as e:
+            raise MemoryException.storage_error(str(e))
+
+    def list_chunks(
+        self,
+        project: str,
+        memory_type: MemoryTypeEnum | None = None,
+        stale_only: bool = False,
+    ) -> dict[str, Any]:
+        try:
+            collection = self._get_collection(project)
+            where_filter = None
+            if memory_type:
+                where_filter = {"type": memory_type.value}
+            all_data = collection.get(
+                where=where_filter,
+                include=["documents", "metadatas"]
+            )
+            chunks = []
+            if all_data["ids"]:
+                for i, chunk_id in enumerate(all_data["ids"]):
+                    metadata = all_data["metadatas"][i] if all_data["metadatas"] else {}
+                    content = all_data["documents"][i] if all_data["documents"] else ""
+                    if stale_only:
+                        paths_str = metadata.get("paths", "")
+                        stored_hash = metadata.get("content_hash", "")
+                        if paths_str and stored_hash:
+                            paths = paths_str.split(",")
+                            try:
+                                current_hash = self._calculate_content_hash(paths)
+                                if current_hash == stored_hash:
+                                    continue
+                            except Exception:
+                                pass
+                    chunks.append({
+                        "id": chunk_id,
+                        "type": metadata.get("type", ""),
+                        "content_preview": content[:100] + "..." if len(content) > 100 else content,
+                        "paths": metadata.get("paths", ""),
+                        "created_at": metadata.get("created_at", ""),
+                        "updated_at": metadata.get("updated_at", ""),
+                    })
+            return {
+                "source": "chromadb",
+                "project": project,
+                "total_chunks": len(chunks),
+                "chunks": chunks,
+            }
+        except Exception as e:
+            raise MemoryException.storage_error(str(e))
+
