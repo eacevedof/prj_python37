@@ -35,7 +35,7 @@ class ImageFlashcardComp(ft.Container):
             src=full_image_path,
             width=350,
             height=350,
-            fit=ft.ImageFit.CONTAIN,
+            fit=ft.BoxFit.CONTAIN,
             border_radius=8,
         )
 
