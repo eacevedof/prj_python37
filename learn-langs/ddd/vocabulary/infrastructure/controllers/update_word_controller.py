@@ -5,6 +5,7 @@ from typing import Callable, Any
 import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.update_word import UpdateWordDto, UpdateWordService
 from ddd.vocabulary.application.get_word_for_edit import (
     GetWordForEditDto,
@@ -16,7 +17,7 @@ from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordVi
 from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
 
 
-class UpdateWordController:
+class UpdateWordController(BaseController):
     """
     Controller para actualizacion de palabra.
 
@@ -25,16 +26,21 @@ class UpdateWordController:
     - Crear ViewDTOs y pasarlos a la Vista
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
-    - NO usa repositorios directamente
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN
+    # =========================================================================
     def __init__(
         self,
-        word_id: int,
-        on_success: Callable[[], None],
-        on_back: Callable[[], None],
+        word_id: int,                           # 1. Dato requerido (ID de palabra a editar)
+        on_success: Callable[[], None],         # 2. Callback primario (al guardar cambios)
+        on_back: Callable[[], None],            # 3. Callback secundario (cancelar/volver)
     ):
+        # Datos iniciales
         self._word_id = word_id
+
+        # Callbacks de navegación (inyectados desde app_router)
         self._route_on_success = on_success
         self._route_on_back = on_back
 
@@ -42,28 +48,35 @@ class UpdateWordController:
         self._available_tags: list[dict[str, Any]] = []
 
         # Servicios
+        self._logger = Logger.get_instance()
         self._update_word_service = UpdateWordService.get_instance()
         self._get_word_for_edit_service = GetWordForEditService.get_instance()
-        self._logger = Logger.get_instance()
 
         # Vista
         self._ft_container = UpdateWordView.from_primitives({
+            "on_mount": self._on_mount,
             "on_submit": self._on_save_btn_click,
             "on_back": self._route_on_back,
-            "on_mount": self._on_mount,
         })
 
+    # =========================================================================
+    # API PÚBLICA
+    # =========================================================================
+    # app_router.invoked
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
+    # =========================================================================
+    # LIFECYCLE & CARGA DE DATOS
+    # =========================================================================
     def _on_mount(self) -> None:
-        """Callback cuando la vista se monta."""
+        """Callback cuando la vista se monta. Carga datos iniciales."""
         self._ft_container.page.run_task(self._async_load_data)
 
     async def _async_load_data(self) -> None:
-        """Carga la palabra y datos iniciales."""
+        """Carga la palabra y datos iniciales desde el servicio."""
         # Mostrar loading
         self._ft_container.render(UpdateWordViewDto.loading())
 
@@ -101,8 +114,11 @@ class UpdateWordController:
             )
             self._ft_container.show_snackbar(f"Error al cargar: {e}", error=True)
 
+    # =========================================================================
+    # EVENT HANDLERS (orden visual/lógico de arriba a abajo en UI)
+    # =========================================================================
     def _on_save_btn_click(self, form_data: dict[str, Any]) -> None:
-        """Callback cuando la vista hace submit."""
+        """Maneja click en guardar cambios (boton azul - abajo en UI)."""
         async def _task():
             await self._async_submit(form_data)
         self._ft_container.page.run_task(_task)

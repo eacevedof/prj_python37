@@ -18,17 +18,21 @@ class CreateWordView(ft.Container):
     - NO importa repositorios ni servicios
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
     def __init__(
         self,
-        on_save_btn_click: Callable[[dict[str, Any]], None],
-        on_back: Callable[[], None],
-        on_mount: Callable[[], None] | None = None,
+        route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
+        route_on_submit: Callable[[dict[str, Any]], None], # 2. Botón guardar (acción primaria)
+        route_on_back: Callable[[], None],                 # 3. Botón cancelar (acción secundaria)
     ):
         super().__init__()
 
-        self._route_on_save_btn_click = on_save_btn_click
-        self._route_on_back = on_back
-        self._route_on_mount = on_mount
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
+        self._route_on_submit = route_on_submit
+        self._route_on_back = route_on_back
 
         # Form fields
         self._ft_text_es_field: ft.TextField | None = None
@@ -44,23 +48,56 @@ class CreateWordView(ft.Container):
         self._selected_tags: list[str] = []
         self._available_tags: list[dict[str, Any]] = []
 
-        self._build_ui()
+        self._build_initial_ui()
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
         return cls(
-            on_save_btn_click=primitives.get("on_submit", lambda x: None),
-            on_back=primitives.get("on_back", lambda: None),
-            on_mount=primitives.get("on_mount"),
+            route_on_mount=primitives.get("on_mount"),
+            route_on_submit=primitives.get("on_submit", lambda x: None),
+            route_on_back=primitives.get("on_back", lambda: None),
         )
 
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, dto: "CreateWordViewDto") -> None:
+        """Renderiza la vista basado en el DTO."""
+        # Loading state
+        if self._ft_loading_ring:
+            self._ft_loading_ring.visible = dto.is_loading
+
+        # Restaurar valores del formulario
+        self._render_form_values(dto.form_values)
+
+        # Tags disponibles
+        self._available_tags = list(dto.available_tags)
+        self._selected_tags = list(dto.form_values.get("selected_tags", []))
+        self._render_tags()
+
+        # Mensajes
+        self._render_messages(dto)
+
+        # Highlight campo con error
+        if dto.error_field:
+            self._highlight_error_field(dto.error_field)
+
+        self.update()
+
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
         if self._route_on_mount:
             self._route_on_mount()
 
-    def _build_ui(self) -> None:
-        """Construye la estructura UI."""
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
         self._ft_text_es_field = ft.TextField(
             label="Palabra en español *",
             hint_text="Escribe la palabra en español",
@@ -201,29 +238,9 @@ class CreateWordView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def render(self, dto: "CreateWordViewDto") -> None:
-        """Renderiza la vista basado en el DTO."""
-        # Loading state
-        if self._ft_loading_ring:
-            self._ft_loading_ring.visible = dto.is_loading
-
-        # Restaurar valores del formulario
-        self._render_form_values(dto.form_values)
-
-        # Tags disponibles
-        self._available_tags = list(dto.available_tags)
-        self._selected_tags = list(dto.form_values.get("selected_tags", []))
-        self._render_tags()
-
-        # Mensajes
-        self._render_messages(dto)
-
-        # Highlight campo con error
-        if dto.error_field:
-            self._highlight_error_field(dto.error_field)
-
-        self.update()
-
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
     def _render_form_values(self, form_values: dict[str, Any]) -> None:
         """Restaura valores del formulario."""
         if self._ft_text_es_field:
@@ -294,6 +311,14 @@ class CreateWordView(ft.Container):
             target_field.border_color = ft.Colors.RED_700
             target_field.focus()
 
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    def _on_save_btn_click(self) -> None:
+        """Maneja click en guardar y notifica al controller."""
+        form_data = self._get_form_data()
+        self._route_on_submit(form_data)
+
     def _toggle_tag(self, tag_name: str) -> None:
         """Alterna selección de tag (estado local)."""
         if tag_name in self._selected_tags:
@@ -302,11 +327,6 @@ class CreateWordView(ft.Container):
             self._selected_tags.append(tag_name)
         self._render_tags()
         self.update()
-
-    def _on_save_btn_click(self) -> None:
-        """Recopila datos del form y emite callback."""
-        form_data = self._get_form_data()
-        self._route_on_save_btn_click(form_data)
 
     def _get_form_data(self) -> dict[str, Any]:
         """Obtiene los datos actuales del formulario."""

@@ -1,11 +1,12 @@
 """Vista de sesion de estudio - Solo renderizado."""
 
+from typing import TYPE_CHECKING, Any, Callable, Self
+
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
 
 from ddd.vocabulary.infrastructure.ui.components.flashcard_comp import FlashcardComp
-from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
+from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
 
 if TYPE_CHECKING:
     from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
@@ -22,89 +23,52 @@ class StudyView(ft.Container):
     - NO importa servicios ni repositorios
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
     def __init__(
         self,
-        on_answer: Callable[[str], None],
-        on_skip: Callable[[], None],
-        on_timeout: Callable[[], None],
-        on_back: Callable[[], None],
-        on_mount: Callable[[], None] | None = None,
+        route_on_mount: Callable[[], None] | None,  # 1. Lifecycle (se ejecuta primero)
+        route_on_answer: Callable[[str], None],     # 2. Input field (render paso 1 - input)
+        route_on_skip: Callable[[], None],          # 3. Skip button (junto al input)
+        route_on_timeout: Callable[[], None],       # 4. Timer timeout (render paso 1 - timer)
+        route_on_back: Callable[[], None],          # 5. Boton volver (header)
     ):
         super().__init__()
 
-        self._route_on_answer = on_answer
-        self._route_on_skip = on_skip
-        self._route_on_timeout = on_timeout
-        self._route_on_back = on_back
-        self._route_on_mount = on_mount
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
+        self._route_on_answer = route_on_answer
+        self._route_on_skip = route_on_skip
+        self._route_on_timeout = route_on_timeout
+        self._route_on_back = route_on_back
 
-        # UI components
+        # Componentes UI - Header
+        self._ft_progress_text: ft.Text | None = None
+        self._ft_score_text: ft.Text | None = None
+
+        # Componentes UI - Content Area (dinámico)
         self._ft_content_area: ft.Column | None = None
         self._ft_flashcard: FlashcardComp | None = None
         self._ft_input_field: InputFieldComp | None = None
         self._ft_timer: TimerComp | None = None
-        self._ft_progress_text: ft.Text | None = None
-        self._ft_score_text: ft.Text | None = None
 
-        self._build_ui()
+        self._build_initial_ui()
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
         return cls(
-            on_answer=primitives.get("on_answer", lambda x: None),
-            on_skip=primitives.get("on_skip", lambda: None),
-            on_timeout=primitives.get("on_timeout", lambda: None),
-            on_back=primitives.get("on_back", lambda: None),
-            on_mount=primitives.get("on_mount"),
+            route_on_mount=primitives.get("on_mount"),
+            route_on_answer=primitives.get("on_answer", lambda x: None),
+            route_on_skip=primitives.get("on_skip", lambda: None),
+            route_on_timeout=primitives.get("on_timeout", lambda: None),
+            route_on_back=primitives.get("on_back", lambda: None),
         )
 
-    def did_mount(self) -> None:
-        """Flet llama esto al montar. Notifica al Controller."""
-        if self._route_on_mount:
-            self._route_on_mount()
-
-    def _build_ui(self) -> None:
-        self._ft_progress_text = ft.Text("Cargando...", size=14)
-        self._ft_score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
-
-        self._ft_content_area = ft.Column(
-            controls=[
-                ft.Container(
-                    content=ft.ProgressRing(),
-                    alignment=ft.Alignment.CENTER,
-                    expand=True,
-                ),
-            ],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            alignment=ft.MainAxisAlignment.CENTER,
-            expand=True,
-        )
-
-        back_btn = ft.IconButton(
-            icon=ft.Icons.ARROW_BACK,
-            on_click=lambda _: self._route_on_back(),
-            tooltip="Volver",
-        )
-
-        self.content = ft.Column(
-            controls=[
-                ft.Row(
-                    controls=[
-                        back_btn,
-                        self._ft_progress_text,
-                        ft.Container(expand=True),
-                        self._ft_score_text,
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                ),
-                ft.Divider(height=1),
-                self._ft_content_area,
-            ],
-            expand=True,
-        )
-        self.expand = True
-        self.padding = 20
-
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
     def render(self, dto: "StudyViewDto") -> None:
         """Renderiza la vista basado en el DTO."""
         # Actualizar header
@@ -130,8 +94,69 @@ class StudyView(ft.Container):
 
         self.update()
 
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
+    def did_mount(self) -> None:
+        """Flet llama esto al montar. Notifica al Controller."""
+        if self._route_on_mount:
+            self._route_on_mount()
+
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
+        # Header components
+        self._ft_progress_text = ft.Text("Cargando...", size=14)
+        self._ft_score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
+
+        # Content area (dinámico)
+        self._ft_content_area = ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.ProgressRing(),
+                    alignment=ft.Alignment.CENTER,
+                    expand=True,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+            expand=True,
+        )
+
+        # Back button
+        back_btn = ft.IconButton(
+            icon=ft.Icons.ARROW_BACK,
+            on_click=lambda _: self._route_on_back(),
+            tooltip="Volver",
+        )
+
+        # Layout principal
+        self.content = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        back_btn,
+                        self._ft_progress_text,
+                        ft.Container(expand=True),
+                        self._ft_score_text,
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                ),
+                ft.Divider(height=1),
+                self._ft_content_area,
+            ],
+            expand=True,
+        )
+        self.expand = True
+        self.padding = 20
+
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
     def _render_loading(self) -> None:
-        """Renderiza estado de carga."""
+        """Renderiza estado de carga (primer estado al montar)."""
         if not self._ft_content_area:
             return
 
@@ -145,13 +170,13 @@ class StudyView(ft.Container):
         )
 
     def _render_studying(self, dto: "StudyViewDto") -> None:
-        """Renderiza palabra actual para estudiar."""
+        """Renderiza palabra actual para estudiar (estado principal)."""
         if not self._ft_content_area or not dto.current_word:
             return
 
         word = dto.current_word
 
-        # Crear flashcard
+        # Crear componentes dinámicos
         self._ft_flashcard = FlashcardComp(
             text_es=word.get("text_es", ""),
             text_lang=word.get("text_lang", ""),
@@ -160,14 +185,12 @@ class StudyView(ft.Container):
             show_translation=False,
         )
 
-        # Crear input
         self._ft_input_field = InputFieldComp(
             placeholder="Escribe la traduccion...",
             on_submit=self._route_on_answer,
             on_skip=self._route_on_skip,
         )
 
-        # Crear timer
         self._ft_timer = TimerComp(
             seconds=30,
             on_timeout=self._route_on_timeout,
@@ -191,7 +214,7 @@ class StudyView(ft.Container):
         ])
 
     def _render_with_result(self, dto: "StudyViewDto") -> None:
-        """Renderiza resultado de respuesta."""
+        """Renderiza resultado de respuesta (post-answer antes de next word)."""
         if not dto.last_result or not self._ft_input_field or not self._ft_flashcard:
             return
 
@@ -210,7 +233,7 @@ class StudyView(ft.Container):
         self._ft_flashcard.reveal_translation()
 
     def _render_no_words(self) -> None:
-        """Renderiza mensaje cuando no hay palabras."""
+        """Renderiza mensaje cuando no hay palabras para practicar."""
         if not self._ft_content_area:
             return
 
@@ -241,7 +264,7 @@ class StudyView(ft.Container):
         ])
 
     def _render_session_complete(self, dto: "StudyViewDto") -> None:
-        """Renderiza sesion completada."""
+        """Renderiza sesion completada con resumen de stats."""
         if not self._ft_content_area:
             return
 
@@ -310,3 +333,9 @@ class StudyView(ft.Container):
                 on_click=lambda _: self._route_on_back(),
             ),
         ])
+
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    # Nota: Los callbacks están conectados directamente en _build_initial_ui
+    # y en los componentes dinámicos (FlashcardComp, InputFieldComp, TimerComp)

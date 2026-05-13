@@ -13,15 +13,23 @@ class DeleteWordController:
     """
     Controller para eliminacion de palabras.
 
+    Responsabilidades:
+    - Orquestar flujo de eliminacion entre Servicio y resultado
+    - Convertir excepciones en DTOs de respuesta
+    - Loggear errores
+
     Nota: Este controller es usado internamente por ListWordsController,
-    no tiene vista propia.
+    no tiene vista propia (no hereda de BaseController).
     """
 
     _instance: "DeleteWordController | None" = None
 
+    # =========================================================================
+    # CONSTRUCCIÓN
+    # =========================================================================
     def __init__(self) -> None:
-        self._delete_service = DeleteWordService.get_instance()
-        self._logger = Logger.get_instance()
+        self._delete_service = DeleteWordService.get_instance()  # Servicio de aplicacion
+        self._logger = Logger.get_instance()                     # Logger compartido
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -29,6 +37,10 @@ class DeleteWordController:
             cls._instance = cls()
         return cls._instance
 
+    # =========================================================================
+    # API PÚBLICA
+    # =========================================================================
+    # ListWordsController.invoked
     async def delete(self, word_id: int) -> DeleteWordViewDto:
         """
         Elimina una palabra y retorna el resultado.
@@ -37,7 +49,7 @@ class DeleteWordController:
             word_id: ID de la palabra a eliminar.
 
         Returns:
-            DeleteWordViewDto con el resultado.
+            DeleteWordViewDto con el resultado (ok/error).
         """
         try:
             dto = DeleteWordDto.from_primitives({

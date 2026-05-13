@@ -67,15 +67,15 @@ class AppRouter:
             controller = StudyController(
                 lang_code=kwargs.get("lang_code", "nl_NL"),
                 tags=kwargs.get("tags", []),
-                on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
             )
             return controller.ft_container
 
         if route_name == ControllerRouteEnum.WORDS:
             controller = ListWordsController(
-                on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
-                on_create=lambda: self.navigate_to(ControllerRouteEnum.CREATE_WORD),
-                on_edit=lambda word_id: self.navigate_to(
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+                route_on_create=lambda: self.navigate_to(ControllerRouteEnum.CREATE_WORD),
+                route_on_edit=lambda word_id: self.navigate_to(
                     ControllerRouteEnum.UPDATE_WORD,
                     word_id=word_id,
                 ),
@@ -84,8 +84,8 @@ class AppRouter:
 
         if route_name == ControllerRouteEnum.CREATE_WORD:
             controller = CreateWordController(
-                on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
-                on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
+                route_on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
             )
             return controller.ft_container
 

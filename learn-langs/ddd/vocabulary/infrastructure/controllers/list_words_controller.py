@@ -6,7 +6,7 @@ from typing import Callable
 import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
-
+from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
 from ddd.vocabulary.application.get_word_images import (
@@ -28,7 +28,7 @@ from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
 )
 
 
-class ListWordsController:
+class ListWordsController(BaseController):
     """
     Controller para listado de palabras.
 
@@ -41,22 +41,28 @@ class ListWordsController:
     - NO usa repositorios directamente
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN
+    # =========================================================================
     def __init__(
         self,
-        on_back: Callable[[], None],
-        on_create: Callable[[], None],
-        on_edit: Callable[[int], None],
+        route_on_back: Callable[[], None],          # 1. Navegación back (header izquierda)
+        route_on_create: Callable[[], None],        # 2. Botón crear palabra (header derecha)
+        route_on_edit: Callable[[int], None],       # 3. Botón editar palabra (item lista)
     ):
-        self._route_on_back = on_back
-        self._route_on_create = on_create
-        self._route_on_edit = on_edit
+        # Callbacks de navegación (inyectados desde app_router)
+        self._route_on_back = route_on_back
+        self._route_on_create = route_on_create
+        self._route_on_edit = route_on_edit
 
+        # Estado del controller
         self._current_search: str = ""
         self._words: list[WordListItemViewDto] = []
         self._current_word_for_image: int | None = None
         self._current_dialog: ft.AlertDialog | None = None
         self._current_images_column: ft.Column | None = None
 
+        # Servicios e infraestructura
         self._ft_file_picker = ft.FilePicker()
         self._logger = Logger.get_instance()
         self._list_words_service = ListWordsService.get_instance()
@@ -65,32 +71,39 @@ class ListWordsController:
         self._add_word_image_service = AddWordImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
 
+        # Vista (instancia de ListWordsView)
         self._ft_container = ListWordsView.from_primitives({
+            "on_mount": self._on_mount,
             "on_back": self._route_on_back,
             "on_create": self._route_on_create,
+            "on_search": self._on_search_input,
             "on_edit": self._route_on_edit,
             "on_delete": self._on_delete_btn_click,
-            "on_search": self._on_search_input,
             "on_show_images": self._on_images_btn_click,
-            "on_mount": self._on_mount,
         })
 
+    # =========================================================================
+    # API PÚBLICA
+    # =========================================================================
+    # app_router.invoked
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
-    def _get_image_full_path(self, filename: str) -> str:
-        """Obtiene la ruta completa de una imagen."""
-        base_path = Path(__file__).parent.parent.parent.parent.parent
-        return str(base_path / "data" / "images" / filename)
+    def refresh(self) -> None:
+        """Recarga datos. Usar para refresh externo si se necesita."""
+        self._ft_container.page.run_task(self._async_load_words)
 
+    # =========================================================================
+    # LIFECYCLE & CARGA DE DATOS
+    # =========================================================================
     def _on_mount(self) -> None:
-        """Callback cuando la vista se monta."""
+        """Callback cuando la vista se monta. Carga datos iniciales."""
         self._ft_container.page.run_task(self._async_load_words)
 
     async def _async_load_words(self) -> None:
-        """Carga la lista de palabras."""
+        """Carga la lista de palabras desde el servicio y actualiza la vista."""
         # Mostrar loading
         self._ft_container.render(ListWordsViewDto.loading())
 
@@ -131,19 +144,33 @@ class ListWordsController:
             )
             self._ft_container.render(ListWordsViewDto.error(f"Error al cargar: {e}"))
 
+    # =========================================================================
+    # EVENT HANDLERS (orden visual/lógico de arriba a abajo en UI)
+    # =========================================================================
     def _on_search_input(self, search_text: str) -> None:
-        """Maneja cambio en busqueda."""
+        """Maneja cambio en busqueda (search field - header)."""
         self._current_search = search_text
         self._ft_container.page.run_task(self._async_load_words)
 
     def _on_delete_btn_click(self, word_id: int) -> None:
-        """Maneja click en eliminar."""
+        """Maneja click en eliminar (botón delete - item lista)."""
         async def _task():
             await self._async_delete_word(word_id)
         self._ft_container.page.run_task(_task)
 
+
+    def _on_images_btn_click(self, word_id: int) -> None:
+        """Maneja click en imagenes (botón image - item lista)."""
+        self._current_word_for_image = word_id
+        async def _task():
+            await self._async_show_images_dialog(word_id)
+        self._ft_container.page.run_task(_task)
+
+    # =========================================================================
+    # GESTIÓN DE PALABRAS (CRUD)
+    # =========================================================================
     async def _async_delete_word(self, word_id: int) -> None:
-        """Elimina una palabra."""
+        """Elimina una palabra via servicio."""
         try:
             dto = DeleteWordDto.from_primitives({"word_id": word_id})
             result = await self._delete_word_service(dto)
@@ -159,12 +186,13 @@ class ListWordsController:
             )
             self._ft_container.show_snackbar(f"Error: {e}", error=True)
 
-    def _on_images_btn_click(self, word_id: int) -> None:
-        """Maneja click en imagenes."""
-        self._current_word_for_image = word_id
-        async def _task():
-            await self._async_show_images_dialog(word_id)
-        self._ft_container.page.run_task(_task)
+    # =========================================================================
+    # GESTIÓN DE IMAGENES (Dialogo y operaciones)
+    # =========================================================================
+    def _get_image_full_path(self, filename: str) -> str:
+        """Obtiene la ruta completa de una imagen."""
+        base_path = Path(__file__).parent.parent.parent.parent.parent
+        return str(base_path / "data" / "images" / filename)
 
     async def _async_show_images_dialog(self, word_id: int) -> None:
         """Muestra dialogo de imagenes."""

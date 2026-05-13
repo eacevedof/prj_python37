@@ -5,6 +5,7 @@ from typing import Callable, Any
 import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
 from ddd.vocabulary.application.get_tags import GetTagsService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
@@ -12,7 +13,7 @@ from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordVi
 from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
 
-class CreateWordController:
+class CreateWordController(BaseController):
     """
     Controller para crear palabra.
 
@@ -21,18 +22,20 @@ class CreateWordController:
     - Crear ViewDTOs y pasarlos a la Vista
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
-    - NO usa repositorios directamente
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN
+    # =========================================================================
     def __init__(
         self,
-        on_success: Callable[[], None],
-        on_back: Callable[[], None],
+        route_on_success: Callable[[], None],    # 1. Callback éxito (cierra formulario)
+        route_on_back: Callable[[], None],       # 2. Callback cancelar (vuelve atrás)
     ):
-        self._route_on_success = on_success
-        self._route_on_back = on_back
+        # Callbacks de navegación (inyectados desde app_router)
+        self._route_on_success = route_on_success
+        self._route_on_back = route_on_back
 
-        # Servicios
         self._logger = Logger.get_instance()
         self._create_word_service = CreateWordService.get_instance()
         self._get_tags_service = GetTagsService.get_instance()
@@ -40,18 +43,24 @@ class CreateWordController:
         # Cache de tags
         self._available_tags: list[dict[str, Any]] = []
 
-        # Vista
         self._ft_container = CreateWordView.from_primitives({
+            "on_mount": self._on_mount,
             "on_submit": self._on_save_btn_click,
             "on_back": self._route_on_back,
-            "on_mount": self._on_mount,
         })
 
+    # =========================================================================
+    # API PÚBLICA
+    # =========================================================================
+    # app_router.invoked
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
+    # =========================================================================
+    # LIFECYCLE & CARGA DE DATOS
+    # =========================================================================
     def _on_mount(self) -> None:
         """Callback cuando la vista se monta. Carga datos iniciales."""
         self._ft_container.page.run_task(self._async_load_initial_data)
@@ -80,8 +89,11 @@ class CreateWordController:
                 CreateWordViewDto.empty(available_tags=[])
             )
 
+    # =========================================================================
+    # EVENT HANDLERS (orden visual/lógico de arriba a abajo en UI)
+    # =========================================================================
     def _on_save_btn_click(self, form_data: dict[str, Any]) -> None:
-        """Callback cuando la vista hace submit."""
+        """Maneja click en guardar (botón verde - abajo en UI)."""
         async def _task():
             await self._async_on_submit(form_data)
         self._ft_container.page.run_task(_task)
@@ -124,6 +136,10 @@ class CreateWordController:
                     available_tags=self._available_tags,
                 )
             )
+
+            # Notificar éxito después de un delay
+            # (permite ver el mensaje de éxito antes de cerrar)
+            # self._route_on_success()
 
         except Exception as e:
             self._logger.write_error(
