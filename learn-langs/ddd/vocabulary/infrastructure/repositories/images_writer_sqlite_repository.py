@@ -96,8 +96,8 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         self,
         word_image_entity: WordImageEntity,
         image_bytes: bytes,
-    ) -> int:
-        """Guarda bytes de imagen en disco y crea el registro. Retorna el ID."""
+    ) -> WordImageEntity:
+        """Guarda bytes de imagen en disco y crea el registro. Retorna la entidad creada."""
         self._ensure_images_dir()
 
         filename = self._generate_filename(word_image_entity.word_es_id, word_image_entity.mime_type)
@@ -137,10 +137,28 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
             is_primary=word_image_entity.is_primary,
         )
 
-        return await self.create(updated_entity)
+        image_id = await self.create(updated_entity)
 
-    async def save_svg_content(self, word_image_entity: WordImageEntity, svg_content: str) -> int:
-        """Guarda contenido SVG y retorna el ID."""
+        # Retornar entidad con el ID asignado
+        return WordImageEntity(
+            id=image_id,
+            word_es_id=updated_entity.word_es_id,
+            source_type=updated_entity.source_type,
+            file_path=updated_entity.file_path,
+            mime_type=updated_entity.mime_type,
+            original_url=updated_entity.original_url,
+            original_filename=updated_entity.original_filename,
+            width=updated_entity.width,
+            height=updated_entity.height,
+            file_size=updated_entity.file_size,
+            svg_content=updated_entity.svg_content,
+            caption=updated_entity.caption,
+            alt_text=updated_entity.alt_text,
+            is_primary=updated_entity.is_primary,
+        )
+
+    async def save_svg_content(self, word_image_entity: WordImageEntity, svg_content: str) -> WordImageEntity:
+        """Guarda contenido SVG y retorna la entidad creada."""
         self._ensure_images_dir()
 
         filename = self._generate_filename(word_image_entity.word_es_id, "image/svg+xml")
@@ -163,7 +181,21 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
             is_primary=word_image_entity.is_primary,
         )
 
-        return await self.create(updated_entity)
+        image_id = await self.create(updated_entity)
+
+        # Retornar entidad con el ID asignado
+        return WordImageEntity(
+            id=image_id,
+            word_es_id=updated_entity.word_es_id,
+            source_type=updated_entity.source_type,
+            file_path=updated_entity.file_path,
+            mime_type=updated_entity.mime_type,
+            file_size=updated_entity.file_size,
+            svg_content=updated_entity.svg_content,
+            caption=updated_entity.caption,
+            alt_text=updated_entity.alt_text,
+            is_primary=updated_entity.is_primary,
+        )
 
     async def update(self, word_image_entity: WordImageEntity) -> bool:
         """Actualiza caption, alt_text, sort_order, is_primary de una imagen."""
