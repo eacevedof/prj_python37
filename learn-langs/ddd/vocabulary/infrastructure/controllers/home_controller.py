@@ -21,13 +21,12 @@ class HomeController:
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
     """
-
     def __init__(
         self,
-        route_on_start_study: Callable[[str, list[str]], None],
-        route_on_manage_words: Callable[[], None],
+        route_on_start_study: Callable[[str, list[str]], None],    # 1. Botón primario (verde, izquierda)
+        route_on_manage_words: Callable[[], None],                 # 2. Botón secundario (gris, derecha)
     ):
-        # Lambdas de navegacion en app_router
+        # Callbacks de navegación (inyectados desde app_router)
         self._route_on_start_study = route_on_start_study
         self._route_on_manage_words = route_on_manage_words
 
@@ -45,11 +44,21 @@ class HomeController:
             "on_manage_words": self._route_on_manage_words,
         })
 
+    # =========================================================================
+    # API PÚBLICA
+    # =========================================================================
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
         return self._ft_container
 
+    def refresh(self) -> None:
+        """Recarga datos. Usar para refresh externo si se necesita."""
+        self._ft_container.page.run_task(self._async_load_data)
+
+    # =========================================================================
+    # LIFECYCLE & CARGA DE DATOS
+    # =========================================================================
     def _on_mount(self) -> None:
         """Callback cuando la vista se monta. Carga datos iniciales."""
         self._ft_container.page.run_task(self._async_load_data)
@@ -75,8 +84,8 @@ class HomeController:
             self._ft_container.render(
                 HomeViewDto.ok(
                     tags=[
-                        {"id": t.id, "name": t.name, "color": t.color}
-                        for t in load_home_result_dto.tags
+                        {"id": lang_tag.id, "name": lang_tag.name, "color": lang_tag.color}
+                        for lang_tag in load_home_result_dto.tags
                     ],
                     stats={
                         "total_words": load_home_result_dto.stats.total_words,
@@ -102,12 +111,11 @@ class HomeController:
                 )
             )
 
-    def refresh(self) -> None:
-        """Recarga datos. Usar para refresh externo si se necesita."""
-        self._ft_container.page.run_task(self._async_load_data)
-
+    # =========================================================================
+    # EVENT HANDLERS (orden visual/lógico de arriba a abajo en UI)
+    # =========================================================================
     def _on_lang_change(self, lang_code: str) -> None:
-        """Maneja el cambio de idioma."""
+        """Maneja el cambio de idioma (dropdown - arriba en UI)."""
         try:
             self._selected_lang = LanguageCodeEnum(lang_code)
         except ValueError:
@@ -116,7 +124,7 @@ class HomeController:
         self._ft_container.page.run_task(self._async_load_data)
 
     def _on_tag_toggle(self, tag_name: str) -> None:
-        """Alterna la seleccion de un tag."""
+        """Alterna la seleccion de un tag (chips - medio en UI)."""
         if tag_name in self._selected_tags:
             self._selected_tags.remove(tag_name)
         else:
@@ -125,7 +133,7 @@ class HomeController:
         self._ft_container.page.run_task(self._async_load_data)
 
     def _route_on_start_study_click(self) -> None:
-        """Maneja click en comenzar estudio."""
+        """Maneja click en comenzar estudio (boton verde - abajo en UI)."""
         self._route_on_start_study(
             str(self._selected_lang),
             self._selected_tags
