@@ -18,22 +18,25 @@ class HomeView(ft.Container):
     - NO importa repositorios ni servicios
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
     def __init__(
         self,
-        route_on_lang_change: Callable[[str], None],
-        route_on_tag_toggle: Callable[[str], None],
-        route_on_start_study: Callable[[], None],
-        route_on_manage_words: Callable[[], None],
-        route_on_mount: Callable[[], None] | None = None,
+        route_on_mount: Callable[[], None] | None,      # 1. Lifecycle (se ejecuta primero)
+        route_on_lang_change: Callable[[str], None],    # 2. Dropdown idiomas (render paso 1)
+        route_on_tag_toggle: Callable[[str], None],     # 3. Tags (render paso 2)
+        route_on_start_study: Callable[[], None],       # 4. Botón acción primaria
+        route_on_manage_words: Callable[[], None],      # 5. Botón acción secundaria
     ):
         super().__init__()
 
-        # Callbacks al controller
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
         self._route_on_lang_change = route_on_lang_change
         self._route_on_tag_toggle = route_on_tag_toggle
         self._route_on_start_study = route_on_start_study
         self._route_on_manage_words = route_on_manage_words
-        self._route_on_mount = route_on_mount
 
         # Componentes UI
         self._ft_lang_dropdown: ft.Dropdown | None = None
@@ -48,18 +51,41 @@ class HomeView(ft.Container):
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         """Crea la vista desde un diccionario de callbacks."""
         return cls(
+            route_on_mount=primitives.get("on_mount"),
             route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
             route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
             route_on_start_study=primitives.get("on_start_study", lambda: None),
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
-            route_on_mount=primitives.get("on_mount"),
         )
 
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, home_view_dto: "HomeViewDto") -> None:
+        """Renderiza la vista con los datos del DTO."""
+        if self._ft_loading_indicator:
+            self._ft_loading_indicator.visible = home_view_dto.is_loading
+
+        if home_view_dto.error_message:
+            self._show_error(home_view_dto.error_message)
+            return
+
+        self._render_language_dropdown(home_view_dto)
+        self._render_tags(home_view_dto)
+        self._render_stats(home_view_dto)
+        self.update()
+
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
         if self._route_on_mount:
             self._route_on_mount()
 
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
     def _build_initial_ui(self) -> None:
         """Construye la estructura inicial de la UI."""
         # Loading indicator
@@ -162,19 +188,9 @@ class HomeView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def render(self, home_view_dto: "HomeViewDto") -> None:
-        """Renderiza la vista con los datos del DTO."""
-        if self._ft_loading_indicator:
-            self._ft_loading_indicator.visible = home_view_dto.is_loading
-
-        if home_view_dto.error_message:
-            self._show_error(home_view_dto.error_message)
-            return
-
-        self._render_language_dropdown(home_view_dto)
-        self._render_tags(home_view_dto)
-        self._render_stats(home_view_dto)
-        self.update()
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
 
     def _render_language_dropdown(self, home_view_dto: "HomeViewDto") -> None:
         """Renderiza el dropdown de idiomas."""
@@ -255,6 +271,9 @@ class HomeView(ft.Container):
             )
         self.update()
 
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
     def _on_lang_dropdown_change(self, e: ft.ControlEvent) -> None:
         """Maneja el cambio de idioma y notifica al controller."""
         self._route_on_lang_change(e.control.value)
