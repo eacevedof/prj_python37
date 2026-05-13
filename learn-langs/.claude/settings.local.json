@@ -8,7 +8,8 @@
       "Bash(else echo \"No venv found\")",
       "Bash(fi)",
       "Bash(dir:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(pip install:*)"
     ]
   }
 }

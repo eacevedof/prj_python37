@@ -162,39 +162,39 @@ class HomeView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def render(self, dto: "HomeViewDto") -> None:
+    def render(self, home_view_dto: "HomeViewDto") -> None:
         """Renderiza la vista con los datos del DTO."""
         if self._ft_loading_indicator:
-            self._ft_loading_indicator.visible = dto.is_loading
+            self._ft_loading_indicator.visible = home_view_dto.is_loading
 
-        if dto.error_message:
-            self._show_error(dto.error_message)
+        if home_view_dto.error_message:
+            self._show_error(home_view_dto.error_message)
             return
 
-        self._render_language_dropdown(dto)
-        self._render_tags(dto)
-        self._render_stats(dto)
+        self._render_language_dropdown(home_view_dto)
+        self._render_tags(home_view_dto)
+        self._render_stats(home_view_dto)
         self.update()
 
-    def _render_language_dropdown(self, dto: "HomeViewDto") -> None:
+    def _render_language_dropdown(self, home_view_dto: "HomeViewDto") -> None:
         """Renderiza el dropdown de idiomas."""
         if not self._ft_lang_dropdown:
             return
 
         self._ft_lang_dropdown.options = [
             ft.dropdown.Option(key=lang["code"], text=lang["display_name"])
-            for lang in dto.language_options
+            for lang in home_view_dto.language_options
         ]
-        self._ft_lang_dropdown.value = dto.selected_lang_code
+        self._ft_lang_dropdown.value = home_view_dto.selected_lang_code
 
-    def _render_tags(self, dto: "HomeViewDto") -> None:
+    def _render_tags(self, home_view_dto: "HomeViewDto") -> None:
         """Renderiza los chips de tags."""
         if not self._ft_tags_row:
             return
 
         self._ft_tags_row.controls.clear()
 
-        if not dto.tags:
+        if not home_view_dto.tags:
             self._ft_tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
@@ -204,7 +204,7 @@ class HomeView(ft.Container):
                 )
             )
         else:
-            for tag in dto.tags:
+            for tag in home_view_dto.tags:
                 tag_name = tag.get("name", "")
                 is_selected = tag.get("is_selected", False)
                 color = tag.get("color", "#6B7280")
@@ -218,14 +218,14 @@ class HomeView(ft.Container):
                 )
                 self._ft_tags_row.controls.append(chip)
 
-    def _render_stats(self, dto: "HomeViewDto") -> None:
+    def _render_stats(self, home_view_dto: "HomeViewDto") -> None:
         """Renderiza las estadísticas."""
-        if not self._ft_stats_column or not dto.stats:
+        if not self._ft_stats_column or not home_view_dto.stats:
             return
 
-        total_words = dto.stats.get("total_words", 0)
-        due_for_review = dto.stats.get("due_for_review", 0)
-        avg_score = float(dto.stats.get("avg_score", 0) or 0)
+        total_words = home_view_dto.stats.get("total_words", 0)
+        due_for_review = home_view_dto.stats.get("due_for_review", 0)
+        avg_score = float(home_view_dto.stats.get("avg_score", 0) or 0)
         avg_score_percent = int(avg_score * 100)
 
         self._ft_stats_column.controls.clear()

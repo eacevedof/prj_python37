@@ -13,3 +13,5 @@ logs/*
 !logs/.gitkeep
 .claude/*.png
 /data/images/
+.claude
+graphify-out
