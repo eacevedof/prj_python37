@@ -21,53 +21,99 @@ class ListWordsView(ft.Container):
     - NO importa repositorios ni servicios
     """
 
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
     def __init__(
         self,
-        on_back: Callable[[], None],
-        on_create: Callable[[], None],
-        on_edit: Callable[[int], None],
-        on_delete: Callable[[int], None],
-        on_search: Callable[[str], None],
-        on_show_images: Callable[[int], None],
-        on_mount: Callable[[], None] | None = None,
+        route_on_mount: Callable[[], None] | None,     # 1. Lifecycle (se ejecuta primero)
+        route_on_back: Callable[[], None],             # 2. Botón back (header izquierda)
+        route_on_create: Callable[[], None],           # 3. Botón crear (header derecha)
+        route_on_search: Callable[[str], None],        # 4. Campo búsqueda (header)
+        route_on_edit: Callable[[int], None],          # 5. Botón editar (item lista)
+        route_on_delete: Callable[[int], None],        # 6. Botón eliminar (item lista)
+        route_on_show_images: Callable[[int], None],   # 7. Botón imagenes (item lista)
     ):
         super().__init__()
 
-        self._route_on_back = on_back
-        self._route_on_create = on_create
-        self._route_on_edit = on_edit
-        self._route_on_delete = on_delete
-        self._route_on_search = on_search
-        self._route_on_show_images = on_show_images
-        self._route_on_mount = on_mount
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
+        self._route_on_back = route_on_back
+        self._route_on_create = route_on_create
+        self._route_on_search = route_on_search
+        self._route_on_edit = route_on_edit
+        self._route_on_delete = route_on_delete
+        self._route_on_show_images = route_on_show_images
 
-        # UI components
+        # Componentes UI
         self._ft_words_list: ft.ListView | None = None
         self._ft_search_field: ft.TextField | None = None
         self._ft_loading: ft.ProgressRing | None = None
         self._ft_count_text: ft.Text | None = None
         self._ft_error_text: ft.Text | None = None
 
-        self._build_ui()
+        self._build_initial_ui()
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
         return cls(
-            on_back=primitives.get("on_back", lambda: None),
-            on_create=primitives.get("on_create", lambda: None),
-            on_edit=primitives.get("on_edit", lambda x: None),
-            on_delete=primitives.get("on_delete", lambda x: None),
-            on_search=primitives.get("on_search", lambda x: None),
-            on_show_images=primitives.get("on_show_images", lambda x: None),
-            on_mount=primitives.get("on_mount"),
+            route_on_mount=primitives.get("on_mount"),
+            route_on_back=primitives.get("on_back", lambda: None),
+            route_on_create=primitives.get("on_create", lambda: None),
+            route_on_search=primitives.get("on_search", lambda x: None),
+            route_on_edit=primitives.get("on_edit", lambda x: None),
+            route_on_delete=primitives.get("on_delete", lambda x: None),
+            route_on_show_images=primitives.get("on_show_images", lambda x: None),
         )
 
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, dto: "ListWordsViewDto") -> None:
+        """Renderiza la vista con los datos del DTO."""
+        # Loading
+        if self._ft_loading:
+            self._ft_loading.visible = dto.is_loading
+
+        # Error
+        if self._ft_error_text:
+            if dto.error_message:
+                self._ft_error_text.value = dto.error_message
+                self._ft_error_text.visible = True
+            else:
+                self._ft_error_text.visible = False
+
+        # Count
+        self._render_count(dto)
+
+        # Words list
+        self._render_words_list(dto)
+
+        self.update()
+
+    def show_snackbar(self, message: str, error: bool = False) -> None:
+        """Muestra un snackbar."""
+        snackbar = ft.SnackBar(
+            content=ft.Text(message),
+            bgcolor=ft.Colors.RED_700 if error else ft.Colors.GREEN_700,
+            open=True,
+        )
+        self.page.overlay.append(snackbar)
+        self.page.update()
+
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
     def did_mount(self) -> None:
         """Flet llama esto al montar. Notifica al Controller."""
         if self._route_on_mount:
             self._route_on_mount()
 
-    def _build_ui(self) -> None:
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
         # Search field
         self._ft_search_field = ft.TextField(
             hint_text="Buscar palabras...",
@@ -150,28 +196,9 @@ class ListWordsView(ft.Container):
         self.expand = True
         self.padding = 20
 
-    def render(self, dto: "ListWordsViewDto") -> None:
-        """Renderiza la vista con los datos del DTO."""
-        # Loading
-        if self._ft_loading:
-            self._ft_loading.visible = dto.is_loading
-
-        # Error
-        if self._ft_error_text:
-            if dto.error_message:
-                self._ft_error_text.value = dto.error_message
-                self._ft_error_text.visible = True
-            else:
-                self._ft_error_text.visible = False
-
-        # Count
-        self._render_count(dto)
-
-        # Words list
-        self._render_words_list(dto)
-
-        self.update()
-
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
     def _render_count(self, dto: "ListWordsViewDto") -> None:
         """Renderiza el contador de palabras."""
         if not self._ft_count_text:
@@ -220,6 +247,15 @@ class ListWordsView(ft.Container):
             tile = self._build_word_tile(word)
             self._ft_words_list.controls.append(tile)
 
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    # Los eventos están mapeados directamente en _build_initial_ui y _build_word_tile
+    # No hay métodos intermedios necesarios en esta vista
+
+    # =========================================================================
+    # HELPERS (Construcción de componentes individuales)
+    # =========================================================================
     def _build_word_tile(self, word: "WordListItemViewDto") -> ft.ListTile:
         """Construye un tile para una palabra."""
         # Icono segun tipo
@@ -270,13 +306,3 @@ class ListWordsView(ft.Container):
                 tight=True,
             ),
         )
-
-    def show_snackbar(self, message: str, error: bool = False) -> None:
-        """Muestra un snackbar."""
-        snackbar = ft.SnackBar(
-            content=ft.Text(message),
-            bgcolor=ft.Colors.RED_700 if error else ft.Colors.GREEN_700,
-            open=True,
-        )
-        self.page.overlay.append(snackbar)
-        self.page.update()

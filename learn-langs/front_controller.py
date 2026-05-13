@@ -36,6 +36,19 @@ async def fn_render(
 
     get_app_config_result_dto = GetAppConfigService.get_instance()()
 
+    # Configurar error handler global para loguear errores no manejados
+    def on_error(e: ft.ControlEvent):
+        """Captura y loguea errores no manejados en event handlers."""
+        logger = Logger.get_instance()
+        error_data = e.data if hasattr(e, 'data') else str(e)
+        logger.write_error(
+            module="flet.event_handler",
+            message=f"Unhandled error in Flet event handler: {error_data}",
+            context={"traceback": traceback.format_exc()},
+        )
+
+    ft_page.on_error = on_error
+
     ft_page.theme_mode = ft.ThemeMode.LIGHT
     ft_page.title = get_app_config_result_dto.app_title
     ft_page.window.width = get_app_config_result_dto.window_width
