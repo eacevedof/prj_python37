@@ -5,13 +5,14 @@ from typing import Callable
 import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.load_home import LoadHomeDto, LoadHomeService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
 
-class HomeController:
+class HomeController(BaseController):
     """
     Controller del Home.
 
@@ -47,6 +48,7 @@ class HomeController:
     # =========================================================================
     # API PÚBLICA
     # =========================================================================
+    # app_router.invoked
     @property
     def ft_container(self) -> ft.Container:
         """Vista para montar en el arbol de Flet."""
