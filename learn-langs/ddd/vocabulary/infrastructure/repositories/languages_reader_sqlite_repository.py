@@ -21,7 +21,8 @@ class LanguagesReaderSqliteRepository(AbstractSqliteRepository):
         query = """
             SELECT code, name, native_name, flag_emoji, is_active
             FROM languages
-            WHERE code = ?
+            WHERE 1=1
+            AND code = ?
         """
         return await self._query_one(query, (code,))
 
@@ -39,7 +40,8 @@ class LanguagesReaderSqliteRepository(AbstractSqliteRepository):
         query = """
             SELECT code, name, native_name, flag_emoji, is_active
             FROM languages
-            WHERE is_active = 1
+            WHERE 1=1
+            AND is_active = 1
             ORDER BY name
         """
         return await self._query(query)

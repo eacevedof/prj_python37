@@ -19,13 +19,13 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
     async def get_by_id(self, session_id: int) -> dict | None:
         """Obtiene una sesión por su ID."""
         return await self._query_one(
-            """
+            f"""
             SELECT id, lang_code, study_mode, started_at, finished_at,
                    total_words, total_score, average_score, tags_filter
             FROM study_sessions
-            WHERE id = ?
+            WHERE 1=1
+            AND id = {session_id}
             """,
-            (session_id,),
         )
 
     async def get_active_session(self, lang_code: str | None = None) -> dict | None:
@@ -36,7 +36,9 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 SELECT id, lang_code, study_mode, started_at, finished_at,
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
-                WHERE finished_at IS NULL AND lang_code = ?
+                WHERE 1=1
+                AND finished_at IS NULL
+                AND lang_code = ?
                 ORDER BY started_at DESC
                 LIMIT 1
                 """,
@@ -48,7 +50,8 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 SELECT id, lang_code, study_mode, started_at, finished_at,
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
-                WHERE finished_at IS NULL
+                WHERE 1=1
+                AND finished_at IS NULL
                 ORDER BY started_at DESC
                 LIMIT 1
                 """,
@@ -66,11 +69,12 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 SELECT id, lang_code, study_mode, started_at, finished_at,
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
-                WHERE lang_code = ?
+                WHERE 1=1
+                AND lang_code = ?
                 ORDER BY started_at DESC
-                LIMIT ?
+                LIMIT {limit}
                 """,
-                (lang_code, limit),
+                (lang_code,),
             )
         else:
             return await self._query(
@@ -79,9 +83,8 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
                 ORDER BY started_at DESC
-                LIMIT ?
+                LIMIT {limit}
                 """,
-                (limit,),
             )
 
     async def get_stats(
@@ -99,8 +102,9 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                     AVG(average_score) as avg_session_score,
                     SUM(CASE WHEN finished_at IS NOT NULL THEN 1 ELSE 0 END) as completed_sessions
                 FROM study_sessions
-                WHERE lang_code = ?
-                  AND started_at >= datetime('now', ?)
+                WHERE 1=1
+                AND lang_code = ?
+                AND started_at >= datetime('now', ?)
                 """,
                 (lang_code, f"-{days} days"),
             )
@@ -113,7 +117,8 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                     AVG(average_score) as avg_session_score,
                     SUM(CASE WHEN finished_at IS NOT NULL THEN 1 ELSE 0 END) as completed_sessions
                 FROM study_sessions
-                WHERE started_at >= datetime('now', ?)
+                WHERE 1=1
+                AND started_at >= datetime('now', ?)
                 """,
                 (f"-{days} days",),
             )

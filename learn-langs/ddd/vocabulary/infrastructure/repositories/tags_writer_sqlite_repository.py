@@ -33,12 +33,11 @@ class TagsWriterSqliteRepository(AbstractSqliteRepository):
         rows_affected = await self._update_where(
             "tags",
             {"name": tag_entity.name.strip(), "color": tag_entity.color},
-            "id = ?",
-            (tag_entity.id,),
+            f"id = {tag_entity.id}",
         )
         return rows_affected > 0
 
     async def delete(self, tag_entity: TagEntity) -> bool:
         """Elimina un tag."""
-        rows_affected = await self._delete_where("tags", "id = ?", (tag_entity.id,))
+        rows_affected = await self._delete_where("tags", f"id = {tag_entity.id}")
         return rows_affected > 0

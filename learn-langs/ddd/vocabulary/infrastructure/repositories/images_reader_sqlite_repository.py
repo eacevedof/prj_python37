@@ -23,61 +23,76 @@ class ImagesReaderSqliteRepository(AbstractSqliteRepository):
     async def get_by_id(self, image_id: int) -> dict | None:
         """Obtiene una imagen por ID."""
         return await self._query_one(
-            "SELECT * FROM word_es_images WHERE id = ? AND is_active = 1",
-            (image_id,),
+            f"""
+            SELECT * FROM word_es_images
+            WHERE 1=1
+            AND id = {image_id}
+            AND is_active = 1
+            """,
         )
 
     async def get_by_word_id(self, word_es_id: int) -> list[dict]:
         """Obtiene todas las imagenes de una palabra."""
         return await self._query(
-            """
+            f"""
             SELECT * FROM word_es_images
-            WHERE word_es_id = ? AND is_active = 1
+            WHERE 1=1
+            AND word_es_id = {word_es_id}
+            AND is_active = 1
             ORDER BY is_primary DESC, sort_order ASC, created_at ASC
             """,
-            (word_es_id,),
         )
 
     async def get_primary_by_word_id(self, word_es_id: int) -> dict | None:
         """Obtiene la imagen principal de una palabra."""
         return await self._query_one(
-            """
+            f"""
             SELECT * FROM word_es_images
-            WHERE word_es_id = ? AND is_primary = 1 AND is_active = 1
+            WHERE 1=1
+            AND word_es_id = {word_es_id}
+            AND is_primary = 1
+            AND is_active = 1
             """,
-            (word_es_id,),
         )
 
     async def get_by_source_type(self, source_type: str, limit: int = 50) -> list[dict]:
         """Obtiene imagenes por tipo de fuente."""
         return await self._query(
-            """
+            f"""
             SELECT * FROM word_es_images
-            WHERE source_type = ? AND is_active = 1
+            WHERE 1=1
+            AND source_type = ?
+            AND is_active = 1
             ORDER BY created_at DESC
-            LIMIT ?
+            LIMIT {limit}
             """,
-            (source_type, limit),
+            (source_type,),
         )
 
     async def count_by_word_id(self, word_es_id: int) -> int:
         """Cuenta las imagenes de una palabra."""
         return await self._query_scalar(
-            "SELECT COUNT(*) as count FROM word_es_images WHERE word_es_id = ? AND is_active = 1",
-            (word_es_id,),
+            f"""
+            SELECT COUNT(*) as count FROM word_es_images
+            WHERE 1=1
+            AND word_es_id = {word_es_id}
+            AND is_active = 1
+            """,
+            (),
             "count",
         ) or 0
 
     async def get_words_with_images(self, limit: int = 50) -> list[dict]:
         """Obtiene palabras que tienen imagenes con su imagen principal."""
         return await self._query(
-            """
+            f"""
             SELECT w.*, i.file_path as primary_image_path, i.mime_type as primary_image_mime
             FROM words_es w
             INNER JOIN word_es_images i ON w.id = i.word_es_id
-            WHERE i.is_primary = 1 AND i.is_active = 1
+            WHERE 1=1
+            AND i.is_primary = 1
+            AND i.is_active = 1
             ORDER BY w.created_at DESC
-            LIMIT ?
+            LIMIT {limit}
             """,
-            (limit,),
         )

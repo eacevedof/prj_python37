@@ -22,9 +22,10 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         -- get_by_id
         SELECT id, text, word_type, notes, created_at, updated_at
         FROM words_es
-        WHERE id = {word_id}
+        WHERE 1=1
+        AND id = {word_id}
         """
-        return await self._query_one(query, ())
+        return await self._query_one(query)
 
     async def get_by_text(self, text: str) -> dict | None:
         """Obtiene una palabra por su texto exacto."""
@@ -32,7 +33,8 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         -- get_by_text
         SELECT id, text, word_type, notes, created_at, updated_at
         FROM words_es
-        WHERE text = ?
+        WHERE 1=1
+        AND text = ?
         """
         return await self._query_one(query, (text.strip(),))
 
@@ -81,7 +83,8 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         FROM words_es w
         INNER JOIN word_es_tags wt ON w.id = wt.word_es_id
         INNER JOIN tags t ON wt.tag_id = t.id
-        WHERE t.name IN ({placeholders})
+        WHERE 1=1
+        AND t.name IN ({placeholders})
         ORDER BY w.updated_at DESC
         LIMIT {limit} OFFSET {offset}
         """
@@ -98,9 +101,10 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         -- get_with_translations
         SELECT lang_code, text, pronunciation, audio_path, notes
         FROM words_lang
-        WHERE word_es_id = {word_id}
+        WHERE 1=1
+        AND word_es_id = {word_id}
         """
-        translations = await self._query(translations_query, ())
+        translations = await self._query(translations_query)
 
         word["translations"] = {t["lang_code"]: t["text"] for t in translations}
         word["translations_detail"] = translations
@@ -127,9 +131,10 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         SELECT t.id, t.name, t.color
         FROM tags t
         INNER JOIN word_es_tags wt ON t.id = wt.tag_id
-        WHERE wt.word_es_id = {word_id}
+        WHERE 1=1
+        AND wt.word_es_id = {word_id}
         """
-        return await self._query(query, ())
+        return await self._query(query)
 
     async def search(self, text: str, limit: int = 50) -> list[dict]:
         """Busca palabras por texto (búsqueda parcial)."""
@@ -137,7 +142,8 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         -- search
         SELECT id, text, word_type, notes, created_at, updated_at
         FROM words_es
-        WHERE text LIKE ?
+        WHERE 1=1
+        AND text LIKE ?
         ORDER BY text
         LIMIT {limit}
         """
@@ -150,7 +156,8 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
             -- count
             SELECT COUNT(*) as count
             FROM words_es
-            WHERE word_type = ?
+            WHERE 1=1
+            AND word_type = ?
             """
             return await self._query_scalar(query, (word_type,), "count") or 0
 

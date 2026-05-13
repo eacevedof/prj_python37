@@ -9,7 +9,9 @@
       "Bash(fi)",
       "Bash(dir:*)",
       "Bash(git add:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)"
     ]
   }
 }
