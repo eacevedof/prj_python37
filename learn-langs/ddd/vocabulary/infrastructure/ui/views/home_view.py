@@ -23,11 +23,12 @@ class HomeView(ft.Container):
     # =========================================================================
     def __init__(
         self,
-        route_on_mount: Callable[[], None] | None,      # 1. Lifecycle (se ejecuta primero)
-        route_on_lang_change: Callable[[str], None],    # 2. Dropdown idiomas (render paso 1)
-        route_on_tag_toggle: Callable[[str], None],     # 3. Tags (render paso 2)
-        route_on_start_study: Callable[[], None],       # 4. Botón acción primaria
-        route_on_manage_words: Callable[[], None],      # 5. Botón acción secundaria
+        route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
+        route_on_lang_change: Callable[[str], None],       # 2. Dropdown idiomas (render paso 1)
+        route_on_tag_toggle: Callable[[str], None],        # 3. Tags (render paso 2)
+        route_on_start_study: Callable[[], None],          # 4. Botón acción primaria (verde)
+        route_on_start_image_study: Callable[[], None],    # 5. Botón acción secundaria (morado)
+        route_on_manage_words: Callable[[], None],         # 6. Botón acción terciaria (gris)
     ):
         super().__init__()
 
@@ -36,6 +37,7 @@ class HomeView(ft.Container):
         self._route_on_lang_change = route_on_lang_change
         self._route_on_tag_toggle = route_on_tag_toggle
         self._route_on_start_study = route_on_start_study
+        self._route_on_start_image_study = route_on_start_image_study
         self._route_on_manage_words = route_on_manage_words
 
         # Componentes UI
@@ -55,6 +57,7 @@ class HomeView(ft.Container):
             route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
             route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
             route_on_start_study=primitives.get("on_start_study", lambda: None),
+            route_on_start_image_study=primitives.get("on_start_image_study", lambda: None),
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
         )
 
@@ -129,6 +132,19 @@ class HomeView(ft.Container):
             ),
         )
 
+        image_study_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.IMAGE), ft.Text("Estudiar con imágenes")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_start_image_study(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.PURPLE_600,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+        )
+
         manage_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.EDIT), ft.Text("Gestionar palabras")],
@@ -175,7 +191,7 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[start_btn, manage_btn],
+                    controls=[start_btn, image_study_btn, manage_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),

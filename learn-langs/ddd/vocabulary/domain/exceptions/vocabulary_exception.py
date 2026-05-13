@@ -84,6 +84,10 @@ class VocabularyException(Exception):
     def no_words_for_study(cls, lang_code: str) -> "VocabularyException":
         return cls(f"No words available for study in {lang_code}", ResponseCodeEnum.NOT_FOUND)
 
+    @classmethod
+    def no_words_for_image_study(cls, lang_code: str) -> "VocabularyException":
+        return cls(f"No words with images available for study in language {lang_code}", ResponseCodeEnum.NOT_FOUND)
+
     # Validation errors
     @classmethod
     def invalid_word_type(cls, word_type: str) -> "VocabularyException":

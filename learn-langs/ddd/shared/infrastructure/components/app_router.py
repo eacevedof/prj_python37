@@ -10,6 +10,7 @@ from ddd.vocabulary.infrastructure.controllers import (
     UpdateWordController,
     ListWordsController,
     StudyController,
+    ImageStudyController,
 )
 
 
@@ -57,6 +58,11 @@ class AppRouter:
                     lang_code=lang,
                     tags=tags,
                 ),
+                route_on_start_image_study=lambda lang, tags: self.navigate_to(
+                    ControllerRouteEnum.IMAGE_STUDY,
+                    lang_code=lang,
+                    tags=tags,
+                ),
                 route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
                 ),
@@ -65,6 +71,14 @@ class AppRouter:
 
         if route_name == ControllerRouteEnum.STUDY:
             controller = StudyController(
+                lang_code=kwargs.get("lang_code", "nl_NL"),
+                tags=kwargs.get("tags", []),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.IMAGE_STUDY:
+            controller = ImageStudyController(
                 lang_code=kwargs.get("lang_code", "nl_NL"),
                 tags=kwargs.get("tags", []),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
