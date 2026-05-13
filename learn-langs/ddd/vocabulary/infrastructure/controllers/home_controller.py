@@ -24,11 +24,13 @@ class HomeController(BaseController):
     """
     def __init__(
         self,
-        route_on_start_study: Callable[[str, list[str]], None],    # 1. Botón primario (verde, izquierda)
-        route_on_manage_words: Callable[[], None],                 # 2. Botón secundario (gris, derecha)
+        route_on_start_study: Callable[[str, list[str]], None],       # 1. Botón primario (verde, izquierda)
+        route_on_start_image_study: Callable[[str, list[str]], None], # 2. Botón secundario (morado, centro)
+        route_on_manage_words: Callable[[], None],                    # 3. Botón terciario (gris, derecha)
     ):
         # Callbacks de navegación (inyectados desde app_router)
         self._route_on_start_study = route_on_start_study
+        self._route_on_start_image_study = route_on_start_image_study
         self._route_on_manage_words = route_on_manage_words
 
         self._logger = Logger.get_instance()
@@ -42,6 +44,7 @@ class HomeController(BaseController):
             "on_lang_change": self._on_lang_change,
             "on_tag_toggle": self._on_tag_toggle,
             "on_start_study": self._route_on_start_study_click,
+            "on_start_image_study": self._route_on_start_image_study_click,
             "on_manage_words": self._route_on_manage_words,
         })
 
@@ -137,6 +140,13 @@ class HomeController(BaseController):
     def _route_on_start_study_click(self) -> None:
         """Maneja click en comenzar estudio (boton verde - abajo en UI)."""
         self._route_on_start_study(
+            str(self._selected_lang),
+            self._selected_tags
+        )
+
+    def _route_on_start_image_study_click(self) -> None:
+        """Maneja click en comenzar estudio con imagenes (boton morado - abajo en UI)."""
+        self._route_on_start_image_study(
             str(self._selected_lang),
             self._selected_tags
         )

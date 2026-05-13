@@ -8,6 +8,7 @@ class ControllerRouteEnum(StrEnum):
 
     HOME = "home"
     STUDY = "study"
+    IMAGE_STUDY = "image_study"
     WORDS = "words"
     CREATE_WORD = "create_word"
     UPDATE_WORD = "update_word"
