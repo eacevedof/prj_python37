@@ -60,17 +60,17 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
                 INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE 1=1
-                AND (wm.next_review_at IS NULL OR wm.next_review_at <= datetime('now'))
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0 ELSE 1 END,
+                    CASE WHEN wm.next_review_at IS NULL THEN 0
+                         WHEN wm.next_review_at <= datetime('now') THEN 1
+                         ELSE 2 END,
                     wm.next_review_at ASC,
                     wm.easiness_factor ASC
                 LIMIT {limit}
             """
             params = (lang_code,) + tuple(tag_names) + (lang_code,)
         else:
-            query = """
+            query = f"""
                 SELECT
                     we.id as word_es_id,
                     we.text as text_es,
@@ -85,10 +85,10 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 FROM words_es we
                 INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE 1=1
-                AND (wm.next_review_at IS NULL OR wm.next_review_at <= datetime('now'))
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0 ELSE 1 END,
+                    CASE WHEN wm.next_review_at IS NULL THEN 0
+                         WHEN wm.next_review_at <= datetime('now') THEN 1
+                         ELSE 2 END,
                     wm.next_review_at ASC,
                     wm.easiness_factor ASC
                 LIMIT {limit}
