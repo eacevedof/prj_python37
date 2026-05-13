@@ -38,11 +38,11 @@ class HomeController:
         self._selected_tags: list[str] = []
 
         self._ft_container = HomeView.from_primitives({
-            "on_manage_words": self._route_on_manage_words,
-            "on_start_study": self._route_on_start_study_click,
+            "on_mount": self._on_mount,
             "on_lang_change": self._on_lang_change,
             "on_tag_toggle": self._on_tag_toggle,
-            "on_mount": self._on_mount,
+            "on_start_study": self._route_on_start_study_click,
+            "on_manage_words": self._route_on_manage_words,
         })
 
     @property
