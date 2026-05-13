@@ -18,12 +18,20 @@ class TagsReaderSqliteRepository(AbstractSqliteRepository):
 
     async def get_by_id(self, tag_id: int) -> dict | None:
         """Obtiene un tag por su ID."""
-        query = "SELECT id, name, color, created_at FROM tags WHERE id = ?"
-        return await self._query_one(query, (tag_id,))
+        query = f"""
+            SELECT id, name, color, created_at FROM tags
+            WHERE 1=1
+            AND id = {tag_id}
+        """
+        return await self._query_one(query)
 
     async def get_by_name(self, name: str) -> dict | None:
         """Obtiene un tag por su nombre."""
-        query = "SELECT id, name, color, created_at FROM tags WHERE name = ?"
+        query = """
+            SELECT id, name, color, created_at FROM tags
+            WHERE 1=1
+            AND name = ?
+        """
         return await self._query_one(query, (name.strip(),))
 
     async def get_all(self) -> list[dict]:
@@ -37,16 +45,21 @@ class TagsReaderSqliteRepository(AbstractSqliteRepository):
             return []
 
         placeholders = self._get_placeholders(len(names))
-        query = f"SELECT id, name, color, created_at FROM tags WHERE name IN ({placeholders})"
+        query = f"""
+            SELECT id, name, color, created_at FROM tags
+            WHERE 1=1
+            AND name IN ({placeholders})
+        """
         return await self._query(query, tuple(names))
 
     async def get_for_word(self, word_es_id: int) -> list[dict]:
         """Obtiene todos los tags de una palabra."""
-        query = """
+        query = f"""
             SELECT t.id, t.name, t.color, t.created_at
             FROM tags t
             INNER JOIN word_es_tags wt ON t.id = wt.tag_id
-            WHERE wt.word_es_id = ?
+            WHERE 1=1
+            AND wt.word_es_id = {word_es_id}
             ORDER BY t.name
         """
-        return await self._query(query, (word_es_id,))
+        return await self._query(query)

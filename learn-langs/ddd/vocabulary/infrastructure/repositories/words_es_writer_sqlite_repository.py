@@ -44,8 +44,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
                 "notes": word_es_entity.notes,
                 "updated_at": now,
             },
-            "id = ?",
-            (word_es_entity.id,),
+            f"id = {word_es_entity.id}",
         )
 
         return rows_affected > 0
@@ -54,8 +53,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         """Elimina una palabra."""
         rows_affected = await self._delete_where(
             "words_es",
-            "id = ?",
-            (word_es_entity.id,),
+            f"id = {word_es_entity.id}",
         )
         return rows_affected > 0
 
@@ -63,8 +61,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         """Añade un tag a una palabra."""
         try:
             await self._sqlite.insert(
-                "INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES (?, ?)",
-                (word_id, tag_id),
+                f"INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES ({word_id}, {tag_id})",
             )
             return True
         except Exception:
@@ -74,14 +71,13 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         """Elimina un tag de una palabra."""
         rows_affected = await self._delete_where(
             "word_es_tags",
-            "word_es_id = ? AND tag_id = ?",
-            (word_id, tag_id),
+            f"word_es_id = {word_id} AND tag_id = {tag_id}",
         )
         return rows_affected > 0
 
     async def set_tags(self, word_id: int, tag_ids: list[int]) -> bool:
         """Reemplaza todos los tags de una palabra."""
-        await self._delete_where("word_es_tags", "word_es_id = ?", (word_id,))
+        await self._delete_where("word_es_tags", f"word_es_id = {word_id}")
 
         for tag_id in tag_ids:
             await self.add_tag(word_id, tag_id)
@@ -97,8 +93,8 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         """Añade una relación entre dos palabras."""
         try:
             await self._sqlite.insert(
-                "INSERT OR IGNORE INTO word_es_relations (word_es_id_a, word_es_id_b, relation_type) VALUES (?, ?, ?)",
-                (word_id_a, word_id_b, relation_type),
+                f"INSERT OR IGNORE INTO word_es_relations (word_es_id_a, word_es_id_b, relation_type) VALUES ({word_id_a}, {word_id_b}, ?)",
+                (relation_type,),
             )
             return True
         except Exception:
@@ -106,13 +102,11 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
 
     async def remove_relation(self, word_id_a: int, word_id_b: int) -> bool:
         """Elimina una relación entre dos palabras."""
-        query = """
+        query = f"""
             DELETE FROM word_es_relations
-            WHERE (word_es_id_a = ? AND word_es_id_b = ?)
-               OR (word_es_id_a = ? AND word_es_id_b = ?)
+            WHERE 1=1
+            AND ((word_es_id_a = {word_id_a} AND word_es_id_b = {word_id_b})
+                 OR (word_es_id_a = {word_id_b} AND word_es_id_b = {word_id_a}))
         """
-        rows_affected = await self._sqlite.delete(
-            query,
-            (word_id_a, word_id_b, word_id_b, word_id_a),
-        )
+        rows_affected = await self._sqlite.delete(query)
         return rows_affected > 0

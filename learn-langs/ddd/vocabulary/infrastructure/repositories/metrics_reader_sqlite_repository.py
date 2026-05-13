@@ -19,14 +19,16 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
     async def get_by_word_and_lang(self, word_es_id: int, lang_code: str) -> dict | None:
         """Obtiene métricas de una palabra en un idioma específico."""
         return await self._query_one(
-            """
+            f"""
             SELECT id, word_es_id, lang_code, repetitions, easiness_factor,
                    interval_days, next_review_at, last_reviewed_at,
                    total_attempts, total_score, created_at, updated_at
             FROM word_metrics
-            WHERE word_es_id = ? AND lang_code = ?
+            WHERE 1=1
+            AND word_es_id = {word_es_id}
+            AND lang_code = ?
             """,
-            (word_es_id, lang_code),
+            (lang_code,),
         )
 
     async def get_words_for_review(
@@ -58,15 +60,15 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
                 INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE wm.next_review_at IS NULL
-                   OR wm.next_review_at <= datetime('now')
+                WHERE 1=1
+                AND (wm.next_review_at IS NULL OR wm.next_review_at <= datetime('now'))
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0 ELSE 1 END,
                     wm.next_review_at ASC,
                     wm.easiness_factor ASC
-                LIMIT ?
+                LIMIT {limit}
             """
-            params = (lang_code,) + tuple(tag_names) + (lang_code, limit)
+            params = (lang_code,) + tuple(tag_names) + (lang_code,)
         else:
             query = """
                 SELECT
@@ -83,15 +85,15 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 FROM words_es we
                 INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE wm.next_review_at IS NULL
-                   OR wm.next_review_at <= datetime('now')
+                WHERE 1=1
+                AND (wm.next_review_at IS NULL OR wm.next_review_at <= datetime('now'))
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0 ELSE 1 END,
                     wm.next_review_at ASC,
                     wm.easiness_factor ASC
-                LIMIT ?
+                LIMIT {limit}
             """
-            params = (lang_code, lang_code, limit)
+            params = (lang_code, lang_code)
 
         return await self._query(query, params)
 
@@ -106,7 +108,8 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 SUM(total_attempts) as total_reviews,
                 AVG(CASE WHEN total_attempts > 0 THEN total_score / total_attempts ELSE 0 END) as avg_score
             FROM word_metrics
-            WHERE lang_code = ?
+            WHERE 1=1
+                AND lang_code = ?
             """,
             (lang_code,),
         )

@@ -44,8 +44,7 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
                 "finished_at": study_session_entity.finished_at if study_session_entity.finished_at else None,
                 "tags_filter": tags_json,
             },
-            "id = ?",
-            (study_session_entity.id,),
+            f"id = {study_session_entity.id}",
         )
         return rows > 0
 
@@ -54,16 +53,18 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         rows = await self._sqlite.update(
-            """
+            f"""
             UPDATE study_sessions
             SET finished_at = ?
-            WHERE id = ? AND finished_at IS NULL
+            WHERE 1=1
+            AND id = {study_session_entity.id}
+            AND finished_at IS NULL
             """,
-            (now, study_session_entity.id),
+            (now,),
         )
         return rows > 0
 
     async def delete(self, study_session_entity: StudySessionEntity) -> bool:
         """Elimina una sesión (y sus respuestas por CASCADE)."""
-        rows = await self._delete_where("study_sessions", "id = ?", (study_session_entity.id,))
+        rows = await self._delete_where("study_sessions", f"id = {study_session_entity.id}")
         return rows > 0

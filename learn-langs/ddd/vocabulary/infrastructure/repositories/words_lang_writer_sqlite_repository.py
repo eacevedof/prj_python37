@@ -46,8 +46,7 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
                 "notes": word_lang_entity.notes,
                 "updated_at": now,
             },
-            "id = ?",
-            (word_lang_entity.id,),
+            f"id = {word_lang_entity.id}",
         )
 
         return rows_affected > 0
@@ -56,8 +55,7 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
         """Elimina una traducción."""
         rows_affected = await self._delete_where(
             "words_lang",
-            "id = ?",
-            (word_lang_entity.id,),
+            f"id = {word_lang_entity.id}",
         )
         return rows_affected > 0
 
@@ -65,7 +63,7 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
         """Elimina una traducción específica de una palabra."""
         rows_affected = await self._delete_where(
             "words_lang",
-            "word_es_id = ? AND lang_code = ?",
-            (word_es_id, lang_code),
+            f"word_es_id = {word_es_id} AND lang_code = ?",
+            (lang_code,),
         )
         return rows_affected > 0

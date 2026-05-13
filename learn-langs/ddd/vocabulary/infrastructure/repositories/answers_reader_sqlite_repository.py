@@ -19,22 +19,22 @@ class AnswersReaderSqliteRepository(AbstractSqliteRepository):
     async def get_by_session(self, session_id: int) -> list[dict]:
         """Obtiene todas las respuestas de una sesión."""
         return await self._query(
-            """
+            f"""
             SELECT sa.id, sa.session_id, sa.word_es_id, sa.user_input,
                    sa.expected_text, sa.score, sa.response_time_ms, sa.answered_at,
                    we.text as text_es
             FROM session_answers sa
             INNER JOIN words_es we ON sa.word_es_id = we.id
-            WHERE sa.session_id = ?
+            WHERE 1=1
+            AND sa.session_id = {session_id}
             ORDER BY sa.answered_at
             """,
-            (session_id,),
         )
 
     async def get_session_summary(self, session_id: int) -> dict:
         """Obtiene resumen de respuestas de una sesión."""
         result = await self._query_one(
-            """
+            f"""
             SELECT
                 COUNT(*) as total_answers,
                 SUM(CASE WHEN score >= 1.0 THEN 1 ELSE 0 END) as correct,
@@ -43,9 +43,9 @@ class AnswersReaderSqliteRepository(AbstractSqliteRepository):
                 AVG(score) as average_score,
                 AVG(response_time_ms) as avg_response_time
             FROM session_answers
-            WHERE session_id = ?
+            WHERE 1=1
+            AND session_id = {session_id}
             """,
-            (session_id,),
         )
         return result or {
             "total_answers": 0,
@@ -63,15 +63,15 @@ class AnswersReaderSqliteRepository(AbstractSqliteRepository):
     ) -> list[dict]:
         """Obtiene historial de respuestas para una palabra."""
         return await self._query(
-            """
+            f"""
             SELECT sa.id, sa.session_id, sa.user_input, sa.expected_text,
                    sa.score, sa.response_time_ms, sa.answered_at,
                    ss.lang_code, ss.study_mode
             FROM session_answers sa
             INNER JOIN study_sessions ss ON sa.session_id = ss.id
-            WHERE sa.word_es_id = ?
+            WHERE 1=1
+            AND sa.word_es_id = {word_es_id}
             ORDER BY sa.answered_at DESC
-            LIMIT ?
+            LIMIT {limit}
             """,
-            (word_es_id, limit),
         )
