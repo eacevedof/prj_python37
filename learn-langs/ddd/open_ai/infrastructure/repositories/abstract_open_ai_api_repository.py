@@ -1,11 +1,11 @@
 """Repositorio abstracto base para comunicación con OpenAI API."""
 
+import json
+import time
 from abc import ABC
 from typing import final, Any
 import urllib.request
 import urllib.error
-import json
-import time
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
