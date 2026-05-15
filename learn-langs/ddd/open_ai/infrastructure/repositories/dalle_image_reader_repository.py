@@ -101,6 +101,8 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             "friendly and approachable, "
             "NO TEXT, NO WORDS, NO LETTERS in the image, "
             "only visual representation, "
+            "DO NOT add faces, eyes or expressions to inanimate objects or body parts, "
+            "NO anthropomorphization, keep objects realistic in their nature, "
             "perfect for language learning flashcards"
         )
 
