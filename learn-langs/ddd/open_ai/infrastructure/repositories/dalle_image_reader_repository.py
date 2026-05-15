@@ -1,5 +1,6 @@
-"""Repositorio para generar imágenes con DALL-E API."""
+"""Repositorio para generar imágenes con OpenAI Extended Inference."""
 
+import base64
 from typing import final, Self
 
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
@@ -7,7 +8,7 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 
 @final
 class DalleImageReaderRepository(AbstractOpenAIApiRepository):
-    """Repositorio para comunicación con DALL-E API."""
+    """Repositorio para generación de imágenes usando OpenAI Extended Inference."""
 
     _instance: "DalleImageReaderRepository | None" = None
 
@@ -22,22 +23,20 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         self,
         word_es: str,
         word_lang: str,
-        size: str = "512x512",
     ) -> dict:
         """
-        Genera una imagen para una palabra educativa.
+        Genera una imagen para una palabra educativa usando Extended Inference.
         El prompt se construye internamente y está oculto.
 
         Args:
             word_es: Palabra, frase u oración en español
             word_lang: Traducción en idioma destino
-            size: Tamaño para DALL-E 2 (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
             {
-                "url": str,  # URL temporal de la imagen generada
-                "revised_prompt": str  # Prompt revisado por DALL-E
+                "image_base64": str,  # Imagen en base64
+                "prompt_used": str    # Prompt construido internamente
             }
 
         Raises:
@@ -47,20 +46,15 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         image_prompt = self.__get_image_prompt(
             word_es=word_es,
             word_lang=word_lang,
-            style_override=None,
         )
 
-        # Generar imagen con el prompt construido
-        return self.__send_prompt_to_open_ai(
-            image_prompt=image_prompt,
-            size=size,
-        )
+        # Generar imagen con Extended Inference
+        return self.__send_prompt_to_open_ai(image_prompt=image_prompt)
 
     def __get_image_prompt(
         self,
         word_es: str,
         word_lang: str,
-        style_override: str | None = None,
     ) -> str:
         """
         Construye prompt para generar imagen educativa estilo cartoon.
@@ -69,17 +63,15 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Args:
             word_es: Palabra, frase u oración en español
             word_lang: Traducción en idioma destino
-            style_override: Override del estilo (opcional)
 
         Returns:
-            Prompt optimizado para DALL-E 3
+            Prompt optimizado para generación de imágenes
         """
-        # Usar estilo custom o el default
-        style = style_override or self.__get_default_image_style()
+        # Usar estilo default
+        style = self.__get_default_image_style()
 
         # Construir prompt simple
-        return f"{word_lang} ({word_es}). {style}"
-
+        return f"Generate an image of: {word_lang} ({word_es}). {style}"
 
     def __get_default_image_style(self) -> str:
         """
@@ -90,48 +82,68 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             Descripción de estilo optimizada para imágenes educativas
         """
         return (
-            "Simple cute cartoon illustration, kawaii style, "
+            "Style: Simple cute cartoon illustration, kawaii style, "
             "flat colors, minimalist, educational, "
             "clean white background, vector art style, "
             "friendly and approachable, "
             "perfect for language learning flashcards"
         )
 
-    def __send_prompt_to_open_ai(
-        self,
-        image_prompt: str,
-        size: str = "512x512",
-    ) -> dict:
+    def __send_prompt_to_open_ai(self, image_prompt: str) -> dict:
         """
-        Genera una imagen usando DALL-E 2.
+        Genera una imagen usando OpenAI Extended Inference (responses.create).
 
         Args:
             image_prompt: Descripción de la imagen a generar
-            size: Tamaño (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
             {
-                "url": str,  # URL temporal de la imagen generada
-                "revised_prompt": str  # Prompt revisado (solo en DALL-E 3)
+                "image_base64": str,  # Imagen en base64
+                "prompt_used": str    # Prompt usado
             }
 
         Raises:
             Exception: Si falla la generación
         """
-        open_ai_response = self._post_http_request(
-            "images/generations",
-            {
-                "model": "dall-e-2",
-                "prompt": image_prompt,
-                "n": 1,
-                "size": size,
-            }
-        )
+        try:
+            # Llamar a Extended Inference con herramienta de image_generation
+            response = self._client.responses.create(
+                model="gpt-4.1-mini",
+                input=image_prompt,
+                tools=[{"type": "image_generation"}],
+            )
 
-        # Extraer datos relevantes de la respuesta
-        image_data = open_ai_response.get("data", [{}])[0]
-        return {
-            "url": image_data.get("url", ""),
-            "revised_prompt": image_data.get("revised_prompt", image_prompt),
-        }
+            # Extraer datos de imagen desde la respuesta
+            image_data = [
+                output.result
+                for output in response.output
+                if output.type == "image_generation_call"
+            ]
+
+            if not image_data:
+                raise Exception("No se generó ninguna imagen en la respuesta")
+
+            image_base64 = image_data[0]
+
+            self._log_openai_success(
+                "extended_inference_image_generation",
+                {
+                    "model": "gpt-4.1-mini",
+                    "prompt": image_prompt[:200],
+                    "image_size_bytes": len(image_base64),
+                },
+            )
+
+            return {
+                "image_base64": image_base64,
+                "prompt_used": image_prompt,
+            }
+
+        except Exception as e:
+            error_msg = f"Error en Extended Inference: {str(e)}"
+            self._log_openai_error(error_msg, {
+                "prompt": image_prompt,
+                "error": str(e),
+            })
+            raise Exception(error_msg)

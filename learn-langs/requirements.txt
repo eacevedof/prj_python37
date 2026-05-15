@@ -12,6 +12,9 @@ pydantic>=2.5.0
 # Utils
 python-dotenv>=1.0.0
 
+# AI/ML
+openai>=1.0.0
+
 # Dev
 ruff>=0.1.0
 mypy>=1.7.0
