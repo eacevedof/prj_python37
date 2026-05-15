@@ -21,15 +21,14 @@ class RunMigrationsService:
     """
 
     _SCHEMA_MIGRATIONS_TABLE = """
-    CREATE TABLE IF NOT EXISTS schema_migrations (
-        version TEXT PRIMARY KEY,
-        filename TEXT NOT NULL,
-        applied_at TEXT DEFAULT (datetime('now')),
-        checksum TEXT
+    CREATE TABLE IF NOT EXISTS migrations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_name TEXT NOT NULL UNIQUE,
+        created_at TEXT DEFAULT (datetime('now'))
     )
     """
 
-    _VERSION_PATTERN = re.compile(r"^(\d+)[_-]")
+    _TIMESTAMP_PATTERN = re.compile(r"^(\d{14})-")
 
     def __init__(self) -> None:
         pass
@@ -85,10 +84,10 @@ class RunMigrationsService:
 
             # Force mode: limpiar registro de migraciones (por si la BD no se eliminó)
             if run_migrations_dto.force:
-                await conn.execute("DELETE FROM schema_migrations")
+                await conn.execute("DELETE FROM migrations")
                 await conn.commit()
 
-            applied_versions = await self._get_applied_versions(conn)
+            applied_files = await self._get_applied_files(conn)
             migration_files = self._get_migration_files(run_migrations_dto.migrations_path)
 
             results: list[MigrationResultDto] = []
@@ -97,27 +96,29 @@ class RunMigrationsService:
             failed_count = 0
 
             for migration_file in migration_files:
-                version = self._extract_version(migration_file.name)
-                if not version:
+                file_name = migration_file.name
+                timestamp = self._extract_timestamp(file_name)
+
+                if not timestamp:
                     results.append(MigrationResultDto(
-                        filename=migration_file.name,
+                        filename=file_name,
                         version="",
                         status="failed",
-                        error="Could not extract version from filename",
+                        error="Could not extract timestamp from filename (expected format: YYYYMMDDHHMMSS-description.sql)",
                     ))
                     failed_count += 1
                     continue
 
-                if version in applied_versions:
+                if file_name in applied_files:
                     results.append(MigrationResultDto(
-                        filename=migration_file.name,
-                        version=version,
+                        filename=file_name,
+                        version=timestamp,
                         status="skipped",
                     ))
                     skipped_count += 1
                     continue
 
-                result = await self._apply_migration(conn, migration_file, version)
+                result = await self._apply_migration(conn, migration_file, timestamp)
                 results.append(result)
 
                 if result.status == "applied":
@@ -142,23 +143,18 @@ class RunMigrationsService:
         return base_path / "data" / "learn_lang.db"
 
     def _get_migration_files(self, migrations_path: Path) -> list[Path]:
-        """Obtiene los archivos de migración ordenados por versión."""
+        """Obtiene los archivos de migración ordenados por timestamp."""
         files = list(migrations_path.glob("*.sql"))
-        return sorted(files, key=lambda f: self._extract_version(f.name) or "")
+        return sorted(files, key=lambda f: self._extract_timestamp(f.name) or "")
 
-    def _extract_version(self, filename: str) -> str | None:
-        """Extrae la versión del nombre del archivo (ej: '001_initial.sql' -> '001')."""
-        match = self._VERSION_PATTERN.match(filename)
+    def _extract_timestamp(self, filename: str) -> str | None:
+        """Extrae el timestamp del nombre del archivo (ej: '20260515205101-description.sql' -> '20260515205101')."""
+        match = self._TIMESTAMP_PATTERN.match(filename)
         return match.group(1) if match else None
 
-    def _compute_checksum(self, content: str) -> str:
-        """Calcula un checksum simple del contenido."""
-        import hashlib
-        return hashlib.md5(content.encode()).hexdigest()
-
-    async def _get_applied_versions(self, conn: aiosqlite.Connection) -> set[str]:
-        """Obtiene las versiones de migraciones ya aplicadas."""
-        cursor = await conn.execute("SELECT version FROM schema_migrations")
+    async def _get_applied_files(self, conn: aiosqlite.Connection) -> set[str]:
+        """Obtiene los nombres de archivos de migraciones ya aplicadas."""
+        cursor = await conn.execute("SELECT file_name FROM migrations")
         rows = await cursor.fetchall()
         return {row[0] for row in rows}
 
@@ -166,27 +162,26 @@ class RunMigrationsService:
         self,
         conn: aiosqlite.Connection,
         migration_file: Path,
-        version: str,
+        timestamp: str,
     ) -> MigrationResultDto:
         """Aplica una migración individual."""
         try:
             sql_content = migration_file.read_text(encoding="utf-8")
-            checksum = self._compute_checksum(sql_content)
 
             await conn.executescript(sql_content)
 
             await conn.execute(
                 """
-                INSERT INTO schema_migrations (version, filename, checksum)
-                VALUES (?, ?, ?)
+                INSERT INTO migrations (file_name, created_at)
+                VALUES (?, datetime('now'))
                 """,
-                (version, migration_file.name, checksum),
+                (migration_file.name,),
             )
             await conn.commit()
 
             return MigrationResultDto(
                 filename=migration_file.name,
-                version=version,
+                version=timestamp,
                 status="applied",
             )
 
@@ -194,7 +189,7 @@ class RunMigrationsService:
             await conn.rollback()
             return MigrationResultDto(
                 filename=migration_file.name,
-                version=version,
+                version=timestamp,
                 status="failed",
                 error=str(e),
             )
@@ -214,27 +209,23 @@ class RunMigrationsService:
 
         if not db_path.exists():
             migration_files = self._get_migration_files(dto.migrations_path)
-            pending = [
-                self._extract_version(f.name) or f.name
-                for f in migration_files
-            ]
+            pending = [f.name for f in migration_files]
             return {"applied": [], "pending": pending}
 
         conn = await aiosqlite.connect(str(db_path))
         try:
             await conn.execute(self._SCHEMA_MIGRATIONS_TABLE)
-            applied_versions = await self._get_applied_versions(conn)
+            applied_files = await self._get_applied_files(conn)
 
             migration_files = self._get_migration_files(dto.migrations_path)
             pending = []
 
             for migration_file in migration_files:
-                version = self._extract_version(migration_file.name)
-                if version and version not in applied_versions:
-                    pending.append(version)
+                if migration_file.name not in applied_files:
+                    pending.append(migration_file.name)
 
             return {
-                "applied": sorted(applied_versions),
+                "applied": sorted(applied_files),
                 "pending": pending,
             }
 
