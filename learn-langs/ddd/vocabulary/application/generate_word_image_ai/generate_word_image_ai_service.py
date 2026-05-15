@@ -1,7 +1,8 @@
-"""Servicio para generar imagenes de palabras con IA (OpenAI Extended Inference)."""
+"""Servicio para generar imagenes de palabras con IA (gpt-image-1.5)."""
 
-import base64
+import ssl
 from typing import final, Self
+import urllib.request
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.open_ai.infrastructure.repositories import DalleImageReaderRepository
@@ -18,7 +19,7 @@ from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteReposit
 
 @final
 class GenerateWordImageAiService:
-    """Servicio para generar imagenes con OpenAI Extended Inference."""
+    """Servicio para generar imagenes con gpt-image-1.5."""
 
     _instance: "GenerateWordImageAiService | None" = None
 
@@ -38,7 +39,7 @@ class GenerateWordImageAiService:
         generate_word_image_ai_dto: GenerateWordImageAiDto
     ) -> GenerateWordImageAiResultDto:
         """
-        Genera una imagen para una palabra usando OpenAI Extended Inference.
+        Genera una imagen para una palabra usando gpt-image-1.5.
 
         Args:
             generate_word_image_ai_dto: DTO con palabra en español y traducción.
@@ -52,17 +53,17 @@ class GenerateWordImageAiService:
                     "Se requiere palabra en español y traducción"
                 )
 
-            # Generar imagen con Extended Inference (prompt oculto en el repositorio)
+            # Generar imagen con gpt-image-1.5 (prompt oculto en el repositorio)
             ai_response = self._dalle_image_reader_repository.get_ai_image_by_word(
                 word_es=generate_word_image_ai_dto.word_es,
                 word_lang=generate_word_image_ai_dto.word_lang,
             )
 
-            image_base64 = ai_response["image_base64"]
+            image_url = ai_response["url"]
             prompt_used = ai_response["prompt_used"]
 
-            # Decodificar imagen base64
-            image_bytes = base64.b64decode(image_base64)
+            # Descargar imagen desde URL
+            image_bytes = self._download_image(image_url)
 
             # Guardar imagen en disco y BD
             word_image_entity = WordImageEntity(
@@ -71,7 +72,7 @@ class GenerateWordImageAiService:
                 source_type=ImageSourceEnum.AI_GENERATED,
                 file_path="",
                 mime_type="image/png",
-                original_url="",
+                original_url=image_url,
                 caption=f"{generate_word_image_ai_dto.word_es} - {generate_word_image_ai_dto.word_lang}",
             )
 
@@ -84,7 +85,7 @@ class GenerateWordImageAiService:
                 image_id=word_img_entity.id,
                 word_id=generate_word_image_ai_dto.word_id,
                 file_path=word_img_entity.file_path,
-                dalle_url="",  # Ya no hay URL, la imagen viene en base64
+                dalle_url=image_url,
                 prompt_used=prompt_used,
             )
 
@@ -95,3 +96,12 @@ class GenerateWordImageAiService:
                 {"word_id": generate_word_image_ai_dto.word_id, "word_es": generate_word_image_ai_dto.word_es},
             )
             return GenerateWordImageAiResultDto.error(str(e))
+
+    def _download_image(self, url: str) -> bytes:
+        """Descarga imagen desde URL."""
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+        with urllib.request.urlopen(url, context=ctx, timeout=30) as response:
+            return response.read()

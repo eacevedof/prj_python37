@@ -24,14 +24,13 @@ class AbstractOpenAIApiRepository(ABC):
         if not self._api_key:
             raise Exception("OPENAI_API_KEY no configurada en .env")
 
-        self._client = OpenAI(api_key=self._api_key)
+        self._open_ai_client = OpenAI(api_key=self._api_key)
 
     def _log_openai_success(self, operation: str, context: dict) -> None:
         """Logging exitoso de llamadas a OpenAI."""
-        self._logger.write_log(
+        self._logger.log_info(
             "open-ai",
-            f"SUCCESS: {operation}",
-            context,
+            f"SUCCESS: {operation}"
         )
 
     def _log_openai_error(self, message: str, context: dict) -> None:
