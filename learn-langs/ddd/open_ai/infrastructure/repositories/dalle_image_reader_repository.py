@@ -18,7 +18,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             cls._instance = cls()
         return cls._instance
 
-    def generate_image_by_word(
+    def get_ai_image_by_word(
         self,
         word_es: str,
         word_lang: str,
