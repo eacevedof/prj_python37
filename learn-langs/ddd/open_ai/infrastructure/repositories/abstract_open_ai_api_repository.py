@@ -141,7 +141,7 @@ class AbstractOpenAIApiRepository(ABC):
 
     def _log_openai_error(self, message: str, context: dict) -> None:
         """Logging de errores de OpenAI."""
-        self._logger.write_error(
+        self._logger.log_error(
             "AbstractOpenAIApiRepository",
             message,
             context,

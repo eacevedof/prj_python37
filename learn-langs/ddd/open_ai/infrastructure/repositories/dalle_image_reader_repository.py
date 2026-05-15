@@ -22,9 +22,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         self,
         word_es: str,
         word_lang: str,
-        size: str = "1024x1024",
-        quality: str = "standard",
-        style: str = "vivid",
+        size: str = "512x512",
     ) -> dict:
         """
         Genera una imagen para una palabra educativa.
@@ -33,9 +31,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Args:
             word_es: Palabra, frase u oración en español
             word_lang: Traducción en idioma destino
-            size: Tamaño (1024x1024, 1792x1024, 1024x1792)
-            quality: Calidad (standard, hd)
-            style: Estilo (vivid, natural)
+            size: Tamaño para DALL-E 2 (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
@@ -58,8 +54,6 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         return self.__send_prompt_to_open_ai(
             image_prompt=image_prompt,
             size=size,
-            quality=quality,
-            style=style,
         )
 
     def __get_image_prompt(
@@ -106,24 +100,20 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
     def __send_prompt_to_open_ai(
         self,
         image_prompt: str,
-        size: str = "1024x1024",
-        quality: str = "standard",
-        style: str = "vivid",
+        size: str = "512x512",
     ) -> dict:
         """
-        Genera una imagen usando DALL-E 3.
+        Genera una imagen usando DALL-E 2.
 
         Args:
             image_prompt: Descripción de la imagen a generar
-            size: Tamaño (1024x1024, 1792x1024, 1024x1792)
-            quality: Calidad (standard, hd)
-            style: Estilo (vivid, natural)
+            size: Tamaño (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
             {
                 "url": str,  # URL temporal de la imagen generada
-                "revised_prompt": str  # Prompt revisado por DALL-E
+                "revised_prompt": str  # Prompt revisado (solo en DALL-E 3)
             }
 
         Raises:
@@ -132,12 +122,10 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         open_ai_response = self._post_http_request(
             "images/generations",
             {
-                "model": "dall-e-3",
+                "model": "dall-e-2",
                 "prompt": image_prompt,
                 "n": 1,
                 "size": size,
-                "quality": quality,
-                "style": style,
             }
         )
 
