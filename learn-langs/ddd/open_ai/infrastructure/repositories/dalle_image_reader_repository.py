@@ -36,7 +36,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Returns:
             dict con estructura:
             {
-                "url": str,           # URL temporal de la imagen generada
+                "b64_json": str,      # Imagen en base64
                 "prompt_used": str    # Prompt construido internamente
             }
 
@@ -108,15 +108,39 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Returns:
             dict con estructura:
             {
-                "url": str,           # URL temporal de la imagen generada
+                "b64_json": str,      # Imagen en base64
                 "prompt_used": str    # Prompt usado
             }
 
         Raises:
             Exception: Si falla la generación
-        """
 
-        # Llamar a OpenAI Images API con gpt-image-1.5
+        {
+            "created": 1778866934,
+            "background": "opaque",
+            "data": [
+                {
+                    "b64_json": "image-inb64-json...hFuUDyje2tdlgAAAABJRU5ErkJggg=="
+                }
+            ],
+            "output_format": "png",
+            "quality": "high",
+            "size": "1024x1024",
+            "usage": {
+                "input_tokens": 12,
+                "input_tokens_details": {
+                    "image_tokens": 0,
+                    "text_tokens": 12
+                },
+                "output_tokens": 4501,
+                "output_tokens_details": {
+                    "image_tokens": 4160,
+                    "text_tokens": 341
+                },
+                "total_tokens": 4513
+            }
+        }
+        """
         open_ai_response = self._open_ai_client.images.generate(
             model="gpt-image-1.5",
             prompt=image_prompt,
@@ -125,14 +149,14 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             quality="low"
         )
 
-        # Extraer URL de la imagen generada
-        image_url = open_ai_response.data[0].url if open_ai_response.data else ""
+        # Extraer b64_json de la imagen generada
+        image_b64 = open_ai_response.data[0].b64_json if open_ai_response.data else ""
 
-        if not image_url:
+        if not image_b64:
             raise Exception("No se generó ninguna imagen en la respuesta")
 
         return {
-            "url": image_url,
+            "b64_json": image_b64,
             "prompt_used": image_prompt,
         }
 

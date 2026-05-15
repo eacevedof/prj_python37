@@ -1,8 +1,7 @@
 """Servicio para generar imagenes de palabras con IA (gpt-image-1.5)."""
 
-import ssl
+import base64
 from typing import final, Self
-import urllib.request
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.open_ai.infrastructure.repositories import DalleImageReaderRepository
@@ -59,11 +58,11 @@ class GenerateWordImageAiService:
                 word_lang=generate_word_image_ai_dto.word_lang,
             )
 
-            image_url = ai_response["url"]
+            image_b64 = ai_response["b64_json"]
             prompt_used = ai_response["prompt_used"]
 
-            # Descargar imagen desde URL
-            image_bytes = self._download_image(image_url)
+            # Decodificar imagen desde base64
+            image_bytes = base64.b64decode(image_b64)
 
             # Guardar imagen en disco y BD
             word_image_entity = WordImageEntity(
@@ -72,7 +71,7 @@ class GenerateWordImageAiService:
                 source_type=ImageSourceEnum.AI_GENERATED,
                 file_path="",
                 mime_type="image/png",
-                original_url=image_url,
+                original_url="",  # No hay URL, imagen viene en base64
                 caption=f"{generate_word_image_ai_dto.word_es} - {generate_word_image_ai_dto.word_lang}",
             )
 
@@ -85,7 +84,7 @@ class GenerateWordImageAiService:
                 image_id=word_img_entity.id,
                 word_id=generate_word_image_ai_dto.word_id,
                 file_path=word_img_entity.file_path,
-                dalle_url=image_url,
+                dalle_url="",  # No hay URL, imagen viene en base64
                 prompt_used=prompt_used,
             )
 
@@ -96,12 +95,3 @@ class GenerateWordImageAiService:
                 {"word_id": generate_word_image_ai_dto.word_id, "word_es": generate_word_image_ai_dto.word_es},
             )
             return GenerateWordImageAiResultDto.error(str(e))
-
-    def _download_image(self, url: str) -> bytes:
-        """Descarga imagen desde URL."""
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-
-        with urllib.request.urlopen(url, context=ctx, timeout=30) as response:
-            return response.read()
