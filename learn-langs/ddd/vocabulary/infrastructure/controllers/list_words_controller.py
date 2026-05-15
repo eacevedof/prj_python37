@@ -405,7 +405,7 @@ class ListWordsController(BaseController):
                 ft_file_picker_file.name,
             )
             await self._refresh_images_dialog()
-            await self._async_load_words()
+            # No recargar lista completa para mantener posición de scroll
             self._ft_container.show_snackbar(f"Imagen '{ft_file_picker_file.name}' agregada")
 
 
@@ -434,7 +434,7 @@ class ListWordsController(BaseController):
 
             if result.success:
                 await self._refresh_images_dialog()
-                await self._async_load_words()
+                # No recargar lista completa para mantener posición de scroll
                 self._ft_container.show_snackbar("Imagen agregada desde URL")
             else:
                 self._ft_container.show_snackbar(result.error_message or "Error", error=True)
@@ -462,7 +462,7 @@ class ListWordsController(BaseController):
 
                 if result.success:
                     await self._refresh_images_dialog()
-                    await self._async_load_words()
+                    # No recargar lista completa para mantener posición de scroll
                     self._ft_container.show_snackbar(f"Imagen IA generada exitosamente")
                 else:
                     self._ft_container.show_snackbar(
@@ -489,7 +489,7 @@ class ListWordsController(BaseController):
 
                 if result.success:
                     await self._refresh_images_dialog()
-                    await self._async_load_words()
+                    # No recargar lista completa para mantener posición de scroll
                     self._ft_container.show_snackbar("Imagen eliminada")
                 else:
                     self._ft_container.show_snackbar(result.error_message or "Error", error=True)
