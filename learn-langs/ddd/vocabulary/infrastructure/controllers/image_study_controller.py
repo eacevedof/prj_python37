@@ -111,7 +111,7 @@ class ImageStudyController(BaseController):
             self._show_current_word()
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ImageStudyController",
                 f"Error iniciando sesión: {e}",
                 {"lang_code": self._lang_code, "tags": self._tags},
@@ -161,7 +161,7 @@ class ImageStudyController(BaseController):
             self._next_word()
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ImageStudyController",
                 f"Error registrando respuesta: {e}",
                 {
@@ -183,7 +183,7 @@ class ImageStudyController(BaseController):
             await self._finish_session_service(dto)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ImageStudyController",
                 f"Error finalizando sesión: {e}",
                 {"session_id": self._session_id},

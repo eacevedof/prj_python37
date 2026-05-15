@@ -52,7 +52,7 @@ class AddWordImageService:
                 )
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "AddWordImageService",
                 f"Error agregando imagen: {e}",
                 {"word_id": dto.word_id, "source_type": dto.source_type},

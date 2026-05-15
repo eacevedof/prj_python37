@@ -66,7 +66,7 @@ class DeleteWordController:
             )
 
         except VocabularyException as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "DeleteWordController",
                 f"Error de vocabulario: {e.message}",
                 {"word_id": word_id, "code": e.code},
@@ -77,7 +77,7 @@ class DeleteWordController:
             )
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "DeleteWordController",
                 f"Error inesperado: {e}",
                 {"word_id": word_id},

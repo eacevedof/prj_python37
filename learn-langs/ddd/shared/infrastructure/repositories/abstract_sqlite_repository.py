@@ -160,7 +160,7 @@ class AbstractSqliteRepository(ABC):
         self._last_insert_id = None
 
         if not data:
-            self._logger.error(f"insert_into {table}: empty data")
+            self._logger.error_sql(f"insert_into {table}: empty data")
             return 0
 
         columns = ", ".join(data.keys())
@@ -173,7 +173,7 @@ class AbstractSqliteRepository(ABC):
             self._last_insert_id = await self._sqlite.insert(query, values)
             return self._last_insert_id
         except Exception as e:
-            self._logger.error(f"insert_into {table}: {e}")
+            self._logger.error_sql(f"insert_into {table}: {e}")
             return 0
 
     async def _update_where(
@@ -196,7 +196,7 @@ class AbstractSqliteRepository(ABC):
             Número de filas afectadas.
         """
         if not data:
-            self._logger.error(f"update_where {table}: empty data")
+            self._logger.error_sql(f"update_where {table}: empty data")
             return 0
 
         set_clause = ", ".join(f"{col} = ?" for col in data.keys())
@@ -207,7 +207,7 @@ class AbstractSqliteRepository(ABC):
         try:
             return await self._sqlite.update(query, values)
         except Exception as e:
-            self._logger.error(f"update_where {table}: {e}")
+            self._logger.error_sql(f"update_where {table}: {e}")
             return 0
 
     async def _delete_where(
@@ -232,7 +232,7 @@ class AbstractSqliteRepository(ABC):
         try:
             return await self._sqlite.delete(query, where_params)
         except Exception as e:
-            self._logger.error(f"delete_where {table}: {e}")
+            self._logger.error_sql(f"delete_where {table}: {e}")
             return 0
 
     async def _query(self, sql: str, params: tuple = ()) -> list[dict]:
@@ -246,11 +246,11 @@ class AbstractSqliteRepository(ABC):
         Returns:
             Lista de diccionarios con los resultados.
         """
-        self._logger.sql(sql)
+        self._logger.log_sql(sql)
         try:
             return await self._sqlite.fetch_all(sql, params)
         except Exception as e:
-            self._logger.error(f"query error: {e}")
+            self._logger.error_sql(f"query error: {e}")
             return []
 
     async def _query_one(self, sql: str, params: tuple = ()) -> dict | None:
@@ -264,11 +264,11 @@ class AbstractSqliteRepository(ABC):
         Returns:
             Diccionario con el resultado o None.
         """
-        self._logger.sql(sql)
+        self._logger.log_sql(sql)
         try:
             return await self._sqlite.fetch_one(sql, params)
         except Exception as e:
-            self._logger.error(f"query_one error: {e}")
+            self._logger.error_sql(f"query_one error: {e}")
             return None
 
     async def _query_scalar(

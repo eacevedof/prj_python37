@@ -39,7 +39,7 @@ class GetTagsService:
             return GetTagsResultDto.ok(tags)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "GetTagsService",
                 f"Error obteniendo tags: {e}",
             )

@@ -17,7 +17,14 @@ class Logger:
     def get_instance(cls) -> Self:
         return cls()
 
-    def write_log(self, file_path: str, content: str) -> None:
+    def log_error(self, module: str, message: str, context: dict | None = None) -> None:
+        log_content = f"[ERROR] {module}: {message}"
+        if context:
+            log_content += f"\nContext: {context}"
+        self.__write_log("errors/error.log", log_content)
+
+
+    def __write_log(self, file_path: str, content: str) -> None:
         environ_path_folder = os.getenv(EnvvarsKeysEnum.APP_LOG_PATH, self._DEFAULT_LOG_PATH)
         logs_folder_path = Path(environ_path_folder).resolve()
         today = datetime.now().strftime("%Y-%m-%d")
@@ -56,29 +63,23 @@ class Logger:
         return re.sub(r"^ {8}", "", content, flags=re.MULTILINE)
 
 
-    def write_error(self, module: str, message: str, context: dict | None = None) -> None:
-        log_content = f"[ERROR] {module}: {message}"
-        if context:
-            log_content += f"\nContext: {context}"
-        self.write_log("errors/error.log", log_content)
-
-
-    def write_info(self, module: str, message: str) -> None:
+    def log_info(self, module: str, message: str) -> None:
         log_content = f"[INFO] {module}: {message}"
-        self.write_log("info/info.log", log_content)
+        self.__write_log("info/info.log", log_content)
 
 
-    def write_debug(self, module: str, message: str, data: dict | None = None) -> None:
+    def log_debug(self, module: str, message: str, data: dict | None = None) -> None:
         log_content = f"[DEBUG] {module}: {message}"
         if data:
             log_content += f"\nData: {data}"
-        self.write_log("debug/debug.log", log_content)
+        self.__write_log("debug/debug.log", log_content)
 
-    # Shortcuts for repository logging
-    def sql(self, query: str) -> None:
+
+    def log_sql(self, query: str) -> None:
         """Log SQL query."""
-        self.write_log("sql/queries.sql", query)
+        self.__write_log("sql/queries.sql", query)
 
-    def error(self, message: str, context: dict | None = None) -> None:
+
+    def error_sql(self, message: str, context: dict | None = None) -> None:
         """Log error message."""
-        self.write_error("Repository", message, context)
+        self.log_error("Repository", message, context)

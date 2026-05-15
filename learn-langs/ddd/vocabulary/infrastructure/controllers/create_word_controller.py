@@ -81,7 +81,7 @@ class CreateWordController(BaseController):
             )
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "CreateWordController",
                 f"Error cargando datos iniciales: {e}",
             )
@@ -142,7 +142,7 @@ class CreateWordController(BaseController):
             # self._route_on_success()
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "CreateWordController",
                 f"Error creando palabra: {e}",
                 {"form_data": form_data},

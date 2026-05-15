@@ -137,7 +137,7 @@ class ListWordsController(BaseController):
             self._ft_container.render(view_dto)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ListWordsController",
                 f"Error cargando palabras: {e}",
                 {"search": self._current_search},
@@ -179,7 +179,7 @@ class ListWordsController(BaseController):
             await self._async_load_words()
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ListWordsController",
                 f"Error eliminando palabra: {e}",
                 {"word_id": word_id},
@@ -216,7 +216,7 @@ class ListWordsController(BaseController):
                 )
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ListWordsController",
                 f"Error mostrando imagenes: {e}",
                 {"word_id": word_id},
@@ -391,7 +391,7 @@ class ListWordsController(BaseController):
                 self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ListWordsController",
                 f"Error agregando imagen desde archivo: {e}",
                 {"word_id": word_id, "file_path": file_path},
@@ -412,7 +412,7 @@ class ListWordsController(BaseController):
                 self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "ListWordsController",
                 f"Error agregando imagen desde URL: {e}",
                 {"word_id": word_id, "url": url},
@@ -434,7 +434,7 @@ class ListWordsController(BaseController):
                     self._ft_container.show_snackbar(result.error_message or "Error", error=True)
 
             except Exception as e:
-                self._logger.write_error(
+                self._logger.log_error(
                     "ListWordsController",
                     f"Error eliminando imagen: {e}",
                     {"image_id": image_id},

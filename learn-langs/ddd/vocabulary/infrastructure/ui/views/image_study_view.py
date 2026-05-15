@@ -192,24 +192,24 @@ class ImageStudyView(ft.Container):
         )
 
         self._ft_timer = TimerComp(
-            seconds=30,
+            seconds=20,
             on_timeout=self._route_on_timeout,
             auto_start=True,
         )
 
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend([
-            ft.Container(height=20),
+            ft.Container(height=10),
             ft.Container(
                 content=self._ft_timer,
                 alignment=ft.Alignment.CENTER,
             ),
-            ft.Container(height=20),
+            ft.Container(height=15),
             ft.Container(
                 content=self._ft_image_flashcard,
                 alignment=ft.Alignment.CENTER,
             ),
-            ft.Container(height=30),
+            ft.Container(height=20),
             self._ft_input_field,
         ])
 

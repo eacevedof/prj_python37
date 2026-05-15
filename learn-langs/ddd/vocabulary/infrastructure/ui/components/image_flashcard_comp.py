@@ -33,8 +33,8 @@ class ImageFlashcardComp(ft.Container):
         # Imagen principal
         image_widget = ft.Image(
             src=full_image_path,
-            width=350,
-            height=350,
+            width=250,
+            height=250,
             fit=ft.BoxFit.CONTAIN,
             border_radius=8,
         )
@@ -92,11 +92,11 @@ class ImageFlashcardComp(ft.Container):
         )
 
         self.content = self._card_content
-        self.width = 400
-        self.height = 500
+        self.width = 350
+        self.height = 380
         self.bgcolor = ft.Colors.WHITE
         self.border_radius = 16
-        self.padding = 24
+        self.padding = 16
         self.shadow = ft.BoxShadow(
             spread_radius=1,
             blur_radius=15,
