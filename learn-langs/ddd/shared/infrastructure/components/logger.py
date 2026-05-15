@@ -77,7 +77,7 @@ class Logger:
 
     def log_sql(self, query: str) -> None:
         """Log SQL query."""
-        self.__write_log("sql/queries.sql", query)
+        self.__write_log("sql/sql.sql", query)
 
 
     def error_sql(self, message: str, context: dict | None = None) -> None:
