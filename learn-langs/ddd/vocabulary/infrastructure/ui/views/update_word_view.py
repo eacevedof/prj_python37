@@ -258,7 +258,7 @@ class UpdateWordView(ft.Container):
             spacing=4,
         )
 
-        # Form card con dos columnas
+        # Form card con dos columnas y scroll
         self._ft_form_container = ft.Container(
             content=ft.Column(
                 controls=[
@@ -281,12 +281,14 @@ class UpdateWordView(ft.Container):
                 ],
                 spacing=4,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
+                scroll=ft.ScrollMode.AUTO,
             ),
             padding=20,
             bgcolor=ft.Colors.WHITE,
             border_radius=12,
             border=ft.border.all(1, ft.Colors.GREY_300),
             width=750,
+            height=600,
             visible=False,
         )
 
