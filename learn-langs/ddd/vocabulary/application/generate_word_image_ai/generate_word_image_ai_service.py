@@ -5,7 +5,7 @@ import urllib.request
 import ssl
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.open_ai.infrastructure.repositories import DalleImageGeneratorRepository
+from ddd.open_ai.infrastructure.repositories import DalleImageReaderRepository
 from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_dto import (
     GenerateWordImageAiDto,
 )
@@ -24,9 +24,9 @@ class GenerateWordImageAiService:
     _instance: "GenerateWordImageAiService | None" = None
 
     def __init__(self) -> None:
-        self._images_writer = ImagesWriterSqliteRepository.get_instance()
-        self._image_generator = DalleImageGeneratorRepository.get_instance()
         self._logger = Logger.get_instance()
+        self._dalle_image_generator_repository = DalleImageReaderRepository.get_instance()
+        self._images_writer_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -34,7 +34,10 @@ class GenerateWordImageAiService:
             cls._instance = cls()
         return cls._instance
 
-    async def __call__(self, generate_word_image_ai_dto: GenerateWordImageAiDto) -> GenerateWordImageAiResultDto:
+    async def __call__(
+        self,
+        generate_word_image_ai_dto: GenerateWordImageAiDto
+    ) -> GenerateWordImageAiResultDto:
         """
         Genera una imagen para una palabra usando DALL-E 3.
 
@@ -51,11 +54,9 @@ class GenerateWordImageAiService:
                 )
 
             # Generar imagen con DALL-E (prompt oculto en el repositorio)
-            dalle_response = self._image_generator.generate_image_by_word(
+            dalle_response = self._dalle_image_generator_repository.generate_image_by_word(
                 word_es=generate_word_image_ai_dto.word_es,
                 word_lang=generate_word_image_ai_dto.word_lang,
-                lang_code=generate_word_image_ai_dto.lang_code,
-                context=generate_word_image_ai_dto.context,
                 size="1024x1024",
                 quality="standard",
                 style="vivid",
@@ -78,7 +79,7 @@ class GenerateWordImageAiService:
                 caption=f"{generate_word_image_ai_dto.word_es} - {generate_word_image_ai_dto.word_lang}",
             )
 
-            saved = await self._images_writer.save_image_bytes(word_image_entity, downloaded_image)
+            saved = await self._images_writer_repository.save_image_bytes(word_image_entity, downloaded_image)
 
             return GenerateWordImageAiResultDto.ok(
                 image_id=saved.id,
