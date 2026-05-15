@@ -12,10 +12,14 @@ class Logger:
     """Simple file-based logger for application events and errors."""
 
     _DEFAULT_LOG_PATH: str = str(Path(__file__).resolve().parents[4] / "logs")
+    _instance: "Logger | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        return cls()
+        """Retorna la instancia singleton."""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
     def log_error(self, module: str, message: str, context: dict | None = None) -> None:
         log_content = f"[ERROR] {module}: {message}"

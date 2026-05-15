@@ -12,3 +12,4 @@ class ImageSourceEnum(StrEnum):
     URL = "URL"                  # Descargada de internet
     LOCAL = "LOCAL"              # Archivo local
     VECTORIAL = "VECTORIAL"      # SVG u otro formato vectorial
+    AI_GENERATED = "AI_GENERATED"  # Generada con IA (DALL-E, etc)
