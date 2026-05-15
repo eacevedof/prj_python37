@@ -1,5 +1,7 @@
 """DTO de vista para actualizacion de palabra."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Self, Any
 
@@ -14,6 +16,9 @@ class UpdateWordViewDto:
     # Tags disponibles para seleccionar
     available_tags: tuple[dict[str, Any], ...] = field(default_factory=tuple)
 
+    # Imagenes de la palabra
+    word_images: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+
     # Resultado de operacion
     word_id: int | None = None
     text: str = ""
@@ -27,9 +32,11 @@ class UpdateWordViewDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         tags_raw = primitives.get("available_tags", []) or []
+        images_raw = primitives.get("word_images", []) or []
         return cls(
             form_values=dict(primitives.get("form_values", {}) or {}),
             available_tags=tuple(tags_raw),
+            word_images=tuple(images_raw),
             word_id=primitives.get("word_id"),
             text=str(primitives.get("text", "")),
             is_loading=bool(primitives.get("is_loading", False)),
@@ -53,6 +60,7 @@ class UpdateWordViewDto:
         translation_nl: str,
         selected_tags: list[str],
         available_tags: list[dict[str, Any]],
+        word_images: list[dict[str, Any]] | None = None,
     ) -> Self:
         """DTO con datos cargados para edicion."""
         return cls.from_primitives({
@@ -66,6 +74,7 @@ class UpdateWordViewDto:
                 "selected_tags": selected_tags,
             },
             "available_tags": available_tags,
+            "word_images": word_images or [],
             "is_loading": False,
         })
 

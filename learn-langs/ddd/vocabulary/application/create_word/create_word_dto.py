@@ -13,6 +13,7 @@ class CreateWordDto:
     image_path: str = ""
     notes: str = ""
     tags: list[str] = field(default_factory=list)
+    group_ids: list[int] = field(default_factory=list)  # IDs de grupos
     translations: dict[str, str] = field(default_factory=dict)  # lang_code -> text
 
     @classmethod
@@ -31,6 +32,7 @@ class CreateWordDto:
             image_path=str(primitives.get("image_path", "") or "").strip(),
             notes=str(primitives.get("notes", "") or "").strip(),
             tags=list(primitives.get("tags", []) or []),
+            group_ids=list(primitives.get("group_ids", []) or []),
             translations=dict(primitives.get("translations", {}) or {}),
         )
 

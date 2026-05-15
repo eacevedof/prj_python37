@@ -56,37 +56,24 @@ class AddWordIaImageService:
             word_es_text = word_es_data.get("text", "")
             word_es_notes = word_es_data.get("notes", "")
 
-            # Obtener tags de la palabra
-            tags_data = await self._tags_reader.get_by_word(dto.word_id)
+            # Obtener tags de la palabra (en español)
+            tags_data = await self._tags_reader.get_for_word(dto.word_id)
             tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
 
-            # Obtener traducción en el idioma especificado
-            word_lang_data = await self._words_lang_reader.get_by_word_and_lang(
-                dto.word_id,
-                dto.lang_code,
-            )
-
-            if not word_lang_data:
-                return AddWordIaImageResultDto.error(
-                    f"No existe traducción al idioma {dto.lang_code} para esta palabra"
-                )
-
-            word_lang_text = word_lang_data.get("text", "")
-
-            # Construir contexto con notes y tags para mejor generación
+            # Construir contexto con tags y notas (todo en español)
             context_parts = []
             if tag_names:
                 context_parts.append(f"Tags: {', '.join(tag_names)}")
             if word_es_notes:
-                context_parts.append(f"Context: {word_es_notes}")
+                context_parts.append(f"Notas: {word_es_notes}")
 
             context = ". ".join(context_parts) if context_parts else None
 
-            # Generar imagen con IA
+            # Generar imagen con IA usando solo texto en español + contexto
             generate_dto = GenerateWordImageAiDto.from_primitives({
                 "word_id": dto.word_id,
                 "word_es": word_es_text,
-                "word_lang": word_lang_text,
+                "word_lang": word_es_text,  # Usar el texto en español también aquí
                 "lang_code": dto.lang_code,
                 "context": context,
             })

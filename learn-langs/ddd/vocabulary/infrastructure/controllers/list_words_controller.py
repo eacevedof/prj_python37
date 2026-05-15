@@ -25,6 +25,7 @@ from ddd.vocabulary.application.add_word_ia_image import (
     AddWordIaImageDto,
     AddWordIaImageService,
 )
+from ddd.vocabulary.infrastructure.repositories import ImagesReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
     ListWordsViewDto,
@@ -75,6 +76,7 @@ class ListWordsController(BaseController):
         self._add_word_image_service = AddWordImageService.get_instance()
         self._add_word_ia_image_service = AddWordIaImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
+        self._images_reader = ImagesReaderSqliteRepository.get_instance()
 
         # Vista (instancia de ListWordsView)
         self._ft_container = ListWordsView.from_primitives({
@@ -120,8 +122,10 @@ class ListWordsController(BaseController):
                 })
             )
 
-            self._words = [
-                WordListItemViewDto.from_primitives({
+            # Cargar palabras
+            words_data = []
+            for w in result.words:
+                word_data = {
                     "id": w.id,
                     "text": w.text,
                     "word_type": w.word_type,
@@ -130,9 +134,20 @@ class ListWordsController(BaseController):
                     "image_count": w.image_count,
                     "tags": w.tags,
                     "translations": w.translations,
-                })
-                for w in result.words
-            ]
+                    "last_image_path": "",
+                }
+
+                # Si tiene imágenes, cargar la última
+                if w.image_count > 0:
+                    images = await self._images_reader.get_by_word_id(w.id)
+                    if images:
+                        # get_by_word_id ya ordena por is_primary DESC, sort_order, created_at
+                        # Así que el último elemento es la última imagen agregada
+                        word_data["last_image_path"] = images[-1].get("file_path", "")
+
+                words_data.append(word_data)
+
+            self._words = [WordListItemViewDto.from_primitives(w) for w in words_data]
 
             view_dto = ListWordsViewDto.ok(
                 words=self._words,

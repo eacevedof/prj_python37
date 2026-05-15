@@ -119,14 +119,27 @@ class ImageFlashcardComp(ft.Container):
         """Muestra la traducción."""
         self.show_translation = True
         if self._card_content and self.text_lang:
+            # Limpiar controles de traducción previos si existen
+            # para evitar duplicados
+            while len(self._card_content.controls) > 2:
+                self._card_content.controls.pop()
+
             self._card_content.controls.extend([
-                ft.Container(height=16),
-                ft.Divider(height=1, color=ft.Colors.GREY_300),
-                ft.Container(height=12),
+                ft.Container(height=8),
+                ft.Divider(height=2, color=ft.Colors.BLUE_300),
+                ft.Container(height=6),
+                ft.Text(
+                    "Respuesta correcta:",
+                    size=13,
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.Colors.BLUE_700,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Container(height=2),
                 ft.Text(
                     self.text_lang,
-                    size=28,
-                    weight=ft.FontWeight.W_500,
+                    size=22,
+                    weight=ft.FontWeight.BOLD,
                     color=ft.Colors.GREEN_700,
                     text_align=ft.TextAlign.CENTER,
                 ),
@@ -136,13 +149,15 @@ class ImageFlashcardComp(ft.Container):
                 self._card_content.controls.append(
                     ft.Text(
                         f"/{self.pronunciation}/",
-                        size=16,
+                        size=13,
                         italic=True,
-                        color=ft.Colors.GREY_600,
+                        color=ft.Colors.GREY_700,
                         text_align=ft.TextAlign.CENTER,
                     )
                 )
 
+            # Aumentar altura para mostrar la traducción
+            self.height = 480
             self.update()
 
     def set_result_style(self, is_correct: bool) -> None:

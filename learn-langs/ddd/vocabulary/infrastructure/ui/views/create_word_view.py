@@ -3,6 +3,8 @@
 import flet as ft
 from typing import Callable, Any, Self, TYPE_CHECKING
 
+from ddd.vocabulary.infrastructure.ui.components.word_groups_selector_comp import WordGroupsSelectorComp
+
 if TYPE_CHECKING:
     from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
@@ -23,9 +25,10 @@ class CreateWordView(ft.Container):
     # =========================================================================
     def __init__(
         self,
-        route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
-        route_on_submit: Callable[[dict[str, Any]], None], # 2. Botón guardar (acción primaria)
-        route_on_back: Callable[[], None],                 # 3. Botón cancelar (acción secundaria)
+        route_on_mount: Callable[[], None] | None,                # 1. Lifecycle (se ejecuta primero)
+        route_on_submit: Callable[[dict[str, Any]], None],        # 2. Botón guardar (acción primaria)
+        route_on_back: Callable[[], None],                        # 3. Botón cancelar (acción secundaria)
+        route_on_create_group: Callable[[str, str], None] | None = None,  # 4. Crear grupo
     ):
         super().__init__()
 
@@ -33,6 +36,7 @@ class CreateWordView(ft.Container):
         self._route_on_mount = route_on_mount
         self._route_on_submit = route_on_submit
         self._route_on_back = route_on_back
+        self._route_on_create_group = route_on_create_group
 
         # Form fields
         self._ft_text_es_field: ft.TextField | None = None
@@ -40,6 +44,7 @@ class CreateWordView(ft.Container):
         self._ft_word_type_dropdown: ft.Dropdown | None = None
         self._ft_notes_field: ft.TextField | None = None
         self._ft_tags_row: ft.Row | None = None
+        self._ft_groups_selector: WordGroupsSelectorComp | None = None
         self._ft_error_text: ft.Text | None = None
         self._ft_success_text: ft.Text | None = None
         self._ft_loading_ring: ft.ProgressRing | None = None
@@ -47,6 +52,10 @@ class CreateWordView(ft.Container):
         # Estado local de tags seleccionados
         self._selected_tags: list[str] = []
         self._available_tags: list[dict[str, Any]] = []
+
+        # Estado local de grupos seleccionados
+        self._selected_group_ids: list[int] = []
+        self._available_groups: list[dict[str, Any]] = []
 
         self._build_initial_ui()
 
@@ -57,6 +66,7 @@ class CreateWordView(ft.Container):
             route_on_mount=primitives.get("on_mount"),
             route_on_submit=primitives.get("on_submit", lambda x: None),
             route_on_back=primitives.get("on_back", lambda: None),
+            route_on_create_group=primitives.get("on_create_group"),
         )
 
     # =========================================================================
@@ -75,6 +85,11 @@ class CreateWordView(ft.Container):
         self._available_tags = list(dto.available_tags)
         self._selected_tags = list(dto.form_values.get("selected_tags", []))
         self._render_tags()
+
+        # Grupos disponibles
+        self._available_groups = list(dto.available_groups)
+        self._selected_group_ids = list(dto.selected_group_ids)
+        self._render_groups()
 
         # Mensajes
         self._render_messages(dto)
@@ -137,6 +152,22 @@ class CreateWordView(ft.Container):
             spacing=8,
         )
 
+        # Grupos selector (inicialmente vacío, se actualiza en render)
+        self._ft_groups_selector = WordGroupsSelectorComp(
+            groups=[],
+            selected_group_ids=[],
+            on_change=self._on_groups_change,
+        )
+
+        # Botón para crear nuevo grupo
+        create_group_btn = ft.TextButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.ADD, size=16), ft.Text("Crear grupo", size=12)],
+                spacing=4,
+            ),
+            on_click=lambda _: self._show_create_group_dialog(),
+        )
+
         self._ft_error_text = ft.Text(
             color=ft.Colors.RED_700,
             visible=False,
@@ -194,6 +225,15 @@ class CreateWordView(ft.Container):
                     ft.Container(height=16),
                     ft.Text("Tags:", size=14, weight=ft.FontWeight.W_500),
                     self._ft_tags_row,
+                    ft.Container(height=16),
+                    ft.Row(
+                        [
+                            ft.Text("Grupos:", size=14, weight=ft.FontWeight.W_500),
+                            create_group_btn,
+                        ],
+                        spacing=8,
+                    ),
+                    self._ft_groups_selector,
                     ft.Container(height=16),
                     self._ft_error_text,
                     self._ft_success_text,
@@ -283,6 +323,14 @@ class CreateWordView(ft.Container):
                 )
                 self._ft_tags_row.controls.append(chip)
 
+    def _render_groups(self) -> None:
+        """Actualiza el selector de grupos."""
+        if self._ft_groups_selector:
+            self._ft_groups_selector.refresh_groups(
+                self._available_groups,
+                self._selected_group_ids,
+            )
+
     def _render_messages(self, dto: "CreateWordViewDto") -> None:
         """Renderiza mensajes de error/éxito."""
         if self._ft_error_text:
@@ -328,6 +376,89 @@ class CreateWordView(ft.Container):
         self._render_tags()
         self.update()
 
+    def _on_groups_change(self, selected_group_ids: list[int]) -> None:
+        """Callback cuando cambia la selección de grupos."""
+        self._selected_group_ids = selected_group_ids
+
+    def _show_create_group_dialog(self) -> None:
+        """Muestra el diálogo para crear un nuevo grupo."""
+        if not self.page:
+            return
+
+        title_field = ft.TextField(
+            label="Título del grupo *",
+            hint_text="Ej: verbos, sustantivos, frases útiles",
+            autofocus=True,
+            width=400,
+        )
+
+        description_field = ft.TextField(
+            label="Descripción (opcional)",
+            hint_text="Breve descripción del grupo",
+            multiline=True,
+            min_lines=2,
+            max_lines=3,
+            width=400,
+        )
+
+        error_text = ft.Text(
+            color=ft.Colors.RED_700,
+            visible=False,
+        )
+
+        def on_save():
+            title = (title_field.value or "").strip()
+            if not title:
+                error_text.value = "El título es obligatorio"
+                error_text.visible = True
+                dialog.update()
+                return
+
+            description = (description_field.value or "").strip()
+
+            # Cerrar el diálogo
+            dialog.open = False
+            self.page.update()
+
+            # Notificar al controller
+            if self._route_on_create_group:
+                self._route_on_create_group(title, description)
+
+        def on_cancel():
+            dialog.open = False
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            title=ft.Text("Crear nuevo grupo"),
+            content=ft.Column(
+                controls=[
+                    title_field,
+                    ft.Container(height=10),
+                    description_field,
+                    ft.Container(height=8),
+                    error_text,
+                ],
+                tight=True,
+                width=400,
+            ),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda _: on_cancel()),
+                ft.ElevatedButton(
+                    "Crear",
+                    on_click=lambda _: on_save(),
+                    style=ft.ButtonStyle(
+                        bgcolor=ft.Colors.BLUE_600,
+                        color=ft.Colors.WHITE,
+                    ),
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
+
     def _get_form_data(self) -> dict[str, Any]:
         """Obtiene los datos actuales del formulario."""
         return {
@@ -336,4 +467,5 @@ class CreateWordView(ft.Container):
             "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else "WORD",
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "selected_tags": list(self._selected_tags),
+            "selected_group_ids": list(self._selected_group_ids),
         }

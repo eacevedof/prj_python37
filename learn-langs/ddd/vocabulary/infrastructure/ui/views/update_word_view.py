@@ -1,7 +1,12 @@
 """Vista para editar palabras - Solo renderizado."""
 
+from __future__ import annotations
+
+import os
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
+from typing import Callable, Any, Self, TYPE_CHECKING, Optional, List, Dict
+
+from ddd.shared.infrastructure.components.logger import Logger
 
 if TYPE_CHECKING:
     from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
@@ -34,20 +39,30 @@ class UpdateWordView(ft.Container):
         self._route_on_submit = route_on_submit
         self._route_on_back = route_on_back
 
+        # Logger
+        self._logger = Logger.get_instance()
+
         # Estado local de tags seleccionados
-        self._selected_tags: list[str] = []
-        self._available_tags: list[dict[str, Any]] = []
+        self._selected_tags: List[str] = []
+        self._available_tags: List[Dict[str, Any]] = []
+
+        # Estado local de imagenes
+        self._word_images: List[Dict[str, Any]] = []
 
         # Componentes UI - Form fields
-        self._ft_text_es_field: ft.TextField | None = None
-        self._ft_text_nl_field: ft.TextField | None = None
-        self._ft_word_type_dropdown: ft.Dropdown | None = None
-        self._ft_notes_field: ft.TextField | None = None
-        self._ft_tags_row: ft.Row | None = None
-        self._ft_loading_indicator: ft.ProgressRing | None = None
-        self._ft_form_container: ft.Container | None = None
-        self._ft_error_text: ft.Text | None = None
-        self._ft_success_text: ft.Text | None = None
+        self._ft_text_es_field: Optional[ft.TextField] = None
+        self._ft_text_nl_field: Optional[ft.TextField] = None
+        self._ft_word_type_dropdown: Optional[ft.Dropdown] = None
+        self._ft_notes_field: Optional[ft.TextField] = None
+        self._ft_tags_row: Optional[ft.Row] = None
+        self._ft_loading_indicator: Optional[ft.ProgressRing] = None
+        self._ft_form_container: Optional[ft.Container] = None
+        self._ft_error_text: Optional[ft.Text] = None
+        self._ft_success_text: Optional[ft.Text] = None
+
+        # Componentes UI - Images
+        self._ft_last_image_container: Optional[ft.Container] = None
+        self._ft_images_grid: Optional[ft.Row] = None
 
         self._build_initial_ui()
 
@@ -83,6 +98,10 @@ class UpdateWordView(ft.Container):
         self._available_tags = list(dto.available_tags)
         self._selected_tags = list(dto.form_values.get("selected_tags", []))
         self._render_tags()
+
+        # Imagenes disponibles
+        self._word_images = list(dto.word_images)
+        self._render_images()
 
         # Mensajes
         self._render_messages(dto)
@@ -157,6 +176,20 @@ class UpdateWordView(ft.Container):
             spacing=8,
         )
 
+        # Contenedor para última imagen
+        self._ft_last_image_container = ft.Container(
+            content=ft.Text("No hay imágenes", italic=True, color=ft.Colors.GREY_500, size=12),
+            visible=False,
+        )
+
+        # Grid de imágenes (listado)
+        self._ft_images_grid = ft.Row(
+            controls=[],
+            wrap=True,
+            spacing=8,
+            scroll=ft.ScrollMode.AUTO,
+        )
+
         self._ft_error_text = ft.Text(
             color=ft.Colors.RED_700,
             visible=False,
@@ -196,21 +229,48 @@ class UpdateWordView(ft.Container):
             tooltip="Volver",
         )
 
-        # Form card
+        # Columna izquierda - Formulario
+        left_column = ft.Column(
+            controls=[
+                self._ft_text_es_field,
+                ft.Container(height=8),
+                self._ft_text_nl_field,
+                ft.Container(height=8),
+                self._ft_word_type_dropdown,
+                ft.Container(height=8),
+                self._ft_notes_field,
+            ],
+            spacing=4,
+        )
+
+        # Columna derecha - Imagen y tags
+        right_column = ft.Column(
+            controls=[
+                ft.Text("Última imagen:", size=12, weight=ft.FontWeight.W_500),
+                self._ft_last_image_container,
+                ft.Container(height=10),
+                ft.Text("Tags:", size=12, weight=ft.FontWeight.W_500),
+                ft.Container(
+                    content=self._ft_tags_row,
+                    width=220,
+                ),
+            ],
+            spacing=4,
+        )
+
+        # Form card con dos columnas
         self._ft_form_container = ft.Container(
             content=ft.Column(
                 controls=[
-                    self._ft_text_es_field,
-                    ft.Container(height=10),
-                    self._ft_text_nl_field,
-                    ft.Container(height=10),
-                    self._ft_word_type_dropdown,
-                    ft.Container(height=10),
-                    self._ft_notes_field,
-                    ft.Container(height=16),
-                    ft.Text("Tags:", size=14, weight=ft.FontWeight.W_500),
-                    self._ft_tags_row,
-                    ft.Container(height=16),
+                    ft.Row(
+                        controls=[
+                            left_column,
+                            ft.Container(width=20),
+                            right_column,
+                        ],
+                        vertical_alignment=ft.CrossAxisAlignment.START,
+                    ),
+                    ft.Container(height=12),
                     self._ft_error_text,
                     self._ft_success_text,
                     ft.Container(height=8),
@@ -222,11 +282,11 @@ class UpdateWordView(ft.Container):
                 spacing=4,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
-            padding=24,
+            padding=20,
             bgcolor=ft.Colors.WHITE,
             border_radius=12,
             border=ft.border.all(1, ft.Colors.GREY_300),
-            width=500,
+            width=750,
             visible=False,
         )
 
@@ -305,12 +365,230 @@ class UpdateWordView(ft.Container):
                 tag_name = tag.get("name", "")
                 is_selected = tag_name in self._selected_tags
                 chip = ft.Chip(
-                    label=ft.Text(tag_name, size=12),
+                    label=ft.Text(tag_name, size=10),
                     selected=is_selected,
                     on_select=lambda e, t=tag_name: self._toggle_tag(t),
                     bgcolor=tag.get("color") if is_selected else None,
+                    height=28,
                 )
                 self._ft_tags_row.controls.append(chip)
+
+    def _get_full_image_path(self, relative_path: str) -> str:
+        """Construye la ruta completa de la imagen desde la ruta relativa."""
+        if not relative_path:
+            return ""
+
+        # Si ya es una ruta absoluta, devolverla tal cual
+        if os.path.isabs(relative_path):
+            return relative_path
+
+        # Construir ruta absoluta desde data/images
+        # C:\projects\prj_python37\learn-langs\data\images
+        from pathlib import Path
+        base_path = Path(__file__).parent.parent.parent.parent.parent.parent / "data" / "images"
+        full_path = base_path / relative_path
+        return str(full_path)
+
+    def _render_images(self) -> None:
+        """Renderiza las imagenes de la palabra."""
+        if not self._ft_last_image_container or not self._ft_images_grid:
+            return
+
+        # Limpiar grid
+        self._ft_images_grid.controls.clear()
+
+        if not self._word_images:
+            self._ft_last_image_container.visible = False
+            self._ft_images_grid.controls.append(
+                ft.Text(
+                    "No hay imagenes",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=12,
+                )
+            )
+            return
+
+        # Mostrar última imagen (la última del array)
+        last_image = self._word_images[-1]
+        self._render_last_image(last_image)
+
+        # Mostrar grid de todas las imagenes
+        thumbnails_added = 0
+        for image_data in self._word_images:
+            relative_path = image_data.get("file_path", "")
+            if not relative_path:
+                continue
+
+            full_path = self._get_full_image_path(relative_path)
+            if not full_path or not os.path.exists(full_path):
+                # Agregar placeholder para imagen no encontrada
+                self._ft_images_grid.controls.append(
+                    ft.Container(
+                        content=ft.Icon(ft.Icons.BROKEN_IMAGE, size=40, color=ft.Colors.GREY_400),
+                        width=80,
+                        height=80,
+                        border=ft.border.all(2, ft.Colors.RED_300),
+                        border_radius=4,
+                        bgcolor=ft.Colors.GREY_100,
+                    )
+                )
+                thumbnails_added += 1
+                continue
+
+            try:
+                # Crear thumbnail clickeable
+                thumbnail = ft.Container(
+                    content=ft.Image(
+                        src=full_path,
+                        width=80,
+                        height=80,
+                        fit=ft.BoxFit.COVER,
+                        border_radius=4,
+                    ),
+                    border=ft.border.all(2, ft.Colors.GREY_300),
+                    border_radius=4,
+                    on_click=lambda e, img=full_path: self._show_fullscreen_image(img),
+                    tooltip="Click para ampliar",
+                    ink=True,
+                )
+                self._ft_images_grid.controls.append(thumbnail)
+                thumbnails_added += 1
+            except Exception as ex:
+                # Log error
+                self._logger.log_error(
+                    "UpdateWordView",
+                    f"Error renderizando thumbnail de imagen: {ex}",
+                    {"image_path": full_path}
+                )
+                # Agregar placeholder para error
+                self._ft_images_grid.controls.append(
+                    ft.Container(
+                        content=ft.Icon(ft.Icons.ERROR_OUTLINE, size=40, color=ft.Colors.RED_400),
+                        width=80,
+                        height=80,
+                        border=ft.border.all(2, ft.Colors.RED_300),
+                        border_radius=4,
+                        bgcolor=ft.Colors.GREY_100,
+                        tooltip=f"Error: {str(ex)}",
+                    )
+                )
+                thumbnails_added += 1
+
+        # Si no se agregó ningún thumbnail, mostrar mensaje
+        if thumbnails_added == 0:
+            self._ft_images_grid.controls.append(
+                ft.Text(
+                    "No se pudieron cargar las imagenes",
+                    italic=True,
+                    color=ft.Colors.ORANGE_500,
+                    size=12,
+                )
+            )
+
+    def _render_last_image(self, image_data: Dict[str, Any]) -> None:
+        """Renderiza la última imagen cargada."""
+        if not self._ft_last_image_container:
+            return
+
+        relative_path = image_data.get("file_path", "")
+        if not relative_path:
+            self._ft_last_image_container.content = ft.Text(
+                "No hay ruta de imagen",
+                italic=True,
+                color=ft.Colors.ORANGE_500,
+                size=12,
+            )
+            self._ft_last_image_container.visible = True
+            return
+
+        full_path = self._get_full_image_path(relative_path)
+        if not os.path.exists(full_path):
+            self._ft_last_image_container.content = ft.Column([
+                ft.Text(
+                    "Imagen no encontrada",
+                    italic=True,
+                    color=ft.Colors.RED_500,
+                    size=12,
+                ),
+                ft.Text(
+                    f"Ruta: {relative_path}",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=10,
+                ),
+            ])
+            self._ft_last_image_container.visible = True
+            return
+
+        try:
+            self._ft_last_image_container.content = ft.Container(
+                content=ft.Image(
+                    src=full_path,
+                    width=200,
+                    height=130,
+                    fit=ft.BoxFit.CONTAIN,
+                    border_radius=8,
+                ),
+                border=ft.border.all(1, ft.Colors.GREY_400),
+                border_radius=8,
+                padding=6,
+                bgcolor=ft.Colors.GREY_100,
+                on_click=lambda e: self._show_fullscreen_image(full_path),
+                tooltip="Click para ampliar",
+                ink=True,
+            )
+            self._ft_last_image_container.visible = True
+        except Exception as ex:
+            # Log error
+            self._logger.log_error(
+                "UpdateWordView",
+                f"Error renderizando última imagen: {ex}",
+                {"image_path": full_path, "relative_path": relative_path}
+            )
+            self._ft_last_image_container.content = ft.Column([
+                ft.Text(
+                    "Error al cargar imagen",
+                    italic=True,
+                    color=ft.Colors.RED_500,
+                    size=12,
+                ),
+                ft.Text(
+                    str(ex),
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=10,
+                ),
+            ])
+            self._ft_last_image_container.visible = True
+
+    def _show_fullscreen_image(self, image_path: str) -> None:
+        """Muestra la imagen en pantalla completa."""
+        if not self.page:
+            return
+
+        def close_dialog():
+            dialog.open = False
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            content=ft.Container(
+                content=ft.Image(
+                    src=image_path,
+                    fit=ft.BoxFit.CONTAIN,
+                ),
+                width=self.page.window.width * 0.9 if self.page.window.width else 800,
+                height=self.page.window.height * 0.8 if self.page.window.height else 600,
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda _: close_dialog()),
+            ],
+            actions_alignment=ft.MainAxisAlignment.CENTER,
+        )
+
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
 
     def _render_messages(self, dto: "UpdateWordViewDto") -> None:
         """Renderiza mensajes de error/exito."""
