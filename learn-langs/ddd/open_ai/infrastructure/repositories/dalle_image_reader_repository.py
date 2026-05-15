@@ -115,43 +115,25 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Raises:
             Exception: Si falla la generación
         """
-        try:
-            # Llamar a OpenAI Images API con gpt-image-1.5
-            open_ai_response = self._open_ai_client.images.generate(
-                model="gpt-image-1.5",
-                prompt=image_prompt,
-                n=1,
-                size=size,
-                quality="low"
-            )
 
-            # Extraer URL de la imagen generada
-            image_url = open_ai_response.data[0].url if open_ai_response.data else ""
+        # Llamar a OpenAI Images API con gpt-image-1.5
+        open_ai_response = self._open_ai_client.images.generate(
+            model="gpt-image-1.5",
+            prompt=image_prompt,
+            n=1,
+            size=size,
+            quality="low"
+        )
 
-            if not image_url:
-                raise Exception("No se generó ninguna imagen en la respuesta")
+        # Extraer URL de la imagen generada
+        image_url = open_ai_response.data[0].url if open_ai_response.data else ""
 
-            self._log_openai_success(
-                "images_generation",
-                {
-                    "model": "gpt-image-1.5",
-                    "prompt": image_prompt[:200],
-                    "size": size,
-                    "url": image_url,
-                },
-            )
+        if not image_url:
+            raise Exception("No se generó ninguna imagen en la respuesta")
 
-            return {
-                "url": image_url,
-                "prompt_used": image_prompt,
-            }
+        return {
+            "url": image_url,
+            "prompt_used": image_prompt,
+        }
 
-        except Exception as e:
-            error_msg = f"Error generando imagen con gpt-image-1.5: {str(e)}"
-            self._log_openai_error(error_msg, {
-                "model": "gpt-image-1.5",
-                "prompt": image_prompt,
-                "size": size,
-                "error": str(e),
-            })
-            raise Exception(error_msg)
+
