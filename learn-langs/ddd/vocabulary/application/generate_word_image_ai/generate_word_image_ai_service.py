@@ -72,7 +72,7 @@ class GenerateWordImageAiService:
                 file_path="",
                 mime_type="image/png",
                 original_url="",  # No hay URL, imagen viene en base64
-                caption=f"{generate_word_image_ai_dto.word_es} - {generate_word_image_ai_dto.word_lang}",
+                caption=generate_word_image_ai_dto.word_es,  # Solo español, sin revelar traducción
             )
 
             word_img_entity = await self._images_writer_repository.save_image_bytes(
