@@ -1,5 +1,5 @@
 import os
-from typing import final
+from typing import final, Self
 
 from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
@@ -8,9 +8,27 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
-    @staticmethod
-    def get_instance() -> "EnvironmentReaderRawRepository":
-        return EnvironmentReaderRawRepository()
+    _instance: "EnvironmentReaderRawRepository | None" = None
+
+    @classmethod
+    def get_instance(cls) -> Self:
+        """Retorna la instancia singleton."""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def get(self, key: str, default: str = "") -> str:
+        """
+        Lee una variable de entorno con valor por defecto.
+
+        Args:
+            key: Nombre de la variable de entorno
+            default: Valor por defecto si no existe
+
+        Returns:
+            str: Valor de la variable o default
+        """
+        return os.getenv(key, default)
 
     def get_azure_organization_name(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.AZURE_ORGANIZATION_NAME)
