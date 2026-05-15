@@ -74,8 +74,8 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         # Usar estilo default
         style = self.__get_default_image_style()
 
-        # Construir prompt simple
-        return f"{word_lang} ({word_es}). {style}"
+        # Construir prompt descriptivo SIN incluir texto en la imagen
+        return f"A cute cartoon illustration of a {word_lang}. {style}"
 
     def __get_default_image_style(self) -> str:
         """
@@ -86,10 +86,11 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             Descripción de estilo optimizada para imágenes educativas
         """
         return (
-            "Simple cute cartoon illustration, kawaii style, "
-            "flat colors, minimalist, educational, "
+            "Kawaii style, flat colors, minimalist, educational, "
             "clean white background, vector art style, "
             "friendly and approachable, "
+            "NO TEXT, NO WORDS, NO LETTERS in the image, "
+            "only visual representation, "
             "perfect for language learning flashcards"
         )
 
