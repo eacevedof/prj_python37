@@ -147,10 +147,12 @@ class HomeView(ft.Container):
 
         manage_btn = ft.ElevatedButton(
             content=ft.Row(
-                [ft.Icon(ft.Icons.EDIT), ft.Text("Gestionar palabras")],
+                [ft.Icon(ft.Icons.EDIT), ft.Text("Palabras")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             on_click=lambda _: self._route_on_manage_words(),
+            bgcolor=ft.Colors.YELLOW_700,
+            color=ft.Colors.BLACK,
         )
 
         # Layout principal

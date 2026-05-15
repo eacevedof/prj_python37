@@ -16,6 +16,7 @@ from ddd.vocabulary.application.generate_word_image_ai import (
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsLangReaderSqliteRepository,
+    TagsReaderSqliteRepository,
 )
 
 
@@ -27,6 +28,7 @@ class AddWordIaImageService:
         self._logger = Logger.get_instance()
         self._words_es_reader = WordsEsReaderSqliteRepository.get_instance()
         self._words_lang_reader = WordsLangReaderSqliteRepository.get_instance()
+        self._tags_reader = TagsReaderSqliteRepository.get_instance()
         self._generate_image_service = GenerateWordImageAiService.get_instance()
 
     @classmethod
@@ -52,6 +54,11 @@ class AddWordIaImageService:
                 )
 
             word_es_text = word_es_data.get("text", "")
+            word_es_notes = word_es_data.get("notes", "")
+
+            # Obtener tags de la palabra
+            tags_data = await self._tags_reader.get_by_word(dto.word_id)
+            tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
 
             # Obtener traducción en el idioma especificado
             word_lang_data = await self._words_lang_reader.get_by_word_and_lang(
@@ -66,12 +73,22 @@ class AddWordIaImageService:
 
             word_lang_text = word_lang_data.get("text", "")
 
+            # Construir contexto con notes y tags para mejor generación
+            context_parts = []
+            if tag_names:
+                context_parts.append(f"Tags: {', '.join(tag_names)}")
+            if word_es_notes:
+                context_parts.append(f"Context: {word_es_notes}")
+
+            context = ". ".join(context_parts) if context_parts else None
+
             # Generar imagen con IA
             generate_dto = GenerateWordImageAiDto.from_primitives({
                 "word_id": dto.word_id,
                 "word_es": word_es_text,
                 "word_lang": word_lang_text,
                 "lang_code": dto.lang_code,
+                "context": context,
             })
 
             result = await self._generate_image_service(generate_dto)
