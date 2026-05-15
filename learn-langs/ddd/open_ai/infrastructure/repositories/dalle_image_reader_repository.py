@@ -22,6 +22,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         self,
         word_es: str,
         word_lang: str,
+        context: str | None = None,
         size: str = "1024x1024",
     ) -> dict:
         """
@@ -47,6 +48,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         image_prompt = self.__get_image_prompt(
             word_es=word_es,
             word_lang=word_lang,
+            context=context,
         )
 
         # Generar imagen con gpt-image-1.5
@@ -59,6 +61,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         self,
         word_es: str,
         word_lang: str,
+        context: str | None = None,
     ) -> str:
         """
         Construye prompt para generar imagen educativa estilo cartoon.
@@ -67,6 +70,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         Args:
             word_es: Palabra, frase u oración en español
             word_lang: Traducción en idioma destino
+            context: Información adicional (tags, notas) para mejor contexto
 
         Returns:
             Prompt optimizado para generación de imágenes
@@ -75,7 +79,13 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         style = self.__get_default_image_style()
 
         # Construir prompt descriptivo SIN incluir texto en la imagen
-        return f"A cute cartoon illustration of a {word_lang}. {style}"
+        base_prompt = f"A cute cartoon illustration of a {word_lang}"
+
+        # Agregar contexto si existe (tags y notas)
+        if context:
+            base_prompt += f" ({context})"
+
+        return f"{base_prompt}. {style}"
 
     def __get_default_image_style(self) -> str:
         """
