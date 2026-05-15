@@ -21,6 +21,10 @@ from ddd.vocabulary.application.delete_word_image import (
     DeleteWordImageDto,
     DeleteWordImageService,
 )
+from ddd.vocabulary.application.add_word_ia_image import (
+    AddWordIaImageDto,
+    AddWordIaImageService,
+)
 from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
     ListWordsViewDto,
@@ -69,6 +73,7 @@ class ListWordsController(BaseController):
         self._delete_word_service = DeleteWordService.get_instance()
         self._get_word_images_service = GetWordImagesService.get_instance()
         self._add_word_image_service = AddWordImageService.get_instance()
+        self._add_word_ia_image_service = AddWordIaImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
 
         # Vista (instancia de ListWordsView)
@@ -342,6 +347,14 @@ class ListWordsController(BaseController):
                                     content=ft.Row([ft.Icon(ft.Icons.LINK), ft.Text("URL")]),
                                     on_click=lambda e: url_field.focus(),
                                 ),
+                                ft.ElevatedButton(
+                                    content=ft.Row([ft.Icon(ft.Icons.AUTO_AWESOME), ft.Text("IA Image")]),
+                                    on_click=lambda e: self._on_add_ia_image_click(word.id),
+                                    style=ft.ButtonStyle(
+                                        bgcolor=ft.Colors.PURPLE_600,
+                                        color=ft.Colors.WHITE,
+                                    ),
+                                ),
                             ],
                             spacing=10,
                         ),
@@ -418,6 +431,39 @@ class ListWordsController(BaseController):
                 {"word_id": word_id, "url": url},
             )
             self._ft_container.show_snackbar(f"Error descargando imagen: {e}", error=True)
+
+    def _on_add_ia_image_click(self, word_id: int) -> None:
+        """Maneja click en botón IA Image."""
+        async def generate_ia_image():
+            try:
+                self._ft_container.show_snackbar("Generando imagen con IA... (puede tardar 30s)", error=False)
+
+                dto = AddWordIaImageDto.from_primitives({
+                    "word_id": word_id,
+                    "lang_code": "nl_NL",  # Idioma por defecto
+                })
+
+                result = await self._add_word_ia_image_service(dto)
+
+                if result.success:
+                    await self._refresh_images_dialog()
+                    await self._async_load_words()
+                    self._ft_container.show_snackbar(f"Imagen IA generada exitosamente")
+                else:
+                    self._ft_container.show_snackbar(
+                        result.error_message or "Error generando imagen IA",
+                        error=True
+                    )
+
+            except Exception as e:
+                self._logger.log_error(
+                    "ListWordsController",
+                    f"Error generando imagen IA: {e}",
+                    {"word_id": word_id},
+                )
+                self._ft_container.show_snackbar(f"Error: {e}", error=True)
+
+        self._ft_container.page.run_task(generate_ia_image)
 
     def _delete_image(self, image_id: int) -> None:
         """Elimina una imagen via servicio."""
