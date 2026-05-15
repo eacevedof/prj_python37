@@ -25,7 +25,7 @@ class Logger:
         log_content = f"[ERROR] {module}: {message}"
         if context:
             log_content += f"\nContext: {context}"
-        self.__write_log("errors/error.log", log_content)
+        self.__write_log("error.log", log_content)
 
 
     def __write_log(self, file_path: str, content: str) -> None:
@@ -69,19 +69,19 @@ class Logger:
 
     def log_info(self, module: str, message: str) -> None:
         log_content = f"[INFO] {module}: {message}"
-        self.__write_log("info/info.log", log_content)
+        self.__write_log("info.log", log_content)
 
 
     def log_debug(self, module: str, message: str, data: dict | None = None) -> None:
         log_content = f"[DEBUG] {module}: {message}"
         if data:
             log_content += f"\nData: {data}"
-        self.__write_log("debug/debug.log", log_content)
+        self.__write_log("debug.log", log_content)
 
 
     def log_sql(self, query: str) -> None:
         """Log SQL query."""
-        self.__write_log("sql/sql.sql", query)
+        self.__write_log("sql.sql", query)
 
 
     def error_sql(self, message: str, context: dict | None = None) -> None:
