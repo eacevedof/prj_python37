@@ -1,8 +1,8 @@
 """Servicio para generar imagenes de palabras con IA (DALL-E)."""
 
+import ssl
 from typing import final, Self
 import urllib.request
-import ssl
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.open_ai.infrastructure.repositories import DalleImageReaderRepository
@@ -57,9 +57,6 @@ class GenerateWordImageAiService:
             dalle_response = self._dalle_image_reader_repository.get_ai_image_by_word(
                 word_es=generate_word_image_ai_dto.word_es,
                 word_lang=generate_word_image_ai_dto.word_lang,
-                size="1024x1024",
-                quality="standard",
-                style="vivid",
             )
 
             dalle_url = dalle_response["url"]
@@ -79,12 +76,15 @@ class GenerateWordImageAiService:
                 caption=f"{generate_word_image_ai_dto.word_es} - {generate_word_image_ai_dto.word_lang}",
             )
 
-            saved = await self._images_writer_repository.save_image_bytes(word_image_entity, downloaded_image)
+            word_img_entity = await self._images_writer_repository.save_image_bytes(
+                word_image_entity,
+                downloaded_image
+            )
 
             return GenerateWordImageAiResultDto.ok(
-                image_id=saved.id,
+                image_id=word_img_entity.id,
                 word_id=generate_word_image_ai_dto.word_id,
-                file_path=saved.file_path,
+                file_path=word_img_entity.file_path,
                 dalle_url=dalle_url,
                 prompt_used=revised_prompt,
             )
