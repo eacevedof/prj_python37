@@ -1,5 +1,9 @@
 """Vista para listar palabras - Solo renderizado."""
 
+from __future__ import annotations
+
+import os
+from pathlib import Path
 import flet as ft
 from typing import Callable, Any, Self, TYPE_CHECKING
 
@@ -256,6 +260,54 @@ class ListWordsView(ft.Container):
     # =========================================================================
     # HELPERS (Construcción de componentes individuales)
     # =========================================================================
+    def _get_full_image_path(self, relative_path: str) -> str:
+        """Construye la ruta completa de la imagen desde la ruta relativa."""
+        if not relative_path:
+            return ""
+
+        # Si ya es una ruta absoluta, devolverla tal cual
+        if os.path.isabs(relative_path):
+            return relative_path
+
+        # Construir ruta absoluta desde data/images
+        base_path = Path(__file__).parent.parent.parent.parent.parent.parent / "data" / "images"
+        full_path = base_path / relative_path
+        return str(full_path)
+
+    def _build_image_button(self, word: "WordListItemViewDto") -> ft.Control:
+        """Construye el botón de imagen con thumbnail o icono."""
+        image_badge = f" ({word.image_count})" if word.image_count > 0 else ""
+        tooltip_text = f"Imagenes{image_badge}"
+
+        # Si tiene imagen, mostrar thumbnail
+        if word.last_image_path:
+            full_path = self._get_full_image_path(word.last_image_path)
+            if os.path.exists(full_path):
+                return ft.Container(
+                    content=ft.Image(
+                        src=full_path,
+                        width=40,
+                        height=40,
+                        fit=ft.BoxFit.COVER,
+                        border_radius=4,
+                    ),
+                    width=48,
+                    height=48,
+                    border=ft.border.all(2, ft.Colors.GREEN_600),
+                    border_radius=6,
+                    on_click=lambda e, w=word: self._route_on_show_images(w.id),
+                    tooltip=tooltip_text,
+                    ink=True,
+                )
+
+        # Si no tiene imagen, mostrar icono
+        return ft.IconButton(
+            icon=ft.Icons.IMAGE,
+            icon_color=ft.Colors.GREY_400,
+            on_click=lambda e, w=word: self._route_on_show_images(w.id),
+            tooltip=tooltip_text,
+        )
+
     def _build_word_tile(self, word: "WordListItemViewDto") -> ft.ListTile:
         """Construye un tile para una palabra."""
         # Icono segun tipo
@@ -287,13 +339,8 @@ class ListWordsView(ft.Container):
                         on_click=lambda e, w=word: self._route_on_edit(w.id),
                         tooltip="Editar",
                     ),
-                    # Imagenes
-                    ft.IconButton(
-                        icon=ft.Icons.IMAGE,
-                        icon_color=ft.Colors.GREEN_600 if word.image_count > 0 else ft.Colors.GREY_400,
-                        on_click=lambda e, w=word: self._route_on_show_images(w.id),
-                        tooltip=f"Imagenes{image_badge}",
-                    ),
+                    # Imagenes - Mostrar thumbnail o icono
+                    self._build_image_button(word),
                     # Eliminar
                     ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINE,

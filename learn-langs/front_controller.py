@@ -13,7 +13,7 @@ if sys.platform == "win32":
 
 from ddd.shared.domain.enums import ControllerRouteEnum
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.shared.infrastructure.components import AppRouter
+from ddd.shared.infrastructure.components.app_router import AppRouter
 
 from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
 

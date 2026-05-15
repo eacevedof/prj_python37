@@ -10,6 +10,8 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordsEsWriterSqliteRepository,
     WordsLangWriterSqliteRepository,
     TagsReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
+    WordGroupsWriterSqliteRepository,
 )
 
 
@@ -22,6 +24,8 @@ class CreateWordService:
     _words_es_writer: WordsEsWriterSqliteRepository
     _words_lang_writer: WordsLangWriterSqliteRepository
     _tags_reader: TagsReaderSqliteRepository
+    _groups_reader: WordGroupsReaderSqliteRepository
+    _groups_writer: WordGroupsWriterSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -48,6 +52,8 @@ class CreateWordService:
         self._words_es_writer = WordsEsWriterSqliteRepository.get_instance()
         self._words_lang_writer = WordsLangWriterSqliteRepository.get_instance()
         self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._groups_reader = WordGroupsReaderSqliteRepository.get_instance()
+        self._groups_writer = WordGroupsWriterSqliteRepository.get_instance()
 
         # Validar DTO
         errors = create_word_dto.validate()
@@ -76,6 +82,9 @@ class CreateWordService:
 
         # Anadir traducciones
         translations_added = await self._add_translations(word_id, create_word_dto.translations)
+
+        # Anadir grupos (siempre al menos "generic")
+        await self._add_groups(word_id, create_word_dto.group_ids)
 
         return CreateWordResultDto.from_primitives({
             "id": word_id,
@@ -125,3 +134,18 @@ class CreateWordService:
                 added_translations[lang_code] = text.strip()
 
         return added_translations
+
+    async def _add_groups(self, word_id: int, group_ids: list[int]) -> None:
+        """
+        Asocia grupos a la palabra.
+        Si no hay grupos especificados, asocia con el grupo "generic".
+        """
+        # Si no hay grupos especificados, usar "generic"
+        if not group_ids:
+            generic_group = await self._groups_reader.get_by_title("generic")
+            if generic_group:
+                group_ids = [generic_group["id"]]
+
+        # Asociar grupos
+        if group_ids:
+            await self._groups_writer.set_word_groups(word_id, group_ids)

@@ -16,6 +16,7 @@ class WordListItemViewDto:
     notes: str = ""
     created_at: str = ""
     image_count: int = 0
+    last_image_path: str = ""
     tags: tuple[str, ...] = field(default_factory=tuple)
     translation_nl: str = ""
 
@@ -30,6 +31,7 @@ class WordListItemViewDto:
             notes=str(primitives.get("notes", "") or ""),
             created_at=str(primitives.get("created_at", "") or "")[:10],
             image_count=int(primitives.get("image_count", 0)),
+            last_image_path=str(primitives.get("last_image_path", "") or ""),
             tags=tuple(tags_list),
             translation_nl=translations.get(LanguageCodeEnum.NL_NL.value, ""),
         )
