@@ -179,7 +179,7 @@ class ImageStudyView(ft.Container):
         # Crear componentes dinámicos
         self._ft_image_flashcard = ImageFlashcardComp(
             image_file_path=word.get("image_file_path", ""),
-            image_caption=word.get("image_caption", ""),
+            image_caption=word.get("text_es", ""),  # Solo español, sin traducción
             text_lang=word.get("text_lang", ""),
             pronunciation=word.get("pronunciation", ""),
             show_translation=False,
