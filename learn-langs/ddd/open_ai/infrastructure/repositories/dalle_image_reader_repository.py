@@ -1,6 +1,5 @@
-"""Repositorio para generar imágenes con OpenAI Extended Inference."""
+"""Repositorio para generar imágenes con OpenAI Images API (gpt-image-1.5)."""
 
-import base64
 from typing import final, Self
 
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
@@ -8,7 +7,7 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 
 @final
 class DalleImageReaderRepository(AbstractOpenAIApiRepository):
-    """Repositorio para generación de imágenes usando OpenAI Extended Inference."""
+    """Repositorio para generación de imágenes usando gpt-image-1.5."""
 
     _instance: "DalleImageReaderRepository | None" = None
 
@@ -23,19 +22,21 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         self,
         word_es: str,
         word_lang: str,
+        size: str = "1024x1024",
     ) -> dict:
         """
-        Genera una imagen para una palabra educativa usando Extended Inference.
+        Genera una imagen para una palabra educativa usando gpt-image-1.5.
         El prompt se construye internamente y está oculto.
 
         Args:
             word_es: Palabra, frase u oración en español
             word_lang: Traducción en idioma destino
+            size: Tamaño (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
             {
-                "image_base64": str,  # Imagen en base64
+                "url": str,           # URL temporal de la imagen generada
                 "prompt_used": str    # Prompt construido internamente
             }
 
@@ -48,8 +49,11 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             word_lang=word_lang,
         )
 
-        # Generar imagen con Extended Inference
-        return self.__send_prompt_to_open_ai(image_prompt=image_prompt)
+        # Generar imagen con gpt-image-1.5
+        return self.__send_prompt_to_open_ai(
+            image_prompt=image_prompt,
+            size=size,
+        )
 
     def __get_image_prompt(
         self,
@@ -71,7 +75,7 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         style = self.__get_default_image_style()
 
         # Construir prompt simple
-        return f"Generate an image of: {word_lang} ({word_es}). {style}"
+        return f"{word_lang} ({word_es}). {style}"
 
     def __get_default_image_style(self) -> str:
         """
@@ -82,24 +86,29 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             Descripción de estilo optimizada para imágenes educativas
         """
         return (
-            "Style: Simple cute cartoon illustration, kawaii style, "
+            "Simple cute cartoon illustration, kawaii style, "
             "flat colors, minimalist, educational, "
             "clean white background, vector art style, "
             "friendly and approachable, "
             "perfect for language learning flashcards"
         )
 
-    def __send_prompt_to_open_ai(self, image_prompt: str) -> dict:
+    def __send_prompt_to_open_ai(
+        self,
+        image_prompt: str,
+        size: str = "1024x1024",
+    ) -> dict:
         """
-        Genera una imagen usando OpenAI Extended Inference (responses.create).
+        Genera una imagen usando gpt-image-1.5.
 
         Args:
             image_prompt: Descripción de la imagen a generar
+            size: Tamaño (256x256, 512x512, 1024x1024)
 
         Returns:
             dict con estructura:
             {
-                "image_base64": str,  # Imagen en base64
+                "url": str,           # URL temporal de la imagen generada
                 "prompt_used": str    # Prompt usado
             }
 
@@ -107,43 +116,42 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             Exception: Si falla la generación
         """
         try:
-            # Llamar a Extended Inference con herramienta de image_generation
-            response = self._client.responses.create(
-                model="gpt-4.1-mini",
-                input=image_prompt,
-                tools=[{"type": "image_generation"}],
+            # Llamar a OpenAI Images API con gpt-image-1.5
+            open_ai_response = self._open_ai_client.images.generate(
+                model="gpt-image-1.5",
+                prompt=image_prompt,
+                n=1,
+                size=size,
+                quality="low"
             )
 
-            # Extraer datos de imagen desde la respuesta
-            image_data = [
-                output.result
-                for output in response.output
-                if output.type == "image_generation_call"
-            ]
+            # Extraer URL de la imagen generada
+            image_url = open_ai_response.data[0].url if open_ai_response.data else ""
 
-            if not image_data:
+            if not image_url:
                 raise Exception("No se generó ninguna imagen en la respuesta")
 
-            image_base64 = image_data[0]
-
             self._log_openai_success(
-                "extended_inference_image_generation",
+                "images_generation",
                 {
-                    "model": "gpt-4.1-mini",
+                    "model": "gpt-image-1.5",
                     "prompt": image_prompt[:200],
-                    "image_size_bytes": len(image_base64),
+                    "size": size,
+                    "url": image_url,
                 },
             )
 
             return {
-                "image_base64": image_base64,
+                "url": image_url,
                 "prompt_used": image_prompt,
             }
 
         except Exception as e:
-            error_msg = f"Error en Extended Inference: {str(e)}"
+            error_msg = f"Error generando imagen con gpt-image-1.5: {str(e)}"
             self._log_openai_error(error_msg, {
+                "model": "gpt-image-1.5",
                 "prompt": image_prompt,
+                "size": size,
                 "error": str(e),
             })
             raise Exception(error_msg)
