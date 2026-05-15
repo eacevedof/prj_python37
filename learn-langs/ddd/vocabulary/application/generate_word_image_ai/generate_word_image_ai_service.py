@@ -56,6 +56,7 @@ class GenerateWordImageAiService:
             ai_response = self._dalle_image_reader_repository.get_ai_image_by_word(
                 word_es=generate_word_image_ai_dto.word_es,
                 word_lang=generate_word_image_ai_dto.word_lang,
+                context=generate_word_image_ai_dto.context,
             )
 
             image_b64 = ai_response["b64_json"]
