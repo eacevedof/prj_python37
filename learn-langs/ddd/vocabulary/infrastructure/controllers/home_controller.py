@@ -104,7 +104,7 @@ class HomeController(BaseController):
 
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "HomeController",
                 f"Error cargando datos: {e}",
                 {"lang_code": str(self._selected_lang)},

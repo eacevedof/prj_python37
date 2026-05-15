@@ -107,7 +107,7 @@ class UpdateWordController(BaseController):
             self._ft_container.render(dto)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "UpdateWordController",
                 f"Error cargando palabra: {e}",
                 {"word_id": self._word_id},
@@ -163,7 +163,7 @@ class UpdateWordController(BaseController):
             self._route_on_success()
 
         except VocabularyException as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "UpdateWordController",
                 f"Error de vocabulario: {e.message}",
                 {"word_id": self._word_id, "form_data": form_data},
@@ -176,7 +176,7 @@ class UpdateWordController(BaseController):
             self._ft_container.render(dto)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "UpdateWordController",
                 f"Error inesperado: {e}",
                 {"word_id": self._word_id, "form_data": form_data},

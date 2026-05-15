@@ -55,7 +55,7 @@ class FinishStudySessionService:
             return FinishStudySessionResultDto.ok(dto.session_id)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "FinishStudySessionService",
                 f"Error finalizando sesion: {e}",
                 {"session_id": dto.session_id},

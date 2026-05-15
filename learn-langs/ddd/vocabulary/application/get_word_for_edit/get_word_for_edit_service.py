@@ -78,7 +78,7 @@ class GetWordForEditService:
             )
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "GetWordForEditService",
                 f"Error obteniendo palabra para editar: {e}",
                 {"word_id": dto.word_id},

@@ -41,7 +41,7 @@ async def fn_render(
         """Captura y loguea errores no manejados en event handlers."""
         logger = Logger.get_instance()
         error_data = e.data if hasattr(e, 'data') else str(e)
-        logger.write_error(
+        logger.log_error(
             module="flet.event_handler",
             message=f"Unhandled error in Flet event handler: {error_data}",
             context={"traceback": traceback.format_exc()},
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     try:
         ft.run(fn_render)
     except Exception as e:
-        Logger.get_instance().write_error(
+        Logger.get_instance().log_error(
             module="front_controller.fn_render",
             message=str(e),
             context={"traceback": traceback.format_exc()},

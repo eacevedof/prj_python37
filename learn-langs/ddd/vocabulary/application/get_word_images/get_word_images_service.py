@@ -45,7 +45,7 @@ class GetWordImagesService:
             return GetWordImagesResultDto.ok(images)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "GetWordImagesService",
                 f"Error obteniendo imagenes: {e}",
                 {"word_id": dto.word_id},

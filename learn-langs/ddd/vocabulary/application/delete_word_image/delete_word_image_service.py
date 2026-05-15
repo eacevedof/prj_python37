@@ -57,7 +57,7 @@ class DeleteWordImageService:
             return DeleteWordImageResultDto.ok(dto.image_id)
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 "DeleteWordImageService",
                 f"Error eliminando imagen: {e}",
                 {"image_id": dto.image_id},
