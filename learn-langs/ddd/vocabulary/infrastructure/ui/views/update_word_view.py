@@ -49,6 +49,12 @@ class UpdateWordView(ft.Container):
         # Estado local de imagenes
         self._word_images: List[Dict[str, Any]] = []
 
+        # Estado local de grupos
+        self._word_groups: List[Dict[str, Any]] = []
+
+        # Componentes UI - Header
+        self._ft_word_groups_text: Optional[ft.Text] = None
+
         # Componentes UI - Form fields
         self._ft_text_es_field: Optional[ft.TextField] = None
         self._ft_text_nl_field: Optional[ft.TextField] = None
@@ -102,6 +108,10 @@ class UpdateWordView(ft.Container):
         # Imagenes disponibles
         self._word_images = list(dto.word_images)
         self._render_images()
+
+        # Grupos de palabras
+        self._word_groups = list(dto.word_groups)
+        self._render_word_groups()
 
         # Mensajes
         self._render_messages(dto)
@@ -292,15 +302,29 @@ class UpdateWordView(ft.Container):
             visible=False,
         )
 
+        # Word groups text (header)
+        self._ft_word_groups_text = ft.Text(
+            "",
+            size=12,
+            color=ft.Colors.GREY_600,
+            italic=True,
+        )
+
         self.content = ft.Column(
             controls=[
                 ft.Row(
                     controls=[
                         back_btn,
-                        ft.Text(
-                            "Editar palabra",
-                            size=24,
-                            weight=ft.FontWeight.BOLD,
+                        ft.Column(
+                            controls=[
+                                ft.Text(
+                                    "Editar palabra",
+                                    size=24,
+                                    weight=ft.FontWeight.BOLD,
+                                ),
+                                self._ft_word_groups_text,
+                            ],
+                            spacing=2,
                         ),
                     ],
                 ),
@@ -374,6 +398,20 @@ class UpdateWordView(ft.Container):
                     height=28,
                 )
                 self._ft_tags_row.controls.append(chip)
+
+    def _render_word_groups(self) -> None:
+        """Renderiza los grupos a los que pertenece la palabra."""
+        if not self._ft_word_groups_text:
+            return
+
+        if not self._word_groups:
+            self._ft_word_groups_text.value = ""
+            self._ft_word_groups_text.visible = False
+        else:
+            # Mostrar los títulos de los grupos separados por comas
+            group_titles = [group.get("title", "") for group in self._word_groups]
+            self._ft_word_groups_text.value = f"Grupo: {', '.join(group_titles)}"
+            self._ft_word_groups_text.visible = True
 
     def _get_full_image_path(self, relative_path: str) -> str:
         """Construye la ruta completa de la imagen desde la ruta relativa."""

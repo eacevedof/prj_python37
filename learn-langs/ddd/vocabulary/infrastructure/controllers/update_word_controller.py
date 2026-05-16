@@ -15,7 +15,10 @@ from ddd.vocabulary.application.get_word_for_edit import (
 )
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.domain.exceptions import VocabularyException
-from ddd.vocabulary.infrastructure.repositories import ImagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories import (
+    ImagesReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
+)
 from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordView
 from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
 
@@ -55,6 +58,7 @@ class UpdateWordController(BaseController):
         self._update_word_service = UpdateWordService.get_instance()
         self._get_word_for_edit_service = GetWordForEditService.get_instance()
         self._images_reader = ImagesReaderSqliteRepository.get_instance()
+        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
 
         # Vista
         self._ft_container = UpdateWordView.from_primitives({
@@ -101,6 +105,9 @@ class UpdateWordController(BaseController):
             # Cargar imagenes de la palabra
             word_images = await self._images_reader.get_by_word_id(self._word_id)
 
+            # Cargar grupos de la palabra
+            word_groups = await self._word_groups_reader.get_by_word(self._word_id)
+
             # Renderizar
             dto = UpdateWordViewDto.with_data(
                 word_id=self._word_id,
@@ -110,6 +117,7 @@ class UpdateWordController(BaseController):
                 translation_nl=result.translations.get(LanguageCodeEnum.NL_NL.value, ""),
                 selected_tags=list(result.selected_tags),
                 available_tags=self._available_tags,
+                word_groups=word_groups,
                 word_images=word_images,
             )
             self._ft_container.render(dto)
