@@ -269,8 +269,7 @@ class ImageStudyView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
+        controls = [
             ft.Container(height=40),
             ft.Icon(
                 ft.Icons.CELEBRATION,
@@ -294,6 +293,70 @@ class ImageStudyView(ft.Container):
                 weight=ft.FontWeight.BOLD,
                 color=ft.Colors.GREEN_700 if dto.avg_score_percent >= 70 else ft.Colors.ORANGE_700,
             ),
+        ]
+
+        # Mostrar palabras falladas si hay
+        if dto.failed_words:
+            controls.extend([
+                ft.Container(height=30),
+                ft.Divider(height=1, color=ft.Colors.GREY_400),
+                ft.Container(height=15),
+                ft.Text(
+                    f"Palabras falladas ({len(dto.failed_words)}):",
+                    size=18,
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.Colors.RED_700,
+                ),
+                ft.Container(height=10),
+            ])
+
+            # Lista de palabras falladas
+            failed_list = ft.Column(
+                controls=[
+                    ft.Container(
+                        content=ft.Row(
+                            controls=[
+                                ft.Text(
+                                    word.get("text_es", ""),
+                                    size=14,
+                                    weight=ft.FontWeight.W_500,
+                                    expand=True,
+                                ),
+                                ft.Text(
+                                    "=",
+                                    size=14,
+                                    color=ft.Colors.GREY_600,
+                                ),
+                                ft.Text(
+                                    word.get("text_lang", ""),
+                                    size=14,
+                                    color=ft.Colors.GREEN_700,
+                                    weight=ft.FontWeight.W_500,
+                                    expand=True,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                        padding=ft.padding.symmetric(vertical=4, horizontal=10),
+                    )
+                    for word in dto.failed_words
+                ],
+                spacing=2,
+                scroll=ft.ScrollMode.AUTO,
+            )
+
+            controls.append(
+                ft.Container(
+                    content=failed_list,
+                    border=ft.border.all(1, ft.Colors.RED_300),
+                    border_radius=8,
+                    padding=10,
+                    bgcolor=ft.Colors.RED_50,
+                    height=200,
+                )
+            )
+
+        controls.extend([
             ft.Container(height=40),
             ft.ElevatedButton(
                 content=ft.Row(
@@ -307,6 +370,9 @@ class ImageStudyView(ft.Container):
                 ),
             ),
         ])
+
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend(controls)
 
     def _render_error(self, message: str) -> None:
         """Renderiza mensaje de error."""

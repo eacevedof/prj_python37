@@ -1,6 +1,7 @@
 """DTO de vista para Image Study."""
 
-from dataclasses import dataclass
+from __future__ import annotations
+from dataclasses import dataclass, field
 from typing import Self, Any
 
 
@@ -25,6 +26,9 @@ class ImageStudyViewDto:
     # Resultado de última respuesta (inmutable)
     last_result: dict[str, Any] | None = None
 
+    # Palabras falladas (inmutable tuple de dicts)
+    failed_words: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+
     # Estados de la vista
     is_loading: bool = True
     is_session_complete: bool = False
@@ -41,6 +45,10 @@ class ImageStudyViewDto:
         current_word = primitives.get("current_word")
         last_result = primitives.get("last_result")
 
+        # Congelar lista de palabras falladas
+        failed_words_raw = primitives.get("failed_words", [])
+        failed_words = tuple(dict(w) for w in failed_words_raw) if failed_words_raw else tuple()
+
         return cls(
             session_id=int(primitives.get("session_id", 0)),
             lang_code=str(primitives.get("lang_code", "")),
@@ -51,6 +59,7 @@ class ImageStudyViewDto:
             answers_count=answers_count,
             avg_score_percent=avg_score_percent,
             last_result=dict(last_result) if last_result else None,
+            failed_words=failed_words,
             is_loading=bool(primitives.get("is_loading", False)),
             is_session_complete=bool(primitives.get("is_session_complete", False)),
             has_no_words=bool(primitives.get("has_no_words", False)),
@@ -131,11 +140,13 @@ class ImageStudyViewDto:
         cls,
         total_score: float,
         answers_count: int,
+        failed_words: list[dict[str, Any]] | None = None,
     ) -> Self:
         """DTO para sesión completada."""
         return cls.from_primitives({
             "total_score": total_score,
             "answers_count": answers_count,
+            "failed_words": failed_words or [],
             "is_loading": False,
             "is_session_complete": True,
         })
@@ -147,7 +158,7 @@ class ImageStudyViewDto:
             return "Cargando..."
         if self.total_words == 0:
             return ""
-        return f"Palabra {self.current_index + 1} de {self.total_words}"
+        return f"Imagen {self.current_index + 1} de {self.total_words}"
 
     @property
     def score_text(self) -> str:

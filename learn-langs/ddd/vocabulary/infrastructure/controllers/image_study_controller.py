@@ -57,6 +57,7 @@ class ImageStudyController(BaseController):
         self._start_time: float = 0
         self._total_score: float = 0
         self._answers_count: int = 0
+        self._failed_words: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -137,6 +138,13 @@ class ImageStudyController(BaseController):
             # Actualizar stats internas
             self._total_score += result.score
             self._answers_count += 1
+
+            # Si falla, agregar a lista de palabras falladas
+            if not result.is_correct:
+                self._failed_words.append({
+                    "text_es": word.text_es,
+                    "text_lang": word.text_lang,
+                })
 
             # Mostrar resultado en vista
             dto = ImageStudyViewDto.with_result(
@@ -245,6 +253,7 @@ class ImageStudyController(BaseController):
         dto = ImageStudyViewDto.session_complete(
             total_score=self._total_score,
             answers_count=self._answers_count,
+            failed_words=self._failed_words,
         )
         self._ft_container.render(dto)
 

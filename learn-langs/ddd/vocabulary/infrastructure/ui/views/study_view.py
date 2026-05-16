@@ -229,8 +229,9 @@ class StudyView(ft.Container):
         self._ft_input_field.set_disabled(True)
         self._ft_input_field.show_result(is_correct, correct_answer)
 
-        # Revelar traduccion en flashcard
+        # Revelar traduccion en flashcard y aplicar estilo segun resultado
         self._ft_flashcard.reveal_translation()
+        self._ft_flashcard.set_result_style(is_correct)
 
     def _render_no_words(self) -> None:
         """Renderiza mensaje cuando no hay palabras para practicar."""
