@@ -108,11 +108,11 @@ class FlashcardComp(ft.Container):
         return colors.get(self.word_type, ft.Colors.GREY_600)
 
     def reveal_translation(self) -> None:
-        """Muestra la traduccion."""
+        """Muestra la traduccion con pronunciacion."""
         self.show_translation = True
         # Rebuild the component
         if self._card_content and self.text_lang:
-            self._card_content.controls.extend([
+            controls_to_add = [
                 ft.Container(height=24),
                 ft.Divider(height=1, color=ft.Colors.GREY_300),
                 ft.Container(height=16),
@@ -123,7 +123,22 @@ class FlashcardComp(ft.Container):
                     color=ft.Colors.GREEN_700,
                     text_align=ft.TextAlign.CENTER,
                 ),
-            ])
+            ]
+
+            # Agregar pronunciacion si existe
+            if self.pronunciation:
+                controls_to_add.extend([
+                    ft.Container(height=8),
+                    ft.Text(
+                        f"/{self.pronunciation}/",
+                        size=16,
+                        italic=True,
+                        color=ft.Colors.GREY_600,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                ])
+
+            self._card_content.controls.extend(controls_to_add)
             self.update()
 
     def set_result_style(self, is_correct: bool) -> None:
