@@ -16,6 +16,9 @@ class UpdateWordViewDto:
     # Tags disponibles para seleccionar
     available_tags: tuple[dict[str, Any], ...] = field(default_factory=tuple)
 
+    # Grupos a los que pertenece la palabra
+    word_groups: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+
     # Imagenes de la palabra
     word_images: tuple[dict[str, Any], ...] = field(default_factory=tuple)
 
@@ -32,10 +35,12 @@ class UpdateWordViewDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         tags_raw = primitives.get("available_tags", []) or []
+        groups_raw = primitives.get("word_groups", []) or []
         images_raw = primitives.get("word_images", []) or []
         return cls(
             form_values=dict(primitives.get("form_values", {}) or {}),
             available_tags=tuple(tags_raw),
+            word_groups=tuple(groups_raw),
             word_images=tuple(images_raw),
             word_id=primitives.get("word_id"),
             text=str(primitives.get("text", "")),
@@ -60,6 +65,7 @@ class UpdateWordViewDto:
         translation_nl: str,
         selected_tags: list[str],
         available_tags: list[dict[str, Any]],
+        word_groups: list[dict[str, Any]] | None = None,
         word_images: list[dict[str, Any]] | None = None,
     ) -> Self:
         """DTO con datos cargados para edicion."""
@@ -74,6 +80,7 @@ class UpdateWordViewDto:
                 "selected_tags": selected_tags,
             },
             "available_tags": available_tags,
+            "word_groups": word_groups or [],
             "word_images": word_images or [],
             "is_loading": False,
         })
