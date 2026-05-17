@@ -26,12 +26,14 @@ class HomeController(BaseController):
         self,
         route_on_start_study: Callable[[str, list[str]], None],       # 1. Botón primario (verde, izquierda)
         route_on_start_image_study: Callable[[str, list[str]], None], # 2. Botón secundario (morado, centro)
-        route_on_manage_words: Callable[[], None],                    # 3. Botón terciario (gris, derecha)
+        route_on_manage_words: Callable[[], None],                    # 3. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],                   # 4. Botón gestión grupos (naranja)
     ):
         # Callbacks de navegación (inyectados desde app_router)
         self._route_on_start_study = route_on_start_study
         self._route_on_start_image_study = route_on_start_image_study
         self._route_on_manage_words = route_on_manage_words
+        self._route_on_manage_groups = route_on_manage_groups
 
         self._logger = Logger.get_instance()
         self._load_home_service = LoadHomeService.get_instance()
@@ -46,6 +48,7 @@ class HomeController(BaseController):
             "on_start_study": self._route_on_start_study_click,
             "on_start_image_study": self._route_on_start_image_study_click,
             "on_manage_words": self._route_on_manage_words,
+            "on_manage_groups": self._route_on_manage_groups,
         })
 
     # =========================================================================
