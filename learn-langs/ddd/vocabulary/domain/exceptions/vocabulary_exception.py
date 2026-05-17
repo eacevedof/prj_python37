@@ -29,12 +29,20 @@ class VocabularyException(Exception):
         raise cls(f"Word #{word_id} not found", ResponseCodeEnum.NOT_FOUND)
 
     @classmethod
+    def custom_not_found(cls, message: str) -> "VocabularyException":
+        raise cls(message, ResponseCodeEnum.NOT_FOUND)
+
+    @classmethod
     def word_already_exists(cls, text: str) -> "VocabularyException":
         raise cls(f"Word '{text}' already exists", ResponseCodeEnum.CONFLICT)
 
     @classmethod
     def word_creation_failed(cls, error: str) -> "VocabularyException":
-        raise cls(f"Word creation failed: {error}", ResponseCodeEnum.BAD_REQUEST)
+        raise (cls(f"Word creation failed: {error}", ResponseCodeEnum.BAD_REQUEST))
+
+    @classmethod
+    def bad_request_custom(cls, message: str) -> "VocabularyException":
+        raise cls(message, ResponseCodeEnum.BAD_REQUEST)
 
     @classmethod
     def word_update_failed(cls, error: str) -> "VocabularyException":

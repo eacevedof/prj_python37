@@ -47,7 +47,7 @@ class LoadHomeService:
         self._load_home_dto = load_home_dto
 
         # Cargar tags
-        tags_raw = await self._tags_reader_sqlite_repository.get_all()
+        tags_raw = await self._tags_reader_sqlite_repository.get_all_tags()
         tags = [TagItemDto.from_primitives(t) for t in tags_raw]
 
         # Cargar estadísticas

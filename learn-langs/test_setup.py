@@ -54,7 +54,7 @@ async def test_database_setup():
 
     # Verificar tags
     tags_reader = TagsReaderSqliteRepository.get_instance()
-    tags = await tags_reader.get_all()
+    tags = await tags_reader.get_all_tags()
     print(f"   Tags creados: {len(tags)}")
 
 

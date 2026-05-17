@@ -20,7 +20,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             cls._instance = cls()
         return cls._instance
 
-    async def get_all(self) -> list[dict]:
+    async def get_all_word_groups(self) -> list[dict]:
         """
         Obtiene todos los grupos de palabras.
 
@@ -28,18 +28,16 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             Lista de diccionarios con datos de grupos.
         """
         query = """
-            SELECT
-                id,
-                title,
-                description,
-                created_at,
-                updated_at
-            FROM word_groups
-            ORDER BY title ASC
+        -- get_all_word_groups
+        SELECT
+            id, title, description, created_at,updated_at
+        FROM word_groups
+        WHERE 1=1
+        ORDER BY title ASC
         """
         return await self._query(query)
 
-    async def get_by_id(self, group_id: int) -> dict | None:
+    async def get_word_group_by_group_id(self, group_id: int) -> dict | None:
         """
         Obtiene un grupo por su ID.
 
@@ -49,19 +47,17 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         Returns:
             Diccionario con datos del grupo o None si no existe.
         """
-        query = """
-            SELECT
-                id,
-                title,
-                description,
-                created_at,
-                updated_at
-            FROM word_groups
-            WHERE id = ?
+        query = f"""
+        -- get_word_group_by_group_id
+        SELECT
+            id, title, description, created_at, updated_at
+        FROM word_groups
+        WHERE 1=1
+        AND id = {group_id}
         """
-        return await self._query_one(query, (group_id,))
+        return await self._query_one(query, ())
 
-    async def get_by_title(self, title: str) -> dict | None:
+    async def get_word_group_by_title(self, title: str) -> dict | None:
         """
         Obtiene un grupo por su título.
 
@@ -72,37 +68,34 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             Diccionario con datos del grupo o None si no existe.
         """
         query = """
-            SELECT
-                id,
-                title,
-                description,
-                created_at,
-                updated_at
-            FROM word_groups
-            WHERE title = ?
+        -- get_word_group_by_title
+        SELECT
+            id, title, description, created_at, updated_at
+        FROM word_groups
+        WHERE 1=1
+        AND title = ?
         """
         return await self._query_one(query, (title,))
 
-    async def get_by_word(self, word_id: int) -> list[dict]:
+    async def get_word_group_by_word_es_id(self, word_es_id: int) -> list[dict]:
         """
         Obtiene todos los grupos asociados a una palabra.
 
         Args:
-            word_id: ID de la palabra.
+            word_es_id: ID de la palabra.
 
         Returns:
             Lista de diccionarios con datos de grupos.
         """
-        query = """
-            SELECT
-                wg.id,
-                wg.title,
-                wg.description,
-                wg.created_at,
-                wg.updated_at
-            FROM word_groups wg
-            INNER JOIN word_es_groups weg ON wg.id = weg.group_id
-            WHERE weg.word_es_id = ?
-            ORDER BY wg.title ASC
+        query = f"""
+        -- get_word_group_by_word_es_id
+        SELECT
+            wg.id, wg.title, wg.description, wg.created_at, wg.updated_at
+        FROM word_groups wg
+        INNER JOIN word_es_groups weg
+        ON wg.id = weg.group_id
+        WHERE 1=1
+        AND weg.word_es_id = {word_es_id}
+        ORDER BY wg.title ASC
         """
-        return await self._query(query, (word_id,))
+        return await self._query(query, ())

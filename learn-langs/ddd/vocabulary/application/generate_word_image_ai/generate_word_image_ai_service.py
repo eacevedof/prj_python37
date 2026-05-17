@@ -4,7 +4,7 @@ import base64
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.open_ai.infrastructure.repositories import GptImage1ReaderRepository
+from ddd.open_ai.infrastructure.repositories import GptImage1ReaderApiRepository
 from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_dto import (
     GenerateWordImageAiDto,
 )
@@ -14,7 +14,7 @@ from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_re
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
 from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteRepository
-
+from ddd.vocabulary.domain.exceptions.vocabulary_exception import VocabularyException
 
 @final
 class GenerateWordImageAiService:
@@ -24,7 +24,7 @@ class GenerateWordImageAiService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._dalle_image_reader_repository = GptImage1ReaderRepository.get_instance()
+        self._gpt_image_1_reader_api_repository = GptImage1ReaderApiRepository.get_instance()
         self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
@@ -52,7 +52,7 @@ class GenerateWordImageAiService:
             )
 
         # Generar imagen con gpt-image-1.5 (prompt oculto en el repositorio)
-        dalle_ai_response = self._dalle_image_reader_repository.get_ai_image_by_word(
+        dalle_ai_response = self._gpt_image_1_reader_api_repository.get_ai_image_by_word(
             word_es=generate_word_image_ai_dto.word_es,
             context=generate_word_image_ai_dto.context,
         )
