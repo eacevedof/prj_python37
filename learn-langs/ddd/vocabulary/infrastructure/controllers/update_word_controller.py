@@ -98,7 +98,7 @@ class UpdateWordController(BaseController):
                 return
 
             # Guardar tags disponibles
-            self._available_tags = result.available_tags_as_dicts()
+            self._available_tags = list(result.available_tags)
 
             # Cargar imagenes de la palabra
             word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
