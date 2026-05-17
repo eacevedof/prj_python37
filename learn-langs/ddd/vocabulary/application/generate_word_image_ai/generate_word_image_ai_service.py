@@ -4,7 +4,7 @@ import base64
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.open_ai.infrastructure.repositories import DalleImageReaderRepository
+from ddd.open_ai.infrastructure.repositories import GptImage1ReaderRepository
 from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_dto import (
     GenerateWordImageAiDto,
 )
@@ -24,7 +24,7 @@ class GenerateWordImageAiService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._dalle_image_reader_repository = DalleImageReaderRepository.get_instance()
+        self._dalle_image_reader_repository = GptImage1ReaderRepository.get_instance()
         self._images_writer_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
@@ -46,53 +46,43 @@ class GenerateWordImageAiService:
         Returns:
             GenerateWordImageAiResultDto con el resultado.
         """
-        try:
-            if not generate_word_image_ai_dto.word_es or not generate_word_image_ai_dto.word_lang:
-                return GenerateWordImageAiResultDto.error(
-                    "Se requiere palabra en español y traducción"
-                )
-
-            # Generar imagen con gpt-image-1.5 (prompt oculto en el repositorio)
-            ai_response = self._dalle_image_reader_repository.get_ai_image_by_word(
-                word_es=generate_word_image_ai_dto.word_es,
-                word_lang=generate_word_image_ai_dto.word_lang,
-                context=generate_word_image_ai_dto.context,
+        if not generate_word_image_ai_dto.word_es or not generate_word_image_ai_dto.word_lang:
+            return GenerateWordImageAiResultDto.error(
+                "Se requiere palabra en español y traducción"
             )
 
-            image_b64 = ai_response["b64_json"]
-            prompt_used = ai_response["prompt_used"]
+        # Generar imagen con gpt-image-1.5 (prompt oculto en el repositorio)
+        dalle_ai_response = self._dalle_image_reader_repository.get_ai_image_by_word(
+            word_es=generate_word_image_ai_dto.word_es,
+            context=generate_word_image_ai_dto.context,
+        )
 
-            # Decodificar imagen desde base64
-            image_bytes = base64.b64decode(image_b64)
+        image_b64 = dalle_ai_response["b64_json"]
+        prompt_used = dalle_ai_response["prompt_used"]
 
-            # Guardar imagen en disco y BD
-            word_image_entity = WordImageEntity(
-                id=0,
-                word_es_id=generate_word_image_ai_dto.word_id,
-                source_type=ImageSourceEnum.AI_GENERATED,
-                file_path="",
-                mime_type="image/png",
-                original_url="",  # No hay URL, imagen viene en base64
-                caption=generate_word_image_ai_dto.word_es,  # Solo español, sin revelar traducción
-            )
+        # Decodificar imagen desde base64
+        image_bytes = base64.b64decode(image_b64)
 
-            word_img_entity = await self._images_writer_repository.save_image_bytes(
-                word_image_entity,
-                image_bytes
-            )
+        # Guardar imagen en disco y BD
+        word_image_entity = WordImageEntity(
+            id=0,
+            word_es_id=generate_word_image_ai_dto.word_id,
+            source_type=ImageSourceEnum.AI_GENERATED,
+            file_path="",
+            mime_type="image/png",
+            original_url="",  # No hay URL, imagen viene en base64
+            caption=generate_word_image_ai_dto.word_es,  # Solo español, sin revelar traducción
+        )
 
-            return GenerateWordImageAiResultDto.ok(
-                image_id=word_img_entity.id,
-                word_id=generate_word_image_ai_dto.word_id,
-                file_path=word_img_entity.file_path,
-                dalle_url="",  # No hay URL, imagen viene en base64
-                prompt_used=prompt_used,
-            )
+        word_img_entity = await self._images_writer_repository.save_image_bytes(
+            word_image_entity,
+            image_bytes
+        )
 
-        except Exception as e:
-            self._logger.log_error(
-                "GenerateWordImageAiService",
-                f"Error generando imagen con IA: {e}",
-                {"word_id": generate_word_image_ai_dto.word_id, "word_es": generate_word_image_ai_dto.word_es},
-            )
-            return GenerateWordImageAiResultDto.error(str(e))
+        return GenerateWordImageAiResultDto.ok(
+            image_id=word_img_entity.id,
+            word_id=generate_word_image_ai_dto.word_id,
+            file_path=word_img_entity.file_path,
+            dalle_url="",  # No hay URL, imagen viene en base64
+            prompt_used=prompt_used,
+        )

@@ -49,9 +49,11 @@ class UpdateWordViewDto:
         )
 
     @classmethod
-    def loading(cls) -> Self:
+    def create_loading(cls) -> Self:
         """DTO estado cargando."""
-        return cls.from_primitives({"is_loading": True})
+        return cls.from_primitives({
+            "is_loading": True
+        })
 
     @classmethod
     def with_data(

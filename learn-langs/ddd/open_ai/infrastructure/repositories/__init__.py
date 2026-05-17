@@ -1,5 +1,5 @@
-from ddd.open_ai.infrastructure.repositories.dalle_image_reader_repository import DalleImageReaderRepository
+from ddd.open_ai.infrastructure.repositories.gpt_image_1_reader_repository import GptImage1ReaderRepository
 
 __all__ = [
-    "DalleImageReaderRepository",
+    "GptImage1ReaderRepository",
 ]
