@@ -29,54 +29,49 @@ class CreateWordGroupService:
             cls._instance = cls()
         return cls._instance
 
-    async def __call__(self, dto: CreateWordGroupDto) -> CreateWordGroupResultDto:
+    async def __call__(
+        self,
+        create_word_group_dto: CreateWordGroupDto
+    ) -> CreateWordGroupResultDto:
         """
         Crea un nuevo grupo de palabras.
 
         Args:
-            dto: DTO con datos del grupo.
+            create_word_group_dto: DTO con datos del grupo.
 
         Returns:
             CreateWordGroupResultDto con el resultado.
         """
-        try:
-            # Validar DTO
-            errors = dto.validate()
-            if errors:
-                return CreateWordGroupResultDto.error("; ".join(errors))
+        # Validar DTO
+        errors = create_word_group_dto.validate()
+        if errors:
+            return CreateWordGroupResultDto.error("; ".join(errors))
 
-            # Verificar que no exista un grupo con el mismo título
-            existing = await self._groups_reader.get_by_title(dto.title)
-            if existing:
-                return CreateWordGroupResultDto.error(
-                    f"A group with title '{dto.title}' already exists"
-                )
-
-            # Crear entidad
-            entity = WordGroupEntity(
-                id=0,
-                title=dto.title,
-                description=dto.description,
+        # Verificar que no exista un grupo con el mismo título
+        existing = await self._groups_reader.get_by_title(create_word_group_dto.title)
+        if existing:
+            return CreateWordGroupResultDto.error(
+                f"A group with title '{create_word_group_dto.title}' already exists"
             )
 
-            # Validar entidad
-            errors = entity.validate()
-            if errors:
-                return CreateWordGroupResultDto.error("; ".join(errors))
+        # Crear entidad
+        word_group_entity = WordGroupEntity(
+            id=0,
+            title=create_word_group_dto.title,
+            description=create_word_group_dto.description,
+        )
 
-            # Crear en BD
-            result = await self._groups_writer.create(entity)
+        # Validar entidad
+        errors = word_group_entity.validate()
+        if errors:
+            return CreateWordGroupResultDto.error("; ".join(errors))
 
-            return CreateWordGroupResultDto.ok(
-                group_id=result["id"],
-                title=result["title"],
-                description=result.get("description", ""),
-            )
+        # Crear en BD
+        result = await self._groups_writer.create(word_group_entity)
 
-        except Exception as e:
-            self._logger.log_error(
-                "CreateWordGroupService",
-                f"Error creating word group: {e}",
-                {"title": dto.title},
-            )
-            return CreateWordGroupResultDto.error(str(e))
+        return CreateWordGroupResultDto.ok(
+            group_id=result["id"],
+            title=result["title"],
+            description=result.get("description", ""),
+        )
+

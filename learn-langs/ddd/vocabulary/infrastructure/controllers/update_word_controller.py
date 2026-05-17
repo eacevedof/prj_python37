@@ -84,7 +84,7 @@ class UpdateWordController(BaseController):
     async def _async_load_data(self) -> None:
         """Carga la palabra y datos iniciales desde el servicio."""
         # Mostrar loading
-        self._ft_container.render(UpdateWordViewDto.loading())
+        self._ft_container.render(UpdateWordViewDto.create_loading())
 
         try:
             # Cargar palabra via servicio
@@ -107,18 +107,20 @@ class UpdateWordController(BaseController):
             word_groups = await self._word_groups_reader.get_by_word(self._word_id)
 
             # Renderizar
-            dto = UpdateWordViewDto.with_data(
+            update_word_view_dto = UpdateWordViewDto.with_data(
                 word_id=self._word_id,
                 text=result.text,
                 word_type=result.word_type,
                 notes=result.notes,
-                translation_nl=result.translations.get(LanguageCodeEnum.NL_NL.value, ""),
+                translation_nl=result.translations.get(
+                    LanguageCodeEnum.NL_NL.value, ""
+                ),
                 selected_tags=list(result.selected_tags),
                 available_tags=self._available_tags,
                 word_groups=word_groups,
                 word_images=word_images,
             )
-            self._ft_container.render(dto)
+            self._ft_container.render(update_word_view_dto)
 
         except Exception as e:
             self._logger.log_error(

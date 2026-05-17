@@ -2,14 +2,16 @@
 
 from typing import final, Self
 
+from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
 
 
 @final
-class DalleImageReaderRepository(AbstractOpenAIApiRepository):
+class GptImage1ReaderRepository(AbstractOpenAIApiRepository):
     """Repositorio para generación de imágenes usando gpt-image-1.5."""
 
-    _instance: "DalleImageReaderRepository | None" = None
+    _instance: "GptImage1ReaderRepository | None" = None
+
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -21,7 +23,6 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
     def get_ai_image_by_word(
         self,
         word_es: str,
-        word_lang: str,
         context: str | None = None,
         size: str = "1024x1024",
     ) -> dict:
@@ -31,7 +32,6 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
 
         Args:
             word_es: Palabra, frase u oración en español
-            word_lang: Traducción en idioma destino
             size: Tamaño (256x256, 512x512, 1024x1024)
 
         Returns:
@@ -47,7 +47,6 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
         # Construir prompt internamente (oculto para el caller)
         image_prompt = self.__get_image_prompt(
             word_es=word_es,
-            word_lang=word_lang,
             context=context,
         )
 
@@ -60,7 +59,6 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
     def __get_image_prompt(
         self,
         word_es: str,
-        word_lang: str,
         context: str | None = None,
     ) -> str:
         """
@@ -69,25 +67,24 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
 
         Args:
             word_es: Palabra, frase u oración en español
-            word_lang: Traducción en idioma destino
             context: Información adicional (tags, notas) para mejor contexto
 
         Returns:
             Prompt optimizado para generación de imágenes
         """
         # Usar estilo default
-        style = self.__get_default_image_style()
-
+        img_style_prompt = self.__get_image_prompt_style()
         # Construir prompt descriptivo SIN incluir texto en la imagen
-        base_prompt = f"A cute cartoon illustration of a {word_lang}"
+        base_prompt = f"A cute cartoon illustration of a {word_es}"
 
         # Agregar contexto si existe (tags y notas)
         if context:
             base_prompt += f" ({context})"
 
-        return f"{base_prompt}. {style}"
+        return f"{base_prompt}. {img_style_prompt}"
 
-    def __get_default_image_style(self) -> str:
+
+    def __get_image_prompt_style(self) -> str:
         """
         Retorna el estilo por defecto: kawaii/cartoon educativo.
         Método privado - el estilo está oculto.
@@ -162,11 +159,11 @@ class DalleImageReaderRepository(AbstractOpenAIApiRepository):
             quality="low"
         )
 
-        # Extraer b64_json de la imagen generada
         image_b64 = open_ai_response.data[0].b64_json if open_ai_response.data else ""
-
         if not image_b64:
-            raise Exception("No se generó ninguna imagen en la respuesta")
+            OpenAIException.unexpected_custom(
+                "GptImage1ReaderRepository: No se recibió b64 en imagen en la respuesta de OpenAI"
+            )
 
         return {
             "b64_json": image_b64,

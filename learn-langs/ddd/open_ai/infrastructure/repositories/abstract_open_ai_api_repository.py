@@ -2,11 +2,12 @@
 
 from abc import ABC
 
-from anyio import open_signal_receiver
 from openai import OpenAI
 
+from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
+from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 
 
 class AbstractOpenAIApiRepository(ABC):
@@ -22,17 +23,12 @@ class AbstractOpenAIApiRepository(ABC):
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
 
-        open_ai_api_key = EnvironmentReaderRawRepository.get_instance().get("OPENAI_API_KEY", "")
+        open_ai_api_key = EnvironmentReaderRawRepository.get_instance().get(
+            EnvvarsKeysEnum.OPENAI_API_KEY.value,  ""
+        )
         if not open_ai_api_key:
-            raise Exception("OPENAI_API_KEY no configurada en .env")
+            raise OpenAIException.unexpected_custom(
+                f"AbstractOpenAIApiRepository: missing env {EnvvarsKeysEnum.OPENAI_API_KEY.value}"
+            )
 
         self._open_ai_client = OpenAI(api_key=open_ai_api_key)
-
-
-    def _log_openai_error(self, message: str, context: dict) -> None:
-        """Logging de errores de OpenAI."""
-        self._logger.log_error(
-            "AbstractOpenAIApiRepository",
-            message,
-            context,
-        )
