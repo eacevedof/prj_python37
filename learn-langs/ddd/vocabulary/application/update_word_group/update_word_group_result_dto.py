@@ -1,21 +1,24 @@
-"""DTO de resultado para GetWordGroupsService."""
+"""DTO de resultado para UpdateWordGroupService."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Self, Any
 
 
 @dataclass(frozen=True, slots=True)
-class GetWordGroupsResultDto:
-    """DTO de resultado para obtener grupos de palabras."""
+class UpdateWordGroupResultDto:
+    """DTO de resultado al actualizar un grupo de palabras."""
 
-    groups: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+    group_id: int = 0
+    title: str = ""
+    description: str = ""
     error_message: str | None = None
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        groups_data = primitives.get("groups", []) or []
         return cls(
-            groups=tuple(groups_data),
+            group_id=int(primitives.get("group_id", 0)),
+            title=str(primitives.get("title", "")),
+            description=str(primitives.get("description", "")),
             error_message=primitives.get("error_message"),
         )
 

@@ -1,12 +1,10 @@
 """Vista para crear palabras - Solo renderizado."""
 
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
+from typing import Callable, Any, Self
 
 from ddd.vocabulary.infrastructure.ui.components.word_groups_selector_comp import WordGroupsSelectorComp
-
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
+from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
 
 class CreateWordView(ft.Container):
@@ -72,7 +70,7 @@ class CreateWordView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, dto: "CreateWordViewDto") -> None:
+    def render(self, dto: CreateWordViewDto) -> None:
         """Renderiza la vista basado en el DTO."""
         # Loading state
         if self._ft_loading_ring:
@@ -331,7 +329,7 @@ class CreateWordView(ft.Container):
                 self._selected_group_ids,
             )
 
-    def _render_messages(self, dto: "CreateWordViewDto") -> None:
+    def _render_messages(self, dto: CreateWordViewDto) -> None:
         """Renderiza mensajes de error/éxito."""
         if self._ft_error_text:
             if dto.error_message:

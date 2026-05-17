@@ -2,12 +2,10 @@
 
 import os
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
+from typing import Callable, Any, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
+from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
 
 
 class UpdateWordView(ft.Container):
@@ -82,7 +80,7 @@ class UpdateWordView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, dto: "UpdateWordViewDto") -> None:
+    def render(self, dto: UpdateWordViewDto) -> None:
         """Renderiza la vista con los datos del DTO."""
         # Loading state
         if self._ft_loading_indicator:
@@ -628,7 +626,7 @@ class UpdateWordView(ft.Container):
         dialog.open = True
         self.page.update()
 
-    def _render_messages(self, dto: "UpdateWordViewDto") -> None:
+    def _render_messages(self, dto: UpdateWordViewDto) -> None:
         """Renderiza mensajes de error/exito."""
         if self._ft_error_text:
             if dto.error_message:
