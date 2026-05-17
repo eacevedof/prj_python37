@@ -35,12 +35,20 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         self,
         lang_code: str,
         tag_names: list[str] | None = None,
+        group_id: int | None = None,
         limit: int = 20,
     ) -> list[dict]:
         """
         Obtiene palabras para repaso ordenadas por prioridad SM-2.
         Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
         """
+        # Construir filtro de grupo
+        group_join = ""
+        group_where = ""
+        if group_id is not None:
+            group_join = "INNER JOIN word_es_groups weg ON we.id = weg.word_es_id"
+            group_where = f"AND weg.group_id = {group_id}"
+
         if tag_names:
             placeholders = self._get_placeholders(len(tag_names))
             query = f"""
@@ -59,7 +67,9 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
                 INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
                 INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
+                {group_join}
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
+                WHERE 1=1 {group_where}
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0
                          WHEN wm.next_review_at <= datetime('now') THEN 1
@@ -84,7 +94,9 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                     COALESCE(wm.total_attempts, 0) as total_attempts
                 FROM words_es we
                 INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
+                {group_join}
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
+                WHERE 1=1 {group_where}
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0
                          WHEN wm.next_review_at <= datetime('now') THEN 1
@@ -101,6 +113,7 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         self,
         lang_code: str,
         tag_names: list[str] | None = None,
+        group_id: int | None = None,
         limit: int = 20,
     ) -> list[dict]:
         """
@@ -108,6 +121,13 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         Solo incluye palabras de tipo WORD que tienen imagen principal.
         Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
         """
+        # Construir filtro de grupo
+        group_join = ""
+        group_where = ""
+        if group_id is not None:
+            group_join = "INNER JOIN word_es_groups weg ON we.id = weg.word_es_id"
+            group_where = f"AND weg.group_id = {group_id}"
+
         if tag_names:
             placeholders = self._get_placeholders(len(tag_names))
             query = f"""
@@ -132,8 +152,9 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                     AND img.is_active = 1
                 INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
                 INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
+                {group_join}
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE we.word_type = 'WORD'
+                WHERE we.word_type = 'WORD' {group_where}
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0
                          WHEN wm.next_review_at <= datetime('now') THEN 1
@@ -164,8 +185,9 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 INNER JOIN word_es_images img ON we.id = img.word_es_id
                     AND img.is_primary = 1
                     AND img.is_active = 1
+                {group_join}
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-                WHERE we.word_type = 'WORD'
+                WHERE we.word_type = 'WORD' {group_where}
                 ORDER BY
                     CASE WHEN wm.next_review_at IS NULL THEN 0
                          WHEN wm.next_review_at <= datetime('now') THEN 1

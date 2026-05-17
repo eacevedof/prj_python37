@@ -43,11 +43,13 @@ class ImageStudyController(BaseController):
         self,
         lang_code: str,                      # Parámetro de sesión: idioma a practicar
         tags: list[str],                     # Parámetro de sesión: filtros de tags
+        group_id: int | None,                # Parámetro de sesión: grupo de palabras
         route_on_back: Callable[[], None],  # Callback de navegación (volver al home)
     ):
         # Parámetros de sesión (inyectados desde app_router)
         self._lang_code = lang_code
         self._tags = tags
+        self._group_id = group_id
         self._route_on_back = route_on_back
 
         # Estado interno de sesión
@@ -97,6 +99,7 @@ class ImageStudyController(BaseController):
             start_dto = StartImageStudySessionDto.from_primitives({
                 "lang_code": self._lang_code,
                 "tags": self._tags,
+                "group_id": self._group_id,
                 "limit": 20,
             })
 

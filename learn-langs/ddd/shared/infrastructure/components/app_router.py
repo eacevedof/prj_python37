@@ -54,15 +54,17 @@ class AppRouter:
         """Construye la vista correspondiente a la ruta."""
         if route_name == ControllerRouteEnum.HOME:
             controller = HomeController(
-                route_on_start_study=lambda lang, tags: self.navigate_to(
+                route_on_start_study=lambda lang, tags, group_id: self.navigate_to(
                     ControllerRouteEnum.STUDY,
                     lang_code=lang,
                     tags=tags,
+                    group_id=group_id,
                 ),
-                route_on_start_image_study=lambda lang, tags: self.navigate_to(
+                route_on_start_image_study=lambda lang, tags, group_id: self.navigate_to(
                     ControllerRouteEnum.IMAGE_STUDY,
                     lang_code=lang,
                     tags=tags,
+                    group_id=group_id,
                 ),
                 route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
@@ -77,6 +79,7 @@ class AppRouter:
             controller = StudyController(
                 lang_code=kwargs.get("lang_code", "nl_NL"),
                 tags=kwargs.get("tags", []),
+                group_id=kwargs.get("group_id"),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
             )
             return controller.ft_container
@@ -85,6 +88,7 @@ class AppRouter:
             controller = ImageStudyController(
                 lang_code=kwargs.get("lang_code", "nl_NL"),
                 tags=kwargs.get("tags", []),
+                group_id=kwargs.get("group_id"),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
             )
             return controller.ft_container

@@ -54,6 +54,7 @@ class StartStudySessionService:
         words_data = await self._metrics_reader_sqlite_repository.get_words_for_review(
             lang_code=start_study_session_dto.lang_code,
             tag_names=start_study_session_dto.tags if start_study_session_dto.tags else None,
+            group_id=start_study_session_dto.group_id,
             limit=start_study_session_dto.limit,
         )
 

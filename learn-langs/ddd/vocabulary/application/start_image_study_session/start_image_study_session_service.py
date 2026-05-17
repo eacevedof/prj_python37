@@ -59,6 +59,7 @@ class StartImageStudySessionService:
         words_data = await self._metrics_reader_sqlite_repository.get_words_with_images_for_review(
             lang_code=start_image_study_session_dto.lang_code,
             tag_names=start_image_study_session_dto.tags if start_image_study_session_dto.tags else None,
+            group_id=start_image_study_session_dto.group_id,
             limit=start_image_study_session_dto.limit,
         )
 
