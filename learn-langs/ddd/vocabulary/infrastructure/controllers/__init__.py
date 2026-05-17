@@ -5,6 +5,7 @@ from ddd.vocabulary.infrastructure.controllers.delete_word_controller import Del
 from ddd.vocabulary.infrastructure.controllers.list_words_controller import ListWordsController
 from ddd.vocabulary.infrastructure.controllers.study_controller import StudyController
 from ddd.vocabulary.infrastructure.controllers.image_study_controller import ImageStudyController
+from ddd.vocabulary.infrastructure.controllers.manage_word_groups_controller import ManageWordGroupsController
 
 __all__ = [
     "HomeController",
@@ -14,4 +15,5 @@ __all__ = [
     "ListWordsController",
     "StudyController",
     "ImageStudyController",
+    "ManageWordGroupsController",
 ]

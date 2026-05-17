@@ -74,6 +74,7 @@ class ManageWordGroupsView(ft.Container):
                 ft.DataColumn(ft.Text("ID", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Título", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Descripción", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Palabras", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Acciones", weight=ft.FontWeight.BOLD)),
             ],
             rows=[],
@@ -125,7 +126,10 @@ class ManageWordGroupsView(ft.Container):
                 ft.Container(height=20),
                 ft.Text("Grupos Existentes:", size=18, weight=ft.FontWeight.BOLD),
                 ft.Container(
-                    content=self._ft_groups_table,
+                    content=ft.Row(
+                        controls=[self._ft_groups_table],
+                        scroll=ft.ScrollMode.AUTO,
+                    ),
                     border=ft.border.all(1, ft.Colors.GREY_400),
                     border_radius=8,
                     padding=10,
@@ -133,9 +137,10 @@ class ManageWordGroupsView(ft.Container):
             ],
             horizontal_alignment=ft.CrossAxisAlignment.START,
             scroll=ft.ScrollMode.AUTO,
+            expand=True,
         )
         self.expand = True
-        self.padding = 20
+        self.padding = ft.padding.symmetric(horizontal=40, vertical=20)
 
     def _render_groups_table(self, dto: ManageWordGroupsViewDto) -> None:
         if not self._ft_groups_table:
@@ -146,34 +151,52 @@ class ManageWordGroupsView(ft.Container):
             group_id = group.get("id", 0)
             title = group.get("title", "")
             description = group.get("description", "")
+            word_count = group.get("word_count", 0)
 
-            # Crear campos editables
-            title_field = ft.TextField(value=title, width=200, dense=True)
-            desc_field = ft.TextField(value=description, width=300, dense=True, multiline=True)
+            is_generic = title.lower() == "generic"
+
+            # Crear campos editables solo si no es generic
+            if is_generic:
+                title_cell = ft.DataCell(ft.Text(title, weight=ft.FontWeight.BOLD))
+                desc_cell = ft.DataCell(ft.Text(description))
+                actions_cell = ft.DataCell(ft.Text("--", color=ft.Colors.GREY))
+            else:
+                title_field = ft.TextField(value=title, width=180, dense=True)
+                desc_field = ft.TextField(value=description, width=250, dense=True, multiline=True)
+                title_cell = ft.DataCell(title_field)
+                desc_cell = ft.DataCell(desc_field)
+                actions_cell = ft.DataCell(
+                    ft.Row([
+                        ft.IconButton(
+                            icon=ft.Icons.EDIT,
+                            tooltip="Guardar cambios",
+                            on_click=lambda _, gid=group_id, tf=title_field, df=desc_field: self._on_edit_click(gid, tf, df),
+                            icon_color=ft.Colors.BLUE,
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.DELETE,
+                            tooltip="Eliminar grupo",
+                            on_click=lambda _, gid=group_id: self._on_delete_click(gid, title),
+                            icon_color=ft.Colors.RED,
+                        ),
+                    ], spacing=5)
+                )
 
             rows.append(
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text(str(group_id))),
-                        ft.DataCell(title_field),
-                        ft.DataCell(desc_field),
+                        title_cell,
+                        desc_cell,
                         ft.DataCell(
-                            ft.Row([
-                                ft.IconButton(
-                                    icon=ft.Icons.SAVE,
-                                    tooltip="Guardar cambios",
-                                    on_click=lambda _, gid=group_id, tf=title_field, df=desc_field: self._on_edit_click(gid, tf, df),
-                                    icon_color=ft.Colors.BLUE,
-                                ),
-                                ft.IconButton(
-                                    icon=ft.Icons.DELETE,
-                                    tooltip="Eliminar grupo",
-                                    on_click=lambda _, gid=group_id, t=title: self._on_delete_click(gid, t),
-                                    icon_color=ft.Colors.RED if title.lower() != "generic" else ft.Colors.GREY,
-                                    disabled=title.lower() == "generic",
-                                ),
-                            ], spacing=5)
+                            ft.Text(
+                                str(word_count),
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.BLUE_700,
+                            )
                         ),
+                        actions_cell,
                     ]
                 )
             )
@@ -204,9 +227,9 @@ class ManageWordGroupsView(ft.Container):
     def show_snackbar(self, message: str, error: bool = False) -> None:
         """Muestra un snackbar con un mensaje."""
         if self.page:
-            self.page.show_snack_bar(
-                ft.SnackBar(
-                    content=ft.Text(message),
-                    bgcolor=ft.Colors.RED if error else ft.Colors.GREEN,
-                )
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(message),
+                bgcolor=ft.Colors.RED if error else ft.Colors.GREEN,
             )
+            self.page.snack_bar.open = True
+            self.page.update()

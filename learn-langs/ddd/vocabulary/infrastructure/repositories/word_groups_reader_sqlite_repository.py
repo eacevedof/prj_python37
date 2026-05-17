@@ -22,18 +22,23 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
 
     async def get_all_word_groups(self) -> list[dict]:
         """
-        Obtiene todos los grupos de palabras.
+        Obtiene todos los grupos de palabras con el conteo de palabras.
 
         Returns:
-            Lista de diccionarios con datos de grupos.
+            Lista de diccionarios con datos de grupos y word_count.
         """
         query = """
         -- get_all_word_groups
         SELECT
-            id, title, description, created_at,updated_at
-        FROM word_groups
+            wg.id, wg.title, wg.description,
+            wg.created_at, wg.updated_at,
+            COUNT(weg.word_es_id) as word_count
+        FROM word_groups wg
+        LEFT JOIN word_es_groups weg
+        ON wg.id = weg.group_id
         WHERE 1=1
-        ORDER BY title ASC
+        GROUP BY wg.id, wg.title, wg.description, wg.created_at, wg.updated_at
+        ORDER BY wg.title ASC
         """
         return await self._query(query)
 
