@@ -15,6 +15,7 @@ class UpdateWordDto:
     word_type: str = "WORD"
     notes: str = ""
     tags: list[str] = field(default_factory=list)
+    group_ids: list[int] = field(default_factory=list)
     translations: dict[str, str] = field(default_factory=dict)  # lang_code -> text
 
     @classmethod
@@ -33,6 +34,7 @@ class UpdateWordDto:
             word_type=word_type,
             notes=str(primitives.get("notes", "") or "").strip(),
             tags=list(primitives.get("tags", []) or []),
+            group_ids=list(primitives.get("group_ids", []) or []),
             translations=dict(primitives.get("translations", {}) or {}),
         )
 

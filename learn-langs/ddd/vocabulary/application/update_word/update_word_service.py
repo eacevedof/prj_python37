@@ -13,6 +13,8 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordsLangReaderSqliteRepository,
     WordsLangWriterSqliteRepository,
     TagsReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
+    WordGroupsWriterSqliteRepository,
 )
 
 
@@ -26,6 +28,8 @@ class UpdateWordService:
     _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
     _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
     _tags_reader_sqlite_repository: TagsReaderSqliteRepository
+    _word_groups_reader_sqlite_repository: WordGroupsReaderSqliteRepository
+    _word_groups_writer_sqlite_repository: WordGroupsWriterSqliteRepository
 
     def __init__(self) -> None:
         self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
@@ -33,6 +37,8 @@ class UpdateWordService:
         self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
         self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
         self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -85,6 +91,9 @@ class UpdateWordService:
         # Actualizar tags
         tags_updated = await self._update_tags(update_word_dto.word_id, update_word_dto.tags)
 
+        # Actualizar grupos
+        await self._update_groups(update_word_dto.word_id, update_word_dto.group_ids)
+
         # Actualizar traducciones
         translations_updated = await self._update_translations(
             update_word_dto.word_id,
@@ -113,6 +122,21 @@ class UpdateWordService:
 
         await self._words_es_writer_sqlite_repository.set_tags(word_id, tag_ids)
         return updated_tags
+
+    async def _update_groups(self, word_id: int, group_ids: list[int]) -> None:
+        """Actualiza los grupos de la palabra. Asegura que 'generic' siempre esté incluido."""
+        # Obtener el grupo "generic"
+        generic_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_title("generic")
+
+        # Asegurar que el grupo "generic" esté en la lista
+        final_group_ids = list(group_ids)
+        if generic_group:
+            generic_id = generic_group.get("id", 0)
+            if generic_id and generic_id not in final_group_ids:
+                final_group_ids.append(generic_id)
+
+        # Establecer los grupos
+        await self._word_groups_writer_sqlite_repository.set_word_groups(word_id, final_group_ids)
 
     async def _update_translations(
         self,

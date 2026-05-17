@@ -25,7 +25,10 @@ from ddd.vocabulary.application.add_word_ia_image import (
     AddWordIaImageDto,
     AddWordIaImageService,
 )
-from ddd.vocabulary.infrastructure.repositories import ImagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories import (
+    ImagesReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
+)
 from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
 from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
     ListWordsViewDto,
@@ -77,6 +80,7 @@ class ListWordsController(BaseController):
         self._add_word_ia_image_service = AddWordIaImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
         self._images_reader = ImagesReaderSqliteRepository.get_instance()
+        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
 
         # Vista (instancia de ListWordsView)
         self._ft_container = ListWordsView.from_primitives({
@@ -135,6 +139,7 @@ class ListWordsController(BaseController):
                     "tags": w.tags,
                     "translations": w.translations,
                     "last_image_path": "",
+                    "groups": [],
                 }
 
                 # Si tiene imágenes, cargar la última
@@ -144,6 +149,10 @@ class ListWordsController(BaseController):
                         # get_by_word_id ya ordena por is_primary DESC, sort_order, created_at
                         # Así que el último elemento es la última imagen agregada
                         word_data["last_image_path"] = images[-1].get("file_path", "")
+
+                # Cargar grupos de la palabra
+                word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(w.id)
+                word_data["groups"] = [g.get("title", "") for g in word_groups]
 
                 words_data.append(word_data)
 
