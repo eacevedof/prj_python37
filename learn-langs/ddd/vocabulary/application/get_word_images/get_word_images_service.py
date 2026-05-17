@@ -40,7 +40,7 @@ class GetWordImagesService:
             GetWordImagesResultDto con la lista de imagenes.
         """
         try:
-            images_raw = await self._images_reader_sqlite_repository.get_by_word_id(dto.word_id)
+            images_raw = await self._images_reader_sqlite_repository.get_word_es_images_by_word_es_id(dto.word_id)
             images = [WordImageDto.from_primitives(img) for img in (images_raw or [])]
             return GetWordImagesResultDto.ok(images)
 

@@ -96,19 +96,19 @@ async def test_read_words():
     reader = WordsEsReaderSqliteRepository.get_instance()
 
     # Buscar palabra
-    word = await reader.get_by_text("hola")
+    word = await reader.get_word_es_by_text("hola")
     if word:
         print(f"   Encontrada: #{word['id']} '{word['text']}'")
 
         # Obtener con traducciones
-        word_full = await reader.get_with_translations(word['id'])
+        word_full = await reader.get_words_langs_by_word_es_id(word['id'])
         if word_full:
             print(f"   Traducciones: {word_full.get('translations', {})}")
     else:
         print("   No se encontró la palabra 'hola'")
 
     # Contar total
-    total = await reader.count()
+    total = await reader.get_total_words_es_by_word_type()
     print(f"   Total de palabras: {total}")
 
 

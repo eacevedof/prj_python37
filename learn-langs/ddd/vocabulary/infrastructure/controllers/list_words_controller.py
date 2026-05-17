@@ -139,7 +139,7 @@ class ListWordsController(BaseController):
 
                 # Si tiene imágenes, cargar la última
                 if w.image_count > 0:
-                    images = await self._images_reader.get_by_word_id(w.id)
+                    images = await self._images_reader.get_word_es_images_by_word_es_id(w.id)
                     if images:
                         # get_by_word_id ya ordena por is_primary DESC, sort_order, created_at
                         # Así que el último elemento es la última imagen agregada

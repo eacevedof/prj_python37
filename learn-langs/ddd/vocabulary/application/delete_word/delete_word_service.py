@@ -61,15 +61,14 @@ class DeleteWordService:
             VocabularyException.word_delete_failed(", ".join(errors))
 
         # Verificar que exista
-        word_data = await self._words_es_reader_sqlite_repository.get_by_id(delete_word_dto.word_id)
-
+        word_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(delete_word_dto.word_id)
         if not word_data:
             VocabularyException.word_not_found(delete_word_dto.word_id)
 
         word_text = word_data["text"]
 
         # Contar y eliminar imagenes
-        images_count = await self._images_reader_sqlite_repository.count_by_word_id(delete_word_dto.word_id)
+        images_count = await self._images_reader_sqlite_repository.get_total_word_es_images_by_word_id(delete_word_dto.word_id)
         await self._images_writer_sqlite_repository.delete_all_by_word(delete_word_dto.word_id)
 
         # Contar y eliminar traducciones

@@ -34,7 +34,7 @@ class GetTagsService:
             GetTagsResultDto con la lista de tags.
         """
         try:
-            tags_raw = await self._tags_reader_sqlite_repository.get_all()
+            tags_raw = await self._tags_reader_sqlite_repository.get_filtered_words_es()
             tags = [TagDto.from_primitives(t) for t in tags_raw]
             return GetTagsResultDto.ok(tags)
 

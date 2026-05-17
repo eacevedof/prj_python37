@@ -101,7 +101,7 @@ class UpdateWordController(BaseController):
             self._available_tags = result.available_tags_as_dicts()
 
             # Cargar imagenes de la palabra
-            word_images = await self._images_reader.get_by_word_id(self._word_id)
+            word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
 
             # Cargar grupos de la palabra
             word_groups = await self._word_groups_reader.get_by_word(self._word_id)

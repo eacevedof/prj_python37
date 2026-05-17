@@ -16,29 +16,30 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
     def get_instance(cls) -> Self:
         return cls()
 
-    async def get_by_id(self, word_id: int) -> dict | None:
+    async def get_word_es_by_word_es_id(self, word_es_id: int) -> dict | None:
         """Obtiene una palabra por su ID."""
         query = f"""
-        -- get_by_id
+        -- get_word_es_by_word_es_id
         SELECT id, text, word_type, notes, created_at, updated_at
         FROM words_es
         WHERE 1=1
-        AND id = {word_id}
+        AND id = {word_es_id}
         """
         return await self._query_one(query)
 
-    async def get_by_text(self, text: str) -> dict | None:
+    async def get_word_es_by_text(self, text: str) -> dict | None:
         """Obtiene una palabra por su texto exacto."""
         query = """
-        -- get_by_text
-        SELECT id, text, word_type, notes, created_at, updated_at
+        -- get_word_es_by_text
+        SELECT
+            id, text, word_type, notes, created_at, updated_at
         FROM words_es
         WHERE 1=1
         AND text = ?
         """
         return await self._query_one(query, (text.strip(),))
 
-    async def get_all(
+    async def get_filtered_words_es(
         self,
         word_type: str | None = None,
         limit: int = 100,
@@ -55,7 +56,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
         query = f"""
-        -- get_all
+        -- get_filtered_words_es
         SELECT id, text, word_type, notes, created_at, updated_at
         FROM words_es
         {where_sql}
@@ -65,7 +66,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
 
         return await self._query(query, tuple(params))
 
-    async def get_by_tags(
+    async def get_words_es_by_tag_names(
         self,
         tag_names: list[str],
         limit: int = 100,
@@ -73,16 +74,19 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
     ) -> list[dict]:
         """Obtiene palabras filtradas por tags."""
         if not tag_names:
-            return await self.get_all(limit=limit, offset=offset)
+            return await self.get_filtered_words_es(limit=limit, offset=offset)
 
         placeholders = self._get_placeholders(len(tag_names))
         query = f"""
-        -- get_by_tags
-        SELECT DISTINCT w.id, w.text, w.word_type, w.notes,
-               w.created_at, w.updated_at
+        -- get_words_es_by_tag_names
+        SELECT
+            DISTINCT w.id, w.text, w.word_type, w.notes,
+            w.created_at, w.updated_at
         FROM words_es w
-        INNER JOIN word_es_tags wt ON w.id = wt.word_es_id
-        INNER JOIN tags t ON wt.tag_id = t.id
+        INNER JOIN word_es_tags wt
+        ON w.id = wt.word_es_id
+        INNER JOIN tags t
+        ON wt.tag_id = t.id
         WHERE 1=1
         AND t.name IN ({placeholders})
         ORDER BY w.updated_at DESC
@@ -91,18 +95,19 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
 
         return await self._query(query, tuple(tag_names))
 
-    async def get_with_translations(self, word_id: int) -> dict | None:
+    async def get_words_langs_by_word_es_id(self, word_es_id: int) -> dict | None:
         """Obtiene una palabra con todas sus traducciones."""
-        word = await self.get_by_id(word_id)
+        word = await self.get_word_es_by_word_es_id(word_es_id)
         if not word:
             return None
 
         translations_query = f"""
-        -- get_with_translations
-        SELECT lang_code, text, pronunciation, audio_path, notes
+        -- get_words_langs_by_word_es_id
+        SELECT
+            lang_code, text, pronunciation, audio_path, notes
         FROM words_lang
         WHERE 1=1
-        AND word_es_id = {word_id}
+        AND word_es_id = {word_es_id}
         """
         translations = await self._query(translations_query)
 
@@ -113,34 +118,36 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
 
     async def get_with_tags(self, word_id: int) -> dict | None:
         """Obtiene una palabra con sus tags."""
-        word = await self.get_by_id(word_id)
+        word = await self.get_word_es_by_word_es_id(word_id)
         if not word:
             return None
 
-        tags = await self.get_tags_for_word(word_id)
+        tags = await self.get_word_es_tags_by_word_es_id(word_id)
 
         word["tags"] = [t["name"] for t in tags]
         word["tags_detail"] = tags
 
         return word
 
-    async def get_tags_for_word(self, word_id: int) -> list[dict]:
+    async def get_word_es_tags_by_word_es_id(self, word_es_id: int) -> list[dict]:
         """Obtiene los tags de una palabra."""
         query = f"""
         -- get_tags_for_word
         SELECT t.id, t.name, t.color
         FROM tags t
-        INNER JOIN word_es_tags wt ON t.id = wt.tag_id
+        INNER JOIN word_es_tags wt
+        ON t.id = wt.tag_id
         WHERE 1=1
-        AND wt.word_es_id = {word_id}
+        AND wt.word_es_id = {word_es_id}
         """
         return await self._query(query)
 
-    async def search(self, text: str, limit: int = 50) -> list[dict]:
+    async def get_words_es_by_text(self, text: str, limit: int = 50) -> list[dict]:
         """Busca palabras por texto (búsqueda parcial)."""
         query = f"""
         -- search
-        SELECT id, text, word_type, notes, created_at, updated_at
+        SELECT
+            id, text, word_type, notes, created_at, updated_at
         FROM words_es
         WHERE 1=1
         AND text LIKE ?
@@ -149,12 +156,13 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         """
         return await self._query(query, (f"%{text}%",))
 
-    async def count(self, word_type: str | None = None) -> int:
+    async def get_total_words_es_by_word_type(self, word_type: str | None = None) -> int:
         """Cuenta el total de palabras."""
         if word_type:
             query = f"""
             -- count
-            SELECT COUNT(*) as count
+            SELECT
+                COUNT(*) as count
             FROM words_es
             WHERE 1=1
             AND word_type = ?
