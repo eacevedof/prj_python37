@@ -31,7 +31,7 @@ class TagsReaderSqliteRepository(AbstractSqliteRepository):
     async def get_tag_by_tag_name(self, tag_name: str) -> dict | None:
         """Obtiene un tag por su nombre."""
         query = """
-        --
+        -- get_tag_by_tag_name
         SELECT
             id, name, color, created_at
         FROM tags
@@ -43,6 +43,7 @@ class TagsReaderSqliteRepository(AbstractSqliteRepository):
     async def get_all_tags(self) -> list[dict]:
         """Obtiene todos los tags."""
         query = """
+        -- get_all_tags
         SELECT
             id, name, color, created_at
         FROM tags
