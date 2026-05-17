@@ -140,7 +140,7 @@ class ManageWordGroupsView(ft.Container):
             expand=True,
         )
         self.expand = True
-        self.padding = ft.padding.symmetric(horizontal=40, vertical=20)
+        self.padding = ft.padding.symmetric(horizontal=20, vertical=20)
 
     def _render_groups_table(self, dto: ManageWordGroupsViewDto) -> None:
         if not self._ft_groups_table:
@@ -161,14 +161,14 @@ class ManageWordGroupsView(ft.Container):
                 desc_cell = ft.DataCell(ft.Text(description))
                 actions_cell = ft.DataCell(ft.Text("--", color=ft.Colors.GREY))
             else:
-                title_field = ft.TextField(value=title, width=180, dense=True)
-                desc_field = ft.TextField(value=description, width=250, dense=True, multiline=True)
+                title_field = ft.TextField(value=title, width=140, dense=True)
+                desc_field = ft.TextField(value=description, width=180, dense=True, multiline=True)
                 title_cell = ft.DataCell(title_field)
                 desc_cell = ft.DataCell(desc_field)
                 actions_cell = ft.DataCell(
                     ft.Row([
                         ft.IconButton(
-                            icon=ft.Icons.EDIT,
+                            icon=ft.Icons.SAVE,
                             tooltip="Guardar cambios",
                             on_click=lambda _, gid=group_id, tf=title_field, df=desc_field: self._on_edit_click(gid, tf, df),
                             icon_color=ft.Colors.BLUE,
