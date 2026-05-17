@@ -3,13 +3,12 @@
 import os
 from pathlib import Path
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
+from typing import Callable, Any, Self
 
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
-        ListWordsViewDto,
-        WordListItemViewDto,
-    )
+from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
+    ListWordsViewDto,
+    WordListItemViewDto,
+)
 
 
 class ListWordsView(ft.Container):
@@ -72,7 +71,7 @@ class ListWordsView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, dto: "ListWordsViewDto") -> None:
+    def render(self, dto: ListWordsViewDto) -> None:
         """Renderiza la vista con los datos del DTO."""
         # Loading
         if self._ft_loading:
@@ -201,7 +200,7 @@ class ListWordsView(ft.Container):
     # =========================================================================
     # RENDERIZADO PARCIAL (en orden de ejecución en render())
     # =========================================================================
-    def _render_count(self, dto: "ListWordsViewDto") -> None:
+    def _render_count(self, dto: ListWordsViewDto) -> None:
         """Renderiza el contador de palabras."""
         if not self._ft_count_text:
             return
@@ -214,7 +213,7 @@ class ListWordsView(ft.Container):
             showing = len(dto.words)
             self._ft_count_text.value = f"Mostrando {showing} de {dto.total_count} palabras"
 
-    def _render_words_list(self, list_words_view_dto: "ListWordsViewDto") -> None:
+    def _render_words_list(self, list_words_view_dto: ListWordsViewDto) -> None:
         """Renderiza la lista de palabras."""
         if not self._ft_words_list:
             return
@@ -272,7 +271,7 @@ class ListWordsView(ft.Container):
         full_path = base_path / relative_path
         return str(full_path)
 
-    def _build_image_button(self, word: "WordListItemViewDto") -> ft.Control:
+    def _build_image_button(self, word: WordListItemViewDto) -> ft.Control:
         """Construye el botón de imagen con thumbnail o icono."""
         image_badge = f" ({word.image_count})" if word.image_count > 0 else ""
         tooltip_text = f"Imagenes{image_badge}"
@@ -306,7 +305,7 @@ class ListWordsView(ft.Container):
             tooltip=tooltip_text,
         )
 
-    def _build_word_tile(self, word: "WordListItemViewDto") -> ft.ListTile:
+    def _build_word_tile(self, word: WordListItemViewDto) -> ft.ListTile:
         """Construye un tile para una palabra."""
         # Icono segun tipo
         icon = ft.Icons.ABC

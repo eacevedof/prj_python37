@@ -1,15 +1,13 @@
 """Vista de sesión de estudio con imágenes - Solo renderizado."""
 
-from typing import TYPE_CHECKING, Any, Callable, Self
+from typing import Any, Callable, Self
 
 import flet as ft
 
 from ddd.vocabulary.infrastructure.ui.components.image_flashcard_comp import ImageFlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
-
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
+from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
 
 class ImageStudyView(ft.Container):
@@ -69,7 +67,7 @@ class ImageStudyView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, dto: "ImageStudyViewDto") -> None:
+    def render(self, dto: ImageStudyViewDto) -> None:
         """Renderiza la vista basado en el DTO."""
         # Actualizar header
         if self._ft_progress_text:
@@ -169,7 +167,7 @@ class ImageStudyView(ft.Container):
             )
         )
 
-    def _render_studying(self, dto: "ImageStudyViewDto") -> None:
+    def _render_studying(self, dto: ImageStudyViewDto) -> None:
         """Renderiza palabra actual con imagen."""
         if not self._ft_content_area or not dto.current_word:
             return
@@ -213,7 +211,7 @@ class ImageStudyView(ft.Container):
             self._ft_input_field,
         ])
 
-    def _render_with_result(self, dto: "ImageStudyViewDto") -> None:
+    def _render_with_result(self, dto: ImageStudyViewDto) -> None:
         """Renderiza resultado de respuesta."""
         if not dto.last_result or not self._ft_input_field or not self._ft_image_flashcard:
             return
@@ -264,7 +262,7 @@ class ImageStudyView(ft.Container):
             ),
         ])
 
-    def _render_session_complete(self, dto: "ImageStudyViewDto") -> None:
+    def _render_session_complete(self, dto: ImageStudyViewDto) -> None:
         """Renderiza sesión completada."""
         if not self._ft_content_area:
             return

@@ -2,7 +2,6 @@
 
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.get_word_groups.get_word_groups_result_dto import GetWordGroupsResultDto
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 
@@ -11,17 +10,14 @@ from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRep
 class GetWordGroupsService:
     """Servicio para obtener todos los grupos de palabras."""
 
-    _instance: "GetWordGroupsService | None" = None
+    _word_groups_reader_sqlite_repository: WordGroupsReaderSqliteRepository
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
         self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        return cls()
 
     async def __call__(self) -> GetWordGroupsResultDto:
         """
@@ -31,4 +27,4 @@ class GetWordGroupsService:
             GetWordGroupsResultDto con la lista de grupos.
         """
         groups = await self._word_groups_reader_sqlite_repository.get_all_word_groups()
-        return GetWordGroupsResultDto.ok(groups)
+        return GetWordGroupsResultDto.from_primitives({"groups": groups or []})

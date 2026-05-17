@@ -1,10 +1,9 @@
 """Vista del Home - Solo renderizado, sin lógica de negocio."""
 
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING
+from typing import Callable, Any, Self
 
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
+from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
 
 class HomeView(ft.Container):
@@ -67,7 +66,7 @@ class HomeView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, home_view_dto: "HomeViewDto") -> None:
+    def render(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza la vista con los datos del DTO."""
         if self._ft_loading_indicator:
             self._ft_loading_indicator.visible = home_view_dto.is_loading
@@ -229,7 +228,7 @@ class HomeView(ft.Container):
     # RENDERIZADO PARCIAL (en orden de ejecución en render())
     # =========================================================================
 
-    def _render_language_dropdown(self, home_view_dto: "HomeViewDto") -> None:
+    def _render_language_dropdown(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza el dropdown de idiomas."""
         if not self._ft_lang_dropdown:
             return
@@ -240,7 +239,7 @@ class HomeView(ft.Container):
         ]
         self._ft_lang_dropdown.value = home_view_dto.selected_lang_code
 
-    def _render_tags(self, home_view_dto: "HomeViewDto") -> None:
+    def _render_tags(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza los chips de tags."""
         if not self._ft_tags_row:
             return
@@ -271,7 +270,7 @@ class HomeView(ft.Container):
                 )
                 self._ft_tags_row.controls.append(chip)
 
-    def _render_stats(self, home_view_dto: "HomeViewDto") -> None:
+    def _render_stats(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza las estadísticas."""
         if not self._ft_stats_column or not home_view_dto.stats:
             return

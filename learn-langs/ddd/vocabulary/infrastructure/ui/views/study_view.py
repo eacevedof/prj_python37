@@ -1,15 +1,13 @@
 """Vista de sesion de estudio - Solo renderizado."""
 
-from typing import TYPE_CHECKING, Any, Callable, Self
+from typing import Any, Callable, Self
 
 import flet as ft
 
 from ddd.vocabulary.infrastructure.ui.components.flashcard_comp import FlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
-
-if TYPE_CHECKING:
-    from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
+from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
 
 
 class StudyView(ft.Container):
@@ -69,7 +67,7 @@ class StudyView(ft.Container):
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
     # =========================================================================
-    def render(self, dto: "StudyViewDto") -> None:
+    def render(self, dto: StudyViewDto) -> None:
         """Renderiza la vista basado en el DTO."""
         # Actualizar header
         if self._ft_progress_text:
@@ -169,7 +167,7 @@ class StudyView(ft.Container):
             )
         )
 
-    def _render_studying(self, dto: "StudyViewDto") -> None:
+    def _render_studying(self, dto: StudyViewDto) -> None:
         """Renderiza palabra actual para estudiar (estado principal)."""
         if not self._ft_content_area or not dto.current_word:
             return
@@ -213,7 +211,7 @@ class StudyView(ft.Container):
             self._ft_input_field,
         ])
 
-    def _render_with_result(self, dto: "StudyViewDto") -> None:
+    def _render_with_result(self, dto: StudyViewDto) -> None:
         """Renderiza resultado de respuesta (post-answer antes de next word)."""
         if not dto.last_result or not self._ft_input_field or not self._ft_flashcard:
             return
@@ -264,7 +262,7 @@ class StudyView(ft.Container):
             ),
         ])
 
-    def _render_session_complete(self, dto: "StudyViewDto") -> None:
+    def _render_session_complete(self, dto: StudyViewDto) -> None:
         """Renderiza sesion completada con resumen de stats."""
         if not self._ft_content_area:
             return
