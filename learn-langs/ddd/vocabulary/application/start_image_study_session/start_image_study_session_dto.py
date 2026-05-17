@@ -10,13 +10,18 @@ class StartImageStudySessionDto:
 
     lang_code: str
     tags: list[str] = field(default_factory=list)
+    group_id: int | None = None
     limit: int = 20
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        group_id_raw = primitives.get("group_id")
+        group_id = int(group_id_raw) if group_id_raw is not None else None
+
         return cls(
             lang_code=str(primitives.get("lang_code", "")).strip(),
             tags=list(primitives.get("tags", []) or []),
+            group_id=group_id,
             limit=int(primitives.get("limit", 20)),
         )
 

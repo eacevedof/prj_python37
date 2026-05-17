@@ -8,6 +8,7 @@ from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.load_home import LoadHomeDto, LoadHomeService
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
@@ -24,10 +25,10 @@ class HomeController(BaseController):
     """
     def __init__(
         self,
-        route_on_start_study: Callable[[str, list[str]], None],       # 1. Botón primario (verde, izquierda)
-        route_on_start_image_study: Callable[[str, list[str]], None], # 2. Botón secundario (morado, centro)
-        route_on_manage_words: Callable[[], None],                    # 3. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],                   # 4. Botón gestión grupos (naranja)
+        route_on_start_study: Callable[[str, list[str], int | None], None],       # 1. Botón primario (verde, izquierda)
+        route_on_start_image_study: Callable[[str, list[str], int | None], None], # 2. Botón secundario (morado, centro)
+        route_on_manage_words: Callable[[], None],                                 # 3. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],                                # 4. Botón gestión grupos (naranja)
     ):
         # Callbacks de navegación (inyectados desde app_router)
         self._route_on_start_study = route_on_start_study
@@ -37,13 +38,17 @@ class HomeController(BaseController):
 
         self._logger = Logger.get_instance()
         self._load_home_service = LoadHomeService.get_instance()
+        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
 
         self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
         self._selected_tags: list[str] = []
+        self._selected_group_id: int | None = None
+        self._all_groups: list[dict] = []
 
         self._ft_container = HomeView.from_primitives({
             "on_mount": self._on_mount,
             "on_lang_change": self._on_lang_change,
+            "on_group_change": self._on_group_change,
             "on_tag_toggle": self._on_tag_toggle,
             "on_start_study": self._route_on_start_study_click,
             "on_start_image_study": self._route_on_start_image_study_click,
@@ -89,12 +94,21 @@ class HomeController(BaseController):
                 )
                 return
 
+            # Cargar grupos disponibles
+            self._all_groups = await self._word_groups_reader.get_all_word_groups()
+
+            # Si no hay grupo seleccionado, seleccionar el primero (probablemente "generic")
+            if self._selected_group_id is None and self._all_groups:
+                self._selected_group_id = self._all_groups[0].get("id", 0)
+
             self._ft_container.render(
                 HomeViewDto.ok(
                     tags=list(load_home_result_dto.tags),
                     stats=load_home_result_dto.stats,
                     selected_lang_code=str(self._selected_lang),
                     selected_tags=self._selected_tags,
+                    groups=self._all_groups,
+                    selected_group_id=self._selected_group_id,
                 )
             )
 
@@ -124,6 +138,11 @@ class HomeController(BaseController):
 
         self._ft_container.page.run_task(self._async_load_data)
 
+    def _on_group_change(self, group_id: int) -> None:
+        """Maneja el cambio de grupo (dropdown - arriba en UI)."""
+        self._selected_group_id = group_id
+        # No es necesario recargar datos, solo actualizar el estado
+
     def _on_tag_toggle(self, tag_name: str) -> None:
         """Alterna la seleccion de un tag (chips - medio en UI)."""
         if tag_name in self._selected_tags:
@@ -137,12 +156,14 @@ class HomeController(BaseController):
         """Maneja click en comenzar estudio (boton verde - abajo en UI)."""
         self._route_on_start_study(
             str(self._selected_lang),
-            self._selected_tags
+            self._selected_tags,
+            self._selected_group_id
         )
 
     def _route_on_start_image_study_click(self) -> None:
         """Maneja click en comenzar estudio con imagenes (boton morado - abajo en UI)."""
         self._route_on_start_image_study(
             str(self._selected_lang),
-            self._selected_tags
+            self._selected_tags,
+            self._selected_group_id
         )

@@ -24,17 +24,19 @@ class HomeView(ft.Container):
         self,
         route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
         route_on_lang_change: Callable[[str], None],       # 2. Dropdown idiomas (render paso 1)
-        route_on_tag_toggle: Callable[[str], None],        # 3. Tags (render paso 2)
-        route_on_start_study: Callable[[], None],          # 4. Botón acción primaria (verde)
-        route_on_start_image_study: Callable[[], None],    # 5. Botón acción secundaria (morado)
-        route_on_manage_words: Callable[[], None],         # 6. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],        # 7. Botón gestión grupos (naranja)
+        route_on_group_change: Callable[[int], None],      # 3. Dropdown grupos (render paso 1.5)
+        route_on_tag_toggle: Callable[[str], None],        # 4. Tags (render paso 2)
+        route_on_start_study: Callable[[], None],          # 5. Botón acción primaria (verde)
+        route_on_start_image_study: Callable[[], None],    # 6. Botón acción secundaria (morado)
+        route_on_manage_words: Callable[[], None],         # 7. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],        # 8. Botón gestión grupos (naranja)
     ):
         super().__init__()
 
         # Callbacks al controller (en orden de ejecución)
         self._route_on_mount = route_on_mount
         self._route_on_lang_change = route_on_lang_change
+        self._route_on_group_change = route_on_group_change
         self._route_on_tag_toggle = route_on_tag_toggle
         self._route_on_start_study = route_on_start_study
         self._route_on_start_image_study = route_on_start_image_study
@@ -43,6 +45,7 @@ class HomeView(ft.Container):
 
         # Componentes UI
         self._ft_lang_dropdown: ft.Dropdown | None = None
+        self._ft_group_dropdown: ft.Dropdown | None = None
         self._ft_tags_row: ft.Row | None = None
         self._ft_stats_column: ft.Column | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
@@ -56,6 +59,7 @@ class HomeView(ft.Container):
         return cls(
             route_on_mount=primitives.get("on_mount"),
             route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
+            route_on_group_change=primitives.get("on_group_change", lambda x: None),
             route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
             route_on_start_study=primitives.get("on_start_study", lambda: None),
             route_on_start_image_study=primitives.get("on_start_image_study", lambda: None),
@@ -76,6 +80,7 @@ class HomeView(ft.Container):
             return
 
         self._render_language_dropdown(home_view_dto)
+        self._render_group_dropdown(home_view_dto)
         self._render_tags(home_view_dto)
         self._render_stats(home_view_dto)
         self.update()
@@ -103,6 +108,14 @@ class HomeView(ft.Container):
             options=[],
         )
         self._ft_lang_dropdown.on_change = self._on_lang_dropdown_change
+
+        # Dropdown de grupos (se llena en render)
+        self._ft_group_dropdown = ft.Dropdown(
+            label="Grupo de palabras",
+            width=250,
+            options=[],
+        )
+        self._ft_group_dropdown.on_change = self._on_group_dropdown_change
 
         # Tags row
         self._ft_tags_row = ft.Row(
@@ -186,6 +199,11 @@ class HomeView(ft.Container):
                     content=self._ft_lang_dropdown,
                     alignment=ft.Alignment.CENTER,
                 ),
+                ft.Container(height=10),
+                ft.Container(
+                    content=self._ft_group_dropdown,
+                    alignment=ft.Alignment.CENTER,
+                ),
                 ft.Container(height=20),
                 ft.Text("Filtrar por tags (opcional):", size=14),
                 ft.Container(
@@ -238,6 +256,23 @@ class HomeView(ft.Container):
             for lang in home_view_dto.language_options
         ]
         self._ft_lang_dropdown.value = home_view_dto.selected_lang_code
+
+    def _render_group_dropdown(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza el dropdown de grupos."""
+        if not self._ft_group_dropdown:
+            return
+
+        self._ft_group_dropdown.options = [
+            ft.dropdown.Option(key=str(group["id"]), text=group["title"])
+            for group in home_view_dto.group_options
+        ]
+
+        # Si hay un grupo seleccionado, establecerlo
+        if home_view_dto.selected_group_id:
+            self._ft_group_dropdown.value = str(home_view_dto.selected_group_id)
+        elif home_view_dto.group_options:
+            # Por defecto seleccionar el primer grupo (probablemente "generic")
+            self._ft_group_dropdown.value = str(home_view_dto.group_options[0]["id"])
 
     def _render_tags(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza los chips de tags."""
@@ -313,3 +348,8 @@ class HomeView(ft.Container):
     def _on_lang_dropdown_change(self, e: ft.ControlEvent) -> None:
         """Maneja el cambio de idioma y notifica al controller."""
         self._route_on_lang_change(e.control.value)
+
+    def _on_group_dropdown_change(self, e: ft.ControlEvent) -> None:
+        """Maneja el cambio de grupo y notifica al controller."""
+        group_id = int(e.control.value) if e.control.value else 0
+        self._route_on_group_change(group_id)

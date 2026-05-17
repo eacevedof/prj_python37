@@ -15,6 +15,10 @@ class HomeViewDto:
     default_lang_code: str = ""
     selected_lang_code: str = ""
 
+    # Opciones de grupos
+    group_options: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+    selected_group_id: int | None = None
+
     # Tags
     tags: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     selected_tags: tuple[str, ...] = field(default_factory=tuple)
@@ -32,6 +36,8 @@ class HomeViewDto:
             language_options=tuple(primitives.get("language_options", []) or []),
             default_lang_code=str(primitives.get("default_lang_code", LanguageCodeEnum.default().value)),
             selected_lang_code=str(primitives.get("selected_lang_code", "")),
+            group_options=tuple(primitives.get("group_options", []) or []),
+            selected_group_id=primitives.get("selected_group_id"),
             tags=tuple(primitives.get("tags", []) or []),
             selected_tags=tuple(primitives.get("selected_tags", []) or []),
             stats=primitives.get("stats"),
@@ -59,6 +65,8 @@ class HomeViewDto:
         stats: dict[str, Any],
         selected_lang_code: str,
         selected_tags: list[str],
+        groups: list[dict[str, Any]] | None = None,
+        selected_group_id: int | None = None,
     ) -> Self:
         """DTO de éxito."""
         # Marcar tags seleccionados
@@ -72,6 +80,8 @@ class HomeViewDto:
             ],
             "default_lang_code": LanguageCodeEnum.default().value,
             "selected_lang_code": selected_lang_code,
+            "group_options": groups or [],
+            "selected_group_id": selected_group_id,
             "selected_tags": selected_tags,
             "tags": tags,
             "stats": stats,

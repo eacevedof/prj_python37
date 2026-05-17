@@ -44,11 +44,13 @@ class StudyController(BaseController):
         self,
         lang_code: str,               # Parametro de sesion: idioma a practicar
         tags: list[str],              # Parametro de sesion: filtros de tags
+        group_id: int | None,         # Parametro de sesion: grupo de palabras
         route_on_back: Callable[[], None],  # Callback de navegacion (volver al home)
     ):
         # Parametros de sesion (inyectados desde app_router)
         self._lang_code = lang_code
         self._tags = tags
+        self._group_id = group_id
         self._route_on_back = route_on_back
 
         # Estado interno de sesion
@@ -98,6 +100,7 @@ class StudyController(BaseController):
                 "lang_code": self._lang_code,
                 "study_mode": "TYPING",
                 "tags": self._tags,
+                "group_id": self._group_id,
                 "limit": 20,
             })
 

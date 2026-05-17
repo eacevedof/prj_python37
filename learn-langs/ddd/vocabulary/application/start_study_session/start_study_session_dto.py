@@ -11,6 +11,7 @@ class StartStudySessionDto:
     lang_code: str
     study_mode: str = "TYPING"
     tags: list[str] = field(default_factory=list)
+    group_id: int | None = None
     limit: int = 20
 
     @classmethod
@@ -22,10 +23,14 @@ class StartStudySessionDto:
         except ValueError:
             study_mode = "TYPING"
 
+        group_id_raw = primitives.get("group_id")
+        group_id = int(group_id_raw) if group_id_raw is not None else None
+
         return cls(
             lang_code=str(primitives.get("lang_code", "")).strip(),
             study_mode=study_mode,
             tags=list(primitives.get("tags", []) or []),
+            group_id=group_id,
             limit=int(primitives.get("limit", 20)),
         )
 
