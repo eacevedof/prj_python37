@@ -21,8 +21,8 @@ class StartImageStudySessionService:
     """Servicio para iniciar una sesión de estudio con imágenes."""
 
     _start_image_study_session_dto: StartImageStudySessionDto
-    _metrics_reader: MetricsReaderSqliteRepository
-    _sessions_writer: SessionsWriterSqliteRepository
+    _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
+    _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -45,23 +45,23 @@ class StartImageStudySessionService:
             VocabularyException: Si no hay palabras con imágenes disponibles.
         """
         self._start_image_study_session_dto = dto
-        self._metrics_reader = MetricsReaderSqliteRepository.get_instance()
-        self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
         # Validar
         errors = dto.validate()
         if errors:
-            raise VocabularyException.word_creation_failed(", ".join(errors))
+            VocabularyException.word_creation_failed(", ".join(errors))
 
         # Obtener palabras con imágenes para repaso (SM-2 + filtro de imágenes)
-        words_data = await self._metrics_reader.get_words_with_images_for_review(
+        words_data = await self._metrics_reader_sqlite_repository.get_words_with_images_for_review(
             lang_code=dto.lang_code,
             tag_names=dto.tags if dto.tags else None,
             limit=dto.limit,
         )
 
         if not words_data:
-            raise VocabularyException.no_words_for_image_study(dto.lang_code)
+            VocabularyException.no_words_for_image_study(dto.lang_code)
 
         # Crear entidad de sesión
         study_session_entity = StudySessionEntity.from_primitives({
@@ -72,7 +72,7 @@ class StartImageStudySessionService:
         })
 
         # Crear sesión
-        session_id = await self._sessions_writer.create(study_session_entity)
+        session_id = await self._sessions_writer_sqlite_repository.create(study_session_entity)
 
         # Construir resultado
         return StartImageStudySessionResultDto.from_primitives({

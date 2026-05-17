@@ -25,7 +25,7 @@ class GenerateWordImageAiService:
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
         self._dalle_image_reader_repository = GptImage1ReaderRepository.get_instance()
-        self._images_writer_repository = ImagesWriterSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -74,7 +74,7 @@ class GenerateWordImageAiService:
             caption=generate_word_image_ai_dto.word_es,  # Solo español, sin revelar traducción
         )
 
-        word_img_entity = await self._images_writer_repository.save_image_bytes(
+        word_img_entity = await self._images_writer_sqlite_repository.save_image_bytes(
             word_image_entity,
             image_bytes
         )

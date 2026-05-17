@@ -15,7 +15,7 @@ class GetWordGroupsService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._groups_reader = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -31,7 +31,7 @@ class GetWordGroupsService:
             GetWordGroupsResultDto con la lista de grupos.
         """
         try:
-            groups = await self._groups_reader.get_all()
+            groups = await self._word_groups_reader_sqlite_repository.get_all()
             return GetWordGroupsResultDto.ok(groups)
 
         except Exception as e:

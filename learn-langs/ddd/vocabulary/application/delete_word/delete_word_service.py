@@ -20,19 +20,32 @@ from ddd.vocabulary.infrastructure.repositories import (
 class DeleteWordService:
     """Servicio para eliminar palabras con sus dependencias."""
 
+    _delete_word_dto: DeleteWordDto
+    _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
+    _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
+    _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
+    _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
+    _images_reader_sqlite_repository: ImagesReaderSqliteRepository
+    _images_writer_sqlite_repository: ImagesWriterSqliteRepository
+
     def __init__(self) -> None:
-        pass
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._images_reader_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: DeleteWordDto) -> DeleteWordResultDto:
+    async def __call__(self, delete_word_dto: DeleteWordDto) -> DeleteWordResultDto:
         """
         Elimina una palabra y todas sus dependencias.
 
         Args:
-            dto: Datos de la palabra a eliminar.
+            delete_word_dto: Datos de la palabra a eliminar.
 
         Returns:
             DeleteWordResultDto con el resultado.
@@ -40,46 +53,44 @@ class DeleteWordService:
         Raises:
             VocabularyException: Si la validacion falla o la palabra no existe.
         """
+        self._delete_word_dto = delete_word_dto
+
         # Validar DTO
-        errors = dto.validate()
+        errors = delete_word_dto.validate()
         if errors:
-            raise VocabularyException.word_delete_failed(", ".join(errors))
+            VocabularyException.word_delete_failed(", ".join(errors))
 
         # Verificar que exista
-        words_reader = WordsEsReaderSqliteRepository.get_instance()
-        word_data = await words_reader.get_by_id(dto.word_id)
+        word_data = await self._words_es_reader_sqlite_repository.get_by_id(delete_word_dto.word_id)
 
         if not word_data:
-            raise VocabularyException.word_not_found(dto.word_id)
+            VocabularyException.word_not_found(delete_word_dto.word_id)
 
         word_text = word_data["text"]
 
         # Contar y eliminar imagenes
-        images_reader = ImagesReaderSqliteRepository.get_instance()
-        images_count = await images_reader.count_by_word_id(dto.word_id)
-
-        images_writer = ImagesWriterSqliteRepository.get_instance()
-        await images_writer.delete_all_by_word(dto.word_id)
+        images_count = await self._images_reader_sqlite_repository.count_by_word_id(delete_word_dto.word_id)
+        await self._images_writer_sqlite_repository.delete_all_by_word(delete_word_dto.word_id)
 
         # Contar y eliminar traducciones
-        lang_reader = WordsLangReaderSqliteRepository.get_instance()
-        translations = await lang_reader.get_all_for_word(dto.word_id)
+        translations = await self._words_lang_reader_sqlite_repository.get_all_for_word(delete_word_dto.word_id)
         translations_count = len(translations)
 
-        lang_writer = WordsLangWriterSqliteRepository.get_instance()
         for translation in translations:
-            await lang_writer.delete_by_word_and_lang(dto.word_id, translation["lang_code"])
+            await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang(
+                delete_word_dto.word_id,
+                translation["lang_code"]
+            )
 
         # Eliminar tags asociados (la relacion, no los tags)
-        words_writer = WordsEsWriterSqliteRepository.get_instance()
-        await words_writer.set_tags(dto.word_id, [])  # Limpia todas las relaciones
+        await self._words_es_writer_sqlite_repository.set_tags(delete_word_dto.word_id, [])
 
         # Eliminar la palabra
         word_entity = WordEsEntity.from_primitives(word_data)
-        await words_writer.delete(word_entity)
+        await self._words_es_writer_sqlite_repository.delete(word_entity)
 
         return DeleteWordResultDto.from_primitives({
-            "word_id": dto.word_id,
+            "word_id": delete_word_dto.word_id,
             "text": word_text,
             "images_deleted": images_count,
             "translations_deleted": translations_count,

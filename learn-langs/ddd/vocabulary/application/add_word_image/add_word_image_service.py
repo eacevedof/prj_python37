@@ -22,7 +22,7 @@ class AddWordImageService:
     _instance: "AddWordImageService | None" = None
 
     def __init__(self) -> None:
-        self._images_writer = ImagesWriterSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -85,7 +85,7 @@ class AddWordImageService:
             original_url=dto.url,
         )
 
-        saved = await self._images_writer.save_image_bytes(entity, image_bytes)
+        saved = await self._images_writer_sqlite_repository.save_image_bytes(entity, image_bytes)
 
         return AddWordImageResultDto.ok(
             image_id=saved.id,
@@ -122,7 +122,7 @@ class AddWordImageService:
             original_filename=dto.filename,
         )
 
-        saved = await self._images_writer.save_image_bytes(entity, image_bytes)
+        saved = await self._images_writer_sqlite_repository.save_image_bytes(entity, image_bytes)
 
         return AddWordImageResultDto.ok(
             image_id=saved.id,

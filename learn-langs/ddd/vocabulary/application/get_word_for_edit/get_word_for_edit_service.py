@@ -24,9 +24,9 @@ class GetWordForEditService:
     _instance: "GetWordForEditService | None" = None
 
     def __init__(self) -> None:
-        self._words_reader = WordsEsReaderSqliteRepository.get_instance()
-        self._lang_reader = WordsLangReaderSqliteRepository.get_instance()
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository_sqlite_repository = TagsReaderSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -47,24 +47,24 @@ class GetWordForEditService:
         """
         try:
             # Cargar palabra
-            word_data = await self._words_reader.get_by_id(dto.word_id)
+            word_data = await self._words_es_reader_sqlite_repository.get_by_id(dto.word_id)
 
             if not word_data:
                 return GetWordForEditResultDto.not_found(dto.word_id)
 
             # Cargar traducciones
-            translations_raw = await self._lang_reader.get_all_for_word(dto.word_id)
+            translations_raw = await self._words_lang_reader_sqlite_repository.get_all_for_word(dto.word_id)
             translations = {
                 t["lang_code"]: t["text"]
                 for t in translations_raw
             }
 
             # Cargar tags de la palabra
-            word_tags = await self._words_reader.get_tags_for_word(dto.word_id)
+            word_tags = await self._words_es_reader_sqlite_repository.get_tags_for_word(dto.word_id)
             selected_tags = [t["name"] for t in word_tags]
 
             # Cargar tags disponibles
-            all_tags_raw = await self._tags_reader.get_all()
+            all_tags_raw = await self._tags_reader_sqlite_repository.get_all()
             available_tags = [TagDto.from_primitives(t) for t in all_tags_raw]
 
             return GetWordForEditResultDto.ok(

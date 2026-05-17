@@ -21,7 +21,7 @@ class FinishStudySessionService:
     _instance: "FinishStudySessionService | None" = None
 
     def __init__(self) -> None:
-        self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -50,7 +50,7 @@ class FinishStudySessionService:
                 "study_mode": dto.study_mode,
             })
 
-            await self._sessions_writer.finish(entity)
+            await self._sessions_writer_sqlite_repository.finish(entity)
 
             return FinishStudySessionResultDto.ok(dto.session_id)
 

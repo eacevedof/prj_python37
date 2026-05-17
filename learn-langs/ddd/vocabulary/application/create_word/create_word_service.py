@@ -20,12 +20,12 @@ class CreateWordService:
     """Servicio para crear palabras en español con traducciones y tags."""
 
     _create_word_dto: CreateWordDto
-    _words_es_reader: WordsEsReaderSqliteRepository
-    _words_es_writer: WordsEsWriterSqliteRepository
-    _words_lang_writer: WordsLangWriterSqliteRepository
-    _tags_reader: TagsReaderSqliteRepository
-    _groups_reader: WordGroupsReaderSqliteRepository
-    _groups_writer: WordGroupsWriterSqliteRepository
+    _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
+    _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
+    _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
+    _tags_reader_sqlite_repository: TagsReaderSqliteRepository
+    _word_groups_reader_sqlite_repository: WordGroupsReaderSqliteRepository
+    _word_groups_writer_sqlite_repository: WordGroupsWriterSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -48,22 +48,22 @@ class CreateWordService:
             VocabularyException: Si la validacion falla o la palabra ya existe.
         """
         self._create_word_dto = create_word_dto
-        self._words_es_reader = WordsEsReaderSqliteRepository.get_instance()
-        self._words_es_writer = WordsEsWriterSqliteRepository.get_instance()
-        self._words_lang_writer = WordsLangWriterSqliteRepository.get_instance()
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
-        self._groups_reader = WordGroupsReaderSqliteRepository.get_instance()
-        self._groups_writer = WordGroupsWriterSqliteRepository.get_instance()
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
 
         # Validar DTO
         errors = create_word_dto.validate()
         if errors:
-            raise VocabularyException.word_creation_failed(", ".join(errors))
+            VocabularyException.word_creation_failed(", ".join(errors))
 
         # Verificar que no exista
-        existing = await self._words_es_reader.get_by_text(create_word_dto.text)
+        existing = await self._words_es_reader_sqlite_repository.get_by_text(create_word_dto.text)
         if existing:
-            raise VocabularyException.word_already_exists(create_word_dto.text)
+            VocabularyException.word_already_exists(create_word_dto.text)
 
         # Crear entidad de palabra
         word_es_entity = WordEsEntity(
@@ -75,7 +75,7 @@ class CreateWordService:
         )
 
         # Crear palabra
-        word_id = await self._words_es_writer.create(word_es_entity)
+        word_id = await self._words_es_writer_sqlite_repository.create(word_es_entity)
 
         # Anadir tags
         tags_added = await self._add_tags(word_id, create_word_dto.tags)
@@ -104,9 +104,9 @@ class CreateWordService:
         added_tags: list[str] = []
 
         for tag_name in tag_names:
-            tag = await self._tags_reader.get_by_name(tag_name)
+            tag = await self._tags_reader_sqlite_repository.get_by_name(tag_name)
             if tag:
-                await self._words_es_writer.add_tag(word_id, tag["id"])
+                await self._words_es_writer_sqlite_repository.add_tag(word_id, tag["id"])
                 added_tags.append(tag_name)
 
         return added_tags
@@ -130,7 +130,7 @@ class CreateWordService:
                     lang_code=lang_code,
                     text=text.strip(),
                 )
-                await self._words_lang_writer.create(word_lang_entity)
+                await self._words_lang_writer_sqlite_repository.create(word_lang_entity)
                 added_translations[lang_code] = text.strip()
 
         return added_translations
@@ -142,10 +142,10 @@ class CreateWordService:
         """
         # Si no hay grupos especificados, usar "generic"
         if not group_ids:
-            generic_group = await self._groups_reader.get_by_title("generic")
+            generic_group = await self._word_groups_reader_sqlite_repository.get_by_title("generic")
             if generic_group:
                 group_ids = [generic_group["id"]]
 
         # Asociar grupos
         if group_ids:
-            await self._groups_writer.set_word_groups(word_id, group_ids)
+            await self._word_groups_writer_sqlite_repository.set_word_groups(word_id, group_ids)

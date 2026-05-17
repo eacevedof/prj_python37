@@ -23,8 +23,8 @@ class DeleteWordImageService:
     _instance: "DeleteWordImageService | None" = None
 
     def __init__(self) -> None:
-        self._images_reader = ImagesReaderSqliteRepository.get_instance()
-        self._images_writer = ImagesWriterSqliteRepository.get_instance()
+        self._images_reader_sqlite_repository_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -44,7 +44,7 @@ class DeleteWordImageService:
             DeleteWordImageResultDto con el resultado.
         """
         try:
-            image_data = await self._images_reader.get_by_id(dto.image_id)
+            image_data = await self._images_reader_sqlite_repository.get_by_id(dto.image_id)
 
             if not image_data:
                 return DeleteWordImageResultDto.error(
@@ -52,7 +52,7 @@ class DeleteWordImageService:
                 )
 
             entity = WordImageEntity.from_primitives(image_data)
-            await self._images_writer.hard_delete(entity)
+            await self._images_writer_sqlite_repository.hard_delete(entity)
 
             return DeleteWordImageResultDto.ok(dto.image_id)
 
