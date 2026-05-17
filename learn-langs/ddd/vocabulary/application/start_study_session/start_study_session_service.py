@@ -19,8 +19,8 @@ class StartStudySessionService:
     """Servicio para iniciar una sesión de estudio."""
 
     _start_study_session_dto: StartStudySessionDto
-    _metrics_reader: MetricsReaderSqliteRepository
-    _sessions_writer: SessionsWriterSqliteRepository
+    _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
+    _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -43,23 +43,23 @@ class StartStudySessionService:
             VocabularyException: Si no hay palabras disponibles.
         """
         self._start_study_session_dto = start_study_session_dto
-        self._metrics_reader = MetricsReaderSqliteRepository.get_instance()
-        self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
         # Validar
         errors = start_study_session_dto.validate()
         if errors:
-            raise VocabularyException.word_creation_failed(", ".join(errors))
+            VocabularyException.word_creation_failed(", ".join(errors))
 
         # Obtener palabras para repaso (SM-2)
-        words_data = await self._metrics_reader.get_words_for_review(
+        words_data = await self._metrics_reader_sqlite_repository.get_words_for_review(
             lang_code=start_study_session_dto.lang_code,
             tag_names=start_study_session_dto.tags if start_study_session_dto.tags else None,
             limit=start_study_session_dto.limit,
         )
 
         if not words_data:
-            raise VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
+            VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
 
         # Crear entidad de sesion
         study_session_entity = StudySessionEntity.from_primitives({
@@ -70,7 +70,7 @@ class StartStudySessionService:
         })
 
         # Crear sesión
-        session_id = await self._sessions_writer.create(study_session_entity)
+        session_id = await self._sessions_writer_sqlite_repository.create(study_session_entity)
 
         # Construir resultado
         return StartStudySessionResultDto.from_primitives({

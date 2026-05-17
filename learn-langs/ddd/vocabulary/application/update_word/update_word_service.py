@@ -21,11 +21,11 @@ class UpdateWordService:
     """Servicio para actualizar palabras en espanol con traducciones y tags."""
 
     _update_word_dto: UpdateWordDto
-    _words_es_reader: WordsEsReaderSqliteRepository
-    _words_es_writer: WordsEsWriterSqliteRepository
-    _words_lang_reader: WordsLangReaderSqliteRepository
-    _words_lang_writer: WordsLangWriterSqliteRepository
-    _tags_reader: TagsReaderSqliteRepository
+    _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
+    _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
+    _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
+    _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
+    _tags_reader_sqlite_repository: TagsReaderSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -48,27 +48,27 @@ class UpdateWordService:
             VocabularyException: Si la validacion falla o la palabra no existe.
         """
         self._update_word_dto = update_word_dto
-        self._words_es_reader = WordsEsReaderSqliteRepository.get_instance()
-        self._words_es_writer = WordsEsWriterSqliteRepository.get_instance()
-        self._words_lang_reader = WordsLangReaderSqliteRepository.get_instance()
-        self._words_lang_writer = WordsLangWriterSqliteRepository.get_instance()
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
 
         # Validar DTO
         errors = update_word_dto.validate()
         if errors:
-            raise VocabularyException.word_update_failed(", ".join(errors))
+            VocabularyException.word_update_failed(", ".join(errors))
 
         # Verificar que exista
-        existing = await self._words_es_reader.get_by_id(update_word_dto.word_id)
+        existing = await self._words_es_reader_sqlite_repository.get_by_id(update_word_dto.word_id)
         if not existing:
-            raise VocabularyException.word_not_found(update_word_dto.word_id)
+            VocabularyException.word_not_found(update_word_dto.word_id)
 
         # Verificar que el nuevo texto no exista en otra palabra
         if update_word_dto.text.lower() != existing["text"].lower():
-            duplicate = await self._words_es_reader.get_by_text(update_word_dto.text)
+            duplicate = await self._words_es_reader_sqlite_repository.get_by_text(update_word_dto.text)
             if duplicate and duplicate["id"] != update_word_dto.word_id:
-                raise VocabularyException.word_already_exists(update_word_dto.text)
+                VocabularyException.word_already_exists(update_word_dto.text)
 
         # Actualizar entidad de palabra
         word_es_entity = WordEsEntity(
@@ -79,7 +79,7 @@ class UpdateWordService:
             notes=update_word_dto.notes,
         )
 
-        await self._words_es_writer.update(word_es_entity)
+        await self._words_es_writer_sqlite_repository.update(word_es_entity)
 
         # Actualizar tags
         tags_updated = await self._update_tags(update_word_dto.word_id, update_word_dto.tags)
@@ -105,12 +105,12 @@ class UpdateWordService:
         updated_tags: list[str] = []
 
         for tag_name in tag_names:
-            tag = await self._tags_reader.get_by_name(tag_name)
+            tag = await self._tags_reader_sqlite_repository.get_by_name(tag_name)
             if tag:
                 tag_ids.append(tag["id"])
                 updated_tags.append(tag_name)
 
-        await self._words_es_writer.set_tags(word_id, tag_ids)
+        await self._words_es_writer_sqlite_repository.set_tags(word_id, tag_ids)
         return updated_tags
 
     async def _update_translations(
@@ -122,7 +122,7 @@ class UpdateWordService:
         updated_translations: dict[str, str] = {}
 
         for lang_code, text in translations.items():
-            existing_translation = await self._words_lang_reader.get_by_word_and_lang(
+            existing_translation = await self._words_lang_reader_sqlite_repository.get_by_word_and_lang(
                 word_id, lang_code
             )
 
@@ -138,7 +138,7 @@ class UpdateWordService:
                         audio_path=existing_translation.get("audio_path", ""),
                         notes=existing_translation.get("notes", ""),
                     )
-                    await self._words_lang_writer.update(word_lang_entity)
+                    await self._words_lang_writer_sqlite_repository.update(word_lang_entity)
                 else:
                     # Crear nueva traduccion
                     word_lang_entity = WordLangEntity(
@@ -147,11 +147,11 @@ class UpdateWordService:
                         lang_code=lang_code,
                         text=text.strip(),
                     )
-                    await self._words_lang_writer.create(word_lang_entity)
+                    await self._words_lang_writer_sqlite_repository.create(word_lang_entity)
 
                 updated_translations[lang_code] = text.strip()
             elif existing_translation:
                 # Eliminar traduccion si el texto esta vacio
-                await self._words_lang_writer.delete_by_word_and_lang(word_id, lang_code)
+                await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang(word_id, lang_code)
 
         return updated_translations

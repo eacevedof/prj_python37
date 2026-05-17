@@ -20,7 +20,7 @@ class GetWordImagesService:
     _instance: "GetWordImagesService | None" = None
 
     def __init__(self) -> None:
-        self._images_reader = ImagesReaderSqliteRepository.get_instance()
+        self._images_reader_sqlite_repository_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -40,7 +40,7 @@ class GetWordImagesService:
             GetWordImagesResultDto con la lista de imagenes.
         """
         try:
-            images_raw = await self._images_reader.get_by_word_id(dto.word_id)
+            images_raw = await self._images_reader_sqlite_repository.get_by_word_id(dto.word_id)
             images = [WordImageDto.from_primitives(img) for img in (images_raw or [])]
             return GetWordImagesResultDto.ok(images)
 

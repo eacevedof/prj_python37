@@ -20,8 +20,8 @@ class CreateWordGroupService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._groups_reader = WordGroupsReaderSqliteRepository.get_instance()
-        self._groups_writer = WordGroupsWriterSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -48,7 +48,7 @@ class CreateWordGroupService:
             return CreateWordGroupResultDto.error("; ".join(errors))
 
         # Verificar que no exista un grupo con el mismo título
-        existing = await self._groups_reader.get_by_title(create_word_group_dto.title)
+        existing = await self._word_groups_reader_sqlite_repository.get_by_title(create_word_group_dto.title)
         if existing:
             return CreateWordGroupResultDto.error(
                 f"A group with title '{create_word_group_dto.title}' already exists"
@@ -67,7 +67,7 @@ class CreateWordGroupService:
             return CreateWordGroupResultDto.error("; ".join(errors))
 
         # Crear en BD
-        result = await self._groups_writer.create(word_group_entity)
+        result = await self._word_groups_writer_sqlite_repository.create(word_group_entity)
 
         return CreateWordGroupResultDto.ok(
             group_id=result["id"],

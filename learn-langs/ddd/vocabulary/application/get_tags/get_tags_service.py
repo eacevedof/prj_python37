@@ -17,7 +17,7 @@ class GetTagsService:
     _instance: "GetTagsService | None" = None
 
     def __init__(self) -> None:
-        self._tags_reader = TagsReaderSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository_sqlite_repository = TagsReaderSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
 
     @classmethod
@@ -34,7 +34,7 @@ class GetTagsService:
             GetTagsResultDto con la lista de tags.
         """
         try:
-            tags_raw = await self._tags_reader.get_all()
+            tags_raw = await self._tags_reader_sqlite_repository.get_all()
             tags = [TagDto.from_primitives(t) for t in tags_raw]
             return GetTagsResultDto.ok(tags)
 

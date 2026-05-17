@@ -19,11 +19,11 @@ class RecordAnswerService:
     """Servicio para registrar respuestas y actualizar metricas SM-2."""
 
     _record_answer_dto: RecordAnswerDto
-    _sessions_reader: SessionsReaderSqliteRepository
-    _sessions_writer: SessionsWriterSqliteRepository
-    _metrics_reader: MetricsReaderSqliteRepository
-    _metrics_writer: MetricsWriterSqliteRepository
-    _answers_writer: AnswersWriterSqliteRepository
+    _sessions_reader_sqlite_repository: SessionsReaderSqliteRepository
+    _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
+    _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
+    _metrics_writer_sqlite_repository: MetricsWriterSqliteRepository
+    _answers_writer_sqlite_repository: AnswersWriterSqliteRepository
 
     def __init__(self) -> None:
         pass
@@ -46,24 +46,24 @@ class RecordAnswerService:
             VocabularyException: Si la sesion no existe o esta finalizada.
         """
         self._record_answer_dto = record_answer_dto
-        self._sessions_reader = SessionsReaderSqliteRepository.get_instance()
-        self._sessions_writer = SessionsWriterSqliteRepository.get_instance()
-        self._metrics_reader = MetricsReaderSqliteRepository.get_instance()
-        self._metrics_writer = MetricsWriterSqliteRepository.get_instance()
-        self._answers_writer = AnswersWriterSqliteRepository.get_instance()
+        self._sessions_reader_sqlite_repository = SessionsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._metrics_writer_sqlite_repository = MetricsWriterSqliteRepository.get_instance()
+        self._answers_writer_sqlite_repository = AnswersWriterSqliteRepository.get_instance()
 
         # Validar DTO
         errors = record_answer_dto.validate()
         if errors:
-            raise VocabularyException.word_creation_failed(", ".join(errors))
+            VocabularyException.word_creation_failed(", ".join(errors))
 
         # Verificar sesion
-        session = await self._sessions_reader.get_by_id(record_answer_dto.session_id)
+        session = await self._sessions_reader_sqlite_repository.get_by_id(record_answer_dto.session_id)
         if not session:
-            raise VocabularyException.session_not_found(record_answer_dto.session_id)
+            VocabularyException.session_not_found(record_answer_dto.session_id)
 
         if session.get("finished_at"):
-            raise VocabularyException.session_already_finished(record_answer_dto.session_id)
+            VocabularyException.session_already_finished(record_answer_dto.session_id)
 
         # Calcular score
         score = ScoreCalculatorService.calculate(
@@ -73,7 +73,7 @@ class RecordAnswerService:
 
         # Obtener metricas actuales
         lang_code = session["lang_code"]
-        current_metrics = await self._metrics_reader.get_by_word_and_lang(
+        current_metrics = await self._metrics_reader_sqlite_repository.get_by_word_and_lang(
             record_answer_dto.word_es_id, lang_code
         )
 
@@ -106,7 +106,7 @@ class RecordAnswerService:
         )
 
         # Guardar metricas
-        await self._metrics_writer.create_or_update(word_metric_entity)
+        await self._metrics_writer_sqlite_repository.create_or_update(word_metric_entity)
 
         # Crear entidad de respuesta
         session_answer_entity = SessionAnswerEntity(
@@ -120,7 +120,7 @@ class RecordAnswerService:
         )
 
         # Guardar respuesta
-        answer_id = await self._answers_writer.create(session_answer_entity)
+        answer_id = await self._answers_writer_sqlite_repository.create(session_answer_entity)
 
         # Actualizar progreso de sesion
         await self._update_session_progress(record_answer_dto.session_id)
@@ -147,7 +147,7 @@ class RecordAnswerService:
         summary = await answers_reader.get_session_summary(session_id)
 
         # Leer sesion actual
-        session_data = await self._sessions_reader.get_by_id(session_id)
+        session_data = await self._sessions_reader_sqlite_repository.get_by_id(session_id)
         if not session_data:
             return
 
@@ -163,4 +163,4 @@ class RecordAnswerService:
             "average_score": round(average_score, 2),
         })
 
-        await self._sessions_writer.update(study_session_entity)
+        await self._sessions_writer_sqlite_repository.update(study_session_entity)
