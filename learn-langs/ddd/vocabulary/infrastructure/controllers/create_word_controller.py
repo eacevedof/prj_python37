@@ -92,7 +92,7 @@ class CreateWordController(BaseController):
                 ]
 
             generic_group_ids = [
-                av_group["id"] for av_group in self._available_groups if av_group["title"] == "generic"
+                word_group["id"] for word_group in self._available_groups if word_group["title"] == "generic"
             ]
 
             self._ft_container.render(
@@ -110,7 +110,7 @@ class CreateWordController(BaseController):
             )
             # Encontrar ID del grupo "generic" para pre-seleccionarlo
             generic_group_ids = [
-                g["id"] for g in self._available_groups if g["title"] == "generic"
+                word_group["id"] for word_group in self._available_groups if word_group["title"] == "generic"
             ]
             self._ft_container.render(
                 CreateWordViewDto.empty(
