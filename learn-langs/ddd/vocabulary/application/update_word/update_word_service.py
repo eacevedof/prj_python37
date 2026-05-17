@@ -28,13 +28,20 @@ class UpdateWordService:
     _tags_reader_sqlite_repository: TagsReaderSqliteRepository
 
     def __init__(self) -> None:
-        pass
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, update_word_dto: UpdateWordDto) -> UpdateWordResultDto:
+    async def __call__(
+        self,
+        update_word_dto: UpdateWordDto
+    ) -> UpdateWordResultDto:
         """
         Actualiza una palabra existente con sus traducciones y tags.
 
@@ -48,11 +55,6 @@ class UpdateWordService:
             VocabularyException: Si la validacion falla o la palabra no existe.
         """
         self._update_word_dto = update_word_dto
-        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
-        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
-        self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
-        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
-        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
 
         # Validar DTO
         errors = update_word_dto.validate()
@@ -70,16 +72,15 @@ class UpdateWordService:
             if duplicate and duplicate["id"] != update_word_dto.word_id:
                 VocabularyException.word_already_exists(update_word_dto.text)
 
-        # Actualizar entidad de palabra
-        word_es_entity = WordEsEntity(
-            id=update_word_dto.word_id,
-            text=update_word_dto.text,
-            word_type=WordTypeEnum(update_word_dto.word_type),
-            image_path=existing.get("image_path", ""),
-            notes=update_word_dto.notes,
+        await self._words_es_writer_sqlite_repository.update_word_es(
+            WordEsEntity(
+                id=update_word_dto.word_id,
+                text=update_word_dto.text,
+                word_type=WordTypeEnum(update_word_dto.word_type),
+                image_path=existing.get("image_path", ""),
+                notes=update_word_dto.notes,
+            )
         )
-
-        await self._words_es_writer_sqlite_repository.update_word_es(word_es_entity)
 
         # Actualizar tags
         tags_updated = await self._update_tags(update_word_dto.word_id, update_word_dto.tags)

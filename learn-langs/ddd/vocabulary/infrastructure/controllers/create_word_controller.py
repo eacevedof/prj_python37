@@ -42,7 +42,6 @@ class CreateWordController(BaseController):
         self._route_on_back = route_on_back
 
         self._logger = Logger.get_instance()
-        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
         self._create_word_service = CreateWordService.get_instance()
         self._get_tags_service = GetTagsService.get_instance()
         self._get_word_groups_service = GetWordGroupsService.get_instance()
@@ -79,21 +78,19 @@ class CreateWordController(BaseController):
         """Carga tags, grupos y renderiza formulario vacio."""
         try:
             # Cargar tags via servicio
-            tags_result = await _tags_reader_sqlite_repository
+            tag_result = await self._get_tags_service()
             self._available_tags = []
-            if tags_result.success:
-                self._available_tags = tags_result.to_list_of_dicts()
+            if tag_result.success:
+                self._available_tags = list(tag_result.tags)
 
-            # Cargar grupos via servicio
-            groups_result = await self._get_word_groups_service()
+            word_group_result = await self._get_word_groups_service()
             self._available_groups = []
-            if groups_result.success:
+            if word_group_result.success:
                 self._available_groups = [
-                    {"id": g.id, "title": g.title, "description": g.description}
-                    for g in groups_result.groups
+                    {"id": word_group.id, "title": word_group.title, "description": word_group.description}
+                    for word_group in word_group_result.groups
                 ]
 
-            # Encontrar ID del grupo "generic" para pre-seleccionarlo
             generic_group_ids = [
                 av_group["id"] for av_group in self._available_groups if av_group["title"] == "generic"
             ]

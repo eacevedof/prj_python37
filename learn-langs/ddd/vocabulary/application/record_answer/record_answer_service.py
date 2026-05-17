@@ -3,15 +3,16 @@ from typing import final, Self
 from ddd.vocabulary.application.record_answer.record_answer_dto import RecordAnswerDto
 from ddd.vocabulary.application.record_answer.record_answer_result_dto import RecordAnswerResultDto
 from ddd.vocabulary.domain.entities import WordMetricEntity, SessionAnswerEntity, StudySessionEntity
-from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.domain.services import ScoreCalculatorService, SpacedRepetitionService
 from ddd.vocabulary.infrastructure.repositories import (
     SessionsReaderSqliteRepository,
     MetricsReaderSqliteRepository,
     MetricsWriterSqliteRepository,
+    AnswersReaderSqliteRepository,
     AnswersWriterSqliteRepository,
     SessionsWriterSqliteRepository,
 )
+from ddd.vocabulary.domain.exceptions import VocabularyException
 
 
 @final
@@ -23,6 +24,7 @@ class RecordAnswerService:
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
     _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
     _metrics_writer_sqlite_repository: MetricsWriterSqliteRepository
+    _answers_reader_sqlite_repository: AnswersReaderSqliteRepository
     _answers_writer_sqlite_repository: AnswersWriterSqliteRepository
 
     def __init__(self) -> None:
@@ -30,6 +32,7 @@ class RecordAnswerService:
         self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
         self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
         self._metrics_writer_sqlite_repository = MetricsWriterSqliteRepository.get_instance()
+        self._answers_reader_sqlite_repository = AnswersReaderSqliteRepository.get_instance()
         self._answers_writer_sqlite_repository = AnswersWriterSqliteRepository.get_instance()
 
     @classmethod
@@ -57,7 +60,7 @@ class RecordAnswerService:
             VocabularyException.word_creation_failed(", ".join(errors))
 
         # Verificar sesion
-        session = await self._sessions_reader_sqlite_repository.get_by_id(record_answer_dto.session_id)
+        session = await self._sessions_reader_sqlite_repository.get_study_session_by_study_session_id(record_answer_dto.session_id)
         if not session:
             VocabularyException.session_not_found(record_answer_dto.session_id)
 
@@ -140,13 +143,10 @@ class RecordAnswerService:
 
     async def _update_session_progress(self, session_id: int) -> None:
         """Actualiza el progreso de la sesion con las respuestas actuales."""
-        from ddd.vocabulary.infrastructure.repositories import AnswersReaderSqliteRepository
-
-        answers_reader = AnswersReaderSqliteRepository.get_instance()
-        summary = await answers_reader.get_session_summary(session_id)
+        summary = await self._answers_reader_sqlite_repository.get_session_summary(session_id)
 
         # Leer sesion actual
-        session_data = await self._sessions_reader_sqlite_repository.get_by_id(session_id)
+        session_data = await self._sessions_reader_sqlite_repository.get_study_session_by_study_session_id(session_id)
         if not session_data:
             return
 

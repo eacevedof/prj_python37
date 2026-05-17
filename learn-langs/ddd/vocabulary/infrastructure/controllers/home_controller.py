@@ -88,15 +88,8 @@ class HomeController(BaseController):
 
             self._ft_container.render(
                 HomeViewDto.ok(
-                    tags=[
-                        {"id": lang_tag.id, "name": lang_tag.name, "color": lang_tag.color}
-                        for lang_tag in load_home_result_dto.tags
-                    ],
-                    stats={
-                        "total_words": load_home_result_dto.stats.total_words,
-                        "due_for_review": load_home_result_dto.stats.due_for_review,
-                        "avg_score": load_home_result_dto.stats.avg_score,
-                    },
+                    tags=list(load_home_result_dto.tags),
+                    stats=load_home_result_dto.stats,
                     selected_lang_code=str(self._selected_lang),
                     selected_tags=self._selected_tags,
                 )

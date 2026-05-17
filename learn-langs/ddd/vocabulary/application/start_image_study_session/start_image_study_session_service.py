@@ -32,7 +32,10 @@ class StartImageStudySessionService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, start_image_study_session_dto: StartImageStudySessionDto) -> StartImageStudySessionResultDto:
+    async def __call__(
+        self,
+        start_image_study_session_dto: StartImageStudySessionDto
+    ) -> StartImageStudySessionResultDto:
         """
         Inicia una nueva sesión de estudio con imágenes.
 
@@ -60,18 +63,19 @@ class StartImageStudySessionService:
         )
 
         if not words_data:
-            VocabularyException.no_words_for_image_study(start_image_study_session_dto.lang_code)
-
-        # Crear entidad de sesión
-        study_session_entity = StudySessionEntity.from_primitives({
-            "id": 0,
-            "lang_code": start_image_study_session_dto.lang_code,
-            "study_mode": StudyModeEnum.IMAGE_TYPING.value,
-            "tags_filter": start_image_study_session_dto.tags if start_image_study_session_dto.tags else [],
-        })
+            VocabularyException.no_words_for_image_study(
+                start_image_study_session_dto.lang_code
+            )
 
         # Crear sesión
-        session_id = await self._sessions_writer_sqlite_repository.create(study_session_entity)
+        session_id = await self._sessions_writer_sqlite_repository.create_study_session(
+            StudySessionEntity.from_primitives({
+                "id": 0,
+                "lang_code": start_image_study_session_dto.lang_code,
+                "study_mode": StudyModeEnum.IMAGE_TYPING.value,
+                "tags_filter": start_image_study_session_dto.tags if start_image_study_session_dto.tags else [],
+            })
+        )
 
         # Construir resultado
         return StartImageStudySessionResultDto.from_primitives({

@@ -19,7 +19,7 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
     def get_instance(cls) -> Self:
         return cls()
 
-    async def create(self, study_session_entity: StudySessionEntity) -> int:
+    async def create_study_session(self, study_session_entity: StudySessionEntity) -> int:
         """Crea una nueva sesión de estudio y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         tags_json = json.dumps(study_session_entity.tags_filter) if study_session_entity.tags_filter else None

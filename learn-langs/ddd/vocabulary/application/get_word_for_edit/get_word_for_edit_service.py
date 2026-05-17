@@ -3,7 +3,6 @@
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.vocabulary.application.get_tags.get_tags_result_dto import TagDto
 from ddd.vocabulary.application.get_word_for_edit.get_word_for_edit_dto import (
     GetWordForEditDto,
 )
@@ -24,10 +23,10 @@ class GetWordForEditService:
     _instance: "GetWordForEditService | None" = None
 
     def __init__(self) -> None:
+        self._logger = Logger.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
         self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
         self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
-        self._tags_reader_sqlite_repository_sqlite_repository = TagsReaderSqliteRepository.get_instance()
-        self._logger = Logger.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -35,52 +34,43 @@ class GetWordForEditService:
             cls._instance = cls()
         return cls._instance
 
-    async def __call__(self, dto: GetWordForEditDto) -> GetWordForEditResultDto:
+    async def __call__(self, get_word_for_edit_dto: GetWordForEditDto) -> GetWordForEditResultDto:
         """
         Obtiene todos los datos necesarios para editar una palabra.
 
         Args:
-            dto: DTO con el word_id.
+            get_word_for_edit_dto: DTO con el word_id.
 
         Returns:
             GetWordForEditResultDto con datos de la palabra, traducciones y tags.
         """
-        try:
-            # Cargar palabra
-            word_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(dto.word_id)
+        # Cargar palabra
+        word_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(
+            get_word_for_edit_dto.word_id
+        )
+        if not word_data:
+            return GetWordForEditResultDto.not_found(get_word_for_edit_dto.word_id)
 
-            if not word_data:
-                return GetWordForEditResultDto.not_found(dto.word_id)
+        # Cargar traducciones
+        translations_raw = await self._words_lang_reader_sqlite_repository.get_all_for_word(get_word_for_edit_dto.word_id)
+        translations = {
+            t["lang_code"]: t["text"]
+            for t in translations_raw
+        }
 
-            # Cargar traducciones
-            translations_raw = await self._words_lang_reader_sqlite_repository.get_all_for_word(dto.word_id)
-            translations = {
-                t["lang_code"]: t["text"]
-                for t in translations_raw
-            }
+        # Cargar tags de la palabra
+        word_tags = await self._words_es_reader_sqlite_repository.get_word_es_tags_by_word_es_id(get_word_for_edit_dto.word_id)
+        selected_tags = [word_tag["name"] for word_tag in word_tags]
 
-            # Cargar tags de la palabra
-            word_tags = await self._words_es_reader_sqlite_repository.get_word_es_tags_by_word_es_id(dto.word_id)
-            selected_tags = [t["name"] for t in word_tags]
+        # Cargar tags disponibles
+        all_tags_raw = await self._words_es_reader_sqlite_repository.get_filtered_words_es()
 
-            # Cargar tags disponibles
-            all_tags_raw = await self._tags_reader_sqlite_repository.get_filtered_words_es()
-            available_tags = [TagDto.from_primitives(t) for t in all_tags_raw]
-
-            return GetWordForEditResultDto.ok(
-                word_id=dto.word_id,
-                text=word_data.get("text", ""),
-                word_type=word_data.get("word_type", "WORD"),
-                notes=word_data.get("notes", "") or "",
-                translations=translations,
-                selected_tags=selected_tags,
-                available_tags=available_tags,
-            )
-
-        except Exception as e:
-            self._logger.log_error(
-                "GetWordForEditService",
-                f"Error obteniendo palabra para editar: {e}",
-                {"word_id": dto.word_id},
-            )
-            return GetWordForEditResultDto.error(str(e))
+        return GetWordForEditResultDto.ok(
+            word_id=get_word_for_edit_dto.word_id,
+            text=word_data.get("text", ""),
+            word_type=word_data.get("word_type", "WORD"),
+            notes=word_data.get("notes", "") or "",
+            translations=translations,
+            selected_tags=selected_tags,
+            available_tags=all_tags_raw,
+        )

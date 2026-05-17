@@ -228,7 +228,7 @@ class ListWordsController(BaseController):
             )
 
             if result.success:
-                self._display_images_dialog(word, result.to_list_of_dicts())
+                self._display_images_dialog(word, list(result.images))
             else:
                 self._ft_container.show_snackbar(
                     result.error_message or "Error cargando imagenes",
@@ -304,7 +304,7 @@ class ListWordsController(BaseController):
         )
 
         if result.success:
-            self._render_images_list(result.to_list_of_dicts())
+            self._render_images_list(list(result.images))
             self._ft_container.page.update()
 
     def _display_images_dialog(
