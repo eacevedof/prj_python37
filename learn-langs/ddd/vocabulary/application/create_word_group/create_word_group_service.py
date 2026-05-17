@@ -66,12 +66,11 @@ class CreateWordGroupService:
         if errors:
             return CreateWordGroupResultDto.error("; ".join(errors))
 
-        # Crear en BD
-        result = await self._word_groups_writer_sqlite_repository.create(word_group_entity)
+        word_group_created = await self._word_groups_writer_sqlite_repository.create(word_group_entity)
 
         return CreateWordGroupResultDto.ok(
-            group_id=result["id"],
-            title=result["title"],
-            description=result.get("description", ""),
+            group_id=word_group_created["id"],
+            title=word_group_created["title"],
+            description=word_group_created.get("description", ""),
         )
 

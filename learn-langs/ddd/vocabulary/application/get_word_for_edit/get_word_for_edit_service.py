@@ -47,7 +47,7 @@ class GetWordForEditService:
         """
         try:
             # Cargar palabra
-            word_data = await self._words_es_reader_sqlite_repository.get_by_id(dto.word_id)
+            word_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(dto.word_id)
 
             if not word_data:
                 return GetWordForEditResultDto.not_found(dto.word_id)
@@ -60,11 +60,11 @@ class GetWordForEditService:
             }
 
             # Cargar tags de la palabra
-            word_tags = await self._words_es_reader_sqlite_repository.get_tags_for_word(dto.word_id)
+            word_tags = await self._words_es_reader_sqlite_repository.get_word_es_tags_by_word_es_id(dto.word_id)
             selected_tags = [t["name"] for t in word_tags]
 
             # Cargar tags disponibles
-            all_tags_raw = await self._tags_reader_sqlite_repository.get_all()
+            all_tags_raw = await self._tags_reader_sqlite_repository.get_filtered_words_es()
             available_tags = [TagDto.from_primitives(t) for t in all_tags_raw]
 
             return GetWordForEditResultDto.ok(

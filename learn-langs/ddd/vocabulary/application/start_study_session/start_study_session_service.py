@@ -23,7 +23,8 @@ class StartStudySessionService:
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
     def __init__(self) -> None:
-        pass
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -43,8 +44,6 @@ class StartStudySessionService:
             VocabularyException: Si no hay palabras disponibles.
         """
         self._start_study_session_dto = start_study_session_dto
-        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
-        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
         # Validar
         errors = start_study_session_dto.validate()

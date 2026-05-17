@@ -25,18 +25,19 @@ class StartImageStudySessionService:
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
     def __init__(self) -> None:
-        pass
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: StartImageStudySessionDto) -> StartImageStudySessionResultDto:
+    async def __call__(self, start_image_study_session_dto: StartImageStudySessionDto) -> StartImageStudySessionResultDto:
         """
         Inicia una nueva sesión de estudio con imágenes.
 
         Args:
-            dto: Configuración de la sesión.
+            start_image_study_session_dto: Configuración de la sesión.
 
         Returns:
             StartImageStudySessionResultDto con la sesión y palabras con imágenes.
@@ -44,31 +45,29 @@ class StartImageStudySessionService:
         Raises:
             VocabularyException: Si no hay palabras con imágenes disponibles.
         """
-        self._start_image_study_session_dto = dto
-        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
-        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
+        self._start_image_study_session_dto = start_image_study_session_dto
 
         # Validar
-        errors = dto.validate()
+        errors = start_image_study_session_dto.validate()
         if errors:
             VocabularyException.word_creation_failed(", ".join(errors))
 
         # Obtener palabras con imágenes para repaso (SM-2 + filtro de imágenes)
         words_data = await self._metrics_reader_sqlite_repository.get_words_with_images_for_review(
-            lang_code=dto.lang_code,
-            tag_names=dto.tags if dto.tags else None,
-            limit=dto.limit,
+            lang_code=start_image_study_session_dto.lang_code,
+            tag_names=start_image_study_session_dto.tags if start_image_study_session_dto.tags else None,
+            limit=start_image_study_session_dto.limit,
         )
 
         if not words_data:
-            VocabularyException.no_words_for_image_study(dto.lang_code)
+            VocabularyException.no_words_for_image_study(start_image_study_session_dto.lang_code)
 
         # Crear entidad de sesión
         study_session_entity = StudySessionEntity.from_primitives({
             "id": 0,
-            "lang_code": dto.lang_code,
+            "lang_code": start_image_study_session_dto.lang_code,
             "study_mode": StudyModeEnum.IMAGE_TYPING.value,
-            "tags_filter": dto.tags if dto.tags else [],
+            "tags_filter": start_image_study_session_dto.tags if start_image_study_session_dto.tags else [],
         })
 
         # Crear sesión
@@ -77,9 +76,9 @@ class StartImageStudySessionService:
         # Construir resultado
         return StartImageStudySessionResultDto.from_primitives({
             "session_id": session_id,
-            "lang_code": dto.lang_code,
+            "lang_code": start_image_study_session_dto.lang_code,
             "study_mode": StudyModeEnum.IMAGE_TYPING.value,
             "started_at": "",
             "words": words_data,
-            "tags_filter": dto.tags,
+            "tags_filter": start_image_study_session_dto.tags,
         })

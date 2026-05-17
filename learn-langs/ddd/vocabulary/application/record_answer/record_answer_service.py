@@ -26,7 +26,11 @@ class RecordAnswerService:
     _answers_writer_sqlite_repository: AnswersWriterSqliteRepository
 
     def __init__(self) -> None:
-        pass
+        self._sessions_reader_sqlite_repository = SessionsReaderSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
+        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
+        self._metrics_writer_sqlite_repository = MetricsWriterSqliteRepository.get_instance()
+        self._answers_writer_sqlite_repository = AnswersWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -46,11 +50,6 @@ class RecordAnswerService:
             VocabularyException: Si la sesion no existe o esta finalizada.
         """
         self._record_answer_dto = record_answer_dto
-        self._sessions_reader_sqlite_repository = SessionsReaderSqliteRepository.get_instance()
-        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
-        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
-        self._metrics_writer_sqlite_repository = MetricsWriterSqliteRepository.get_instance()
-        self._answers_writer_sqlite_repository = AnswersWriterSqliteRepository.get_instance()
 
         # Validar DTO
         errors = record_answer_dto.validate()

@@ -53,7 +53,7 @@ class AddWordIaImageService:
             AddWordIaImageResultDto con el resultado.
         """
         # Obtener palabra en español
-        word_es_data = await self._words_es_reader_sqlite_repository.get_by_id(add_word_ia_dto.word_id)
+        word_es_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(add_word_ia_dto.word_id)
         if not word_es_data:
             return AddWordIaImageResultDto.error(
                 f"Palabra con ID {add_word_ia_dto.word_id} no encontrada"

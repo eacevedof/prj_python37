@@ -60,13 +60,13 @@ class UpdateWordService:
             VocabularyException.word_update_failed(", ".join(errors))
 
         # Verificar que exista
-        existing = await self._words_es_reader_sqlite_repository.get_by_id(update_word_dto.word_id)
+        existing = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(update_word_dto.word_id)
         if not existing:
             VocabularyException.word_not_found(update_word_dto.word_id)
 
         # Verificar que el nuevo texto no exista en otra palabra
         if update_word_dto.text.lower() != existing["text"].lower():
-            duplicate = await self._words_es_reader_sqlite_repository.get_by_text(update_word_dto.text)
+            duplicate = await self._words_es_reader_sqlite_repository.get_word_es_by_text(update_word_dto.text)
             if duplicate and duplicate["id"] != update_word_dto.word_id:
                 VocabularyException.word_already_exists(update_word_dto.text)
 

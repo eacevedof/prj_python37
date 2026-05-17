@@ -28,7 +28,12 @@ class CreateWordService:
     _word_groups_writer_sqlite_repository: WordGroupsWriterSqliteRepository
 
     def __init__(self) -> None:
-        pass
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -48,12 +53,6 @@ class CreateWordService:
             VocabularyException: Si la validacion falla o la palabra ya existe.
         """
         self._create_word_dto = create_word_dto
-        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
-        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
-        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
-        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
-        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
-        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
 
         # Validar DTO
         errors = create_word_dto.validate()
@@ -61,7 +60,7 @@ class CreateWordService:
             VocabularyException.word_creation_failed(", ".join(errors))
 
         # Verificar que no exista
-        existing = await self._words_es_reader_sqlite_repository.get_by_text(create_word_dto.text)
+        existing = await self._words_es_reader_sqlite_repository.get_word_es_by_text(create_word_dto.text)
         if existing:
             VocabularyException.word_already_exists(create_word_dto.text)
 

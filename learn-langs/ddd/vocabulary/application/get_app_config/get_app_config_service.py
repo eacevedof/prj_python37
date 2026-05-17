@@ -14,9 +14,10 @@ class GetAppConfigService:
 
     _instance: "GetAppConfigService | None" = None
     _cached_config: GetAppConfigResultDto | None = None
+    _app_config_reader_raw_repository: AppConfigReaderRawRepository
 
     def __init__(self) -> None:
-        pass
+        self._app_config_reader_raw_repository = AppConfigReaderRawRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -35,8 +36,7 @@ class GetAppConfigService:
         if self._cached_config is not None:
             return self._cached_config
 
-        repository = AppConfigReaderRawRepository.get_instance()
-        config_data = repository.get_all()
+        config_data = self._app_config_reader_raw_repository.get_all()
 
         self._cached_config = GetAppConfigResultDto.from_primitives(config_data)
         return self._cached_config

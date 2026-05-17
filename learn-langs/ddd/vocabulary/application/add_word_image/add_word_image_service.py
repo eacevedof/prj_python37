@@ -22,8 +22,8 @@ class AddWordImageService:
     _instance: "AddWordImageService | None" = None
 
     def __init__(self) -> None:
-        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
         self._logger = Logger.get_instance()
+        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
