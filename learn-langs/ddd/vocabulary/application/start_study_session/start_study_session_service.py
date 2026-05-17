@@ -60,16 +60,15 @@ class StartStudySessionService:
         if not words_data:
             VocabularyException.no_words_for_study(start_study_session_dto.lang_code)
 
-        # Crear entidad de sesion
-        study_session_entity = StudySessionEntity.from_primitives({
-            "id": 0,
-            "lang_code": start_study_session_dto.lang_code,
-            "study_mode": start_study_session_dto.study_mode,
-            "tags_filter": start_study_session_dto.tags if start_study_session_dto.tags else [],
-        })
-
         # Crear sesión
-        session_id = await self._sessions_writer_sqlite_repository.create(study_session_entity)
+        session_id = await self._sessions_writer_sqlite_repository.create_study_session(
+            StudySessionEntity.from_primitives({
+                "id": 0,
+                "lang_code": start_study_session_dto.lang_code,
+                "study_mode": start_study_session_dto.study_mode,
+                "tags_filter": start_study_session_dto.tags if start_study_session_dto.tags else [],
+            })
+        )
 
         # Construir resultado
         return StartStudySessionResultDto.from_primitives({

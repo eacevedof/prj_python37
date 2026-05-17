@@ -3,11 +3,7 @@
 from typing import final, Self
 
 from ddd.vocabulary.application.load_home.load_home_dto import LoadHomeDto
-from ddd.vocabulary.application.load_home.load_home_result_dto import (
-    LoadHomeResultDto,
-    TagItemDto,
-    StatsDto,
-)
+from ddd.vocabulary.application.load_home.load_home_result_dto import LoadHomeResultDto
 from ddd.vocabulary.infrastructure.repositories import (
     TagsReaderSqliteRepository,
     MetricsReaderSqliteRepository,
@@ -48,16 +44,15 @@ class LoadHomeService:
 
         # Cargar tags
         tags_raw = await self._tags_reader_sqlite_repository.get_all_tags()
-        tags = [TagItemDto.from_primitives(t) for t in tags_raw]
 
         # Cargar estadísticas
         stats_raw = await self._metrics_reader_sqlite_repository.get_stats_for_lang(load_home_dto.lang_code)
         total_words = await self._words_es_reader_sqlite_repository.get_total_words_es_by_word_type()
 
-        stats = StatsDto.from_primitives({
+        stats = {
             "total_words": total_words,
             "due_for_review": stats_raw.get("due_for_review", 0),
             "avg_score": stats_raw.get("avg_score", 0.0),
-        })
+        }
 
-        return LoadHomeResultDto.ok(tags=tags, stats=stats)
+        return LoadHomeResultDto.from_primitives({"tags": tags_raw, "stats": stats})

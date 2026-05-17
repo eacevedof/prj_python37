@@ -16,10 +16,11 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
     def get_instance(cls) -> Self:
         return cls()
 
-    async def get_by_id(self, session_id: int) -> dict | None:
+    async def get_study_session_by_study_session_id(self, session_id: int) -> dict | None:
         """Obtiene una sesión por su ID."""
         return await self._query_one(
             f"""
+            -- get_study_session_by_study_session_id
             SELECT id, lang_code, study_mode, started_at, finished_at,
                    total_words, total_score, average_score, tags_filter
             FROM study_sessions
@@ -28,11 +29,12 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
             """,
         )
 
-    async def get_active_session(self, lang_code: str | None = None) -> dict | None:
+    async def get_active_study_sessions_by_lang_code(self, lang_code: str | None = None) -> dict | None:
         """Obtiene la sesión activa (sin finalizar)."""
         if lang_code:
             return await self._query_one(
                 """
+                -- get_active_study_sessions_by_lang_code 1
                 SELECT id, lang_code, study_mode, started_at, finished_at,
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
@@ -47,6 +49,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
         else:
             return await self._query_one(
                 """
+                -- get_active_study_sessions_by_lang_code 2
                 SELECT id, lang_code, study_mode, started_at, finished_at,
                        total_words, total_score, average_score, tags_filter
                 FROM study_sessions
@@ -57,7 +60,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 """,
             )
 
-    async def get_recent_sessions(
+    async def get_recent_sessions_by_lang_code(
         self,
         lang_code: str | None = None,
         limit: int = 10,
@@ -66,8 +69,10 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
         if lang_code:
             return await self._query(
                 """
-                SELECT id, lang_code, study_mode, started_at, finished_at,
-                       total_words, total_score, average_score, tags_filter
+                -- get_recent_sessions_by_lang_code
+                SELECT
+                    id, lang_code, study_mode, started_at, finished_at, total_words,
+                    total_score, average_score, tags_filter
                 FROM study_sessions
                 WHERE 1=1
                 AND lang_code = ?
@@ -79,15 +84,18 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
         else:
             return await self._query(
                 """
-                SELECT id, lang_code, study_mode, started_at, finished_at,
-                       total_words, total_score, average_score, tags_filter
+                -- get_recent_sessions_by_lang_code
+                SELECT
+                    id, lang_code, study_mode, started_at, finished_at, total_words,
+                    total_score, average_score, tags_filter
                 FROM study_sessions
+                WHERE 1=1
                 ORDER BY started_at DESC
                 LIMIT {limit}
                 """,
             )
 
-    async def get_stats(
+    async def get_study_sessions_stats_by_lang_code(
         self,
         lang_code: str | None = None,
         days: int = 30,
@@ -96,6 +104,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
         if lang_code:
             result = await self._query_one(
                 """
+                -- get_study_sessions_stats_by_lang_code 1
                 SELECT
                     COUNT(*) as total_sessions,
                     SUM(total_words) as total_words_studied,
@@ -111,6 +120,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
         else:
             result = await self._query_one(
                 """
+                -- get_study_sessions_stats_by_lang_code 2
                 SELECT
                     COUNT(*) as total_sessions,
                     SUM(total_words) as total_words_studied,
