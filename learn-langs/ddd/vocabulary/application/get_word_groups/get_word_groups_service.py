@@ -31,7 +31,7 @@ class GetWordGroupsService:
             GetWordGroupsResultDto con la lista de grupos.
         """
         try:
-            groups = await self._word_groups_reader_sqlite_repository.get_all()
+            groups = await self._word_groups_reader_sqlite_repository.get_all_word_groups()
             return GetWordGroupsResultDto.ok(groups)
 
         except Exception as e:

@@ -14,6 +14,7 @@ from ddd.vocabulary.infrastructure.repositories import (
     ImagesReaderSqliteRepository,
     ImagesWriterSqliteRepository,
 )
+from ddd.vocabulary.domain.exceptions.vocabulary_exception import VocabularyException
 
 
 @final
@@ -44,14 +45,14 @@ class DeleteWordImageService:
             DeleteWordImageResultDto con el resultado.
         """
 
-        image_data = await self._images_reader_sqlite_repository.get_word_es_image_by_word_es_image_id(delete_word_image_dto.image_id)
+        word_es_image_entity = await self._images_reader_sqlite_repository_sqlite_repository.get_word_es_image_by_word_es_image_id(
+            delete_word_image_dto.image_id
+        )
 
-        if not image_data:
-            return DeleteWordImageResultDto.error(
-                f"Imagen #{delete_word_image_dto.image_id} no encontrada"
-            )
+        if not word_es_image_entity:
+            VocabularyException.custom_not_found(f"Image not found for image_id {delete_word_image_dto.image_id}")
 
-        entity = WordImageEntity.from_primitives(image_data)
-        await self._images_writer_sqlite_repository.hard_delete(entity)
+        word_es_image_dict = WordImageEntity.from_primitives(word_es_image_entity)
+        await self._images_writer_sqlite_repository_sqlite_repository.hard_delete(word_es_image_dict)
 
         return DeleteWordImageResultDto.ok(delete_word_image_dto.image_id)

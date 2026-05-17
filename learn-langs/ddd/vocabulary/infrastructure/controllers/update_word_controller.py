@@ -104,7 +104,7 @@ class UpdateWordController(BaseController):
             word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
 
             # Cargar grupos de la palabra
-            word_groups = await self._word_groups_reader.get_by_word(self._word_id)
+            word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(self._word_id)
 
             # Renderizar
             update_word_view_dto = UpdateWordViewDto.with_data(

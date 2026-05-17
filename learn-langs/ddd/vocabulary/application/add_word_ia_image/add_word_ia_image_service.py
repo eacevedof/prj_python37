@@ -63,7 +63,7 @@ class AddWordIaImageService:
         word_es_notes = word_es_data.get("notes", "")
 
         # Obtener tags de la palabra (en español)
-        tags_data = await self._tags_reader_sqlite_repository.get_for_word(add_word_ia_dto.word_id)
+        tags_data = await self._tags_reader_sqlite_repository.get_tags_by_word_es_id(add_word_ia_dto.word_id)
         tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
 
         # Construir contexto con tags y notas (todo en español)

@@ -10,6 +10,7 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordGroupsReaderSqliteRepository,
     WordGroupsWriterSqliteRepository,
 )
+from ddd.vocabulary.domain.exceptions import VocabularyException
 
 
 @final
@@ -48,7 +49,9 @@ class CreateWordGroupService:
             return CreateWordGroupResultDto.error("; ".join(errors))
 
         # Verificar que no exista un grupo con el mismo título
-        existing = await self._word_groups_reader_sqlite_repository.get_by_title(create_word_group_dto.title)
+        existing = await self._word_groups_reader_sqlite_repository.get_word_group_by_title(
+            create_word_group_dto.title
+        )
         if existing:
             return CreateWordGroupResultDto.error(
                 f"A group with title '{create_word_group_dto.title}' already exists"

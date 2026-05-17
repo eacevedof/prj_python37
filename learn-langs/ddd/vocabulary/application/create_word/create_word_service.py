@@ -4,7 +4,6 @@ from ddd.vocabulary.application.create_word.create_word_dto import CreateWordDto
 from ddd.vocabulary.application.create_word.create_word_result_dto import CreateWordResultDto
 from ddd.vocabulary.domain.entities import WordEsEntity, WordLangEntity
 from ddd.vocabulary.domain.enums import WordTypeEnum
-from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsEsWriterSqliteRepository,
@@ -13,6 +12,7 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordGroupsReaderSqliteRepository,
     WordGroupsWriterSqliteRepository,
 )
+from ddd.vocabulary.domain.exceptions import VocabularyException
 
 
 @final
@@ -64,29 +64,26 @@ class CreateWordService:
         if existing:
             VocabularyException.word_already_exists(create_word_dto.text)
 
-        # Crear entidad de palabra
-        word_es_entity = WordEsEntity(
-            id=0,
-            text=create_word_dto.text,
-            word_type=WordTypeEnum(create_word_dto.word_type),
-            image_path=create_word_dto.image_path,
-            notes=create_word_dto.notes,
+        # Crear palabra
+        new_word_es_id = await self._words_es_writer_sqlite_repository.create_new_word_es(
+            WordEsEntity(
+                id=0,
+                text=create_word_dto.text,
+                word_type=WordTypeEnum(create_word_dto.word_type),
+                image_path=create_word_dto.image_path,
+                notes=create_word_dto.notes,
+            )
         )
 
-        # Crear palabra
-        word_id = await self._words_es_writer_sqlite_repository.create(word_es_entity)
-
         # Anadir tags
-        tags_added = await self._add_tags(word_id, create_word_dto.tags)
-
+        tags_added = await self._add_tags(new_word_es_id, create_word_dto.tags)
         # Anadir traducciones
-        translations_added = await self._add_translations(word_id, create_word_dto.translations)
-
+        translations_added = await self._add_translations(new_word_es_id, create_word_dto.translations)
         # Anadir grupos (siempre al menos "generic")
-        await self._add_groups(word_id, create_word_dto.group_ids)
+        await self._add_groups(new_word_es_id, create_word_dto.group_ids)
 
         return CreateWordResultDto.from_primitives({
-            "id": word_id,
+            "id": new_word_es_id,
             "text": create_word_dto.text,
             "word_type": create_word_dto.word_type,
             "image_path": create_word_dto.image_path,
@@ -103,7 +100,7 @@ class CreateWordService:
         added_tags: list[str] = []
 
         for tag_name in tag_names:
-            tag = await self._tags_reader_sqlite_repository.get_by_name(tag_name)
+            tag = await self._tags_reader_sqlite_repository.get_tag_by_tag_name(tag_name)
             if tag:
                 await self._words_es_writer_sqlite_repository.add_tag(word_id, tag["id"])
                 added_tags.append(tag_name)
@@ -141,7 +138,7 @@ class CreateWordService:
         """
         # Si no hay grupos especificados, usar "generic"
         if not group_ids:
-            generic_group = await self._word_groups_reader_sqlite_repository.get_by_title("generic")
+            generic_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_title("generic")
             if generic_group:
                 group_ids = [generic_group["id"]]
 

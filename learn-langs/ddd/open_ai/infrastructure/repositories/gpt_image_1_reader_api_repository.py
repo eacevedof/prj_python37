@@ -7,10 +7,10 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 
 
 @final
-class GptImage1ReaderRepository(AbstractOpenAIApiRepository):
+class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repositorio para generación de imágenes usando gpt-image-1.5."""
 
-    _instance: "GptImage1ReaderRepository | None" = None
+    _instance: "GptImage1ReaderApiRepository | None" = None
 
 
     @classmethod

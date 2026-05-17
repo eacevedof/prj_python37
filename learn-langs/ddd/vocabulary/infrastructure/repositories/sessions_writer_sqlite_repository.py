@@ -48,7 +48,7 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
         )
         return rows > 0
 
-    async def finish(self, study_session_entity: StudySessionEntity) -> bool:
+    async def finish_study_session_by_session_id(self, study_session_entity: StudySessionEntity) -> bool:
         """Finaliza una sesión de estudio."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -57,8 +57,8 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
             UPDATE study_sessions
             SET finished_at = ?
             WHERE 1=1
-            AND id = {study_session_entity.id}
             AND finished_at IS NULL
+            AND id = {study_session_entity.id}
             """,
             (now,),
         )

@@ -16,7 +16,7 @@ from ddd.vocabulary.application.create_word_group import (
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
 from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
-
+from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
 
 class CreateWordController(BaseController):
     """
@@ -42,6 +42,7 @@ class CreateWordController(BaseController):
         self._route_on_back = route_on_back
 
         self._logger = Logger.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
         self._create_word_service = CreateWordService.get_instance()
         self._get_tags_service = GetTagsService.get_instance()
         self._get_word_groups_service = GetWordGroupsService.get_instance()
@@ -78,25 +79,23 @@ class CreateWordController(BaseController):
         """Carga tags, grupos y renderiza formulario vacio."""
         try:
             # Cargar tags via servicio
-            tags_result = await self._get_tags_service()
+            tags_result = await _tags_reader_sqlite_repository
+            self._available_tags = []
             if tags_result.success:
                 self._available_tags = tags_result.to_list_of_dicts()
-            else:
-                self._available_tags = []
 
             # Cargar grupos via servicio
             groups_result = await self._get_word_groups_service()
+            self._available_groups = []
             if groups_result.success:
                 self._available_groups = [
                     {"id": g.id, "title": g.title, "description": g.description}
                     for g in groups_result.groups
                 ]
-            else:
-                self._available_groups = []
 
             # Encontrar ID del grupo "generic" para pre-seleccionarlo
             generic_group_ids = [
-                g["id"] for g in self._available_groups if g["title"] == "generic"
+                av_group["id"] for av_group in self._available_groups if av_group["title"] == "generic"
             ]
 
             self._ft_container.render(

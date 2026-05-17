@@ -18,7 +18,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
     def get_instance(cls) -> Self:
         return cls()
 
-    async def create(self, word_es_entity: WordEsEntity) -> int:
+    async def create_new_word_es(self, word_es_entity: WordEsEntity) -> int:
         """Crea una nueva palabra y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -31,7 +31,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
             "updated_at": now,
         })
 
-    async def update(self, word_es_entity: WordEsEntity) -> bool:
+    async def update_word_es(self, word_es_entity: WordEsEntity) -> bool:
         """Actualiza una palabra existente."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -59,13 +59,11 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
 
     async def add_tag(self, word_id: int, tag_id: int) -> bool:
         """Añade un tag a una palabra."""
-        try:
-            await self._sqlite.insert(
-                f"INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES ({word_id}, {tag_id})",
-            )
-            return True
-        except Exception:
-            return False
+        await self._sqlite.insert(f"""
+        INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES ({word_id}, {tag_id})""",
+        )
+        return True
+
 
     async def remove_tag(self, word_id: int, tag_id: int) -> bool:
         """Elimina un tag de una palabra."""
@@ -89,24 +87,28 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         word_id_a: int,
         word_id_b: int,
         relation_type: str,
-    ) -> bool:
+    ) -> None:
         """Añade una relación entre dos palabras."""
-        try:
-            await self._sqlite.insert(
-                f"INSERT OR IGNORE INTO word_es_relations (word_es_id_a, word_es_id_b, relation_type) VALUES ({word_id_a}, {word_id_b}, ?)",
-                (relation_type,),
-            )
-            return True
-        except Exception:
-            return False
+        await self._sqlite.insert(
+            f"""
+            INSERT OR IGNORE INTO word_es_relations
+            (word_es_id_a, word_es_id_b, relation_type)
+            VALUES
+            ({word_id_a}, {word_id_b}, ?)
+            """,
+            (relation_type,),
+        )
 
     async def remove_relation(self, word_id_a: int, word_id_b: int) -> bool:
         """Elimina una relación entre dos palabras."""
         query = f"""
-            DELETE FROM word_es_relations
-            WHERE 1=1
-            AND ((word_es_id_a = {word_id_a} AND word_es_id_b = {word_id_b})
-                 OR (word_es_id_a = {word_id_b} AND word_es_id_b = {word_id_a}))
+        DELETE
+        FROM word_es_relations
+        WHERE 1=1
+        AND (
+            (word_es_id_a = {word_id_a} AND word_es_id_b = {word_id_b})
+            OR (word_es_id_a = {word_id_b} AND word_es_id_b = {word_id_a})
+        )
         """
         rows_affected = await self._sqlite.delete(query)
         return rows_affected > 0

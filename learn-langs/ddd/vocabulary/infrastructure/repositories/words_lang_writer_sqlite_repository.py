@@ -59,7 +59,7 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
         )
         return rows_affected > 0
 
-    async def delete_by_word_and_lang(self, word_es_id: int, lang_code: str) -> bool:
+    async def delete_by_word_and_lang_code(self, word_es_id: int, lang_code: str) -> bool:
         """Elimina una traducción específica de una palabra."""
         rows_affected = await self._delete_where(
             "words_lang",

@@ -58,36 +58,39 @@ class DeleteWordService:
         # Validar DTO
         errors = delete_word_dto.validate()
         if errors:
-            VocabularyException.word_delete_failed(", ".join(errors))
+            VocabularyException.bad_request_custom("wrong input: "+", ".join(errors))
 
         # Verificar que exista
-        word_data = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(delete_word_dto.word_id)
-        if not word_data:
-            VocabularyException.word_not_found(delete_word_dto.word_id)
-
-        word_text = word_data["text"]
+        word_es_entity = await self._words_es_reader_sqlite_repository.get_word_es_by_word_es_id(
+            delete_word_dto.word_id
+        )
+        if not word_es_entity:
+            VocabularyException.custom_not_found(f"word not found by id {delete_word_dto.word_id}")
 
         # Contar y eliminar imagenes
-        images_count = await self._images_reader_sqlite_repository.get_total_word_es_images_by_word_id(delete_word_dto.word_id)
+        images_count = await self._images_reader_sqlite_repository.get_total_word_es_images_by_word_id(
+            delete_word_dto.word_id
+        )
         await self._images_writer_sqlite_repository.delete_all_by_word(delete_word_dto.word_id)
 
         # Contar y eliminar traducciones
-        translations = await self._words_lang_reader_sqlite_repository.get_all_for_word(delete_word_dto.word_id)
-        translations_count = len(translations)
+        word_translations = await self._words_lang_reader_sqlite_repository.get_all_for_word(delete_word_dto.word_id)
+        translations_count = len(word_translations)
 
-        for translation in translations:
-            await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang(
+        for word_translation in word_translations:
+            await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang_code(
                 delete_word_dto.word_id,
-                translation["lang_code"]
+                word_translation["lang_code"]
             )
 
         # Eliminar tags asociados (la relacion, no los tags)
         await self._words_es_writer_sqlite_repository.set_tags(delete_word_dto.word_id, [])
 
         # Eliminar la palabra
-        word_entity = WordEsEntity.from_primitives(word_data)
-        await self._words_es_writer_sqlite_repository.delete(word_entity)
+        word_es_ent = WordEsEntity.from_primitives(word_es_entity)
+        await self._words_es_writer_sqlite_repository.delete(word_es_ent)
 
+        word_text = word_es_entity["text"]
         return DeleteWordResultDto.from_primitives({
             "word_id": delete_word_dto.word_id,
             "text": word_text,

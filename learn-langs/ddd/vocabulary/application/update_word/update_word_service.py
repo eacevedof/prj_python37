@@ -79,7 +79,7 @@ class UpdateWordService:
             notes=update_word_dto.notes,
         )
 
-        await self._words_es_writer_sqlite_repository.update(word_es_entity)
+        await self._words_es_writer_sqlite_repository.update_word_es(word_es_entity)
 
         # Actualizar tags
         tags_updated = await self._update_tags(update_word_dto.word_id, update_word_dto.tags)
@@ -105,7 +105,7 @@ class UpdateWordService:
         updated_tags: list[str] = []
 
         for tag_name in tag_names:
-            tag = await self._tags_reader_sqlite_repository.get_by_name(tag_name)
+            tag = await self._tags_reader_sqlite_repository.get_tag_by_tag_name(tag_name)
             if tag:
                 tag_ids.append(tag["id"])
                 updated_tags.append(tag_name)
@@ -152,6 +152,6 @@ class UpdateWordService:
                 updated_translations[lang_code] = text.strip()
             elif existing_translation:
                 # Eliminar traduccion si el texto esta vacio
-                await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang(word_id, lang_code)
+                await self._words_lang_writer_sqlite_repository.delete_by_word_and_lang_code(word_id, lang_code)
 
         return updated_translations
