@@ -317,14 +317,30 @@ class ListWordsView(ft.Container):
         # Badge de imagenes
         image_badge = f" ({word.image_count})" if word.image_count > 0 else ""
 
-        # Subtitulo con traduccion
+        # Subtitulo con traduccion y grupos
         subtitle_parts = [word.word_type, word.created_at]
         if word.translation_nl:
             subtitle_parts.append(f"NL: {word.translation_nl}")
+        if word.groups:
+            groups_str = ", ".join(word.groups)
+            subtitle_parts.append(f"Grupos: {groups_str}")
         subtitle = " | ".join(subtitle_parts)
 
         return ft.ListTile(
-            leading=ft.Icon(icon, color=ft.Colors.BLUE_700),
+            leading=ft.Row(
+                controls=[
+                    ft.Text(
+                        f"#{word.id}",
+                        size=11,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.GREY_600,
+                        width=45,
+                    ),
+                    ft.Icon(icon, color=ft.Colors.BLUE_700, size=20),
+                ],
+                spacing=4,
+                tight=True,
+            ),
             title=ft.Text(word.text, weight=ft.FontWeight.W_500, expand=True),
             subtitle=ft.Text(subtitle, size=12),
             trailing=ft.Row(

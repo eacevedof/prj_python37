@@ -46,6 +46,29 @@ class GetWordForEditResultDto:
             "error_message": message,
         })
 
+    @classmethod
+    def ok(
+        cls,
+        word_id: int,
+        text: str,
+        word_type: str,
+        notes: str,
+        translations: dict[str, str],
+        selected_tags: list[str],
+        available_tags: list[dict[str, Any]],
+    ) -> Self:
+        """Factory method for successful result."""
+        return cls.from_primitives({
+            "word_id": word_id,
+            "text": text,
+            "word_type": word_type,
+            "notes": notes,
+            "translations": translations,
+            "selected_tags": selected_tags,
+            "available_tags": available_tags,
+            "error_message": None,
+        })
+
     @property
     def success(self) -> bool:
         return self.error_message is None

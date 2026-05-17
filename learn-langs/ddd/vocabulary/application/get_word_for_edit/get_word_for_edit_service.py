@@ -63,7 +63,7 @@ class GetWordForEditService:
         selected_tags = [word_tag["name"] for word_tag in word_tags]
 
         # Cargar tags disponibles
-        all_tags_raw = await self._words_es_reader_sqlite_repository.get_filtered_words_es()
+        all_tags_raw = await self._tags_reader_sqlite_repository.get_all_tags()
 
         return GetWordForEditResultDto.ok(
             word_id=get_word_for_edit_dto.word_id,

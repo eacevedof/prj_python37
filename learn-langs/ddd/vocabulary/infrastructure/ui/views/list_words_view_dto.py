@@ -18,12 +18,21 @@ class WordListItemViewDto:
     image_count: int = 0
     last_image_path: str = ""
     tags: tuple[str, ...] = field(default_factory=tuple)
+    groups: tuple[str, ...] = field(default_factory=tuple)
     translation_nl: str = ""
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         translations = primitives.get("translations", {}) or {}
         tags_list = primitives.get("tags", []) or []
+        groups_list = primitives.get("groups", []) or []
+
+        # Filtrar grupos, excluyendo "generic"
+        non_generic_groups = [
+            g for g in groups_list
+            if isinstance(g, str) and g.lower() != "generic"
+        ]
+
         return cls(
             id=int(primitives.get("id", 0)),
             text=str(primitives.get("text", "")),
@@ -33,6 +42,7 @@ class WordListItemViewDto:
             image_count=int(primitives.get("image_count", 0)),
             last_image_path=str(primitives.get("last_image_path", "") or ""),
             tags=tuple(tags_list),
+            groups=tuple(non_generic_groups),
             translation_nl=translations.get(LanguageCodeEnum.NL_NL.value, ""),
         )
 

@@ -45,7 +45,7 @@ class DeleteWordGroupService:
             VocabularyException.word_delete_failed(", ".join(errors))
 
         # Verificar que el grupo existe
-        existing = await self._word_groups_reader_sqlite_repository.get_by_id(delete_word_group_dto.group_id)
+        existing = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(delete_word_group_dto.group_id)
         if not existing:
             VocabularyException.word_not_found(delete_word_group_dto.group_id)
 

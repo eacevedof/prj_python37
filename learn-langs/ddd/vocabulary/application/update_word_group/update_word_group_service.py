@@ -46,7 +46,7 @@ class UpdateWordGroupService:
             VocabularyException.word_update_failed(", ".join(errors))
 
         # Verificar que el grupo existe
-        existing = await self._word_groups_reader_sqlite_repository.get_by_id(update_word_group_dto.group_id)
+        existing = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(update_word_group_dto.group_id)
         if not existing:
             VocabularyException.word_not_found(update_word_group_dto.group_id)
 

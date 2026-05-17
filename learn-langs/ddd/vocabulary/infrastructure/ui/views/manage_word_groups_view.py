@@ -161,7 +161,7 @@ class ManageWordGroupsView(ft.Container):
                 desc_cell = ft.DataCell(ft.Text(description))
                 actions_cell = ft.DataCell(ft.Text("--", color=ft.Colors.GREY))
             else:
-                title_field = ft.TextField(value=title, width=140, dense=True)
+                title_field = ft.TextField(value=title, width=220, dense=True)
                 desc_field = ft.TextField(value=description, width=180, dense=True, multiline=True)
                 title_cell = ft.DataCell(title_field)
                 desc_cell = ft.DataCell(desc_field)

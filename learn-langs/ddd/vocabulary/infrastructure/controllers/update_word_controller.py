@@ -106,6 +106,9 @@ class UpdateWordController(BaseController):
             # Cargar grupos de la palabra
             word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(self._word_id)
 
+            # Cargar todos los grupos disponibles
+            all_groups = await self._word_groups_reader.get_all_word_groups()
+
             # Renderizar
             update_word_view_dto = UpdateWordViewDto.with_data(
                 word_id=self._word_id,
@@ -117,6 +120,7 @@ class UpdateWordController(BaseController):
                 ),
                 selected_tags=list(result.selected_tags),
                 available_tags=self._available_tags,
+                available_groups=all_groups,
                 word_groups=word_groups,
                 word_images=word_images,
             )
@@ -166,6 +170,7 @@ class UpdateWordController(BaseController):
                 "text": text_es,
                 "word_type": form_data.get("word_type", "WORD"),
                 "tags": form_data.get("selected_tags", []),
+                "group_ids": form_data.get("selected_group_ids", []),
                 "translations": translations,
                 "notes": (form_data.get("notes") or "").strip(),
             })

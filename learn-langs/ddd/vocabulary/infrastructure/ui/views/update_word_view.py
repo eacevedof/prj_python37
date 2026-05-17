@@ -47,9 +47,12 @@ class UpdateWordView(ft.Container):
 
         # Estado local de grupos
         self._word_groups: list[dict[str, Any]] = []
+        self._available_groups: list[dict[str, Any]] = []
+        self._selected_group_ids: list[int] = []
 
         # Componentes UI - Header
         self._ft_word_groups_text: ft.Text | None = None
+        self._ft_groups_column: ft.Column | None = None
 
         # Componentes UI - Form fields
         self._ft_text_es_field: ft.TextField | None = None
@@ -107,6 +110,8 @@ class UpdateWordView(ft.Container):
 
         # Grupos de palabras
         self._word_groups = list(dto.word_groups)
+        self._available_groups = list(dto.available_groups)
+        self._selected_group_ids = [g.get("id", 0) for g in self._word_groups]
         self._render_word_groups()
 
         # Mensajes
@@ -182,6 +187,11 @@ class UpdateWordView(ft.Container):
             spacing=8,
         )
 
+        self._ft_groups_column = ft.Column(
+            controls=[],
+            spacing=4,
+        )
+
         # Contenedor para última imagen
         self._ft_last_image_container = ft.Container(
             content=ft.Text("No hay imágenes", italic=True, color=ft.Colors.GREY_500, size=12),
@@ -249,7 +259,7 @@ class UpdateWordView(ft.Container):
             spacing=4,
         )
 
-        # Columna derecha - Imagen y tags
+        # Columna derecha - Imagen, tags y grupos
         right_column = ft.Column(
             controls=[
                 ft.Text("Última imagen:", size=12, weight=ft.FontWeight.W_500),
@@ -258,6 +268,12 @@ class UpdateWordView(ft.Container):
                 ft.Text("Tags:", size=12, weight=ft.FontWeight.W_500),
                 ft.Container(
                     content=self._ft_tags_row,
+                    width=220,
+                ),
+                ft.Container(height=10),
+                ft.Text("Grupos:", size=12, weight=ft.FontWeight.W_500),
+                ft.Container(
+                    content=self._ft_groups_column,
                     width=220,
                 ),
             ],
@@ -396,18 +412,35 @@ class UpdateWordView(ft.Container):
                 self._ft_tags_row.controls.append(chip)
 
     def _render_word_groups(self) -> None:
-        """Renderiza los grupos a los que pertenece la palabra."""
-        if not self._ft_word_groups_text:
+        """Renderiza los checkboxes de grupos de palabras."""
+        if not self._ft_groups_column:
             return
 
-        if not self._word_groups:
-            self._ft_word_groups_text.value = ""
-            self._ft_word_groups_text.visible = False
+        self._ft_groups_column.controls.clear()
+
+        if not self._available_groups:
+            self._ft_groups_column.controls.append(
+                ft.Text(
+                    "No hay grupos disponibles",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=12,
+                )
+            )
         else:
-            # Mostrar los títulos de los grupos separados por comas
-            group_titles = [group.get("title", "") for group in self._word_groups]
-            self._ft_word_groups_text.value = f"Grupo: {', '.join(group_titles)}"
-            self._ft_word_groups_text.visible = True
+            for group in self._available_groups:
+                group_id = group.get("id", 0)
+                group_title = group.get("title", "")
+                is_generic = group_title.lower() == "generic"
+                is_selected = group_id in self._selected_group_ids
+
+                checkbox = ft.Checkbox(
+                    label=group_title,
+                    value=is_selected or is_generic,
+                    disabled=is_generic,
+                    on_change=lambda e, gid=group_id: self._toggle_group(gid, e.control.value),
+                )
+                self._ft_groups_column.controls.append(checkbox)
 
     def _get_full_image_path(self, relative_path: str) -> str:
         """Construye la ruta completa de la imagen desde la ruta relativa."""
@@ -666,6 +699,14 @@ class UpdateWordView(ft.Container):
         self._render_tags()
         self.update()
 
+    def _toggle_group(self, group_id: int, is_checked: bool) -> None:
+        """Alterna selección de grupo (estado local)."""
+        if is_checked and group_id not in self._selected_group_ids:
+            self._selected_group_ids.append(group_id)
+        elif not is_checked and group_id in self._selected_group_ids:
+            self._selected_group_ids.remove(group_id)
+        self.update()
+
     def _on_save_btn_click(self) -> None:
         """Maneja click en guardar cambios y notifica al controller."""
         form_data = self._get_form_data()
@@ -679,4 +720,5 @@ class UpdateWordView(ft.Container):
             "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else "WORD",
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "selected_tags": list(self._selected_tags),
+            "selected_group_ids": list(self._selected_group_ids),
         }
