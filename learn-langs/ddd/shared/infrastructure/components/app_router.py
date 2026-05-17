@@ -66,6 +66,9 @@ class AppRouter:
                 route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
                 ),
+                route_on_manage_groups=lambda: self.navigate_to(
+                    ControllerRouteEnum.WORD_GROUPS,
+                ),
             )
             return controller.ft_container
 
@@ -110,6 +113,27 @@ class AppRouter:
                 on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
             )
             return controller.ft_container
+
+        if route_name == ControllerRouteEnum.WORD_GROUPS:
+            # Placeholder temporal - vista simple de gestión de grupos
+            return ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Container(height=20),
+                        ft.Text("Gestión de Grupos de Palabras", size=28, weight=ft.FontWeight.BOLD),
+                        ft.Container(height=20),
+                        ft.Text("En desarrollo - Aquí se mostrará el listado CRUD de grupos", size=16),
+                        ft.Container(height=20),
+                        ft.ElevatedButton(
+                            "Volver al Home",
+                            on_click=lambda _: self.navigate_to(ControllerRouteEnum.HOME),
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
+                padding=20,
+                expand=True,
+            )
 
         # recursivo
         return self._get_ft_control_by_route_name(

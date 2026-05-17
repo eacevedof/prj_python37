@@ -28,7 +28,8 @@ class HomeView(ft.Container):
         route_on_tag_toggle: Callable[[str], None],        # 3. Tags (render paso 2)
         route_on_start_study: Callable[[], None],          # 4. Botón acción primaria (verde)
         route_on_start_image_study: Callable[[], None],    # 5. Botón acción secundaria (morado)
-        route_on_manage_words: Callable[[], None],         # 6. Botón acción terciaria (gris)
+        route_on_manage_words: Callable[[], None],         # 6. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],        # 7. Botón gestión grupos (naranja)
     ):
         super().__init__()
 
@@ -39,6 +40,7 @@ class HomeView(ft.Container):
         self._route_on_start_study = route_on_start_study
         self._route_on_start_image_study = route_on_start_image_study
         self._route_on_manage_words = route_on_manage_words
+        self._route_on_manage_groups = route_on_manage_groups
 
         # Componentes UI
         self._ft_lang_dropdown: ft.Dropdown | None = None
@@ -59,6 +61,7 @@ class HomeView(ft.Container):
             route_on_start_study=primitives.get("on_start_study", lambda: None),
             route_on_start_image_study=primitives.get("on_start_image_study", lambda: None),
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
+            route_on_manage_groups=primitives.get("on_manage_groups", lambda: None),
         )
 
     # =========================================================================
@@ -155,6 +158,16 @@ class HomeView(ft.Container):
             color=ft.Colors.BLACK,
         )
 
+        manage_groups_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.FOLDER), ft.Text("Grupos")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_manage_groups(),
+            bgcolor=ft.Colors.ORANGE_700,
+            color=ft.Colors.WHITE,
+        )
+
         # Layout principal
         self._ft_content_column = ft.Column(
             controls=[
@@ -193,7 +206,13 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[start_btn, image_study_btn, manage_btn],
+                    controls=[start_btn, image_study_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                ),
+                ft.Container(height=10),
+                ft.Row(
+                    controls=[manage_btn, manage_groups_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
