@@ -1,7 +1,5 @@
 """Controller para actualizacion de palabra."""
 
-from __future__ import annotations
-
 from typing import Callable, Any
 
 import flet as ft

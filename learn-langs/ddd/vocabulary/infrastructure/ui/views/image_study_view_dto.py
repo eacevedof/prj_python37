@@ -1,6 +1,5 @@
 """DTO de vista para Image Study."""
 
-from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Self, Any
 

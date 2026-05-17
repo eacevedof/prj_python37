@@ -1,6 +1,6 @@
 """Componente selector multiple de grupos de palabras."""
 
-from typing import Optional, Callable, List, Dict
+from typing import Callable
 
 import flet as ft
 
@@ -10,15 +10,15 @@ class WordGroupsSelectorComp(ft.Container):
 
     def __init__(
         self,
-        groups: List[Dict],  # [{"id": 1, "title": "generic", "description": "..."}]
-        selected_group_ids: Optional[List[int]] = None,
-        on_change: Optional[Callable] = None,
+        groups: list[dict],  # [{"id": 1, "title": "generic", "description": "..."}]
+        selected_group_ids: list[int] | None = None,
+        on_change: Callable | None = None,
     ):
         super().__init__()
         self.groups = groups
         self.selected_group_ids = selected_group_ids or []
         self.on_change_callback = on_change
-        self._checkboxes: Dict[int, ft.Checkbox] = {}
+        self._checkboxes: dict[int, ft.Checkbox] = {}
 
         # Construir UI
         self._build()
@@ -61,11 +61,11 @@ class WordGroupsSelectorComp(ft.Container):
         if self.on_change_callback:
             self.on_change_callback(self.selected_group_ids)
 
-    def get_selected_ids(self) -> List[int]:
+    def get_selected_ids(self) -> list[int]:
         """Retorna lista de IDs de grupos seleccionados."""
         return self.selected_group_ids.copy()
 
-    def set_selected_ids(self, group_ids: List[int]) -> None:
+    def set_selected_ids(self, group_ids: list[int]) -> None:
         """Establece los grupos seleccionados."""
         self.selected_group_ids = group_ids.copy()
 
@@ -76,7 +76,7 @@ class WordGroupsSelectorComp(ft.Container):
         if self.page:
             self.update()
 
-    def refresh_groups(self, groups: List[Dict], selected_group_ids: Optional[List[int]] = None) -> None:
+    def refresh_groups(self, groups: list[dict], selected_group_ids: list[int] | None = None) -> None:
         """Refresca la lista de grupos."""
         self.groups = groups
         if selected_group_ids is not None:

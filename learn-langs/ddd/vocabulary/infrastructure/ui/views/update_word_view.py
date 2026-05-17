@@ -1,10 +1,8 @@
 """Vista para editar palabras - Solo renderizado."""
 
-from __future__ import annotations
-
 import os
 import flet as ft
-from typing import Callable, Any, Self, TYPE_CHECKING, Optional, List, Dict
+from typing import Callable, Any, Self, TYPE_CHECKING
 
 from ddd.shared.infrastructure.components.logger import Logger
 
@@ -43,32 +41,32 @@ class UpdateWordView(ft.Container):
         self._logger = Logger.get_instance()
 
         # Estado local de tags seleccionados
-        self._selected_tags: List[str] = []
-        self._available_tags: List[Dict[str, Any]] = []
+        self._selected_tags: list[str] = []
+        self._available_tags: list[dict[str, Any]] = []
 
         # Estado local de imagenes
-        self._word_images: List[Dict[str, Any]] = []
+        self._word_images: list[dict[str, Any]] = []
 
         # Estado local de grupos
-        self._word_groups: List[Dict[str, Any]] = []
+        self._word_groups: list[dict[str, Any]] = []
 
         # Componentes UI - Header
-        self._ft_word_groups_text: Optional[ft.Text] = None
+        self._ft_word_groups_text: ft.Text | None = None
 
         # Componentes UI - Form fields
-        self._ft_text_es_field: Optional[ft.TextField] = None
-        self._ft_text_nl_field: Optional[ft.TextField] = None
-        self._ft_word_type_dropdown: Optional[ft.Dropdown] = None
-        self._ft_notes_field: Optional[ft.TextField] = None
-        self._ft_tags_row: Optional[ft.Row] = None
-        self._ft_loading_indicator: Optional[ft.ProgressRing] = None
-        self._ft_form_container: Optional[ft.Container] = None
-        self._ft_error_text: Optional[ft.Text] = None
-        self._ft_success_text: Optional[ft.Text] = None
+        self._ft_text_es_field: ft.TextField | None = None
+        self._ft_text_nl_field: ft.TextField | None = None
+        self._ft_word_type_dropdown: ft.Dropdown | None = None
+        self._ft_notes_field: ft.TextField | None = None
+        self._ft_tags_row: ft.Row | None = None
+        self._ft_loading_indicator: ft.ProgressRing | None = None
+        self._ft_form_container: ft.Container | None = None
+        self._ft_error_text: ft.Text | None = None
+        self._ft_success_text: ft.Text | None = None
 
         # Componentes UI - Images
-        self._ft_last_image_container: Optional[ft.Container] = None
-        self._ft_images_grid: Optional[ft.Row] = None
+        self._ft_last_image_container: ft.Container | None = None
+        self._ft_images_grid: ft.Row | None = None
 
         self._build_initial_ui()
 
@@ -526,7 +524,7 @@ class UpdateWordView(ft.Container):
                 )
             )
 
-    def _render_last_image(self, image_data: Dict[str, Any]) -> None:
+    def _render_last_image(self, image_data: dict[str, Any]) -> None:
         """Renderiza la última imagen cargada."""
         if not self._ft_last_image_container:
             return

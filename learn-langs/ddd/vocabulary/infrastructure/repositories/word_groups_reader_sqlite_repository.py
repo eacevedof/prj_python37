@@ -11,6 +11,9 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
 
     _instance: "WordGroupsReaderSqliteRepository | None" = None
 
+    def __init__(self) -> None:
+        super().__init__()
+
     @classmethod
     def get_instance(cls) -> Self:
         if cls._instance is None:
@@ -34,21 +37,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             FROM word_groups
             ORDER BY title ASC
         """
-
-        async with self._get_connection() as conn:
-            cursor = await conn.execute(query)
-            rows = await cursor.fetchall()
-
-            return [
-                {
-                    "id": row[0],
-                    "title": row[1],
-                    "description": row[2],
-                    "created_at": row[3],
-                    "updated_at": row[4],
-                }
-                for row in rows
-            ]
+        return await self._query(query)
 
     async def get_by_id(self, group_id: int) -> dict | None:
         """
@@ -70,21 +59,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             FROM word_groups
             WHERE id = ?
         """
-
-        async with self._get_connection() as conn:
-            cursor = await conn.execute(query, (group_id,))
-            row = await cursor.fetchone()
-
-            if not row:
-                return None
-
-            return {
-                "id": row[0],
-                "title": row[1],
-                "description": row[2],
-                "created_at": row[3],
-                "updated_at": row[4],
-            }
+        return await self._query_one(query, (group_id,))
 
     async def get_by_title(self, title: str) -> dict | None:
         """
@@ -106,21 +81,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             FROM word_groups
             WHERE title = ?
         """
-
-        async with self._get_connection() as conn:
-            cursor = await conn.execute(query, (title,))
-            row = await cursor.fetchone()
-
-            if not row:
-                return None
-
-            return {
-                "id": row[0],
-                "title": row[1],
-                "description": row[2],
-                "created_at": row[3],
-                "updated_at": row[4],
-            }
+        return await self._query_one(query, (title,))
 
     async def get_by_word(self, word_id: int) -> list[dict]:
         """
@@ -144,18 +105,4 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
             WHERE weg.word_es_id = ?
             ORDER BY wg.title ASC
         """
-
-        async with self._get_connection() as conn:
-            cursor = await conn.execute(query, (word_id,))
-            rows = await cursor.fetchall()
-
-            return [
-                {
-                    "id": row[0],
-                    "title": row[1],
-                    "description": row[2],
-                    "created_at": row[3],
-                    "updated_at": row[4],
-                }
-                for row in rows
-            ]
+        return await self._query(query, (word_id,))
