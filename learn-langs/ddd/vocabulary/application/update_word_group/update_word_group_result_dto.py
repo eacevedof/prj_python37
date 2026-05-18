@@ -11,6 +11,7 @@ class UpdateWordGroupResultDto:
     group_id: int = 0
     title: str = ""
     description: str = ""
+    source: str = ""
     error_message: str | None = None
 
     @classmethod
@@ -19,6 +20,7 @@ class UpdateWordGroupResultDto:
             group_id=int(primitives.get("group_id", 0)),
             title=str(primitives.get("title", "")),
             description=str(primitives.get("description", "")),
+            source=str(primitives.get("source", "")),
             error_message=primitives.get("error_message"),
         )
 

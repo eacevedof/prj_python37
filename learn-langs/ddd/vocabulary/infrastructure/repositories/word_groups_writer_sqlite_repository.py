@@ -28,16 +28,17 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             Diccionario con datos del grupo creado.
         """
         query = """
-            INSERT INTO word_groups (title, description, created_at, updated_at)
-            VALUES (?, ?, datetime('now'), datetime('now'))
+            INSERT INTO word_groups (title, description, source, created_at, updated_at)
+            VALUES (?, ?, ?, datetime('now'), datetime('now'))
         """
 
-        group_id = await self._sqlite.insert(query, (entity.title, entity.description))
+        group_id = await self._sqlite.insert(query, (entity.title, entity.description, entity.source))
 
         return {
             "id": group_id,
             "title": entity.title,
             "description": entity.description,
+            "source": entity.source,
         }
 
     async def update(self, group_id: int, entity: WordGroupEntity) -> dict:
@@ -55,16 +56,18 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             UPDATE word_groups
             SET title = ?,
                 description = ?,
+                source = ?,
                 updated_at = datetime('now')
             WHERE id = ?
         """
 
-        await self._sqlite.update(query, (entity.title, entity.description, group_id))
+        await self._sqlite.update(query, (entity.title, entity.description, entity.source, group_id))
 
         return {
             "id": group_id,
             "title": entity.title,
             "description": entity.description,
+            "source": entity.source,
         }
 
     async def delete(self, group_id: int) -> bool:

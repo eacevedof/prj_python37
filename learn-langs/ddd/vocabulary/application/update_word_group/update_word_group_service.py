@@ -55,6 +55,7 @@ class UpdateWordGroupService:
             id=update_word_group_dto.group_id,
             title=update_word_group_dto.title,
             description=update_word_group_dto.description,
+            source=update_word_group_dto.source,
         )
 
         # Actualizar

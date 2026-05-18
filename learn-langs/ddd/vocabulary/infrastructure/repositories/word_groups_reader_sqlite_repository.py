@@ -30,7 +30,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         query = """
         -- get_all_word_groups
         SELECT
-            wg.id, wg.title, wg.description,
+            wg.id, wg.title, wg.description, wg.source,
             wg.created_at, wg.updated_at,
             COUNT(DISTINCT weg.word_es_id) as word_count,
             COALESCE(
@@ -47,7 +47,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         LEFT JOIN word_metrics wm
         ON weg.word_es_id = wm.word_es_id
         WHERE 1=1
-        GROUP BY wg.id, wg.title, wg.description, wg.created_at, wg.updated_at
+        GROUP BY wg.id, wg.title, wg.description, wg.source, wg.created_at, wg.updated_at
         ORDER BY wg.title ASC
         """
         return await self._query(query)
@@ -65,7 +65,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         query = f"""
         -- get_word_group_by_group_id
         SELECT
-            id, title, description, created_at, updated_at
+            id, title, description, source, created_at, updated_at
         FROM word_groups
         WHERE 1=1
         AND id = {group_id}
@@ -85,7 +85,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         query = """
         -- get_word_group_by_title
         SELECT
-            id, title, description, created_at, updated_at
+            id, title, description, source, created_at, updated_at
         FROM word_groups
         WHERE 1=1
         AND title = ?
@@ -105,7 +105,7 @@ class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
         query = f"""
         -- get_word_group_by_word_es_id
         SELECT
-            wg.id, wg.title, wg.description, wg.created_at, wg.updated_at
+            wg.id, wg.title, wg.description, wg.source, wg.created_at, wg.updated_at
         FROM word_groups wg
         INNER JOIN word_es_groups weg
         ON wg.id = weg.group_id
