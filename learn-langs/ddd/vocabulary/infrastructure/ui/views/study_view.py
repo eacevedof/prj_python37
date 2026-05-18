@@ -31,6 +31,7 @@ class StudyView(ft.Container):
         route_on_skip: Callable[[], None],          # 3. Skip button (junto al input)
         route_on_timeout: Callable[[], None],       # 4. Timer timeout (render paso 1 - timer)
         route_on_back: Callable[[], None],          # 5. Boton volver (header)
+        route_on_retry_failed: Callable[[], None],  # 6. Boton repetir errores (session complete)
     ):
         super().__init__()
 
@@ -40,6 +41,7 @@ class StudyView(ft.Container):
         self._route_on_skip = route_on_skip
         self._route_on_timeout = route_on_timeout
         self._route_on_back = route_on_back
+        self._route_on_retry_failed = route_on_retry_failed
 
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
@@ -62,6 +64,7 @@ class StudyView(ft.Container):
             route_on_skip=primitives.get("on_skip", lambda: None),
             route_on_timeout=primitives.get("on_timeout", lambda: None),
             route_on_back=primitives.get("on_back", lambda: None),
+            route_on_retry_failed=primitives.get("on_retry_failed", lambda: None),
         )
 
     # =========================================================================
@@ -267,8 +270,7 @@ class StudyView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
+        controls = [
             ft.Container(height=40),
             ft.Icon(
                 ft.Icons.CELEBRATION,
@@ -292,19 +294,131 @@ class StudyView(ft.Container):
                 weight=ft.FontWeight.BOLD,
                 color=ft.Colors.GREEN_700 if dto.avg_score_percent >= 70 else ft.Colors.ORANGE_700,
             ),
-            ft.Container(height=40),
-            ft.ElevatedButton(
+        ]
+
+        # Mostrar palabras falladas si hay
+        if dto.failed_words:
+            # Preparar texto para copiar
+            failed_words_text = "\n".join([
+                f"{word.get('text_es', '')} = {word.get('text_lang', '')}"
+                for word in dto.failed_words
+            ])
+
+            controls.extend([
+                ft.Container(height=30),
+                ft.Divider(height=1, color=ft.Colors.GREY_400),
+                ft.Container(height=15),
+                ft.Row(
+                    controls=[
+                        ft.Text(
+                            f"Palabras falladas ({len(dto.failed_words)}):",
+                            size=18,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.RED_700,
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.COPY,
+                            tooltip="Copiar al portapapeles",
+                            icon_color=ft.Colors.BLUE_700,
+                            on_click=lambda _: self._copy_to_clipboard(failed_words_text),
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Container(height=10),
+            ])
+
+            # Lista de palabras falladas (seleccionable)
+            failed_list = ft.Column(
+                controls=[
+                    ft.Container(
+                        content=ft.Row(
+                            controls=[
+                                ft.Text(
+                                    word.get("text_es", ""),
+                                    size=14,
+                                    weight=ft.FontWeight.W_500,
+                                    expand=True,
+                                    selectable=True,
+                                ),
+                                ft.Text(
+                                    "=",
+                                    size=14,
+                                    color=ft.Colors.GREY_600,
+                                ),
+                                ft.Text(
+                                    word.get("text_lang", ""),
+                                    size=14,
+                                    color=ft.Colors.GREEN_700,
+                                    weight=ft.FontWeight.W_500,
+                                    expand=True,
+                                    selectable=True,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                        padding=ft.padding.symmetric(vertical=4, horizontal=10),
+                    )
+                    for word in dto.failed_words
+                ],
+                spacing=2,
+                scroll=ft.ScrollMode.AUTO,
+            )
+
+            controls.append(
+                ft.Container(
+                    content=failed_list,
+                    border=ft.border.all(1, ft.Colors.RED_300),
+                    border_radius=8,
+                    padding=10,
+                    bgcolor=ft.Colors.RED_50,
+                    height=200,
+                )
+            )
+
+        # Botones de acción
+        action_buttons = []
+
+        # Botón de repetir errores (solo si hay palabras falladas)
+        if dto.failed_words:
+            retry_btn = ft.ElevatedButton(
                 content=ft.Row(
-                    [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
+                    [ft.Icon(ft.Icons.REFRESH), ft.Text("Repetir errores")],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                on_click=lambda _: self._route_on_back(),
+                on_click=lambda _: self._route_on_retry_failed(),
                 style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.BLUE_700,
+                    bgcolor=ft.Colors.ORANGE_700,
                     color=ft.Colors.WHITE,
                 ),
+            )
+            action_buttons.append(retry_btn)
+
+        # Botón de volver al inicio
+        home_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_back(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.BLUE_700,
+                color=ft.Colors.WHITE,
+            ),
+        )
+        action_buttons.append(home_btn)
+
+        controls.extend([
+            ft.Container(height=40),
+            ft.Row(
+                controls=action_buttons,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=20,
             ),
         ])
+
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend(controls)
 
     def _render_error(self, message: str) -> None:
         """Renderiza mensaje de error."""
@@ -336,5 +450,16 @@ class StudyView(ft.Container):
     # =========================================================================
     # EVENT HANDLERS (Callbacks de UI)
     # =========================================================================
+    def _copy_to_clipboard(self, text: str) -> None:
+        """Copia texto al portapapeles."""
+        if self.page:
+            self.page.set_clipboard(text)
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text("Palabras copiadas al portapapeles"),
+                bgcolor=ft.Colors.GREEN_700,
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+
     # Nota: Los callbacks están conectados directamente en _build_initial_ui
     # y en los componentes dinámicos (FlashcardComp, InputFieldComp, TimerComp)
