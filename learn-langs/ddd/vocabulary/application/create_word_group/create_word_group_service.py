@@ -62,6 +62,7 @@ class CreateWordGroupService:
             id=0,
             title=create_word_group_dto.title,
             description=create_word_group_dto.description,
+            source=create_word_group_dto.source,
         )
 
         # Validar entidad
@@ -75,5 +76,6 @@ class CreateWordGroupService:
             group_id=word_group_created["id"],
             title=word_group_created["title"],
             description=word_group_created.get("description", ""),
+            source=word_group_created.get("source", ""),
         )
 

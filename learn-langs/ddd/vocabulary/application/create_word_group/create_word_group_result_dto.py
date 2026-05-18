@@ -14,6 +14,7 @@ class CreateWordGroupResultDto:
     group_id: int = 0
     title: str = ""
     description: str = ""
+    source: str = ""
     error_message: str = ""
     response_code: int = ResponseCodeEnum.OK
 
@@ -24,18 +25,20 @@ class CreateWordGroupResultDto:
             group_id=int(primitives.get("group_id", 0)),
             title=str(primitives.get("title", "")),
             description=str(primitives.get("description", "")),
+            source=str(primitives.get("source", "")),
             error_message=str(primitives.get("error_message", "")),
             response_code=int(primitives.get("response_code", ResponseCodeEnum.OK)),
         )
 
     @classmethod
-    def ok(cls, group_id: int, title: str, description: str = "") -> Self:
+    def ok(cls, group_id: int, title: str, description: str = "", source: str = "") -> Self:
         """Crea un resultado exitoso."""
         return cls(
             success=True,
             group_id=group_id,
             title=title,
             description=description,
+            source=source,
             response_code=ResponseCodeEnum.OK,
         )
 

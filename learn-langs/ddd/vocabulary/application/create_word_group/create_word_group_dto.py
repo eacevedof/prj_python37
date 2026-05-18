@@ -10,12 +10,14 @@ class CreateWordGroupDto:
 
     title: str = ""
     description: str = ""
+    source: str = ""
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
             title=str(primitives.get("title", "")).strip(),
             description=str(primitives.get("description", "") or "").strip(),
+            source=str(primitives.get("source", "") or "").strip(),
         )
 
     def validate(self) -> list[str]:

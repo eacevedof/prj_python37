@@ -11,6 +11,7 @@ class WordGroupEntity:
     id: int
     title: str
     description: str = ""
+    source: str = ""
     created_at: str = ""
     updated_at: str = ""
 
@@ -21,6 +22,7 @@ class WordGroupEntity:
             id=int(primitives.get("id", 0)),
             title=str(primitives.get("title", "")).strip(),
             description=str(primitives.get("description", "") or "").strip(),
+            source=str(primitives.get("source", "") or "").strip(),
             created_at=str(primitives.get("created_at", "")),
             updated_at=str(primitives.get("updated_at", "")),
         )
@@ -31,6 +33,7 @@ class WordGroupEntity:
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "source": self.source,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }

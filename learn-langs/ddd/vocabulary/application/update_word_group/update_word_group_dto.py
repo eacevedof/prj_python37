@@ -11,6 +11,7 @@ class UpdateWordGroupDto:
     group_id: int
     title: str
     description: str
+    source: str
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -18,6 +19,7 @@ class UpdateWordGroupDto:
             group_id=int(primitives.get("group_id", 0)),
             title=str(primitives.get("title", "")).strip(),
             description=str(primitives.get("description", "")).strip(),
+            source=str(primitives.get("source", "") or "").strip(),
         )
 
     def validate(self) -> list[str]:

@@ -86,19 +86,20 @@ class ManageWordGroupsController(BaseController):
                 ManageWordGroupsViewDto.error(str(e))
             )
 
-    def _on_create_group(self, title: str, description: str) -> None:
+    def _on_create_group(self, title: str, description: str, source: str) -> None:
         """Maneja la creación de un grupo."""
         async def _task():
-            await self._async_create_group(title, description)
+            await self._async_create_group(title, description, source)
         self._ft_container.page.run_task(_task)
 
-    async def _async_create_group(self, title: str, description: str) -> None:
+    async def _async_create_group(self, title: str, description: str, source: str) -> None:
         """Crea un nuevo grupo."""
         try:
             result = await self._create_word_group_service(
                 CreateWordGroupDto.from_primitives({
                     "title": title,
                     "description": description,
+                    "source": source,
                 })
             )
 
@@ -121,13 +122,13 @@ class ManageWordGroupsController(BaseController):
             )
             self._ft_container.show_snackbar(str(e), error=True)
 
-    def _on_edit_group(self, group_id: int, title: str, description: str) -> None:
+    def _on_edit_group(self, group_id: int, title: str, description: str, source: str) -> None:
         """Maneja la edición de un grupo."""
         async def _task():
-            await self._async_edit_group(group_id, title, description)
+            await self._async_edit_group(group_id, title, description, source)
         self._ft_container.page.run_task(_task)
 
-    async def _async_edit_group(self, group_id: int, title: str, description: str) -> None:
+    async def _async_edit_group(self, group_id: int, title: str, description: str, source: str) -> None:
         """Actualiza un grupo existente."""
         try:
             result = await self._update_word_group_service(
@@ -135,6 +136,7 @@ class ManageWordGroupsController(BaseController):
                     "group_id": group_id,
                     "title": title,
                     "description": description,
+                    "source": source,
                 })
             )
 

@@ -13,8 +13,8 @@ class ManageWordGroupsView(ft.Container):
         self,
         route_on_mount: Callable[[], None] | None,
         route_on_back: Callable[[], None],
-        route_on_create: Callable[[str, str], None],
-        route_on_edit: Callable[[int, str, str], None],
+        route_on_create: Callable[[str, str, str], None],
+        route_on_edit: Callable[[int, str, str, str], None],
         route_on_delete: Callable[[int], None],
     ):
         super().__init__()
@@ -36,8 +36,8 @@ class ManageWordGroupsView(ft.Container):
         return cls(
             route_on_mount=primitives.get("on_mount"),
             route_on_back=primitives.get("on_back", lambda: None),
-            route_on_create=primitives.get("on_create", lambda t, d: None),
-            route_on_edit=primitives.get("on_edit", lambda id, t, d: None),
+            route_on_create=primitives.get("on_create", lambda t, d, s: None),
+            route_on_edit=primitives.get("on_edit", lambda id, t, d, s: None),
             route_on_delete=primitives.get("on_delete", lambda id: None),
         )
 
@@ -74,6 +74,7 @@ class ManageWordGroupsView(ft.Container):
                 ft.DataColumn(ft.Text("ID", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Título", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Descripción", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Fuente", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Palabras", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Acciones", weight=ft.FontWeight.BOLD)),
             ],
@@ -83,6 +84,7 @@ class ManageWordGroupsView(ft.Container):
         # Formulario de creación
         self._ft_new_title = ft.TextField(label="Título del nuevo grupo", width=300)
         self._ft_new_description = ft.TextField(label="Descripción", width=400, multiline=True, max_lines=3)
+        self._ft_new_source = ft.TextField(label="Fuente (URL o archivo)", width=400, hint_text="Ej: https://..., video.mp4, articulo.pdf")
 
         create_btn = ft.ElevatedButton(
             "Crear Grupo",
@@ -118,6 +120,7 @@ class ManageWordGroupsView(ft.Container):
                             ft.Text("Crear Nuevo Grupo", size=18, weight=ft.FontWeight.BOLD),
                             self._ft_new_title,
                             self._ft_new_description,
+                            self._ft_new_source,
                             create_btn,
                         ]),
                         padding=20,
@@ -151,6 +154,7 @@ class ManageWordGroupsView(ft.Container):
             group_id = group.get("id", 0)
             title = group.get("title", "")
             description = group.get("description", "")
+            source = group.get("source", "")
             word_count = group.get("word_count", 0)
 
             is_generic = title.lower() == "generic"
@@ -159,18 +163,21 @@ class ManageWordGroupsView(ft.Container):
             if is_generic:
                 title_cell = ft.DataCell(ft.Text(title, weight=ft.FontWeight.BOLD))
                 desc_cell = ft.DataCell(ft.Text(description))
+                source_cell = ft.DataCell(ft.Text(source or "--"))
                 actions_cell = ft.DataCell(ft.Text("--", color=ft.Colors.GREY))
             else:
                 title_field = ft.TextField(value=title, width=220, dense=True)
                 desc_field = ft.TextField(value=description, width=180, dense=True, multiline=True)
+                source_field = ft.TextField(value=source, width=250, dense=True)
                 title_cell = ft.DataCell(title_field)
                 desc_cell = ft.DataCell(desc_field)
+                source_cell = ft.DataCell(source_field)
                 actions_cell = ft.DataCell(
                     ft.Row([
                         ft.IconButton(
                             icon=ft.Icons.SAVE,
                             tooltip="Guardar cambios",
-                            on_click=lambda _, gid=group_id, tf=title_field, df=desc_field: self._on_edit_click(gid, tf, df),
+                            on_click=lambda _, gid=group_id, tf=title_field, df=desc_field, sf=source_field: self._on_edit_click(gid, tf, df, sf),
                             icon_color=ft.Colors.BLUE,
                         ),
                         ft.IconButton(
@@ -188,6 +195,7 @@ class ManageWordGroupsView(ft.Container):
                         ft.DataCell(ft.Text(str(group_id))),
                         title_cell,
                         desc_cell,
+                        source_cell,
                         ft.DataCell(
                             ft.Text(
                                 str(word_count),
@@ -204,20 +212,23 @@ class ManageWordGroupsView(ft.Container):
         self._ft_groups_table.rows = rows
 
     def _on_create_click(self, _) -> None:
-        if self._ft_new_title and self._ft_new_description:
+        if self._ft_new_title and self._ft_new_description and self._ft_new_source:
             title = self._ft_new_title.value or ""
             description = self._ft_new_description.value or ""
+            source = self._ft_new_source.value or ""
 
             if title.strip():
-                self._route_on_create(title.strip(), description.strip())
+                self._route_on_create(title.strip(), description.strip(), source.strip())
                 self._ft_new_title.value = ""
                 self._ft_new_description.value = ""
+                self._ft_new_source.value = ""
 
-    def _on_edit_click(self, group_id: int, title_field: ft.TextField, desc_field: ft.TextField) -> None:
+    def _on_edit_click(self, group_id: int, title_field: ft.TextField, desc_field: ft.TextField, source_field: ft.TextField) -> None:
         title = title_field.value or ""
         description = desc_field.value or ""
+        source = source_field.value or ""
         if title.strip():
-            self._route_on_edit(group_id, title.strip(), description.strip())
+            self._route_on_edit(group_id, title.strip(), description.strip(), source.strip())
 
     def _on_delete_click(self, group_id: int, title: str) -> None:
         # Confirmar eliminación
