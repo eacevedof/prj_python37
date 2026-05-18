@@ -74,6 +74,7 @@ class ImageStudyController(BaseController):
             "on_skip": self._on_skip_btn_click,
             "on_timeout": self._on_timer_timeout,
             "on_back": self._on_back_btn_click,
+            "on_retry_failed": self._on_retry_failed_click,
         })
 
     # =========================================================================
@@ -142,11 +143,17 @@ class ImageStudyController(BaseController):
             self._total_score += result.score
             self._answers_count += 1
 
-            # Si falla, agregar a lista de palabras falladas
-            if not result.is_correct:
+            # Rastrear palabras falladas (score < 0.7)
+            if result.score < 0.7:
                 self._failed_words.append({
+                    "word_es_id": word.word_es_id,
                     "text_es": word.text_es,
                     "text_lang": word.text_lang,
+                    "word_type": word.word_type,
+                    "pronunciation": word.pronunciation,
+                    "image_file_path": word.image_file_path,
+                    "image_mime_type": word.image_mime_type,
+                    "image_caption": word.image_caption,
                 })
 
             # Mostrar resultado en vista
@@ -200,6 +207,45 @@ class ImageStudyController(BaseController):
                 {"session_id": self._session_id},
             )
 
+    async def _async_retry_failed(self) -> None:
+        """Reinicia la sesión con solo las palabras falladas."""
+        try:
+            # Finalizar sesión actual
+            await self._async_finish_session()
+
+            # Convertir palabras falladas a ImageStudyWordDto
+            failed_words_dto = [
+                ImageStudyWordDto.from_primitives(word)
+                for word in self._failed_words
+            ]
+
+            # Reiniciar estado con palabras falladas
+            self._words = failed_words_dto
+            self._current_index = 0
+            self._total_score = 0
+            self._answers_count = 0
+            self._failed_words = []
+
+            # Crear nueva sesión
+            start_dto = StartImageStudySessionDto.from_primitives({
+                "lang_code": self._lang_code,
+                "tags": self._tags,
+                "group_id": self._group_id,
+                "limit": len(failed_words_dto),
+            })
+            result = await self._start_session_service(start_dto)
+            self._session_id = result.session_id
+
+            # Mostrar primera palabra
+            self._show_current_word()
+
+        except Exception as e:
+            self._logger.log_error(
+                "ImageStudyController",
+                f"Error reiniciando con palabras falladas: {e}",
+            )
+            self._ft_container.render(ImageStudyViewDto.error(str(e)))
+
     # =========================================================================
     # EVENT HANDLERS (orden visual/lógico en UI: flashcard → input → timer → back)
     # =========================================================================
@@ -225,6 +271,10 @@ class ImageStudyController(BaseController):
         """Maneja click en boton volver (arriba izquierda en UI)."""
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()
+
+    def _on_retry_failed_click(self) -> None:
+        """Maneja click en boton repetir errores."""
+        self._ft_container.page.run_task(self._async_retry_failed)
 
     # =========================================================================
     # HELPERS PRIVADOS
@@ -253,12 +303,11 @@ class ImageStudyController(BaseController):
         """Muestra pantalla de sesion completada y finaliza via servicio."""
         self._ft_container.page.run_task(self._async_finish_session)
 
-        dto = ImageStudyViewDto.session_complete(
+        self._ft_container.render(ImageStudyViewDto.session_complete(
             total_score=self._total_score,
             answers_count=self._answers_count,
             failed_words=self._failed_words,
-        )
-        self._ft_container.render(dto)
+        ))
 
     def _next_word(self) -> None:
         """Avanza a la siguiente palabra."""

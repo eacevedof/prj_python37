@@ -60,6 +60,7 @@ class StudyController(BaseController):
         self._start_time: float = 0
         self._total_score: float = 0
         self._answers_count: int = 0
+        self._failed_words: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -74,6 +75,7 @@ class StudyController(BaseController):
             "on_skip": self._on_skip_btn_click,
             "on_timeout": self._on_timer_timeout,
             "on_back": self._on_back_btn_click,
+            "on_retry_failed": self._on_retry_failed_click,
         })
 
     # =========================================================================
@@ -143,6 +145,16 @@ class StudyController(BaseController):
             self._total_score += result.score
             self._answers_count += 1
 
+            # Rastrear palabras falladas (score < 0.7)
+            if result.score < 0.7:
+                self._failed_words.append({
+                    "word_es_id": word.word_es_id,
+                    "text_es": word.text_es,
+                    "text_lang": word.text_lang,
+                    "word_type": word.word_type,
+                    "pronunciation": word.pronunciation,
+                })
+
             # Mostrar resultado en vista
             dto = StudyViewDto.with_result(
                 session_id=self._session_id,
@@ -194,6 +206,46 @@ class StudyController(BaseController):
                 {"session_id": self._session_id},
             )
 
+    async def _async_retry_failed(self) -> None:
+        """Reinicia la sesión con solo las palabras falladas."""
+        try:
+            # Finalizar sesión actual
+            await self._async_finish_session()
+
+            # Convertir palabras falladas a StudyWordDto
+            failed_words_dto = [
+                StudyWordDto.from_primitives(word)
+                for word in self._failed_words
+            ]
+
+            # Reiniciar estado con palabras falladas
+            self._words = failed_words_dto
+            self._current_index = 0
+            self._total_score = 0
+            self._answers_count = 0
+            self._failed_words = []
+
+            # Crear nueva sesión
+            start_dto = StartStudySessionDto.from_primitives({
+                "lang_code": self._lang_code,
+                "study_mode": "TYPING",
+                "tags": self._tags,
+                "group_id": self._group_id,
+                "limit": len(failed_words_dto),
+            })
+            result = await self._start_session_service(start_dto)
+            self._session_id = result.session_id
+
+            # Mostrar primera palabra
+            self._show_current_word()
+
+        except Exception as e:
+            self._logger.log_error(
+                "StudyController",
+                f"Error reiniciando con palabras falladas: {e}",
+            )
+            self._ft_container.render(StudyViewDto.error(str(e)))
+
     # =========================================================================
     # EVENT HANDLERS (orden visual/lógico en UI: flashcard → input → timer → back)
     # =========================================================================
@@ -219,6 +271,10 @@ class StudyController(BaseController):
         """Maneja click en boton volver (arriba izquierda en UI)."""
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()
+
+    def _on_retry_failed_click(self) -> None:
+        """Maneja click en boton repetir errores."""
+        self._ft_container.page.run_task(self._async_retry_failed)
 
     # =========================================================================
     # HELPERS PRIVADOS
@@ -247,11 +303,11 @@ class StudyController(BaseController):
         """Muestra pantalla de sesion completada y finaliza via servicio."""
         self._ft_container.page.run_task(self._async_finish_session)
 
-        dto = StudyViewDto.session_complete(
+        self._ft_container.render(StudyViewDto.session_complete(
             total_score=self._total_score,
             answers_count=self._answers_count,
-        )
-        self._ft_container.render(dto)
+            failed_words=self._failed_words,
+        ))
 
     def _next_word(self) -> None:
         """Avanza a la siguiente palabra."""
