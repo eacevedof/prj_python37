@@ -104,7 +104,7 @@ class HomeView(ft.Container):
         # Dropdown de idiomas (se llena en render)
         self._ft_lang_dropdown = ft.Dropdown(
             label="Idioma a practicar",
-            width=250,
+            width=400,
             options=[],
         )
         self._ft_lang_dropdown.on_change = self._on_lang_dropdown_change
@@ -112,7 +112,7 @@ class HomeView(ft.Container):
         # Dropdown de grupos (se llena en render)
         self._ft_group_dropdown = ft.Dropdown(
             label="Grupo de palabras",
-            width=250,
+            width=400,
             options=[],
         )
         self._ft_group_dropdown.on_change = self._on_group_dropdown_change
@@ -263,7 +263,10 @@ class HomeView(ft.Container):
             return
 
         self._ft_group_dropdown.options = [
-            ft.dropdown.Option(key=str(group["id"]), text=group["title"])
+            ft.dropdown.Option(
+                key=str(group["id"]),
+                text=f"{group["id"]} - {group["title"]} - {int(group.get("avg_score", 0) * 100)}%"
+            )
             for group in home_view_dto.group_options
         ]
 
