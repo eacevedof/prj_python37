@@ -95,9 +95,24 @@ class HomeController(BaseController):
                 return
 
             # Cargar grupos disponibles
-            self._all_groups = await self._word_groups_reader.get_all_word_groups()
+            all_groups_raw = await self._word_groups_reader.get_all_word_groups()
 
-            # Si no hay grupo seleccionado, seleccionar el primero (probablemente "generic")
+            # Ordenar grupos: generic al final, resto por ID desc
+            generic_group = None
+            other_groups = []
+            for group in all_groups_raw:
+                if group.get("title", "").lower() == "generic":
+                    generic_group = group
+                else:
+                    other_groups.append(group)
+
+            # Ordenar otros grupos por ID descendente
+            other_groups.sort(key=lambda g: g.get("id", 0), reverse=True)
+
+            # Construir lista final: otros grupos + generic al final
+            self._all_groups = other_groups + ([generic_group] if generic_group else [])
+
+            # Si no hay grupo seleccionado, seleccionar el primero de la lista ordenada
             if self._selected_group_id is None and self._all_groups:
                 self._selected_group_id = self._all_groups[0].get("id", 0)
 
