@@ -156,6 +156,29 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         """
         return await self._query(query, (f"%{text}%",))
 
+    async def get_words_es_by_text_or_group(self, text: str, limit: int = 50) -> list[dict]:
+        """
+        Busca palabras por texto o por nombre de grupo (búsqueda parcial).
+        Retorna palabras que coincidan con el texto o que pertenezcan a grupos con nombres coincidentes.
+        """
+        query = f"""
+        -- search by text or group name
+        SELECT DISTINCT
+            we.id, we.text, we.word_type, we.notes, we.created_at, we.updated_at
+        FROM words_es we
+        LEFT JOIN word_es_groups weg ON we.id = weg.word_es_id
+        LEFT JOIN word_groups wg ON weg.group_id = wg.id
+        WHERE 1=1
+        AND (
+            we.text LIKE ?
+            OR wg.title LIKE ?
+        )
+        ORDER BY we.text
+        LIMIT {limit}
+        """
+        search_pattern = f"%{text}%"
+        return await self._query(query, (search_pattern, search_pattern))
+
     async def get_total_words_es_by_word_type(self, word_type: str | None = None) -> int:
         """Cuenta el total de palabras."""
         if word_type:

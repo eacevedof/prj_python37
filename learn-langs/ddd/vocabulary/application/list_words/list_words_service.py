@@ -46,7 +46,7 @@ class ListWordsService:
 
         # Obtener palabras segun filtros
         if list_words_dto.search:
-            words_raw = await self._words_es_reader_sqlite_repository.get_words_es_by_text(list_words_dto.search, limit=list_words_dto.limit)
+            words_raw = await self._words_es_reader_sqlite_repository.get_words_es_by_text_or_group(list_words_dto.search, limit=list_words_dto.limit)
         elif list_words_dto.tags:
             words_raw = await self._words_es_reader_sqlite_repository.get_words_es_by_tag_names(
                 list_words_dto.tags, limit=list_words_dto.limit, offset=list_words_dto.offset
