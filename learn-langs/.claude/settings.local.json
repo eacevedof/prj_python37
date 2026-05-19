@@ -18,7 +18,8 @@
       "Bash(\".venv-win/Scripts/python.exe\" -m py_compile ddd/vocabulary/infrastructure/ui/components/word_groups_selector_comp.py)",
       "Bash(\".venv-win/Scripts/python.exe\" -c \"print\\(''Testing imports...''\\); from ddd.vocabulary.infrastructure.ui.components.word_groups_selector_comp import WordGroupsSelectorComp; print\\(''Component import OK''\\)\")",
       "Bash(powershell -Command:*)",
-      "Bash(\"C:\\\\projects\\\\prj_python37\\\\learn-langs\\\\.venv-win\\\\Scripts\\\\python.exe\" -c \"\ntry:\n    # Intentar importar módulos principales\n    from ddd.shared.infrastructure.components.app_router import AppRouter\n    from ddd.vocabulary.infrastructure.controllers import HomeController\n    from ddd.vocabulary.infrastructure.ui.views import HomeView\n    print\\(''SUCCESS: All main imports work''\\)\n    print\\(''No circular import errors detected''\\)\nexcept ImportError as e:\n    if ''circular'' in str\\(e\\).lower\\(\\) or ''partially initialized'' in str\\(e\\).lower\\(\\):\n        print\\(''ERROR: Circular import detected:'', e\\)\n    else:\n        print\\(''Import error \\(not circular\\):'', e\\)\n\")"
+      "Bash(\"C:\\\\projects\\\\prj_python37\\\\learn-langs\\\\.venv-win\\\\Scripts\\\\python.exe\" -c \"\ntry:\n    # Intentar importar módulos principales\n    from ddd.shared.infrastructure.components.app_router import AppRouter\n    from ddd.vocabulary.infrastructure.controllers import HomeController\n    from ddd.vocabulary.infrastructure.ui.views import HomeView\n    print\\(''SUCCESS: All main imports work''\\)\n    print\\(''No circular import errors detected''\\)\nexcept ImportError as e:\n    if ''circular'' in str\\(e\\).lower\\(\\) or ''partially initialized'' in str\\(e\\).lower\\(\\):\n        print\\(''ERROR: Circular import detected:'', e\\)\n    else:\n        print\\(''Import error \\(not circular\\):'', e\\)\n\")",
+      "Bash(sqlite3:*)"
     ]
   }
 }

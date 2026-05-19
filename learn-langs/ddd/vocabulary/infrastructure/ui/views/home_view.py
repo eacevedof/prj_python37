@@ -3,6 +3,7 @@
 import flet as ft
 from typing import Callable, Any, Self
 
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
 
@@ -33,6 +34,7 @@ class HomeView(ft.Container):
     ):
         super().__init__()
 
+        self._logger = Logger.get_instance()
         # Callbacks al controller (en orden de ejecución)
         self._route_on_mount = route_on_mount
         self._route_on_lang_change = route_on_lang_change
@@ -66,6 +68,19 @@ class HomeView(ft.Container):
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
             route_on_manage_groups=primitives.get("on_manage_groups", lambda: None),
         )
+
+    # =========================================================================
+    # API PÚBLICA - GETTERS
+    # =========================================================================
+    def get_selected_group_id(self) -> int | None:
+        """Retorna el group_id actualmente seleccionado en el dropdown."""
+        if not self._ft_group_dropdown or not self._ft_group_dropdown.value:
+            return None
+        try:
+            return int(self._ft_group_dropdown.value)
+        except (ValueError, TypeError) as e:
+            self._logger.log_error(f"Invalid group_id value in dropdown: {self._ft_group_dropdown.value}. Error: {type(e).__name__}")
+            return None
 
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
@@ -270,6 +285,9 @@ class HomeView(ft.Container):
             for group in home_view_dto.group_options
         ]
 
+        # Asegurar que el handler on_change esté conectado
+        self._ft_group_dropdown.on_change = self._on_group_dropdown_change
+
         # Si hay un grupo seleccionado, establecerlo
         if home_view_dto.selected_group_id:
             self._ft_group_dropdown.value = str(home_view_dto.selected_group_id)
@@ -354,5 +372,8 @@ class HomeView(ft.Container):
 
     def _on_group_dropdown_change(self, e: ft.ControlEvent) -> None:
         """Maneja el cambio de grupo y notifica al controller."""
+        # DEBUG: Verificar si el evento se dispara
+        print(f"[DEBUG VIEW] Group dropdown changed! value={e.control.value}")
         group_id = int(e.control.value) if e.control.value else 0
+        print(f"[DEBUG VIEW] Calling controller with group_id={group_id}")
         self._route_on_group_change(group_id)

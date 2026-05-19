@@ -141,6 +141,12 @@ class HomeController(BaseController):
     def _on_group_change(self, group_id: int) -> None:
         """Maneja el cambio de grupo (dropdown - arriba en UI)."""
         self._selected_group_id = group_id
+        # DEBUG: Log del cambio de grupo
+        self._logger.log_debug(
+            "HomeController",
+            f"Group changed to group_id={group_id}",
+            {"group_id": group_id},
+        )
         # No es necesario recargar datos, solo actualizar el estado
 
     def _on_tag_toggle(self, tag_name: str) -> None:
@@ -154,6 +160,11 @@ class HomeController(BaseController):
 
     def _route_on_start_study_click(self) -> None:
         """Maneja click en comenzar estudio (boton verde - abajo en UI)."""
+        # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
+        actual_group_id = self._ft_container.get_selected_group_id()
+        if actual_group_id is not None:
+            self._selected_group_id = actual_group_id
+
         self._route_on_start_study(
             str(self._selected_lang),
             self._selected_tags,
@@ -162,6 +173,17 @@ class HomeController(BaseController):
 
     def _route_on_start_image_study_click(self) -> None:
         """Maneja click en comenzar estudio con imagenes (boton morado - abajo en UI)."""
+        # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
+        actual_group_id = self._ft_container.get_selected_group_id()
+        if actual_group_id is not None:
+            self._selected_group_id = actual_group_id
+
+        # DEBUG: Log del group_id seleccionado
+        self._logger.log_debug(
+            "HomeController",
+            f"Starting image study with group_id={self._selected_group_id}",
+            {"lang": str(self._selected_lang), "tags": self._selected_tags, "group_id": self._selected_group_id},
+        )
         self._route_on_start_image_study(
             str(self._selected_lang),
             self._selected_tags,

@@ -121,6 +121,14 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         Solo incluye palabras de tipo WORD que tienen imagen principal.
         Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
         """
+        # DEBUG: Log del group_id recibido
+        from ddd.shared.infrastructure.components.logger import Logger
+        Logger.get_instance().log_debug(
+            "MetricsReaderSqliteRepository",
+            f"get_words_with_images_for_review called with group_id={group_id}",
+            {"lang_code": lang_code, "tag_names": tag_names, "group_id": group_id, "limit": limit},
+        )
+
         # Construir filtro de grupo
         group_join = ""
         group_where = ""
