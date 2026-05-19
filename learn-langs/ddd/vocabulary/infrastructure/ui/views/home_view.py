@@ -112,7 +112,7 @@ class HomeView(ft.Container):
         # Dropdown de grupos (se llena en render)
         self._ft_group_dropdown = ft.Dropdown(
             label="Grupo de palabras",
-            width=400,
+            width=550,
             options=[],
         )
         self._ft_group_dropdown.on_change = self._on_group_dropdown_change
@@ -265,7 +265,7 @@ class HomeView(ft.Container):
         self._ft_group_dropdown.options = [
             ft.dropdown.Option(
                 key=str(group["id"]),
-                text=f"{group["id"]} - {group["title"]} - {int(group.get("avg_score", 0) * 100)}%"
+                text=f"{group["id"]} - {group["title"]} ({group.get("word_count", 0)} palabras) - {int(group.get("avg_score", 0) * 100)}%"
             )
             for group in home_view_dto.group_options
         ]
