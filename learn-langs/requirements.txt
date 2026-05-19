@@ -11,6 +11,7 @@ pydantic>=2.5.0
 
 # Utils
 python-dotenv>=1.0.0
+pyperclip>=1.8.0
 
 # AI/ML
 openai>=1.0.0
