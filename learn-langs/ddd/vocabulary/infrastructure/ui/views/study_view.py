@@ -451,12 +451,21 @@ class StudyView(ft.Container):
     # EVENT HANDLERS (Callbacks de UI)
     # =========================================================================
     def _copy_to_clipboard(self, text: str) -> None:
-        """Copia texto al portapapeles."""
+        """Copia texto al portapapeles usando pyperclip."""
         if self.page:
-            self.page.set_clipboard(text)
+            try:
+                import pyperclip
+                pyperclip.copy(text)
+                message = "Palabras copiadas al portapapeles"
+                color = ft.Colors.GREEN_700
+            except Exception as e:
+                # Si pyperclip no está disponible, el texto ya es seleccionable manualmente
+                message = "Selecciona el texto para copiarlo manualmente (Ctrl+C)"
+                color = ft.Colors.BLUE_700
+
             self.page.snack_bar = ft.SnackBar(
-                content=ft.Text("Palabras copiadas al portapapeles"),
-                bgcolor=ft.Colors.GREEN_700,
+                content=ft.Text(message),
+                bgcolor=color,
             )
             self.page.snack_bar.open = True
             self.page.update()
