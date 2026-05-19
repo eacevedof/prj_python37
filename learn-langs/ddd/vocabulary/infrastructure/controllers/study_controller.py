@@ -61,6 +61,7 @@ class StudyController(BaseController):
         self._total_score: float = 0
         self._answers_count: int = 0
         self._failed_words: list[dict[str, Any]] = []
+        self._is_session_complete: bool = False
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -127,6 +128,10 @@ class StudyController(BaseController):
 
     async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta del usuario via servicio."""
+        # Evitar procesar si la sesión ya está completa
+        if self._is_session_complete:
+            return
+
         word = self._words[self._current_index]
         response_time = int((time.time() - self._start_time) * 1000)
 
@@ -224,6 +229,7 @@ class StudyController(BaseController):
             self._total_score = 0
             self._answers_count = 0
             self._failed_words = []
+            self._is_session_complete = False
 
             # Crear nueva sesión
             start_dto = StartStudySessionDto.from_primitives({
@@ -301,6 +307,7 @@ class StudyController(BaseController):
 
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesion completada y finaliza via servicio."""
+        self._is_session_complete = True
         self._ft_container.page.run_task(self._async_finish_session)
 
         self._ft_container.render(StudyViewDto.session_complete(
