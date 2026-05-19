@@ -25,3 +25,9 @@ update-branch:  ## update master branch
 	git checkout $(CURRENT_BRANCH);
 	git diff --name-only develop master
 
+apk: ## build android apk
+	@mv requirements.txt requirements-dev.txt 2>/dev/null || true
+	@cp requirements-prod.txt requirements.txt
+	flet build apk --module-name front_controller --verbose
+	@mv requirements-dev.txt requirements.txt 2>/dev/null || true
+

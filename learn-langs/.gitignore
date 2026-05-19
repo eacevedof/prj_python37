@@ -15,3 +15,16 @@ logs/*
 /data/images/
 .claude
 graphify-out
+
+# Flet build artifacts
+build/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.dmg
+*.app
+
+# Temporary build files
+requirements-dev.txt
+requirements-prod.txt
