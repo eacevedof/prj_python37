@@ -357,7 +357,7 @@ class StudyView(ft.Container):
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
-                        padding=ft.padding.symmetric(vertical=4, horizontal=10),
+                        padding=ft.padding.only(left=10, right=10, top=4, bottom=4),
                     )
                     for word in dto.failed_words
                 ],
