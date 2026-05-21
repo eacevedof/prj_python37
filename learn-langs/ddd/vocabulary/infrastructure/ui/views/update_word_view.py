@@ -124,13 +124,47 @@ class UpdateWordView(ft.Container):
         self.update()
 
     def show_snackbar(self, message: str, error: bool = False) -> None:
-        """Muestra un snackbar."""
-        self.page.snack_bar = ft.SnackBar(
-            content=ft.Text(message),
-            bgcolor=ft.Colors.RED_700 if error else ft.Colors.GREEN_700,
-        )
-        self.page.snack_bar.open = True
-        self.page.update()
+        """Muestra un snackbar o dialog de error."""
+        if error:
+            # Para errores, mostrar dialog seleccionable
+            def close_dialog(e):
+                dialog.open = False
+                self.page.update()
+
+            def copy_error(e):
+                self.page.set_clipboard(message)
+                self.page.show_snack_bar(
+                    ft.SnackBar(content=ft.Text("Error copiado al portapapeles"), duration=1500)
+                )
+
+            dialog = ft.AlertDialog(
+                modal=True,
+                title=ft.Text("Error", color=ft.Colors.RED_700),
+                content=ft.Container(
+                    content=ft.Text(
+                        message,
+                        selectable=True,
+                        size=14,
+                    ),
+                    width=500,
+                ),
+                actions=[
+                    ft.TextButton("Copiar", on_click=copy_error),
+                    ft.TextButton("Cerrar", on_click=close_dialog),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+            self.page.overlay.append(dialog)
+            dialog.open = True
+            self.page.update()
+        else:
+            # Para mensajes normales, usar snackbar
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(message),
+                bgcolor=ft.Colors.GREEN_700,
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
 
     # =========================================================================
     # LIFECYCLE HOOKS (Flet)
