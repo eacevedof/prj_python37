@@ -1,5 +1,6 @@
 #!/bin/bash
 TODAY := $(shell date +'%Y-%m-%d')
+TIMESTAMP := $(shell date +'%Y%m%d-%H%M%S')
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 help: ## Show this help message
@@ -25,7 +26,7 @@ update-branch:  ## update master branch
 	git checkout $(CURRENT_BRANCH);
 	git diff --name-only develop master
 
-apk: ## build android apk
+apk: ## build android apk with timestamp
 	@echo "Generating flet.yaml from .env..."
 	@if [ ! -f .env ]; then echo "Error: .env file not found"; exit 1; fi
 	@echo "name: learn-langs" > flet.yaml
@@ -39,4 +40,7 @@ apk: ## build android apk
 	@cp requirements-prod.txt requirements.txt
 	flet build apk --module-name front_controller --verbose
 	@mv requirements-dev.txt requirements.txt 2>/dev/null || true
+	@echo "Renaming APK with timestamp..."
+	@find build/apk -name "*.apk" -type f -exec sh -c 'for f; do mv "$$f" "$${f%.apk}-$(TIMESTAMP).apk"; done' sh {} +
+	@echo "APK generated: build/apk/*-$(TIMESTAMP).apk"
 
