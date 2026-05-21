@@ -13,8 +13,6 @@ class Logger:
 
     _DEFAULT_LOG_PATH: str = str(Path(__file__).resolve().parents[4] / "logs")
     _instance: "Logger | None" = None
-    _error_buffer: list[str] = []  # Buffer de errores en memoria
-    _MAX_BUFFER_SIZE: int = 100  # Máximo de errores en memoria
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -23,29 +21,10 @@ class Logger:
             cls._instance = cls()
         return cls._instance
 
-    def get_error_logs(self) -> list[str]:
-        """Retorna los errores almacenados en memoria."""
-        return self._error_buffer.copy()
-
-    def clear_error_logs(self) -> None:
-        """Limpia el buffer de errores en memoria."""
-        self._error_buffer.clear()
-
     def log_error(self, module: str, message: str, context: dict | None = None) -> None:
         log_content = f"[ERROR] {module}: {message}"
         if context:
             log_content += f"\nContext: {context}"
-
-        # Guardar en memoria
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        error_entry = f"[{now}] {log_content}"
-        self._error_buffer.append(error_entry)
-
-        # Limitar tamaño del buffer
-        if len(self._error_buffer) > self._MAX_BUFFER_SIZE:
-            self._error_buffer.pop(0)
-
-        # Guardar en archivo
         self.__write_log("error.log", log_content)
 
 
