@@ -1,5 +1,4 @@
 from ddd.shared.infrastructure.components.printer import Printer
-from ddd.shared.infrastructure.components.tokenizer import Tokenizer
 from ddd.shared.infrastructure.components.curler import Curler
 from ddd.shared.infrastructure.components.encoder import Encoder
 from ddd.shared.infrastructure.components.hasher import Hasher
@@ -16,7 +15,6 @@ from ddd.shared.infrastructure.components.abstract_input_dto import AbstractInpu
 
 __all__ = [
     "Printer",
-    "Tokenizer",
     "Curler",
     "Encoder",
     "Hasher",
