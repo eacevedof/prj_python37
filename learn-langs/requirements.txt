@@ -1,4 +1,4 @@
-# Learn Languages App
+# Learn Languages App - Production Dependencies
 
 # UI Framework
 flet>=0.21.0
@@ -15,9 +15,3 @@ pyperclip>=1.8.0
 
 # AI/ML
 openai>=1.0.0
-
-# Dev
-ruff>=0.1.0
-mypy>=1.7.0
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
