@@ -143,7 +143,7 @@ class ManageWordGroupsView(ft.Container):
             expand=True,
         )
         self.expand = True
-        self.padding = ft.padding.symmetric(horizontal=20, vertical=20)
+        self.padding = ft.padding.only(left=20, right=20, top=20, bottom=20)
 
     def _render_groups_table(self, dto: ManageWordGroupsViewDto) -> None:
         if not self._ft_groups_table:
