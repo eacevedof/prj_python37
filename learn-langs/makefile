@@ -26,6 +26,15 @@ update-branch:  ## update master branch
 	git diff --name-only develop master
 
 apk: ## build android apk
+	@echo "Generating flet.yaml from .env..."
+	@if [ ! -f .env ]; then echo "Error: .env file not found"; exit 1; fi
+	@echo "name: learn-langs" > flet.yaml
+	@echo "description: Learn Languages App with Spaced Repetition" >> flet.yaml
+	@echo "" >> flet.yaml
+	@echo "environment:" >> flet.yaml
+	@grep "^OPENAI_API_KEY=" .env | sed 's/^OPENAI_API_KEY=/  OPENAI_API_KEY: "/' | sed 's/$$/\"/' >> flet.yaml
+	@grep "^APP_LOG_PATH=" .env | sed 's/^APP_LOG_PATH=/  APP_LOG_PATH: "/' | sed 's/$$/\"/' >> flet.yaml
+	@echo "flet.yaml generated successfully"
 	@mv requirements.txt requirements-dev.txt 2>/dev/null || true
 	@cp requirements-prod.txt requirements.txt
 	flet build apk --module-name front_controller --verbose

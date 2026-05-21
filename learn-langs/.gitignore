@@ -24,6 +24,7 @@ build/
 *.exe
 *.dmg
 *.app
+flet.yaml
 
 # Temporary build files
 requirements-dev.txt
