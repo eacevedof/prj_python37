@@ -270,6 +270,12 @@ class StudyView(ft.Container):
         if not self._ft_content_area:
             return
 
+        # Debug: verificar cantidad de palabras falladas
+        print(f"DEBUG: Total failed_words recibidas: {len(dto.failed_words)}")
+        if dto.failed_words:
+            print(f"DEBUG: Primera palabra: {dto.failed_words[0]}")
+            print(f"DEBUG: Última palabra: {dto.failed_words[-1]}")
+
         controls = [
             ft.Container(height=40),
             ft.Icon(
@@ -329,8 +335,10 @@ class StudyView(ft.Container):
             ])
 
             # Lista de palabras falladas (seleccionable)
-            failed_list = ft.Column(
-                controls=[
+            failed_words_controls = []
+            for idx, word in enumerate(dto.failed_words):
+                print(f"DEBUG: Generando control #{idx}: {word.get('text_es', 'N/A')}")
+                failed_words_controls.append(
                     ft.Container(
                         content=ft.Row(
                             controls=[
@@ -359,11 +367,18 @@ class StudyView(ft.Container):
                         ),
                         padding=ft.padding.only(left=10, right=10, top=4, bottom=4),
                     )
-                    for word in dto.failed_words
-                ],
+                )
+
+            print(f"DEBUG: Total controles generados: {len(failed_words_controls)}")
+
+            failed_list = ft.Column(
+                controls=failed_words_controls,
                 spacing=2,
                 scroll=ft.ScrollMode.AUTO,
             )
+
+            # Altura dinámica: min 150, max 400
+            list_height = min(400, max(150, len(dto.failed_words) * 35))
 
             controls.append(
                 ft.Container(
@@ -372,7 +387,7 @@ class StudyView(ft.Container):
                     border_radius=8,
                     padding=10,
                     bgcolor=ft.Colors.RED_50,
-                    height=200,
+                    height=list_height,
                 )
             )
 

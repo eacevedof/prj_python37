@@ -156,6 +156,7 @@ class ImageStudyController(BaseController):
             self._answers_count += 1
 
             # Rastrear palabras falladas (score < 0.7)
+            print(f"DEBUG Controller: Palabra '{word.text_es}' score={result.score}, is_correct={result.is_correct}")
             if result.score < 0.7:
                 self._failed_words.append({
                     "word_es_id": word.word_es_id,
@@ -167,6 +168,9 @@ class ImageStudyController(BaseController):
                     "image_mime_type": word.image_mime_type,
                     "image_caption": word.image_caption,
                 })
+                print(f"DEBUG Controller: Agregada a failed_words. Total ahora: {len(self._failed_words)}")
+            else:
+                print(f"DEBUG Controller: NO agregada (score >= 0.7)")
 
             # Mostrar resultado en vista
             dto = ImageStudyViewDto.with_result(
@@ -316,6 +320,12 @@ class ImageStudyController(BaseController):
         """Muestra pantalla de sesion completada y finaliza via servicio."""
         self._is_session_complete = True
         self._ft_container.page.run_task(self._async_finish_session)
+
+        print(f"DEBUG Controller: _show_session_complete - Total failed_words: {len(self._failed_words)}")
+        if self._failed_words:
+            print(f"DEBUG Controller: Primeras 3 palabras falladas:")
+            for i, word in enumerate(self._failed_words[:3]):
+                print(f"  {i}: {word.get('text_es', 'N/A')}")
 
         self._ft_container.render(ImageStudyViewDto.session_complete(
             total_score=self._total_score,
