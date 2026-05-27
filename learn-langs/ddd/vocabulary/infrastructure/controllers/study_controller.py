@@ -150,8 +150,8 @@ class StudyController(BaseController):
             self._total_score += result.score
             self._answers_count += 1
 
-            # Rastrear palabras falladas (score < 0.7)
-            if result.score < 0.7:
+            # Rastrear palabras falladas (cualquier respuesta incorrecta)
+            if not result.is_correct:
                 self._failed_words.append({
                     "word_es_id": word.word_es_id,
                     "text_es": word.text_es,

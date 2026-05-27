@@ -270,12 +270,6 @@ class ImageStudyView(ft.Container):
         if not self._ft_content_area:
             return
 
-        # Debug: verificar cantidad de palabras falladas
-        print(f"DEBUG: Total failed_words recibidas: {len(dto.failed_words)}")
-        if dto.failed_words:
-            print(f"DEBUG: Primera palabra: {dto.failed_words[0]}")
-            print(f"DEBUG: Última palabra: {dto.failed_words[-1]}")
-
         controls = [
             ft.Container(height=40),
             ft.Icon(
@@ -335,10 +329,8 @@ class ImageStudyView(ft.Container):
             ])
 
             # Lista de palabras falladas (seleccionable)
-            failed_words_controls = []
-            for idx, word in enumerate(dto.failed_words):
-                print(f"DEBUG: Generando control #{idx}: {word.get('text_es', 'N/A')}")
-                failed_words_controls.append(
+            failed_list = ft.Column(
+                controls=[
                     ft.Container(
                         content=ft.Row(
                             controls=[
@@ -367,12 +359,8 @@ class ImageStudyView(ft.Container):
                         ),
                         padding=ft.padding.only(left=10, right=10, top=4, bottom=4),
                     )
-                )
-
-            print(f"DEBUG: Total controles generados: {len(failed_words_controls)}")
-
-            failed_list = ft.Column(
-                controls=failed_words_controls,
+                    for word in dto.failed_words
+                ],
                 spacing=2,
                 scroll=ft.ScrollMode.AUTO,
             )
