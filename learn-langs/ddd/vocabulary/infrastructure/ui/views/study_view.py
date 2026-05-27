@@ -271,19 +271,19 @@ class StudyView(ft.Container):
             return
 
         controls = [
-            ft.Container(height=40),
+            ft.Container(height=20),
             ft.Icon(
                 ft.Icons.CELEBRATION,
-                size=80,
+                size=50,
                 color=ft.Colors.AMBER_500,
             ),
-            ft.Container(height=20),
+            ft.Container(height=10),
             ft.Text(
                 "Sesion completada!",
-                size=28,
+                size=24,
                 weight=ft.FontWeight.BOLD,
             ),
-            ft.Container(height=20),
+            ft.Container(height=10),
             ft.Text(
                 f"Palabras practicadas: {dto.answers_count}",
                 size=18,
@@ -305,9 +305,9 @@ class StudyView(ft.Container):
             ])
 
             controls.extend([
-                ft.Container(height=30),
-                ft.Divider(height=1, color=ft.Colors.GREY_400),
                 ft.Container(height=15),
+                ft.Divider(height=1, color=ft.Colors.GREY_400),
+                ft.Container(height=10),
                 ft.Row(
                     controls=[
                         ft.Text(
