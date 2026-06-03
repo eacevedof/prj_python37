@@ -14,7 +14,6 @@ from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_re
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
 from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteRepository
-from ddd.vocabulary.domain.exceptions.vocabulary_exception import VocabularyException
 
 @final
 class GenerateWordImageAiService:
