@@ -34,7 +34,7 @@ class FlashcardComp(ft.Container):
             ),
             bgcolor=self._get_type_color(),
             border_radius=4,
-            padding=ft.padding.only(left=8, right=8, top=2, bottom=2),
+            padding=ft.Padding(left=8, right=8, top=2, bottom=2),
         )
 
         # Texto principal (espanol)

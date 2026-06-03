@@ -32,6 +32,7 @@ class ImageStudyView(ft.Container):
         route_on_timeout: Callable[[], None],
         route_on_back: Callable[[], None],
         route_on_retry_failed: Callable[[], None],
+        route_on_play_audio: Callable[[], None] | None = None,
     ):
         super().__init__()
 
@@ -42,6 +43,7 @@ class ImageStudyView(ft.Container):
         self._route_on_timeout = route_on_timeout
         self._route_on_back = route_on_back
         self._route_on_retry_failed = route_on_retry_failed
+        self._route_on_play_audio = route_on_play_audio
 
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
@@ -65,6 +67,7 @@ class ImageStudyView(ft.Container):
             route_on_timeout=primitives.get("on_timeout", lambda: None),
             route_on_back=primitives.get("on_back", lambda: None),
             route_on_retry_failed=primitives.get("on_retry_failed", lambda: None),
+            route_on_play_audio=primitives.get("on_play_audio"),
         )
 
     # =========================================================================
@@ -198,8 +201,24 @@ class ImageStudyView(ft.Container):
             auto_start=True,
         )
 
+        # Botón de audio (hint)
+        audio_button = None
+        if self._route_on_play_audio:
+            audio_button = ft.Container(
+                content=ft.IconButton(
+                    icon=ft.Icons.VOLUME_UP,
+                    icon_size=32,
+                    tooltip="Escuchar pronunciación (pista)",
+                    on_click=lambda _: self._route_on_play_audio(),
+                    style=ft.ButtonStyle(
+                        color=ft.Colors.BLUE_700,
+                    ),
+                ),
+                alignment=ft.Alignment.CENTER,
+            )
+
         self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
+        controls_to_add = [
             ft.Container(height=10),
             ft.Container(
                 content=self._ft_timer,
@@ -210,9 +229,21 @@ class ImageStudyView(ft.Container):
                 content=self._ft_image_flashcard,
                 alignment=ft.Alignment.CENTER,
             ),
-            ft.Container(height=20),
+        ]
+
+        # Agregar botón de audio si está disponible
+        if audio_button:
+            controls_to_add.extend([
+                ft.Container(height=10),
+                audio_button,
+            ])
+
+        controls_to_add.extend([
+            ft.Container(height=10),
             self._ft_input_field,
         ])
+
+        self._ft_content_area.controls.extend(controls_to_add)
 
     def _render_with_result(self, dto: ImageStudyViewDto) -> None:
         """Renderiza resultado de respuesta."""
@@ -357,7 +388,7 @@ class ImageStudyView(ft.Container):
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
-                        padding=ft.padding.only(left=10, right=10, top=4, bottom=4),
+                        padding=ft.Padding(left=10, right=10, top=4, bottom=4),
                     )
                     for word in dto.failed_words
                 ],

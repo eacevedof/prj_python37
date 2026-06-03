@@ -12,6 +12,7 @@ from ddd.vocabulary.application.generate_word_audio_ai.generate_word_audio_ai_dt
 from ddd.vocabulary.application.generate_word_audio_ai.generate_word_audio_ai_result_dto import (
     GenerateWordAudioAiResultDto,
 )
+from ddd.vocabulary.domain.entities import WordLangEntity
 from ddd.vocabulary.infrastructure.repositories import (
     WordsLangReaderSqliteRepository,
     WordsLangWriterSqliteRepository,
@@ -55,18 +56,18 @@ class GenerateWordAudioAiService:
             )
 
         # Obtener traducción de la BD
-        word_lang_entity = await self._words_lang_reader_sqlite_repository.get_by_id(
+        word_lang_dict = await self._words_lang_reader_sqlite_repository.get_by_id(
             generate_word_audio_ai_dto.word_lang_id
         )
 
-        if not word_lang_entity:
+        if not word_lang_dict:
             return GenerateWordAudioAiResultDto.error(
                 f"No se encontró traducción con ID {generate_word_audio_ai_dto.word_lang_id}"
             )
 
-        # Usar texto del DTO o de la entidad
-        text_to_generate = generate_word_audio_ai_dto.text or word_lang_entity.text
-        lang_code = generate_word_audio_ai_dto.lang_code or word_lang_entity.lang_code
+        # Usar texto del DTO o del diccionario
+        text_to_generate = generate_word_audio_ai_dto.text or word_lang_dict["text"]
+        lang_code = generate_word_audio_ai_dto.lang_code or word_lang_dict["lang_code"]
 
         if not text_to_generate:
             return GenerateWordAudioAiResultDto.error(
@@ -94,20 +95,22 @@ class GenerateWordAudioAiService:
             audio_dir.mkdir(parents=True, exist_ok=True)
 
             # Nombre: {word_lang_id}_{lang_code}.mp3
-            audio_filename = f"{word_lang_entity.id}_{lang_code}.mp3"
+            audio_filename = f"{word_lang_dict['id']}_{lang_code}.mp3"
             audio_path = audio_dir / audio_filename
             audio_path.write_bytes(audio_bytes)
 
-            # Actualizar audio_path en BD
+            # Actualizar audio_path en BD - convertir dict a entity
+            word_lang_entity = WordLangEntity.from_primitives(word_lang_dict)
             word_lang_entity.audio_path = str(audio_path)
             await self._words_lang_writer_sqlite_repository.update(word_lang_entity)
 
-            self._logger.info(
+            self._logger.log_info(
+                "GenerateWordAudioAiService",
                 f"Audio generado: {audio_path} con voz '{voice_used}'"
             )
 
             return GenerateWordAudioAiResultDto.ok(
-                word_lang_id=word_lang_entity.id,
+                word_lang_id=word_lang_dict["id"],
                 audio_path=str(audio_path),
                 voice_used=voice_used,
                 model_used=model_used,
@@ -116,5 +119,5 @@ class GenerateWordAudioAiService:
 
         except Exception as e:
             error_msg = f"Error al generar audio: {str(e)}"
-            self._logger.error(error_msg)
+            self._logger.log_error("GenerateWordAudioAiService", error_msg)
             return GenerateWordAudioAiResultDto.error(error_msg)

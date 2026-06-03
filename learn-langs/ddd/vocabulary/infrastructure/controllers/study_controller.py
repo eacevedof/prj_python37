@@ -5,6 +5,7 @@ import time
 from typing import Any, Callable
 
 import flet as ft
+import flet_audio as fta
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
@@ -21,6 +22,11 @@ from ddd.vocabulary.application.start_study_session import (
     StartStudySessionService,
     StudyWordDto,
 )
+from ddd.vocabulary.application.generate_word_audio_ai import (
+    GenerateWordAudioAiDto,
+    GenerateWordAudioAiService,
+)
+from ddd.vocabulary.infrastructure.repositories import WordsLangReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.study_view import StudyView
 from ddd.vocabulary.infrastructure.ui.views.study_view_dto import StudyViewDto
 
@@ -68,6 +74,8 @@ class StudyController(BaseController):
         self._start_session_service = StartStudySessionService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
+        self._generate_audio_service = GenerateWordAudioAiService.get_instance()
+        self._words_lang_reader = WordsLangReaderSqliteRepository.get_instance()
 
         # Vista
         self._ft_container = StudyView.from_primitives({
@@ -77,6 +85,7 @@ class StudyController(BaseController):
             "on_timeout": self._on_timer_timeout,
             "on_back": self._on_back_btn_click,
             "on_retry_failed": self._on_retry_failed_click,
+            "on_play_audio": self._on_play_audio_click,
         })
 
     # =========================================================================
@@ -252,6 +261,71 @@ class StudyController(BaseController):
             )
             self._ft_container.render(StudyViewDto.error(str(e)))
 
+    async def _async_play_audio(self) -> None:
+        """Genera y reproduce audio de la traducción actual."""
+        try:
+            # Obtener palabra actual
+            if self._current_index >= len(self._words):
+                return
+
+            word = self._words[self._current_index]
+
+            # Buscar word_lang_id usando word_es_id + lang_code
+            word_lang = await self._words_lang_reader.get_by_word_and_lang(
+                word.word_es_id,
+                self._lang_code
+            )
+
+            if not word_lang:
+                self._logger.log_info(
+                    "StudyController",
+                    f"No se encontró traducción para word_es_id={word.word_es_id}, lang={self._lang_code}",
+                )
+                return
+
+            # Generar audio si no existe
+            audio_dto = GenerateWordAudioAiDto.from_primitives({
+                "word_lang_id": word_lang["id"],
+                "text": word.text_lang,
+                "lang_code": self._lang_code,
+            })
+
+            result = await self._generate_audio_service(audio_dto)
+
+            if not result.success:
+                self._logger.log_error(
+                    "StudyController",
+                    f"Error generando audio: {result.error_message}",
+                )
+                return
+
+            # Reproducir audio con Flet
+            ft_audio_control = fta.Audio(
+                src=result.audio_path,
+                autoplay=True,
+                volume=1.0,
+            )
+
+            if self._ft_container.page:
+                self._ft_container.page.overlay.append(ft_audio_control)
+                self._ft_container.page.update()
+
+                # Remover después de 10 segundos
+                await asyncio.sleep(10)
+                if ft_audio_control in self._ft_container.page.overlay:
+                    self._ft_container.page.overlay.remove(ft_audio_control)
+                    self._ft_container.page.update()
+
+        except Exception as e:
+            self._logger.log_error(
+                "StudyController",
+                f"Error reproduciendo audio: {e}",
+                {
+                    "current_index": self._current_index,
+                    "lang_code": self._lang_code,
+                },
+            )
+
     # =========================================================================
     # EVENT HANDLERS (orden visual/lógico en UI: flashcard → input → timer → back)
     # =========================================================================
@@ -281,6 +355,12 @@ class StudyController(BaseController):
     def _on_retry_failed_click(self) -> None:
         """Maneja click en boton repetir errores."""
         self._ft_container.page.run_task(self._async_retry_failed)
+
+    def _on_play_audio_click(self) -> None:
+        """Maneja click en boton de audio (pista)."""
+        async def _task():
+            await self._async_play_audio()
+        self._ft_container.page.run_task(_task)
 
     # =========================================================================
     # HELPERS PRIVADOS
