@@ -29,3 +29,4 @@ flet.yaml
 # Temporary build files
 requirements-dev.txt
 requirements-prod.txt
+/data/audio/
