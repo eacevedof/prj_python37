@@ -247,7 +247,7 @@ class CreateWordView(ft.Container):
             padding=24,
             bgcolor=ft.Colors.WHITE,
             border_radius=12,
-            border=ft.border.all(1, ft.Colors.GREY_300),
+            border=ft.Border.all(1, ft.Colors.GREY_300),
             width=500,
         )
 

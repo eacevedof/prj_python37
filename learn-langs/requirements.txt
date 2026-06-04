@@ -2,7 +2,9 @@
 
 # UI Framework
 flet>=0.21.0
-flet-audio>=0.1.0
+
+# Audio
+pygame>=2.5.0
 
 # Database
 aiosqlite>=0.19.0

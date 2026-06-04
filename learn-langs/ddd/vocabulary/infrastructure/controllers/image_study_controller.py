@@ -2,10 +2,11 @@
 
 import asyncio
 import time
+from pathlib import Path
 from typing import Any, Callable
 
 import flet as ft
-import flet_audio as fta
+import pygame
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
@@ -306,22 +307,28 @@ class ImageStudyController(BaseController):
                 )
                 return
 
-            # Reproducir audio con Flet
-            ft_audio_control = fta.Audio(
-                src=result.audio_path,
-                autoplay=True,
-                volume=1.0,
-            )
+            # Reproducir audio con pygame.mixer en thread separado
+            def _play_audio_sync(audio_path: str) -> None:
+                """Reproduce audio de forma sincrónica usando pygame."""
+                try:
+                    # Inicializar mixer si no está inicializado
+                    if not pygame.mixer.get_init():
+                        pygame.mixer.init()
 
-            if self._ft_container.page:
-                self._ft_container.page.overlay.append(ft_audio_control)
-                self._ft_container.page.update()
+                    # Cargar y reproducir
+                    pygame.mixer.music.load(str(Path(audio_path).resolve()))
+                    pygame.mixer.music.play()
 
-                # Remover después de 10 segundos
-                await asyncio.sleep(10)
-                if ft_audio_control in self._ft_container.page.overlay:
-                    self._ft_container.page.overlay.remove(ft_audio_control)
-                    self._ft_container.page.update()
+                    # Esperar a que termine
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.Clock().tick(10)
+
+                    # IMPORTANTE: Liberar el archivo para que pueda ser sobrescrito
+                    pygame.mixer.music.unload()
+                except Exception as e:
+                    raise Exception(f"Error reproduciendo audio con pygame: {e}")
+
+            await asyncio.to_thread(_play_audio_sync, result.audio_path)
 
         except Exception as e:
             self._logger.log_error(

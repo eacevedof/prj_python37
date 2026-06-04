@@ -1,5 +1,6 @@
 import os
 import re
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import final, Self
@@ -87,3 +88,13 @@ class Logger:
     def error_sql(self, message: str, context: dict | None = None) -> None:
         """Log error message."""
         self.log_error("Repository", message, context)
+
+    def log_exception(self, module: str, message: str, exc: Exception | None = None, context: dict | None = None) -> None:
+        """Log exception with full traceback."""
+        log_content = f"[EXCEPTION] {module}: {message}"
+        if context:
+            log_content += f"\nContext: {context}"
+        if exc:
+            log_content += f"\nException: {type(exc).__name__}: {exc}"
+            log_content += f"\nTraceback:\n{traceback.format_exc()}"
+        self.__write_log("error.log", log_content)

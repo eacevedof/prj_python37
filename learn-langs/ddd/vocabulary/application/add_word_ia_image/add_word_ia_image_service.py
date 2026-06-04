@@ -17,6 +17,7 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     WordsLangReaderSqliteRepository,
     TagsReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
 )
 
 
@@ -30,6 +31,7 @@ class AddWordIaImageService:
         self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
         self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
         self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
         self._generate_word_image_ai_service = GenerateWordImageAiService.get_instance()
 
@@ -66,10 +68,31 @@ class AddWordIaImageService:
         tags_data = await self._tags_reader_sqlite_repository.get_tags_by_word_es_id(add_word_ia_dto.word_id)
         tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
 
-        # Construir contexto con tags y notas (todo en español)
+        # Obtener grupos asociados a la palabra
+        groups_data = await self._word_groups_reader_sqlite_repository.get_word_group_by_word_es_id(add_word_ia_dto.word_id)
+
+        # Construir contexto con grupos, tags y notas (todo en español)
         context_parts = []
+
+        # Agregar descripción de grupos y fuente (si no es migración)
+        if groups_data:
+            for group in groups_data:
+                group_description = group.get("description", "")
+                group_source = group.get("source", "")
+
+                # Agregar descripción del grupo si existe
+                if group_description:
+                    context_parts.append(f"Grupo: {group_description}")
+
+                # Agregar fuente si existe y NO es migración
+                if group_source and group_source.lower() not in ["migracion", "migration", "mig"]:
+                    context_parts.append(f"Fuente: {group_source}")
+
+        # Agregar tags
         if tag_names:
             context_parts.append(f"Tags: {', '.join(tag_names)}")
+
+        # Agregar notas de la palabra
         if word_es_notes:
             context_parts.append(f"Notas: {word_es_notes}")
 

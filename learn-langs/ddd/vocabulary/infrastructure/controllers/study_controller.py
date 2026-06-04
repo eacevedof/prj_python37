@@ -2,10 +2,11 @@
 
 import asyncio
 import time
+from pathlib import Path
 from typing import Any, Callable
 
 import flet as ft
-import flet_audio as fta
+import pygame
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
@@ -264,11 +265,18 @@ class StudyController(BaseController):
     async def _async_play_audio(self) -> None:
         """Genera y reproduce audio de la traducción actual."""
         try:
+            self._logger.log_debug("StudyController._async_play_audio", "Iniciando reproducción de audio")
+
             # Obtener palabra actual
             if self._current_index >= len(self._words):
+                self._logger.log_debug("StudyController._async_play_audio", "Abortando: current_index >= len(words)")
                 return
 
             word = self._words[self._current_index]
+            self._logger.log_debug("StudyController._async_play_audio", "Palabra actual", {
+                "word_es_id": word.word_es_id,
+                "text_es": word.text_es,
+            })
 
             # Buscar word_lang_id usando word_es_id + lang_code
             word_lang = await self._words_lang_reader.get_by_word_and_lang(
@@ -283,6 +291,11 @@ class StudyController(BaseController):
                 )
                 return
 
+            self._logger.log_debug("StudyController._async_play_audio", "Traducción encontrada", {
+                "word_lang_id": word_lang["id"],
+                "text": word.text_lang,
+            })
+
             # Generar audio si no existe
             audio_dto = GenerateWordAudioAiDto.from_primitives({
                 "word_lang_id": word_lang["id"],
@@ -290,6 +303,7 @@ class StudyController(BaseController):
                 "lang_code": self._lang_code,
             })
 
+            self._logger.log_debug("StudyController._async_play_audio", "Generando audio")
             result = await self._generate_audio_service(audio_dto)
 
             if not result.success:
@@ -299,27 +313,41 @@ class StudyController(BaseController):
                 )
                 return
 
-            # Reproducir audio con Flet
-            ft_audio_control = fta.Audio(
-                src=result.audio_path,
-                autoplay=True,
-                volume=1.0,
-            )
+            self._logger.log_debug("StudyController._async_play_audio", "Audio generado", {
+                "audio_path": result.audio_path,
+            })
 
-            if self._ft_container.page:
-                self._ft_container.page.overlay.append(ft_audio_control)
-                self._ft_container.page.update()
+            # Reproducir audio con pygame.mixer en thread separado
+            self._logger.log_debug("StudyController._async_play_audio", "Reproduciendo audio con pygame")
 
-                # Remover después de 10 segundos
-                await asyncio.sleep(10)
-                if ft_audio_control in self._ft_container.page.overlay:
-                    self._ft_container.page.overlay.remove(ft_audio_control)
-                    self._ft_container.page.update()
+            def _play_audio_sync(audio_path: str) -> None:
+                """Reproduce audio de forma sincrónica usando pygame."""
+                try:
+                    # Inicializar mixer si no está inicializado
+                    if not pygame.mixer.get_init():
+                        pygame.mixer.init()
+
+                    # Cargar y reproducir
+                    pygame.mixer.music.load(str(Path(audio_path).resolve()))
+                    pygame.mixer.music.play()
+
+                    # Esperar a que termine
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.Clock().tick(10)
+
+                    # IMPORTANTE: Liberar el archivo para que pueda ser sobrescrito
+                    pygame.mixer.music.unload()
+                except Exception as e:
+                    raise Exception(f"Error reproduciendo audio con pygame: {e}")
+
+            await asyncio.to_thread(_play_audio_sync, result.audio_path)
+            self._logger.log_debug("StudyController._async_play_audio", "Audio reproducido exitosamente")
 
         except Exception as e:
-            self._logger.log_error(
-                "StudyController",
-                f"Error reproduciendo audio: {e}",
+            self._logger.log_exception(
+                "StudyController._async_play_audio",
+                "Error reproduciendo audio",
+                e,
                 {
                     "current_index": self._current_index,
                     "lang_code": self._lang_code,

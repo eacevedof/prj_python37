@@ -10,8 +10,12 @@ Este archivo proporciona contexto a Claude Code para trabajar con este repositor
 
 | Categoria | Skills |
 |-----------|--------|
-| Base | `_base/commits/`, `_base/ddd-architecture/`, `_base/karpathy-guidelines/` |
+| Base | `_base/commits/`, `_base/ddd-architecture/`, `_base/karpathy-guidelines/`, `_base/eskylet-claude.md` |
 | Python | `python/clean-code/`, `python/python-pro/`, `python/flet-gui/`, `python/sqlite/`, `python/async-patterns/` |
+
+### Spec Completa del Proyecto
+
+**Ver documentación completa**: `C:/projects/temper/ai/obsidian/dev-ops/skills/_base/eskylet-claude.md`
 
 ---
 

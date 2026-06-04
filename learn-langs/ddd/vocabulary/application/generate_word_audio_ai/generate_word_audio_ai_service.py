@@ -74,6 +74,24 @@ class GenerateWordAudioAiService:
                 "No hay texto para generar audio"
             )
 
+        # Verificar si ya existe el audio
+        audio_dir = Path("data/audio")
+        audio_filename = f"{word_lang_dict['id']}_{lang_code}.mp3"
+        audio_path = audio_dir / audio_filename
+
+        if audio_path.exists() and word_lang_dict.get("audio_path"):
+            self._logger.log_info(
+                "GenerateWordAudioAiService",
+                f"Audio ya existe: {audio_path}"
+            )
+            return GenerateWordAudioAiResultDto.ok(
+                word_lang_id=word_lang_dict["id"],
+                audio_path=str(audio_path),
+                voice_used="cached",
+                model_used="cached",
+                text_generated=text_to_generate,
+            )
+
         # Generar audio con tts-1
         try:
             tts_response = self._gpt_tts_1_reader_api_repository.get_audio_pronunciation_by_text(
@@ -91,12 +109,7 @@ class GenerateWordAudioAiService:
             audio_bytes = base64.b64decode(audio_b64)
 
             # Guardar archivo MP3 en disco
-            audio_dir = Path("data/audio")
             audio_dir.mkdir(parents=True, exist_ok=True)
-
-            # Nombre: {word_lang_id}_{lang_code}.mp3
-            audio_filename = f"{word_lang_dict['id']}_{lang_code}.mp3"
-            audio_path = audio_dir / audio_filename
             audio_path.write_bytes(audio_bytes)
 
             # Actualizar audio_path en BD - convertir dict a entity

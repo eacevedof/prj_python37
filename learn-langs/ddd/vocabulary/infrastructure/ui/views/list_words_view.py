@@ -222,7 +222,7 @@ class ListWordsView(ft.Container):
                 ft.Container(
                     content=self._ft_words_list,
                     expand=True,
-                    border=ft.border.all(1, ft.Colors.GREY_300),
+                    border=ft.Border.all(1, ft.Colors.GREY_300),
                     border_radius=8,
                 ),
             ],
@@ -324,7 +324,7 @@ class ListWordsView(ft.Container):
                     ),
                     width=48,
                     height=48,
-                    border=ft.border.all(2, ft.Colors.GREEN_600),
+                    border=ft.Border.all(2, ft.Colors.GREEN_600),
                     border_radius=6,
                     on_click=lambda e, w=word: self._route_on_show_images(w.id),
                     tooltip=tooltip_text,

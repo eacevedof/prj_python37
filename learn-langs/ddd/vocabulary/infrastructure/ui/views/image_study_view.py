@@ -402,7 +402,7 @@ class ImageStudyView(ft.Container):
             controls.append(
                 ft.Container(
                     content=failed_list,
-                    border=ft.border.all(1, ft.Colors.RED_300),
+                    border=ft.Border.all(1, ft.Colors.RED_300),
                     border_radius=8,
                     padding=10,
                     bgcolor=ft.Colors.RED_50,

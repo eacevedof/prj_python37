@@ -133,7 +133,7 @@ class ManageWordGroupsView(ft.Container):
                         controls=[self._ft_groups_table],
                         scroll=ft.ScrollMode.AUTO,
                     ),
-                    border=ft.border.all(1, ft.Colors.GREY_400),
+                    border=ft.Border.all(1, ft.Colors.GREY_400),
                     border_radius=8,
                     padding=10,
                 ),

@@ -144,7 +144,7 @@ class FlashcardComp(ft.Container):
     def set_result_style(self, is_correct: bool) -> None:
         """Aplica estilo segun resultado."""
         if is_correct:
-            self.border = ft.border.all(3, ft.Colors.GREEN_500)
+            self.border = ft.Border.all(3, ft.Colors.GREEN_500)
         else:
-            self.border = ft.border.all(3, ft.Colors.RED_500)
+            self.border = ft.Border.all(3, ft.Colors.RED_500)
         self.update()

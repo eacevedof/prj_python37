@@ -4,6 +4,7 @@ from typing import Any, Callable, Self
 
 import flet as ft
 
+from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.infrastructure.ui.components.flashcard_comp import FlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
@@ -35,6 +36,9 @@ class StudyView(ft.Container):
         route_on_play_audio: Callable[[], None] | None = None,  # 7. Boton escuchar audio (hint)
     ):
         super().__init__()
+
+        # Logger
+        self._logger = Logger.get_instance()
 
         # Callbacks al controller (en orden de ejecución)
         self._route_on_mount = route_on_mount
@@ -75,28 +79,59 @@ class StudyView(ft.Container):
     # =========================================================================
     def render(self, dto: StudyViewDto) -> None:
         """Renderiza la vista basado en el DTO."""
-        # Actualizar header
-        if self._ft_progress_text:
-            self._ft_progress_text.value = dto.progress_text
+        try:
+            self._logger.log_debug("StudyView.render", "Iniciando render", {
+                "is_loading": dto.is_loading,
+                "error_message": dto.error_message,
+                "has_no_words": dto.has_no_words,
+                "is_session_complete": dto.is_session_complete,
+                "has_last_result": bool(dto.last_result),
+                "has_current_word": bool(dto.current_word),
+            })
 
-        if self._ft_score_text:
-            self._ft_score_text.value = dto.score_text
+            # Actualizar header
+            if self._ft_progress_text:
+                self._ft_progress_text.value = dto.progress_text
+                self._logger.log_debug("StudyView.render", "Header actualizado: progress_text")
 
-        # Renderizar segun estado
-        if dto.is_loading:
-            self._render_loading()
-        elif dto.error_message:
-            self._render_error(dto.error_message)
-        elif dto.has_no_words:
-            self._render_no_words()
-        elif dto.is_session_complete:
-            self._render_session_complete(dto)
-        elif dto.last_result:
-            self._render_with_result(dto)
-        elif dto.current_word:
-            self._render_studying(dto)
+            if self._ft_score_text:
+                self._ft_score_text.value = dto.score_text
+                self._logger.log_debug("StudyView.render", "Header actualizado: score_text")
 
-        self.update()
+            # Renderizar segun estado
+            if dto.is_loading:
+                self._logger.log_debug("StudyView.render", "Renderizando: loading")
+                self._render_loading()
+            elif dto.error_message:
+                self._logger.log_debug("StudyView.render", "Renderizando: error")
+                self._render_error(dto.error_message)
+            elif dto.has_no_words:
+                self._logger.log_debug("StudyView.render", "Renderizando: no_words")
+                self._render_no_words()
+            elif dto.is_session_complete:
+                self._logger.log_debug("StudyView.render", "Renderizando: session_complete")
+                self._render_session_complete(dto)
+            elif dto.last_result:
+                self._logger.log_debug("StudyView.render", "Renderizando: with_result")
+                self._render_with_result(dto)
+            elif dto.current_word:
+                self._logger.log_debug("StudyView.render", "Renderizando: studying")
+                self._render_studying(dto)
+
+            self._logger.log_debug("StudyView.render", "Llamando self.update()")
+            self.update()
+            self._logger.log_debug("StudyView.render", "Render completado exitosamente")
+
+        except Exception as e:
+            self._logger.log_exception("StudyView.render", "Error en render", e, {
+                "dto_state": {
+                    "is_loading": dto.is_loading,
+                    "error_message": dto.error_message,
+                    "has_no_words": dto.has_no_words,
+                    "is_session_complete": dto.is_session_complete,
+                }
+            })
+            raise
 
     # =========================================================================
     # LIFECYCLE HOOKS (Flet)
@@ -175,75 +210,102 @@ class StudyView(ft.Container):
 
     def _render_studying(self, dto: StudyViewDto) -> None:
         """Renderiza palabra actual para estudiar (estado principal)."""
-        if not self._ft_content_area or not dto.current_word:
-            return
+        try:
+            self._logger.log_debug("StudyView._render_studying", "Iniciando", {
+                "has_content_area": bool(self._ft_content_area),
+                "has_current_word": bool(dto.current_word),
+            })
 
-        word = dto.current_word
+            if not self._ft_content_area or not dto.current_word:
+                self._logger.log_debug("StudyView._render_studying", "Abortando: falta content_area o current_word")
+                return
 
-        # Crear componentes dinámicos
-        self._ft_flashcard = FlashcardComp(
-            text_es=word.get("text_es", ""),
-            text_lang=word.get("text_lang", ""),
-            word_type=word.get("word_type", ""),
-            pronunciation=word.get("pronunciation", ""),
-            show_translation=False,
-        )
+            word = dto.current_word
+            self._logger.log_debug("StudyView._render_studying", "Palabra actual", {
+                "text_es": word.get("text_es", ""),
+                "word_type": word.get("word_type", ""),
+            })
 
-        self._ft_input_field = InputFieldComp(
-            placeholder="Escribe la traduccion...",
-            on_submit=self._route_on_answer,
-            on_skip=self._route_on_skip,
-        )
-
-        self._ft_timer = TimerComp(
-            seconds=30,
-            on_timeout=self._route_on_timeout,
-            auto_start=True,
-        )
-
-        # Botón de audio (hint)
-        audio_button = None
-        if self._route_on_play_audio:
-            audio_button = ft.Container(
-                content=ft.IconButton(
-                    icon=ft.Icons.VOLUME_UP,
-                    icon_size=32,
-                    tooltip="Escuchar pronunciación (pista)",
-                    on_click=lambda _: self._route_on_play_audio(),
-                    style=ft.ButtonStyle(
-                        color=ft.Colors.BLUE_700,
-                    ),
-                ),
-                alignment=ft.Alignment.CENTER,
+            # Crear componentes dinámicos
+            self._logger.log_debug("StudyView._render_studying", "Creando FlashcardComp")
+            self._ft_flashcard = FlashcardComp(
+                text_es=word.get("text_es", ""),
+                text_lang=word.get("text_lang", ""),
+                word_type=word.get("word_type", ""),
+                pronunciation=word.get("pronunciation", ""),
+                show_translation=False,
             )
 
-        self._ft_content_area.controls.clear()
-        controls_to_add = [
-            ft.Container(height=20),
-            ft.Container(
-                content=self._ft_timer,
-                alignment=ft.Alignment.CENTER,
-            ),
-            ft.Container(height=20),
-            ft.Container(
-                content=self._ft_flashcard,
-                alignment=ft.Alignment.CENTER,
-            ),
-        ]
+            self._logger.log_debug("StudyView._render_studying", "Creando InputFieldComp")
+            self._ft_input_field = InputFieldComp(
+                placeholder="Escribe la traduccion...",
+                on_submit=self._route_on_answer,
+                on_skip=self._route_on_skip,
+            )
 
-        # Agregar botón de audio si está disponible
-        if audio_button:
+            self._logger.log_debug("StudyView._render_studying", "Creando TimerComp")
+            self._ft_timer = TimerComp(
+                seconds=30,
+                on_timeout=self._route_on_timeout,
+                auto_start=True,
+            )
+
+            # Botón de audio (hint)
+            audio_button = None
+            if self._route_on_play_audio:
+                self._logger.log_debug("StudyView._render_studying", "Creando botón de audio")
+                audio_button = ft.Container(
+                    content=ft.IconButton(
+                        icon=ft.Icons.VOLUME_UP,
+                        icon_size=32,
+                        tooltip="Escuchar pronunciación (pista)",
+                        on_click=lambda _: self._route_on_play_audio(),
+                        style=ft.ButtonStyle(
+                            color=ft.Colors.BLUE_700,
+                        ),
+                    ),
+                    alignment=ft.Alignment.CENTER,
+                )
+
+            self._logger.log_debug("StudyView._render_studying", "Limpiando content_area.controls")
+            self._ft_content_area.controls.clear()
+
+            self._logger.log_debug("StudyView._render_studying", "Construyendo lista de controles")
+            controls_to_add = [
+                ft.Container(height=20),
+                ft.Container(
+                    content=self._ft_timer,
+                    alignment=ft.Alignment.CENTER,
+                ),
+                ft.Container(height=20),
+                ft.Container(
+                    content=self._ft_flashcard,
+                    alignment=ft.Alignment.CENTER,
+                ),
+            ]
+
+            # Agregar botón de audio si está disponible
+            if audio_button:
+                self._logger.log_debug("StudyView._render_studying", "Agregando botón de audio a controls")
+                controls_to_add.extend([
+                    ft.Container(height=15),
+                    audio_button,
+                ])
+
             controls_to_add.extend([
                 ft.Container(height=15),
-                audio_button,
+                self._ft_input_field,
             ])
 
-        controls_to_add.extend([
-            ft.Container(height=15),
-            self._ft_input_field,
-        ])
+            self._logger.log_debug("StudyView._render_studying", f"Agregando {len(controls_to_add)} controles al content_area")
+            self._ft_content_area.controls.extend(controls_to_add)
+            self._logger.log_debug("StudyView._render_studying", "Controles agregados exitosamente")
 
-        self._ft_content_area.controls.extend(controls_to_add)
+        except Exception as e:
+            self._logger.log_exception("StudyView._render_studying", "Error en _render_studying", e, {
+                "word": word if 'word' in locals() else None,
+            })
+            raise
 
     def _render_with_result(self, dto: StudyViewDto) -> None:
         """Renderiza resultado de respuesta (post-answer antes de next word)."""
@@ -402,7 +464,7 @@ class StudyView(ft.Container):
             controls.append(
                 ft.Container(
                     content=failed_list,
-                    border=ft.border.all(1, ft.Colors.RED_300),
+                    border=ft.Border.all(1, ft.Colors.RED_300),
                     border_radius=8,
                     padding=10,
                     bgcolor=ft.Colors.RED_50,

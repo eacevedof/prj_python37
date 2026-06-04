@@ -47,7 +47,7 @@ class WordGroupsSelectorComp(ft.Container):
         )
         self.height = min(200, len(checkboxes) * 40 + 20)
         self.padding = 10
-        self.border = ft.border.all(1, ft.Colors.GREY_400)
+        self.border = ft.Border.all(1, ft.Colors.GREY_400)
         self.border_radius = 8
 
     def _on_checkbox_change(self, group_id: int, is_checked: bool) -> None:
