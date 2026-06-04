@@ -39,8 +39,11 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         limit: int = 20,
     ) -> list[dict]:
         """
-        Obtiene palabras para repaso ordenadas por prioridad SM-2.
-        Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
+        Obtiene palabras para repaso ordenadas por prioridad:
+        1. Nunca examinadas (total_attempts = 0 o NULL)
+        2. Más falladas (intentos - score total)
+        3. Más antiguas sin examinar (last_reviewed_at más antiguo)
+        4. Aleatorio
         """
         # Construir filtro de grupo
         group_join = ""
@@ -71,11 +74,24 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
                 WHERE 1=1 {group_where}
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0
-                         WHEN wm.next_review_at <= datetime('now') THEN 1
-                         ELSE 2 END,
-                    wm.next_review_at ASC,
-                    wm.easiness_factor ASC
+                    -- Prioridad 1: Nunca examinadas
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE 1
+                    END ASC,
+                    -- Prioridad 2: Más falladas (fallos ponderados)
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
+                    END DESC,
+                    -- Prioridad 3: Más antiguas sin examinar
+                    CASE
+                        WHEN wm.last_reviewed_at IS NULL THEN 0
+                        ELSE 1
+                    END ASC,
+                    wm.last_reviewed_at ASC,
+                    -- Prioridad 4: Aleatorio
+                    RANDOM()
                 LIMIT {limit}
             """
             params = (lang_code,) + tuple(tag_names) + (lang_code,)
@@ -98,11 +114,24 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
                 WHERE 1=1 {group_where}
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0
-                         WHEN wm.next_review_at <= datetime('now') THEN 1
-                         ELSE 2 END,
-                    wm.next_review_at ASC,
-                    wm.easiness_factor ASC
+                    -- Prioridad 1: Nunca examinadas
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE 1
+                    END ASC,
+                    -- Prioridad 2: Más falladas (fallos ponderados)
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
+                    END DESC,
+                    -- Prioridad 3: Más antiguas sin examinar
+                    CASE
+                        WHEN wm.last_reviewed_at IS NULL THEN 0
+                        ELSE 1
+                    END ASC,
+                    wm.last_reviewed_at ASC,
+                    -- Prioridad 4: Aleatorio
+                    RANDOM()
                 LIMIT {limit}
             """
             params = (lang_code, lang_code)
@@ -117,9 +146,12 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         limit: int = 20,
     ) -> list[dict]:
         """
-        Obtiene palabras con imágenes para repaso ordenadas por prioridad SM-2.
+        Obtiene palabras con imágenes para repaso ordenadas por prioridad:
+        1. Nunca examinadas (total_attempts = 0 o NULL)
+        2. Más falladas (intentos - score total)
+        3. Más antiguas sin examinar (last_reviewed_at más antiguo)
+        4. Aleatorio
         Solo incluye palabras de tipo WORD que tienen imagen principal.
-        Incluye palabras sin métricas (nuevas) y con next_review_at vencido.
         """
         # DEBUG: Log del group_id recibido
         from ddd.shared.infrastructure.components.logger import Logger
@@ -164,11 +196,24 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
                 WHERE we.word_type = 'WORD' {group_where}
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0
-                         WHEN wm.next_review_at <= datetime('now') THEN 1
-                         ELSE 2 END,
-                    wm.next_review_at ASC,
-                    wm.easiness_factor ASC
+                    -- Prioridad 1: Nunca examinadas
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE 1
+                    END ASC,
+                    -- Prioridad 2: Más falladas (fallos ponderados)
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
+                    END DESC,
+                    -- Prioridad 3: Más antiguas sin examinar
+                    CASE
+                        WHEN wm.last_reviewed_at IS NULL THEN 0
+                        ELSE 1
+                    END ASC,
+                    wm.last_reviewed_at ASC,
+                    -- Prioridad 4: Aleatorio
+                    RANDOM()
                 LIMIT {limit}
             """
             params = (lang_code,) + tuple(tag_names) + (lang_code,)
@@ -197,11 +242,24 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
                 WHERE we.word_type = 'WORD' {group_where}
                 ORDER BY
-                    CASE WHEN wm.next_review_at IS NULL THEN 0
-                         WHEN wm.next_review_at <= datetime('now') THEN 1
-                         ELSE 2 END,
-                    wm.next_review_at ASC,
-                    wm.easiness_factor ASC
+                    -- Prioridad 1: Nunca examinadas
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE 1
+                    END ASC,
+                    -- Prioridad 2: Más falladas (fallos ponderados)
+                    CASE
+                        WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
+                        ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
+                    END DESC,
+                    -- Prioridad 3: Más antiguas sin examinar
+                    CASE
+                        WHEN wm.last_reviewed_at IS NULL THEN 0
+                        ELSE 1
+                    END ASC,
+                    wm.last_reviewed_at ASC,
+                    -- Prioridad 4: Aleatorio
+                    RANDOM()
                 LIMIT {limit}
             """
             params = (lang_code, lang_code)
