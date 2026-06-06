@@ -49,7 +49,7 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         Raises:
             OpenAIException: If generation fails
         """
-        api_params = {
+        image_params = {
             "model": openai_model,
             "prompt": prompt,
             "n": result_number,
@@ -59,12 +59,12 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         }
 
         if style:
-            api_params["style"] = style
+            image_params["style"] = style
 
-        image_response = self._open_ai_client.images.generate(**api_params)
+        image_response = self._open_ai_client.images.generate(**image_params)
 
         if not image_response.data:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 "GptImage1ReaderApiRepository: No image data received from OpenAI API"
             )
 

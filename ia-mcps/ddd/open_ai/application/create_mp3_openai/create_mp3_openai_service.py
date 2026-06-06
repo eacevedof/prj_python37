@@ -81,29 +81,29 @@ class CreateMp3OpenaiService:
 
     def _fail_if_wrong_input(self) -> None:
         if len(self._create_mp3_openai_dto.text) > self.MAX_TEXT_LENGTH:
-            raise OpenAIException.unexpected_custom(f"text cannot exceed {self.MAX_TEXT_LENGTH} characters")
+            OpenAIException.unexpected_custom(f"text cannot exceed {self.MAX_TEXT_LENGTH} characters")
 
         if not self.MIN_SPEED <= self._create_mp3_openai_dto.speed <= self.MAX_SPEED:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"speed must be between {self.MIN_SPEED} and {self.MAX_SPEED}"
             )
 
-        valid_voices = [str(enum_item.value) for enum_item in OpenaiTtsVoiceEnum]
+        valid_voices = list(OpenaiTtsVoiceEnum)
         if self._create_mp3_openai_dto.voice not in valid_voices:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid voice: {self._create_mp3_openai_dto.voice}. Allowed values: {", ".join(valid_voices)}"
             )
 
-        valid_models = [str(enum_item.value) for enum_item in OpenaiTtsModelEnum]
+        valid_models = list(OpenaiTtsModelEnum)
         if self._create_mp3_openai_dto.tts_model not in valid_models:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid tts_model: {self._create_mp3_openai_dto.tts_model}. "
                 f"Allowed values: {", ".join(valid_models)}"
             )
 
-        valid_formats = [str(enum_item.value) for enum_item in OpenaiTtsFormatEnum]
+        valid_formats = list(OpenaiTtsFormatEnum)
         if self._create_mp3_openai_dto.response_format not in valid_formats:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid response_format: {self._create_mp3_openai_dto.response_format}. "
                 f"Allowed values: {", ".join(valid_formats)}"
             )

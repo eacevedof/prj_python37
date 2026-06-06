@@ -53,7 +53,7 @@ class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
 
         audio_bytes = audio_response.content
         if not audio_bytes:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 "GptTts1ReaderApiRepository: No audio data received from OpenAI API"
             )
 

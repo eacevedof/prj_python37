@@ -1,28 +1,112 @@
-# Core
-aiohttp>=3.9.0
-python-dotenv>=1.0.0
+# MCP Servers - IA Services
+# Uses compatible releases (~=) for security patches without breaking changes
+# Installation: pip install -r requirements.txt
 
-# MCP Server
-mcp
+# ============================================================================
+# CORE
+# ============================================================================
 
-# RAG - Vector DB
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
+# aiohttp - Async HTTP client for EMT Madrid API
+# Used in: ddd/emt/infrastructure/repositories/emt_api_repository.py
+aiohttp~=3.9.0
 
-# File processing
-PyMuPDF>=1.23.0
-python-docx>=1.1.0
-openpyxl>=3.1.0
-Pillow>=10.0.0
-transformers>=4.35.0
-openai-whisper>=20231117
+# python-dotenv - Load environment variables from .env file
+# Supports: OPENAI_API_KEY, EMT_CLIENT_ID, EMT_PASSKEY, APP_LOG_PATH
+python-dotenv~=1.0.0
 
+# ============================================================================
+# MCP SERVER
+# ============================================================================
+
+# mcp - Model Context Protocol server framework
+# Used in: ddd/mcp_emt, ddd/mcp_memory
+# Provides: Server, Tool, TextContent, stdio_server
+mcp~=1.0.0
+
+# ============================================================================
+# VECTOR DATABASE & EMBEDDINGS
+# ============================================================================
+
+# chromadb - Vector database for semantic search and RAG
+# Used in: ddd/ia_memory/infrastructure/repositories/vector_db_repository.py
+# Stores: Document embeddings for similarity search
+chromadb~=0.4.0
+
+# sentence-transformers - Generate text embeddings for ChromaDB
+# Used in: ddd/ia_memory/infrastructure/repositories/vector_db_repository.py
+# Model: SentenceTransformer for embedding generation
+sentence-transformers~=2.2.0
+
+# ============================================================================
+# FILE PROCESSING
+# ============================================================================
+
+# PyMuPDF - PDF file processing and text extraction
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Imported as: fitz
+# Processes: .pdf files → text chunks
+PyMuPDF~=1.23.0
+
+# python-docx - Microsoft Word document processing
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Imported as: docx
+# Processes: .docx files → text chunks
+python-docx~=1.1.0
+
+# openpyxl - Excel spreadsheet processing
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Processes: .xlsx files → text chunks per sheet
+openpyxl~=3.1.0
+
+# Pillow - Image file processing
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Imported as: PIL.Image
+# Processes: .png, .jpg, .jpeg images
+Pillow~=10.0.0
+
+# transformers - Hugging Face transformers for image captioning
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Model: BlipProcessor, BlipForConditionalGeneration
+# Processes: Images → text descriptions
+transformers~=4.35.0
+
+# openai-whisper - Audio transcription with Whisper model
+# Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
+# Imported as: whisper
+# Processes: .mp3, .wav files → text transcriptions
+openai-whisper~=20231117
+
+# ============================================================================
 # AI/ML
-openai>=1.0.0
+# ============================================================================
 
-# Dev
-ruff>=0.1.0
-mypy>=1.7.0
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
-pytest-cov>=4.1.0
+# openai - OpenAI API client for GPT, DALL-E, TTS
+# Used in: ddd/open_ai/infrastructure/repositories/
+# - abstract_open_ai_api_repository.py (OpenAI client setup)
+# - gpt_image_1_reader_api_repository.py (DALL-E, GPT-Image-1.5)
+# - gpt_tts_1_reader_api_repository.py (TTS-1, TTS-1-HD)
+openai~=1.0.0
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# ruff - Fast Python linter and formatter
+# Usage: ruff check .
+ruff~=0.1.0
+
+# mypy - Static type checker
+# Usage: mypy .
+mypy~=1.7.0
+
+# pytest - Testing framework
+# Usage: pytest
+pytest~=7.4.0
+
+# pytest-asyncio - Async test support for pytest
+# Required for: Testing async functions in EMT and MCP services
+pytest-asyncio~=0.21.0
+
+# pytest-cov - Code coverage plugin for pytest
+# Usage: pytest --cov
+pytest-cov~=4.1.0

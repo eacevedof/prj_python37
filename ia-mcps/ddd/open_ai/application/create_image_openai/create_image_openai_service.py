@@ -60,6 +60,10 @@ class CreateImageOpenaiService:
         )
 
         base64_img_strings = self._get_valid_base64_strings(openai_images)
+        if not base64_img_strings:
+            OpenAIException.unexpected_custom(
+                "Failed to generate images: No valid base64 image strings returned from OpenAI API"
+            )
 
         return CreateImageOpenaiResultDto.from_primitives({
             "images": base64_img_strings,
@@ -70,53 +74,54 @@ class CreateImageOpenaiService:
             "number_of_images": self._create_image_openai_dto.number_of_images,
         })
 
+
     def _fail_if_wrong_input(self) -> None:
         if self._create_image_openai_dto.number_of_images < self.MIN_NUMBER_OF_IMAGES or \
            self._create_image_openai_dto.number_of_images > self.MAX_NUMBER_OF_IMAGES:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"number_of_images must be between {self.MIN_NUMBER_OF_IMAGES} and {self.MAX_NUMBER_OF_IMAGES}"
             )
 
-        valid_models = [str(enum_item.value) for enum_item in OpenaiImageModelEnum]
+        valid_models = list(OpenaiImageModelEnum)
         if self._create_image_openai_dto.openai_model not in valid_models:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid image_model: {self._create_image_openai_dto.openai_model}. "
                 f"Allowed values: {", ".join(valid_models)}"
             )
 
-        valid_sizes = [str(enum_item.value) for enum_item in OpenaiImageSizeEnum]
+        valid_sizes = list(OpenaiImageSizeEnum)
         if self._create_image_openai_dto.size not in valid_sizes:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid size: {self._create_image_openai_dto.size}. Allowed values: {", ".join(valid_sizes)}"
             )
 
-        valid_qualities = [str(enum_item.value) for enum_item in OpenaiImageQualityEnum]
+        valid_qualities = list(OpenaiImageQualityEnum)
         if self._create_image_openai_dto.quality not in valid_qualities:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"Invalid quality: {self._create_image_openai_dto.quality}. "
                 f"Allowed values: {", ".join(valid_qualities)}"
             )
 
         if self._create_image_openai_dto.style is not None:
-            valid_styles = [str(enum_item.value) for enum_item in OpenaiImageStyleEnum]
+            valid_styles = list(OpenaiImageStyleEnum)
             if self._create_image_openai_dto.style not in valid_styles:
-                raise OpenAIException.unexpected_custom(
+                OpenAIException.unexpected_custom(
                     f"Invalid style: {self._create_image_openai_dto.style}. "
                     f"Allowed values: {", ".join(valid_styles)}"
                 )
 
-        if self._create_image_openai_dto.openai_model == OpenaiImageModelEnum.DALL_E_3.value and \
-           self._create_image_openai_dto.size in [OpenaiImageSizeEnum.SIZE_256.value, OpenaiImageSizeEnum.SIZE_512.value]:
-            raise OpenAIException.unexpected_custom("dall-e-3 does not support 256x256 or 512x512 sizes")
+        if self._create_image_openai_dto.openai_model == OpenaiImageModelEnum.DALL_E_3 and \
+           self._create_image_openai_dto.size in [OpenaiImageSizeEnum.SIZE_256, OpenaiImageSizeEnum.SIZE_512]:
+            OpenAIException.unexpected_custom("dall-e-3 does not support 256x256 or 512x512 sizes")
 
         if self._create_image_openai_dto.openai_model in [
-            OpenaiImageModelEnum.DALL_E_2.value,
-            OpenaiImageModelEnum.GPT_IMAGE_1_5.value
+            OpenaiImageModelEnum.DALL_E_2,
+            OpenaiImageModelEnum.GPT_IMAGE_1_5
         ] and self._create_image_openai_dto.size in [
-            OpenaiImageSizeEnum.SIZE_1024_1792.value,
-            OpenaiImageSizeEnum.SIZE_1792_1024.value
+            OpenaiImageSizeEnum.SIZE_1024_1792,
+            OpenaiImageSizeEnum.SIZE_1792_1024
         ]:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"{self._create_image_openai_dto.openai_model} does not support 1024x1792 or 1792x1024 sizes"
             )
 
@@ -125,10 +130,6 @@ class CreateImageOpenaiService:
         for img_data in base64_images:
             image_b64 = img_data.get(OpenaiImageResponseFormatEnum.B64_JSON, "")
             if not image_b64:
-                raise OpenAIException.unexpected_custom(
-                    f"Image data does not contain {OpenaiImageResponseFormatEnum.B64_JSON}"
-                )
-
+                continue
             images.append(img_data)
-
         return images
