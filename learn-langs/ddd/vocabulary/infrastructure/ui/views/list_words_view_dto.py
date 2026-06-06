@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.enums import LanguageCodeEnum, WordTypeEnum
 
 
 @dataclass(frozen=True, slots=True)
@@ -12,7 +12,7 @@ class WordListItemViewDto:
 
     id: int = 0
     text: str = ""
-    word_type: str = "WORD"
+    word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
     created_at: str = ""
     image_count: int = 0
@@ -36,7 +36,7 @@ class WordListItemViewDto:
         return cls(
             id=int(primitives.get("id", 0)),
             text=str(primitives.get("text", "")),
-            word_type=str(primitives.get("word_type", "WORD")),
+            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             notes=str(primitives.get("notes", "") or ""),
             created_at=str(primitives.get("created_at", "") or "")[:10],
             image_count=int(primitives.get("image_count", 0)),

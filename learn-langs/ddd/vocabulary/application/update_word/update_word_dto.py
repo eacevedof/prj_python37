@@ -12,7 +12,7 @@ class UpdateWordDto:
 
     word_id: int
     text: str
-    word_type: str = "WORD"
+    word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
     tags: list[str] = field(default_factory=list)
     group_ids: list[int] = field(default_factory=list)
@@ -20,13 +20,13 @@ class UpdateWordDto:
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        word_type = str(primitives.get("word_type", "WORD")).upper()
+        word_type = str(primitives.get("word_type", WordTypeEnum.WORD.value)).upper()
 
         # Validar word_type
         try:
             WordTypeEnum(word_type)
         except ValueError:
-            word_type = "WORD"
+            word_type = WordTypeEnum.WORD.value
 
         return cls(
             word_id=int(primitives.get("word_id", 0)),

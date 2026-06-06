@@ -3,6 +3,7 @@
 import flet as ft
 from typing import Callable, Any, Self
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
 from ddd.vocabulary.infrastructure.ui.components.word_groups_selector_comp import WordGroupsSelectorComp
 from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
 
@@ -128,11 +129,11 @@ class CreateWordView(ft.Container):
             label="Tipo",
             width=200,
             options=[
-                ft.dropdown.Option("WORD", "Palabra"),
-                ft.dropdown.Option("PHRASE", "Frase"),
-                ft.dropdown.Option("SENTENCE", "Oración"),
+                ft.dropdown.Option(WordTypeEnum.WORD.value, "Palabra"),
+                ft.dropdown.Option(WordTypeEnum.PHRASE.value, "Frase"),
+                ft.dropdown.Option(WordTypeEnum.SENTENCE.value, "Oración"),
             ],
-            value="WORD",
+            value=WordTypeEnum.WORD.value,
         )
 
         self._ft_notes_field = ft.TextField(
@@ -288,7 +289,7 @@ class CreateWordView(ft.Container):
             self._ft_text_lang_field.value = form_values.get("text_lang", "")
 
         if self._ft_word_type_dropdown:
-            self._ft_word_type_dropdown.value = form_values.get("word_type", "WORD")
+            self._ft_word_type_dropdown.value = form_values.get("word_type", WordTypeEnum.WORD.value)
 
         if self._ft_notes_field:
             self._ft_notes_field.value = form_values.get("notes", "")
@@ -462,7 +463,7 @@ class CreateWordView(ft.Container):
         return {
             "text_es": self._ft_text_es_field.value if self._ft_text_es_field else "",
             "text_lang": self._ft_text_lang_field.value if self._ft_text_lang_field else "",
-            "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else "WORD",
+            "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else WordTypeEnum.WORD.value,
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "selected_tags": list(self._selected_tags),
             "selected_group_ids": list(self._selected_group_ids),

@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
+
 
 @dataclass(frozen=True, slots=True)
 class GetWordForEditResultDto:
@@ -10,7 +12,7 @@ class GetWordForEditResultDto:
 
     word_id: int = 0
     text: str = ""
-    word_type: str = "WORD"
+    word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
     translations: dict[str, str] = field(default_factory=dict)
     selected_tags: tuple[str, ...] = field(default_factory=tuple)
@@ -26,7 +28,7 @@ class GetWordForEditResultDto:
         return cls(
             word_id=int(primitives.get("word_id", 0)),
             text=str(primitives.get("text", "")),
-            word_type=str(primitives.get("word_type", "WORD")),
+            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             notes=str(primitives.get("notes", "") or ""),
             translations=dict(translations),
             selected_tags=tuple(selected_tags),

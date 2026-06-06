@@ -5,6 +5,7 @@ from pathlib import Path
 import flet as ft
 from typing import Callable, Any, Self
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
 from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
     ListWordsViewDto,
     WordListItemViewDto,
@@ -343,9 +344,9 @@ class ListWordsView(ft.Container):
         """Construye un tile para una palabra."""
         # Icono segun tipo
         icon = ft.Icons.ABC
-        if word.word_type == "PHRASE":
+        if word.word_type == WordTypeEnum.PHRASE.value:
             icon = ft.Icons.SHORT_TEXT
-        elif word.word_type == "SENTENCE":
+        elif word.word_type == WordTypeEnum.SENTENCE.value:
             icon = ft.Icons.NOTES
 
         # Badge de imagenes

@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
+
 
 @dataclass(frozen=True, slots=True)
 class ImageStudyWordDto:
@@ -27,7 +29,7 @@ class ImageStudyWordDto:
             word_es_id=int(primitives.get("word_es_id", 0)),
             text_es=str(primitives.get("text_es", "")),
             text_lang=str(primitives.get("text_lang", "")),
-            word_type=str(primitives.get("word_type", "WORD")),
+            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             pronunciation=str(primitives.get("pronunciation", "") or ""),
             repetitions=int(primitives.get("repetitions", 0)),
             easiness_factor=float(primitives.get("easiness_factor", 2.5)),

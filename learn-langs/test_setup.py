@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from ddd.devops.application.run_migrations import RunMigrationsDto, RunMigrationsService
 from ddd.vocabulary.application.get_app_config import GetAppConfigService
 from ddd.vocabulary.application.create_word import CreateWordDto, CreateWordService
+from ddd.vocabulary.domain.enums import WordTypeEnum
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
     TagsReaderSqliteRepository,
@@ -66,7 +67,7 @@ async def test_create_word():
     # Crear palabra de prueba
     dto = CreateWordDto.from_primitives({
         "text": "hola",
-        "word_type": "WORD",
+        "word_type": WordTypeEnum.WORD.value,
         "notes": "Saludo común",
         "tags": ["básico", "cotidiano"],
         "translations": {

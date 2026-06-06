@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
+
 
 @dataclass(frozen=True, slots=True)
 class UpdateWordResultDto:
@@ -21,7 +23,7 @@ class UpdateWordResultDto:
         return cls(
             id=int(primitives.get("id", 0)),
             text=str(primitives.get("text", "")).strip(),
-            word_type=str(primitives.get("word_type", "WORD")),
+            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             notes=str(primitives.get("notes", "") or ""),
             updated_at=str(primitives.get("updated_at", "") or ""),
             tags=list(primitives.get("tags", []) or []),

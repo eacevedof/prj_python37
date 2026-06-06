@@ -9,7 +9,7 @@ class CreateWordDto:
     """Input DTO para crear una palabra en español."""
 
     text: str
-    word_type: str = "WORD"
+    word_type: str = WordTypeEnum.WORD.value
     image_path: str = ""
     notes: str = ""
     tags: list[str] = field(default_factory=list)
@@ -18,13 +18,13 @@ class CreateWordDto:
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        word_type = str(primitives.get("word_type", "WORD")).upper()
+        word_type = str(primitives.get("word_type", WordTypeEnum.WORD.value)).upper()
 
         # Validar word_type
         try:
             WordTypeEnum(word_type)
         except ValueError:
-            word_type = "WORD"
+            word_type = WordTypeEnum.WORD.value
 
         return cls(
             text=str(primitives.get("text", "")).strip(),

@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
+
 
 @dataclass(frozen=True, slots=True)
 class CreateWordResultDto:
@@ -20,7 +22,7 @@ class CreateWordResultDto:
         return cls(
             id=int(primitives.get("id", 0)),
             text=str(primitives.get("text", "")).strip(),
-            word_type=str(primitives.get("word_type", "WORD")),
+            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             image_path=str(primitives.get("image_path", "") or ""),
             notes=str(primitives.get("notes", "") or ""),
             created_at=str(primitives.get("created_at", "") or ""),

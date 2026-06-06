@@ -3,6 +3,7 @@
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.vocabulary.domain.enums import WordTypeEnum
 from ddd.vocabulary.application.get_word_for_edit.get_word_for_edit_dto import (
     GetWordForEditDto,
 )
@@ -68,7 +69,7 @@ class GetWordForEditService:
         return GetWordForEditResultDto.ok(
             word_id=get_word_for_edit_dto.word_id,
             text=word_data.get("text", ""),
-            word_type=word_data.get("word_type", "WORD"),
+            word_type=word_data.get("word_type", WordTypeEnum.WORD.value),
             notes=word_data.get("notes", "") or "",
             translations=translations,
             selected_tags=selected_tags,
