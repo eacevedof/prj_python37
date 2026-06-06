@@ -1,47 +1,41 @@
 """DTO para crear audio MP3 con OpenAI Audio API."""
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Self
+
+from ddd.open_ai.domain.enums import (
+    OpenaiTtsFormatEnum,
+    OpenaiTtsModelEnum,
+    OpenaiTtsVoiceEnum,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class CreateMp3OpenaiDto:
-    """
-    DTO para parametrizar la generación de audio TTS con OpenAI.
-
-    Soporta tanto tts-1 como tts-1-hd con múltiples voces y formatos.
-    """
+    """DTO para parametrizar la generación de audio TTS con OpenAI."""
 
     text: str
-    """Texto a convertir en audio (máximo 4096 caracteres)."""
-
-    voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = "alloy"
-    """
-    Voz a utilizar:
-    - alloy: Neutral, versátil
-    - echo: Masculina, clara
-    - fable: Británica, expresiva
-    - onyx: Masculina, profunda
-    - nova: Femenina, energética
-    - shimmer: Femenina, suave
-    """
-
-    model: Literal["tts-1", "tts-1-hd"] = "tts-1"
-    """Modelo a utilizar (tts-1 es más rápido, tts-1-hd tiene mejor calidad)."""
-
+    voice: str = "alloy"
+    tts_model: str = "tts-1"
     speed: float = 1.0
-    """Velocidad del audio (0.25 a 4.0)."""
+    response_format: str = "mp3"
 
-    response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3"
-    """Formato de audio de salida."""
+    @classmethod
+    def from_primitives(cls, primitives: dict) -> Self:
+        text = str(primitives.get("text", "")).strip()
+        voice = str(primitives.get("voice", OpenaiTtsVoiceEnum.ALLOY.value))
+        tts_model = str(primitives.get("tts_model", OpenaiTtsModelEnum.TTS_1.value))
+        speed = float(primitives.get("speed", 1.0))
+        response_format = str(primitives.get("response_format", OpenaiTtsFormatEnum.MP3.value))
+
+        return cls(
+            text=text,
+            voice=voice,
+            tts_model=tts_model,
+            speed=speed,
+            response_format=response_format,
+        )
 
     def __post_init__(self) -> None:
-        """Valida los parámetros del DTO."""
         if not self.text or not self.text.strip():
             raise ValueError("CreateMp3OpenaiDto: text no puede estar vacío")
-
-        if len(self.text) > 4096:
-            raise ValueError("CreateMp3OpenaiDto: text no puede exceder 4096 caracteres")
-
-        if not 0.25 <= self.speed <= 4.0:
-            raise ValueError("CreateMp3OpenaiDto: speed debe estar entre 0.25 y 4.0")

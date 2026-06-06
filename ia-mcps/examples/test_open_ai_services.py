@@ -22,10 +22,10 @@ def test_create_image() -> None:
 
     dto = CreateImageOpenaiDto(
         prompt="A friendly robot helping a child learn to code",
-        model="gpt-image-1.5",
+        image_model="gpt-image-1.5",
         size="1024x1024",
         quality="low",
-        n=1,
+        number_of_images=1,
     )
 
     print(f"Prompt: {dto.prompt}")
@@ -51,7 +51,7 @@ def test_create_mp3() -> None:
     dto = CreateMp3OpenaiDto(
         text="Hello! This is a test of the OpenAI text to speech service.",
         voice="nova",
-        model="tts-1",
+        tts_model="tts-1",
         speed=1.0,
         response_format="mp3",
     )
@@ -85,12 +85,12 @@ def test_dto_validations() -> None:
     except ValueError as e:
         print(f"✅ PASS: Prompt vacío rechazado - {e}")
 
-    # Test 2: n fuera de rango
+    # Test 2: number_of_images fuera de rango
     try:
-        CreateImageOpenaiDto(prompt="Test", n=15)
-        print("❌ FAIL: Debería rechazar n > 10")
+        CreateImageOpenaiDto(prompt="Test", number_of_images=15)
+        print("❌ FAIL: Debería rechazar number_of_images > 10")
     except ValueError as e:
-        print(f"✅ PASS: n=15 rechazado - {e}")
+        print(f"✅ PASS: number_of_images=15 rechazado - {e}")
 
     # Test 3: Speed fuera de rango
     try:
@@ -108,7 +108,7 @@ def test_dto_validations() -> None:
 
     # Test 5: dall-e-3 con tamaño no soportado
     try:
-        CreateImageOpenaiDto(prompt="Test", model="dall-e-3", size="256x256")
+        CreateImageOpenaiDto(prompt="Test", image_model="dall-e-3", size="256x256")
         print("❌ FAIL: Debería rechazar dall-e-3 con 256x256")
     except ValueError as e:
         print(f"✅ PASS: Combinación inválida rechazada - {e}")
