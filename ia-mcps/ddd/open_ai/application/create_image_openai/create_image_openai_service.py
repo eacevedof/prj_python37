@@ -7,11 +7,12 @@ from ddd.open_ai.application.create_image_openai.create_image_openai_result_dto 
 from ddd.open_ai.domain.enums import (
     OpenaiImageModelEnum,
     OpenaiImageQualityEnum,
+    OpenaiImageResponseFormatEnum,
     OpenaiImageSizeEnum,
     OpenaiImageStyleEnum,
 )
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
-from ddd.open_ai.infrastructure.repositories.openai_images_api_repository import OpenaiImagesApiRepository
+from ddd.open_ai.infrastructure.repositories.gpt_image_1_reader_api_repository import GptImage1ReaderApiRepository
 
 
 @final
@@ -22,16 +23,19 @@ class CreateImageOpenaiService:
     MAX_NUMBER_OF_IMAGES: int = 10
 
     _create_image_openai_dto: CreateImageOpenaiDto
-    _images_repository: OpenaiImagesApiRepository
+    _gpt_image1_reader_api_repository: GptImage1ReaderApiRepository
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     def __init__(self) -> None:
-        self._images_repository = OpenaiImagesApiRepository.get_instance()
+        self._gpt_image1_reader_api_repository = GptImage1ReaderApiRepository.get_instance()
 
-    def __call__(self, create_image_openai_dto: CreateImageOpenaiDto) -> CreateImageOpenaiResultDto:
+    def __call__(
+        self,
+        create_image_openai_dto: CreateImageOpenaiDto
+    ) -> CreateImageOpenaiResultDto:
         """
         Generates images with OpenAI according to DTO parameters.
 
@@ -45,25 +49,22 @@ class CreateImageOpenaiService:
 
         self._fail_if_wrong_input()
 
-        response = self._images_repository.generate_image(
-            model=self._create_image_openai_dto.image_model,
+        openai_images = self._gpt_image1_reader_api_repository.get_base64_images_from_text(
+            openai_model=self._create_image_openai_dto.openai_model,
             prompt=self._create_image_openai_dto.prompt.strip(),
-            n=self._create_image_openai_dto.number_of_images,
+            result_number=self._create_image_openai_dto.number_of_images,
             size=self._create_image_openai_dto.size,
             quality=self._create_image_openai_dto.quality,
-            response_format="b64_json",
+            response_format=OpenaiImageResponseFormatEnum.B64_JSON.value,
             style=self._create_image_openai_dto.style,
         )
 
-        if not response.data:
-            raise OpenAIException.unexpected_custom("No image data received from OpenAI API")
-
-        images = self._get_processed_images(response.data)
+        base64_img_strings = self._get_valid_base64_strings(openai_images)
 
         return CreateImageOpenaiResultDto.from_primitives({
-            "images": images,
+            "images": base64_img_strings,
             "prompt_used": self._create_image_openai_dto.prompt.strip(),
-            "model": self._create_image_openai_dto.image_model,
+            "model": self._create_image_openai_dto.openai_model,
             "size": self._create_image_openai_dto.size,
             "quality": self._create_image_openai_dto.quality,
             "number_of_images": self._create_image_openai_dto.number_of_images,
@@ -77,9 +78,9 @@ class CreateImageOpenaiService:
             )
 
         valid_models = [str(enum_item.value) for enum_item in OpenaiImageModelEnum]
-        if self._create_image_openai_dto.image_model not in valid_models:
+        if self._create_image_openai_dto.openai_model not in valid_models:
             raise OpenAIException.unexpected_custom(
-                f"Invalid image_model: {self._create_image_openai_dto.image_model}. "
+                f"Invalid image_model: {self._create_image_openai_dto.openai_model}. "
                 f"Allowed values: {", ".join(valid_models)}"
             )
 
@@ -104,11 +105,11 @@ class CreateImageOpenaiService:
                     f"Allowed values: {", ".join(valid_styles)}"
                 )
 
-        if self._create_image_openai_dto.image_model == OpenaiImageModelEnum.DALL_E_3.value and \
+        if self._create_image_openai_dto.openai_model == OpenaiImageModelEnum.DALL_E_3.value and \
            self._create_image_openai_dto.size in [OpenaiImageSizeEnum.SIZE_256.value, OpenaiImageSizeEnum.SIZE_512.value]:
             raise OpenAIException.unexpected_custom("dall-e-3 does not support 256x256 or 512x512 sizes")
 
-        if self._create_image_openai_dto.image_model in [
+        if self._create_image_openai_dto.openai_model in [
             OpenaiImageModelEnum.DALL_E_2.value,
             OpenaiImageModelEnum.GPT_IMAGE_1_5.value
         ] and self._create_image_openai_dto.size in [
@@ -116,20 +117,18 @@ class CreateImageOpenaiService:
             OpenaiImageSizeEnum.SIZE_1792_1024.value
         ]:
             raise OpenAIException.unexpected_custom(
-                f"{self._create_image_openai_dto.image_model} does not support 1024x1792 or 1792x1024 sizes"
+                f"{self._create_image_openai_dto.openai_model} does not support 1024x1792 or 1792x1024 sizes"
             )
 
-    def _get_processed_images(self, images_data: list) -> list[dict]:
+    def _get_valid_base64_strings(self, base64_images: list[dict]) -> list[dict]:
         images = []
-        for img_data in images_data:
-            image_b64 = img_data.b64_json or ""
+        for img_data in base64_images:
+            image_b64 = img_data.get(OpenaiImageResponseFormatEnum.B64_JSON.value, "")
             if not image_b64:
-                raise OpenAIException.unexpected_custom("Image data does not contain b64_json")
+                raise OpenAIException.unexpected_custom(
+                    f"Image data does not contain {OpenaiImageResponseFormatEnum.B64_JSON.value}"
+                )
 
-            image_dict = {
-                "b64_json": image_b64,
-                "revised_prompt": img_data.revised_prompt if hasattr(img_data, "revised_prompt") else None,
-            }
-            images.append(image_dict)
+            images.append(img_data)
 
         return images

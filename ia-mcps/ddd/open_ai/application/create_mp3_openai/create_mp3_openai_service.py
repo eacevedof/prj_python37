@@ -11,12 +11,12 @@ from ddd.open_ai.domain.enums import (
     OpenaiTtsVoiceEnum,
 )
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
-from ddd.open_ai.infrastructure.repositories.openai_audio_api_repository import OpenaiAudioApiRepository
+from ddd.open_ai.infrastructure.repositories.gpt_tts_1_reader_api_repository import GptTts1ReaderApiRepository
 
 
 @final
 class CreateMp3OpenaiService:
-    """Use case to generate TTS audio with OpenAI Audio API."""
+    """Use case to generate text-to-speech audio with OpenAI Audio API."""
 
     MAX_TEXT_LENGTH: int = 4096
     MIN_SPEED: float = 0.25
@@ -32,21 +32,21 @@ class CreateMp3OpenaiService:
     }
 
     _create_mp3_openai_dto: CreateMp3OpenaiDto
-    _audio_repository: OpenaiAudioApiRepository
+    _audio_repository: GptTts1ReaderApiRepository
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     def __init__(self) -> None:
-        self._audio_repository = OpenaiAudioApiRepository.get_instance()
+        self._audio_repository = GptTts1ReaderApiRepository.get_instance()
 
     def __call__(
         self,
         create_mp3_openai_dto: CreateMp3OpenaiDto
     ) -> CreateMp3OpenaiResultDto:
         """
-        Generates TTS audio with OpenAI according to DTO parameters.
+        Generates text-to-speech audio with OpenAI according to DTO parameters.
 
         Returns:
             CreateMp3OpenaiResultDto: Result DTO with generated audio
@@ -58,17 +58,13 @@ class CreateMp3OpenaiService:
 
         self._fail_if_wrong_input()
 
-        response = self._audio_repository.generate_speech(
+        audio_bytes = self._audio_repository.get_audio_bytes_from_text(
             model=self._create_mp3_openai_dto.tts_model,
             voice=self._create_mp3_openai_dto.voice,
             input_text=self._create_mp3_openai_dto.text.strip(),
             speed=self._create_mp3_openai_dto.speed,
             response_format=self._create_mp3_openai_dto.response_format,
         )
-
-        audio_bytes = response.content
-        if not audio_bytes:
-            raise OpenAIException.unexpected_custom("No audio data received from OpenAI API")
 
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
@@ -81,6 +77,7 @@ class CreateMp3OpenaiService:
             "speed": self._create_mp3_openai_dto.speed,
             "format": self._create_mp3_openai_dto.response_format,
         })
+
 
     def _fail_if_wrong_input(self) -> None:
         if len(self._create_mp3_openai_dto.text) > self.MAX_TEXT_LENGTH:
@@ -110,6 +107,7 @@ class CreateMp3OpenaiService:
                 f"Invalid response_format: {self._create_mp3_openai_dto.response_format}. "
                 f"Allowed values: {", ".join(valid_formats)}"
             )
+
 
     def _get_mime_type(self) -> str:
         return self._MIME_TYPES.get(self._create_mp3_openai_dto.response_format, "audio/mpeg")

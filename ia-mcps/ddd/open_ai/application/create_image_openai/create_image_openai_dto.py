@@ -7,7 +7,6 @@ from ddd.open_ai.domain.enums import (
     OpenaiImageModelEnum,
     OpenaiImageQualityEnum,
     OpenaiImageSizeEnum,
-    OpenaiImageStyleEnum,
 )
 
 
@@ -16,9 +15,9 @@ class CreateImageOpenaiDto:
     """DTO para parametrizar la generación de imágenes con OpenAI."""
 
     prompt: str
-    image_model: str = "gpt-image-1.5"
-    size: str = "1024x1024"
-    quality: str = "low"
+    openai_model: str = OpenaiImageModelEnum.GPT_IMAGE_1_5.value
+    size: str = OpenaiImageSizeEnum.SIZE_1024.value
+    quality: str = OpenaiImageQualityEnum.LOW.value
     style: str | None = None
     number_of_images: int = 1
 
@@ -33,13 +32,10 @@ class CreateImageOpenaiDto:
 
         return cls(
             prompt=prompt,
-            image_model=image_model,
+            openai_model=image_model,
             size=size,
             quality=quality,
             style=style,
             number_of_images=number_of_images,
         )
 
-    def __post_init__(self) -> None:
-        if not self.prompt or not self.prompt.strip():
-            raise ValueError("CreateImageOpenaiDto: prompt no puede estar vacío")

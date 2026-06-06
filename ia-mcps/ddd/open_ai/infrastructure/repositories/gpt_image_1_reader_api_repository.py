@@ -2,6 +2,7 @@
 
 from typing import Self, final
 
+from ddd.open_ai.domain.enums import OpenaiImageResponseFormatEnum
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
 
@@ -19,41 +20,39 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
             cls._instance = cls()
         return cls._instance
 
-    def generate_image(
+    def get_base64_images_from_text(
         self,
-        model: str,
+        openai_model: str,
         prompt: str,
-        n: int,
+        result_number: int,
         size: str,
         quality: str,
         response_format: str,
         style: str | None = None,
-    ) -> dict:
+    ) -> list[dict]:
         """
         Genera imágenes usando OpenAI Images API.
 
         Args:
-            model: Modelo a usar (gpt-image-1.5, dall-e-3, dall-e-2)
+            openai_model: Modelo a usar (gpt-image-1.5, dall-e-3, dall-e-2)
             prompt: Descripción de la imagen
-            n: Número de imágenes a generar
+            result_number: Número de imágenes a generar
             size: Tamaño (256x256, 512x512, 1024x1024, etc.)
             quality: Calidad (low, high)
             response_format: Formato de respuesta (b64_json, url)
             style: Estilo (vivid, natural) - opcional
 
         Returns:
-            dict con estructura:
-            {
-                "data": [{"b64_json": str, "revised_prompt": str | None}, ...],
-            }
+            list[dict]: Lista de imágenes, cada una con estructura:
+            {"b64_json": str, "revised_prompt": str | None}
 
         Raises:
             OpenAIException: Si falla la generación
         """
         api_params = {
-            "model": model,
+            "model": openai_model,
             "prompt": prompt,
-            "n": n,
+            "n": result_number,
             "size": size,
             "quality": quality,
             "response_format": response_format,
@@ -62,19 +61,17 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         if style:
             api_params["style"] = style
 
-        open_ai_response = self._open_ai_client.images.generate(**api_params)
+        image_response = self._open_ai_client.images.generate(**api_params)
 
-        if not open_ai_response.data:
+        if not image_response.data:
             raise OpenAIException.unexpected_custom(
                 "GptImage1ReaderApiRepository: No image data received from OpenAI API"
             )
 
-        return {
-            "data": [
-                {
-                    "b64_json": img_data.b64_json or "",
-                    "revised_prompt": img_data.revised_prompt if hasattr(img_data, "revised_prompt") else None,
-                }
-                for img_data in open_ai_response.data
-            ],
-        }
+        return [
+            {
+                OpenaiImageResponseFormatEnum.B64_JSON.value: img_data.b64_json or "",
+                "revised_prompt": img_data.revised_prompt if hasattr(img_data, "revised_prompt") else None,
+            }
+            for img_data in image_response.data
+        ]
