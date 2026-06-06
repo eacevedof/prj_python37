@@ -4,7 +4,7 @@ from typing import final
 
 @final
 class OpenaiTtsVoiceEnum(StrEnum):
-    """Voces disponibles para TTS con OpenAI."""
+    """Available voices for TTS with OpenAI."""
 
     ALLOY = "alloy"
     ECHO = "echo"

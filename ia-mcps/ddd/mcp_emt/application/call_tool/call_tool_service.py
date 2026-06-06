@@ -57,7 +57,7 @@ class CallToolService:
                 ]
 
         except Exception as e:
-            self._logger.write_error(
+            self._logger.log_error(
                 module="CallToolService.__call__",
                 message=str(e),
                 context={

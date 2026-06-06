@@ -4,7 +4,7 @@ from typing import final
 
 @final
 class OpenaiTtsFormatEnum(StrEnum):
-    """Formatos de audio disponibles para TTS con OpenAI."""
+    """Available audio formats for TTS with OpenAI."""
 
     MP3 = "mp3"
     OPUS = "opus"

@@ -1,4 +1,4 @@
-"""DTO para crear audio MP3 con OpenAI Audio API."""
+"""DTO for creating MP3 audio with OpenAI Audio API."""
 
 from dataclasses import dataclass
 from typing import Self
@@ -12,7 +12,7 @@ from ddd.open_ai.domain.enums import (
 
 @dataclass(frozen=True, slots=True)
 class CreateMp3OpenaiDto:
-    """DTO para parametrizar la generación de audio TTS con OpenAI."""
+    """DTO for parameterizing TTS audio generation with OpenAI."""
 
     text: str
     voice: str = "alloy"
@@ -38,4 +38,4 @@ class CreateMp3OpenaiDto:
 
     def __post_init__(self) -> None:
         if not self.text or not self.text.strip():
-            raise ValueError("CreateMp3OpenaiDto: text no puede estar vacío")
+            raise ValueError("CreateMp3OpenaiDto: text cannot be empty")

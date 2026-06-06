@@ -1,10 +1,11 @@
-import os
 import re
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import final, Self
 
 from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
+from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
 
 
 @final
@@ -12,13 +13,26 @@ class Logger:
     """Simple file-based logger for application events and errors."""
 
     _DEFAULT_LOG_PATH: str = str(Path(__file__).resolve().parents[4] / "logs")
+    _instance: "Logger | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        return cls()
+        """Returns the singleton instance."""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
-    def write_log(self, file_path: str, content: str) -> None:
-        environ_path_folder = os.getenv(EnvvarsKeysEnum.APP_LOG_PATH, self._DEFAULT_LOG_PATH)
+    def log_error(self, module: str, message: str, context: dict | None = None) -> None:
+        log_content = f"[ERROR] {module}: {message}"
+        if context:
+            log_content += f"\nContext: {context}"
+        self.__write_log("error.log", log_content)
+
+
+    def __write_log(self, file_path: str, content: str) -> None:
+        environ_path_folder = EnvironmentReaderRawRepository.get_instance().get(
+            EnvvarsKeysEnum.APP_LOG_PATH, self._DEFAULT_LOG_PATH
+        )
         logs_folder_path = Path(environ_path_folder).resolve()
         today = datetime.now().strftime("%Y-%m-%d")
 
@@ -44,6 +58,8 @@ class Logger:
             content = self.__get_normalized_margin_for_sql(content)
 
         log_entry = f"\n[{now}]\n{content}"
+        if ext == "sql":
+            log_entry = f"\n-- [{now}]\n{content}"
 
         with open(final_log_path, "a", encoding="utf-8") as f:
             f.write(log_entry)
@@ -54,20 +70,33 @@ class Logger:
         return re.sub(r"^ {8}", "", content, flags=re.MULTILINE)
 
 
-    def write_error(self, module: str, message: str, context: dict | None = None) -> None:
-        log_content = f"[ERROR] {module}: {message}"
-        if context:
-            log_content += f"\nContext: {context}"
-        self.write_log("errors/error.log", log_content)
-
-
-    def write_info(self, module: str, message: str) -> None:
+    def log_info(self, module: str, message: str) -> None:
         log_content = f"[INFO] {module}: {message}"
-        self.write_log("info/info.log", log_content)
+        self.__write_log("info.log", log_content)
 
 
-    def write_debug(self, module: str, message: str, data: dict | None = None) -> None:
+    def log_debug(self, module: str, message: str, data: dict | None = None) -> None:
         log_content = f"[DEBUG] {module}: {message}"
         if data:
             log_content += f"\nData: {data}"
-        self.write_log("debug/debug.log", log_content)
+        self.__write_log("debug.log", log_content)
+
+
+    def log_sql(self, query: str) -> None:
+        """Log SQL query."""
+        self.__write_log("sql.sql", query)
+
+
+    def error_sql(self, message: str, context: dict | None = None) -> None:
+        """Log error message."""
+        self.log_error("Repository", message, context)
+
+    def log_exception(self, module: str, message: str, exc: Exception | None = None, context: dict | None = None) -> None:
+        """Log exception with full traceback."""
+        log_content = f"[EXCEPTION] {module}: {message}"
+        if context:
+            log_content += f"\nContext: {context}"
+        if exc:
+            log_content += f"\nException: {type(exc).__name__}: {exc}"
+            log_content += f"\nTraceback:\n{traceback.format_exc()}"
+        self.__write_log("error.log", log_content)

@@ -4,7 +4,7 @@ from typing import final
 
 @final
 class OpenaiImageSizeEnum(StrEnum):
-    """Tamaños disponibles para generación de imágenes con OpenAI."""
+    """Available sizes for image generation with OpenAI."""
 
     SIZE_256 = "256x256"
     SIZE_512 = "512x512"

@@ -1,10 +1,9 @@
-import os
 from typing import final, Self, Any
 
 import aiohttp
 
-from ddd.emt.domain.enums import EnvvarsKeysEnum
 from ddd.emt.domain.exceptions import EmtException
+from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
 
 
 @final
@@ -19,8 +18,9 @@ class EmtApiRepository:
     _access_token: str | None = None
 
     def __init__(self) -> None:
-        self._client_id = os.getenv(EnvvarsKeysEnum.EMT_CLIENT_ID.value, "")
-        self._passkey = os.getenv(EnvvarsKeysEnum.EMT_PASSKEY.value, "")
+        env_reader = EnvironmentReaderRawRepository.get_instance()
+        self._client_id = env_reader.get_emt_client_id()
+        self._passkey = env_reader.get_emt_passkey()
 
     @classmethod
     def get_instance(cls) -> Self:

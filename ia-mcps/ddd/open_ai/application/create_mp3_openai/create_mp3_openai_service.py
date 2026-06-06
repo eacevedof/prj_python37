@@ -1,4 +1,4 @@
-"""Servicio para crear audio MP3 con OpenAI Audio API."""
+"""Service for creating MP3 audio with OpenAI Audio API."""
 
 import base64
 from typing import Self, final

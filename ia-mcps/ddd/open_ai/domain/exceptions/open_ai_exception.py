@@ -5,7 +5,7 @@ from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
 
 @final
 class OpenAIException(Exception):
-    """Excepciones del dominio OpenAI."""
+    """Exceptions for the OpenAI domain."""
 
     _code: int
     _message: str

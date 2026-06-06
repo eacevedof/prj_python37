@@ -1,4 +1,4 @@
-"""Application layer - Casos de uso para OpenAI."""
+"""Application layer - Use cases for OpenAI."""
 
 from ddd.open_ai.application.create_image_openai import CreateImageOpenaiDto, CreateImageOpenaiService
 from ddd.open_ai.application.create_mp3_openai import CreateMp3OpenaiDto, CreateMp3OpenaiService

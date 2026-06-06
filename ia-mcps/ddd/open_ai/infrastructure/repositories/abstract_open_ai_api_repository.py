@@ -1,4 +1,4 @@
-"""Repositorio abstracto base para comunicación con OpenAI API."""
+"""Abstract base repository for OpenAI API communication."""
 
 from abc import ABC
 
@@ -12,23 +12,22 @@ from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 
 class AbstractOpenAIApiRepository(ABC):
     """
-    Repositorio abstracto base para todas las comunicaciones con OpenAI API.
+    Abstract base repository for all OpenAI API communications.
 
-    Responsabilidades:
-    - Gestionar autenticación con API key
-    - Proporcionar cliente OpenAI configurado
-    - Logging específico de OpenAI
+    Responsibilities:
+    - Manage authentication with API key
+    - Provide configured OpenAI client
+    - OpenAI-specific logging
     """
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
 
-        open_ai_api_key = EnvironmentReaderRawRepository.get_instance().get(
-            EnvvarsKeysEnum.OPENAI_API_KEY.value,  ""
-        )
-        if not open_ai_api_key:
+        try:
+            open_ai_api_key = EnvironmentReaderRawRepository.get_instance().get_openai_api_key()
+        except ValueError as e:
             raise OpenAIException.unexpected_custom(
-                f"AbstractOpenAIApiRepository: missing env {EnvvarsKeysEnum.OPENAI_API_KEY.value}"
+                f"AbstractOpenAIApiRepository: {str(e)}"
             )
 
         self._open_ai_client = OpenAI(api_key=open_ai_api_key)

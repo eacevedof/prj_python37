@@ -1,5 +1,4 @@
 import asyncio
-import traceback
 from typing import final, Self
 
 from mcp.server import Server
@@ -33,7 +32,7 @@ class McpEmtController:
 
     async def __call__(self) -> None:
         async with stdio_server() as (mcp_read_stream, mcp_write_stream):
-            self._logger.write_info(
+            self._logger.log_info(
                 module="mcp_emt_controller", message="__call__"
             )
             await self._mcp_server.run(
@@ -43,7 +42,7 @@ class McpEmtController:
             )
 
     def __register_services_as_handlers(self) -> None:
-        self._logger.write_info(
+        self._logger.log_info(
             module="mcp_emt_controller", message="_register_handlers"
         )
 
@@ -90,14 +89,10 @@ class McpEmtController:
         base_exception: BaseException,
         context: dict | None = None,
     ) -> None:
-        error_traceback = "".join(
-            traceback.format_exception(
-                type(base_exception), base_exception, base_exception.__traceback__
-            )
-        )
-        self._logger.write_error(
+        self._logger.log_exception(
             module=module,
-            message=f"{type(base_exception).__name__}: {base_exception}\n{error_traceback}",
+            message=str(base_exception),
+            exc=base_exception,
             context=context,
         )
 
@@ -107,12 +102,10 @@ def start_mcp_or_fail() -> None:
     try:
         asyncio.run(McpEmtController.get_instance()())
     except BaseException as error:
-        Logger.get_instance().write_error(
+        Logger.get_instance().log_exception(
             module="mcp_emt_controller.start_mcp",
-            message=(
-                f"Unhandled error: {type(error).__name__}: {error}\n"
-                f"{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
-            ),
+            message="Unhandled error",
+            exc=error,
         )
         raise
 

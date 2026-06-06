@@ -4,7 +4,7 @@ from typing import final
 
 @final
 class OpenaiImageQualityEnum(StrEnum):
-    """Calidad de imagen para generación con OpenAI."""
+    """Image quality for generation with OpenAI."""
 
     LOW = "low"
     HIGH = "high"

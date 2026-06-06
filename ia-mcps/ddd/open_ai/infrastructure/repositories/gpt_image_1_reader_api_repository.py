@@ -1,4 +1,4 @@
-"""Repositorio para generar imágenes con OpenAI Images API."""
+"""Repository for generating images with OpenAI Images API."""
 
 from typing import Self, final
 
@@ -9,13 +9,13 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 
 @final
 class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
-    """Repositorio para generación de imágenes usando OpenAI Images API."""
+    """Repository for image generation using OpenAI Images API."""
 
     _instance: "GptImage1ReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        """Retorna la instancia singleton."""
+        """Returns the singleton instance."""
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -31,23 +31,23 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         style: str | None = None,
     ) -> list[dict]:
         """
-        Genera imágenes usando OpenAI Images API.
+        Generates images using OpenAI Images API.
 
         Args:
-            openai_model: Modelo a usar (gpt-image-1.5, dall-e-3, dall-e-2)
-            prompt: Descripción de la imagen
-            result_number: Número de imágenes a generar
-            size: Tamaño (256x256, 512x512, 1024x1024, etc.)
-            quality: Calidad (low, high)
-            response_format: Formato de respuesta (b64_json, url)
-            style: Estilo (vivid, natural) - opcional
+            openai_model: Model to use (gpt-image-1.5, dall-e-3, dall-e-2)
+            prompt: Image description
+            result_number: Number of images to generate
+            size: Size (256x256, 512x512, 1024x1024, etc.)
+            quality: Quality (low, high)
+            response_format: Response format (b64_json, url)
+            style: Style (vivid, natural) - optional
 
         Returns:
-            list[dict]: Lista de imágenes, cada una con estructura:
+            list[dict]: List of images, each with structure:
             {"b64_json": str, "revised_prompt": str | None}
 
         Raises:
-            OpenAIException: Si falla la generación
+            OpenAIException: If generation fails
         """
         api_params = {
             "model": openai_model,
@@ -70,7 +70,7 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
 
         return [
             {
-                OpenaiImageResponseFormatEnum.B64_JSON.value: img_data.b64_json or "",
+                OpenaiImageResponseFormatEnum.B64_JSON: img_data.b64_json or "",
                 "revised_prompt": img_data.revised_prompt if hasattr(img_data, "revised_prompt") else None,
             }
             for img_data in image_response.data

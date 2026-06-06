@@ -1,4 +1,4 @@
-"""Repositorio para generar audio (TTS) con OpenAI Audio API."""
+"""Repository for generating audio (TTS) with OpenAI Audio API."""
 
 from typing import Self, final
 
@@ -8,13 +8,13 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 
 @final
 class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
-    """Repositorio para generación de audio text-to-speech usando OpenAI Audio API."""
+    """Repository for text-to-speech audio generation using OpenAI Audio API."""
 
     _instance: "GptTts1ReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        """Retorna la instancia singleton."""
+        """Returns the singleton instance."""
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -28,20 +28,20 @@ class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
         response_format: str,
     ) -> bytes:
         """
-        Genera audio usando OpenAI Audio API.
+        Generates audio using OpenAI Audio API.
 
         Args:
-            model: Modelo text-to-speech (tts-1, tts-1-hd)
-            voice: Voz (alloy, echo, fable, onyx, nova, shimmer)
-            input_text: Texto a convertir
-            speed: Velocidad (0.25 a 4.0)
-            response_format: Formato (mp3, opus, aac, flac, wav, pcm)
+            model: Text-to-speech model (tts-1, tts-1-hd)
+            voice: Voice (alloy, echo, fable, onyx, nova, shimmer)
+            input_text: Text to convert
+            speed: Speed (0.25 to 4.0)
+            response_format: Format (mp3, opus, aac, flac, wav, pcm)
 
         Returns:
-            bytes: Audio en formato bytes
+            bytes: Audio in bytes format
 
         Raises:
-            OpenAIException: Si falla la generación
+            OpenAIException: If generation fails
         """
         audio_response = self._open_ai_client.audio.speech.create(
             model=model,

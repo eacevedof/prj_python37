@@ -1,4 +1,4 @@
-"""Servicio para crear imágenes con OpenAI Images API."""
+"""Service for creating images with OpenAI Images API."""
 
 from typing import Self, final
 
@@ -55,7 +55,7 @@ class CreateImageOpenaiService:
             result_number=self._create_image_openai_dto.number_of_images,
             size=self._create_image_openai_dto.size,
             quality=self._create_image_openai_dto.quality,
-            response_format=OpenaiImageResponseFormatEnum.B64_JSON.value,
+            response_format=OpenaiImageResponseFormatEnum.B64_JSON,
             style=self._create_image_openai_dto.style,
         )
 
@@ -123,10 +123,10 @@ class CreateImageOpenaiService:
     def _get_valid_base64_strings(self, base64_images: list[dict]) -> list[dict]:
         images = []
         for img_data in base64_images:
-            image_b64 = img_data.get(OpenaiImageResponseFormatEnum.B64_JSON.value, "")
+            image_b64 = img_data.get(OpenaiImageResponseFormatEnum.B64_JSON, "")
             if not image_b64:
                 raise OpenAIException.unexpected_custom(
-                    f"Image data does not contain {OpenaiImageResponseFormatEnum.B64_JSON.value}"
+                    f"Image data does not contain {OpenaiImageResponseFormatEnum.B64_JSON}"
                 )
 
             images.append(img_data)

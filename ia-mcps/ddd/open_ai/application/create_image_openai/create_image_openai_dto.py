@@ -1,4 +1,4 @@
-"""DTO para crear imágenes con OpenAI Images API."""
+"""DTO for creating images with OpenAI Images API."""
 
 from dataclasses import dataclass
 from typing import Self
@@ -12,7 +12,7 @@ from ddd.open_ai.domain.enums import (
 
 @dataclass(frozen=True, slots=True)
 class CreateImageOpenaiDto:
-    """DTO para parametrizar la generación de imágenes con OpenAI."""
+    """DTO for parameterizing image generation with OpenAI."""
 
     prompt: str
     openai_model: str = OpenaiImageModelEnum.GPT_IMAGE_1_5.value
