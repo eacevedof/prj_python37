@@ -15,16 +15,16 @@ class CreateImageOpenaiDto:
     """DTO for parameterizing image generation with OpenAI."""
 
     prompt: str
-    openai_model: str = OpenaiImageModelEnum.GPT_IMAGE_1_5
+    openai_model: str = OpenaiImageModelEnum.DALL_E_3
     size: str = OpenaiImageSizeEnum.SIZE_1024
-    quality: str = OpenaiImageQualityEnum.LOW
+    quality: str = OpenaiImageQualityEnum.STANDARD
     style: str | None = None
     number_of_images: int = 1
 
     @classmethod
     def from_primitives(cls, primitives: dict) -> Self:
         prompt = str(primitives.get("prompt", "")).strip()
-        image_model = str(primitives.get("image_model", OpenaiImageModelEnum.GPT_IMAGE_1_5))
+        image_model = str(primitives.get("image_model", OpenaiImageModelEnum.DALL_E_3))
         size = str(primitives.get("size", OpenaiImageSizeEnum.SIZE_1024))
         quality = str(primitives.get("quality", OpenaiImageQualityEnum.LOW))
         style = str(primitives["style"]) if primitives.get("style") else None

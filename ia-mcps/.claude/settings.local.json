@@ -16,7 +16,13 @@
       "Bash(echo:*)",
       "Bash(done)",
       "Bash(find:*)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(.venv-win\\\\Scripts\\\\python.exe -m ddd.mcp_media:*)",
+      "Bash(.venv-win/Scripts/python.exe:*)",
+      "Bash(ls:*)",
+      "mcp__media__media_create_image",
+      "WebFetch(domain:developers.openai.com)",
+      "WebFetch(domain:platform.openai.com)"
     ]
   }
 }

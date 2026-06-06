@@ -6,5 +6,5 @@ from typing import final
 class OpenaiImageQualityEnum(StrEnum):
     """Image quality for generation with OpenAI."""
 
-    LOW = "low"
-    HIGH = "high"
+    STANDARD = "standard"
+    HD = "hd"

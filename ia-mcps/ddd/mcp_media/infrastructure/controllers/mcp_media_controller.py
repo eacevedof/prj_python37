@@ -1,6 +1,7 @@
 import asyncio
 from typing import final, Self
 
+from dotenv import load_dotenv
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
@@ -8,6 +9,9 @@ from mcp.types import Tool, TextContent
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_emt.domain.enums import McpServerNameEnum
 from ddd.mcp_media.application import CallToolDto, ListToolsService, CallToolService
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 @final

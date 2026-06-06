@@ -27,20 +27,18 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         result_number: int,
         size: str,
         quality: str,
-        response_format: str,
         style: str | None = None,
     ) -> list[dict]:
         """
         Generates images using OpenAI Images API.
 
         Args:
-            openai_model: Model to use (gpt-image-1.5, dall-e-3, dall-e-2)
+            openai_model: Model to use (dall-e-3, dall-e-2)
             prompt: Image description
-            result_number: Number of images to generate
-            size: Size (256x256, 512x512, 1024x1024, etc.)
-            quality: Quality (low, high)
-            response_format: Response format (b64_json, url)
-            style: Style (vivid, natural) - optional
+            result_number: Number of images to generate (1-10 for dall-e-2, only 1 for dall-e-3)
+            size: Size (256x256, 512x512, 1024x1024 for dall-e-2; 1024x1024, 1024x1792, 1792x1024 for dall-e-3)
+            quality: Quality (standard, hd) - only for dall-e-3
+            style: Style (vivid, natural) - only for dall-e-3
 
         Returns:
             list[dict]: List of images, each with structure:
@@ -52,14 +50,19 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         image_params = {
             "model": openai_model,
             "prompt": prompt,
-            "n": result_number,
             "size": size,
-            "quality": quality,
-            "response_format": response_format,
+            "response_format": "b64_json",
         }
 
-        if style:
-            image_params["style"] = style
+        # Only add n parameter for dall-e-2 (dall-e-3 only supports n=1)
+        if openai_model == "dall-e-2":
+            image_params["n"] = result_number
+
+        # Only add quality and style for dall-e-3
+        if openai_model == "dall-e-3":
+            image_params["quality"] = quality
+            if style:
+                image_params["style"] = style
 
         image_response = self._open_ai_client.images.generate(**image_params)
 

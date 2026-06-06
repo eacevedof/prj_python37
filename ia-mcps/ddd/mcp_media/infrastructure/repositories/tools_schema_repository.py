@@ -32,8 +32,8 @@ class ToolsSchemaRepository:
                     },
                     "model": {
                         "type": "string",
-                        "description": "model to use (gpt-image-1.5, dall-e-3, dall-e-2)",
-                        "default": "gpt-image-1.5",
+                        "description": "model to use (dall-e-3, dall-e-2)",
+                        "default": "dall-e-3",
                     },
                     "size": {
                         "type": "string",

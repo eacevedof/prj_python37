@@ -55,7 +55,6 @@ class CreateImageOpenaiService:
             result_number=self._create_image_openai_dto.number_of_images,
             size=self._create_image_openai_dto.size,
             quality=self._create_image_openai_dto.quality,
-            response_format=OpenaiImageResponseFormatEnum.B64_JSON,
             style=self._create_image_openai_dto.style,
         )
 
@@ -114,10 +113,8 @@ class CreateImageOpenaiService:
            self._create_image_openai_dto.size in [OpenaiImageSizeEnum.SIZE_256, OpenaiImageSizeEnum.SIZE_512]:
             OpenAIException.unexpected_custom("dall-e-3 does not support 256x256 or 512x512 sizes")
 
-        if self._create_image_openai_dto.openai_model in [
-            OpenaiImageModelEnum.DALL_E_2,
-            OpenaiImageModelEnum.GPT_IMAGE_1_5
-        ] and self._create_image_openai_dto.size in [
+        if self._create_image_openai_dto.openai_model == OpenaiImageModelEnum.DALL_E_2 and \
+           self._create_image_openai_dto.size in [
             OpenaiImageSizeEnum.SIZE_1024_1792,
             OpenaiImageSizeEnum.SIZE_1792_1024
         ]:

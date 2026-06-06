@@ -45,7 +45,7 @@ sentence-transformers~=2.2.0
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Imported as: fitz
 # Processes: .pdf files → text chunks
-PyMuPDF~=1.23.0
+PyMuPDF>=1.27.2.3
 
 # python-docx - Microsoft Word document processing
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
@@ -62,7 +62,7 @@ openpyxl~=3.1.0
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Imported as: PIL.Image
 # Processes: .png, .jpg, .jpeg images
-Pillow~=10.0.0
+Pillow~=12.2.0
 
 # transformers - Hugging Face transformers for image captioning
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
@@ -74,18 +74,14 @@ transformers~=4.35.0
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Imported as: whisper
 # Processes: .mp3, .wav files → text transcriptions
-openai-whisper~=20231117
+openai-whisper==20250625
 
 # ============================================================================
 # AI/ML
 # ============================================================================
 
-# openai - OpenAI API client for GPT, DALL-E, TTS
-# Used in: ddd/open_ai/infrastructure/repositories/
-# - abstract_open_ai_api_repository.py (OpenAI client setup)
-# - gpt_image_1_reader_api_repository.py (DALL-E, GPT-Image-1.5)
-# - gpt_tts_1_reader_api_repository.py (TTS-1, TTS-1-HD)
-openai~=1.0.0
+# openai - https://developers.openai.com/api/reference/python/resources/images/methods/generate
+openai~=2.41.0
 
 # ============================================================================
 # DEVELOPMENT TOOLS
