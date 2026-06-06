@@ -2,6 +2,8 @@
 
 import flet as ft
 
+from ddd.vocabulary.domain.enums import WordTypeEnum
+
 
 class FlashcardComp(ft.Container):
     """Componente que muestra una palabra como flashcard."""
@@ -10,7 +12,7 @@ class FlashcardComp(ft.Container):
         self,
         text_es: str,
         text_lang: str = "",
-        word_type: str = "WORD",
+        word_type: str = WordTypeEnum.WORD.value,
         show_translation: bool = False,
         pronunciation: str = "",
     ):
@@ -101,9 +103,9 @@ class FlashcardComp(ft.Container):
     def _get_type_color(self) -> str:
         """Retorna color segun tipo de palabra."""
         colors = {
-            "WORD": ft.Colors.BLUE_600,
-            "PHRASE": ft.Colors.PURPLE_600,
-            "SENTENCE": ft.Colors.TEAL_600,
+            WordTypeEnum.WORD.value: ft.Colors.BLUE_600,
+            WordTypeEnum.PHRASE.value: ft.Colors.PURPLE_600,
+            WordTypeEnum.SENTENCE.value: ft.Colors.TEAL_600,
         }
         return colors.get(self.word_type, ft.Colors.GREY_600)
 
