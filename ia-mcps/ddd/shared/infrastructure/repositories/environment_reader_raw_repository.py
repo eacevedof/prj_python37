@@ -39,8 +39,6 @@ class EnvironmentReaderRawRepository:
     def get_emt_passkey(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.EMT_PASSKEY)
 
-    def __get_required(self, key: EnvvarsKeysEnum) -> str:
-        value = os.getenv(key)
-        if value is None:
-            raise ValueError(f"Missing required environment variable: {key}")
-        return value
+    def __get_required(self, env_key: EnvvarsKeysEnum) -> str:
+        return os.getenv(env_key.value or "")
+

@@ -26,3 +26,7 @@ class OpenAIException(Exception):
     @classmethod
     def unexpected_custom(cls, message: str) -> "OpenAIException":
         raise cls(f"{message}", ResponseCodeEnum.INTERNAL_SERVER_ERROR)
+
+    @classmethod
+    def bad_request_custom(cls, message: str) -> "OpenAIException":
+        raise cls(f"{message}", ResponseCodeEnum.BAD_REQUEST)
