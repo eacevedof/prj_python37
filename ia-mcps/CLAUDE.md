@@ -57,6 +57,9 @@ pytest --cov
 # Run MCP EMT
 python -m ddd.mcp_emt
 ```
+## spec más importante y se aplica siempre
+cargar este espec `C:/projects/temper/ai/obsidian/dev-ops/skills/_base/eskylet-claude.md`
+
 
 ## MCP Tools (mcp_emt)
 
