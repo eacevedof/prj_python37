@@ -39,6 +39,9 @@ class EnvironmentReaderRawRepository:
     def get_emt_passkey(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.EMT_PASSKEY)
 
+    def get_media_output_dir(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.MEDIA_OUTPUT_DIR)
+
     def __get_required(self, env_key: EnvvarsKeysEnum) -> str:
         return os.getenv(env_key.value or "")
 

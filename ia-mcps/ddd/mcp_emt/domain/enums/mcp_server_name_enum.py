@@ -7,3 +7,4 @@ class McpServerNameEnum(str, Enum):
     """MCP server names."""
 
     EMT = "emt"
+    MEDIA = "media"
