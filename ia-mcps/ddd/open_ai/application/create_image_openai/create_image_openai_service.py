@@ -9,7 +9,6 @@ from ddd.open_ai.domain.enums import (
     OpenaiImageQualityEnum,
     OpenaiImageResponseFormatEnum,
     OpenaiImageSizeEnum,
-    OpenaiImageStyleEnum,
 )
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.gpt_image_1_reader_api_repository import GptImage1ReaderApiRepository
@@ -55,7 +54,6 @@ class CreateImageOpenaiService:
             result_number=self._create_image_openai_dto.number_of_images,
             size=self._create_image_openai_dto.size,
             quality=self._create_image_openai_dto.quality,
-            style=self._create_image_openai_dto.style,
         )
 
         base64_img_strings = self._get_valid_base64_strings(openai_images)
@@ -100,14 +98,6 @@ class CreateImageOpenaiService:
                 f"Invalid quality: {self._create_image_openai_dto.quality}. "
                 f"Allowed values: {", ".join(valid_qualities)}"
             )
-
-        if self._create_image_openai_dto.style is not None:
-            valid_styles = list(OpenaiImageStyleEnum)
-            if self._create_image_openai_dto.style not in valid_styles:
-                OpenAIException.unexpected_custom(
-                    f"Invalid style: {self._create_image_openai_dto.style}. "
-                    f"Allowed values: {", ".join(valid_styles)}"
-                )
 
         if self._create_image_openai_dto.openai_model == OpenaiImageModelEnum.DALL_E_3 and \
            self._create_image_openai_dto.size in [OpenaiImageSizeEnum.SIZE_256, OpenaiImageSizeEnum.SIZE_512]:

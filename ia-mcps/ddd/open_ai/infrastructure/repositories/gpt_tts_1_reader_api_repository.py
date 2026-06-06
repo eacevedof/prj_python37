@@ -1,11 +1,9 @@
-"""Repository for generating audio (TTS) with OpenAI Audio API."""
-
 from typing import Self, final
 
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
 
-
+# https://developers.openai.com/api/reference/python/resources/audio/subresources/translations/methods/create
 @final
 class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repository for text-to-speech audio generation using OpenAI Audio API."""

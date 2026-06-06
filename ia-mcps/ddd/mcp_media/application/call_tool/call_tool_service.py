@@ -95,7 +95,6 @@ class CallToolService:
             "image_model": self._payload_dict.get("model", OpenaiImageModelEnum.GPT_IMAGE_1_5),
             "size": self._payload_dict.get("size", OpenaiImageSizeEnum.SIZE_1024),
             "quality": self._payload_dict.get("quality", OpenaiImageQualityEnum.STANDARD),
-            "style": self._payload_dict.get("style"),
             "number_of_images": self._payload_dict.get("n", 1),
         }
 

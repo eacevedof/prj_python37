@@ -18,7 +18,6 @@ class CreateImageOpenaiDto:
     openai_model: str = OpenaiImageModelEnum.GPT_IMAGE_1_5
     size: str = OpenaiImageSizeEnum.SIZE_1024
     quality: str = OpenaiImageQualityEnum.STANDARD
-    style: str | None = None
     number_of_images: int = 1
 
     @classmethod
@@ -35,7 +34,6 @@ class CreateImageOpenaiDto:
         }
         quality = quality_map.get(quality_raw.lower(), quality_raw)
 
-        style = str(primitives["style"]) if primitives.get("style") else None
         number_of_images = int(primitives.get("number_of_images", 1))
 
         return cls(
@@ -43,7 +41,6 @@ class CreateImageOpenaiDto:
             openai_model=image_model,
             size=size,
             quality=quality,
-            style=style,
             number_of_images=number_of_images,
         )
 

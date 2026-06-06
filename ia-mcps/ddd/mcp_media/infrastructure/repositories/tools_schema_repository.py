@@ -45,10 +45,6 @@ class ToolsSchemaRepository:
                         "description": "quality level (standard, hd) - only for dall-e-3",
                         "default": "standard",
                     },
-                    "style": {
-                        "type": "string",
-                        "description": "style for dall-e-3 only (natural, vivid)",
-                    },
                     "n": {
                         "type": "integer",
                         "description": "number of images to generate (1-10)",

@@ -1,5 +1,3 @@
-"""Repository for generating images with OpenAI Images API."""
-
 from typing import Self, final
 
 from ddd.open_ai.domain.enums import (
@@ -9,7 +7,7 @@ from ddd.open_ai.domain.enums import (
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
 
-
+# https://developers.openai.com/api/reference/python/resources/images/methods/generate
 @final
 class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repository for image generation using OpenAI Images API."""
@@ -30,7 +28,6 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         result_number: int,
         size: str,
         quality: str,
-        style: str | None = None,
     ) -> list[dict]:
         """
         Generates images using OpenAI Images API.
@@ -41,7 +38,6 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
             result_number: Number of images to generate (1-10 for dall-e-2, only 1 for dall-e-3)
             size: Size (256x256, 512x512, 1024x1024 for dall-e-2; 1024x1024, 1024x1792, 1792x1024 for dall-e-3)
             quality: Quality (standard, hd) - only for dall-e-3
-            style: Style (vivid, natural) - only for dall-e-3
 
         Returns:
             list[dict]: List of images, each with structure:
@@ -58,11 +54,9 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
             "size": size,
         }
 
-        # Only add quality and style for dall-e-3
+        # Only add quality for dall-e-3
         if openai_model == OpenaiImageModelEnum.DALL_E_3.value:
             image_params["quality"] = quality
-            if style:
-                image_params["style"] = style
 
         image_response = self._open_ai_client.images.generate(**image_params)
 
