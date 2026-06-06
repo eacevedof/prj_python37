@@ -15,7 +15,7 @@ class CreateImageOpenaiDto:
     """DTO for parameterizing image generation with OpenAI."""
 
     prompt: str
-    openai_model: str = OpenaiImageModelEnum.DALL_E_3
+    openai_model: str = OpenaiImageModelEnum.GPT_IMAGE_1_5
     size: str = OpenaiImageSizeEnum.SIZE_1024
     quality: str = OpenaiImageQualityEnum.STANDARD
     style: str | None = None
@@ -24,9 +24,17 @@ class CreateImageOpenaiDto:
     @classmethod
     def from_primitives(cls, primitives: dict) -> Self:
         prompt = str(primitives.get("prompt", "")).strip()
-        image_model = str(primitives.get("image_model", OpenaiImageModelEnum.DALL_E_3))
+        image_model = str(primitives.get("image_model", OpenaiImageModelEnum.GPT_IMAGE_1_5))
         size = str(primitives.get("size", OpenaiImageSizeEnum.SIZE_1024))
-        quality = str(primitives.get("quality", OpenaiImageQualityEnum.LOW))
+
+        # Map old quality values to new ones for backward compatibility
+        quality_raw = str(primitives.get("quality", OpenaiImageQualityEnum.STANDARD))
+        quality_map = {
+            "low": OpenaiImageQualityEnum.STANDARD,
+            "high": OpenaiImageQualityEnum.HD,
+        }
+        quality = quality_map.get(quality_raw.lower(), quality_raw)
+
         style = str(primitives["style"]) if primitives.get("style") else None
         number_of_images = int(primitives.get("number_of_images", 1))
 

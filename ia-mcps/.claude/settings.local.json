@@ -22,7 +22,8 @@
       "Bash(ls:*)",
       "mcp__media__media_create_image",
       "WebFetch(domain:developers.openai.com)",
-      "WebFetch(domain:platform.openai.com)"
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(python3:*)"
     ]
   }
 }

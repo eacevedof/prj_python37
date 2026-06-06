@@ -32,8 +32,8 @@ class ToolsSchemaRepository:
                     },
                     "model": {
                         "type": "string",
-                        "description": "model to use (dall-e-3, dall-e-2)",
-                        "default": "dall-e-3",
+                        "description": "model to use (gpt-image-1.5, gpt-image-2, dall-e-3, dall-e-2)",
+                        "default": "gpt-image-1.5",
                     },
                     "size": {
                         "type": "string",
@@ -42,8 +42,8 @@ class ToolsSchemaRepository:
                     },
                     "quality": {
                         "type": "string",
-                        "description": "quality level (low, high)",
-                        "default": "low",
+                        "description": "quality level (standard, hd) - only for dall-e-3",
+                        "default": "standard",
                     },
                     "style": {
                         "type": "string",

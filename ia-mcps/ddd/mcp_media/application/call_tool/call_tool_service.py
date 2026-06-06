@@ -92,7 +92,7 @@ class CallToolService:
         # Create DTO from payload
         dto_dict = {
             "prompt": self._payload_dict.get("prompt", ""),
-            "image_model": self._payload_dict.get("model", OpenaiImageModelEnum.DALL_E_3),
+            "image_model": self._payload_dict.get("model", OpenaiImageModelEnum.GPT_IMAGE_1_5),
             "size": self._payload_dict.get("size", OpenaiImageSizeEnum.SIZE_1024),
             "quality": self._payload_dict.get("quality", OpenaiImageQualityEnum.STANDARD),
             "style": self._payload_dict.get("style"),

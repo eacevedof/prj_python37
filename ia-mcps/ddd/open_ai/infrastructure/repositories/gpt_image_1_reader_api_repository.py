@@ -2,7 +2,10 @@
 
 from typing import Self, final
 
-from ddd.open_ai.domain.enums import OpenaiImageResponseFormatEnum
+from ddd.open_ai.domain.enums import (
+    OpenaiImageModelEnum,
+    OpenaiImageResponseFormatEnum,
+)
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
 
@@ -47,19 +50,16 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
         Raises:
             OpenAIException: If generation fails
         """
+        # Simple parameters as per OpenAI documentation
         image_params = {
             "model": openai_model,
             "prompt": prompt,
+            "n": result_number,
             "size": size,
-            "response_format": "b64_json",
         }
 
-        # Only add n parameter for dall-e-2 (dall-e-3 only supports n=1)
-        if openai_model == "dall-e-2":
-            image_params["n"] = result_number
-
         # Only add quality and style for dall-e-3
-        if openai_model == "dall-e-3":
+        if openai_model == OpenaiImageModelEnum.DALL_E_3.value:
             image_params["quality"] = quality
             if style:
                 image_params["style"] = style
