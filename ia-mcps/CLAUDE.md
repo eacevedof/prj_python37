@@ -27,6 +27,12 @@ ddd/
 │   └── infrastructure/
 │       ├── controllers/   # McpEmtController
 │       └── repositories/  # ToolsSchemaRepository
+├── mcp_media/             # MCP Server Media (images and audio)
+│   ├── application/       # list_tools, call_tool
+│   ├── domain/            # ToolNameEnum
+│   └── infrastructure/
+│       ├── controllers/   # McpMediaController
+│       └── repositories/  # ToolsSchemaRepository
 ├── open_ai/                      # Dominio OpenAI (imágenes y audio)
 │   ├── application/              # Casos de uso por proveedor
 │   │   ├── create_image_openai/  # CreateImageOpenaiDto, CreateImageOpenaiService
@@ -37,7 +43,8 @@ ddd/
 └── shared/                # Shared kernel
     ├── domain/enums/      # EnvvarsKeysEnum, ResponseCodeEnum
     └── infrastructure/
-        └── components/    # Logger
+        ├── components/    # Logger, Slugger
+        └── repositories/  # EnvironmentReaderRawRepository
 ```
 
 ## Variables de entorno
@@ -52,6 +59,9 @@ EMT_PASSKEY=your-passkey
 
 # OpenAI API (https://platform.openai.com/api-keys)
 OPENAI_API_KEY=your-openai-api-key
+
+# Media output directory for generated images and audio
+MEDIA_OUTPUT_DIR=C:\projects\tmp
 ```
 
 ## Comandos
@@ -66,6 +76,9 @@ pytest --cov
 
 # Run MCP EMT
 python -m ddd.mcp_emt
+
+# Run MCP Media
+python -m ddd.mcp_media
 ```
 ## spec más importante y se aplica siempre
 cargar este espec `C:/projects/temper/ai/obsidian/dev-ops/skills/_base/eskylet-claude.md`
@@ -134,7 +147,9 @@ result = CreateMp3OpenaiService.get_instance()(dto)
 
 ---
 
-## MCP Tools (mcp_emt)
+## MCP Tools
+
+### mcp_emt
 
 | Tool | Descripción |
 |------|-------------|
@@ -142,6 +157,20 @@ result = CreateMp3OpenaiService.get_instance()(dto)
 | `emt_get_lines_info` | Información de todas las líneas |
 | `emt_get_stops_around` | Paradas cercanas a coordenadas |
 | `emt_get_stop_detail` | Detalle de una parada específica |
+
+### mcp_media
+
+| Tool | Descripción |
+|------|-------------|
+| `media_create_image` | Genera imágenes desde un prompt y las guarda en disco |
+| `media_create_audio` | Genera audio TTS desde texto y lo guarda en disco |
+
+**Características**:
+- Auto-genera nombres de archivo usando los primeros 25 caracteres del prompt en formato slug + timestamp (yyyymmdd-hhmmss)
+- Soporta nombres de archivo personalizados (opcional)
+- Guarda archivos en el directorio configurado en `MEDIA_OUTPUT_DIR`
+- Soporta múltiples imágenes con sufijos numerados
+- Retorna las rutas de los archivos generados
 
 ---
 
