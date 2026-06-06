@@ -27,8 +27,15 @@ ddd/
 │   └── infrastructure/
 │       ├── controllers/   # McpEmtController
 │       └── repositories/  # ToolsSchemaRepository
+├── open_ai/                      # Dominio OpenAI (imágenes y audio)
+│   ├── application/              # Casos de uso por proveedor
+│   │   ├── create_image_openai/  # CreateImageOpenaiDto, CreateImageOpenaiService
+│   │   └── create_mp3_openai/    # CreateMp3OpenaiDto, CreateMp3OpenaiService
+│   ├── domain/                   # Exceptions (OpenAIException)
+│   └── infrastructure/           # Repositories (Image, TTS)
+│       └── repositories/         # GptImage1, GptTts1, AbstractOpenAIApi
 └── shared/                # Shared kernel
-    ├── domain/enums/      # EnvvarsKeysEnum
+    ├── domain/enums/      # EnvvarsKeysEnum, ResponseCodeEnum
     └── infrastructure/
         └── components/    # Logger
 ```
@@ -42,6 +49,9 @@ APP_LOG_PATH=./logs
 # EMT Madrid API (https://mobilitylabs.emtmadrid.es)
 EMT_CLIENT_ID=your-client-id
 EMT_PASSKEY=your-passkey
+
+# OpenAI API (https://platform.openai.com/api-keys)
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 ## Comandos
@@ -60,6 +70,69 @@ python -m ddd.mcp_emt
 ## spec más importante y se aplica siempre
 cargar este espec `C:/projects/temper/ai/obsidian/dev-ops/skills/_base/eskylet-claude.md`
 
+
+## OpenAI Services (open_ai)
+
+Casos de uso genéricos para generación de imágenes y audio con OpenAI API.
+
+### CreateImageOpenaiService
+
+Genera imágenes con modelos de OpenAI totalmente parametrizados.
+
+**DTO**: `CreateImageOpenaiDto`
+- `prompt`: Descripción completa de la imagen
+- `model`: "gpt-image-1.5" | "dall-e-3" | "dall-e-2"
+- `size`: "256x256" | "512x512" | "1024x1024" | "1024x1792" | "1792x1024"
+- `quality`: "low" | "high"
+- `style`: "natural" | "vivid" (solo dall-e-3)
+- `n`: 1-10 (número de imágenes)
+
+**Ejemplo**:
+```python
+from ddd.open_ai.application import CreateImageOpenaiDto, CreateImageOpenaiService
+
+dto = CreateImageOpenaiDto(
+    prompt="A futuristic city with flying cars at sunset",
+    model="gpt-image-1.5",
+    size="1024x1024",
+    quality="low",
+    n=1
+)
+
+result = CreateImageOpenaiService.get_instance()(dto)
+# result["images"][0]["b64_json"] - Imagen en base64
+```
+
+### CreateMp3OpenaiService
+
+Genera audio TTS con modelos de OpenAI totalmente parametrizados.
+
+**DTO**: `CreateMp3OpenaiDto`
+- `text`: Texto a convertir (máx 4096 caracteres)
+- `voice`: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
+- `model`: "tts-1" | "tts-1-hd"
+- `speed`: 0.25 - 4.0
+- `response_format`: "mp3" | "opus" | "aac" | "flac" | "wav" | "pcm"
+
+**Ejemplo**:
+```python
+from ddd.open_ai.application import CreateMp3OpenaiDto, CreateMp3OpenaiService
+
+dto = CreateMp3OpenaiDto(
+    text="Hello, this is a test of text to speech",
+    voice="nova",
+    model="tts-1",
+    speed=1.0,
+    response_format="mp3"
+)
+
+result = CreateMp3OpenaiService.get_instance()(dto)
+# result["audio_b64"] - Audio en base64
+```
+
+**Ver ejemplos completos**: `ddd/open_ai/USAGE_EXAMPLES.md`
+
+---
 
 ## MCP Tools (mcp_emt)
 

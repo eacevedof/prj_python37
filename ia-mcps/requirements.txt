@@ -17,6 +17,9 @@ Pillow>=10.0.0
 transformers>=4.35.0
 openai-whisper>=20231117
 
+# AI/ML
+openai>=1.0.0
+
 # Dev
 ruff>=0.1.0
 mypy>=1.7.0
