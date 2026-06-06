@@ -4,18 +4,18 @@ import base64
 from typing import Self, final
 
 from ddd.open_ai.application.create_mp3_openai.create_mp3_openai_dto import CreateMp3OpenaiDto
-from ddd.open_ai.application.create_mp3_openai.created_mp3_openai_dto import CreatedMp3OpenaiDto
+from ddd.open_ai.application.create_mp3_openai.create_mp3_openai_result_dto import CreateMp3OpenaiResultDto
 from ddd.open_ai.domain.enums import (
     OpenaiTtsFormatEnum,
     OpenaiTtsModelEnum,
     OpenaiTtsVoiceEnum,
 )
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
-from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository import AbstractOpenAIApiRepository
+from ddd.open_ai.infrastructure.repositories.openai_audio_api_repository import OpenaiAudioApiRepository
 
 
 @final
-class CreateMp3OpenaiService(AbstractOpenAIApiRepository):
+class CreateMp3OpenaiService:
     """Use case to generate TTS audio with OpenAI Audio API."""
 
     MAX_TEXT_LENGTH: int = 4096
@@ -32,37 +32,36 @@ class CreateMp3OpenaiService(AbstractOpenAIApiRepository):
     }
 
     _create_mp3_openai_dto: CreateMp3OpenaiDto
+    _audio_repository: OpenaiAudioApiRepository
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
-    def __call__(self, create_mp3_openai_dto: CreateMp3OpenaiDto) -> dict:
+    def __init__(self) -> None:
+        self._audio_repository = OpenaiAudioApiRepository.get_instance()
+
+    def __call__(
+        self,
+        create_mp3_openai_dto: CreateMp3OpenaiDto
+    ) -> CreateMp3OpenaiResultDto:
         """
         Generates TTS audio with OpenAI according to DTO parameters.
 
         Returns:
-            dict with structure:
-            {
-                "audio_b64": str,
-                "mime_type": str,
-                "text": str,
-                "model": str,
-                "voice": str,
-                "speed": float,
-                "format": str,
-            }
+            CreateMp3OpenaiResultDto: Result DTO with generated audio
 
         Raises:
             OpenAIException: If parameter validation or generation fails
         """
         self._create_mp3_openai_dto = create_mp3_openai_dto
+
         self._fail_if_wrong_input()
 
-        response = self._open_ai_client.audio.speech.create(
+        response = self._audio_repository.generate_speech(
             model=self._create_mp3_openai_dto.tts_model,
             voice=self._create_mp3_openai_dto.voice,
-            input=self._create_mp3_openai_dto.text.strip(),
+            input_text=self._create_mp3_openai_dto.text.strip(),
             speed=self._create_mp3_openai_dto.speed,
             response_format=self._create_mp3_openai_dto.response_format,
         )
@@ -73,7 +72,7 @@ class CreateMp3OpenaiService(AbstractOpenAIApiRepository):
 
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-        return {
+        return CreateMp3OpenaiResultDto.from_primitives({
             "audio_b64": audio_b64,
             "mime_type": self._get_mime_type(),
             "text": self._create_mp3_openai_dto.text.strip(),
@@ -81,7 +80,7 @@ class CreateMp3OpenaiService(AbstractOpenAIApiRepository):
             "voice": self._create_mp3_openai_dto.voice,
             "speed": self._create_mp3_openai_dto.speed,
             "format": self._create_mp3_openai_dto.response_format,
-        }
+        })
 
     def _fail_if_wrong_input(self) -> None:
         if len(self._create_mp3_openai_dto.text) > self.MAX_TEXT_LENGTH:
@@ -92,24 +91,24 @@ class CreateMp3OpenaiService(AbstractOpenAIApiRepository):
                 f"speed must be between {self.MIN_SPEED} and {self.MAX_SPEED}"
             )
 
-        valid_voices = [e.value for e in OpenaiTtsVoiceEnum]
+        valid_voices = [str(enum_item.value) for enum_item in OpenaiTtsVoiceEnum]
         if self._create_mp3_openai_dto.voice not in valid_voices:
             raise OpenAIException.unexpected_custom(
-                f"Invalid voice: {self._create_mp3_openai_dto.voice}. Allowed values: {', '.join(valid_voices)}"
+                f"Invalid voice: {self._create_mp3_openai_dto.voice}. Allowed values: {", ".join(valid_voices)}"
             )
 
-        valid_models = [e.value for e in OpenaiTtsModelEnum]
+        valid_models = [str(enum_item.value) for enum_item in OpenaiTtsModelEnum]
         if self._create_mp3_openai_dto.tts_model not in valid_models:
             raise OpenAIException.unexpected_custom(
                 f"Invalid tts_model: {self._create_mp3_openai_dto.tts_model}. "
-                f"Allowed values: {', '.join(valid_models)}"
+                f"Allowed values: {", ".join(valid_models)}"
             )
 
-        valid_formats = [e.value for e in OpenaiTtsFormatEnum]
+        valid_formats = [str(enum_item.value) for enum_item in OpenaiTtsFormatEnum]
         if self._create_mp3_openai_dto.response_format not in valid_formats:
             raise OpenAIException.unexpected_custom(
                 f"Invalid response_format: {self._create_mp3_openai_dto.response_format}. "
-                f"Allowed values: {', '.join(valid_formats)}"
+                f"Allowed values: {", ".join(valid_formats)}"
             )
 
     def _get_mime_type(self) -> str:
