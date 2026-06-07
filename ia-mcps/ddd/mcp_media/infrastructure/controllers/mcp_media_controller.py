@@ -76,7 +76,7 @@ class McpMediaController:
                     e,
                     f"mcp_media_controller.call_tool: {event_name}"
                 )
-                self._logger.log_payload(
+                self._logger.log_payload_error(
                     payload_dict,
                     f"mcp_media_controller.call_tool: {event_name}"
                 )

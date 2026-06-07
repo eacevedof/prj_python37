@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Any, final, Self
 
+from ddd.shared.infrastructure.components import Logger
 from ddd.ia_memory.domain.exceptions import MemoryException
 
 
@@ -9,10 +10,11 @@ from ddd.ia_memory.domain.exceptions import MemoryException
 class FileProcessorRepository:
     """Repository for processing binary files into text chunks."""
 
+    _logger: Logger
     _instance: "FileProcessorRepository | None" = None
 
     def __init__(self) -> None:
-        pass
+        self._logger = Logger.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -20,9 +22,10 @@ class FileProcessorRepository:
             cls._instance = cls()
         return cls._instance
 
+
     def process_file(self, file_path: str) -> list[dict[str, Any]]:
         if not os.path.exists(file_path):
-            raise MemoryException.file_not_found(file_path)
+            MemoryException.not_found_custom(f"File not found: {file_path}")
         ext = Path(file_path).suffix.lower()
         processors = {
             ".pdf": self._process_pdf,
@@ -36,8 +39,9 @@ class FileProcessorRepository:
         }
         processor = processors.get(ext)
         if not processor:
-            raise MemoryException.unsupported_file_type(ext)
+            MemoryException.bad_request_custom(f"Unsupported file type: {ext}")
         return processor(file_path)
+
 
     def _process_pdf(self, file_path: str) -> list[dict[str, Any]]:
         try:
@@ -58,9 +62,11 @@ class FileProcessorRepository:
             doc.close()
             return chunks
         except ImportError:
-            raise MemoryException.file_processing_error(file_path, "PyMuPDF not installed")
+            self._logger.log_payload_error(file_path,f"_process_pdf.file_path")
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: PyMuPDF not installed")
         except Exception as e:
-            raise MemoryException.file_processing_error(file_path, str(e))
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: {str(e)}")
+
 
     def _process_image(self, file_path: str) -> list[dict[str, Any]]:
         try:
@@ -77,9 +83,10 @@ class FileProcessorRepository:
                 "metadata": {"source_file": file_path, "source_type": "image"}
             }]
         except ImportError:
-            raise MemoryException.file_processing_error(file_path, "transformers not installed")
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: transformers not installed")
         except Exception as e:
-            raise MemoryException.file_processing_error(file_path, str(e))
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: {str(e)}")
+
 
     def _process_audio(self, file_path: str) -> list[dict[str, Any]]:
         try:
@@ -92,9 +99,10 @@ class FileProcessorRepository:
                 "metadata": {"source_file": file_path, "source_type": "audio"}
             }]
         except ImportError:
-            raise MemoryException.file_processing_error(file_path, "whisper not installed")
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: whisper not installed")
         except Exception as e:
-            raise MemoryException.file_processing_error(file_path, str(e))
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: {str(e)}")
+
 
     def _process_docx(self, file_path: str) -> list[dict[str, Any]]:
         try:
@@ -106,9 +114,10 @@ class FileProcessorRepository:
                 "metadata": {"source_file": file_path, "source_type": "docx"}
             }]
         except ImportError:
-            raise MemoryException.file_processing_error(file_path, "python-docx not installed")
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: python-docx not installed")
         except Exception as e:
-            raise MemoryException.file_processing_error(file_path, str(e))
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: {str(e)}")
+
 
     def _process_xlsx(self, file_path: str) -> list[dict[str, Any]]:
         try:
@@ -130,6 +139,6 @@ class FileProcessorRepository:
             wb.close()
             return chunks
         except ImportError:
-            raise MemoryException.file_processing_error(file_path, "openpyxl not installed")
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: openpyxl not installed")
         except Exception as e:
-            raise MemoryException.file_processing_error(file_path, str(e))
+            MemoryException.unexpected_custom(f"Failed to process file: {file_path}: {str(e)}")

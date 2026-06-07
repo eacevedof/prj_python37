@@ -115,7 +115,7 @@ class Logger:
 
         self.__write_log("error.log", log_content)
 
-    def log_payload(self, any_obj: Any, title: str = "") -> None:
+    def log_payload_error(self, any_obj: Any, title: str = "") -> None:
         """Log payload data for debugging.
 
         Args:
@@ -142,4 +142,4 @@ class Logger:
             payload_str = str(any_obj)
 
         log_content += f"\n{payload_str}"
-        self.__write_log("debug.log", log_content)
+        self.__write_log("error.log", log_content)

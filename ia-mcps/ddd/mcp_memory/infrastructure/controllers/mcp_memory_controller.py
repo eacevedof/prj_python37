@@ -5,6 +5,7 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
+from ddd.shared.infrastructure.components import Logger
 from ddd.mcp_memory.domain.enums import ToolNameEnum
 from ddd.mcp_memory.infrastructure.repositories import ToolsSchemaRepository
 from ddd.ia_memory.domain.enums import MemoryTypeEnum
@@ -21,9 +22,12 @@ from ddd.ia_memory.application import (
 
 @final
 class McpMemoryController:
+
+    _logger: Logger
     _instance: "McpMemoryController | None" = None
 
     def __init__(self) -> None:
+        self._logger = Logger.get_instance()
         self._server = Server("mcp-memory")
         self._tools_repo = ToolsSchemaRepository.get_instance()
         self._setup_handlers()
@@ -64,6 +68,7 @@ class McpMemoryController:
             else:
                 return {"error": f"Unknown tool: {name}"}
         except Exception as e:
+            self._logger.log_payload_error({"name":name, "args":args}, f"_handle_tool.payload")
             return {"error": str(e)}
 
     async def _store_memory(self, args: dict[str, Any]) -> dict[str, Any]:

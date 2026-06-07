@@ -57,10 +57,8 @@ class CallToolService:
                 ]
 
         except Exception as e:
-            self._logger.log_exception(
-                e,
-                f"CallToolService.__call__: tool={call_tool_dto.event_name}"
-            )
+            self._logger.log_exception(e,f"CallToolService.__call__: tool={call_tool_dto.event_name}")
+            self._logger.log_payload_error(self._payload_dict, f"CallToolService.__call__.payload: tool={call_tool_dto.event_name}")
             text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
 
         return CallToolResultDto.from_primitives({"contents": text_contents})

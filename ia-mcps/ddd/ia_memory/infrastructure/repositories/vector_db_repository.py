@@ -9,6 +9,8 @@ import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
+from ddd.shared.infrastructure.components import Logger
+
 from ddd.ia_memory.domain.enums import MemoryTypeEnum
 from ddd.ia_memory.domain.exceptions import MemoryException
 
@@ -17,11 +19,12 @@ from ddd.ia_memory.domain.exceptions import MemoryException
 class VectorDbRepository:
     """Repository for ChromaDB vector database operations."""
 
-    _instance: "VectorDbRepository | None" = None
+    _logger: Logger
     _embedding_model: SentenceTransformer | None = None
     _client: chromadb.PersistentClient | None = None
 
     def __init__(self) -> None:
+        self._logger = Logger.get_instance()
         self._data_path = os.getenv(
             "MEMORY_CHROMA_PATH",
             str(Path(__file__).parent.parent.parent.parent.parent / "data" / "chroma")
@@ -30,9 +33,7 @@ class VectorDbRepository:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        return cls()
 
     def _get_client(self) -> chromadb.PersistentClient:
         if self._client is None:
@@ -61,7 +62,8 @@ class VectorDbRepository:
             embedding = model.encode(text, convert_to_numpy=True)
             return embedding.tolist()
         except Exception as e:
-            raise MemoryException.embedding_failed(str(e))
+            self._logger.log_payload_error(text,f"VectorDbRepository._generate_embedding.text")
+            MemoryException.unexpected_custom(f"Failed to generate embedding: {str(e)}")
 
     def _calculate_content_hash(self, paths: list[str]) -> str:
         try:
@@ -80,7 +82,8 @@ class VectorDbRepository:
                         hasher.update(f.read())
             return f"sha256:{hasher.hexdigest()}"
         except Exception as e:
-            raise MemoryException.hash_calculation_error(paths, str(e))
+            self._logger.log_payload_error(paths, f"VectorDbRepository._calculate_content_hash.paths")
+            MemoryException.unexpected_custom(f"Failed to calculate content hash for paths {paths}: {str(e)}")
 
     def store(
         self,
@@ -126,7 +129,11 @@ class VectorDbRepository:
         except MemoryException:
             raise
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            self._logger.log_payload_error(
+                {"project": project, "content": content, "paths": paths },
+                f"VectorDbRepository.store.payload"
+            )
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 
     def search(
         self,
@@ -165,7 +172,11 @@ class VectorDbRepository:
                 "results": chunks,
             }
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            self._logger.log_payload_error(
+                {"project": project, "query": query, "limit": limit},
+                f"VectorDbRepository.search.payload"
+            )
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 
 
     def check_freshness(self, project: str) -> dict[str, Any]:
@@ -216,7 +227,11 @@ class VectorDbRepository:
                 "chunks": results,
             }
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            self._logger.log_payload_error(
+                {"project": project},
+                f"VectorDbRepository.check_freshness.payload"
+            )
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 
     def update(
         self,
@@ -230,7 +245,7 @@ class VectorDbRepository:
             collection = self._get_collection(project)
             existing = collection.get(ids=[chunk_id], include=["documents", "metadatas"])
             if not existing["ids"]:
-                raise MemoryException.chunk_not_found(chunk_id)
+                MemoryException.not_found_custom(f"Memory chunk not found: {chunk_id}")
             current_content = existing["documents"][0] if existing["documents"] else ""
             current_metadata = existing["metadatas"][0] if existing["metadatas"] else {}
             new_content = content if content is not None else current_content
@@ -260,7 +275,11 @@ class VectorDbRepository:
         except MemoryException:
             raise
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            self._logger.log_payload_error(
+                {"chunk_id": chunk_id, "project":project, "content": content, "paths": paths},
+                f"VectorDbRepository.update.payload"
+            )
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 
 
     def delete(self, chunk_id: str, project: str) -> dict[str, Any]:
@@ -268,7 +287,7 @@ class VectorDbRepository:
             collection = self._get_collection(project)
             existing = collection.get(ids=[chunk_id])
             if not existing["ids"]:
-                raise MemoryException.chunk_not_found(chunk_id)
+                MemoryException.not_found_custom(f"Memory chunk not found: {chunk_id}")
             collection.delete(ids=[chunk_id])
             return {
                 "id": chunk_id,
@@ -279,7 +298,7 @@ class VectorDbRepository:
         except MemoryException:
             raise
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 
     def list_chunks(
         self,
@@ -327,5 +346,5 @@ class VectorDbRepository:
                 "chunks": chunks,
             }
         except Exception as e:
-            raise MemoryException.storage_error(str(e))
+            MemoryException.unexpected_custom(f"ChromaDB storage error: {str(e)}")
 

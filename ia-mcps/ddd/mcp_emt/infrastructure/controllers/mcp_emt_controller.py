@@ -77,7 +77,7 @@ class McpEmtController:
                     e,
                     f"mcp_emt_controller.call_tool: {event_name}"
                 )
-                self._logger.log_payload(
+                self._logger.log_payload_error(
                     payload_dict,
                     f"mcp_emt_controller.call_tool: {event_name}"
                 )

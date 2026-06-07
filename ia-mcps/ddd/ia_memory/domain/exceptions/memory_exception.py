@@ -1,58 +1,36 @@
 from typing import final
 
+from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
+
 
 @final
 class MemoryException(Exception):
-    """Exception for memory operations."""
+    """Exceptions for the Memory domain."""
 
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
+    _code: int
+    _message: str
 
-    @classmethod
-    def project_not_found(cls, project: str) -> "MemoryException":
-        return cls(f"Project not found: {project}")
+    def __init__(self, message: str, code: int = ResponseCodeEnum.BAD_REQUEST) -> None:
+        self._message = message
+        self._code = code
+        super().__init__(self._message)
 
-    @classmethod
-    def chunk_not_found(cls, chunk_id: str) -> "MemoryException":
-        return cls(f"Memory chunk not found: {chunk_id}")
+    @property
+    def code(self) -> int:
+        return self._code
 
-    @classmethod
-    def invalid_memory_type(cls, memory_type: str) -> "MemoryException":
-        return cls(f"Invalid memory type: {memory_type}")
-
-    @classmethod
-    def embedding_failed(cls, detail: str = "") -> "MemoryException":
-        msg = "Failed to generate embedding"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
+    @property
+    def message(self) -> str:
+        return self._message
 
     @classmethod
-    def storage_error(cls, detail: str = "") -> "MemoryException":
-        msg = "ChromaDB storage error"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
+    def bad_request_custom(cls, message: str) -> "MemoryException":
+        raise cls(f"{message}", ResponseCodeEnum.BAD_REQUEST)
 
     @classmethod
-    def file_not_found(cls, path: str) -> "MemoryException":
-        return cls(f"File not found: {path}")
+    def not_found_custom(cls, message: str) -> "MemoryException":
+        raise cls(f"{message}", ResponseCodeEnum.NOT_FOUND)
 
     @classmethod
-    def unsupported_file_type(cls, extension: str) -> "MemoryException":
-        return cls(f"Unsupported file type: {extension}")
-
-    @classmethod
-    def file_processing_error(cls, path: str, detail: str = "") -> "MemoryException":
-        msg = f"Failed to process file: {path}"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
-
-    @classmethod
-    def hash_calculation_error(cls, paths: list[str], detail: str = "") -> "MemoryException":
-        msg = f"Failed to calculate content hash for paths: {paths}"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
+    def unexpected_custom(cls, message: str) -> "MemoryException":
+        raise cls(f"{message}", ResponseCodeEnum.INTERNAL_SERVER_ERROR)
