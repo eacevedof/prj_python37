@@ -6,6 +6,8 @@ python -m venv .venv-win
 .venv-win\Scripts\activate
 .venv-win\Scripts\python.exe -m pip install --upgrade pip
 .venv-win\Scripts\python.exe -m pip install -r .\requirements.txt
+
+.venv-win\Scripts\python.exe -m pip uninstall -r .\uninstall.txt -y
 ```
 
 ### linux

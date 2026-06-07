@@ -20,6 +20,46 @@ class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
             cls._instance = cls()
         return cls._instance
 
+    def get_audio_bytes_from_text(
+        self,
+        model: str,
+        voice: str,
+        input_text: str,
+        speed: float,
+        response_format: str,
+    ) -> bytes:
+        """
+        Generates audio using OpenAI Audio API.
+
+        Args:
+            model: Text-to-speech model (tts-1, tts-1-hd)
+            voice: Voice (alloy, echo, fable, onyx, nova, shimmer)
+            input_text: Text to convert
+            speed: Speed (0.25 to 4.0)
+            response_format: Format (mp3, opus, aac, flac, wav, pcm)
+
+        Returns:
+            bytes: Audio in bytes format
+
+        Raises:
+            OpenAIException: If generation fails
+        """
+        audio_response = self._open_ai_client.audio.speech.create(
+            model=model,
+            voice=voice,
+            input=input_text,
+            speed=speed,
+            response_format=response_format,
+        )
+
+        audio_bytes = audio_response.content
+        if not audio_bytes:
+            OpenAIException.unexpected_custom(
+                "GptTts1ReaderApiRepository: No audio data received from OpenAI API"
+            )
+
+        return audio_bytes
+
     def get_audio_pronunciation_by_text(
         self,
         text: str,

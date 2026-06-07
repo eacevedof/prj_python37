@@ -1,27 +1,75 @@
 # Learn Languages App
-# pip install -r requirements.txt
+# packages got from: https://pypi.org/<package-name>
+# Uses compatible releases (~=) for security patches without breaking changes
+# Installation: pip install -r requirements.txt
 
-# Utils
-python-dotenv>=1.0.0
-# UI Framework
-flet>=0.21.0
+# ============================================================================
+# CORE
+# ============================================================================
 
-# Database
-aiosqlite>=0.19.0
+# python-dotenv - Load environment variables from .env file
+# Supports: OPENAI_API_KEY, APP_LOG_PATH
+python-dotenv~=1.2.2
 
-# Validation
-pydantic>=2.5.0
+# ============================================================================
+# UI FRAMEWORK
+# ============================================================================
 
+# flet - Cross-platform UI framework (Windows, Mac, Linux, Web, Mobile)
+# Used in: main.py, ddd/vocabulary/infrastructure/ui/
+flet~=0.85.2
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+
+# aiosqlite - Async SQLite database adapter
+# Used in: ddd/shared/infrastructure/repositories/sqlite_connection.py
+aiosqlite~=0.22.1
+
+# ============================================================================
+# VALIDATION
+# ============================================================================
+
+# pydantic - Data validation using Python type annotations
+# Used in: DTOs across the application
+pydantic~=2.13.4
+
+# ============================================================================
 # AI/ML
-openai>=1.0.0
+# ============================================================================
 
-pyperclip>=1.8.0
-# Audio
-pygame>=2.5.0
+# openai - https://developers.openai.com/api/reference/python/resources/images/methods/generate
+openai~=2.41.0
 
-# Dev
-ruff>=0.1.0
-mypy>=1.7.0
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
+# ============================================================================
+# UTILITIES
+# ============================================================================
 
+# pyperclip - Cross-platform clipboard access
+# Used in: Clipboard operations for text/images
+pyperclip~=1.11.0
+
+# pygame - Audio playback
+# Used in: ddd/vocabulary/infrastructure/controllers/study_controller.py
+pygame~=2.6.1
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# ruff - Fast Python linter and formatter
+# Usage: ruff check .
+ruff~=0.15.16
+
+# mypy - Static type checker
+# Usage: mypy .
+mypy~=2.1.0
+
+# pytest - Testing framework
+# Usage: pytest
+pytest~=9.0.3
+
+# pytest-asyncio - Async test support for pytest
+# Required for: Testing async functions
+pytest-asyncio~=1.4.0
