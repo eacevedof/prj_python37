@@ -89,12 +89,30 @@ class Logger:
         """Log error message."""
         self.log_error("Repository", message, context)
 
-    def log_exception(self, module: str, message: str, exc: Exception | None = None, context: dict | None = None) -> None:
-        """Log exception with full traceback."""
-        log_content = f"[EXCEPTION] {module}: {message}"
+    def log_exception(
+        self,
+        exception: BaseException,
+        title: str = "",
+        context: dict | None = None
+    ) -> None:
+        """Log exception with full traceback.
+
+        Args:
+            exception: The exception to log with complete traceback
+            title: Optional title/context for the error (default: "")
+            context: Optional context dictionary with additional debug info
+        """
+        log_content = f"[EXCEPTION]"
+        if title:
+            log_content += f" {title}"
+
+        log_content += f"\n{type(exception).__name__}: {exception}"
+
         if context:
             log_content += f"\nContext: {context}"
-        if exc:
-            log_content += f"\nException: {type(exc).__name__}: {exc}"
-            log_content += f"\nTraceback:\n{traceback.format_exc()}"
+
+        if exception.__traceback__:
+            tb_lines = traceback.format_exception(type(exception), exception, exception.__traceback__)
+            log_content += f"\n\nTraceback:\n{''.join(tb_lines)}"
+
         self.__write_log("error.log", log_content)

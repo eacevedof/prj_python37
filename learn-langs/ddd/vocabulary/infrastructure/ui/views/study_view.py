@@ -123,7 +123,7 @@ class StudyView(ft.Container):
             self._logger.log_debug("StudyView.render", "Render completado exitosamente")
 
         except Exception as e:
-            self._logger.log_exception("StudyView.render", "Error en render", e, {
+            self._logger.log_exception(e, "StudyView.render: Error en render", {
                 "dto_state": {
                     "is_loading": dto.is_loading,
                     "error_message": dto.error_message,
@@ -302,7 +302,7 @@ class StudyView(ft.Container):
             self._logger.log_debug("StudyView._render_studying", "Controles agregados exitosamente")
 
         except Exception as e:
-            self._logger.log_exception("StudyView._render_studying", "Error en _render_studying", e, {
+            self._logger.log_exception(e, "StudyView._render_studying: Error en _render_studying", {
                 "word": word if 'word' in locals() else None,
             })
             raise

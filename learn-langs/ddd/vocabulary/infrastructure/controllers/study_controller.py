@@ -345,9 +345,8 @@ class StudyController(BaseController):
 
         except Exception as e:
             self._logger.log_exception(
-                "StudyController._async_play_audio",
-                "Error reproduciendo audio",
                 e,
+                "StudyController._async_play_audio: Error reproduciendo audio",
                 {
                     "current_index": self._current_index,
                     "lang_code": self._lang_code,

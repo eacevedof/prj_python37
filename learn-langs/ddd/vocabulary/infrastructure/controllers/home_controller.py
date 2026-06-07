@@ -38,7 +38,7 @@ class HomeController(BaseController):
 
         self._logger = Logger.get_instance()
         self._load_home_service = LoadHomeService.get_instance()
-        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
         self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
         self._selected_tags: list[str] = []
@@ -95,7 +95,7 @@ class HomeController(BaseController):
                 return
 
             # Cargar grupos disponibles
-            all_groups_raw = await self._word_groups_reader.get_all_word_groups()
+            all_groups_raw = await self._word_groups_reader_sqlite_repository.get_all_word_groups()
 
             # Ordenar grupos: generic al final, resto por ID desc
             generic_group = None
