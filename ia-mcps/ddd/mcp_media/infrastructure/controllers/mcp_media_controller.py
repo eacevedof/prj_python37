@@ -1,7 +1,6 @@
 import asyncio
 from typing import final, Self
 
-from dotenv import load_dotenv
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
@@ -9,9 +8,6 @@ from mcp.types import Tool, TextContent
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_emt.domain.enums import McpServerNameEnum
 from ddd.mcp_media.application import CallToolDto, ListToolsService, CallToolService
-
-# Load environment variables from .env file
-load_dotenv()
 
 
 @final
@@ -35,6 +31,7 @@ class McpMediaController:
         return cls()
 
     async def __call__(self) -> None:
+
         async with stdio_server() as (mcp_read_stream, mcp_write_stream):
             self._logger.log_info(
                 module="mcp_media_controller", message="__call__"
@@ -77,6 +74,10 @@ class McpMediaController:
             except Exception as e:
                 self._logger.log_exception(
                     e,
+                    f"mcp_media_controller.call_tool: {event_name}"
+                )
+                self._logger.log_payload(
+                    payload_dict,
                     f"mcp_media_controller.call_tool: {event_name}"
                 )
                 return [

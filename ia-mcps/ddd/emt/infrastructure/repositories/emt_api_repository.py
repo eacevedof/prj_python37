@@ -21,6 +21,8 @@ class EmtApiRepository:
         env_reader = EnvironmentReaderRawRepository.get_instance()
         self._client_id = env_reader.get_emt_client_id()
         self._passkey = env_reader.get_emt_passkey()
+        if not self._client_id or not self._passkey:
+            EmtException.unexpected_custom("EMT credentials not configured (EMT_CLIENT_ID, EMT_PASSKEY)")
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -35,8 +37,6 @@ class EmtApiRepository:
         Raises:
             EmtException: If authentication fails.
         """
-        if not self._client_id or not self._passkey:
-            raise EmtException.missing_credentials()
 
         url = f"{self._api_base_url}/mobilitylabs/user/login/"
         headers = {
@@ -49,18 +49,18 @@ class EmtApiRepository:
             async with session.get(url, headers=headers) as response:
                 if response.status != 200:
                     error_text = await response.text()
-                    raise EmtException.authentication_failed(error_text)
+                    EmtException.unauthorized_custom(f"EMT authentication failed: {error_text}")
 
                 data = await response.json()
 
                 if data.get("code") != "00":
-                    raise EmtException.authentication_failed(
-                        data.get("description", "Unknown error")
+                    EmtException.unauthorized_custom(
+                        f"EMT authentication failed: {data.get('description', 'Unknown error')}"
                     )
 
                 access_token = data.get("data", [{}])[0].get("accessToken")
                 if not access_token:
-                    raise EmtException.authentication_failed("No access token in response")
+                    EmtException.unauthorized_custom("EMT authentication failed: No access token in response")
 
                 self._access_token = access_token
                 return access_token
@@ -112,14 +112,13 @@ class EmtApiRepository:
 
                 if response.status >= 400:
                     error_text = await response.text()
-                    raise EmtException.api_error(response.status, error_text)
+                    EmtException.unexpected_custom(f"EMT API error (HTTP {response.status}): {error_text}")
 
                 data = await response.json()
 
                 if data.get("code") not in ("00", "01", "80"):
-                    raise EmtException.api_error(
-                        response.status,
-                        data.get("description", "Unknown error"),
+                    EmtException.unexpected_custom(
+                        f"EMT API error (HTTP {response.status}): {data.get('description', 'Unknown error')}"
                     )
 
                 return data

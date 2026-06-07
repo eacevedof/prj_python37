@@ -1,44 +1,40 @@
 from typing import final
 
+from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
+
 
 @final
 class EmtException(Exception):
-    """Exception for EMT API operations."""
+    """Exceptions for the EMT domain."""
 
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
+    _code: int
+    _message: str
 
-    @classmethod
-    def authentication_failed(cls, detail: str = "") -> "EmtException":
-        msg = "EMT authentication failed"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
+    def __init__(self, message: str, code: int = ResponseCodeEnum.BAD_REQUEST) -> None:
+        self._message = message
+        self._code = code
+        super().__init__(self._message)
 
-    @classmethod
-    def stop_not_found(cls, stop_id: str) -> "EmtException":
-        return cls(f"Stop not found: {stop_id}")
+    @property
+    def code(self) -> int:
+        return self._code
 
-    @classmethod
-    def line_not_found(cls, line_id: str) -> "EmtException":
-        return cls(f"Line not found: {line_id}")
+    @property
+    def message(self) -> str:
+        return self._message
 
     @classmethod
-    def no_arrivals(cls, stop_id: str) -> "EmtException":
-        return cls(f"No arrivals data for stop: {stop_id}")
+    def bad_request_custom(cls, message: str) -> "EmtException":
+        raise cls(f"{message}", ResponseCodeEnum.BAD_REQUEST)
 
     @classmethod
-    def api_error(cls, status_code: int, detail: str = "") -> "EmtException":
-        msg = f"EMT API error (HTTP {status_code})"
-        if detail:
-            msg = f"{msg}: {detail}"
-        return cls(msg)
+    def unauthorized_custom(cls, message: str) -> "EmtException":
+        raise cls(f"{message}", ResponseCodeEnum.UNAUTHORIZED)
 
     @classmethod
-    def token_expired(cls) -> "EmtException":
-        return cls("EMT access token expired")
+    def not_found_custom(cls, message: str) -> "EmtException":
+        raise cls(f"{message}", ResponseCodeEnum.NOT_FOUND)
 
     @classmethod
-    def missing_credentials(cls) -> "EmtException":
-        return cls("EMT credentials not configured (EMT_CLIENT_ID, EMT_PASSKEY)")
+    def unexpected_custom(cls, message: str) -> "EmtException":
+        raise cls(f"{message}", ResponseCodeEnum.INTERNAL_SERVER_ERROR)

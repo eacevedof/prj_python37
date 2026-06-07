@@ -57,7 +57,11 @@ class CallToolService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
+    async def __call__(
+        self,
+        call_tool_dto: CallToolDto
+    ) -> CallToolResultDto:
+
         self._payload_dict = call_tool_dto.payload_dict
         self._output_dir = self._env_reader.get_media_output_dir()
 
@@ -76,20 +80,16 @@ class CallToolService:
                 ]
 
         except Exception as e:
-            self._logger.log_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={
-                    "tool": call_tool_dto.event_name,
-                    "payload": self._payload_dict,
-                },
+            self._logger.log_exception(
+                e,
+                f"CallToolService.__call__: tool={call_tool_dto.event_name}"
             )
             text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
 
         return CallToolResultDto.from_primitives({"contents": text_contents})
 
+
     async def __create_image_text_content(self) -> list[TextContent]:
-        # Create DTO from payload
         dto_dict = {
             "prompt": self._payload_dict.get("prompt", ""),
             "image_model": self._payload_dict.get("model", OpenaiImageModelEnum.GPT_IMAGE_1_5),
@@ -98,12 +98,10 @@ class CallToolService:
             "number_of_images": self._payload_dict.get("n", 1),
         }
 
-        # Generate images
         result = CreateImageOpenaiService.get_instance()(
             CreateImageOpenaiDto.from_primitives(dto_dict)
         )
 
-        # Generate filename
         base_filename = self._payload_dict.get("filename")
         if not base_filename:
             base_filename = self._slugger.slugify_with_timestamp(result.prompt_used)
@@ -118,11 +116,10 @@ class CallToolService:
             if not b64_data:
                 continue
 
+            filename = f"{base_filename}.png"
             # Add index suffix if multiple images
             if result.number_of_images > 1:
                 filename = f"{base_filename}_{idx + 1}.png"
-            else:
-                filename = f"{base_filename}.png"
 
             file_path = os.path.join(self._output_dir, filename)
 
@@ -150,8 +147,8 @@ class CallToolService:
             )
         ]
 
+
     async def __create_audio_text_content(self) -> list[TextContent]:
-        # Create DTO from payload
         dto_dict = {
             "text": self._payload_dict.get("text", ""),
             "voice": self._payload_dict.get("voice", OpenaiTtsVoiceEnum.ALLOY),

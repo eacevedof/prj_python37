@@ -57,13 +57,9 @@ class CallToolService:
                 ]
 
         except Exception as e:
-            self._logger.log_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={
-                    "tool": call_tool_dto.event_name,
-                    "payload": self._payload_dict,
-                },
+            self._logger.log_exception(
+                e,
+                f"CallToolService.__call__: tool={call_tool_dto.event_name}"
             )
             text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
 

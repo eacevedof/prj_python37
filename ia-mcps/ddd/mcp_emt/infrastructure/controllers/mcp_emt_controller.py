@@ -31,6 +31,7 @@ class McpEmtController:
         return cls()
 
     async def __call__(self) -> None:
+
         async with stdio_server() as (mcp_read_stream, mcp_write_stream):
             self._logger.log_info(
                 module="mcp_emt_controller", message="__call__"
@@ -59,20 +60,25 @@ class McpEmtController:
                 return []
 
         @self._mcp_server.call_tool()
-        async def call_tool(event_name: str, payload_dict: dict) -> list[TextContent]:
+        async def call_tool(
+            event_name: str,
+            payload_dict: dict
+        ) -> list[TextContent]:
             try:
                 result_dto = await self._call_tool_service(
-                    CallToolDto.from_primitives(
-                        {
-                            "event_name": event_name,
-                            "arguments": payload_dict,
-                        }
-                    )
+                    CallToolDto.from_primitives({
+                        "event_name": event_name,
+                        "arguments": payload_dict,
+                    })
                 )
                 return result_dto.to_list()
             except Exception as e:
                 self._logger.log_exception(
                     e,
+                    f"mcp_emt_controller.call_tool: {event_name}"
+                )
+                self._logger.log_payload(
+                    payload_dict,
                     f"mcp_emt_controller.call_tool: {event_name}"
                 )
                 return [

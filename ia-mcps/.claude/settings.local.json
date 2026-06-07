@@ -24,7 +24,8 @@
       "WebFetch(domain:developers.openai.com)",
       "WebFetch(domain:platform.openai.com)",
       "Bash(python3:*)",
-      "mcp__media__media_create_audio"
+      "mcp__media__media_create_audio",
+      "mcp__emt__emt_get_stop_arrivals"
     ]
   }
 }

@@ -1,8 +1,10 @@
 import os
 from typing import final, Self
 
+from dotenv import load_dotenv
 from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
+load_dotenv()
 
 @final
 class EnvironmentReaderRawRepository:

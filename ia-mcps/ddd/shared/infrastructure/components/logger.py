@@ -1,8 +1,9 @@
+import json
 import re
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import final, Self
+from typing import Any, final, Self
 
 from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
@@ -113,3 +114,32 @@ class Logger:
             log_content += f"\n\nTraceback:\n{''.join(tb_lines)}"
 
         self.__write_log("error.log", log_content)
+
+    def log_payload(self, any_obj: Any, title: str = "") -> None:
+        """Log payload data for debugging.
+
+        Args:
+            any_obj: Payload object to log (any type accepted)
+            title: Optional title/context for the payload (default: "")
+        """
+        log_content = f"[PAYLOAD]"
+        if title:
+            log_content += f" {title}"
+
+        # Try to format as JSON for better readability
+        try:
+            # Use default=str to handle non-serializable objects
+            payload_str = json.dumps(
+                any_obj,
+                indent=2,
+                ensure_ascii=False,
+                default=lambda obj: (
+                    obj.__dict__ if hasattr(obj, "__dict__")
+                    else str(obj)
+                )
+            )
+        except Exception:
+            payload_str = str(any_obj)
+
+        log_content += f"\n{payload_str}"
+        self.__write_log("debug.log", log_content)
