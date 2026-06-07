@@ -2,24 +2,22 @@
 
 from typing import Self, final
 
-from ddd.open_ai.application.create_image_openai.create_image_openai_dto import CreateImageOpenaiDto
-from ddd.open_ai.application.create_image_openai.create_image_openai_result_dto import CreateImageOpenaiResultDto
 from ddd.open_ai.domain.enums import (
+    OpenaiImageNumberEnum,
     OpenaiImageModelEnum,
     OpenaiImageQualityEnum,
     OpenaiImageResponseFormatEnum,
     OpenaiImageSizeEnum,
 )
-from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
+from ddd.open_ai.application.create_image_openai.create_image_openai_dto import CreateImageOpenaiDto
+from ddd.open_ai.application.create_image_openai.create_image_openai_result_dto import CreateImageOpenaiResultDto
 from ddd.open_ai.infrastructure.repositories.gpt_image_1_reader_api_repository import GptImage1ReaderApiRepository
+from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 
 
 @final
 class CreateImageOpenaiService:
     """Use case to generate images with OpenAI Images API."""
-
-    MIN_NUMBER_OF_IMAGES: int = 1
-    MAX_NUMBER_OF_IMAGES: int = 10
 
     _create_image_openai_dto: CreateImageOpenaiDto
     _gpt_image1_reader_api_repository: GptImage1ReaderApiRepository
@@ -48,15 +46,7 @@ class CreateImageOpenaiService:
 
         self._fail_if_wrong_input()
 
-        openai_images = self._gpt_image1_reader_api_repository.get_base64_images_from_text(
-            openai_model=self._create_image_openai_dto.openai_model,
-            prompt=self._create_image_openai_dto.prompt.strip(),
-            result_number=self._create_image_openai_dto.number_of_images,
-            size=self._create_image_openai_dto.size,
-            quality=self._create_image_openai_dto.quality,
-        )
-
-        base64_img_strings = self._get_valid_base64_strings(openai_images)
+        base64_img_strings = self.__get_valid_base64_strings()
         if not base64_img_strings:
             OpenAIException.unexpected_custom(
                 "Failed to generate images: No valid base64 image strings returned from OpenAI API"
@@ -73,10 +63,10 @@ class CreateImageOpenaiService:
 
 
     def _fail_if_wrong_input(self) -> None:
-        if self._create_image_openai_dto.number_of_images < self.MIN_NUMBER_OF_IMAGES or \
-           self._create_image_openai_dto.number_of_images > self.MAX_NUMBER_OF_IMAGES:
+        if self._create_image_openai_dto.number_of_images < OpenaiImageNumberEnum.MIN_NUMBER_OF_IMAGES.value or \
+           self._create_image_openai_dto.number_of_images > OpenaiImageNumberEnum.MAX_NUMBER_OF_IMAGES.value:
             OpenAIException.unexpected_custom(
-                f"number_of_images must be between {self.MIN_NUMBER_OF_IMAGES} and {self.MAX_NUMBER_OF_IMAGES}"
+                f"number_of_images must be between {OpenaiImageNumberEnum.MIN_NUMBER_OF_IMAGES.value} and {OpenaiImageNumberEnum.MAX_NUMBER_OF_IMAGES.value}"
             )
 
         valid_models = list(OpenaiImageModelEnum)
@@ -112,7 +102,15 @@ class CreateImageOpenaiService:
                 f"{self._create_image_openai_dto.openai_model} does not support 1024x1792 or 1792x1024 sizes"
             )
 
-    def _get_valid_base64_strings(self, base64_images: list[dict]) -> list[dict]:
+    def __get_valid_base64_strings(self) -> list[dict]:
+        base64_images = self._gpt_image1_reader_api_repository.get_base64_images_from_text(
+            openai_model=self._create_image_openai_dto.openai_model,
+            prompt=self._create_image_openai_dto.prompt.strip(),
+            result_number=self._create_image_openai_dto.number_of_images,
+            size=self._create_image_openai_dto.size,
+            quality=self._create_image_openai_dto.quality,
+        )
+
         images = []
         for img_data in base64_images:
             image_b64 = img_data.get(OpenaiImageResponseFormatEnum.B64_JSON, "")

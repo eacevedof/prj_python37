@@ -54,7 +54,7 @@ class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
             "size": size,
         }
 
-        # Only add quality for dall-e-3
+        # Only add quality for dall-e-3 @deprecated
         if openai_model == OpenaiImageModelEnum.DALL_E_3.value:
             image_params["quality"] = quality
 

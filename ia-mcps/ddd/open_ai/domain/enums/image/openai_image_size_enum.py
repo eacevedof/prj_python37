@@ -11,3 +11,4 @@ class OpenaiImageSizeEnum(StrEnum):
     SIZE_1024 = "1024x1024"
     SIZE_1024_1792 = "1024x1792"
     SIZE_1792_1024 = "1792x1024"
+

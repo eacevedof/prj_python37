@@ -1,4 +1,5 @@
-# MCP Servers - IA Services
+# MCP Servers - IA Services 2026-06-07
+# packages got from: https://pypi.org/<package-name>
 # Uses compatible releases (~=) for security patches without breaking changes
 # Installation: pip install -r requirements.txt
 
@@ -8,11 +9,11 @@
 
 # aiohttp - Async HTTP client for EMT Madrid API
 # Used in: ddd/emt/infrastructure/repositories/emt_api_repository.py
-aiohttp~=3.9.0
+aiohttp~=3.14.0
 
 # python-dotenv - Load environment variables from .env file
 # Supports: OPENAI_API_KEY, EMT_CLIENT_ID, EMT_PASSKEY, APP_LOG_PATH
-python-dotenv~=1.0.0
+python-dotenv~=1.2.2
 
 # ============================================================================
 # MCP SERVER
@@ -21,7 +22,8 @@ python-dotenv~=1.0.0
 # mcp - Model Context Protocol server framework
 # Used in: ddd/mcp_emt, ddd/mcp_memory
 # Provides: Server, Tool, TextContent, stdio_server
-mcp~=1.0.0
+# Updated to 1.27.2 for better cancelled notification handling
+mcp==1.27.2
 
 # ============================================================================
 # VECTOR DATABASE & EMBEDDINGS
@@ -30,12 +32,12 @@ mcp~=1.0.0
 # chromadb - Vector database for semantic search and RAG
 # Used in: ddd/ia_memory/infrastructure/repositories/vector_db_repository.py
 # Stores: Document embeddings for similarity search
-chromadb~=0.4.0
+chromadb~=1.5.9
 
 # sentence-transformers - Generate text embeddings for ChromaDB
 # Used in: ddd/ia_memory/infrastructure/repositories/vector_db_repository.py
 # Model: SentenceTransformer for embedding generation
-sentence-transformers~=2.2.0
+sentence-transformers~=5.5.1
 
 # ============================================================================
 # FILE PROCESSING
@@ -51,12 +53,12 @@ PyMuPDF>=1.27.2.3
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Imported as: docx
 # Processes: .docx files → text chunks
-python-docx~=1.1.0
+python-docx~=1.2.0
 
 # openpyxl - Excel spreadsheet processing
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Processes: .xlsx files → text chunks per sheet
-openpyxl~=3.1.0
+openpyxl~=3.1.5
 
 # Pillow - Image file processing
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
@@ -68,7 +70,7 @@ Pillow~=12.2.0
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
 # Model: BlipProcessor, BlipForConditionalGeneration
 # Processes: Images → text descriptions
-transformers~=4.35.0
+transformers~=5.10.2
 
 # openai-whisper - Audio transcription with Whisper model
 # Used in: ddd/ia_memory/infrastructure/repositories/file_processor_repository.py
@@ -89,20 +91,20 @@ openai~=2.41.0
 
 # ruff - Fast Python linter and formatter
 # Usage: ruff check .
-ruff~=0.1.0
+ruff~=0.15.16
 
 # mypy - Static type checker
 # Usage: mypy .
-mypy~=1.7.0
+mypy~=2.1.0
 
 # pytest - Testing framework
 # Usage: pytest
-pytest~=7.4.0
+pytest~=9.0.3
 
 # pytest-asyncio - Async test support for pytest
 # Required for: Testing async functions in EMT and MCP services
-pytest-asyncio~=0.21.0
+pytest-asyncio~=1.4.0
 
 # pytest-cov - Code coverage plugin for pytest
 # Usage: pytest --cov
-pytest-cov~=4.1.0
+pytest-cov~=7.1.0

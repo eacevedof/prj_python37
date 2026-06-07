@@ -52,9 +52,9 @@ class McpEmtController:
                 result_dto = await self._list_tools_service()
                 return result_dto.to_list()
             except Exception as e:
-                self.__log_exception(
-                    module="mcp_emt_controller._register_handlers.list_tools",
-                    base_exception=e,
+                self._logger.log_exception(
+                    e,
+                    "mcp_emt_controller.list_tools"
                 )
                 return []
 
@@ -71,10 +71,9 @@ class McpEmtController:
                 )
                 return result_dto.to_list()
             except Exception as e:
-                self.__log_exception(
-                    module="mcp_emt_controller._register_handlers.call_tool",
-                    base_exception=e,
-                    context={"event_name": event_name, "arguments": payload_dict},
+                self._logger.log_exception(
+                    e,
+                    f"mcp_emt_controller.call_tool: {event_name}"
                 )
                 return [
                     TextContent(
@@ -83,29 +82,15 @@ class McpEmtController:
                     )
                 ]
 
-    def __log_exception(
-        self,
-        module: str,
-        base_exception: BaseException,
-        context: dict | None = None,
-    ) -> None:
-        self._logger.log_exception(
-            module=module,
-            message=str(base_exception),
-            exc=base_exception,
-            context=context,
-        )
-
 
 def start_mcp_or_fail() -> None:
     """Start the MCP server for EMT Madrid operations."""
     try:
         asyncio.run(McpEmtController.get_instance()())
-    except BaseException as error:
+    except BaseException as e:
         Logger.get_instance().log_exception(
-            module="mcp_emt_controller.start_mcp",
-            message="Unhandled error",
-            exc=error,
+            e,
+            "mcp_emt_controller.start_mcp: Unhandled error"
         )
         raise
 

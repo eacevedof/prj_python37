@@ -9,6 +9,8 @@ from ddd.open_ai.domain.enums import (
     OpenaiTtsFormatEnum,
     OpenaiTtsModelEnum,
     OpenaiTtsVoiceEnum,
+    OpenaiTtsMimeTypeEnum,
+    OpenaiTtsConstraintsEnum,
 )
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 from ddd.open_ai.infrastructure.repositories.gpt_tts_1_reader_api_repository import GptTts1ReaderApiRepository
@@ -17,19 +19,6 @@ from ddd.open_ai.infrastructure.repositories.gpt_tts_1_reader_api_repository imp
 @final
 class CreateMp3OpenaiService:
     """Use case to generate text-to-speech audio with OpenAI Audio API."""
-
-    MAX_TEXT_LENGTH: int = 4096
-    MIN_SPEED: float = 0.25
-    MAX_SPEED: float = 4.0
-
-    _MIME_TYPES: dict[str, str] = {
-        "mp3": "audio/mpeg",
-        "opus": "audio/opus",
-        "aac": "audio/aac",
-        "flac": "audio/flac",
-        "wav": "audio/wav",
-        "pcm": "audio/pcm",
-    }
 
     _create_mp3_openai_dto: CreateMp3OpenaiDto
     _audio_repository: GptTts1ReaderApiRepository
@@ -70,7 +59,9 @@ class CreateMp3OpenaiService:
 
         return CreateMp3OpenaiResultDto.from_primitives({
             "audio_b64": audio_b64,
-            "mime_type": self._get_mime_type(),
+            "mime_type": OpenaiTtsMimeTypeEnum.get_mime_type_by_format(
+                self._create_mp3_openai_dto.response_format
+            ),
             "text": self._create_mp3_openai_dto.text.strip(),
             "model": self._create_mp3_openai_dto.tts_model,
             "voice": self._create_mp3_openai_dto.voice,
@@ -80,12 +71,15 @@ class CreateMp3OpenaiService:
 
 
     def _fail_if_wrong_input(self) -> None:
-        if len(self._create_mp3_openai_dto.text) > self.MAX_TEXT_LENGTH:
-            OpenAIException.unexpected_custom(f"text cannot exceed {self.MAX_TEXT_LENGTH} characters")
+        max_text_length = OpenaiTtsConstraintsEnum.MAX_TEXT_LENGTH.value
+        if len(self._create_mp3_openai_dto.text) > max_text_length:
+            OpenAIException.unexpected_custom(f"text cannot exceed {max_text_length} characters")
 
-        if not self.MIN_SPEED <= self._create_mp3_openai_dto.speed <= self.MAX_SPEED:
+        min_speed = OpenaiTtsConstraintsEnum.MIN_SPEED.value
+        max_speed = OpenaiTtsConstraintsEnum.MAX_SPEED.value
+        if not min_speed <= self._create_mp3_openai_dto.speed <= max_speed:
             OpenAIException.unexpected_custom(
-                f"speed must be between {self.MIN_SPEED} and {self.MAX_SPEED}"
+                f"speed must be between {min_speed} and {max_speed}"
             )
 
         valid_voices = list(OpenaiTtsVoiceEnum)
@@ -110,4 +104,4 @@ class CreateMp3OpenaiService:
 
 
     def _get_mime_type(self) -> str:
-        return self._MIME_TYPES.get(self._create_mp3_openai_dto.response_format, "audio/mpeg")
+        return OpenaiTtsMimeTypeEnum.get_mime_type_by_format(self._create_mp3_openai_dto.response_format)
