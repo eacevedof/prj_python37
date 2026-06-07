@@ -1,4 +1,4 @@
-# Learn Languages App
+# Learn Languages App 2026-06-07
 # packages got from: https://pypi.org/<package-name>
 # Uses compatible releases (~=) for security patches without breaking changes
 # Installation: pip install -r requirements.txt
