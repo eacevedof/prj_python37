@@ -2,88 +2,34 @@
 
 import asyncio
 from ddd.video_fetcher.application import (
-    DownloadVideoDto,
     DownloadVideoService
 )
-from ddd.video_fetcher.domain.exceptions import VideoFetcherException
 
 
-async def download_direct_video():
-    """Example: Download direct mp4 video."""
-    print("\n=== Downloading direct MP4 ===")
-    try:
-        dto = DownloadVideoDto.from_primitives({
-            "url": "https://example.com/sample-video.mp4",
-            "output_dir": "C:\projects\tmp",
-            "filename": "direct-video.mp4"
-        })
-        
-        result = await DownloadVideoService.get_instance()(dto)
-        
-        print(f"✓ Downloaded: {result.file_path}")
-        print(f"  Size: {result.file_size_bytes} bytes")
-        print(f"  Type: {result.video_type}")
-        print(f"  Status: {result.download_status}")
-        
-    except VideoFetcherException as e:
-        print(f"✗ Error: {e.message} (code: {e.code})")
+async def ideo_type_detection():
+    """Test video type detection."""
+    print("\n=== Testing Video Type Detection ===")
+    
+    service = DownloadVideoService.get_instance()
+    
+    test_cases = [
+        #("https://example.com/video.mp4", "DIRECT_MP4"),
+        #("https://example.com/stream.m3u8", "M3U8_HLS"),
+        ("blob:https://www.linkedin.com/b12a7fdc-5b6c-4483-9997-2d274772b216", "BLOB_FRAGMENTED"),
+        #("https://example.com/video.mov", "DIRECT_MP4"),
+    ]
+    
+    for url, expected_type in test_cases:
+        detected_type = service._detect_video_type(url)
+        status = "✓" if expected_type in detected_type else "✗"
+        print(f"{status} {url} -> {detected_type}")
 
-
-async def download_m3u8_video():
-    """Example: Download m3u8/HLS video."""
-    print("\n=== Downloading M3U8/HLS video ===")
-    try:
-        dto = DownloadVideoDto.from_primitives({
-            "url": "https://example.com/stream.m3u8",
-            "output_dir": "C:\projects\tmp"
-        })
-        
-        result = await DownloadVideoService.get_instance()(dto)
-        
-        print(f"✓ Downloaded: {result.file_path}")
-        print(f"  Size: {result.file_size_bytes} bytes")
-        print(f"  Type: {result.video_type}")
-        print(f"  Fragments: {result.fragments_count}")
-        print(f"  Status: {result.download_status}")
-        
-    except VideoFetcherException as e:
-        print(f"✗ Error: {e.message} (code: {e.code})")
-
-
-async def download_with_headers():
-    """Example: Download video with custom headers."""
-    print("\n=== Downloading with custom headers ===")
-    try:
-        dto = DownloadVideoDto.from_primitives({
-            "url": "https://example.com/protected-video.mp4",
-            "output_dir": "C:\projects\tmp",
-            "headers": {
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://example.com"
-            }
-        })
-        
-        result = await DownloadVideoService.get_instance()(dto)
-        
-        print(f"✓ Downloaded: {result.file_path}")
-        
-    except VideoFetcherException as e:
-        print(f"✗ Error: {e.message} (code: {e.code})")
 
 
 async def main():
-    """Run all examples."""
-    print("=" * 60)
-    print("Video Fetcher - Usage Examples")
-    print("=" * 60)
-    
-    await download_direct_video()
-    await download_m3u8_video()
-    await download_with_headers()
-    
-    print("\n" + "=" * 60)
-    print("Examples completed")
-    print("=" * 60)
+    """Run all tests."""
+    await ideo_type_detection()
+
 
 
 if __name__ == "__main__":

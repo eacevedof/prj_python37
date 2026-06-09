@@ -26,7 +26,9 @@
       "Bash(python3:*)",
       "mcp__media__media_create_audio",
       "mcp__emt__emt_get_stop_arrivals",
-      "Bash(python -m py_compile:*)"
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(PYTHONPATH=\"C:\\\\projects\\\\prj_python37\\\\ia-mcps\" python:*)"
     ]
   }
 }

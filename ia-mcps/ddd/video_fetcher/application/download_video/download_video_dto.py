@@ -37,6 +37,3 @@ class DownloadVideoDto:
     def __post_init__(self) -> None:
         if not self.url or not self.url.strip():
             raise ValueError("DownloadVideoDto: url cannot be empty")
-
-        if self.output_dir and not os.path.isdir(self.output_dir):
-            raise ValueError(f"DownloadVideoDto: output_dir does not exist: {self.output_dir}")
