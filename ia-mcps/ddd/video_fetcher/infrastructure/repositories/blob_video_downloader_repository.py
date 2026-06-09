@@ -47,13 +47,9 @@ class BlobVideoDownloaderRepository:
         Raises:
             VideoFetcherException: If download fails
         """
-
         # Check if it's a blob URL
         if base_url.startswith("blob:"):
-            VideoFetcherException.bad_request_custom(
-                "Direct blob: URLs cannot be downloaded. "
-                "You need to extract the actual video URLs from the page source."
-            )
+            return await self._handle_blob_url(base_url, output_path, headers)
 
         # Check if it's an m3u8 manifest
         if ".m3u8" in base_url:
@@ -128,6 +124,103 @@ class BlobVideoDownloaderRepository:
                 "fragments_count": len(fragment_urls),
             }
 
+
+    async def _handle_blob_url(
+        self,
+        blob_url: str,
+        output_path: str,
+        headers: dict[str, str] | None = None,
+    ) -> dict[str, int | str]:
+        """
+        Attempt to infer and download video from blob URL.
+
+        For LinkedIn blob URLs, tries to extract the video ID and find the manifest.
+        """
+        self._logger.log_info(
+            "BlobVideoDownloaderRepository",
+            f"Attempting to infer manifest from blob URL: {blob_url}"
+        )
+
+        # Extract blob ID
+        blob_id = self._extract_blob_id(blob_url)
+        if not blob_id:
+            VideoFetcherException.bad_request_custom(
+                "Could not extract blob ID from URL. "
+                "Please provide the actual m3u8 manifest URL instead. "
+                "Find it in browser DevTools > Network tab > Filter by 'm3u8'"
+            )
+
+        # Try to infer manifest URL based on platform
+        manifest_url = None
+
+        if "linkedin.com" in blob_url:
+            manifest_url = await self._try_infer_linkedin_manifest(blob_url, blob_id, headers)
+
+        if not manifest_url:
+            VideoFetcherException.bad_request_custom(
+                f"Could not infer manifest URL from blob: {blob_url}. "
+                "Please use browser DevTools to find the actual m3u8 manifest URL:\n"
+                "1. Open DevTools (F12)\n"
+                "2. Go to Network tab\n"
+                "3. Filter by 'm3u8'\n"
+                "4. Play the video\n"
+                "5. Copy the m3u8 URL that appears"
+            )
+
+        self._logger.log_info(
+            "BlobVideoDownloaderRepository",
+            f"Inferred manifest URL: {manifest_url}"
+        )
+
+        return await self._download_m3u8_video(manifest_url, output_path, headers)
+
+    def _extract_blob_id(self, blob_url: str) -> str:
+        """Extract blob ID from blob URL."""
+        # blob:https://www.linkedin.com/b12a7fdc-5b6c-4483-9997-2d274772b216
+        match = re.search(r'blob:https?://[^/]+/([a-f0-9-]+)', blob_url)
+        if match:
+            return match.group(1)
+        return ""
+
+    async def _try_infer_linkedin_manifest(
+        self,
+        blob_url: str,
+        blob_id: str,
+        headers: dict[str, str] | None = None,
+    ) -> str | None:
+        """
+        Try to infer LinkedIn manifest URL.
+
+        LinkedIn videos use patterns like:
+        - https://dms.licdn.com/playlist/...
+        - Need to inspect network traffic to find actual URLs
+        """
+        # Extract post URL from referer if available
+        if headers and "Referer" in headers:
+            post_url = headers["Referer"]
+            self._logger.log_info(
+                "BlobVideoDownloaderRepository",
+                f"Trying to extract manifest from LinkedIn post: {post_url}"
+            )
+
+            # Try to fetch the post page and extract video URLs
+            async with aiohttp.ClientSession() as session:
+                async with session.get(post_url, headers=headers) as response:
+                    if response.status == 200:
+                        content = await response.text()
+
+                        # Look for m3u8 URLs in page content
+                        m3u8_matches = re.findall(
+                            r'https://[^"\']+\.m3u8[^"\']*',
+                            content
+                        )
+
+                        if m3u8_matches:
+                            # Return first m3u8 found
+                            return m3u8_matches[0]
+
+        # Could not infer automatically
+        return None
 
     def _parse_m3u8_manifest(self, manifest_content: str, base_url: str) -> list[str]:
         """Parse m3u8 manifest and extract fragment URLs."""
