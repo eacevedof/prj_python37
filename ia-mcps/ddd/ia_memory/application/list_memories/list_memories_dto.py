@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from ddd.ia_memory.domain.enums import MemoryTypeEnum
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class ListMemoriesDto:
     project: str
     memory_type: MemoryTypeEnum | None = None

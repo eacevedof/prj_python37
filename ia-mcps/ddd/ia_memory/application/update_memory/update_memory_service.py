@@ -1,7 +1,8 @@
-from typing import Any, final, Self
+from typing import final, Self
 
 from ddd.ia_memory.application.update_memory.update_memory_dto import UpdateMemoryDto
-from ddd.ia_memory.infrastructure.repositories import VectorDbRepository
+from ddd.ia_memory.application.update_memory.update_memory_result_dto import UpdateMemoryResultDto
+from ddd.ia_memory.infrastructure.repositories import VectorDbWriterRepository
 
 
 @final
@@ -13,12 +14,13 @@ class UpdateMemoryService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: UpdateMemoryDto) -> dict[str, Any]:
-        repository = VectorDbRepository.get_instance()
-        return repository.update(
+    async def __call__(self, dto: UpdateMemoryDto) -> UpdateMemoryResultDto:
+        repository = VectorDbWriterRepository.get_instance()
+        result = repository.update(
             chunk_id=dto.chunk_id,
             project=dto.project,
             content=dto.content,
             paths=dto.paths,
             metadata=dto.metadata,
         )
+        return UpdateMemoryResultDto.from_primitives(result)

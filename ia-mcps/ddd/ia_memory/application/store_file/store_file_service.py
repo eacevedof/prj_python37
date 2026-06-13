@@ -1,7 +1,8 @@
-from typing import Any, final, Self
+from typing import final, Self
 
 from ddd.ia_memory.application.store_file.store_file_dto import StoreFileDto
-from ddd.ia_memory.infrastructure.repositories import VectorDbRepository, FileProcessorRepository
+from ddd.ia_memory.application.store_file.store_file_result_dto import StoreFileResultDto
+from ddd.ia_memory.infrastructure.repositories import VectorDbWriterRepository, FileProcessorRepository
 
 
 @final
@@ -13,9 +14,9 @@ class StoreFileService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, dto: StoreFileDto) -> dict[str, Any]:
+    async def __call__(self, dto: StoreFileDto) -> StoreFileResultDto:
         file_processor = FileProcessorRepository.get_instance()
-        vector_db = VectorDbRepository.get_instance()
+        vector_db = VectorDbWriterRepository.get_instance()
 
         chunks = file_processor.process_file(dto.file_path)
         stored = []
@@ -30,10 +31,10 @@ class StoreFileService:
             )
             stored.append(result)
 
-        return {
+        return StoreFileResultDto.from_primitives({
             "source": "chromadb",
             "project": dto.project,
             "file": dto.file_path,
             "chunks_stored": len(stored),
             "chunks": stored,
-        }
+        })

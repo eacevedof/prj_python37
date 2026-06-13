@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from ddd.ia_memory.domain.enums import MemoryTypeEnum
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class StoreFileDto:
     project: str
     file_path: str

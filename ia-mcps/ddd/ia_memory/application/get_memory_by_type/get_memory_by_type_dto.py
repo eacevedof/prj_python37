@@ -4,8 +4,6 @@ from ddd.ia_memory.domain.enums import MemoryTypeEnum
 
 
 @dataclass(frozen=True, slots=True)
-class SearchMemoryDto:
+class GetMemoryByTypeDto:
     project: str
-    query: str
-    limit: int = 5
-    memory_type: MemoryTypeEnum | None = None
+    memory_type: MemoryTypeEnum

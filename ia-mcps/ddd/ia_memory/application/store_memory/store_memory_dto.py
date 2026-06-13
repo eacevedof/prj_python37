@@ -4,7 +4,7 @@ from typing import Any
 from ddd.ia_memory.domain.enums import MemoryTypeEnum
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class StoreMemoryDto:
     project: str
     memory_type: MemoryTypeEnum

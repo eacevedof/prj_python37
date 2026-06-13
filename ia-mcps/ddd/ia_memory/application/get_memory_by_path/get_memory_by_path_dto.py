@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
-class DeleteMemoryDto:
-    chunk_id: str
+class GetMemoryByPathDto:
     project: str
+    file_path: str
