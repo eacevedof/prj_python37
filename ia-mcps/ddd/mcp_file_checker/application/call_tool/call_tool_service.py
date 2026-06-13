@@ -29,14 +29,14 @@ class CallToolService:
         self._payload_dict = call_tool_dto.payload_dict
 
         try:
+            text_contents = [
+                TextContent(
+                    type="text", text=f"unknown tool: {call_tool_dto.event_name}"
+                )
+            ]
+
             if call_tool_dto.event_name == ToolNameEnum.VERIFY_FILE_SIGNATURE.value:
                 text_contents = await self.__verify_file_signature_text_content()
-            else:
-                text_contents = [
-                    TextContent(
-                        type="text", text=f"unknown tool: {call_tool_dto.event_name}"
-                    )
-                ]
 
         except Exception as e:
             self._logger.log_exception(e, f"CallToolService.__call__: tool={call_tool_dto.event_name}")
@@ -45,42 +45,53 @@ class CallToolService:
             )
             text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
 
-        return CallToolResultDto.from_primitives({"contents": text_contents})
+        return CallToolResultDto.from_primitives({
+            "contents": text_contents
+        })
+
 
     async def __verify_file_signature_text_content(self) -> list[TextContent]:
-        result = VerifyFileSignatureService.get_instance()(
+        verify_result_dto = VerifyFileSignatureService.get_instance()(
             VerifyFileSignatureDto.from_primitives(self._payload_dict)
         )
 
-        lines = [
-            f"File verification report:\n"
-            f"- file_path: {result.file_path}\n"
-            f"- source: {result.source}\n"
-            f"- file_size: {result.file_size} bytes\n"
-            f"- last_modified: {result.last_modified}\n"
-            f"- hash_algorithm: {result.algorithm}\n"
-            f"- hash_value: {result.hash_value}\n"
-        ]
+        report_data = {
+            "file_information": {
+                "file_path": verify_result_dto.file_path,
+                "source": verify_result_dto.source,
+                "file_size": f"{verify_result_dto.file_size} bytes",
+                "last_modified": verify_result_dto.last_modified,
+            },
+            "hash_verification": {
+                "algorithm": verify_result_dto.algorithm,
+                "hash_value": verify_result_dto.hash_value,
+            },
+            "executable_information": {
+                "format": verify_result_dto.executable_format or "not an executable",
+                "version": verify_result_dto.executable_version or "N/A",
+                "description": verify_result_dto.executable_description or "N/A",
+                "product_name": verify_result_dto.executable_product_name or "N/A",
+                "company": verify_result_dto.executable_company or "N/A",
+            },
+            "digital_signature": {
+                "method": verify_result_dto.signature_method or "not verified",
+                "status": verify_result_dto.signature_status or "N/A",
+                "signer": verify_result_dto.signature_signer or "not available",
+            },
+        }
 
-        if result.executable_format:
-            lines.append(f"- executable_format: {result.executable_format}")
-            if result.executable_version:
-                lines.append(f"  version: {result.executable_version}")
-            if result.executable_description:
-                lines.append(f"  description: {result.executable_description}")
-            if result.executable_product_name:
-                lines.append(f"  product: {result.executable_product_name}")
-            if result.executable_company:
-                lines.append(f"  company: {result.executable_company}")
-        else:
-            lines.append(f"- executable_format: not an executable")
+        text_content = self.__get_formatted_result_as_string(report_data)
+        return [TextContent(type="text", text=text_content)]
 
-        if result.signature_method:
-            lines.append(f"- signature_method: {result.signature_method}")
-            lines.append(f"  status: {result.signature_status}")
-            if result.signature_signer:
-                lines.append(f"  signer: {result.signature_signer}")
-        else:
-            lines.append(f"- signature: not verified")
+    def __get_formatted_result_as_string(self, report_data: dict) -> str:
+        lines = ["=== FILE VERIFICATION REPORT ===\n"]
 
-        return [TextContent(type="text", text="\n".join(lines))]
+        for section_name, section_data in report_data.items():
+            section_title = section_name.replace("_", " ").title()
+            lines.append(f"{section_title}:")
+            for key, value in section_data.items():
+                formatted_key = key.replace("_", " ").replace(" ", "_")
+                lines.append(f"  {formatted_key}: {value}")
+            lines.append("")
+
+        return "\n".join(lines)

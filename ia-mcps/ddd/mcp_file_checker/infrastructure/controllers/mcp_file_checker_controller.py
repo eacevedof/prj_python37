@@ -1,9 +1,9 @@
 import asyncio
 from typing import final, Self
 
+from mcp.types import Tool, TextContent
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_file_checker.domain.enums import McpServerNameEnum
@@ -44,7 +44,8 @@ class McpFileCheckerController:
 
     def __register_services_as_handlers(self) -> None:
         self._logger.log_info(
-            module="mcp_file_checker_controller", message="_register_handlers"
+            module="mcp_file_checker_controller",
+            message="_register_handlers"
         )
 
         @self._mcp_server.list_tools()
