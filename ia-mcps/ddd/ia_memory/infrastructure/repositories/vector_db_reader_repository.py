@@ -20,7 +20,7 @@ class VectorDbReaderRepository:
 
     _logger: Logger
     _embedding_model: SentenceTransformer | None = None
-    _client: chromadb.PersistentClient | None = None
+    _client: Any = None
     _data_path: str
     _model_name: str
 

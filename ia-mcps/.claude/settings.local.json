@@ -30,7 +30,11 @@
       "Bash(python:*)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\projects\\\\prj_python37\\\\ia-mcps\\\\ddd\\\\mcp_emt\" -Recurse -File | Where-Object { $_.Extension -ne '.pyc' -and $_.FullName -notmatch '__pycache__' } | ForEach-Object { $_.FullName } | Sort-Object)",
       "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\prj_python37\\\\ia-mcps\\\\ddd\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(C:/projects/prj_python37/ia-mcps/.venv-win/Scripts/python.exe -m ddd.mcp_memory)",
+      "Bash(C:/projects/prj_python37/ia-mcps/.venv-win/Scripts/python.exe *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: serialize DTOs to dict in CallToolService for JSON compatibility *)"
     ]
   }
 }

@@ -57,7 +57,8 @@ class CallToolService:
 			metadata=args.get("metadata"),
 		)
 		service = StoreMemoryService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _search_memory(self, args: dict[str, Any]) -> dict[str, Any]:
 		memory_type = MemoryTypeEnum(args["type"]) if args.get("type") else None
@@ -68,12 +69,14 @@ class CallToolService:
 			memory_type=memory_type,
 		)
 		service = SearchMemoryService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _check_freshness(self, args: dict[str, Any]) -> dict[str, Any]:
 		dto = CheckFreshnessDto(project=args["project"])
 		service = CheckFreshnessService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _list_memories(self, args: dict[str, Any]) -> dict[str, Any]:
 		memory_type = MemoryTypeEnum(args["type"]) if args.get("type") else None
@@ -83,7 +86,8 @@ class CallToolService:
 			stale_only=args.get("stale_only", False),
 		)
 		service = ListMemoriesService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _delete_memory(self, args: dict[str, Any]) -> dict[str, Any]:
 		dto = DeleteMemoryDto(
@@ -91,7 +95,8 @@ class CallToolService:
 			project=args["project"],
 		)
 		service = DeleteMemoryService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _update_memory(self, args: dict[str, Any]) -> dict[str, Any]:
 		dto = UpdateMemoryDto(
@@ -102,7 +107,8 @@ class CallToolService:
 			metadata=args.get("metadata"),
 		)
 		service = UpdateMemoryService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
 
 	async def _store_file(self, args: dict[str, Any]) -> dict[str, Any]:
 		memory_type = MemoryTypeEnum(args.get("type", "documentation"))
@@ -112,4 +118,5 @@ class CallToolService:
 			memory_type=memory_type,
 		)
 		service = StoreFileService.get_instance()
-		return await service(dto)
+		result_dto = await service(dto)
+		return result_dto.to_primitives()
