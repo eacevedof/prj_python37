@@ -18,10 +18,11 @@ class VerifyFileSignatureController:
     """Controller that exposes the VerifyFileSignature use case to MCP/HTTP.
 
     Instance variables use full semantic names for clarity and maintainability.
+    Declared in order: shared components first, then module-specific services.
     """
 
-    _verify_file_signature_service: VerifyFileSignatureService
     _logger: Logger
+    _verify_file_signature_service: VerifyFileSignatureService
 
     @classmethod
     def get_instance(cls) -> "VerifyFileSignatureController":
@@ -29,8 +30,8 @@ class VerifyFileSignatureController:
 
     def __init__(self) -> None:
         """Wire dependencies with full semantic names."""
-        self._verify_file_signature_service = VerifyFileSignatureService.get_instance()
         self._logger = Logger.get_instance()
+        self._verify_file_signature_service = VerifyFileSignatureService.get_instance()
 
     def invoke(
         self,

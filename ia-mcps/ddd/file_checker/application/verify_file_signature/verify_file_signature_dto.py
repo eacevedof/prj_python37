@@ -41,9 +41,16 @@ class VerifyFileSignatureDto:
         Returns:
             VerifyFileSignatureDto instance.
         """
-        file_path = str(primitives.get(FileCheckerRequestKeyEnum.FILE_PATH, "")).strip()
-        expected_hash = str(primitives.get(FileCheckerRequestKeyEnum.EXPECTED_HASH, "")).strip().lower()
-        algorithm = str(primitives.get(FileCheckerRequestKeyEnum.ALGORITHM, FileCheckerHashAlgorithmEnum.SHA256)).strip().lower()
+        file_path = str(
+            primitives.get(FileCheckerRequestKeyEnum.FILE_PATH, "")
+        ).strip()
+        expected_hash = str(
+            primitives.get(FileCheckerRequestKeyEnum.EXPECTED_HASH, "")
+        ).strip().lower()
+        algorithm = str(primitives.get(
+            FileCheckerRequestKeyEnum.ALGORITHM,
+            FileCheckerHashAlgorithmEnum.SHA256.value)
+        ).strip().lower()
 
         return cls(
             file_path=file_path,
