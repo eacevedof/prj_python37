@@ -6,6 +6,5 @@ from typing import final
 class FileCheckerRequestKeyEnum(StrEnum):
     """Request dictionary keys for file checker DTOs."""
 
-    FILE_PATH = "file_path"
-    EXPECTED_HASH = "expected_hash"
+    FILE_PATH_OR_URL = "file_path_or_url"
     ALGORITHM = "algorithm"

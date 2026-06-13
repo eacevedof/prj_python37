@@ -14,13 +14,11 @@ class VerifyFileSignatureDto:
     Immutable container for request data. Access fields directly.
 
     Attributes:
-        file_path: Path to the file to verify.
-        expected_hash: Expected hash value in lowercase hex.
+        file_path_or_url: Path to local file or URL to download.
         algorithm: Hash algorithm name (default: sha256).
     """
 
-    file_path: str
-    expected_hash: str
+    file_path_or_url: str
     algorithm: str = FileCheckerHashAlgorithmEnum.SHA256
 
     @classmethod
@@ -31,18 +29,15 @@ class VerifyFileSignatureDto:
         NOT: Business validation (VerifyFileSignatureService handles that).
 
         Args:
-            primitives: Dict with file_path, expected_hash, algorithm keys.
+            primitives: Dict with file_path_or_url, algorithm keys.
 
         Returns:
             VerifyFileSignatureDto instance.
         """
         return cls(
-            file_path=str(
-                primitives.get(FileCheckerRequestKeyEnum.FILE_PATH, "")
+            file_path_or_url=str(
+                primitives.get(FileCheckerRequestKeyEnum.FILE_PATH_OR_URL, "")
             ).strip(),
-            expected_hash=str(
-                primitives.get(FileCheckerRequestKeyEnum.EXPECTED_HASH, "")
-            ).strip().lower(),
             algorithm=str(primitives.get(
                 FileCheckerRequestKeyEnum.ALGORITHM,
                 FileCheckerHashAlgorithmEnum.SHA256.value)

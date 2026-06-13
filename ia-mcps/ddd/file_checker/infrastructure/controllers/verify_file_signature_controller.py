@@ -31,15 +31,13 @@ class VerifyFileSignatureController:
 
     def invoke(
         self,
-        file_path: str,
-        expected_hash: str,
+        file_path_or_url: str,
         algorithm: str = FileCheckerHashAlgorithmEnum.SHA256,
     ) -> dict:
-        """Handle file signature verification request.
+        """Handle file verification request (local path or URL).
 
         Args:
-            file_path: Path to the file to verify.
-            expected_hash: Known hash to compare against.
+            file_path_or_url: Local file path or HTTP/HTTPS URL to download.
             algorithm: Hash algorithm (md5, sha1, sha256, sha512).
 
         Returns:
@@ -48,8 +46,7 @@ class VerifyFileSignatureController:
         try:
             verify_file_signature_result_dto = self._verify_file_signature_service(
                 VerifyFileSignatureDto.from_primitives({
-                    FileCheckerRequestKeyEnum.FILE_PATH: file_path,
-                    FileCheckerRequestKeyEnum.EXPECTED_HASH: expected_hash,
+                    FileCheckerRequestKeyEnum.FILE_PATH_OR_URL: file_path_or_url,
                     FileCheckerRequestKeyEnum.ALGORITHM: algorithm,
                 })
             )
@@ -63,7 +60,7 @@ class VerifyFileSignatureController:
             self._logger.log_error(
                 "VerifyFileSignatureController",
                 f"Verification failed: {e.message}",
-                {FileCheckerRequestKeyEnum.FILE_PATH: file_path}
+                {"file_path_or_url": file_path_or_url}
             )
             return {
                 FileCheckerHttpResponseKeyEnum.CODE: e.code,

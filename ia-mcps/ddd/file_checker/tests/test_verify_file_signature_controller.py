@@ -1,6 +1,5 @@
 """Integration tests for VerifyFileSignatureController."""
 
-import hashlib
 from pathlib import Path
 
 from ddd.file_checker.infrastructure.controllers import VerifyFileSignatureController
@@ -16,40 +15,29 @@ class TestVerifyFileSignatureController:
         cls.test_file = Path("ddd/file_checker/domain/exceptions/file_checker_exception.py")
         assert cls.test_file.exists(), f"Test file not found: {cls.test_file}"
 
-    def test_invoke_valid_hash_returns_200(self) -> None:
-        """Valid file verification should return 200 with data."""
-        with open(self.test_file, "rb") as f:
-            expected_hash = hashlib.sha256(f.read()).hexdigest()
-
+    def test_invoke_local_file_returns_200(self) -> None:
+        """Verifying a local file should return 200 with complete data."""
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash=expected_hash,
+            file_path_or_url=str(self.test_file),
             algorithm="sha256"
         )
 
         assert response["code"] == ResponseCodeEnum.OK
         assert "data" in response
-        assert response["data"]["is_valid"] is True
-
-    def test_invoke_tampered_hash_returns_200_not_valid(self) -> None:
-        """Tampered hash should return 200 but is_valid=False."""
-        controller = VerifyFileSignatureController.get_instance()
-        response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash="a" * 64,
-            algorithm="sha256"
-        )
-
-        assert response["code"] == ResponseCodeEnum.OK
-        assert response["data"]["is_valid"] is False
+        data = response["data"]
+        assert data["source"] == "local"
+        assert data["algorithm"] == "sha256"
+        assert data["hash_value"]
+        assert data["file_path"]
+        assert data["file_size"] > 0
+        assert data["last_modified"]
 
     def test_invoke_invalid_algorithm_returns_400(self) -> None:
         """Invalid algorithm should return 400."""
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash="a" * 64,
+            file_path_or_url=str(self.test_file),
             algorithm="invalid_algo"
         )
 
@@ -60,20 +48,18 @@ class TestVerifyFileSignatureController:
         """Non-existent file should return 400."""
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path="/nonexistent/file.bin",
-            expected_hash="a" * 64,
+            file_path_or_url="/nonexistent/file.bin",
             algorithm="sha256"
         )
 
         assert response["code"] == ResponseCodeEnum.BAD_REQUEST
         assert "error" in response
 
-    def test_invoke_wrong_hash_length_returns_400(self) -> None:
-        """Hash with wrong length should return 400."""
+    def test_invoke_empty_path_returns_400(self) -> None:
+        """Empty path should return 400."""
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash="abc",
+            file_path_or_url="",
             algorithm="sha256"
         )
 
@@ -82,43 +68,33 @@ class TestVerifyFileSignatureController:
 
     def test_invoke_md5_algorithm(self) -> None:
         """MD5 algorithm should work."""
-        with open(self.test_file, "rb") as f:
-            expected_hash = hashlib.md5(f.read()).hexdigest()
-
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash=expected_hash,
+            file_path_or_url=str(self.test_file),
             algorithm="md5"
         )
 
         assert response["code"] == ResponseCodeEnum.OK
-        assert response["data"]["is_valid"] is True
+        assert response["data"]["algorithm"] == "md5"
+        assert response["data"]["hash_value"]
 
     def test_invoke_sha512_algorithm(self) -> None:
         """SHA512 algorithm should work."""
-        with open(self.test_file, "rb") as f:
-            expected_hash = hashlib.sha512(f.read()).hexdigest()
-
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash=expected_hash,
+            file_path_or_url=str(self.test_file),
             algorithm="sha512"
         )
 
         assert response["code"] == ResponseCodeEnum.OK
-        assert response["data"]["is_valid"] is True
+        assert response["data"]["algorithm"] == "sha512"
+        assert response["data"]["hash_value"]
 
     def test_invoke_default_algorithm_is_sha256(self) -> None:
         """Default algorithm should be SHA256."""
-        with open(self.test_file, "rb") as f:
-            expected_hash = hashlib.sha256(f.read()).hexdigest()
-
         controller = VerifyFileSignatureController.get_instance()
         response = controller.invoke(
-            file_path=str(self.test_file),
-            expected_hash=expected_hash
+            file_path_or_url=str(self.test_file)
         )
 
         assert response["code"] == ResponseCodeEnum.OK
@@ -131,11 +107,10 @@ def run_all_tests() -> None:
     test_suite.setup_class()
 
     tests = [
-        ("test_invoke_valid_hash_returns_200", test_suite.test_invoke_valid_hash_returns_200),
-        ("test_invoke_tampered_hash_returns_200_not_valid", test_suite.test_invoke_tampered_hash_returns_200_not_valid),
+        ("test_invoke_local_file_returns_200", test_suite.test_invoke_local_file_returns_200),
         ("test_invoke_invalid_algorithm_returns_400", test_suite.test_invoke_invalid_algorithm_returns_400),
         ("test_invoke_file_not_found_returns_400", test_suite.test_invoke_file_not_found_returns_400),
-        ("test_invoke_wrong_hash_length_returns_400", test_suite.test_invoke_wrong_hash_length_returns_400),
+        ("test_invoke_empty_path_returns_400", test_suite.test_invoke_empty_path_returns_400),
         ("test_invoke_md5_algorithm", test_suite.test_invoke_md5_algorithm),
         ("test_invoke_sha512_algorithm", test_suite.test_invoke_sha512_algorithm),
         ("test_invoke_default_algorithm_is_sha256", test_suite.test_invoke_default_algorithm_is_sha256),
