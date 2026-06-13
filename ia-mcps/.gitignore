@@ -13,5 +13,10 @@ logs/*
 !logs/.gitkeep
 .claude/*.png
 
-# ChromaDB data (sensitive project memory)
+# ChromaDB data (sensitive project memory - auto-generated, user-specific)
 data/
+chroma/
+.chroma/
+*.db
+memory.json
+**/*.sqlite

@@ -28,7 +28,9 @@
       "mcp__emt__emt_get_stop_arrivals",
       "Bash(python -m py_compile:*)",
       "Bash(python:*)",
-      "PowerShell(Get-ChildItem -Path \"C:\\\\projects\\\\prj_python37\\\\ia-mcps\\\\ddd\\\\mcp_emt\" -Recurse -File | Where-Object { $_.Extension -ne '.pyc' -and $_.FullName -notmatch '__pycache__' } | ForEach-Object { $_.FullName } | Sort-Object)"
+      "PowerShell(Get-ChildItem -Path \"C:\\\\projects\\\\prj_python37\\\\ia-mcps\\\\ddd\\\\mcp_emt\" -Recurse -File | Where-Object { $_.Extension -ne '.pyc' -and $_.FullName -notmatch '__pycache__' } | ForEach-Object { $_.FullName } | Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\prj_python37\\\\ia-mcps\\\\ddd\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
