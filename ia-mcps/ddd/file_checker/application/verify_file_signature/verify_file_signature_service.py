@@ -3,9 +3,12 @@ from typing import Self, final
 
 from ddd.file_checker.application.verify_file_signature.verify_file_signature_dto import VerifyFileSignatureDto
 from ddd.file_checker.application.verify_file_signature.verify_file_signature_result_dto import VerifyFileSignatureResultDto
-from ddd.file_checker.domain.enums import FileCheckerHashAlgorithmEnum
+from ddd.file_checker.domain.enums import (
+    FileCheckerHashAlgorithmEnum,
+    FileCheckerResponseKeyEnum,
+)
 from ddd.file_checker.domain.exceptions.file_checker_exception import FileCheckerException
-from ddd.file_checker.infrastructure.repositories.file_hash_reader_repository import FileHashReaderRepository
+from ddd.file_checker.infrastructure.repositories.file_hash_reader_file_repository import FileHashReaderFileRepository
 
 
 @final
@@ -13,39 +16,41 @@ class VerifyFileSignatureService:
     """Use case that verifies a downloaded file has not been tampered with."""
 
     _dto: VerifyFileSignatureDto
-    _file_hash_reader: FileHashReaderRepository
+    _file_hash_reader_file_repository: FileHashReaderFileRepository
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     def __init__(self) -> None:
-        self._file_hash_reader = FileHashReaderRepository.get_instance()
+        self._file_hash_reader_file_repository = FileHashReaderFileRepository.get_instance()
 
     def __call__(self, dto: VerifyFileSignatureDto) -> VerifyFileSignatureResultDto:
-        """
-        Computes the file hash and compares it against the expected value.
+        """Verify that a downloaded file has not been tampered with.
+
+        Args:
+            dto: Input DTO with file_path, expected_hash, and algorithm.
 
         Returns:
-            VerifyFileSignatureResultDto: Result with is_valid flag and both hashes.
+            VerifyFileSignatureResultDto: Contains is_valid flag and computed hash.
 
         Raises:
-            FileCheckerException: If input is invalid or the file cannot be read.
+            FileCheckerException: On invalid algorithm, malformed hash, file not found, or I/O error.
         """
         self._dto = dto
         self._fail_if_wrong_input()
 
-        actual_hash = self._file_hash_reader.get_hex_digest(
+        actual_hash = self._file_hash_reader_file_repository.get_hex_digest(
             file_path=self._dto.file_path,
             algorithm=self._dto.algorithm,
         )
 
         return VerifyFileSignatureResultDto.from_primitives({
-            "is_valid": actual_hash == self._dto.expected_hash,
-            "actual_hash": actual_hash,
-            "expected_hash": self._dto.expected_hash,
-            "algorithm": self._dto.algorithm,
-            "file_path": self._dto.file_path,
+            FileCheckerResponseKeyEnum.IS_VALID: actual_hash == self._dto.expected_hash,
+            FileCheckerResponseKeyEnum.ACTUAL_HASH: actual_hash,
+            FileCheckerResponseKeyEnum.EXPECTED_HASH: self._dto.expected_hash,
+            FileCheckerResponseKeyEnum.ALGORITHM: self._dto.algorithm,
+            FileCheckerResponseKeyEnum.FILE_PATH: self._dto.file_path,
         })
 
     def _fail_if_wrong_input(self) -> None:
