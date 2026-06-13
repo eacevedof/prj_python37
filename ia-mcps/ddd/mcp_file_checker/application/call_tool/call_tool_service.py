@@ -36,7 +36,7 @@ class CallToolService:
             ]
 
             if call_tool_dto.event_name == ToolNameEnum.VERIFY_FILE_SIGNATURE.value:
-                text_contents = await self.__verify_file_signature_text_content()
+                text_contents = await self.__get_list_text_content_by_payload()
 
         except Exception as e:
             self._logger.log_exception(e, f"CallToolService.__call__: tool={call_tool_dto.event_name}")
@@ -50,7 +50,7 @@ class CallToolService:
         })
 
 
-    async def __verify_file_signature_text_content(self) -> list[TextContent]:
+    async def __get_list_text_content_by_payload(self) -> list[TextContent]:
         verify_result_dto = VerifyFileSignatureService.get_instance()(
             VerifyFileSignatureDto.from_primitives(self._payload_dict)
         )
