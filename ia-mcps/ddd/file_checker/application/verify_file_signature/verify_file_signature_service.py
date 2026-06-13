@@ -13,9 +13,8 @@ from ddd.file_checker.infrastructure.repositories.file_hash_reader_file_reposito
 
 @final
 class VerifyFileSignatureService:
-    """Use case that verifies a downloaded file has not been tampered with."""
+    """Use case that verifies a file has not been tampered with."""
 
-    _dto: VerifyFileSignatureDto
     _file_hash_reader_file_repository: FileHashReaderFileRepository
 
     @classmethod
@@ -26,49 +25,47 @@ class VerifyFileSignatureService:
         self._file_hash_reader_file_repository = FileHashReaderFileRepository.get_instance()
 
     def __call__(self, dto: VerifyFileSignatureDto) -> VerifyFileSignatureResultDto:
-        """Verify that a downloaded file has not been tampered with.
+        """Verify that a file has not been tampered with.
 
         Args:
             dto: Input DTO with file_path, expected_hash, and algorithm.
 
         Returns:
-            VerifyFileSignatureResultDto: Contains is_valid flag and computed hash.
+            VerifyFileSignatureResultDto with is_valid flag and computed hash.
 
         Raises:
             FileCheckerException: On invalid algorithm, malformed hash, file not found, or I/O error.
         """
-        self._dto = dto
-        self._fail_if_wrong_input()
-
+        self._fail_if_wrong_input(dto)
         actual_hash = self._file_hash_reader_file_repository.get_hex_digest(
-            file_path=self._dto.file_path,
-            algorithm=self._dto.algorithm,
+            file_path=dto.file_path,
+            algorithm=dto.algorithm,
         )
 
         return VerifyFileSignatureResultDto.from_primitives({
-            FileCheckerResponseKeyEnum.IS_VALID: actual_hash == self._dto.expected_hash,
+            FileCheckerResponseKeyEnum.IS_VALID: actual_hash == dto.expected_hash,
             FileCheckerResponseKeyEnum.ACTUAL_HASH: actual_hash,
-            FileCheckerResponseKeyEnum.EXPECTED_HASH: self._dto.expected_hash,
-            FileCheckerResponseKeyEnum.ALGORITHM: self._dto.algorithm,
-            FileCheckerResponseKeyEnum.FILE_PATH: self._dto.file_path,
+            FileCheckerResponseKeyEnum.EXPECTED_HASH: dto.expected_hash,
+            FileCheckerResponseKeyEnum.ALGORITHM: dto.algorithm,
+            FileCheckerResponseKeyEnum.FILE_PATH: dto.file_path,
         })
 
-    def _fail_if_wrong_input(self) -> None:
+    def _fail_if_wrong_input(self, dto: VerifyFileSignatureDto) -> None:
         valid_algorithms = list(FileCheckerHashAlgorithmEnum)
-        if self._dto.algorithm not in valid_algorithms:
+        if dto.algorithm not in valid_algorithms:
             FileCheckerException.bad_request_custom(
-                f"Invalid algorithm: '{self._dto.algorithm}'. "
+                f"Invalid algorithm: '{dto.algorithm}'. "
                 f"Allowed values: {', '.join(valid_algorithms)}"
             )
 
-        expected_length = self._expected_hex_length(self._dto.algorithm)
-        if len(self._dto.expected_hash) != expected_length:
+        expected_length = self._expected_hex_length(dto.algorithm)
+        if len(dto.expected_hash) != expected_length:
             FileCheckerException.bad_request_custom(
-                f"expected_hash has wrong length for {self._dto.algorithm}: "
-                f"got {len(self._dto.expected_hash)}, expected {expected_length} hex chars"
+                f"expected_hash has wrong length for {dto.algorithm}: "
+                f"got {len(dto.expected_hash)}, expected {expected_length} hex chars"
             )
 
-        if not all(c in "0123456789abcdef" for c in self._dto.expected_hash):
+        if not all(c in "0123456789abcdef" for c in dto.expected_hash):
             FileCheckerException.bad_request_custom(
                 "expected_hash must contain only lowercase hexadecimal characters (0-9, a-f)"
             )
