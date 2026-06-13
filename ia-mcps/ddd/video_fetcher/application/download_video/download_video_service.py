@@ -49,20 +49,22 @@ class DownloadVideoService:
         """
         self._download_video_dto = download_video_dto
 
-        # Detect video type
         video_type = self._detect_video_type(self._download_video_dto.url)
 
-        # Generate output path
-        output_path = self._get_output_path(video_type)
+        if video_type not in (VideoTypeEnum.DIRECT_MP4, VideoTypeEnum.BLOB_FRAGMENTED, VideoTypeEnum.M3U8_HLS):
+            VideoFetcherException.bad_request_custom(
+                f"Unsupported video type: {video_type}"
+            )
 
+        output_path = self._get_output_path(video_type)
         result = {}
+        fragments_count = 0
         if video_type == VideoTypeEnum.DIRECT_MP4:
             result = await self._direct_downloader.download_direct_video(
                 url=self._download_video_dto.url,
                 output_path=output_path,
                 headers=self._download_video_dto.headers,
             )
-            fragments_count = 0
 
         elif video_type in (VideoTypeEnum.BLOB_FRAGMENTED, VideoTypeEnum.M3U8_HLS):
             result = await self._blob_downloader.download_blob_video(
@@ -72,10 +74,6 @@ class DownloadVideoService:
             )
             fragments_count = result.get("fragments_count", 0)
 
-        else:
-            VideoFetcherException.bad_request_custom(
-                f"Unsupported video type: {video_type}"
-            )
 
         return DownloadVideoResultDto.from_primitives({
             "file_path": result["file_path"],
@@ -85,6 +83,7 @@ class DownloadVideoService:
             "fragments_count": fragments_count,
             "url": self._download_video_dto.url,
         })
+
 
     def _detect_video_type(self, url: str) -> str:
         """Detect video type from URL."""
