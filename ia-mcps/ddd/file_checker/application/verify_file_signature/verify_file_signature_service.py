@@ -1,4 +1,5 @@
 import os
+import hashlib
 from typing import Self, final
 
 from ddd.file_checker.application.verify_file_signature.verify_file_signature_dto import VerifyFileSignatureDto
@@ -12,6 +13,10 @@ from ddd.file_checker.infrastructure.repositories.file_metadata_reader_file_repo
 from ddd.file_checker.infrastructure.repositories.file_hash_reader_file_repository import FileHashReaderFileRepository
 from ddd.file_checker.infrastructure.repositories.file_executable_reader_file_repository import FileExecutableReaderFileRepository
 from ddd.file_checker.infrastructure.repositories.file_signature_reader_file_repository import FileSignatureReaderFileRepository
+from ddd.file_checker.infrastructure.repositories.file_forensic_analyzer_repository import FileForensicAnalyzerRepository
+from ddd.file_checker.infrastructure.repositories.malware_threat_intelligence_repository import (
+    MalwareThreatIntelligenceRepository,
+)
 from ddd.file_checker.domain.exceptions.file_checker_exception import FileCheckerException
 
 
@@ -25,6 +30,8 @@ class VerifyFileSignatureService:
     _file_hash_reader_file_repository: FileHashReaderFileRepository
     _file_executable_reader_file_repository: FileExecutableReaderFileRepository
     _file_signature_reader_file_repository: FileSignatureReaderFileRepository
+    _file_forensic_analyzer_repository: FileForensicAnalyzerRepository
+    _malware_threat_intelligence_repository: MalwareThreatIntelligenceRepository
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -36,6 +43,8 @@ class VerifyFileSignatureService:
         self._file_hash_reader_file_repository = FileHashReaderFileRepository.get_instance()
         self._file_executable_reader_file_repository = FileExecutableReaderFileRepository.get_instance()
         self._file_signature_reader_file_repository = FileSignatureReaderFileRepository.get_instance()
+        self._file_forensic_analyzer_repository = FileForensicAnalyzerRepository.get_instance()
+        self._malware_threat_intelligence_repository = MalwareThreatIntelligenceRepository.get_instance()
 
     def __call__(
         self,
@@ -84,7 +93,23 @@ class VerifyFileSignatureService:
         executable_info = self._file_executable_reader_file_repository.get_executable_info(local_path)
         signature_info = self._file_signature_reader_file_repository.get_signature_info(local_path)
 
-        return VerifyFileSignatureResultDto.from_primitives({
+        with open(local_path, "rb") as f:
+            file_bytes = f.read()
+
+        forensic_analysis = self._file_forensic_analyzer_repository.analyze_file_for_threats(local_path)
+        threat_intelligence = self._malware_threat_intelligence_repository.check_against_threat_intelligence(
+            file_hash=hash_value,
+            file_name=os.path.basename(local_path),
+            file_bytes=file_bytes,
+        )
+        threat_report = self._malware_threat_intelligence_repository.generate_threat_report(
+            file_hash=hash_value,
+            file_name=os.path.basename(local_path),
+            forensic_analysis=forensic_analysis,
+            threat_intelligence=threat_intelligence,
+        )
+
+        result = {
             FileCheckerResponseKeyEnum.FILE_PATH: local_path,
             FileCheckerResponseKeyEnum.FILE_SIZE: metadata[FileCheckerResponseKeyEnum.FILE_SIZE],
             FileCheckerResponseKeyEnum.LAST_MODIFIED: metadata[FileCheckerResponseKeyEnum.LAST_MODIFIED],
@@ -99,7 +124,12 @@ class VerifyFileSignatureService:
             FileCheckerResponseKeyEnum.SIGNATURE_STATUS: signature_info[FileCheckerResponseKeyEnum.SIGNATURE_STATUS],
             FileCheckerResponseKeyEnum.SIGNATURE_METHOD: signature_info[FileCheckerResponseKeyEnum.SIGNATURE_METHOD],
             FileCheckerResponseKeyEnum.SIGNATURE_SIGNER: signature_info[FileCheckerResponseKeyEnum.SIGNATURE_SIGNER],
-        })
+            "forensic_analysis": forensic_analysis,
+            "threat_intelligence": threat_intelligence,
+            "threat_report": threat_report,
+        }
+
+        return VerifyFileSignatureResultDto.from_primitives(result)
 
     def _fail_if_wrong_input(self) -> None:
         if not self._verify_file_signature_dto.file_path_or_url.strip():
