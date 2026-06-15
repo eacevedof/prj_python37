@@ -1,233 +1,136 @@
-import re
 from pathlib import Path
-from typing import final, Self
+from typing import Self, final
 
-import aiosqlite
-
-from ddd.devops.application.run_migrations.run_migrations_dto import RunMigrationsDto
-from ddd.devops.application.run_migrations.run_migrations_result_dto import (
-    RunMigrationsResultDto,
-    MigrationResultDto,
+from ddd.devops.domain.enums.migration_status_enum import MigrationStatusEnum
+from ddd.devops.domain.enums.migration_file_enum import MigrationFileEnum
+from ddd.devops.domain.exceptions.devops_exception import DevopsException
+from ddd.devops.infrastructure.repositories.migration_files_reader_file_repository import (
+    MigrationFilesReaderFileRepository,
 )
+from ddd.devops.infrastructure.repositories.migrations_reader_sqlite_repository import (
+    MigrationsReaderSqliteRepository,
+)
+from ddd.devops.infrastructure.repositories.migrations_writer_sqlite_repository import (
+    MigrationsWriterSqliteRepository,
+)
+from ddd.devops.application.run_migrations.run_migrations_dto import RunMigrationsDto
+from ddd.devops.application.run_migrations.run_migrations_result_dto import RunMigrationsResultDto
 
 
 @final
 class RunMigrationsService:
     """
-    Servicio para ejecutar migraciones SQL de forma controlada.
+    Ejecuta las migraciones SQL pendientes de forma controlada.
 
-    Mantiene un registro de migraciones aplicadas en la tabla `schema_migrations`.
-    Solo ejecuta migraciones que no hayan sido aplicadas previamente.
+    - force=False: aplica solo las migraciones pendientes (diferencial).
+    - force=True: elimina la BD, la recrea y ejecuta TODAS las migraciones.
     """
-
-    _SCHEMA_MIGRATIONS_TABLE = """
-    CREATE TABLE IF NOT EXISTS migrations (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        file_name TEXT NOT NULL UNIQUE,
-        created_at TEXT DEFAULT (datetime('now'))
-    )
-    """
-
-    _TIMESTAMP_PATTERN = re.compile(r"^(\d{14})-")
 
     def __init__(self) -> None:
-        pass
+        self._migration_files_reader_file_repository = MigrationFilesReaderFileRepository.get_instance()
+        self._migrations_reader_sqlite_repository = MigrationsReaderSqliteRepository.get_instance()
+        self._migrations_writer_sqlite_repository = MigrationsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(
-        self,
-        run_migrations_dto: RunMigrationsDto
-    ) -> RunMigrationsResultDto:
-        """
-        Ejecuta las migraciones.
-
-        Args:
-            run_migrations_dto: Datos con la ruta de migraciones y base de datos.
-                - force=False: Solo aplica migraciones pendientes (diferencial)
-                - force=True: Drop BD, crea BD, ejecuta TODAS las migraciones
-
-        Returns:
-            RunMigrationsResultDto con el resultado de las migraciones.
-        """
-        errors = run_migrations_dto.validate()
-        if errors:
-            return RunMigrationsResultDto.from_primitives({
-                "total_migrations": 0,
-                "applied_count": 0,
-                "skipped_count": 0,
-                "failed_count": 1,
-                "migrations": [
-                    MigrationResultDto(
-                        filename="",
-                        version="",
-                        status="failed",
-                        error="; ".join(errors),
-                    )
-                ],
-            })
+    async def __call__(self, run_migrations_dto: RunMigrationsDto) -> RunMigrationsResultDto:
+        self._fail_if_wrong_input(run_migrations_dto)
 
         db_path = run_migrations_dto.db_path or self._get_default_db_path()
         db_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Force mode: eliminar BD existente
-        if run_migrations_dto.force and db_path.exists():
-            db_path.unlink()
+        if run_migrations_dto.force:
+            self._migrations_writer_sqlite_repository.drop_database(db_path)
 
-        conn = await aiosqlite.connect(str(db_path))
-        try:
-            await conn.execute("PRAGMA foreign_keys = ON")
-            await conn.execute(self._SCHEMA_MIGRATIONS_TABLE)
-            await conn.commit()
+        await self._migrations_writer_sqlite_repository.ensure_migrations_table(db_path)
 
-            # Force mode: limpiar registro de migraciones (por si la BD no se eliminó)
-            if run_migrations_dto.force:
-                await conn.execute("DELETE FROM migrations")
-                await conn.commit()
+        if run_migrations_dto.force:
+            await self._migrations_writer_sqlite_repository.clear_applied_migrations(db_path)
 
-            applied_files = await self._get_applied_files(conn)
-            migration_files = self._get_migration_files(run_migrations_dto.migrations_path)
+        applied_files = await self._migrations_reader_sqlite_repository.get_applied_file_names(db_path)
+        migration_files = self._migration_files_reader_file_repository.get_sorted_sql_files(
+            run_migrations_dto.migrations_path
+        )
 
-            results: list[MigrationResultDto] = []
-            applied_count = 0
-            skipped_count = 0
-            failed_count = 0
+        results: list[dict[str, str]] = []
+        applied_count = 0
+        skipped_count = 0
+        failed_count = 0
 
-            for migration_file in migration_files:
-                file_name = migration_file.name
-                timestamp = self._extract_timestamp(file_name)
+        for migration_file in migration_files:
+            file_name = migration_file.name
+            version = self._migration_files_reader_file_repository.extract_version(file_name)
 
-                if not timestamp:
-                    results.append(MigrationResultDto(
-                        filename=file_name,
-                        version="",
-                        status="failed",
-                        error="Could not extract timestamp from filename (expected format: YYYYMMDDHHMMSS-description.sql)",
-                    ))
-                    failed_count += 1
-                    continue
+            if not version:
+                results.append(self._build_result(
+                    file_name,
+                    "",
+                    MigrationStatusEnum.FAILED,
+                    f"Could not extract version from filename (expected format: {MigrationFileEnum.FORMAT_HINT})",
+                ))
+                failed_count += 1
+                continue
 
-                if file_name in applied_files:
-                    results.append(MigrationResultDto(
-                        filename=file_name,
-                        version=timestamp,
-                        status="skipped",
-                    ))
-                    skipped_count += 1
-                    continue
+            if file_name in applied_files:
+                results.append(self._build_result(file_name, version, MigrationStatusEnum.SKIPPED))
+                skipped_count += 1
+                continue
 
-                result = await self._apply_migration(conn, migration_file, timestamp)
-                results.append(result)
+            result = await self._apply_migration(db_path, migration_file, version)
+            results.append(result)
 
-                if result.status == "applied":
-                    applied_count += 1
-                else:
-                    failed_count += 1
+            if result["status"] == MigrationStatusEnum.APPLIED:
+                applied_count += 1
+            else:
+                failed_count += 1
 
-            return RunMigrationsResultDto.from_primitives({
-                "total_migrations": len(migration_files),
-                "applied_count": applied_count,
-                "skipped_count": skipped_count,
-                "failed_count": failed_count,
-                "migrations": results,
-            })
-
-        finally:
-            await conn.close()
-
-    def _get_default_db_path(self) -> Path:
-        """Retorna la ruta por defecto de la base de datos."""
-        base_path = Path(__file__).parent.parent.parent.parent.parent
-        return base_path / "data" / "learn_lang.db"
-
-    def _get_migration_files(self, migrations_path: Path) -> list[Path]:
-        """Obtiene los archivos de migración ordenados por timestamp."""
-        files = list(migrations_path.glob("*.sql"))
-        return sorted(files, key=lambda f: self._extract_timestamp(f.name) or "")
-
-    def _extract_timestamp(self, filename: str) -> str | None:
-        """Extrae el timestamp del nombre del archivo (ej: '20260515205101-description.sql' -> '20260515205101')."""
-        match = self._TIMESTAMP_PATTERN.match(filename)
-        return match.group(1) if match else None
-
-    async def _get_applied_files(self, conn: aiosqlite.Connection) -> set[str]:
-        """Obtiene los nombres de archivos de migraciones ya aplicadas."""
-        cursor = await conn.execute("SELECT file_name FROM migrations")
-        rows = await cursor.fetchall()
-        return {row[0] for row in rows}
+        return RunMigrationsResultDto.from_primitives({
+            "total_migrations": len(migration_files),
+            "applied_count": applied_count,
+            "skipped_count": skipped_count,
+            "failed_count": failed_count,
+            "migrations": results,
+        })
 
     async def _apply_migration(
         self,
-        conn: aiosqlite.Connection,
+        db_path: Path,
         migration_file: Path,
-        timestamp: str,
-    ) -> MigrationResultDto:
-        """Aplica una migración individual."""
+        version: str,
+    ) -> dict[str, str]:
+        """Aplica una migración individual. Captura el fallo para no abortar el lote."""
         try:
-            sql_content = migration_file.read_text(encoding="utf-8")
-
-            await conn.executescript(sql_content)
-
-            await conn.execute(
-                """
-                INSERT INTO migrations (file_name, created_at)
-                VALUES (?, datetime('now'))
-                """,
-                (migration_file.name,),
+            sql_content = self._migration_files_reader_file_repository.get_sql_content(migration_file)
+            await self._migrations_writer_sqlite_repository.apply_migration(
+                db_path, sql_content, migration_file.name
             )
-            await conn.commit()
-
-            return MigrationResultDto(
-                filename=migration_file.name,
-                version=timestamp,
-                status="applied",
-            )
-
+            return self._build_result(migration_file.name, version, MigrationStatusEnum.APPLIED)
         except Exception as e:
-            await conn.rollback()
-            return MigrationResultDto(
-                filename=migration_file.name,
-                version=timestamp,
-                status="failed",
-                error=str(e),
-            )
+            return self._build_result(migration_file.name, version, MigrationStatusEnum.FAILED, str(e))
 
-    async def get_status(self, dto: RunMigrationsDto) -> dict[str, list[str]]:
-        """
-        Retorna el estado actual de las migraciones.
+    def _build_result(
+        self,
+        file_name: str,
+        version: str,
+        status: MigrationStatusEnum,
+        error: str = "",
+    ) -> dict[str, str]:
+        return {
+            "filename": file_name,
+            "version": version,
+            "status": status.value,
+            "error": error,
+        }
 
-        Returns:
-            Dict con 'applied' y 'pending' como listas de versiones.
-        """
-        errors = dto.validate()
-        if errors:
-            return {"applied": [], "pending": [], "errors": errors}
+    def _fail_if_wrong_input(self, run_migrations_dto: RunMigrationsDto) -> None:
+        migrations_path = run_migrations_dto.migrations_path
+        if not self._migration_files_reader_file_repository.path_exists(migrations_path):
+            DevopsException.migrations_path_not_found(str(migrations_path))
+        if not self._migration_files_reader_file_repository.is_directory(migrations_path):
+            DevopsException.migrations_path_not_directory(str(migrations_path))
 
-        db_path = dto.db_path or self._get_default_db_path()
-
-        if not db_path.exists():
-            migration_files = self._get_migration_files(dto.migrations_path)
-            pending = [f.name for f in migration_files]
-            return {"applied": [], "pending": pending}
-
-        conn = await aiosqlite.connect(str(db_path))
-        try:
-            await conn.execute(self._SCHEMA_MIGRATIONS_TABLE)
-            applied_files = await self._get_applied_files(conn)
-
-            migration_files = self._get_migration_files(dto.migrations_path)
-            pending = []
-
-            for migration_file in migration_files:
-                if migration_file.name not in applied_files:
-                    pending.append(migration_file.name)
-
-            return {
-                "applied": sorted(applied_files),
-                "pending": pending,
-            }
-
-        finally:
-            await conn.close()
+    def _get_default_db_path(self) -> Path:
+        base_path = Path(__file__).parent.parent.parent.parent.parent
+        return base_path / "data" / "learn_lang.db"

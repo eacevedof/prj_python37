@@ -41,8 +41,8 @@ async def test_database_setup():
     if result.failed_count > 0:
         print(f"   ERRORES: {result.failed_count}")
         for m in result.migrations:
-            if m.status == "failed":
-                print(f"      - {m.filename}: {m.error}")
+            if m["status"] == "failed":
+                print(f"      - {m['filename']}: {m['error']}")
     else:
         print("   Base de datos inicializada correctamente")
 

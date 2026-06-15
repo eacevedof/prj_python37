@@ -77,8 +77,8 @@ class SqliteConnector:
         }))
 
         if result.failed_count > 0:
-            failed = [m for m in result.migrations if m.status == "failed"]
-            errors = "; ".join(m.error or m.filename for m in failed)
+            failed = [m for m in result.migrations if m["status"] == "failed"]
+            errors = "; ".join(m.get("error") or m["filename"] for m in failed)
             raise RuntimeError(f"Migration failed: {errors}")
 
         self._initialized = True
