@@ -1,8 +1,10 @@
 """Enumerado de rutas de navegacion de la aplicacion."""
 
 from enum import StrEnum
+from typing import final
 
 
+@final
 class ControllerRouteEnum(StrEnum):
     """Rutas de vistas disponibles en la aplicacion."""
 

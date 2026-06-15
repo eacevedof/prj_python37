@@ -169,12 +169,8 @@ class AbstractSqliteRepository(ABC):
 
         query = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
 
-        try:
-            self._last_insert_id = await self._sqlite.insert(query, values)
-            return self._last_insert_id
-        except Exception as e:
-            self._logger.error_sql(f"insert_into {table}: {e}")
-            return 0
+        self._last_insert_id = await self._sqlite.insert(query, values)
+        return self._last_insert_id
 
     async def _update_where(
         self,
@@ -204,11 +200,7 @@ class AbstractSqliteRepository(ABC):
 
         query = f"UPDATE {table} SET {set_clause} WHERE {where}"
 
-        try:
-            return await self._sqlite.update(query, values)
-        except Exception as e:
-            self._logger.error_sql(f"update_where {table}: {e}")
-            return 0
+        return await self._sqlite.update(query, values)
 
     async def _delete_where(
         self,
@@ -229,11 +221,7 @@ class AbstractSqliteRepository(ABC):
         """
         query = f"DELETE FROM {table} WHERE {where}"
 
-        try:
-            return await self._sqlite.delete(query, where_params)
-        except Exception as e:
-            self._logger.error_sql(f"delete_where {table}: {e}")
-            return 0
+        return await self._sqlite.delete(query, where_params)
 
     async def _query(self, sql: str, params: tuple = ()) -> list[dict]:
         """
@@ -247,11 +235,7 @@ class AbstractSqliteRepository(ABC):
             Lista de diccionarios con los resultados.
         """
         self._logger.log_sql(sql)
-        try:
-            return await self._sqlite.fetch_all(sql, params)
-        except Exception as e:
-            self._logger.error_sql(f"query error: {e}")
-            return []
+        return await self._sqlite.fetch_all(sql, params)
 
     async def _query_one(self, sql: str, params: tuple = ()) -> dict | None:
         """
@@ -265,11 +249,7 @@ class AbstractSqliteRepository(ABC):
             Diccionario con el resultado o None.
         """
         self._logger.log_sql(sql)
-        try:
-            return await self._sqlite.fetch_one(sql, params)
-        except Exception as e:
-            self._logger.error_sql(f"query_one error: {e}")
-            return None
+        return await self._sqlite.fetch_one(sql, params)
 
     async def _query_scalar(
         self,
