@@ -1,10 +1,14 @@
 """Servicio para generar audio de pronunciación con IA (tts-1)."""
 
-import base64
 from pathlib import Path
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.open_ai.domain.enums import (
+    OpenaiTtsConstraintsEnum,
+    OpenaiTtsFormatEnum,
+    OpenaiTtsModelEnum,
+)
 from ddd.open_ai.infrastructure.repositories import GptTts1ReaderApiRepository
 from ddd.vocabulary.application.generate_word_audio_ai.generate_word_audio_ai_dto import (
     GenerateWordAudioAiDto,
@@ -13,6 +17,7 @@ from ddd.vocabulary.application.generate_word_audio_ai.generate_word_audio_ai_re
     GenerateWordAudioAiResultDto,
 )
 from ddd.vocabulary.domain.entities import WordLangEntity
+from ddd.vocabulary.domain.services import TtsVoiceSelectorService
 from ddd.vocabulary.infrastructure.repositories import (
     WordsLangReaderSqliteRepository,
     WordsLangWriterSqliteRepository,
@@ -92,21 +97,22 @@ class GenerateWordAudioAiService:
                 text_generated=text_to_generate,
             )
 
-        # Generar audio con tts-1
+        # Seleccionar voz (lógica de dominio) y generar audio con tts-1
         try:
-            tts_response = self._gpt_tts_1_reader_api_repository.get_audio_pronunciation_by_text(
-                text=text_to_generate,
-                lang_code=lang_code,
-                voice=generate_word_audio_ai_dto.voice,
-                speed=generate_word_audio_ai_dto.speed,
+            voice_used = generate_word_audio_ai_dto.voice or TtsVoiceSelectorService.select(lang_code)
+            model_used = OpenaiTtsModelEnum.TTS_1.value
+
+            speed = generate_word_audio_ai_dto.speed
+            if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
+                speed = 1.0
+
+            audio_bytes = self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text(
+                model=model_used,
+                voice=voice_used,
+                input_text=text_to_generate.strip(),
+                speed=speed,
+                response_format=OpenaiTtsFormatEnum.MP3,
             )
-
-            audio_b64 = tts_response["audio_b64"]
-            voice_used = tts_response["voice_used"]
-            model_used = tts_response["model"]
-
-            # Decodificar audio desde base64
-            audio_bytes = base64.b64decode(audio_b64)
 
             # Guardar archivo MP3 en disco
             audio_dir.mkdir(parents=True, exist_ok=True)

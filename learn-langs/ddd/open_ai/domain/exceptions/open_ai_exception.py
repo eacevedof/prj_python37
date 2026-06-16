@@ -5,7 +5,7 @@ from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
 
 @final
 class OpenAIException(Exception):
-    """Excepciones del dominio Vocabulary."""
+    """Excepciones del dominio open_ai."""
 
     _code: int
     _message: str
@@ -24,6 +24,13 @@ class OpenAIException(Exception):
         return self._message
 
     @classmethod
-    def unexpected_custom(cls, message: str) -> "OpenAIException":
-        raise cls(f"{message}", ResponseCodeEnum.INTERNAL_SERVER_ERROR)
+    def bad_request(cls, message: str) -> "OpenAIException":
+        raise cls(message, ResponseCodeEnum.BAD_REQUEST)
 
+    @classmethod
+    def not_found(cls, message: str) -> "OpenAIException":
+        raise cls(message, ResponseCodeEnum.NOT_FOUND)
+
+    @classmethod
+    def unexpected_custom(cls, message: str) -> "OpenAIException":
+        raise cls(message, ResponseCodeEnum.INTERNAL_SERVER_ERROR)

@@ -22,6 +22,8 @@ class DeleteWordImageResultDto:
     def ok(cls, image_id: int) -> Self:
         return cls.from_primitives({"image_id": image_id})
 
+    # @deuda: el caso de uso devuelve este ResultDto de error en vez de lanzar
+    # VocabularyException para que el controller la capture (migrar a raise + catch).
     @classmethod
     def error(cls, message: str) -> Self:
         return cls.from_primitives({"error_message": message})

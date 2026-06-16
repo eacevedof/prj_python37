@@ -4,6 +4,12 @@ import base64
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.open_ai.domain.enums import (
+    OpenaiImageModelEnum,
+    OpenaiImageQualityEnum,
+    OpenaiImageResponseFormatEnum,
+    OpenaiImageSizeEnum,
+)
 from ddd.open_ai.infrastructure.repositories import GptImage1ReaderApiRepository
 from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_dto import (
     GenerateWordImageAiDto,
@@ -13,6 +19,7 @@ from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_re
 )
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
+from ddd.vocabulary.domain.services import WordImagePromptBuilderService
 from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteRepository
 
 @final
@@ -50,14 +57,21 @@ class GenerateWordImageAiService:
                 "Se requiere palabra en español y traducción"
             )
 
-        # Generar imagen con gpt-image-1.5 (prompt oculto en el repositorio)
-        dalle_ai_response = self._gpt_image_1_reader_api_repository.get_ai_image_by_word(
+        # Construir el prompt (lógica de dominio) y generar la imagen (gpt-image-1.5)
+        prompt_used = WordImagePromptBuilderService.build(
             word_es=generate_word_image_ai_dto.word_es,
             context=generate_word_image_ai_dto.context,
         )
 
-        image_b64 = dalle_ai_response["b64_json"]
-        prompt_used = dalle_ai_response["prompt_used"]
+        base64_images = self._gpt_image_1_reader_api_repository.get_base64_images_from_text(
+            openai_model=OpenaiImageModelEnum.GPT_IMAGE_1_5,
+            prompt=prompt_used,
+            result_number=1,
+            size=OpenaiImageSizeEnum.SIZE_1024,
+            quality=OpenaiImageQualityEnum.STANDARD,
+        )
+
+        image_b64 = base64_images[0][OpenaiImageResponseFormatEnum.B64_JSON] if base64_images else ""
 
         # Decodificar imagen desde base64
         image_bytes = base64.b64decode(image_b64)

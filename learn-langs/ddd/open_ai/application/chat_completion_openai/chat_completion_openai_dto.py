@@ -31,13 +31,3 @@ class ChatCompletionOpenaiDto:
             max_tokens=max_tokens,
             stream=stream,
         )
-
-    def __post_init__(self) -> None:
-        if not self.messages:
-            raise ValueError("ChatCompletionOpenaiDto: messages cannot be empty")
-
-        for msg in self.messages:
-            if "role" not in msg or "content" not in msg:
-                raise ValueError(
-                    "ChatCompletionOpenaiDto: each message must have 'role' and 'content' keys"
-                )

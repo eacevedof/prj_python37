@@ -42,6 +42,8 @@ class CreateWordGroupResultDto:
             response_code=ResponseCodeEnum.OK,
         )
 
+    # @deuda: el caso de uso devuelve este ResultDto de error en vez de lanzar
+    # VocabularyException para que el controller la capture (migrar a raise + catch).
     @classmethod
     def error(cls, message: str, code: int = ResponseCodeEnum.BAD_REQUEST) -> Self:
         """Crea un resultado de error."""

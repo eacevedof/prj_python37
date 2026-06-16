@@ -109,6 +109,8 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         # Obtener dimensiones si es posible
         width, height = word_image_entity.width, word_image_entity.height
         if width is None or height is None:
+            # @deuda: try/except en repositorio (lo prohíbe la spec DDD). Extraer la lectura
+            # de dimensiones con PIL a un componente compartido (p.ej. ImageInspector/Imager).
             try:
                 from PIL import Image
                 import io

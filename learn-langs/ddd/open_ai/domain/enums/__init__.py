@@ -1,5 +1,6 @@
 from ddd.open_ai.domain.enums.audio import (
     OpenaiAudioFileTypeEnum,
+    OpenaiTranscriptionConstraintsEnum,
     OpenaiTranscriptionModelEnum,
     OpenaiTranscriptionResponseFormatEnum,
     OpenaiTtsConstraintsEnum,
@@ -25,6 +26,7 @@ from ddd.open_ai.domain.enums.image import (
 __all__ = [
     # Audio enums
     "OpenaiAudioFileTypeEnum",
+    "OpenaiTranscriptionConstraintsEnum",
     "OpenaiTranscriptionModelEnum",
     "OpenaiTranscriptionResponseFormatEnum",
     "OpenaiTtsConstraintsEnum",

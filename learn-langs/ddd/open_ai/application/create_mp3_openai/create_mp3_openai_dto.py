@@ -35,7 +35,3 @@ class CreateMp3OpenaiDto:
             speed=speed,
             response_format=response_format,
         )
-
-    def __post_init__(self) -> None:
-        if not self.text or not self.text.strip():
-            raise ValueError("CreateMp3OpenaiDto: text cannot be empty")

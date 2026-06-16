@@ -27,7 +27,7 @@ class AbstractOpenAIApiRepository(ABC):
             EnvvarsKeysEnum.OPENAI_API_KEY.value,  ""
         )
         if not open_ai_api_key:
-            raise OpenAIException.unexpected_custom(
+            OpenAIException.unexpected_custom(
                 f"AbstractOpenAIApiRepository: missing env {EnvvarsKeysEnum.OPENAI_API_KEY.value}"
             )
 
