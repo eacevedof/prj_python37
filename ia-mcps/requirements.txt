@@ -1,5 +1,5 @@
 # MCP Servers - IA Services 2026-06-07
-# packages got from: https://pypi.org/<package-name>
+# packages got from:https://pypi.org/project/<package-name>
 # Uses compatible releases (~=) for security patches without breaking changes
 # Installation: pip install -r requirements.txt
 
@@ -77,6 +77,20 @@ transformers~=5.10.2
 # Imported as: whisper
 # Processes: .mp3, .wav files → text transcriptions
 openai-whisper==20250625
+
+# ============================================================================
+# PDF GENERATION
+# ============================================================================
+
+# Markdown - Convert Markdown text to HTML
+# Used in: ddd/to_pdf/infrastructure/repositories/md_to_pdf_writer_file_repository.py
+# Extensions: tables, fenced_code, codehilite
+Markdown~=3.10.2
+
+# weasyprint - Convert HTML+CSS to PDF
+# Used in: ddd/to_pdf/infrastructure/repositories/md_to_pdf_writer_file_repository.py
+# Requires: libpango (Linux) / GTK runtime (Windows)
+weasyprint~=69.0
 
 # ============================================================================
 # AI/ML
