@@ -73,8 +73,8 @@ class SliderCardComp(ft.Container):
         self._ft_translation = ft.Text(
             "",
             size=SliderCardSizeEnum.TRANSLATION.value,
-            weight=ft.FontWeight.BOLD,
-            color=ft.Colors.GREEN_700,
+            weight=ft.FontWeight.W_400,
+            color=ft.Colors.BLUE_100,  # muy tenue, casi del color de fondo (BLUE_50)
             text_align=ft.TextAlign.CENTER,
             visible=False,
         )

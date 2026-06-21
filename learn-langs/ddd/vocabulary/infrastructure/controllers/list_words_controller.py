@@ -49,6 +49,9 @@ class ListWordsController(BaseController):
     - NO usa repositorios directamente
     """
 
+    # Tamaño de página para el listado paginado
+    _PAGE_SIZE: int = 100
+
     # =========================================================================
     # CONSTRUCCIÓN
     # =========================================================================
@@ -65,6 +68,7 @@ class ListWordsController(BaseController):
 
         # Estado del controller
         self._current_search: str = ""
+        self._current_page: int = 0
         self._words: list[WordListItemViewDto] = []
         self._current_word_for_image: int | None = None
         self._current_dialog: ft.AlertDialog | None = None
@@ -91,6 +95,9 @@ class ListWordsController(BaseController):
             "on_edit": self._route_on_edit,
             "on_delete": self._on_delete_btn_click,
             "on_show_images": self._on_images_btn_click,
+            "on_prev_page": self._on_prev_page_click,
+            "on_next_page": self._on_next_page_click,
+            "on_zoom_image": self._on_zoom_image_click,
         })
 
     # =========================================================================
@@ -122,7 +129,8 @@ class ListWordsController(BaseController):
             result = await self._list_words_service(
                 ListWordsDto.from_primitives({
                     "search": self._current_search,
-                    "limit": 100,
+                    "limit": self._PAGE_SIZE,
+                    "offset": self._current_page * self._PAGE_SIZE,
                 })
             )
 
@@ -162,6 +170,8 @@ class ListWordsController(BaseController):
                 words=self._words,
                 total_count=result.total_count,
                 has_more=result.has_more,
+                page=self._current_page,
+                page_size=self._PAGE_SIZE,
             )
             self._ft_container.render(view_dto)
 
@@ -179,7 +189,23 @@ class ListWordsController(BaseController):
     def _on_search_input(self, search_text: str) -> None:
         """Maneja cambio en busqueda (search field - header)."""
         self._current_search = search_text
+        self._current_page = 0  # nueva búsqueda -> volver a la primera página
         self._ft_container.page.run_task(self._async_load_words)
+
+    def _on_prev_page_click(self) -> None:
+        """Va a la página anterior."""
+        if self._current_page > 0:
+            self._current_page -= 1
+            self._ft_container.page.run_task(self._async_load_words)
+
+    def _on_next_page_click(self) -> None:
+        """Va a la página siguiente."""
+        self._current_page += 1
+        self._ft_container.page.run_task(self._async_load_words)
+
+    def _on_zoom_image_click(self, image_full_path: str) -> None:
+        """Amplía la imagen del listado (lupa)."""
+        self._show_large_image(image_full_path)
 
     def _on_delete_btn_click(self, word_id: int) -> None:
         """Maneja click en eliminar (botón delete - item lista)."""
@@ -271,10 +297,16 @@ class ListWordsController(BaseController):
                     fit=ft.BoxFit.COVER,
                     border_radius=4,
                 )
+                # Miniatura clicable -> abre la imagen ampliada
+                ft_thumb = ft.Container(
+                    content=ft_image,
+                    on_click=lambda e, p=img_full_path: self._show_large_image(p),
+                    tooltip="Ampliar imagen",
+                )
 
                 ft_row = ft.Row(
                     controls=[
-                        ft_image,
+                        ft_thumb,
                         ft.Icon(
                             ft.Icons.STAR if img_dict.get("is_primary") else ft.Icons.IMAGE,
                             color=ft.Colors.AMBER_500 if img_dict.get("is_primary") else ft.Colors.GREY_500,
@@ -286,6 +318,13 @@ class ListWordsController(BaseController):
                             expand=True,
                         ),
                         ft.Text(img_dict.get("source_type", ""), size=10, color=ft.Colors.GREY_600),
+                        ft.IconButton(
+                            icon=ft.Icons.ZOOM_IN,
+                            icon_color=ft.Colors.BLUE_500,
+                            icon_size=18,
+                            on_click=lambda e, p=img_full_path: self._show_large_image(p),
+                            tooltip="Ampliar imagen",
+                        ),
                         ft.IconButton(
                             icon=ft.Icons.DELETE,
                             icon_color=ft.Colors.RED_400,
@@ -302,6 +341,29 @@ class ListWordsController(BaseController):
             self._current_images_column.controls.append(
                 ft.Text("No hay imagenes", italic=True, color=ft.Colors.GREY_500)
             )
+
+    def _show_large_image(self, image_full_path: str) -> None:
+        """Abre un dialogo con la imagen ampliada (sobre el modal actual)."""
+        page = self._ft_container.page
+
+        def close_large(e=None):
+            large_dialog.open = False
+            page.update()
+
+        large_dialog = ft.AlertDialog(
+            content=ft.Container(
+                content=ft.Image(src=image_full_path, fit=ft.BoxFit.CONTAIN),
+                width=640,
+                height=640,
+                alignment=ft.Alignment.CENTER,
+            ),
+            actions=[ft.TextButton("Cerrar", on_click=close_large)],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+
+        page.overlay.append(large_dialog)
+        large_dialog.open = True
+        page.update()
 
     async def _refresh_images_dialog(self) -> None:
         """Recarga las imagenes en el dialogo actual."""

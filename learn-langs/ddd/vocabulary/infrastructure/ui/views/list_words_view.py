@@ -35,6 +35,9 @@ class ListWordsView(ft.Container):
         route_on_edit: Callable[[int], None],          # 5. Botón editar (item lista)
         route_on_delete: Callable[[int], None],        # 6. Botón eliminar (item lista)
         route_on_show_images: Callable[[int], None],   # 7. Botón imagenes (item lista)
+        route_on_prev_page: Callable[[], None] | None = None,   # 8. Paginación: anterior
+        route_on_next_page: Callable[[], None] | None = None,   # 9. Paginación: siguiente
+        route_on_zoom_image: Callable[[str], None] | None = None,  # 10. Lupa: ampliar imagen
     ):
         super().__init__()
 
@@ -46,6 +49,9 @@ class ListWordsView(ft.Container):
         self._route_on_edit = route_on_edit
         self._route_on_delete = route_on_delete
         self._route_on_show_images = route_on_show_images
+        self._route_on_prev_page = route_on_prev_page or (lambda: None)
+        self._route_on_next_page = route_on_next_page or (lambda: None)
+        self._route_on_zoom_image = route_on_zoom_image or (lambda p: None)
 
         # Componentes UI
         self._ft_words_list: ft.ListView | None = None
@@ -53,6 +59,9 @@ class ListWordsView(ft.Container):
         self._ft_loading: ft.ProgressRing | None = None
         self._ft_count_text: ft.Text | None = None
         self._ft_error_text: ft.Text | None = None
+        self._ft_prev_page_btn: ft.IconButton | None = None
+        self._ft_next_page_btn: ft.IconButton | None = None
+        self._ft_page_text: ft.Text | None = None
 
         self._build_initial_ui()
 
@@ -67,6 +76,9 @@ class ListWordsView(ft.Container):
             route_on_edit=primitives.get("on_edit", lambda x: None),
             route_on_delete=primitives.get("on_delete", lambda x: None),
             route_on_show_images=primitives.get("on_show_images", lambda x: None),
+            route_on_prev_page=primitives.get("on_prev_page"),
+            route_on_next_page=primitives.get("on_next_page"),
+            route_on_zoom_image=primitives.get("on_zoom_image"),
         )
 
     # =========================================================================
@@ -88,6 +100,9 @@ class ListWordsView(ft.Container):
 
         # Count
         self._render_count(dto)
+
+        # Paginación
+        self._render_pagination(dto)
 
         # Words list
         self._render_words_list(dto)
@@ -167,6 +182,21 @@ class ListWordsView(ft.Container):
         # Error text
         self._ft_error_text = ft.Text("", color=ft.Colors.RED_700, visible=False)
 
+        # Paginación (footer)
+        self._ft_prev_page_btn = ft.IconButton(
+            icon=ft.Icons.CHEVRON_LEFT,
+            tooltip="Página anterior",
+            on_click=lambda _: self._route_on_prev_page(),
+            disabled=True,
+        )
+        self._ft_next_page_btn = ft.IconButton(
+            icon=ft.Icons.CHEVRON_RIGHT,
+            tooltip="Página siguiente",
+            on_click=lambda _: self._route_on_next_page(),
+            disabled=True,
+        )
+        self._ft_page_text = ft.Text("", size=12, color=ft.Colors.GREY_700)
+
         # Words list
         self._ft_words_list = ft.ListView(
             expand=True,
@@ -226,6 +256,17 @@ class ListWordsView(ft.Container):
                     border=ft.Border.all(1, ft.Colors.GREY_300),
                     border_radius=8,
                 ),
+                # Footer paginación
+                ft.Row(
+                    controls=[
+                        ft.Container(expand=True),
+                        self._ft_prev_page_btn,
+                        self._ft_page_text,
+                        self._ft_next_page_btn,
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                ),
             ],
             expand=True,
         )
@@ -247,6 +288,21 @@ class ListWordsView(ft.Container):
         else:
             showing = len(dto.words)
             self._ft_count_text.value = f"Mostrando {showing} de {dto.total_count} palabras"
+
+    def _render_pagination(self, dto: ListWordsViewDto) -> None:
+        """Renderiza los controles de paginación (anterior / siguiente)."""
+        if not self._ft_page_text or not self._ft_prev_page_btn or not self._ft_next_page_btn:
+            return
+
+        if dto.is_loading or dto.error_message:
+            self._ft_page_text.value = ""
+            self._ft_prev_page_btn.disabled = True
+            self._ft_next_page_btn.disabled = True
+            return
+
+        self._ft_page_text.value = dto.page_label
+        self._ft_prev_page_btn.disabled = not dto.has_prev
+        self._ft_next_page_btn.disabled = not dto.has_next
 
     def _render_words_list(self, list_words_view_dto: ListWordsViewDto) -> None:
         """Renderiza la lista de palabras."""
@@ -340,6 +396,20 @@ class ListWordsView(ft.Container):
             tooltip=tooltip_text,
         )
 
+    def _build_zoom_button(self, word: WordListItemViewDto) -> ft.Control:
+        """Lupa para ampliar la imagen (solo si la palabra tiene imagen)."""
+        if word.last_image_path:
+            full_path = self._get_full_image_path(word.last_image_path)
+            if os.path.exists(full_path):
+                return ft.IconButton(
+                    icon=ft.Icons.ZOOM_IN,
+                    icon_color=ft.Colors.BLUE_500,
+                    on_click=lambda e, p=full_path: self._route_on_zoom_image(p),
+                    tooltip="Ampliar imagen",
+                )
+        # Sin imagen: placeholder sin ancho para no alterar la alineación
+        return ft.Container(width=0)
+
     def _build_word_tile(self, word: WordListItemViewDto) -> ft.ListTile:
         """Construye un tile para una palabra."""
         # Icono segun tipo
@@ -389,6 +459,8 @@ class ListWordsView(ft.Container):
                     ),
                     # Imagenes - Mostrar thumbnail o icono
                     self._build_image_button(word),
+                    # Lupa - Ampliar imagen (si la tiene)
+                    self._build_zoom_button(word),
                     # Eliminar
                     ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINE,

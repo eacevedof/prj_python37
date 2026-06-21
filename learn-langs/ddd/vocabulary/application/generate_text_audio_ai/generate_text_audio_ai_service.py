@@ -16,6 +16,7 @@ from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_dt
 from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_result_dto import (
     GenerateTextAudioAiResultDto,
 )
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.domain.services import TtsVoiceSelectorService
 
 
@@ -27,6 +28,22 @@ class GenerateTextAudioAiService:
     usando cache_key. Lo usa el slider para pronunciar tanto el origen
     español como la traducción del idioma destino.
     """
+
+    # Acento por idioma: si hay instrucción, se genera con gpt-4o-mini-tts
+    # (tts-1 no permite controlar el acento). El español suena de España
+    # (castellano peninsular); el neerlandés, de Países Bajos (Standaardnederlands /
+    # ABN, acento neutro Randstad/Haarlem, no flamenco/belga).
+    _ACCENT_INSTRUCTIONS_BY_LANG: dict[str, str] = {
+        LanguageCodeEnum.ES_ES.value: (
+            "Habla en español de España, con acento castellano peninsular. "
+            "No uses acento latinoamericano."
+        ),
+        LanguageCodeEnum.NL_NL.value: (
+            "Spreek Standaardnederlands (ABN) zoals in Nederland, "
+            "met het neutrale Randstad/Haarlem-accent. "
+            "Gebruik geen Vlaams of Belgisch accent."
+        ),
+    }
 
     _instance: "GenerateTextAudioAiService | None" = None
 
@@ -78,11 +95,17 @@ class GenerateTextAudioAiService:
         # Seleccionar voz (lógica de dominio) y generar audio con tts-1
         try:
             voice_used = generate_text_audio_ai_dto.voice or TtsVoiceSelectorService.select(lang_code)
-            model_used = OpenaiTtsModelEnum.TTS_1.value
 
             speed = generate_text_audio_ai_dto.speed
             if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
                 speed = 1.0
+
+            # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
+            instructions = self._ACCENT_INSTRUCTIONS_BY_LANG.get(lang_code, "")
+            if instructions:
+                model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
+            else:
+                model_used = OpenaiTtsModelEnum.TTS_1.value
 
             audio_bytes = self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text(
                 model=model_used,
@@ -90,6 +113,7 @@ class GenerateTextAudioAiService:
                 input_text=text_to_generate,
                 speed=speed,
                 response_format=OpenaiTtsFormatEnum.MP3,
+                instructions=instructions,
             )
 
             audio_dir.mkdir(parents=True, exist_ok=True)

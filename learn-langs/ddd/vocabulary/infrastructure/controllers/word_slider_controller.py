@@ -24,6 +24,7 @@ from ddd.vocabulary.application.start_word_slider_session import (
     SliderWordDto,
 )
 from ddd.vocabulary.domain.enums import LanguageCodeEnum, StudyModeEnum
+from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view import WordSliderView
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import WordSliderViewDto
 
@@ -82,6 +83,7 @@ class WordSliderController(BaseController):
         self._start_session_service = StartWordSliderSessionService.get_instance()
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
+        self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
 
         # Vista
         self._ft_container = WordSliderView.from_primitives({
@@ -317,7 +319,7 @@ class WordSliderController(BaseController):
                 "word_es_id": word.word_es_id,
                 "text_es": word.text_es,
                 "text_lang": word.text_lang,
-                "pronunciation": word.pronunciation,
+                "pronunciation": self._pronunciation_for(word),
                 "image_file_path": word.image_file_path,
             },
             phase_label=phase_label,
@@ -338,6 +340,16 @@ class WordSliderController(BaseController):
             return LanguageCodeEnum(self._lang_code).display_name
         except ValueError:
             return self._lang_code
+
+    def _pronunciation_for(self, word: SliderWordDto) -> str:
+        """Pronunciación (gris): para neerlandés, aproximación leíble en español."""
+        is_dutch = self._lang_code in (
+            LanguageCodeEnum.NL_NL.value,
+            LanguageCodeEnum.NL_BE.value,
+        )
+        if is_dutch:
+            return self._dutch_phonetic_service.transcribe(word.text_lang)
+        return word.pronunciation
 
     @staticmethod
     def _stop_audio() -> None:

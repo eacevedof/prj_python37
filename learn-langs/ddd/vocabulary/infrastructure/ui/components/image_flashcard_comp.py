@@ -14,6 +14,7 @@ class ImageFlashcardComp(ft.Container):
         text_lang: str = "",
         pronunciation: str = "",
         show_translation: bool = False,
+        word_id: int | str = "",
     ):
         super().__init__()
         self.image_file_path = image_file_path
@@ -21,6 +22,7 @@ class ImageFlashcardComp(ft.Container):
         self.text_lang = text_lang
         self.pronunciation = pronunciation
         self.show_translation = show_translation
+        self.word_id = word_id
         self._card_content: ft.Column | None = None
 
         self._build_ui()
@@ -91,7 +93,19 @@ class ImageFlashcardComp(ft.Container):
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-        self.content = self._card_content
+        # Id de la palabra como overlay (no toca _card_content -> reveal_translation intacto)
+        word_id_badge = ft.Container(
+            content=ft.Text(
+                f"#{self.word_id}" if self.word_id != "" else "",
+                size=14,
+                color=ft.Colors.GREY_500,
+                weight=ft.FontWeight.W_500,
+            ),
+            top=2,
+            right=4,
+        )
+
+        self.content = ft.Stack(controls=[self._card_content, word_id_badge])
         self.width = 350
         self.height = 380
         self.bgcolor = ft.Colors.WHITE

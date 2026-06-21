@@ -9,6 +9,7 @@ from ddd.vocabulary.application.list_words.list_words_result_dto import (
 )
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,
+    WordsPaginationReaderSqliteRepository,
     WordsLangReaderSqliteRepository,
     ImagesReaderSqliteRepository,
 )
@@ -19,11 +20,13 @@ class ListWordsService:
     """Servicio para listar palabras con filtros."""
 
     _list_words_dto: ListWordsDto
+    _words_pagination_reader_sqlite_repository: WordsPaginationReaderSqliteRepository
     _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
     _images_reader_sqlite_repository: ImagesReaderSqliteRepository
     _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
 
     def __init__(self) -> None:
+        self._words_pagination_reader_sqlite_repository = WordsPaginationReaderSqliteRepository.get_instance()
         self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
         self._images_reader_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
         self._words_lang_reader_sqlite_repository = WordsLangReaderSqliteRepository.get_instance()
@@ -44,19 +47,15 @@ class ListWordsService:
         """
         self._list_words_dto = list_words_dto
 
-        # Obtener palabras segun filtros
-        if list_words_dto.search:
-            words_raw = await self._words_es_reader_sqlite_repository.get_words_es_by_text_or_group(list_words_dto.search, limit=list_words_dto.limit)
-        elif list_words_dto.tags:
-            words_raw = await self._words_es_reader_sqlite_repository.get_words_es_by_tag_names(
-                list_words_dto.tags, limit=list_words_dto.limit, offset=list_words_dto.offset
-            )
-        else:
-            words_raw = await self._words_es_reader_sqlite_repository.get_filtered_words_es(
-                word_type=list_words_dto.word_type,
-                limit=list_words_dto.limit,
-                offset=list_words_dto.offset,
-            )
+        # Filtros para el repositorio de paginación (search incluye id, texto y grupo)
+        filters = {
+            "search": list_words_dto.search,
+            "word_type": list_words_dto.word_type,
+            "tags": list_words_dto.tags,
+            "limit": list_words_dto.limit,
+            "offset": list_words_dto.offset,
+        }
+        words_raw = await self._words_pagination_reader_sqlite_repository.get_words(filters)
 
         # Enriquecer con conteo de imagenes y traducciones
         words: list[WordItemDto] = []
@@ -87,8 +86,8 @@ class ListWordsService:
             })
             words.append(word_item)
 
-        # Obtener total para paginacion
-        total_count = await self._words_es_reader_sqlite_repository.get_total_words_es_by_word_type(word_type=list_words_dto.word_type)
+        # Total para paginacion (mismo dict de filtros -> total correcto también al buscar)
+        total_count = await self._words_pagination_reader_sqlite_repository.get_total(filters)
         has_more = (list_words_dto.offset + len(words)) < total_count
 
         return ListWordsResultDto.from_primitives({

@@ -54,6 +54,8 @@ class ListWordsViewDto:
     words: tuple[WordListItemViewDto, ...] = field(default_factory=tuple)
     total_count: int = 0
     has_more: bool = False
+    page: int = 0
+    page_size: int = 100
     is_loading: bool = False
     error_message: str | None = None
 
@@ -68,6 +70,8 @@ class ListWordsViewDto:
             words=words,
             total_count=int(primitives.get("total_count", 0)),
             has_more=bool(primitives.get("has_more", False)),
+            page=int(primitives.get("page", 0)),
+            page_size=int(primitives.get("page_size", 100)),
             is_loading=bool(primitives.get("is_loading", False)),
             error_message=primitives.get("error_message"),
         )
@@ -83,12 +87,16 @@ class ListWordsViewDto:
         words: list[WordListItemViewDto],
         total_count: int,
         has_more: bool,
+        page: int = 0,
+        page_size: int = 100,
     ) -> Self:
         """DTO de exito."""
         return cls.from_primitives({
             "words": words,
             "total_count": total_count,
             "has_more": has_more,
+            "page": page,
+            "page_size": page_size,
             "is_loading": False,
         })
 
@@ -109,3 +117,25 @@ class ListWordsViewDto:
     def is_empty(self) -> bool:
         """Indica si no hay palabras."""
         return len(self.words) == 0
+
+    @property
+    def total_pages(self) -> int:
+        """Número total de páginas (mínimo 1)."""
+        if self.page_size <= 0:
+            return 1
+        return max(1, (self.total_count + self.page_size - 1) // self.page_size)
+
+    @property
+    def has_prev(self) -> bool:
+        """Indica si hay página anterior."""
+        return self.page > 0
+
+    @property
+    def has_next(self) -> bool:
+        """Indica si hay página siguiente."""
+        return self.has_more
+
+    @property
+    def page_label(self) -> str:
+        """Texto 'Página X de Y'."""
+        return f"Página {self.page + 1} de {self.total_pages}"

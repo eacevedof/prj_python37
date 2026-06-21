@@ -15,6 +15,7 @@ class FlashcardComp(ft.Container):
         word_type: str = WordTypeEnum.WORD.value,
         show_translation: bool = False,
         pronunciation: str = "",
+        word_id: int | str = "",
     ):
         super().__init__()
         self.text_es = text_es
@@ -22,6 +23,7 @@ class FlashcardComp(ft.Container):
         self.word_type = word_type
         self.show_translation = show_translation
         self.pronunciation = pronunciation
+        self.word_id = word_id
         self._card_content: ft.Column | None = None
 
         self._build_ui()
@@ -39,6 +41,14 @@ class FlashcardComp(ft.Container):
             padding=ft.Padding(left=8, right=8, top=2, bottom=2),
         )
 
+        # Id de la palabra (pequeño, para depurar audios que no suenan)
+        word_id_text = ft.Text(
+            f"#{self.word_id}" if self.word_id != "" else "",
+            size=14,
+            color=ft.Colors.GREY_400,
+            weight=ft.FontWeight.W_500,
+        )
+
         # Texto principal (espanol)
         main_text = ft.Text(
             self.text_es,
@@ -49,7 +59,10 @@ class FlashcardComp(ft.Container):
 
         # Contenido de la tarjeta
         card_controls = [
-            type_badge,
+            ft.Row(
+                controls=[type_badge, ft.Container(expand=True), word_id_text],
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
             ft.Container(height=16),
             main_text,
         ]

@@ -52,7 +52,6 @@ class StudyView(ft.Container):
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
         self._ft_score_text: ft.Text | None = None
-        self._ft_word_id_text: ft.Text | None = None
 
         # Componentes UI - Content Area (dinámico)
         self._ft_content_area: ft.Column | None = None
@@ -94,12 +93,6 @@ class StudyView(ft.Container):
             if self._ft_progress_text:
                 self._ft_progress_text.value = dto.progress_text
                 self._logger.log_debug("StudyView.render", "Header actualizado: progress_text")
-
-            if self._ft_word_id_text is not None:
-                current_word = dto.current_word
-                self._ft_word_id_text.value = (
-                    f"#{current_word.get('word_es_id', '')}" if current_word else ""
-                )
 
             if self._ft_score_text:
                 self._ft_score_text.value = dto.score_text
@@ -156,8 +149,6 @@ class StudyView(ft.Container):
         # Header components
         self._ft_progress_text = ft.Text("Cargando...", size=14)
         self._ft_score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
-        # Id de la palabra (pequeño, para depurar audios que no suenan)
-        self._ft_word_id_text = ft.Text("", size=12, color=ft.Colors.GREY_400)
 
         # Content area (dinámico)
         self._ft_content_area = ft.Column(
@@ -187,7 +178,6 @@ class StudyView(ft.Container):
                     controls=[
                         back_btn,
                         self._ft_progress_text,
-                        self._ft_word_id_text,
                         ft.Container(expand=True),
                         self._ft_score_text,
                     ],
@@ -244,6 +234,7 @@ class StudyView(ft.Container):
                 word_type=word.get("word_type", ""),
                 pronunciation=word.get("pronunciation", ""),
                 show_translation=False,
+                word_id=word.get("word_es_id", ""),
             )
 
             self._logger.log_debug("StudyView._render_studying", "Creando InputFieldComp")
