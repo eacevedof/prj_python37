@@ -21,7 +21,11 @@ class Volumer:
             cls._instance = cls()
         return cls._instance
 
-    def set_scalar(self, level: float) -> None:
+    def set_to_max(self) -> None:
+        """Sube el volumen maestro del sistema al máximo (100%)."""
+        self._set_scalar(1.0)
+
+    def _set_scalar(self, level: float) -> None:
         """Fija el volumen maestro (0.0-1.0) y desactiva el mute."""
         if sys.platform != "win32":
             return
@@ -46,6 +50,4 @@ class Volumer:
         finally:
             CoUninitialize()
 
-    def set_to_max(self) -> None:
-        """Sube el volumen maestro del sistema al máximo (100%)."""
-        self.set_scalar(1.0)
+
