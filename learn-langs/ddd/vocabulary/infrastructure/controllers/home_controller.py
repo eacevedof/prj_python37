@@ -27,12 +27,14 @@ class HomeController(BaseController):
         self,
         route_on_start_study: Callable[[str, list[str], int | None], None],       # 1. Botón primario (verde, izquierda)
         route_on_start_image_study: Callable[[str, list[str], int | None], None], # 2. Botón secundario (morado, centro)
-        route_on_manage_words: Callable[[], None],                                 # 3. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],                                # 4. Botón gestión grupos (naranja)
+        route_on_start_slider: Callable[[str, list[str], int | None], None],      # 3. Botón slider (teal)
+        route_on_manage_words: Callable[[], None],                                 # 4. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],                                # 5. Botón gestión grupos (naranja)
     ):
         # Callbacks de navegación (inyectados desde app_router)
         self._route_on_start_study = route_on_start_study
         self._route_on_start_image_study = route_on_start_image_study
+        self._route_on_start_slider = route_on_start_slider
         self._route_on_manage_words = route_on_manage_words
         self._route_on_manage_groups = route_on_manage_groups
 
@@ -40,7 +42,7 @@ class HomeController(BaseController):
         self._load_home_service = LoadHomeService.get_instance()
         self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
-        self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.default()
+        self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.NL_NL
         self._selected_tags: list[str] = []
         self._selected_group_id: int | None = None
         self._all_groups: list[dict] = []
@@ -52,6 +54,7 @@ class HomeController(BaseController):
             "on_tag_toggle": self._on_tag_toggle,
             "on_start_study": self._route_on_start_study_click,
             "on_start_image_study": self._route_on_start_image_study_click,
+            "on_start_slider": self._route_on_start_slider_click,
             "on_manage_words": self._route_on_manage_words,
             "on_manage_groups": self._route_on_manage_groups,
         })
@@ -149,7 +152,7 @@ class HomeController(BaseController):
         try:
             self._selected_lang = LanguageCodeEnum(lang_code)
         except ValueError:
-            self._selected_lang = LanguageCodeEnum.default()
+            self._selected_lang = LanguageCodeEnum.NL_NL
 
         self._ft_container.page.run_task(self._async_load_data)
 
@@ -200,6 +203,19 @@ class HomeController(BaseController):
             {"lang": str(self._selected_lang), "tags": self._selected_tags, "group_id": self._selected_group_id},
         )
         self._route_on_start_image_study(
+            str(self._selected_lang),
+            self._selected_tags,
+            self._selected_group_id
+        )
+
+    def _route_on_start_slider_click(self) -> None:
+        """Maneja click en slider (boton teal - abajo en UI)."""
+        # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
+        actual_group_id = self._ft_container.get_selected_group_id()
+        if actual_group_id is not None:
+            self._selected_group_id = actual_group_id
+
+        self._route_on_start_slider(
             str(self._selected_lang),
             self._selected_tags,
             self._selected_group_id

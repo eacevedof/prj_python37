@@ -16,10 +16,10 @@ class LoadHomeDto:
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         lang_code = str(primitives.get("lang_code", ""))
         if not lang_code:
-            lang_code = LanguageCodeEnum.default().value
+            lang_code = LanguageCodeEnum.NL_NL.value
         return cls(lang_code=lang_code)
 
     @classmethod
     def default(cls) -> Self:
         """Crea un DTO con valores por defecto."""
-        return cls(lang_code=LanguageCodeEnum.default().value)
+        return cls(lang_code=LanguageCodeEnum.NL_NL.value)

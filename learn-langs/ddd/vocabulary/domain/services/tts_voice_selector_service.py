@@ -8,7 +8,7 @@ from ddd.vocabulary.domain.enums.language_code_enum import LanguageCodeEnum
 class TtsVoiceSelectorService:
     """Servicio de dominio: selecciona la voz TTS óptima según el idioma."""
 
-    _VOICE_BY_LANG = {
+    _VOICE_BY_LANG: dict[str, str] = {
         LanguageCodeEnum.NL_NL.value: OpenaiTtsVoiceEnum.NOVA.value,
         LanguageCodeEnum.NL_BE.value: OpenaiTtsVoiceEnum.NOVA.value,
         LanguageCodeEnum.EN_US.value: OpenaiTtsVoiceEnum.ALLOY.value,
@@ -23,5 +23,6 @@ class TtsVoiceSelectorService:
     def select(lang_code: str) -> str:
         """Devuelve la voz para el idioma dado (ALLOY por defecto)."""
         return TtsVoiceSelectorService._VOICE_BY_LANG.get(
-            lang_code, OpenaiTtsVoiceEnum.ALLOY.value
+            lang_code,
+            OpenaiTtsVoiceEnum.ALLOY.value
         )

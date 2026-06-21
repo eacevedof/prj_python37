@@ -34,7 +34,7 @@ class HomeViewDto:
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
             language_options=tuple(primitives.get("language_options", []) or []),
-            default_lang_code=str(primitives.get("default_lang_code", LanguageCodeEnum.default().value)),
+            default_lang_code=str(primitives.get("default_lang_code", LanguageCodeEnum.NL_NL.value)),
             selected_lang_code=str(primitives.get("selected_lang_code", "")),
             group_options=tuple(primitives.get("group_options", []) or []),
             selected_group_id=primitives.get("selected_group_id"),
@@ -53,8 +53,8 @@ class HomeViewDto:
                 {"code": lang.value, "display_name": lang.display_name}
                 for lang in LanguageCodeEnum.ui_options()
             ],
-            "default_lang_code": LanguageCodeEnum.default().value,
-            "selected_lang_code": LanguageCodeEnum.default().value,
+            "default_lang_code": LanguageCodeEnum.NL_NL.value,
+            "selected_lang_code": LanguageCodeEnum.NL_NL.value,
             "is_loading": True,
         })
 
@@ -78,7 +78,7 @@ class HomeViewDto:
                 {"code": lang.value, "display_name": lang.display_name}
                 for lang in LanguageCodeEnum.ui_options()
             ],
-            "default_lang_code": LanguageCodeEnum.default().value,
+            "default_lang_code": LanguageCodeEnum.NL_NL.value,
             "selected_lang_code": selected_lang_code,
             "group_options": groups or [],
             "selected_group_id": selected_group_id,
@@ -96,8 +96,8 @@ class HomeViewDto:
                 {"code": lang.value, "display_name": lang.display_name}
                 for lang in LanguageCodeEnum.ui_options()
             ],
-            "default_lang_code": LanguageCodeEnum.default().value,
-            "selected_lang_code": selected_lang_code or LanguageCodeEnum.default().value,
+            "default_lang_code": LanguageCodeEnum.NL_NL.value,
+            "selected_lang_code": selected_lang_code or LanguageCodeEnum.NL_NL.value,
             "is_loading": False,
             "error_message": message,
         })

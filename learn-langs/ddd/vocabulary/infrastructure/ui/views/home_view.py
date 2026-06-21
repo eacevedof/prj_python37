@@ -29,8 +29,9 @@ class HomeView(ft.Container):
         route_on_tag_toggle: Callable[[str], None],        # 4. Tags (render paso 2)
         route_on_start_study: Callable[[], None],          # 5. Botón acción primaria (verde)
         route_on_start_image_study: Callable[[], None],    # 6. Botón acción secundaria (morado)
-        route_on_manage_words: Callable[[], None],         # 7. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],        # 8. Botón gestión grupos (naranja)
+        route_on_start_slider: Callable[[], None],         # 7. Botón slider (teal)
+        route_on_manage_words: Callable[[], None],         # 8. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],        # 9. Botón gestión grupos (naranja)
     ):
         super().__init__()
 
@@ -42,6 +43,7 @@ class HomeView(ft.Container):
         self._route_on_tag_toggle = route_on_tag_toggle
         self._route_on_start_study = route_on_start_study
         self._route_on_start_image_study = route_on_start_image_study
+        self._route_on_start_slider = route_on_start_slider
         self._route_on_manage_words = route_on_manage_words
         self._route_on_manage_groups = route_on_manage_groups
 
@@ -65,6 +67,7 @@ class HomeView(ft.Container):
             route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
             route_on_start_study=primitives.get("on_start_study", lambda: None),
             route_on_start_image_study=primitives.get("on_start_image_study", lambda: None),
+            route_on_start_slider=primitives.get("on_start_slider", lambda: None),
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
             route_on_manage_groups=primitives.get("on_manage_groups", lambda: None),
         )
@@ -175,6 +178,19 @@ class HomeView(ft.Container):
             ),
         )
 
+        slider_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.SLIDESHOW), ft.Text("Slider")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_start_slider(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.TEAL_600,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+        )
+
         manage_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.EDIT), ft.Text("Palabras")],
@@ -238,7 +254,7 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[start_btn, image_study_btn],
+                    controls=[start_btn, image_study_btn, slider_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
