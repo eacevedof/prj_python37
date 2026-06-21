@@ -23,11 +23,12 @@ from ddd.vocabulary.application.start_image_study_session import (
     StartImageStudySessionService,
     ImageStudyWordDto,
 )
-from ddd.vocabulary.application.generate_word_audio_ai import (
-    GenerateWordAudioAiDto,
-    GenerateWordAudioAiService,
+from ddd.vocabulary.application.generate_text_audio_ai import (
+    GenerateTextAudioAiDto,
+    GenerateTextAudioAiService,
 )
-from ddd.vocabulary.infrastructure.repositories import WordsLangReaderSqliteRepository
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.ui.views.image_study_view import ImageStudyView
 from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
@@ -74,8 +75,8 @@ class ImageStudyController(BaseController):
         self._start_session_service = StartImageStudySessionService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
-        self._generate_audio_service = GenerateWordAudioAiService.get_instance()
-        self._words_lang_reader = WordsLangReaderSqliteRepository.get_instance()
+        self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
+        self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
 
         # Vista
         self._ft_container = ImageStudyView.from_primitives({
@@ -119,7 +120,7 @@ class ImageStudyController(BaseController):
                 "lang_code": self._lang_code,
                 "tags": self._tags,
                 "group_id": self._group_id,
-                "limit": 20,
+                "limit": 40,
             })
 
             result = await self._start_session_service(start_dto)
@@ -195,9 +196,13 @@ class ImageStudyController(BaseController):
             )
             self._ft_container.render(dto)
 
-            # Esperar (2s si correcto, 5s si error) y continuar
-            wait_time = 2 if result.is_correct else 5
-            await asyncio.sleep(wait_time)
+            # Al revisar: reproducir el audio del idioma destino y esperar 3s
+            await self._play_text_audio(
+                word.text_lang,
+                self._lang_code,
+                word.word_es_id,
+            )
+            await asyncio.sleep(3)
             self._next_word()
 
         except Exception as e:
@@ -270,75 +275,66 @@ class ImageStudyController(BaseController):
             self._ft_container.render(ImageStudyViewDto.error(str(e)))
 
     async def _async_play_audio(self) -> None:
-        """Genera y reproduce audio de la traducción actual."""
+        """Reproduce el audio del idioma destino de la palabra actual (botón pista).
+
+        Usa el mismo camino que la reproducción automática (gpt-4o-mini-tts con
+        acento), para que el botón suene igual.
+        """
+        if self._current_index >= len(self._words):
+            return
+        word = self._words[self._current_index]
+        await self._play_text_audio(
+            word.text_lang,
+            self._lang_code,
+            word.word_es_id,
+        )
+
+    async def _async_play_source_audio(self) -> None:
+        """Reproduce el audio en español de la palabra actual (al aparecer)."""
+        if self._current_index >= len(self._words):
+            return
+        word = self._words[self._current_index]
+        await self._play_text_audio(
+            word.text_es,
+            LanguageCodeEnum.ES_ES.value,
+            word.word_es_id,
+        )
+
+    async def _play_text_audio(self, text: str, lang_code: str, word_id: int) -> None:
+        """Genera (o reutiliza de cache) y reproduce el audio de un texto."""
+        if not text:
+            return
         try:
-            # Obtener palabra actual
-            if self._current_index >= len(self._words):
-                return
-
-            word = self._words[self._current_index]
-
-            # Buscar word_lang_id usando word_es_id + lang_code
-            word_lang = await self._words_lang_reader.get_by_word_and_lang(
-                word.word_es_id,
-                self._lang_code
-            )
-
-            if not word_lang:
-                self._logger.log_info(
-                    "ImageStudyController",
-                    f"No se encontró traducción para word_es_id={word.word_es_id}, lang={self._lang_code}",
-                )
-                return
-
-            # Generar audio si no existe
-            audio_dto = GenerateWordAudioAiDto.from_primitives({
-                "word_lang_id": word_lang["id"],
-                "text": word.text_lang,
-                "lang_code": self._lang_code,
+            audio_dto = GenerateTextAudioAiDto.from_primitives({
+                "text": text,
+                "lang_code": lang_code,
+                "word_id": word_id,
             })
-
-            result = await self._generate_audio_service(audio_dto)
-
+            result = await self._generate_text_audio_service(audio_dto)
             if not result.success:
                 self._logger.log_error(
                     "ImageStudyController",
                     f"Error generando audio: {result.error_message}",
                 )
                 return
-
-            # Reproducir audio con pygame.mixer en thread separado
-            def _play_audio_sync(audio_path: str) -> None:
-                """Reproduce audio de forma sincrónica usando pygame."""
-                try:
-                    # Inicializar mixer si no está inicializado
-                    if not pygame.mixer.get_init():
-                        pygame.mixer.init()
-
-                    # Cargar y reproducir
-                    pygame.mixer.music.load(str(Path(audio_path).resolve()))
-                    pygame.mixer.music.play()
-
-                    # Esperar a que termine
-                    while pygame.mixer.music.get_busy():
-                        pygame.time.Clock().tick(10)
-
-                    # IMPORTANTE: Liberar el archivo para que pueda ser sobrescrito
-                    pygame.mixer.music.unload()
-                except Exception as e:
-                    raise Exception(f"Error reproduciendo audio con pygame: {e}")
-
-            await asyncio.to_thread(_play_audio_sync, result.audio_path)
-
+            await asyncio.to_thread(self._play_audio_file, result.audio_path)
         except Exception as e:
             self._logger.log_error(
                 "ImageStudyController",
                 f"Error reproduciendo audio: {e}",
-                {
-                    "current_index": self._current_index,
-                    "lang_code": self._lang_code,
-                },
+                {"text": text, "lang_code": lang_code},
             )
+
+    @staticmethod
+    def _play_audio_file(audio_path: str) -> None:
+        """Reproduce un mp3 de forma sincrónica con pygame (en thread aparte)."""
+        if not pygame.mixer.get_init():
+            pygame.mixer.init()
+        pygame.mixer.music.load(str(Path(audio_path).resolve()))
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        pygame.mixer.music.unload()
 
     # =========================================================================
     # EVENT HANDLERS (orden visual/lógico en UI: flashcard → input → timer → back)
@@ -399,6 +395,9 @@ class ImageStudyController(BaseController):
         )
         self._ft_container.render(dto)
 
+        # Reproducir el audio en español en cuanto aparece la palabra
+        self._ft_container.page.run_task(self._async_play_source_audio)
+
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesion completada y finaliza via servicio."""
         self._is_session_complete = True
@@ -422,8 +421,20 @@ class ImageStudyController(BaseController):
             "text_es": word.text_es,
             "text_lang": word.text_lang,
             "word_type": word.word_type,
-            "pronunciation": word.pronunciation,
+            "pronunciation": self._pronunciation_for(word),
             "image_file_path": word.image_file_path,
             "image_mime_type": word.image_mime_type,
             "image_caption": word.image_caption,
         }
+
+    def _pronunciation_for(self, word: ImageStudyWordDto) -> str:
+        """Pronunciación escrita: para neerlandés, aproximación leíble en español
+        (igual que en el slider). Otros idiomas usan la pronunciación de BD.
+        """
+        is_dutch = self._lang_code in (
+            LanguageCodeEnum.NL_NL.value,
+            LanguageCodeEnum.NL_BE.value,
+        )
+        if is_dutch:
+            return self._dutch_phonetic_service.transcribe(word.text_lang)
+        return word.pronunciation

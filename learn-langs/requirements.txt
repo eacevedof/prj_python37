@@ -54,6 +54,10 @@ pyperclip~=1.11.0
 # Used in: ddd/vocabulary/infrastructure/controllers/study_controller.py
 pygame~=2.6.1
 
+# pycaw - Windows master volume control (Core Audio)
+# Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
+pycaw~=20251023
+
 # ============================================================================
 # DEVELOPMENT TOOLS
 # ============================================================================

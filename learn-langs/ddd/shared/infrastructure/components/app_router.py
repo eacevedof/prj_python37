@@ -4,6 +4,7 @@ import flet as ft
 from typing import Any
 
 from ddd.shared.domain.enums import ControllerRouteEnum
+from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.controllers import (
     HomeController,
     CreateWordController,
@@ -11,12 +12,16 @@ from ddd.vocabulary.infrastructure.controllers import (
     ListWordsController,
     StudyController,
     ImageStudyController,
+    WordSliderController,
     ManageWordGroupsController,
 )
 
 
 class AppRouter:
     """Maneja la navegacion entre vistas."""
+
+    # Idioma destino por defecto cuando la navegacion no especifica uno
+    _DEFAULT_LANG_CODE: str = LanguageCodeEnum.NL_NL.value
 
     def __init__(
         self,
@@ -66,6 +71,12 @@ class AppRouter:
                     tags=tags,
                     group_id=group_id,
                 ),
+                route_on_start_slider=lambda lang, tags, group_id: self.navigate_to(
+                    ControllerRouteEnum.WORD_SLIDER,
+                    lang_code=lang,
+                    tags=tags,
+                    group_id=group_id,
+                ),
                 route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
                 ),
@@ -77,7 +88,7 @@ class AppRouter:
 
         if route_name == ControllerRouteEnum.STUDY:
             controller = StudyController(
-                lang_code=kwargs.get("lang_code", "nl_NL"),
+                lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
                 tags=kwargs.get("tags", []),
                 group_id=kwargs.get("group_id"),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
@@ -86,7 +97,16 @@ class AppRouter:
 
         if route_name == ControllerRouteEnum.IMAGE_STUDY:
             controller = ImageStudyController(
-                lang_code=kwargs.get("lang_code", "nl_NL"),
+                lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
+                tags=kwargs.get("tags", []),
+                group_id=kwargs.get("group_id"),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.WORD_SLIDER:
+            controller = WordSliderController(
+                lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
                 tags=kwargs.get("tags", []),
                 group_id=kwargs.get("group_id"),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),

@@ -3,6 +3,7 @@ from ddd.vocabulary.domain.enums.study_mode_enum import StudyModeEnum
 from ddd.vocabulary.domain.enums.relation_type_enum import RelationTypeEnum
 from ddd.vocabulary.domain.enums.image_source_enum import ImageSourceEnum
 from ddd.vocabulary.domain.enums.language_code_enum import LanguageCodeEnum
+from ddd.vocabulary.domain.enums.tts_accent_enum import TtsAccentEnum
 
 __all__ = [
     "WordTypeEnum",
@@ -10,4 +11,5 @@ __all__ = [
     "RelationTypeEnum",
     "ImageSourceEnum",
     "LanguageCodeEnum",
+    "TtsAccentEnum",
 ]

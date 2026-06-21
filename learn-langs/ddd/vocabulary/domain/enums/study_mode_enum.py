@@ -9,3 +9,4 @@ class StudyModeEnum(str, Enum):
     TYPING = "TYPING"           # Usuario escribe la traducción
     PRESENTATION = "PRESENTATION"  # Solo visualización, Enter para continuar
     IMAGE_TYPING = "IMAGE_TYPING"  # Usuario ve imagen y escribe traducción
+    SLIDER = "SLIDER"           # Presentación auto-reproducida con audio ES/idioma

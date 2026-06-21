@@ -11,6 +11,7 @@ class ControllerRouteEnum(StrEnum):
     HOME = "home"
     STUDY = "study"
     IMAGE_STUDY = "image_study"
+    WORD_SLIDER = "word_slider"
     WORDS = "words"
     WORD_GROUPS = "word_groups"
     CREATE_WORD = "create_word"

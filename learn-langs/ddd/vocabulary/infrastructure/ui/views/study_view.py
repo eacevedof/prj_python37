@@ -234,6 +234,7 @@ class StudyView(ft.Container):
                 word_type=word.get("word_type", ""),
                 pronunciation=word.get("pronunciation", ""),
                 show_translation=False,
+                word_id=word.get("word_es_id", ""),
             )
 
             self._logger.log_debug("StudyView._render_studying", "Creando InputFieldComp")

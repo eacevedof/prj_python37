@@ -1,4 +1,5 @@
 from ddd.vocabulary.infrastructure.repositories.words_es_reader_sqlite_repository import WordsEsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_pagination_reader_sqlite_repository import WordsPaginationReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_es_writer_sqlite_repository import WordsEsWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_lang_reader_sqlite_repository import WordsLangReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_lang_writer_sqlite_repository import WordsLangWriterSqliteRepository
@@ -19,6 +20,7 @@ from ddd.vocabulary.infrastructure.repositories.languages_reader_sqlite_reposito
 
 __all__ = [
     "WordsEsReaderSqliteRepository",
+    "WordsPaginationReaderSqliteRepository",
     "WordsEsWriterSqliteRepository",
     "WordsLangReaderSqliteRepository",
     "WordsLangWriterSqliteRepository",

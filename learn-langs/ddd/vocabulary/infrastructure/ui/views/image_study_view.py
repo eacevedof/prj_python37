@@ -187,6 +187,7 @@ class ImageStudyView(ft.Container):
             text_lang=word.get("text_lang", ""),
             pronunciation=word.get("pronunciation", ""),
             show_translation=False,
+            word_id=word.get("word_es_id", ""),
         )
 
         self._ft_input_field = InputFieldComp(
