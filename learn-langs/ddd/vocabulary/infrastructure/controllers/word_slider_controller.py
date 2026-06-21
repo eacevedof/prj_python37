@@ -49,7 +49,11 @@ class WordSliderController(BaseController):
     _ES_WAIT_SECONDS = 10
     _LANG_WAIT_SECONDS = 8
     _LANG_REPETITIONS = 3
-    _FINAL_PAUSE_SECONDS = 2
+
+    # Fase final (refuerzo español + idioma destino)
+    _FINAL_REPETITIONS = 3
+    _FINAL_ES_TO_LANG_WAIT_SECONDS = 3   # tras el español, antes del idioma destino
+    _FINAL_PAUSE_SECONDS = 4             # tras el idioma destino
 
     # =========================================================================
     # CONSTRUCCIÓN
@@ -179,17 +183,25 @@ class WordSliderController(BaseController):
             if not await self._wait(self._LANG_WAIT_SECONDS):
                 return
 
-        # Fase 3: Español + idioma destino (refuerzo final)
-        self._render_phase(
-            word, show_translation=True, phase_label=f"🔊 Español + {lang_name}"
-        )
-        await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, f"es_{word.word_es_id}")
-        if self._is_stopped:
-            return
-        await self._play_text_audio(
-            word.text_lang, self._lang_code, f"{self._lang_code}_{word.word_es_id}"
-        )
-        await self._wait(self._FINAL_PAUSE_SECONDS)
+        # Fase 3: Español + idioma destino (refuerzo final, x3)
+        for repetition in range(self._FINAL_REPETITIONS):
+            if self._is_stopped:
+                return
+            self._render_phase(
+                word,
+                show_translation=True,
+                phase_label=f"🔊 Español + {lang_name} ({repetition + 1}/{self._FINAL_REPETITIONS})",
+            )
+            await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, f"es_{word.word_es_id}")
+            # Tras el español, esperar antes de pronunciar el idioma destino
+            if not await self._wait(self._FINAL_ES_TO_LANG_WAIT_SECONDS):
+                return
+            await self._play_text_audio(
+                word.text_lang, self._lang_code, f"{self._lang_code}_{word.word_es_id}"
+            )
+            # Tras el idioma destino, pausa antes de la siguiente repetición / palabra
+            if not await self._wait(self._FINAL_PAUSE_SECONDS):
+                return
 
     async def _async_finish_session(self) -> None:
         """Finaliza la sesión via servicio."""
@@ -302,6 +314,7 @@ class WordSliderController(BaseController):
             total_words=len(self._words),
             current_index=self._current_index,
             current_word={
+                "word_es_id": word.word_es_id,
                 "text_es": word.text_es,
                 "text_lang": word.text_lang,
                 "pronunciation": word.pronunciation,

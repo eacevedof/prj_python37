@@ -159,9 +159,9 @@ class WordSliderView(ft.Container):
             self._ft_content_area.controls.clear()
             self._ft_content_area.controls.extend([
                 ft.Container(height=20),
-                ft.Container(
-                    content=self._ft_slider_card,
-                    alignment=ft.Alignment.CENTER,
+                ft.Row(
+                    controls=[self._ft_slider_card],
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ])
             self._is_card_mounted = True
@@ -174,6 +174,7 @@ class WordSliderView(ft.Container):
             phase_label=dto.phase_label,
             word_key=str(dto.current_index),
             image_file_path=word.get("image_file_path", ""),
+            word_id=word.get("word_es_id", ""),
         )
 
     def _render_no_words(self) -> None:

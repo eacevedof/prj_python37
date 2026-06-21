@@ -4,26 +4,23 @@ from pathlib import Path
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
+
 
 class SliderCardComp(ft.Container):
     """
     Tarjeta del slider, pensada para verse a distancia (modo kiosko).
 
     Responsabilidades:
-    - Mostrar la imagen de la palabra (si existe)
+    - Mostrar la imagen de la palabra (si existe), a la izquierda
     - Mostrar la palabra en español en MUY grande, animada al cambiar de palabra
     - Revelar la traducción y pronunciación en la fase del idioma destino
     - Indicar visualmente la fase de reproducción actual (audio)
     - NO tiene lógica de negocio
-    """
 
-    # Tamaños grandes para lectura a ~5 metros
-    _PHASE_SIZE = 30
-    _WORD_SIZE = 120
-    _TRANSLATION_SIZE = 96
-    _PRONUNCIATION_SIZE = 36
-    _IMAGE_WIDTH = 380
-    _IMAGE_HEIGHT = 320
+    Layout horizontal (imagen | texto) para aprovechar el ancho de la ventana
+    y evitar que el contenido se corte en alto.
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -34,17 +31,25 @@ class SliderCardComp(ft.Container):
         # Etiqueta de fase (qué se está pronunciando)
         self._ft_phase_label = ft.Text(
             "",
-            size=self._PHASE_SIZE,
+            size=SliderCardSizeEnum.PHASE.value,
             weight=ft.FontWeight.W_500,
             color=ft.Colors.BLUE_700,
             text_align=ft.TextAlign.CENTER,
         )
 
-        # Imagen de la palabra (opcional)
+        # Id de la palabra (pequeño, para depurar qué audio no se generó/suena)
+        self._ft_word_id = ft.Text(
+            "",
+            size=16,
+            color=ft.Colors.GREY_400,
+            weight=ft.FontWeight.W_500,
+        )
+
+        # Imagen de la palabra (opcional) - a la izquierda
         self._ft_image = ft.Image(
             src="",
-            width=self._IMAGE_WIDTH,
-            height=self._IMAGE_HEIGHT,
+            width=SliderCardSizeEnum.IMAGE.value,
+            height=SliderCardSizeEnum.IMAGE.value,
             fit=ft.BoxFit.CONTAIN,
             border_radius=12,
         )
@@ -67,7 +72,7 @@ class SliderCardComp(ft.Container):
         # Traducción y pronunciación (se revelan en la fase del idioma destino)
         self._ft_translation = ft.Text(
             "",
-            size=self._TRANSLATION_SIZE,
+            size=SliderCardSizeEnum.TRANSLATION.value,
             weight=ft.FontWeight.BOLD,
             color=ft.Colors.GREEN_700,
             text_align=ft.TextAlign.CENTER,
@@ -75,23 +80,47 @@ class SliderCardComp(ft.Container):
         )
         self._ft_pronunciation = ft.Text(
             "",
-            size=self._PRONUNCIATION_SIZE,
+            size=SliderCardSizeEnum.PRONUNCIATION.value,
             italic=True,
             color=ft.Colors.GREY_600,
             text_align=ft.TextAlign.CENTER,
             visible=False,
         )
 
-        self.content = ft.Column(
+        # Columna de texto (palabra ES + traducción + pronunciación) - a la derecha
+        self._ft_text_column = ft.Column(
             controls=[
-                self._ft_phase_label,
-                ft.Container(height=16),
-                self._ft_image_container,
-                ft.Container(height=16),
                 self._ft_word_switcher,
-                ft.Container(height=18),
+                ft.Container(height=12),
                 self._ft_translation,
                 self._ft_pronunciation,
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=0,
+            expand=True,
+        )
+
+        # Cuerpo horizontal: imagen | texto (aprovecha el ancho de la ventana)
+        self._ft_body_row = ft.Row(
+            controls=[
+                self._ft_image_container,
+                self._ft_text_column,
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=48,
+        )
+
+        self.content = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[ft.Container(expand=True), self._ft_word_id],
+                    alignment=ft.MainAxisAlignment.END,
+                ),
+                self._ft_phase_label,
+                ft.Container(height=16),
+                self._ft_body_row,
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,
@@ -101,7 +130,7 @@ class SliderCardComp(ft.Container):
         self.padding = 40
         self.border_radius = 20
         self.bgcolor = ft.Colors.BLUE_50
-        self.width = 820
+        self.expand = True
 
     def render(
         self,
@@ -112,9 +141,11 @@ class SliderCardComp(ft.Container):
         phase_label: str,
         word_key: str,
         image_file_path: str = "",
+        word_id: int | str = "",
     ) -> None:
         """Actualiza la tarjeta. Anima/actualiza la imagen solo al cambiar de palabra."""
         self._ft_phase_label.value = phase_label
+        self._ft_word_id.value = f"#{word_id}" if word_id != "" else ""
 
         # Animar la palabra ES y refrescar imagen solo cuando cambia la palabra
         if word_key != self._current_key:
@@ -122,7 +153,7 @@ class SliderCardComp(ft.Container):
             self._ft_word_switcher.content = ft.Text(
                 text_es,
                 key=word_key,
-                size=self._WORD_SIZE,
+                size=SliderCardSizeEnum.WORD.value,
                 weight=ft.FontWeight.BOLD,
                 color=ft.Colors.BLUE_900,
                 text_align=ft.TextAlign.CENTER,
