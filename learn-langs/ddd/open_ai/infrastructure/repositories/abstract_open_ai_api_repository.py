@@ -9,7 +9,7 @@ from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
 from ddd.open_ai.domain.exceptions.open_ai_exception import OpenAIException
 
-
+# https://platform.openai.com/settings/organization/usage
 class AbstractOpenAIApiRepository(ABC):
     """
     Repositorio abstracto base para todas las comunicaciones con OpenAI API.
