@@ -166,7 +166,7 @@ class WordSliderController(BaseController):
 
         # Fase 1: Español -> espera 10s
         self._render_phase(word, show_translation=False, phase_label="🔊 Español")
-        await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, f"es_{word.word_es_id}")
+        await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, word.word_es_id)
         if not await self._wait(self._ES_WAIT_SECONDS):
             return
 
@@ -180,7 +180,7 @@ class WordSliderController(BaseController):
                 phase_label=f"🔊 {lang_name} ({repetition + 1}/{self._LANG_REPETITIONS})",
             )
             await self._play_text_audio(
-                word.text_lang, self._lang_code, f"{self._lang_code}_{word.word_es_id}"
+                word.text_lang, self._lang_code, word.word_es_id
             )
             if not await self._wait(self._LANG_WAIT_SECONDS):
                 return
@@ -194,12 +194,12 @@ class WordSliderController(BaseController):
                 show_translation=True,
                 phase_label=f"🔊 Español + {lang_name} ({repetition + 1}/{self._FINAL_REPETITIONS})",
             )
-            await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, f"es_{word.word_es_id}")
+            await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, word.word_es_id)
             # Tras el español, esperar antes de pronunciar el idioma destino
             if not await self._wait(self._FINAL_ES_TO_LANG_WAIT_SECONDS):
                 return
             await self._play_text_audio(
-                word.text_lang, self._lang_code, f"{self._lang_code}_{word.word_es_id}"
+                word.text_lang, self._lang_code, word.word_es_id
             )
             # Tras el idioma destino, pausa antes de la siguiente repetición / palabra
             if not await self._wait(self._FINAL_PAUSE_SECONDS):
@@ -221,7 +221,7 @@ class WordSliderController(BaseController):
                 {"session_id": self._session_id},
             )
 
-    async def _play_text_audio(self, text: str, lang_code: str, cache_key: str) -> None:
+    async def _play_text_audio(self, text: str, lang_code: str, word_id: int) -> None:
         """Genera (o reutiliza) y reproduce el audio de un texto."""
         if self._is_stopped or not text:
             return
@@ -230,7 +230,7 @@ class WordSliderController(BaseController):
             audio_dto = GenerateTextAudioAiDto.from_primitives({
                 "text": text,
                 "lang_code": lang_code,
-                "cache_key": cache_key,
+                "word_id": word_id,
             })
             result = await self._generate_audio_service(audio_dto)
 

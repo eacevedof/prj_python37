@@ -16,7 +16,7 @@ from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_dt
 from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_result_dto import (
     GenerateTextAudioAiResultDto,
 )
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.enums import TtsAccentEnum
 from ddd.vocabulary.domain.services import TtsVoiceSelectorService
 
 
@@ -29,21 +29,9 @@ class GenerateTextAudioAiService:
     español como la traducción del idioma destino.
     """
 
-    # Acento por idioma: si hay instrucción, se genera con gpt-4o-mini-tts
-    # (tts-1 no permite controlar el acento). El español suena de España
-    # (castellano peninsular); el neerlandés, de Países Bajos (Standaardnederlands /
-    # ABN, acento neutro Randstad/Haarlem, no flamenco/belga).
-    _ACCENT_INSTRUCTIONS_BY_LANG: dict[str, str] = {
-        LanguageCodeEnum.ES_ES.value: (
-            "Habla en español de España, con acento castellano peninsular. "
-            "No uses acento latinoamericano."
-        ),
-        LanguageCodeEnum.NL_NL.value: (
-            "Spreek Standaardnederlands (ABN) zoals in Nederland, "
-            "met het neutrale Randstad/Haarlem-accent. "
-            "Gebruik geen Vlaams of Belgisch accent."
-        ),
-    }
+    # Los acentos disponibles están enumerados en TtsAccentEnum (idioma + etiqueta
+    # de fichero + instrucción). Si un idioma tiene acento -> gpt-4o-mini-tts;
+    # si no -> tts-1 (sin control de acento).
 
     _instance: "GenerateTextAudioAiService | None" = None
 
@@ -56,6 +44,16 @@ class GenerateTextAudioAiService:
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
+
+    def _build_filename(self, word_id: int, lang_code: str) -> str:
+        """Nombre autodocumentado del audio: word-<id>-<lang>-<accent>.mp3.
+
+        Incluir el acento en el nombre hace la caché autoinvalidante: si cambia
+        el acento configurado, cambia el nombre y el audio se regenera solo.
+        """
+        accent = TtsAccentEnum.for_lang(lang_code)
+        accent_label = accent.label if accent else lang_code.lower().replace("_", "-")
+        return f"word-{word_id}-{accent_label}.mp3"
 
     async def __call__(
         self,
@@ -72,17 +70,17 @@ class GenerateTextAudioAiService:
         """
         text_to_generate = generate_text_audio_ai_dto.text
         lang_code = generate_text_audio_ai_dto.lang_code
-        cache_key = generate_text_audio_ai_dto.cache_key
+        word_id = generate_text_audio_ai_dto.word_id
 
         if not text_to_generate:
             return GenerateTextAudioAiResultDto.error("No hay texto para generar audio")
 
-        if not cache_key:
-            return GenerateTextAudioAiResultDto.error("Se requiere cache_key")
+        if word_id <= 0:
+            return GenerateTextAudioAiResultDto.error("Se requiere word_id")
 
-        # Reutilizar audio cacheado si existe
+        # Reutilizar audio cacheado si existe (nombre con id + idioma + acento)
         audio_dir = Path("data/audio")
-        audio_path = audio_dir / f"{cache_key}.mp3"
+        audio_path = audio_dir / self._build_filename(word_id, lang_code)
 
         if audio_path.exists():
             return GenerateTextAudioAiResultDto.ok(
@@ -101,7 +99,8 @@ class GenerateTextAudioAiService:
                 speed = 1.0
 
             # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
-            instructions = self._ACCENT_INSTRUCTIONS_BY_LANG.get(lang_code, "")
+            accent = TtsAccentEnum.for_lang(lang_code)
+            instructions = accent.instructions if accent else ""
             if instructions:
                 model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
             else:

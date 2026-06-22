@@ -190,9 +190,11 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
             INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
             INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
             {group_join}
-            LEFT JOIN word_es_images img ON we.id = img.word_es_id
-                AND img.is_primary = 1
-                AND img.is_active = 1
+            LEFT JOIN word_es_images img ON img.word_es_id = we.id
+                AND img.id = (
+                    SELECT MAX(i2.id) FROM word_es_images i2
+                    WHERE i2.word_es_id = we.id AND i2.is_active = 1
+                )
             LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
             WHERE 1=1
             {group_where}
@@ -238,9 +240,11 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
             FROM words_es we
             INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
             {group_join}
-            LEFT JOIN word_es_images img ON we.id = img.word_es_id
-                AND img.is_primary = 1
-                AND img.is_active = 1
+            LEFT JOIN word_es_images img ON img.word_es_id = we.id
+                AND img.id = (
+                    SELECT MAX(i2.id) FROM word_es_images i2
+                    WHERE i2.word_es_id = we.id AND i2.is_active = 1
+                )
             LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
             WHERE 1=1
             {group_where}

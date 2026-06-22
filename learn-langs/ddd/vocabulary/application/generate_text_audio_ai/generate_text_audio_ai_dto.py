@@ -9,13 +9,14 @@ class GenerateTextAudioAiDto:
     """DTO de entrada para generar audio de un texto arbitrario con IA.
 
     A diferencia de GenerateWordAudioAiDto (acoplado a word_lang_id en BD),
-    este DTO solo necesita texto + idioma + una clave de cache. Permite
-    generar audio del origen español (que no tiene fila en words_lang).
+    este DTO solo necesita texto + idioma + id de palabra. El servicio deriva
+    el nombre de fichero (con el acento), por lo que permite generar audio del
+    origen español (que no tiene fila en words_lang).
     """
 
     text: str = ""
     lang_code: str = ""
-    cache_key: str = ""
+    word_id: int = 0
     voice: str | None = None
     speed: float = 1.0
 
@@ -24,7 +25,7 @@ class GenerateTextAudioAiDto:
         return cls(
             text=str(primitives.get("text", "")).strip(),
             lang_code=str(primitives.get("lang_code", "")).strip(),
-            cache_key=str(primitives.get("cache_key", "")).strip(),
+            word_id=int(primitives.get("word_id", 0)),
             voice=primitives.get("voice"),
             speed=float(primitives.get("speed", 1.0)),
         )

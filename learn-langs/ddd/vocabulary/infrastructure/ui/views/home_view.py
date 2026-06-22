@@ -152,17 +152,15 @@ class HomeView(ft.Container):
         )
 
         # Botones de acción
+        # "Comenzar estudio" es de uso poco frecuente: pequeño y al final (junto a gestión)
         start_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Comenzar estudio")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             on_click=lambda _: self._route_on_start_study(),
-            style=ft.ButtonStyle(
-                bgcolor=ft.Colors.GREEN_600,
-                color=ft.Colors.WHITE,
-                padding=20,
-            ),
+            bgcolor=ft.Colors.GREEN_600,
+            color=ft.Colors.WHITE,
         )
 
         image_study_btn = ft.ElevatedButton(
@@ -254,13 +252,13 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[start_btn, image_study_btn, slider_btn],
+                    controls=[image_study_btn, slider_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
                 ft.Container(height=10),
                 ft.Row(
-                    controls=[manage_btn, manage_groups_btn],
+                    controls=[manage_btn, manage_groups_btn, start_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
