@@ -113,7 +113,7 @@ class StudyController(BaseController):
                 "study_mode": "TYPING",
                 "tags": self._tags,
                 "group_id": self._group_id,
-                "limit": 20,
+                "limit": 40,
             })
 
             result = await self._start_session_service(start_dto)

@@ -116,7 +116,7 @@ class WordSliderController(BaseController):
                 "lang_code": self._lang_code,
                 "tags": self._tags,
                 "group_id": self._group_id,
-                "limit": 20,
+                "limit": 1000,  # todas las palabras/imágenes del grupo (tope alto)
             })
 
             result = await self._start_session_service(start_dto)

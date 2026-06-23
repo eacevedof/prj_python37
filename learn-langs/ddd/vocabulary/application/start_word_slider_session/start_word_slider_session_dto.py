@@ -32,7 +32,7 @@ class StartWordSliderSessionDto:
         if not self.lang_code:
             errors.append("'lang_code' is required")
 
-        if self.limit < 1 or self.limit > 100:
-            errors.append("'limit' must be between 1 and 100")
+        if self.limit < 1 or self.limit > 1000:
+            errors.append("'limit' must be between 1 and 1000")
 
         return errors
