@@ -28,6 +28,7 @@ from ddd.vocabulary.application.generate_text_audio_ai import (
     GenerateTextAudioAiService,
 )
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.ui.views.image_study_view import ImageStudyView
 from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
@@ -75,6 +76,7 @@ class ImageStudyController(BaseController):
         self._record_answer_service = RecordAnswerService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
         self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
+        self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
 
         # Vista
         self._ft_container = ImageStudyView.from_primitives({
@@ -419,8 +421,20 @@ class ImageStudyController(BaseController):
             "text_es": word.text_es,
             "text_lang": word.text_lang,
             "word_type": word.word_type,
-            "pronunciation": word.pronunciation,
+            "pronunciation": self._pronunciation_for(word),
             "image_file_path": word.image_file_path,
             "image_mime_type": word.image_mime_type,
             "image_caption": word.image_caption,
         }
+
+    def _pronunciation_for(self, word: ImageStudyWordDto) -> str:
+        """Pronunciación escrita: para neerlandés, aproximación leíble en español
+        (igual que en el slider). Otros idiomas usan la pronunciación de BD.
+        """
+        is_dutch = self._lang_code in (
+            LanguageCodeEnum.NL_NL.value,
+            LanguageCodeEnum.NL_BE.value,
+        )
+        if is_dutch:
+            return self._dutch_phonetic_service.transcribe(word.text_lang)
+        return word.pronunciation
