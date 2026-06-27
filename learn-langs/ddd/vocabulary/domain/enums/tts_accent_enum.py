@@ -29,11 +29,6 @@ class TtsAccentEnum(Enum):
         "Habla en español de España, con acento castellano peninsular. "
         "No uses acento latinoamericano.",
     )
-    ES_ANDALUZ = (
-        LanguageCodeEnum.ES_ES.value,
-        "es-es-andaluz",
-        "Habla español de España con acento andaluz del sur.",
-    )
 
     # ── Neerlandés de Países Bajos (activo: NL_HAARLEM) ──────────────────────
     NL_HAARLEM = (
