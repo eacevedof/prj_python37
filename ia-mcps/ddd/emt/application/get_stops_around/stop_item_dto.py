@@ -24,7 +24,12 @@ class StopItemDto:
             lines = [str(line.get("line", "")) for line in lines_raw if line]
 
         return cls(
-            stop_id=str(primitives.get("stop", "")),
+            stop_id=str(
+                primitives.get("stopId")
+                or primitives.get("stop")
+                or primitives.get("node")
+                or ""
+            ),
             stop_name=str(primitives.get("stopName", "")),
             latitude=float(coordinates[1]) if len(coordinates) > 1 else 0.0,
             longitude=float(coordinates[0]) if coordinates else 0.0,

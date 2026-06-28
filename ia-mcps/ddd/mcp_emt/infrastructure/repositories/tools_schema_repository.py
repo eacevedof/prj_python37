@@ -44,16 +44,20 @@ class ToolsSchemaRepository:
     def _get_lines_info_schema(self) -> Tool:
         return Tool(
             name=ToolNameEnum.GET_LINES_INFO.value,
-            description="get information about all EMT Madrid bus lines",
+            description="get information about a specific EMT Madrid bus line",
             inputSchema={
                 "type": "object",
                 "properties": {
+                    "line_id": {
+                        "type": "string",
+                        "description": "the bus line ID (e.g., '105', 'C1')",
+                    },
                     "date": {
                         "type": "string",
-                        "description": "date in YYYYMMDD format to get lines for that date (optional)",
+                        "description": "date in YYYYMMDD format (optional, defaults to today)",
                     },
                 },
-                "required": [],
+                "required": ["line_id"],
             },
         )
 

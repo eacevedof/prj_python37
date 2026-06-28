@@ -14,6 +14,7 @@ class EmtApiRepository:
     API docs: https://apidocs.emtmadrid.es/
     """
 
+    _api_host: str = "https://openapi.emtmadrid.es"
     _api_base_url: str = "https://openapi.emtmadrid.es/v2"
     _access_token: str | None = None
 
@@ -38,11 +39,10 @@ class EmtApiRepository:
             EmtException: If authentication fails.
         """
 
-        url = f"{self._api_base_url}/mobilitylabs/user/login/"
+        url = f"{self._api_host}/v1/mobilitylabs/user/login/"
         headers = {
             "X-ClientId": self._client_id,
             "passKey": self._passkey,
-            "Content-Type": "application/json",
         }
 
         async with aiohttp.ClientSession() as session:
@@ -53,14 +53,15 @@ class EmtApiRepository:
 
                 data = await response.json()
 
-                if data.get("code") != "00":
+                # EMT returns code "00" when it mints a fresh token and "01" when it
+                # reuses/extends the one cached server-side ("Token extend into
+                # control-cache"). Both are valid: success means we got an accessToken.
+                data_items = data.get("data") or [{}]
+                access_token = data_items[0].get("accessToken")
+                if not access_token:
                     EmtException.unauthorized_custom(
                         f"EMT authentication failed: {data.get('description', 'Unknown error')}"
                     )
-
-                access_token = data.get("data", [{}])[0].get("accessToken")
-                if not access_token:
-                    EmtException.unauthorized_custom("EMT authentication failed: No access token in response")
 
                 self._access_token = access_token
                 return access_token
@@ -157,26 +158,24 @@ class EmtApiRepository:
 
     async def get_lines_info(
         self,
-        date: str | None = None,
+        line_id: str,
+        date: str,
     ) -> dict[str, Any]:
-        """Get information about bus lines.
+        """Get information about a specific bus line.
 
         Args:
-            date: Optional date in YYYYMMDD format.
+            line_id: The line ID (e.g., "105", "C1").
+            date: Date in YYYYMMDD format.
 
         Returns:
-            Dict with lines information.
+            Dict with line information.
 
         Raises:
             EmtException: If the request fails.
         """
-        url = f"{self._api_base_url}/transport/busemtmad/lines/info/"
+        url = f"{self._api_host}/v1/transport/busemtmad/lines/{line_id}/info/{date}/"
 
-        body: dict[str, Any] = {}
-        if date:
-            body["date"] = date
-
-        return await self._request("POST", url, json_data=body)
+        return await self._request("GET", url)
 
     async def get_line_detail(
         self,

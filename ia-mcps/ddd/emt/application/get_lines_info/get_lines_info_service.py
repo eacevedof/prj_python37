@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import final, Self
 
 from ddd.emt.application.get_lines_info.get_lines_info_dto import GetLinesInfoDto
@@ -34,8 +35,11 @@ class GetLinesInfoService:
         """
         repository = EmtApiRepository.get_instance()
 
+        date = get_lines_info_dto.date or datetime.now().strftime("%Y%m%d")
+
         response = await repository.get_lines_info(
-            date=get_lines_info_dto.date,
+            line_id=get_lines_info_dto.line_id,
+            date=date,
         )
 
         return GetLinesInfoResultDto.from_primitives(response)
