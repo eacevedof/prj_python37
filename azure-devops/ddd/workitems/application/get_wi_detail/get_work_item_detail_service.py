@@ -1,5 +1,6 @@
 from typing import final, Self, Any
 
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
 from ddd.workitems.application.get_wi_detail.get_work_item_detail_dto import GetWorkItemDetailDto
@@ -13,6 +14,7 @@ class GetWorkItemDetailService:
 
     _work_items_reader_api_repository: WorkItemsReaderApiRepository
     _get_work_item_detail_dto: GetWorkItemDetailDto
+    _project: str
 
     def __init__(self) -> None:
         pass
@@ -29,8 +31,9 @@ class GetWorkItemDetailService:
             WorkItemsException: When work item not found
         """
         self._get_work_item_detail_dto = detail_dto
+        self._project = detail_dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._work_items_reader_api_repository = WorkItemsReaderApiRepository.get_instance(
-            project=detail_dto.project
+            project=self._project
         )
 
         work_item = await self._work_items_reader_api_repository.get_work_item_by_work_item_id(

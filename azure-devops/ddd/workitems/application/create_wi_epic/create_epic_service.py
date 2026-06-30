@@ -1,6 +1,7 @@
 from typing import final, Self, Any
 
 from ddd.shared.infrastructure.components.texter import Texter
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemTypeEnum, WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.epics_writer_api_repository import EpicsWriterApiRepository
 from ddd.workitems.application.create_wi_epic.create_epic_dto import CreateEpicDto
@@ -14,6 +15,7 @@ class CreateEpicService:
     _texter: Texter
     _epics_writer_api_repository: EpicsWriterApiRepository
     _create_epic_dto: CreateEpicDto
+    _project: str
 
     def __init__(self) -> None:
         self._texter = Texter.get_instance()
@@ -28,8 +30,9 @@ class CreateEpicService:
             WorkItemsException: When epic creation fails
         """
         self._create_epic_dto = create_epic_dto
+        self._project = create_epic_dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._epics_writer_api_repository = EpicsWriterApiRepository.get_instance(
-            project=create_epic_dto.project
+            project=self._project
         )
 
         api_resp_dict = await self.__get_epic_after_creation()
@@ -68,5 +71,5 @@ class CreateEpicService:
             "id": api_resp_dict.get("id", 0),
             "title": api_resp_dict.get("fields", {}).get(WorkItemFieldEnum.TITLE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
-            "project": self._create_epic_dto.project,
+            "project": self._project,
         }

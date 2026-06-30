@@ -2,7 +2,6 @@ import re
 from dataclasses import dataclass
 from typing import Self, Any
 
-from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums.work_item_type_enum import WorkItemTypeEnum
 
 
@@ -29,8 +28,6 @@ class CreateWorkItemDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         project = str(primitives.get("project", "")).strip()
-        if not project:
-            project = EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
 
         raw_type = str(primitives.get("work_item_type", "task")).strip().lower()
         work_item_type = _VALID_TYPES.get(raw_type, WorkItemTypeEnum.TASK.value)

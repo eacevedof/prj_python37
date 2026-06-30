@@ -1,13 +1,11 @@
 from typing import final, Self
 
+from ddd.shared.infrastructure.components.hasher import Hasher
 from ddd.devops.application.get_hashed_passwords.get_hashed_passwords_dto import (
     GetHashedPasswordsDto,
 )
 from ddd.devops.application.get_hashed_passwords.get_hashed_passwords_result_dto import (
     GetHashedPasswordsResultDto,
-)
-from ddd.devops.infrastructure.repositories.password_hasher_repository import (
-    PasswordHasherRepository,
 )
 from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 
@@ -16,10 +14,10 @@ from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 class GetHashedPasswordsService:
     """Service for hashing one or multiple passwords."""
 
-    _password_hasher_repository: PasswordHasherRepository
+    _hasher: Hasher
 
     def __init__(self) -> None:
-        self._password_hasher_repository = PasswordHasherRepository.get_instance()
+        self._hasher = Hasher.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -46,7 +44,7 @@ class GetHashedPasswordsService:
 
         items = []
         for password in password_list:
-            hashed = self._password_hasher_repository.hash_password(password)
+            hashed = self._hasher.get_password_hashed(password)
             items.append(
                 {
                     "password": password,

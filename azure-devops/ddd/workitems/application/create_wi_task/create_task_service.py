@@ -1,6 +1,7 @@
 from typing import final, Self, Any
 
 from ddd.shared.infrastructure.components.texter import Texter
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemTypeEnum, WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.infrastructure.repositories.epics_writer_api_repository import EpicsWriterApiRepository
@@ -19,6 +20,7 @@ class CreateTaskService:
     _epics_writer_api_repository: EpicsWriterApiRepository
     _work_items_reader_api_repository: WorkItemsReaderApiRepository
     _create_task_dto: CreateTaskDto
+    _project: str
 
     def __init__(self) -> None:
         self._texter = Texter.get_instance()
@@ -33,14 +35,15 @@ class CreateTaskService:
             WorkItemsException: When epic not found or task creation fails
         """
         self._create_task_dto = create_task_dto
+        self._project = create_task_dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._tasks_writer_api_repository = TasksWriterApiRepository.get_instance(
-            project=create_task_dto.project
+            project=self._project
         )
         self._epics_writer_api_repository = EpicsWriterApiRepository.get_instance(
-            project=create_task_dto.project
+            project=self._project
         )
         self._work_items_reader_api_repository = WorkItemsReaderApiRepository.get_instance(
-            project=create_task_dto.project
+            project=self._project
         )
 
         epic_url = await self._get_epic_url()
@@ -118,6 +121,6 @@ class CreateTaskService:
             "title": fields.get(WorkItemFieldEnum.TITLE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
             "epic_id": self._create_task_dto.epic_id,
-            "project": self._create_task_dto.project,
+            "project": self._project,
             "due_date": due_date,
         }

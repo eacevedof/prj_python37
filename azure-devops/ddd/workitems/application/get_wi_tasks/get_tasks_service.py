@@ -1,6 +1,7 @@
 import re
 from typing import final, Self, Any
 
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
 from ddd.workitems.application.get_wi_tasks.get_tasks_dto import GetTasksDto
@@ -13,6 +14,7 @@ class GetTasksService:
 
     _work_items_reader_api_repository: WorkItemsReaderApiRepository
     _get_tasks_dto: GetTasksDto
+    _project: str
 
     def __init__(self) -> None:
         pass
@@ -27,8 +29,9 @@ class GetTasksService:
             WorkItemsException: When query fails
         """
         self._get_tasks_dto = get_tasks_dto
+        self._project = get_tasks_dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._work_items_reader_api_repository = WorkItemsReaderApiRepository.get_instance(
-            project=get_tasks_dto.project
+            project=self._project
         )
 
         work_items = await self._query_work_items()

@@ -7,6 +7,7 @@ from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_dto import AdminLocM
 from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_result_dto import (
     AdminLocMysqlResultDto,
 )
+from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 from ddd.devops.infrastructure.repositories import MysqlAdminReaderMysqlRepository
 
 
@@ -43,15 +44,7 @@ class AdminLocMysqlService:
             case MysqlActionEnum.EXECUTE_QUERY.value:
                 return await self._execute_query(dto.database, dto.query)
             case _:
-                return AdminLocMysqlResultDto.from_primitives(
-                    {
-                        "action": dto.action,
-                        "success": False,
-                        "message": f"Unknown action: {dto.action}. Valid actions: list_databases, show_tables, describe_table, execute_query",
-                        "data": [],
-                        "row_count": 0,
-                    }
-                )
+                raise DevOpsException.unknown_action(dto.action)
 
     async def _list_databases(self) -> AdminLocMysqlResultDto:
         result = await self._mysql_admin_reader_mysql_repository.execute_query(
@@ -70,15 +63,7 @@ class AdminLocMysqlService:
 
     async def _show_tables(self, database: str) -> AdminLocMysqlResultDto:
         if not database:
-            return AdminLocMysqlResultDto.from_primitives(
-                {
-                    "action": MysqlActionEnum.SHOW_TABLES.value,
-                    "success": False,
-                    "message": "Database name is required for show_tables action",
-                    "data": [],
-                    "row_count": 0,
-                }
-            )
+            raise DevOpsException.database_required(MysqlActionEnum.SHOW_TABLES.value)
 
         result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,
@@ -98,26 +83,10 @@ class AdminLocMysqlService:
         self, database: str, table: str
     ) -> AdminLocMysqlResultDto:
         if not database:
-            return AdminLocMysqlResultDto.from_primitives(
-                {
-                    "action": MysqlActionEnum.DESCRIBE_TABLE.value,
-                    "success": False,
-                    "message": "Database name is required for describe_table action",
-                    "data": [],
-                    "row_count": 0,
-                }
-            )
+            raise DevOpsException.database_required(MysqlActionEnum.DESCRIBE_TABLE.value)
 
         if not table:
-            return AdminLocMysqlResultDto.from_primitives(
-                {
-                    "action": MysqlActionEnum.DESCRIBE_TABLE.value,
-                    "success": False,
-                    "message": "Table name is required for describe_table action",
-                    "data": [],
-                    "row_count": 0,
-                }
-            )
+            raise DevOpsException.table_required(MysqlActionEnum.DESCRIBE_TABLE.value)
 
         result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,
@@ -135,15 +104,7 @@ class AdminLocMysqlService:
 
     async def _execute_query(self, database: str, query: str) -> AdminLocMysqlResultDto:
         if not query:
-            return AdminLocMysqlResultDto.from_primitives(
-                {
-                    "action": MysqlActionEnum.EXECUTE_QUERY.value,
-                    "success": False,
-                    "message": "Query is required for execute_query action",
-                    "data": [],
-                    "row_count": 0,
-                }
-            )
+            raise DevOpsException.query_required(MysqlActionEnum.EXECUTE_QUERY.value)
 
         result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,

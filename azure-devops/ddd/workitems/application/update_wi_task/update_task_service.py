@@ -1,6 +1,7 @@
 from typing import final, Self, Any
 
 from ddd.shared.infrastructure.components.texter import Texter
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.application.update_wi_task.update_task_dto import UpdateTaskDto
@@ -14,6 +15,7 @@ class UpdateTaskService:
     _texter: Texter
     _tasks_writer_api_repository: TasksWriterApiRepository
     _update_task_dto: UpdateTaskDto
+    _project: str
 
     def __init__(self) -> None:
         self._texter = Texter.get_instance()
@@ -24,8 +26,9 @@ class UpdateTaskService:
 
     async def __call__(self, update_task_dto: UpdateTaskDto) -> UpdateTaskResultDto:
         self._update_task_dto = update_task_dto
+        self._project = update_task_dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._tasks_writer_api_repository = TasksWriterApiRepository.get_instance(
-            project=update_task_dto.project
+            project=self._project
         )
 
         fields = self.__get_fields_updated()

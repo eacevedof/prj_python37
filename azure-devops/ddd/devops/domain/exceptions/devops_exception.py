@@ -65,3 +65,28 @@ class DevOpsException(Exception):
             f"Missing required environment variable: {var_name}",
             {"variable": var_name},
         )
+
+    @classmethod
+    def database_required(cls, action: str) -> "DevOpsException":
+        return cls(
+            f"Database name is required for {action} action", {"action": action}
+        )
+
+    @classmethod
+    def table_required(cls, action: str) -> "DevOpsException":
+        return cls(
+            f"Table name is required for {action} action", {"action": action}
+        )
+
+    @classmethod
+    def query_required(cls, action: str) -> "DevOpsException":
+        return cls(
+            f"Query is required for {action} action", {"action": action}
+        )
+
+    @classmethod
+    def unknown_action(cls, action: str) -> "DevOpsException":
+        return cls(
+            f"Unknown action: {action}. Valid actions: list_databases, show_tables, describe_table, execute_query",
+            {"action": action},
+        )

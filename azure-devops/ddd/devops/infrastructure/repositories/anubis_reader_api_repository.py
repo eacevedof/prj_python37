@@ -4,10 +4,8 @@ from datetime import datetime
 from typing import final, Self, Any
 from zoneinfo import ZoneInfo
 
-from argon2 import PasswordHasher
-from argon2.profiles import RFC_9106_LOW_MEMORY
-
 from ddd.shared.infrastructure.components.curler import Curler
+from ddd.shared.infrastructure.components.hasher import Hasher
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.devops.domain.enums.anubis_environment_enum import AnubisEnvironmentEnum
 from ddd.devops.domain.exceptions.devops_exception import DevOpsException
@@ -28,7 +26,7 @@ class AnubisReaderApiRepository:
     def __init__(self) -> None:
         self._curler = Curler.get_instance()
         self._logger = Logger.get_instance()
-        self._hasher = PasswordHasher.from_parameters(RFC_9106_LOW_MEMORY)
+        self._hasher = Hasher.get_instance()
 
         self._salt = self._require_env("PROVISION_SALT")
         self._timezone = self._require_env("PROVISION_TIMEZONE")
@@ -74,7 +72,7 @@ class AnubisReaderApiRepository:
         domain = self._get_domain()
         raw_token = f"{domain}{self._salt}{today_timestamp}"
 
-        return self._hasher.hash(raw_token)
+        return self._hasher.get_password_hashed(raw_token)
 
     async def execute_query(self, sql: str) -> dict[str, Any]:
         """Execute SQL query against Anubis API.
@@ -110,7 +108,7 @@ class AnubisReaderApiRepository:
         status_code = response.get("status_code", 0)
 
         if status_code != 200:
-            error_msg = response.get("response", "") or response.get("error", "")
+            error_msg = response.get("response", "")
             self._logger.write_error(
                 module="AnubisReaderApiRepository.execute_query",
                 message=f"Query failed: {error_msg}",
@@ -118,14 +116,11 @@ class AnubisReaderApiRepository:
             )
             raise DevOpsException.anubis_query_failed(status_code, error_msg)
 
-        try:
-            response_data = json.loads(response.get("response", "{}"))
-            return {
-                "result": response_data.get("result", []),
-                "status_code": status_code,
-            }
-        except json.JSONDecodeError as e:
-            raise DevOpsException.anubis_query_failed(status_code, str(e))
+        response_data = json.loads(response.get("response", "{}"))
+        return {
+            "result": response_data.get("result", []),
+            "status_code": status_code,
+        }
 
     def is_write_query(self, sql: str) -> bool:
         """Check if SQL query is a write operation."""

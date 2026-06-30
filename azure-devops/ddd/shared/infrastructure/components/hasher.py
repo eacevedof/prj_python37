@@ -3,6 +3,8 @@ import secrets
 import string
 from typing import final, Self
 
+from argon2 import PasswordHasher
+from argon2.profiles import RFC_9106_LOW_MEMORY
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from nacl import pwhash
@@ -60,14 +62,28 @@ class Hasher:
         return iv_md5[:self._IV_LENGTH]
 
     def does_password_match(self, hashed_password: str, plain_password: str) -> bool:
-        try:
-            return pwhash.verify(hashed_password.encode("utf-8"), plain_password.encode("utf-8"))
-        except Exception:
-            return False
+        return pwhash.verify(hashed_password.encode("utf-8"), plain_password.encode("utf-8"))
 
     def get_random_string_by_length(self, length: int = 12) -> str:
         charset = string.ascii_uppercase + string.digits
         return "".join(secrets.choice(charset) for _ in range(length))
+
+    def get_password_hashed(self, plain: str) -> str:
+        """Hash a plain text value using Argon2id.
+
+        Uses the RFC_9106_LOW_MEMORY profile, compatible with PHP's
+        sodium_crypto_pwhash_str (OPSLIMIT/MEMLIMIT_INTERACTIVE).
+        """
+        password_hasher = PasswordHasher.from_parameters(RFC_9106_LOW_MEMORY)
+        return password_hasher.hash(plain)
+
+    def verify_password(self, hashed: str, plain: str) -> bool:
+        """Verify a plain text value against an Argon2id hash.
+
+        Lets argon2's VerifyMismatchError (and other exceptions) propagate.
+        """
+        password_hasher = PasswordHasher.from_parameters(RFC_9106_LOW_MEMORY)
+        return password_hasher.verify(hashed, plain)
 
     def get_sodium_crypto_hashed(self, plain_text: str) -> str:
         return pwhash.str(

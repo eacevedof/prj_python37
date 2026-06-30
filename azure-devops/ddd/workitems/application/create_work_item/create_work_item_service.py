@@ -1,6 +1,7 @@
 from typing import final, Self, Any
 
 from ddd.shared.infrastructure.components.texter import Texter
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import WorkItemFieldEnum
 from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.application.create_work_item.create_work_item_dto import CreateWorkItemDto
@@ -14,6 +15,7 @@ class CreateWorkItemService:
     _texter: Texter
     _tasks_writer_api_repository: TasksWriterApiRepository
     _create_work_item_dto: CreateWorkItemDto
+    _project: str
 
     def __init__(self) -> None:
         self._texter = Texter.get_instance()
@@ -29,8 +31,9 @@ class CreateWorkItemService:
             WorkItemsException: When creation fails.
         """
         self._create_work_item_dto = dto
+        self._project = dto.project or EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._tasks_writer_api_repository = TasksWriterApiRepository.get_instance(
-            project=dto.project
+            project=self._project
         )
 
         api_resp_dict = await self._create_work_item()
@@ -72,6 +75,6 @@ class CreateWorkItemService:
             "work_item_type": fields.get("System.WorkItemType", self._create_work_item_dto.work_item_type),
             "title": fields.get(WorkItemFieldEnum.TITLE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
-            "project": self._create_work_item_dto.project,
+            "project": self._project,
             "due_date": due_date,
         }

@@ -2,8 +2,6 @@ import re
 from dataclasses import dataclass
 from typing import Self, Any
 
-from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
-
 
 @dataclass(frozen=True, slots=True)
 class CreateTaskDto:
@@ -19,8 +17,6 @@ class CreateTaskDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         project = str(primitives.get("project", "")).strip()
-        if not project:
-            project = EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
 
         return cls(
             project=project,

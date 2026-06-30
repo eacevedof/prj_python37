@@ -17,17 +17,11 @@ class Encoder:
     def get_decoded_array_from_base64(self, base64_encoded: str) -> dict[str, Any] | list[Any]:
         decoded_string = self.get_base64_decoded(base64_encoded)
         if decoded_string:
-            try:
-                return json.loads(decoded_string)
-            except json.JSONDecodeError:
-                pass
+            return json.loads(decoded_string)
         return {}
 
     def get_base64_encoded(self, text: str) -> str:
         return base64.b64encode(text.encode("utf-8")).decode("utf-8")
 
     def get_base64_decoded(self, base64_encoded: str) -> str:
-        try:
-            return base64.b64decode(base64_encoded).decode("utf-8")
-        except Exception:
-            return base64_encoded
+        return base64.b64decode(base64_encoded).decode("utf-8")

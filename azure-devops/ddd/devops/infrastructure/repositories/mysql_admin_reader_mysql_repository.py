@@ -51,72 +51,44 @@ class MysqlAdminReaderMysqlRepository:
         if database:
             cmd_args.insert(-2, database)
 
-        try:
-            process = await asyncio.create_subprocess_exec(
-                *cmd_args,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-            stdout, stderr = await process.communicate()
+        process = await asyncio.create_subprocess_exec(
+            *cmd_args,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await process.communicate()
 
-            if process.returncode != 0:
-                error_msg = stderr.decode("utf-8", errors="replace").strip()
-                if "Warning: Using a password" in error_msg:
-                    lines = error_msg.split("\n")
-                    error_msg = "\n".join(
-                        line
-                        for line in lines
-                        if "Warning: Using a password" not in line
-                    ).strip()
+        if process.returncode != 0:
+            error_msg = stderr.decode("utf-8", errors="replace").strip()
+            if "Warning: Using a password" in error_msg:
+                lines = error_msg.split("\n")
+                error_msg = "\n".join(
+                    line
+                    for line in lines
+                    if "Warning: Using a password" not in line
+                ).strip()
 
-                self._logger.write_error(
-                    module="MysqlAdminReaderMysqlRepository.execute_query",
-                    message=f"Query failed: {error_msg}",
-                    context={"query": query, "database": database},
-                )
-                return {
-                    "success": False,
-                    "message": error_msg or "Query execution failed",
-                    "data": [],
-                    "row_count": 0,
-                }
-
-            output = stdout.decode("utf-8", errors="replace").strip()
-            data = self._get_rows_from_output(output)
-
-            return {
-                "success": True,
-                "message": f"Query executed successfully. {len(data)} rows returned.",
-                "data": data,
-                "row_count": len(data),
-            }
-
-        except FileNotFoundError:
-            error_msg = (
-                "Docker command not found. Ensure Docker is installed and in PATH."
-            )
             self._logger.write_error(
                 module="MysqlAdminReaderMysqlRepository.execute_query",
-                message=error_msg,
-            )
-            return {
-                "success": False,
-                "message": error_msg,
-                "data": [],
-                "row_count": 0,
-            }
-        except Exception as e:
-            self._logger.write_error(
-                module="MysqlAdminReaderMysqlRepository.execute_query",
-                message=f"Unexpected error: {str(e)}",
+                message=f"Query failed: {error_msg}",
                 context={"query": query, "database": database},
             )
             return {
                 "success": False,
-                "message": f"Unexpected error: {str(e)}",
+                "message": error_msg or "Query execution failed",
                 "data": [],
                 "row_count": 0,
             }
+
+        output = stdout.decode("utf-8", errors="replace").strip()
+        data = self._get_rows_from_output(output)
+
+        return {
+            "success": True,
+            "message": f"Query executed successfully. {len(data)} rows returned.",
+            "data": data,
+            "row_count": len(data),
+        }
 
     def _get_rows_from_output(self, output: str) -> list[dict[str, Any]]:
         """Parse MySQL batch output (tab-separated) into list of dicts."""
