@@ -7,7 +7,7 @@ from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_dto import AdminLocM
 from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_result_dto import (
     AdminLocMysqlResultDto,
 )
-from ddd.devops.infrastructure.repositories import MysqlAdminRepository
+from ddd.devops.infrastructure.repositories import MysqlAdminReaderMysqlRepository
 
 
 @final
@@ -15,11 +15,13 @@ class AdminLocMysqlService:
     """Service for local MySQL administration operations."""
 
     _logger: Logger
-    _mysql_admin_repository: MysqlAdminRepository
+    _mysql_admin_reader_mysql_repository: MysqlAdminReaderMysqlRepository
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._mysql_admin_repository = MysqlAdminRepository.get_instance()
+        self._mysql_admin_reader_mysql_repository = (
+            MysqlAdminReaderMysqlRepository.get_instance()
+        )
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -52,7 +54,7 @@ class AdminLocMysqlService:
                 )
 
     async def _list_databases(self) -> AdminLocMysqlResultDto:
-        result = await self._mysql_admin_repository.execute_query(
+        result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database="",
             query=MysqlQueryConst.SHOW_DATABASES,
         )
@@ -78,7 +80,7 @@ class AdminLocMysqlService:
                 }
             )
 
-        result = await self._mysql_admin_repository.execute_query(
+        result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,
             query=MysqlQueryConst.SHOW_TABLES,
         )
@@ -117,7 +119,7 @@ class AdminLocMysqlService:
                 }
             )
 
-        result = await self._mysql_admin_repository.execute_query(
+        result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,
             query=MysqlQueryConst.DESCRIBE_TABLE_TEMPLATE.format(table=table),
         )
@@ -143,7 +145,7 @@ class AdminLocMysqlService:
                 }
             )
 
-        result = await self._mysql_admin_repository.execute_query(
+        result = await self._mysql_admin_reader_mysql_repository.execute_query(
             database=database,
             query=query,
         )

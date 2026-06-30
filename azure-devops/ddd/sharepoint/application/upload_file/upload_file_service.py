@@ -2,8 +2,8 @@ from typing import final, Self
 
 from ddd.sharepoint.application.upload_file.upload_file_dto import UploadFileDto
 from ddd.sharepoint.application.upload_file.upload_file_result_dto import UploadFileResultDto
-from ddd.sharepoint.infrastructure.repositories.sharepoint_files_repository import (
-    SharePointFilesRepository,
+from ddd.sharepoint.infrastructure.repositories.sharepoint_files_writer_graph_repository import (
+    SharepointFilesWriterGraphRepository,
 )
 
 
@@ -30,13 +30,13 @@ class UploadFileService:
         Raises:
             SharePointException: If upload fails.
         """
-        sharepoint_files_repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_writer_graph_repository = SharepointFilesWriterGraphRepository.get_instance(
             site_id=upload_file_dto.site_id
         )
 
         content_bytes = upload_file_dto.get_content_bytes()
 
-        result = await sharepoint_files_repository.upload_file(
+        result = await sharepoint_files_writer_graph_repository.upload_file(
             file_path=upload_file_dto.file_path,
             content=content_bytes,
         )

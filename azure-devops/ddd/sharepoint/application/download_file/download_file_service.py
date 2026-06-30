@@ -4,8 +4,8 @@ from ddd.sharepoint.application.download_file.download_file_dto import DownloadF
 from ddd.sharepoint.application.download_file.download_file_result_dto import (
     DownloadFileResultDto,
 )
-from ddd.sharepoint.infrastructure.repositories.sharepoint_files_repository import (
-    SharePointFilesRepository,
+from ddd.sharepoint.infrastructure.repositories.sharepoint_files_reader_graph_repository import (
+    SharepointFilesReaderGraphRepository,
 )
 
 
@@ -32,11 +32,11 @@ class DownloadFileService:
         Raises:
             SharePointException: If download fails.
         """
-        sharepoint_files_repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_reader_graph_repository = SharepointFilesReaderGraphRepository.get_instance(
             site_id=download_file_dto.site_id
         )
 
-        content = await sharepoint_files_repository.download_file(
+        content = await sharepoint_files_reader_graph_repository.download_file(
             file_path=download_file_dto.file_path
         )
 

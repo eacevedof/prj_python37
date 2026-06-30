@@ -1,13 +1,16 @@
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories import EnvironmentReaderEnvRepository
 from ddd.devops.domain.enums.local_project_const import LocalProjectConst
 from ddd.devops.application.setup_project.setup_project_dto import SetupProjectDto
 from ddd.devops.application.setup_project.setup_project_result_dto import (
     SetupProjectResultDto,
 )
-from ddd.devops.infrastructure.repositories import LocalProjectRepository
+from ddd.devops.infrastructure.repositories import (
+    LocalProjectReaderFileRepository,
+    LocalProjectWriterFileRepository,
+)
 
 
 @final
@@ -15,13 +18,19 @@ class SetupProjectService:
     """Service to setup a new local project with all configurations."""
 
     _logger: Logger
-    _env_reader_raw_repository: EnvironmentReaderRawRepository
-    _local_project_repository: LocalProjectRepository
+    _env_reader_raw_repository: EnvironmentReaderEnvRepository
+    _local_project_reader_file_repository: LocalProjectReaderFileRepository
+    _local_project_writer_file_repository: LocalProjectWriterFileRepository
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._env_reader_raw_repository = EnvironmentReaderRawRepository.get_instance()
-        self._local_project_repository = LocalProjectRepository.get_instance()
+        self._env_reader_raw_repository = EnvironmentReaderEnvRepository.get_instance()
+        self._local_project_reader_file_repository = (
+            LocalProjectReaderFileRepository.get_instance()
+        )
+        self._local_project_writer_file_repository = (
+            LocalProjectWriterFileRepository.get_instance()
+        )
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -89,7 +98,9 @@ class SetupProjectService:
         if port:
             return port
         vhosts_file = self._env_reader_raw_repository.get_local_vhosts_file()
-        return await self._local_project_repository.get_next_available_port(vhosts_file)
+        return await self._local_project_reader_file_repository.get_next_available_port(
+            vhosts_file
+        )
 
     def _log_start(self, project_name: str, port: int, db_name: str) -> None:
         self._logger.write_info(
@@ -104,7 +115,7 @@ class SetupProjectService:
         steps_completed: list[str],
     ) -> str:
         www_path = self._env_reader_raw_repository.get_local_www_path()
-        app_path = await self._local_project_repository.clone_repository(
+        app_path = await self._local_project_writer_file_repository.clone_repository(
             www_path, setup_project_dto.repo_url, setup_project_dto.project_name
         )
         steps_completed.append("repository_cloned")
@@ -117,7 +128,7 @@ class SetupProjectService:
         steps_completed: list[str],
     ) -> None:
         vhosts_file = self._env_reader_raw_repository.get_local_vhosts_file()
-        await self._local_project_repository.add_virtualhost(
+        await self._local_project_writer_file_repository.add_virtualhost(
             vhosts_file, project_name, port
         )
         steps_completed.append("virtualhost_added")
@@ -127,7 +138,7 @@ class SetupProjectService:
         db_name: str,
         steps_completed: list[str],
     ) -> None:
-        await self._local_project_repository.create_database(db_name)
+        await self._local_project_writer_file_repository.create_database(db_name)
         steps_completed.append("database_created")
 
     async def __add_into_file_hosts_entry(
@@ -138,7 +149,7 @@ class SetupProjectService:
     ) -> None:
         hosts_file = self._env_reader_raw_repository.get_local_hosts_file()
         try:
-            await self._local_project_repository.add_hosts_entry(
+            await self._local_project_writer_file_repository.add_hosts_entry(
                 hosts_file, port, project_name
             )
             steps_completed.append("hosts_entry_added")
@@ -157,7 +168,7 @@ class SetupProjectService:
     ) -> str:
         www_path = self._env_reader_raw_repository.get_local_www_path()
         base_env_file = self._env_reader_raw_repository.get_local_base_env_file()
-        env_path = await self._local_project_repository.create_env_file(
+        env_path = await self._local_project_writer_file_repository.create_env_file(
             www_path,
             base_env_file,
             setup_project_dto.project_name,
@@ -169,5 +180,5 @@ class SetupProjectService:
 
     async def __restart_apache_in_docker(self, steps_completed: list[str]) -> None:
         docker_lamp_path = self._env_reader_raw_repository.get_local_docker_lamp_path()
-        await self._local_project_repository.restart_apache(docker_lamp_path)
+        await self._local_project_writer_file_repository.restart_apache(docker_lamp_path)
         steps_completed.append("apache_restarted")

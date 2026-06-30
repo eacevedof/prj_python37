@@ -4,8 +4,8 @@ from ddd.calendar.application.update_event.update_event_dto import UpdateEventDt
 from ddd.calendar.application.update_event.update_event_result_dto import (
     UpdateEventResultDto,
 )
-from ddd.calendar.infrastructure.repositories.calendar_events_repository import (
-    CalendarEventsRepository,
+from ddd.calendar.infrastructure.repositories.calendar_events_writer_graph_repository import (
+    CalendarEventsWriterGraphRepository,
 )
 
 
@@ -13,10 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class UpdateEventService:
     """Service for updating calendar events."""
 
-    _calendar_events_repository: CalendarEventsRepository
+    _calendar_events_writer_graph_repository: CalendarEventsWriterGraphRepository
 
     def __init__(self) -> None:
-        self._calendar_events_repository = CalendarEventsRepository.get_instance()
+        self._calendar_events_writer_graph_repository = CalendarEventsWriterGraphRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -34,7 +34,7 @@ class UpdateEventService:
         Raises:
             CalendarException: If update fails.
         """
-        event = await self._calendar_events_repository.update_event(
+        event = await self._calendar_events_writer_graph_repository.update_event(
             user_id=update_event_dto.user_id,
             event_id=update_event_dto.event_id,
             subject=update_event_dto.subject,

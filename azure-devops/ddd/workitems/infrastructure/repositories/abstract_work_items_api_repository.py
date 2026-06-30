@@ -4,7 +4,7 @@ from typing import Any
 
 import aiohttp
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 
 HTTP_STATUS_NOT_FOUND = 404
 HTTP_STATUS_NO_CONTENT = 204
@@ -14,7 +14,7 @@ class AbstractWorkItemsApiRepository(ABC):
     """Base repository for Azure DevOps Work Items API operations."""
 
     def __init__(self, organization: str, project_name: str) -> None:
-        azure_pat = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
+        azure_pat = EnvironmentReaderEnvRepository.get_instance().get_azure_pat()
         self._auth = base64.b64encode(f":{azure_pat}".encode()).decode()
         self._organization = organization
 

@@ -5,7 +5,7 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
 
 @final
-class EnvironmentReaderRawRepository:
+class EnvironmentReaderEnvRepository:
     """Repository for reading environment variables required by the application."""
 
     @classmethod
@@ -56,4 +56,3 @@ class EnvironmentReaderRawRepository:
         if value is None:
             raise ValueError(f"Missing required environment variable: {key}")
         return value
-

@@ -14,7 +14,7 @@ from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 
 
 @final
-class ProvisionApiRepository:
+class AnubisReaderApiRepository:
     """Repository for executing SQL queries against provision API.
 
     Token generation follows the same algorithm as PHP:
@@ -112,7 +112,7 @@ class ProvisionApiRepository:
         if status_code != 200:
             error_msg = response.get("response", "") or response.get("error", "")
             self._logger.write_error(
-                module="AnubisApiRepository.execute_query",
+                module="AnubisReaderApiRepository.execute_query",
                 message=f"Query failed: {error_msg}",
                 context={"status_code": status_code, "sql": sql[:200]},
             )

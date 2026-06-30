@@ -4,8 +4,8 @@ from ddd.calendar.application.list_events.list_events_dto import ListEventsDto
 from ddd.calendar.application.list_events.list_events_result_dto import (
     ListEventsResultDto,
 )
-from ddd.calendar.infrastructure.repositories.calendar_events_repository import (
-    CalendarEventsRepository,
+from ddd.calendar.infrastructure.repositories.calendar_events_reader_graph_repository import (
+    CalendarEventsReaderGraphRepository,
 )
 
 
@@ -13,10 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class ListEventsService:
     """Service for listing calendar events."""
 
-    _calendar_events_repository: CalendarEventsRepository
+    _calendar_events_reader_graph_repository: CalendarEventsReaderGraphRepository
 
     def __init__(self) -> None:
-        self._calendar_events_repository = CalendarEventsRepository.get_instance()
+        self._calendar_events_reader_graph_repository = CalendarEventsReaderGraphRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -34,7 +34,7 @@ class ListEventsService:
         Raises:
             CalendarException: If listing fails.
         """
-        items = await self._calendar_events_repository.list_events(
+        items = await self._calendar_events_reader_graph_repository.list_events(
             user_id=list_events_dto.user_id,
             start_datetime=list_events_dto.start_datetime,
             end_datetime=list_events_dto.end_datetime,

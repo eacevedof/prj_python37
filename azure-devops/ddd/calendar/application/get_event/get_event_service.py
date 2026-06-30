@@ -2,8 +2,8 @@ from typing import final, Self
 
 from ddd.calendar.application.get_event.get_event_dto import GetEventDto
 from ddd.calendar.application.get_event.get_event_result_dto import GetEventResultDto
-from ddd.calendar.infrastructure.repositories.calendar_events_repository import (
-    CalendarEventsRepository,
+from ddd.calendar.infrastructure.repositories.calendar_events_reader_graph_repository import (
+    CalendarEventsReaderGraphRepository,
 )
 
 
@@ -11,10 +11,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class GetEventService:
     """Service for getting a specific calendar event."""
 
-    _calendar_events_repository: CalendarEventsRepository
+    _calendar_events_reader_graph_repository: CalendarEventsReaderGraphRepository
 
     def __init__(self) -> None:
-        self._calendar_events_repository = CalendarEventsRepository.get_instance()
+        self._calendar_events_reader_graph_repository = CalendarEventsReaderGraphRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -32,7 +32,7 @@ class GetEventService:
         Raises:
             CalendarException: If event not found.
         """
-        event = await self._calendar_events_repository.get_event(
+        event = await self._calendar_events_reader_graph_repository.get_event(
             user_id=get_event_dto.user_id,
             event_id=get_event_dto.event_id,
         )

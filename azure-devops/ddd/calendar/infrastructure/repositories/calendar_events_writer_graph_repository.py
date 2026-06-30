@@ -1,148 +1,19 @@
 from typing import final, Self, Any
 
-import aiohttp
-
-from ddd.sharepoint.infrastructure.repositories.graph_api_auth_repository import (
-    GraphApiAuthRepository,
+from ddd.calendar.infrastructure.repositories.abstract_calendar_graph_repository import (
+    AbstractCalendarGraphRepository,
 )
-from ddd.calendar.domain.enums.graph_api_enum import GraphApiEnum
-from ddd.calendar.domain.enums.http_status_enum import HttpStatusEnum
 from ddd.calendar.domain.enums.sensitivity_enum import SensitivityEnum
 from ddd.calendar.domain.exceptions.calendar_exception import CalendarException
 
 
 @final
-class CalendarEventsRepository:
-    """Repository for Microsoft Graph Calendar event operations.
-
-    Supports CRUD operations on user calendars using Microsoft Graph API.
-    Reuses OAuth authentication from SharePoint GraphApiAuthRepository.
-    """
-
-    _graph_base_url: str = GraphApiEnum.BASE_URL.value
-
-    def __init__(self) -> None:
-        self._auth_repository = GraphApiAuthRepository.get_instance()
+class CalendarEventsWriterGraphRepository(AbstractCalendarGraphRepository):
+    """Repository for creating, updating and deleting Microsoft Graph Calendar events."""
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
-
-    async def _get_headers(self) -> dict[str, str]:
-        """Get authorization headers with valid access token."""
-        token = await self._auth_repository.get_access_token()
-        return {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
-
-    async def _request(
-        self,
-        method: str,
-        url: str,
-        json_data: dict[str, Any] | None = None,
-    ) -> dict[str, Any] | None:
-        """Make an authenticated request to Microsoft Graph API.
-
-        Args:
-            method: HTTP method (GET, POST, PATCH, DELETE).
-            url: Full URL to request.
-            json_data: JSON body for the request.
-
-        Returns:
-            JSON response dict or None for 204.
-
-        Raises:
-            CalendarException: If the API request fails.
-        """
-        headers = await self._get_headers()
-
-        async with aiohttp.ClientSession() as session:
-            kwargs: dict[str, Any] = {"headers": headers}
-            if json_data is not None:
-                kwargs["json"] = json_data
-
-            async with session.request(method, url, **kwargs) as response:
-                if response.status == HttpStatusEnum.NO_CONTENT:
-                    return None
-
-                if response.status == HttpStatusEnum.NOT_FOUND:
-                    return None
-
-                if response.status >= HttpStatusEnum.BAD_REQUEST:
-                    error_text = await response.text()
-                    raise CalendarException.api_error(response.status, error_text)
-
-                content_type_header = response.headers.get("Content-Type", "")
-                if "application/json" in content_type_header:
-                    return await response.json()
-
-                return None
-
-    async def list_events(
-        self,
-        user_id: str,
-        start_datetime: str | None = None,
-        end_datetime: str | None = None,
-        top: int = 50,
-    ) -> list[dict[str, Any]]:
-        """List calendar events for a user.
-
-        Args:
-            user_id: User ID or email (UPN).
-            start_datetime: ISO 8601 start datetime for calendarView (optional).
-            end_datetime: ISO 8601 end datetime for calendarView (optional).
-            top: Maximum number of events to return.
-
-        Returns:
-            List of event dictionaries.
-
-        Raises:
-            CalendarException: If listing fails.
-        """
-        if start_datetime and end_datetime:
-            url = (
-                f"{self._graph_base_url}/users/{user_id}/calendarView"
-                f"?startDateTime={start_datetime}&endDateTime={end_datetime}"
-                f"&$top={top}&$orderby=start/dateTime"
-            )
-        else:
-            url = (
-                f"{self._graph_base_url}/users/{user_id}/calendar/events"
-                f"?$top={top}&$orderby=start/dateTime"
-            )
-
-        result = await self._request("GET", url)
-        if result is None:
-            raise CalendarException.user_not_found(user_id)
-
-        if isinstance(result, dict):
-            return result.get("value", [])
-        return []
-
-    async def get_event(self, user_id: str, event_id: str) -> dict[str, Any]:
-        """Get a specific calendar event.
-
-        Args:
-            user_id: User ID or email (UPN).
-            event_id: Event ID.
-
-        Returns:
-            Event dictionary.
-
-        Raises:
-            CalendarException: If event not found.
-        """
-        url = f"{self._graph_base_url}/users/{user_id}/calendar/events/{event_id}"
-
-        result = await self._request("GET", url)
-        if result is None:
-            raise CalendarException.event_not_found(event_id)
-
-        if isinstance(result, dict):
-            return result
-
-        raise CalendarException.event_not_found(event_id)
 
     async def create_event(
         self,
@@ -332,46 +203,6 @@ class CalendarEventsRepository:
             return True
 
         raise CalendarException.delete_failed(event_id)
-
-    async def list_calendars(self, user_id: str) -> list[dict[str, Any]]:
-        """List all calendars for a user.
-
-        Args:
-            user_id: User ID or email (UPN).
-
-        Returns:
-            List of calendar dictionaries.
-
-        Raises:
-            CalendarException: If listing fails.
-        """
-        url = f"{self._graph_base_url}/users/{user_id}/calendars"
-
-        result = await self._request("GET", url)
-        if result is None:
-            raise CalendarException.user_not_found(user_id)
-
-        if isinstance(result, dict):
-            return result.get("value", [])
-        return []
-
-    async def get_calendar_id_by_name(
-        self, user_id: str, calendar_name: str
-    ) -> str | None:
-        """Find a calendar ID by its name.
-
-        Args:
-            user_id: User ID or email (UPN).
-            calendar_name: Name of the calendar to find.
-
-        Returns:
-            Calendar ID if found, None otherwise.
-        """
-        calendars = await self.list_calendars(user_id)
-        for calendar in calendars:
-            if calendar.get("name", "").lower() == calendar_name.lower():
-                return calendar.get("id")
-        return None
 
     async def create_event_in_calendar(
         self,

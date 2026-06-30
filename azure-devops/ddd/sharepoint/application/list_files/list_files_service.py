@@ -2,8 +2,8 @@ from typing import final, Self
 
 from ddd.sharepoint.application.list_files.list_files_dto import ListFilesDto
 from ddd.sharepoint.application.list_files.list_files_result_dto import ListFilesResultDto
-from ddd.sharepoint.infrastructure.repositories.sharepoint_files_repository import (
-    SharePointFilesRepository,
+from ddd.sharepoint.infrastructure.repositories.sharepoint_files_reader_graph_repository import (
+    SharepointFilesReaderGraphRepository,
 )
 
 
@@ -30,11 +30,11 @@ class ListFilesService:
         Raises:
             SharePointException: If listing fails.
         """
-        sharepoint_files_repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_reader_graph_repository = SharepointFilesReaderGraphRepository.get_instance(
             site_id=list_files_dto.site_id
         )
 
-        items = await sharepoint_files_repository.list_files(
+        items = await sharepoint_files_reader_graph_repository.list_files(
             folder_path=list_files_dto.folder_path
         )
 

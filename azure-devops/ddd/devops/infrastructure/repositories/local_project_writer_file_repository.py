@@ -1,36 +1,18 @@
 import asyncio
 import re
-from typing import final, Self
+from typing import final
 from pathlib import Path
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.devops.domain.enums.local_project_const import LocalProjectConst
 from ddd.devops.domain.enums.mysql_docker_const import MysqlDockerConst
+from ddd.devops.infrastructure.repositories.abstract_local_project_repository import (
+    AbstractLocalProjectRepository,
+)
 
 
 @final
-class LocalProjectRepository:
-    """Repository for local project setup operations."""
-
-    _logger: Logger
-
-    def __init__(self) -> None:
-        self._logger = Logger.get_instance()
-
-    @classmethod
-    def get_instance(cls) -> Self:
-        return cls()
-
-    async def get_next_available_port(self, vhosts_file: str) -> int:
-        """Detect the next available port from ci-apps.conf."""
-        vhosts_path = Path(vhosts_file)
-        content = vhosts_path.read_text(encoding="utf-8")
-        ports = [int(m.group(1)) for m in re.finditer(r"Listen (\d+)", content)]
-
-        if not ports:
-            return LocalProjectConst.DEFAULT_PORT
-
-        return max(ports) + 1
+class LocalProjectWriterFileRepository(AbstractLocalProjectRepository):
+    """Repository for writing/creating local project setup artifacts."""
 
     async def clone_repository(
         self, www_path: str, repo_url: str, project_name: str
@@ -41,7 +23,7 @@ class LocalProjectRepository:
 
         if app_path.exists():
             self._logger.write_info(
-                module="LocalProjectRepository.clone_repository",
+                module="LocalProjectWriterFileRepository.clone_repository",
                 message=f"Folder already exists: {app_path}",
             )
             return str(app_path)
@@ -104,7 +86,7 @@ TimeOut 900
 
         if f"Listen {port}" in content:
             self._logger.write_info(
-                module="LocalProjectRepository.add_virtualhost",
+                module="LocalProjectWriterFileRepository.add_virtualhost",
                 message=f"Port {port} already exists in ci-apps.conf",
             )
             return
@@ -147,7 +129,7 @@ TimeOut 900
 
         if server_name in content:
             self._logger.write_info(
-                module="LocalProjectRepository.add_hosts_entry",
+                module="LocalProjectWriterFileRepository.add_hosts_entry",
                 message=f"Host entry for {server_name} already exists",
             )
             return
@@ -170,7 +152,7 @@ TimeOut 900
 
         if env_dest_path.exists():
             self._logger.write_info(
-                module="LocalProjectRepository.create_env_file",
+                module="LocalProjectWriterFileRepository.create_env_file",
                 message=f".env file already exists: {env_dest_path}",
             )
             return str(env_dest_path)

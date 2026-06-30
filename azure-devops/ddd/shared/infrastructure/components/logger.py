@@ -4,8 +4,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import final, Self
 
-from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
-
 
 @final
 class Logger:
@@ -18,7 +16,7 @@ class Logger:
         return cls()
 
     def write_log(self, file_path: str, content: str) -> None:
-        environ_path_folder = os.getenv(EnvvarsKeysEnum.APP_LOG_PATH, self._DEFAULT_LOG_PATH)
+        environ_path_folder = os.getenv("APP_LOG_PATH", self._DEFAULT_LOG_PATH)
         logs_folder_path = Path(environ_path_folder).resolve()
         today = datetime.now().strftime("%Y-%m-%d")
 

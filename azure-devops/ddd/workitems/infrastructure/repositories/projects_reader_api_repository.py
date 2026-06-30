@@ -3,7 +3,7 @@ from typing import final, Self, Any
 
 import aiohttp
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import AzureApiEnum
 
 
@@ -16,14 +16,14 @@ class ProjectsReaderApiRepository:
     _base_url: str
 
     def __init__(self, organization: str) -> None:
-        azure_pat = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
+        azure_pat = EnvironmentReaderEnvRepository.get_instance().get_azure_pat()
         self._auth = base64.b64encode(f":{azure_pat}".encode()).decode()
         self._organization = organization
         self._base_url = f"https://dev.azure.com/{organization}/_apis/projects"
 
     @classmethod
     def get_instance(cls) -> Self:
-        env = EnvironmentReaderRawRepository.get_instance()
+        env = EnvironmentReaderEnvRepository.get_instance()
         return cls(organization=env.get_azure_organization_name())
 
     def _get_headers(self) -> dict[str, str]:

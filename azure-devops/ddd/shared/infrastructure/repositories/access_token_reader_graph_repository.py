@@ -3,32 +3,35 @@ from typing import final, Self
 
 import aiohttp
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import (
-    EnvironmentReaderRawRepository,
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import (
+    EnvironmentReaderEnvRepository,
 )
-from ddd.sharepoint.domain.enums.graph_auth_enum import GraphAuthEnum
-from ddd.sharepoint.domain.enums.token_expiry_enum import TokenExpiryEnum
-from ddd.sharepoint.domain.exceptions.sharepoint_exception import SharePointException
+from ddd.shared.domain.exceptions.graph_auth_exception import GraphAuthException
+
+TOKEN_URL_TEMPLATE = "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
+REFRESH_BUFFER_SECONDS = 60
+DEFAULT_EXPIRES_IN = 3600
 
 
 @final
-class GraphApiAuthRepository:
+class AccessTokenReaderGraphRepository:
     """Repository for Microsoft Graph API OAuth2 authentication.
 
     Uses client_credentials flow with Azure AD App Registration.
     Caches access token until expiration.
     """
 
-    _instance: "GraphApiAuthRepository | None" = None
+    _instance: "AccessTokenReaderGraphRepository | None" = None
     _access_token: str | None = None
     _token_expires_at: float = 0
 
     def __init__(self) -> None:
-        env = EnvironmentReaderRawRepository.get_instance()
+        env = EnvironmentReaderEnvRepository.get_instance()
         self._tenant_id = env.get_sharepoint_tenant_id()
         self._client_id = env.get_sharepoint_client_id()
         self._client_secret = env.get_sharepoint_client_secret()
-        self._token_url = GraphAuthEnum.TOKEN_URL_TEMPLATE.value.format(
+        self._token_url = TOKEN_URL_TEMPLATE.format(
             tenant_id=self._tenant_id
         )
 
@@ -45,7 +48,7 @@ class GraphApiAuthRepository:
             Valid access token for Microsoft Graph API.
 
         Raises:
-            SharePointException: If authentication fails.
+            GraphAuthException: If authentication fails.
         """
         if self._is_token_valid():
             return self._access_token  # type: ignore[return-value]
@@ -58,19 +61,19 @@ class GraphApiAuthRepository:
         if self._access_token is None:
             return False
         return time.time() < (
-            self._token_expires_at - TokenExpiryEnum.REFRESH_BUFFER_SECONDS
+            self._token_expires_at - REFRESH_BUFFER_SECONDS
         )
 
     async def _refresh_token(self) -> None:
         """Request a new access token from Azure AD.
 
         Raises:
-            SharePointException: If token request fails.
+            GraphAuthException: If token request fails.
         """
         payload = {
             "client_id": self._client_id,
             "client_secret": self._client_secret,
-            "scope": GraphAuthEnum.DEFAULT_SCOPE.value,
+            "scope": DEFAULT_SCOPE,
             "grant_type": "client_credentials",
         }
 
@@ -82,12 +85,12 @@ class GraphApiAuthRepository:
             ) as response:
                 if response.status != 200:
                     error_text = await response.text()
-                    raise SharePointException.authentication_failed(error_text)
+                    raise GraphAuthException.authentication_failed(error_text)
 
                 data = await response.json()
                 self._access_token = data["access_token"]
                 expires_in = int(
-                    data.get("expires_in", TokenExpiryEnum.DEFAULT_EXPIRES_IN)
+                    data.get("expires_in", DEFAULT_EXPIRES_IN)
                 )
                 self._token_expires_at = time.time() + expires_in
 

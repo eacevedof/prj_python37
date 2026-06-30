@@ -1,6 +1,6 @@
 from typing import final, Any
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums import AzureApiEnum
 from ddd.workitems.infrastructure.repositories.abstract_work_items_api_repository import AbstractWorkItemsApiRepository
 
@@ -11,7 +11,7 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
 
     @staticmethod
     def get_instance(project: str) -> "WorkItemsReaderApiRepository":
-        env = EnvironmentReaderRawRepository.get_instance()
+        env = EnvironmentReaderEnvRepository.get_instance()
         return WorkItemsReaderApiRepository(
             organization=env.get_azure_organization_name(),
             project_name=project

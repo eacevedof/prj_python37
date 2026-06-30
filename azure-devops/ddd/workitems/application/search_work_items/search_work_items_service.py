@@ -1,6 +1,6 @@
 from typing import final, Self, Any
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
 from ddd.workitems.application.search_work_items.search_work_items_dto import SearchWorkItemsDto
 from ddd.workitems.application.search_work_items.search_work_items_result_dto import SearchWorkItemsResultDto
@@ -29,7 +29,7 @@ class SearchWorkItemsService:
         """
         self._search_work_items_dto = search_dto
 
-        default_project = EnvironmentReaderRawRepository.get_instance().get_app_default_project()
+        default_project = EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
         self._work_items_reader_api_repository = WorkItemsReaderApiRepository.get_instance(
             project=default_project
         )

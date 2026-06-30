@@ -2,8 +2,8 @@ from typing import final, Self
 
 from ddd.sharepoint.application.delete_file.delete_file_dto import DeleteFileDto
 from ddd.sharepoint.application.delete_file.delete_file_result_dto import DeleteFileResultDto
-from ddd.sharepoint.infrastructure.repositories.sharepoint_files_repository import (
-    SharePointFilesRepository,
+from ddd.sharepoint.infrastructure.repositories.sharepoint_files_writer_graph_repository import (
+    SharepointFilesWriterGraphRepository,
 )
 
 
@@ -30,11 +30,11 @@ class DeleteFileService:
         Raises:
             SharePointException: If deletion fails.
         """
-        sharepoint_files_repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_writer_graph_repository = SharepointFilesWriterGraphRepository.get_instance(
             site_id=delete_file_dto.site_id
         )
 
-        deleted = await sharepoint_files_repository.delete_file(
+        deleted = await sharepoint_files_writer_graph_repository.delete_file(
             file_path=delete_file_dto.file_path
         )
 

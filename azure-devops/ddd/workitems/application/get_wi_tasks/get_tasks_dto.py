@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Self, Any
 
-from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import EnvironmentReaderEnvRepository
 from ddd.workitems.domain.enums.work_item_state_enum import WorkItemStateEnum
 
 
@@ -24,7 +24,7 @@ class GetTasksDto:
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         project = str(primitives.get("project", "")).strip()
         if not project:
-            project = EnvironmentReaderRawRepository.get_instance().get_app_default_project()
+            project = EnvironmentReaderEnvRepository.get_instance().get_app_default_project()
 
         epic_id = primitives.get("epic_id")
         states = cls._parse_and_validate_states(primitives.get("state"))

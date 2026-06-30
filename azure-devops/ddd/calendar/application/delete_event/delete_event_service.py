@@ -4,8 +4,8 @@ from ddd.calendar.application.delete_event.delete_event_dto import DeleteEventDt
 from ddd.calendar.application.delete_event.delete_event_result_dto import (
     DeleteEventResultDto,
 )
-from ddd.calendar.infrastructure.repositories.calendar_events_repository import (
-    CalendarEventsRepository,
+from ddd.calendar.infrastructure.repositories.calendar_events_writer_graph_repository import (
+    CalendarEventsWriterGraphRepository,
 )
 
 
@@ -13,10 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class DeleteEventService:
     """Service for deleting calendar events."""
 
-    _calendar_events_repository: CalendarEventsRepository
+    _calendar_events_writer_graph_repository: CalendarEventsWriterGraphRepository
 
     def __init__(self) -> None:
-        self._calendar_events_repository = CalendarEventsRepository.get_instance()
+        self._calendar_events_writer_graph_repository = CalendarEventsWriterGraphRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -34,7 +34,7 @@ class DeleteEventService:
         Raises:
             CalendarException: If deletion fails.
         """
-        deleted = await self._calendar_events_repository.delete_event(
+        deleted = await self._calendar_events_writer_graph_repository.delete_event(
             user_id=delete_event_dto.user_id,
             event_id=delete_event_dto.event_id,
         )

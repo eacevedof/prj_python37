@@ -4,8 +4,8 @@ from ddd.devops.application.request_anubis.request_anubis_dto import RequestAnub
 from ddd.devops.application.request_anubis.request_anubis_result_dto import (
     RequestAnubisResultDto,
 )
-from ddd.devops.infrastructure.repositories.provision_api_repository import (
-    ProvisionApiRepository,
+from ddd.devops.infrastructure.repositories.anubis_reader_api_repository import (
+    AnubisReaderApiRepository,
 )
 from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 
@@ -17,10 +17,10 @@ class RequestAnubisService:
     Write operations require explicit confirmation.
     """
 
-    _provision_api_repository: ProvisionApiRepository
+    _anubis_reader_api_repository: AnubisReaderApiRepository
 
     def __init__(self) -> None:
-        self._provision_api_repository = ProvisionApiRepository.get_instance()
+        self._anubis_reader_api_repository = AnubisReaderApiRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -49,7 +49,7 @@ class RequestAnubisService:
         if not sql:
             raise DevOpsException.anubis_empty_query()
 
-        is_write = self._provision_api_repository.is_write_query(sql)
+        is_write = self._anubis_reader_api_repository.is_write_query(sql)
 
         if is_write and not request_anubis_dto.confirmed:
             return RequestAnubisResultDto.from_primitives(
@@ -61,7 +61,7 @@ class RequestAnubisService:
                 }
             )
 
-        response = await self._provision_api_repository.execute_query(sql)
+        response = await self._anubis_reader_api_repository.execute_query(sql)
 
         return RequestAnubisResultDto.from_primitives(
             {

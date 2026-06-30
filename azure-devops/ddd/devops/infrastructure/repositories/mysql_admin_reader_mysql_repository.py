@@ -6,7 +6,7 @@ from ddd.devops.domain.enums.mysql_docker_const import MysqlDockerConst
 
 
 @final
-class MysqlAdminRepository:
+class MysqlAdminReaderMysqlRepository:
     """Repository for MySQL administration operations via Docker."""
 
     _logger: Logger
@@ -31,7 +31,7 @@ class MysqlAdminRepository:
     ) -> dict[str, Any]:
         """Execute a MySQL query via Docker exec and return results as JSON."""
         self._logger.write_info(
-            module="MysqlAdminRepository.execute_query",
+            module="MysqlAdminReaderMysqlRepository.execute_query",
             message=f"Executing query on database: {database or '(no database)'} - query: {query[:100]}",
         )
 
@@ -70,7 +70,7 @@ class MysqlAdminRepository:
                     ).strip()
 
                 self._logger.write_error(
-                    module="MysqlAdminRepository.execute_query",
+                    module="MysqlAdminReaderMysqlRepository.execute_query",
                     message=f"Query failed: {error_msg}",
                     context={"query": query, "database": database},
                 )
@@ -96,7 +96,7 @@ class MysqlAdminRepository:
                 "Docker command not found. Ensure Docker is installed and in PATH."
             )
             self._logger.write_error(
-                module="MysqlAdminRepository.execute_query",
+                module="MysqlAdminReaderMysqlRepository.execute_query",
                 message=error_msg,
             )
             return {
@@ -107,7 +107,7 @@ class MysqlAdminRepository:
             }
         except Exception as e:
             self._logger.write_error(
-                module="MysqlAdminRepository.execute_query",
+                module="MysqlAdminReaderMysqlRepository.execute_query",
                 message=f"Unexpected error: {str(e)}",
                 context={"query": query, "database": database},
             )
