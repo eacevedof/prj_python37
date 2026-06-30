@@ -68,6 +68,22 @@ class Texter:
             return ""
         return html.unescape(html_text)
 
+    def get_html_from_plain_text(self, text: str | None) -> str:
+        """Plain text -> Azure-safe HTML for fields rendered as HTML (e.g. System.Description).
+
+        Escapes special chars and turns newlines into <br>. Line breaks at most,
+        no other formatting (no <div>, no <a>, no markdown).
+        """
+        if text is None:
+            return ""
+        text = text.strip()
+        if not text:
+            return ""
+
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+        text = html.escape(text, quote=False)
+        return text.replace("\n", "<br>")
+
     def _get_hard_replace(self, html_text: str) -> str:
         replacements = {
             "&aacute;": "á",

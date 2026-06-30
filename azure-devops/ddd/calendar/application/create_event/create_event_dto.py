@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.calendar.domain.enums.sensitivity_enum import SensitivityEnum
+
 
 @dataclass(frozen=True, slots=True)
 class CreateEventDto:
@@ -15,7 +17,7 @@ class CreateEventDto:
     location: str | None = None
     attendees: list[str] = field(default_factory=list)
     is_all_day: bool = False
-    sensitivity: str = "normal"
+    sensitivity: str = SensitivityEnum.NORMAL.value
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -44,5 +46,7 @@ class CreateEventDto:
             location=location,
             attendees=attendees,
             is_all_day=bool(primitives.get("is_all_day", False)),
-            sensitivity=str(primitives.get("sensitivity", "normal")).strip(),
+            sensitivity=str(
+                primitives.get("sensitivity", SensitivityEnum.NORMAL.value)
+            ).strip(),
         )

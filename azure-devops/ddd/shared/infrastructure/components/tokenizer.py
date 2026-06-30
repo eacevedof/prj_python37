@@ -5,6 +5,8 @@ from typing import final, Self
 
 from nacl import pwhash
 
+from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
+
 
 @final
 class Tokenizer:
@@ -15,7 +17,7 @@ class Tokenizer:
         return cls()
 
     def get_auth_raw_token(self) -> str | None:
-        return os.getenv("API_AUTH_RAW_TOKEN")
+        return os.getenv(EnvvarsKeysEnum.API_AUTH_RAW_TOKEN)
 
     def get_anubis_auth_token(self) -> str:
         anubis_tz = ZoneInfo(self._ANUBIS_TIMEZONE)
@@ -26,8 +28,8 @@ class Tokenizer:
         today_datetime = today_datetime.replace(tzinfo=anubis_tz)
         today_timestamp = int(today_datetime.timestamp())
 
-        anubis_domain = os.getenv("API_ANUBIS_DOMAIN", "")
-        anubis_salt_encrypt = os.getenv("API_ANUBIS_SALT", "")
+        anubis_domain = os.getenv(EnvvarsKeysEnum.API_ANUBIS_DOMAIN, "")
+        anubis_salt_encrypt = os.getenv(EnvvarsKeysEnum.API_ANUBIS_SALT, "")
         raw_token = f"{anubis_domain}{anubis_salt_encrypt}{today_timestamp}".encode("utf-8")
 
         auth_token = pwhash.str(

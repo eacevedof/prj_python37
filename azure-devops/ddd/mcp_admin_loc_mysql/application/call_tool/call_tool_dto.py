@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CallToolDto:
     """DTO for MCP tool call."""
 

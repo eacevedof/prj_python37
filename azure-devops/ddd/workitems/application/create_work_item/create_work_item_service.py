@@ -1,19 +1,22 @@
 from typing import final, Self, Any
 
+from ddd.shared.infrastructure.components.texter import Texter
+from ddd.workitems.domain.enums import WorkItemFieldEnum
+from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.application.create_work_item.create_work_item_dto import CreateWorkItemDto
 from ddd.workitems.application.create_work_item.create_work_item_result_dto import CreateWorkItemResultDto
-from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 
 
 @final
 class CreateWorkItemService:
     """Service for creating standalone work items (Task, Issue, Epic, Bug) in Azure DevOps."""
 
-    _dto: CreateWorkItemDto
-    _writer_repository: TasksWriterApiRepository
+    _texter: Texter
+    _tasks_writer_api_repository: TasksWriterApiRepository
+    _create_work_item_dto: CreateWorkItemDto
 
     def __init__(self) -> None:
-        pass
+        self._texter = Texter.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -25,8 +28,8 @@ class CreateWorkItemService:
         Raises:
             WorkItemsException: When creation fails.
         """
-        self._dto = dto
-        self._writer_repository = TasksWriterApiRepository.get_instance(
+        self._create_work_item_dto = dto
+        self._tasks_writer_api_repository = TasksWriterApiRepository.get_instance(
             project=dto.project
         )
 
@@ -39,36 +42,36 @@ class CreateWorkItemService:
     async def _create_work_item(self) -> dict:
         fields: dict[str, Any] = {}
 
-        if self._dto.description:
-            fields["System.Description"] = self._dto.description
+        if self._create_work_item_dto.description:
+            fields[WorkItemFieldEnum.DESCRIPTION.value] = self._texter.get_html_from_plain_text(self._create_work_item_dto.description)
 
-        if self._dto.assigned_to:
-            fields["System.AssignedTo"] = self._dto.assigned_to
+        if self._create_work_item_dto.assigned_to:
+            fields[WorkItemFieldEnum.ASSIGNED_TO.value] = self._create_work_item_dto.assigned_to
 
-        if self._dto.tags:
-            fields["System.Tags"] = self._dto.tags
+        if self._create_work_item_dto.tags:
+            fields[WorkItemFieldEnum.TAGS.value] = self._create_work_item_dto.tags
 
-        due_date = self._dto.get_due_date_from_title()
+        due_date = self._create_work_item_dto.get_due_date_from_title()
         if due_date:
-            fields["Microsoft.VSTS.Scheduling.TargetDate"] = due_date
+            fields[WorkItemFieldEnum.TARGET_DATE.value] = due_date
 
-        return await self._writer_repository.create_work_item(
-            item_type=self._dto.work_item_type,
-            title=self._dto.title,
+        return await self._tasks_writer_api_repository.create_work_item(
+            item_type=self._create_work_item_dto.work_item_type,
+            title=self._create_work_item_dto.title,
             **fields
         )
 
     def _get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
         fields = api_resp_dict.get("fields", {})
-        due_date = fields.get("Microsoft.VSTS.Scheduling.TargetDate", "")
+        due_date = fields.get(WorkItemFieldEnum.TARGET_DATE.value, "")
         if due_date:
             due_date = due_date[:10]
 
         return {
             "id": api_resp_dict.get("id", 0),
-            "work_item_type": fields.get("System.WorkItemType", self._dto.work_item_type),
-            "title": fields.get("System.Title", ""),
+            "work_item_type": fields.get("System.WorkItemType", self._create_work_item_dto.work_item_type),
+            "title": fields.get(WorkItemFieldEnum.TITLE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
-            "project": self._dto.project,
+            "project": self._create_work_item_dto.project,
             "due_date": due_date,
         }

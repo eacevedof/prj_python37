@@ -5,7 +5,7 @@ from mcp.types import TextContent
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CallToolResultDto:
     """Result DTO for MCP tool call."""
 

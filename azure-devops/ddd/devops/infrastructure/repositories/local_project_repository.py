@@ -4,6 +4,8 @@ from typing import final, Self
 from pathlib import Path
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.devops.domain.enums.local_project_const import LocalProjectConst
+from ddd.devops.domain.enums.mysql_docker_const import MysqlDockerConst
 
 
 @final
@@ -26,7 +28,7 @@ class LocalProjectRepository:
         ports = [int(m.group(1)) for m in re.finditer(r"Listen (\d+)", content)]
 
         if not ports:
-            return 8080
+            return LocalProjectConst.DEFAULT_PORT
 
         return max(ports) + 1
 
@@ -34,7 +36,7 @@ class LocalProjectRepository:
         self, www_path: str, repo_url: str, project_name: str
     ) -> str:
         """Clone a repository to the www directory."""
-        app_folder = f"app-{project_name}"
+        app_folder = f"{LocalProjectConst.APP_NAME_PREFIX}{project_name}"
         app_path = Path(www_path) / app_folder
 
         if app_path.exists():
@@ -64,8 +66,8 @@ class LocalProjectRepository:
         self, vhosts_file: str, project_name: str, port: int
     ) -> None:
         """Add VirtualHost configuration to ci-apps.conf."""
-        app_folder = f"app-{project_name}"
-        server_name = f"local-{port}"
+        app_folder = f"{LocalProjectConst.APP_NAME_PREFIX}{project_name}"
+        server_name = f"{LocalProjectConst.SERVER_NAME_PREFIX}{port}"
 
         vhost_config = f"""
 # {project_name}
@@ -117,10 +119,10 @@ TimeOut 900
         process = await asyncio.create_subprocess_exec(
             "docker",
             "exec",
-            "cont-lr-mysql",
+            MysqlDockerConst.CONTAINER_NAME,
             "mysql",
-            "-uroot",
-            "-proot",
+            MysqlDockerConst.USER_FLAG,
+            MysqlDockerConst.PASSWORD_FLAG,
             "-e",
             cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -137,7 +139,7 @@ TimeOut 900
         self, hosts_file: str, port: int, project_name: str
     ) -> None:
         """Add entry to Windows hosts file."""
-        server_name = f"local-{port}"
+        server_name = f"{LocalProjectConst.SERVER_NAME_PREFIX}{port}"
         host_entry = f"127.0.0.1 {server_name} #{port} {project_name}"
 
         hosts_path = Path(hosts_file)
@@ -162,8 +164,8 @@ TimeOut 900
         db_name: str,
     ) -> str:
         """Create .env file based on plataformabase template."""
-        app_folder = f"app-{project_name}"
-        server_name = f"local-{port}"
+        app_folder = f"{LocalProjectConst.APP_NAME_PREFIX}{project_name}"
+        server_name = f"{LocalProjectConst.SERVER_NAME_PREFIX}{port}"
         env_dest_path = Path(www_path) / app_folder / "html" / ".env"
 
         if env_dest_path.exists():

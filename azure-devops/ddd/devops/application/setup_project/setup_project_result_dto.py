@@ -1,9 +1,9 @@
-from typing import final, Self
+from typing import final, Self, Any
 from dataclasses import dataclass
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class SetupProjectResultDto:
     """Result DTO for setup project operation."""
 
@@ -30,3 +30,16 @@ class SetupProjectResultDto:
             env_path=data["env_path"],
             steps_completed=data["steps_completed"],
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "projectName": self.project_name,
+            "appFolder": self.app_folder,
+            "appPath": self.app_path,
+            "port": self.port,
+            "serverName": self.server_name,
+            "dbName": self.db_name,
+            "url": self.url,
+            "envPath": self.env_path,
+            "stepsCompleted": self.steps_completed,
+        }

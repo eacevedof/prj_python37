@@ -11,8 +11,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class GetEventService:
     """Service for getting a specific calendar event."""
 
+    _calendar_events_repository: CalendarEventsRepository
+
     def __init__(self) -> None:
-        pass
+        self._calendar_events_repository = CalendarEventsRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -30,9 +32,7 @@ class GetEventService:
         Raises:
             CalendarException: If event not found.
         """
-        repository = CalendarEventsRepository.get_instance()
-
-        event = await repository.get_event(
+        event = await self._calendar_events_repository.get_event(
             user_id=get_event_dto.user_id,
             event_id=get_event_dto.event_id,
         )

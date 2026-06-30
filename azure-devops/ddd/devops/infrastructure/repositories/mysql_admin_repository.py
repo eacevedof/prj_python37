@@ -2,6 +2,7 @@ import asyncio
 from typing import final, Self, Any
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.devops.domain.enums.mysql_docker_const import MysqlDockerConst
 
 
 @final
@@ -15,9 +16,9 @@ class MysqlAdminRepository:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._container_name = "cont-lr-mysql"
-        self._mysql_user = "root"
-        self._mysql_password = "root"
+        self._container_name = MysqlDockerConst.CONTAINER_NAME
+        self._mysql_user = MysqlDockerConst.ROOT_USER
+        self._mysql_password = MysqlDockerConst.ROOT_PASSWORD
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -81,7 +82,7 @@ class MysqlAdminRepository:
                 }
 
             output = stdout.decode("utf-8", errors="replace").strip()
-            data = self._parse_mysql_output(output)
+            data = self._get_rows_from_output(output)
 
             return {
                 "success": True,
@@ -117,7 +118,7 @@ class MysqlAdminRepository:
                 "row_count": 0,
             }
 
-    def _parse_mysql_output(self, output: str) -> list[dict[str, Any]]:
+    def _get_rows_from_output(self, output: str) -> list[dict[str, Any]]:
         """Parse MySQL batch output (tab-separated) into list of dicts."""
         if not output:
             return []

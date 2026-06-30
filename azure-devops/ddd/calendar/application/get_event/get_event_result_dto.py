@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
+from ddd.calendar.domain.enums.sensitivity_enum import SensitivityEnum
+
 
 @dataclass(frozen=True, slots=True)
 class GetEventResultDto:
@@ -16,7 +18,7 @@ class GetEventResultDto:
     is_all_day: bool = False
     organizer: str = ""
     attendees: list[str] = field(default_factory=list)
-    sensitivity: str = "normal"
+    sensitivity: str = SensitivityEnum.NORMAL.value
     web_link: str = ""
     created_datetime: str = ""
     last_modified_datetime: str = ""
@@ -48,7 +50,9 @@ class GetEventResultDto:
             is_all_day=bool(primitives.get("isAllDay", False)),
             organizer=str(organizer_email.get("address", "")),
             attendees=attendees,
-            sensitivity=str(primitives.get("sensitivity", "normal")),
+            sensitivity=str(
+                primitives.get("sensitivity", SensitivityEnum.NORMAL.value)
+            ),
             web_link=str(primitives.get("webLink", "")),
             created_datetime=str(primitives.get("createdDateTime", "")),
             last_modified_datetime=str(primitives.get("lastModifiedDateTime", "")),

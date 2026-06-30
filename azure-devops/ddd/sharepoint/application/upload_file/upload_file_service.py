@@ -30,13 +30,13 @@ class UploadFileService:
         Raises:
             SharePointException: If upload fails.
         """
-        repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_repository = SharePointFilesRepository.get_instance(
             site_id=upload_file_dto.site_id
         )
 
         content_bytes = upload_file_dto.get_content_bytes()
 
-        result = await repository.upload_file(
+        result = await sharepoint_files_repository.upload_file(
             file_path=upload_file_dto.file_path,
             content=content_bytes,
         )

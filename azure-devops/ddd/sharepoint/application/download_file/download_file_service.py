@@ -32,11 +32,11 @@ class DownloadFileService:
         Raises:
             SharePointException: If download fails.
         """
-        repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_repository = SharePointFilesRepository.get_instance(
             site_id=download_file_dto.site_id
         )
 
-        content = await repository.download_file(
+        content = await sharepoint_files_repository.download_file(
             file_path=download_file_dto.file_path
         )
 

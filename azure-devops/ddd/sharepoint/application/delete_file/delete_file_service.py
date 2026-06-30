@@ -30,11 +30,11 @@ class DeleteFileService:
         Raises:
             SharePointException: If deletion fails.
         """
-        repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_repository = SharePointFilesRepository.get_instance(
             site_id=delete_file_dto.site_id
         )
 
-        deleted = await repository.delete_file(
+        deleted = await sharepoint_files_repository.delete_file(
             file_path=delete_file_dto.file_path
         )
 

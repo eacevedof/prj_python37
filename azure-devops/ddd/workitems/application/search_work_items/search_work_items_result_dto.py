@@ -30,6 +30,19 @@ class SearchWorkItemDto:
             url=primitives.get("url", ""),
         )
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "work_item_type": self.work_item_type,
+            "state": self.state,
+            "project": self.project,
+            "assigned_to": self.assigned_to,
+            "created_date": self.created_date,
+            "changed_date": self.changed_date,
+            "url": self.url,
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class SearchWorkItemsResultDto:
@@ -46,3 +59,9 @@ class SearchWorkItemsResultDto:
             items=items,
             total=primitives.get("total", len(items)),
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "items": [item.to_dict() for item in self.items],
+            "total": self.total,
+        }

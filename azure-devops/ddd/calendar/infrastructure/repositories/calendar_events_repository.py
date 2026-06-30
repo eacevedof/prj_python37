@@ -5,6 +5,9 @@ import aiohttp
 from ddd.sharepoint.infrastructure.repositories.graph_api_auth_repository import (
     GraphApiAuthRepository,
 )
+from ddd.calendar.domain.enums.graph_api_enum import GraphApiEnum
+from ddd.calendar.domain.enums.http_status_enum import HttpStatusEnum
+from ddd.calendar.domain.enums.sensitivity_enum import SensitivityEnum
 from ddd.calendar.domain.exceptions.calendar_exception import CalendarException
 
 
@@ -16,7 +19,7 @@ class CalendarEventsRepository:
     Reuses OAuth authentication from SharePoint GraphApiAuthRepository.
     """
 
-    _graph_base_url: str = "https://graph.microsoft.com/v1.0"
+    _graph_base_url: str = GraphApiEnum.BASE_URL.value
 
     def __init__(self) -> None:
         self._auth_repository = GraphApiAuthRepository.get_instance()
@@ -60,13 +63,13 @@ class CalendarEventsRepository:
                 kwargs["json"] = json_data
 
             async with session.request(method, url, **kwargs) as response:
-                if response.status == 204:
+                if response.status == HttpStatusEnum.NO_CONTENT:
                     return None
 
-                if response.status == 404:
+                if response.status == HttpStatusEnum.NOT_FOUND:
                     return None
 
-                if response.status >= 400:
+                if response.status >= HttpStatusEnum.BAD_REQUEST:
                     error_text = await response.text()
                     raise CalendarException.api_error(response.status, error_text)
 
@@ -152,7 +155,7 @@ class CalendarEventsRepository:
         location: str | None = None,
         attendees: list[str] | None = None,
         is_all_day: bool = False,
-        sensitivity: str = "normal",
+        sensitivity: str = SensitivityEnum.NORMAL.value,
     ) -> dict[str, Any]:
         """Create a new calendar event.
 

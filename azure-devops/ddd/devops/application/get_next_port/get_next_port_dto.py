@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class GetNextPortDto:
     """DTO for getting next available port."""
 

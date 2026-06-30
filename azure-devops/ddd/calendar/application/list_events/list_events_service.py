@@ -13,8 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class ListEventsService:
     """Service for listing calendar events."""
 
+    _calendar_events_repository: CalendarEventsRepository
+
     def __init__(self) -> None:
-        pass
+        self._calendar_events_repository = CalendarEventsRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -32,9 +34,7 @@ class ListEventsService:
         Raises:
             CalendarException: If listing fails.
         """
-        repository = CalendarEventsRepository.get_instance()
-
-        items = await repository.list_events(
+        items = await self._calendar_events_repository.list_events(
             user_id=list_events_dto.user_id,
             start_datetime=list_events_dto.start_datetime,
             end_datetime=list_events_dto.end_datetime,

@@ -12,6 +12,7 @@ from nacl import pwhash
 class Hasher:
     _ENCRYPT_SALT: str = "a1b;2c3-d4e,5f6g7h81."
     _INITIALIZATION_VECTOR: str = "cdf86fc413278d46"
+    _IV_LENGTH: int = 16
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -56,7 +57,7 @@ class Hasher:
 
     def _get_initial_vector(self) -> str:
         iv_md5 = hashlib.md5(self._INITIALIZATION_VECTOR.encode()).hexdigest()
-        return iv_md5[:16]
+        return iv_md5[:self._IV_LENGTH]
 
     def does_password_match(self, hashed_password: str, plain_password: str) -> bool:
         try:

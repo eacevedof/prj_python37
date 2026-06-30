@@ -8,6 +8,8 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 from ddd.sharepoint.infrastructure.repositories.graph_api_auth_repository import (
     GraphApiAuthRepository,
 )
+from ddd.sharepoint.domain.enums.graph_api_enum import GraphApiEnum
+from ddd.sharepoint.domain.enums.http_status_enum import HttpStatusEnum
 from ddd.sharepoint.domain.exceptions.sharepoint_exception import SharePointException
 
 
@@ -18,7 +20,7 @@ class SharePointFilesRepository:
     Supports CRUD operations on SharePoint document libraries.
     """
 
-    _graph_base_url: str = "https://graph.microsoft.com/v1.0"
+    _graph_base_url: str = GraphApiEnum.BASE_URL.value
 
     def __init__(self, site_id: str) -> None:
         self._site_id = site_id
@@ -73,13 +75,13 @@ class SharePointFilesRepository:
                 kwargs["data"] = data
 
             async with session.request(method, url, **kwargs) as response:
-                if response.status == 204:
+                if response.status == HttpStatusEnum.NO_CONTENT:
                     return None
 
-                if response.status == 404:
+                if response.status == HttpStatusEnum.NOT_FOUND:
                     return None
 
-                if response.status >= 400:
+                if response.status >= HttpStatusEnum.BAD_REQUEST:
                     error_text = await response.text()
                     raise SharePointException.api_error(response.status, error_text)
 

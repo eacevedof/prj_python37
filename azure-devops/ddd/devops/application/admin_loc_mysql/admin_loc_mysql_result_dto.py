@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class AdminLocMysqlResultDto:
     """Result DTO for local MySQL administration operations."""
 
@@ -22,3 +22,12 @@ class AdminLocMysqlResultDto:
             data=data.get("data", []),
             row_count=int(data.get("row_count", 0)),
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "action": self.action,
+            "success": self.success,
+            "message": self.message,
+            "data": self.data,
+            "rowCount": self.row_count,
+        }

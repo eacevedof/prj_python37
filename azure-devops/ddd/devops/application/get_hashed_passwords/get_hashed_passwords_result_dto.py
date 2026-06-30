@@ -26,3 +26,9 @@ class GetHashedPasswordsResultDto:
 
     def to_list(self) -> list[dict[str, Any]]:
         return [item.to_dict() for item in self.items]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "items": self.to_list(),
+            "total": self.total,
+        }

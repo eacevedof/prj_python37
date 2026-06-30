@@ -204,7 +204,7 @@ class ToolsSchemaRepository:
                     },
                     "description": {
                         "type": "string",
-                        "description": "new description (supports html)",
+                        "description": "new description (plain text; line breaks preserved, no html/markdown)",
                     },
                 },
                 "required": ["project", "task_id"],

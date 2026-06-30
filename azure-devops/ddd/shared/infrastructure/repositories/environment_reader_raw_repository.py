@@ -1,5 +1,5 @@
 import os
-from typing import final
+from typing import final, Self
 
 from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 
@@ -8,9 +8,9 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
-    @staticmethod
-    def get_instance() -> "EnvironmentReaderRawRepository":
-        return EnvironmentReaderRawRepository()
+    @classmethod
+    def get_instance(cls) -> Self:
+        return cls()
 
     def get_azure_organization_name(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.AZURE_ORGANIZATION_NAME)

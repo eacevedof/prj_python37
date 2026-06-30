@@ -22,6 +22,15 @@ class ProjectDto:
             state=str(primitives.get("state", "")),
         )
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "url": self.url,
+            "state": self.state,
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class SearchProjectsResultDto:
@@ -38,3 +47,9 @@ class SearchProjectsResultDto:
             projects=projects,
             total=int(primitives.get("total", len(projects))),
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "projects": [project.to_dict() for project in self.projects],
+            "total": self.total,
+        }

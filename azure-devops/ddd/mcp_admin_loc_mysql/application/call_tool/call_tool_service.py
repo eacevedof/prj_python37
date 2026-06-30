@@ -9,6 +9,7 @@ from ddd.mcp_admin_loc_mysql.application.call_tool.call_tool_dto import CallTool
 from ddd.mcp_admin_loc_mysql.application.call_tool.call_tool_result_dto import (
     CallToolResultDto,
 )
+from ddd.devops.domain.enums.mysql_action_enum import MysqlActionEnum
 from ddd.devops.application import (
     AdminLocMysqlDto,
     AdminLocMysqlService,
@@ -69,7 +70,7 @@ class CallToolService:
     async def __handle_list_databases(self) -> list[TextContent]:
         dto = AdminLocMysqlDto.from_primitives(
             {
-                "action": "list_databases",
+                "action": MysqlActionEnum.LIST_DATABASES.value,
                 "database": "",
                 "table": "",
                 "query": "",
@@ -81,7 +82,7 @@ class CallToolService:
     async def __handle_show_tables(self) -> list[TextContent]:
         dto = AdminLocMysqlDto.from_primitives(
             {
-                "action": "show_tables",
+                "action": MysqlActionEnum.SHOW_TABLES.value,
                 "database": self._payload_dict.get("database", ""),
                 "table": "",
                 "query": "",
@@ -93,7 +94,7 @@ class CallToolService:
     async def __handle_describe_table(self) -> list[TextContent]:
         dto = AdminLocMysqlDto.from_primitives(
             {
-                "action": "describe_table",
+                "action": MysqlActionEnum.DESCRIBE_TABLE.value,
                 "database": self._payload_dict.get("database", ""),
                 "table": self._payload_dict.get("table", ""),
                 "query": "",
@@ -105,7 +106,7 @@ class CallToolService:
     async def __handle_execute_query(self) -> list[TextContent]:
         dto = AdminLocMysqlDto.from_primitives(
             {
-                "action": "execute_query",
+                "action": MysqlActionEnum.EXECUTE_QUERY.value,
                 "database": self._payload_dict.get("database", ""),
                 "table": "",
                 "query": self._payload_dict.get("query", ""),

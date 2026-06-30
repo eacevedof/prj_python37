@@ -6,6 +6,8 @@ import aiohttp
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import (
     EnvironmentReaderRawRepository,
 )
+from ddd.sharepoint.domain.enums.graph_auth_enum import GraphAuthEnum
+from ddd.sharepoint.domain.enums.token_expiry_enum import TokenExpiryEnum
 from ddd.sharepoint.domain.exceptions.sharepoint_exception import SharePointException
 
 
@@ -26,8 +28,8 @@ class GraphApiAuthRepository:
         self._tenant_id = env.get_sharepoint_tenant_id()
         self._client_id = env.get_sharepoint_client_id()
         self._client_secret = env.get_sharepoint_client_secret()
-        self._token_url = (
-            f"https://login.microsoftonline.com/{self._tenant_id}/oauth2/v2.0/token"
+        self._token_url = GraphAuthEnum.TOKEN_URL_TEMPLATE.value.format(
+            tenant_id=self._tenant_id
         )
 
     @classmethod
@@ -55,7 +57,9 @@ class GraphApiAuthRepository:
         """Check if current token is still valid (with 60s buffer)."""
         if self._access_token is None:
             return False
-        return time.time() < (self._token_expires_at - 60)
+        return time.time() < (
+            self._token_expires_at - TokenExpiryEnum.REFRESH_BUFFER_SECONDS
+        )
 
     async def _refresh_token(self) -> None:
         """Request a new access token from Azure AD.
@@ -66,7 +70,7 @@ class GraphApiAuthRepository:
         payload = {
             "client_id": self._client_id,
             "client_secret": self._client_secret,
-            "scope": "https://graph.microsoft.com/.default",
+            "scope": GraphAuthEnum.DEFAULT_SCOPE.value,
             "grant_type": "client_credentials",
         }
 
@@ -82,7 +86,9 @@ class GraphApiAuthRepository:
 
                 data = await response.json()
                 self._access_token = data["access_token"]
-                expires_in = int(data.get("expires_in", 3600))
+                expires_in = int(
+                    data.get("expires_in", TokenExpiryEnum.DEFAULT_EXPIRES_IN)
+                )
                 self._token_expires_at = time.time() + expires_in
 
     def invalidate_token(self) -> None:

@@ -14,8 +14,10 @@ from ddd.calendar.domain.exceptions.calendar_exception import CalendarException
 class AddHolidayService:
     """Service for adding holidays to a specific calendar."""
 
+    _calendar_events_repository: CalendarEventsRepository
+
     def __init__(self) -> None:
-        pass
+        self._calendar_events_repository = CalendarEventsRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -33,9 +35,7 @@ class AddHolidayService:
         Raises:
             CalendarException: If calendar not found or creation fails.
         """
-        repository = CalendarEventsRepository.get_instance()
-
-        calendar_id = await repository.get_calendar_id_by_name(
+        calendar_id = await self._calendar_events_repository.get_calendar_id_by_name(
             user_id=add_holiday_dto.user_id,
             calendar_name=add_holiday_dto.calendar_name,
         )
@@ -43,7 +43,7 @@ class AddHolidayService:
         if calendar_id is None:
             raise CalendarException.calendar_not_found(add_holiday_dto.calendar_name)
 
-        event = await repository.create_event_in_calendar(
+        event = await self._calendar_events_repository.create_event_in_calendar(
             user_id=add_holiday_dto.user_id,
             calendar_id=calendar_id,
             subject=add_holiday_dto.title,

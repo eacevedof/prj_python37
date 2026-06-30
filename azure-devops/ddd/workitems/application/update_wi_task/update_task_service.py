@@ -1,19 +1,22 @@
 from typing import final, Self, Any
 
+from ddd.shared.infrastructure.components.texter import Texter
+from ddd.workitems.domain.enums import WorkItemFieldEnum
+from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 from ddd.workitems.application.update_wi_task.update_task_dto import UpdateTaskDto
 from ddd.workitems.application.update_wi_task.update_task_result_dto import UpdateTaskResultDto
-from ddd.workitems.infrastructure.repositories.tasks_writer_api_repository import TasksWriterApiRepository
 
 
 @final
 class UpdateTaskService:
     """Service for updating Task work items in Azure DevOps."""
 
-    _update_task_dto: UpdateTaskDto
+    _texter: Texter
     _tasks_writer_api_repository: TasksWriterApiRepository
+    _update_task_dto: UpdateTaskDto
 
     def __init__(self) -> None:
-        pass
+        self._texter = Texter.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -39,16 +42,16 @@ class UpdateTaskService:
         fields: dict[str, Any] = {}
 
         if self._update_task_dto.state:
-            fields["System.State"] = self._update_task_dto.state
+            fields[WorkItemFieldEnum.STATE.value] = self._update_task_dto.state
 
         if self._update_task_dto.assigned_to:
-            fields["System.AssignedTo"] = self._update_task_dto.assigned_to
+            fields[WorkItemFieldEnum.ASSIGNED_TO.value] = self._update_task_dto.assigned_to
 
         if self._update_task_dto.title:
-            fields["System.Title"] = self._update_task_dto.title
+            fields[WorkItemFieldEnum.TITLE.value] = self._update_task_dto.title
 
         if self._update_task_dto.description:
-            fields["System.Description"] = self._update_task_dto.description
+            fields[WorkItemFieldEnum.DESCRIPTION.value] = self._texter.get_html_from_plain_text(self._update_task_dto.description)
 
         return fields
 
@@ -56,7 +59,7 @@ class UpdateTaskService:
         fields_dict = api_resp_dict.get("fields", {})
         return {
             "id": api_resp_dict.get("id", 0),
-            "title": fields_dict.get("System.Title", ""),
-            "state": fields_dict.get("System.State", ""),
+            "title": fields_dict.get(WorkItemFieldEnum.TITLE.value, ""),
+            "state": fields_dict.get(WorkItemFieldEnum.STATE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
         }

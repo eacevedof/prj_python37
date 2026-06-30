@@ -17,8 +17,10 @@ class RequestAnubisService:
     Write operations require explicit confirmation.
     """
 
+    _provision_api_repository: ProvisionApiRepository
+
     def __init__(self) -> None:
-        self._repository = ProvisionApiRepository.get_instance()
+        self._provision_api_repository = ProvisionApiRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -47,7 +49,7 @@ class RequestAnubisService:
         if not sql:
             raise DevOpsException.anubis_empty_query()
 
-        is_write = self._repository.is_write_query(sql)
+        is_write = self._provision_api_repository.is_write_query(sql)
 
         if is_write and not request_anubis_dto.confirmed:
             return RequestAnubisResultDto.from_primitives(
@@ -59,7 +61,7 @@ class RequestAnubisService:
                 }
             )
 
-        response = await self._repository.execute_query(sql)
+        response = await self._provision_api_repository.execute_query(sql)
 
         return RequestAnubisResultDto.from_primitives(
             {

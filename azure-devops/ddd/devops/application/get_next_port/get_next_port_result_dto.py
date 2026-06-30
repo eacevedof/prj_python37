@@ -1,9 +1,9 @@
-from typing import final, Self
+from typing import final, Self, Any
 from dataclasses import dataclass
 
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class GetNextPortResultDto:
     """Result DTO for get next port operation."""
 
@@ -14,3 +14,8 @@ class GetNextPortResultDto:
         return cls(
             port=data["port"],
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "port": self.port,
+        }

@@ -1,7 +1,8 @@
 from typing import final, Any
 
-from ddd.workitems.infrastructure.repositories.abstract_work_items_api_repository import AbstractWorkItemsApiRepository
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.workitems.domain.enums import AzureApiEnum
+from ddd.workitems.infrastructure.repositories.abstract_work_items_api_repository import AbstractWorkItemsApiRepository
 
 
 @final
@@ -18,13 +19,13 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
 
     async def get_work_item_by_work_item_id(self, work_item_id: int) -> dict[str, Any] | None:
         """Get a single work item by ID."""
-        url = f"{self._base_url}/{work_item_id}?api-version=7.0"
+        url = f"{self._base_url}/{work_item_id}?api-version={AzureApiEnum.API_VERSION.value}"
         return await self._request("GET", url)
 
     async def get_work_items_by_work_items_ids(self, work_items_ids: list[int]) -> dict[str, Any] | None:
         """Get multiple work items by IDs."""
         ids_str = ",".join(map(str, work_items_ids))
-        url = f"{self._base_url}?ids={ids_str}&api-version=7.0"
+        url = f"{self._base_url}?ids={ids_str}&api-version={AzureApiEnum.API_VERSION.value}"
         return await self._request("GET", url)
 
     async def query(self, wiql: str) -> list[dict[str, Any]]:
@@ -37,7 +38,7 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         Example:
             await repo.query("SELECT [Id], [Title] FROM WorkItems WHERE [State] = 'Active'")
         """
-        url = f"{self._wiql_url}?api-version=7.0"
+        url = f"{self._wiql_url}?api-version={AzureApiEnum.API_VERSION.value}"
         result = await self._request("POST", url, {"query": wiql}, "application/json")
         return result.get("workItems", []) if result else []
 
@@ -58,7 +59,7 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         Returns:
             List of work item search results ordered by ID desc
         """
-        url = f"{self._search_url}?api-version=7.0"
+        url = f"{self._search_url}?api-version={AzureApiEnum.API_VERSION.value}"
         payload: dict[str, Any] = {
             "searchText": search_text,
             "$top": limit,
@@ -86,6 +87,6 @@ class WorkItemsReaderApiRepository(AbstractWorkItemsApiRepository):
         Returns:
             List of comments
         """
-        url = f"{self._base_url}/{work_item_id}/comments?api-version=7.0-preview"
+        url = f"{self._base_url}/{work_item_id}/comments?api-version={AzureApiEnum.API_VERSION_PREVIEW.value}"
         result = await self._request("GET", url, content_type="application/json")
         return result.get("comments", []) if result else []

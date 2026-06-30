@@ -6,13 +6,16 @@ import aiohttp
 
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
 
+HTTP_STATUS_NOT_FOUND = 404
+HTTP_STATUS_NO_CONTENT = 204
+
 
 class AbstractWorkItemsApiRepository(ABC):
     """Base repository for Azure DevOps Work Items API operations."""
 
     def __init__(self, organization: str, project_name: str) -> None:
-        azure_path = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
-        self._auth = base64.b64encode(f":{azure_path}".encode()).decode()
+        azure_pat = EnvironmentReaderRawRepository.get_instance().get_azure_pat()
+        self._auth = base64.b64encode(f":{azure_pat}".encode()).decode()
         self._organization = organization
 
         self._project = project_name
@@ -40,9 +43,9 @@ class AbstractWorkItemsApiRepository(ABC):
                 headers=self._get_headers(content_type),
                 json=json_data
             ) as response:
-                if response.status == 404:
+                if response.status == HTTP_STATUS_NOT_FOUND:
                     return None
-                if response.status == 204:
+                if response.status == HTTP_STATUS_NO_CONTENT:
                     return {"deleted": True}
                 response.raise_for_status()
                 return await response.json()

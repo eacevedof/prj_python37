@@ -13,8 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class UpdateEventService:
     """Service for updating calendar events."""
 
+    _calendar_events_repository: CalendarEventsRepository
+
     def __init__(self) -> None:
-        pass
+        self._calendar_events_repository = CalendarEventsRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -32,9 +34,7 @@ class UpdateEventService:
         Raises:
             CalendarException: If update fails.
         """
-        repository = CalendarEventsRepository.get_instance()
-
-        event = await repository.update_event(
+        event = await self._calendar_events_repository.update_event(
             user_id=update_event_dto.user_id,
             event_id=update_event_dto.event_id,
             subject=update_event_dto.subject,

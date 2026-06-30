@@ -1,6 +1,8 @@
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.devops.domain.enums.mysql_action_enum import MysqlActionEnum
+from ddd.devops.domain.enums.mysql_query_const import MysqlQueryConst
 from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_dto import AdminLocMysqlDto
 from ddd.devops.application.admin_loc_mysql.admin_loc_mysql_result_dto import (
     AdminLocMysqlResultDto,
@@ -30,13 +32,13 @@ class AdminLocMysqlService:
         )
 
         match dto.action:
-            case "list_databases":
+            case MysqlActionEnum.LIST_DATABASES.value:
                 return await self._list_databases()
-            case "show_tables":
+            case MysqlActionEnum.SHOW_TABLES.value:
                 return await self._show_tables(dto.database)
-            case "describe_table":
+            case MysqlActionEnum.DESCRIBE_TABLE.value:
                 return await self._describe_table(dto.database, dto.table)
-            case "execute_query":
+            case MysqlActionEnum.EXECUTE_QUERY.value:
                 return await self._execute_query(dto.database, dto.query)
             case _:
                 return AdminLocMysqlResultDto.from_primitives(
@@ -52,11 +54,11 @@ class AdminLocMysqlService:
     async def _list_databases(self) -> AdminLocMysqlResultDto:
         result = await self._mysql_admin_repository.execute_query(
             database="",
-            query="SHOW DATABASES",
+            query=MysqlQueryConst.SHOW_DATABASES,
         )
         return AdminLocMysqlResultDto.from_primitives(
             {
-                "action": "list_databases",
+                "action": MysqlActionEnum.LIST_DATABASES.value,
                 "success": result["success"],
                 "message": result["message"],
                 "data": result["data"],
@@ -68,7 +70,7 @@ class AdminLocMysqlService:
         if not database:
             return AdminLocMysqlResultDto.from_primitives(
                 {
-                    "action": "show_tables",
+                    "action": MysqlActionEnum.SHOW_TABLES.value,
                     "success": False,
                     "message": "Database name is required for show_tables action",
                     "data": [],
@@ -78,11 +80,11 @@ class AdminLocMysqlService:
 
         result = await self._mysql_admin_repository.execute_query(
             database=database,
-            query="SHOW TABLES",
+            query=MysqlQueryConst.SHOW_TABLES,
         )
         return AdminLocMysqlResultDto.from_primitives(
             {
-                "action": "show_tables",
+                "action": MysqlActionEnum.SHOW_TABLES.value,
                 "success": result["success"],
                 "message": result["message"],
                 "data": result["data"],
@@ -96,7 +98,7 @@ class AdminLocMysqlService:
         if not database:
             return AdminLocMysqlResultDto.from_primitives(
                 {
-                    "action": "describe_table",
+                    "action": MysqlActionEnum.DESCRIBE_TABLE.value,
                     "success": False,
                     "message": "Database name is required for describe_table action",
                     "data": [],
@@ -107,7 +109,7 @@ class AdminLocMysqlService:
         if not table:
             return AdminLocMysqlResultDto.from_primitives(
                 {
-                    "action": "describe_table",
+                    "action": MysqlActionEnum.DESCRIBE_TABLE.value,
                     "success": False,
                     "message": "Table name is required for describe_table action",
                     "data": [],
@@ -117,11 +119,11 @@ class AdminLocMysqlService:
 
         result = await self._mysql_admin_repository.execute_query(
             database=database,
-            query=f"DESCRIBE `{table}`",
+            query=MysqlQueryConst.DESCRIBE_TABLE_TEMPLATE.format(table=table),
         )
         return AdminLocMysqlResultDto.from_primitives(
             {
-                "action": "describe_table",
+                "action": MysqlActionEnum.DESCRIBE_TABLE.value,
                 "success": result["success"],
                 "message": result["message"],
                 "data": result["data"],
@@ -133,7 +135,7 @@ class AdminLocMysqlService:
         if not query:
             return AdminLocMysqlResultDto.from_primitives(
                 {
-                    "action": "execute_query",
+                    "action": MysqlActionEnum.EXECUTE_QUERY.value,
                     "success": False,
                     "message": "Query is required for execute_query action",
                     "data": [],
@@ -147,7 +149,7 @@ class AdminLocMysqlService:
         )
         return AdminLocMysqlResultDto.from_primitives(
             {
-                "action": "execute_query",
+                "action": MysqlActionEnum.EXECUTE_QUERY.value,
                 "success": result["success"],
                 "message": result["message"],
                 "data": result["data"],

@@ -1,17 +1,18 @@
 from typing import final, Self, Any
 
+from ddd.workitems.domain.enums import WorkItemFieldEnum
+from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
 from ddd.workitems.application.get_wi_detail.get_work_item_detail_dto import GetWorkItemDetailDto
 from ddd.workitems.application.get_wi_detail.get_work_item_detail_result_dto import GetWorkItemDetailResultDto
 from ddd.workitems.domain.exceptions.work_items_exception import WorkItemsException
-from ddd.workitems.infrastructure.repositories.work_items_reader_api_repository import WorkItemsReaderApiRepository
 
 
 @final
 class GetWorkItemDetailService:
     """Service for getting work item detail including description and comments."""
 
-    _detail_dto: GetWorkItemDetailDto
     _work_items_reader_api_repository: WorkItemsReaderApiRepository
+    _get_work_item_detail_dto: GetWorkItemDetailDto
 
     def __init__(self) -> None:
         pass
@@ -27,7 +28,7 @@ class GetWorkItemDetailService:
         Raises:
             WorkItemsException: When work item not found
         """
-        self._detail_dto = detail_dto
+        self._get_work_item_detail_dto = detail_dto
         self._work_items_reader_api_repository = WorkItemsReaderApiRepository.get_instance(
             project=detail_dto.project
         )
@@ -43,11 +44,11 @@ class GetWorkItemDetailService:
             detail_dto.work_item_id
         )
 
-        primitives = self._map_to_primitives(work_item, comments)
+        primitives = self._get_to_primitives(work_item, comments)
 
         return GetWorkItemDetailResultDto.from_primitives(primitives)
 
-    def _map_to_primitives(
+    def _get_to_primitives(
         self,
         work_item: dict[str, Any],
         comments: list[dict[str, Any]]
@@ -62,27 +63,27 @@ class GetWorkItemDetailService:
         if changed_date:
             changed_date = changed_date[:10]
 
-        assigned_to = fields.get("System.AssignedTo", {})
+        assigned_to = fields.get(WorkItemFieldEnum.ASSIGNED_TO.value, {})
         if isinstance(assigned_to, dict):
             assigned_to = assigned_to.get("displayName", "")
 
         return {
             "id": work_item.get("id", 0),
-            "title": fields.get("System.Title", ""),
+            "title": fields.get(WorkItemFieldEnum.TITLE.value, ""),
             "work_item_type": fields.get("System.WorkItemType", ""),
-            "state": fields.get("System.State", ""),
-            "description": fields.get("System.Description", ""),
+            "state": fields.get(WorkItemFieldEnum.STATE.value, ""),
+            "description": fields.get(WorkItemFieldEnum.DESCRIPTION.value, ""),
             "assigned_to": assigned_to,
             "created_date": created_date,
             "changed_date": changed_date,
             "url": work_item.get("_links", {}).get("html", {}).get("href", ""),
-            "comments": self._map_comments(comments),
+            "comments": self._get_comments(comments),
         }
 
-    def _map_comments(self, comments: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        return [self._map_single_comment(c) for c in comments]
+    def _get_comments(self, comments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return [self._get_single_comment(c) for c in comments]
 
-    def _map_single_comment(self, comment: dict[str, Any]) -> dict[str, Any]:
+    def _get_single_comment(self, comment: dict[str, Any]) -> dict[str, Any]:
         created_date = comment.get("createdDate", "")
         if created_date:
             created_date = created_date[:10]

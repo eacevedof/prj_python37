@@ -16,8 +16,10 @@ from ddd.devops.domain.exceptions.devops_exception import DevOpsException
 class GetHashedPasswordsService:
     """Service for hashing one or multiple passwords."""
 
+    _password_hasher_repository: PasswordHasherRepository
+
     def __init__(self) -> None:
-        pass
+        self._password_hasher_repository = PasswordHasherRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -42,11 +44,9 @@ class GetHashedPasswordsService:
         if not password_list:
             raise DevOpsException.empty_password()
 
-        repository = PasswordHasherRepository.get_instance()
-
         items = []
         for password in password_list:
-            hashed = repository.hash_password(password)
+            hashed = self._password_hasher_repository.hash_password(password)
             items.append(
                 {
                     "password": password,

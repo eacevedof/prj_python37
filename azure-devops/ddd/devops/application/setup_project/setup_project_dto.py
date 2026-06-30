@@ -2,9 +2,11 @@ import re
 from typing import final, Self, Any
 from dataclasses import dataclass
 
+from ddd.devops.domain.enums.local_project_const import LocalProjectConst
+
 
 @final
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class SetupProjectDto:
     """DTO for setting up a new local project."""
 
@@ -20,7 +22,7 @@ class SetupProjectDto:
 
         db_name = primitives_dict.get("db_name") or ""
         if not db_name:
-            db_name = f"ci_{normalized_proj_name.replace('-', '_')}"
+            db_name = f"{LocalProjectConst.DATABASE_NAME_PREFIX}{normalized_proj_name.replace('-', '_')}"
 
         return cls(
             project_name=normalized_proj_name,

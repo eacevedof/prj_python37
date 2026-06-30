@@ -1,4 +1,4 @@
-from typing import final, Self, Any
+from typing import final, Self
 
 from mcp.types import TextContent
 
@@ -31,18 +31,17 @@ class CallToolService:
     """Service that routes MCP tool calls to work item operations."""
 
     _logger: Logger
-    _payload_dict: dict[str, Any]
+    _call_tool_dto: CallToolDto
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._payload_dict = {}
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
-        self._payload_dict = call_tool_dto.payload_dict
+        self._call_tool_dto = call_tool_dto
 
         try:
             if call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC.value:
@@ -78,7 +77,7 @@ class CallToolService:
             self._logger.write_error(
                 module="CallToolService.__call__",
                 message=str(e),
-                context={"tool": call_tool_dto.event_name, "payload": self._payload_dict}
+                context={"tool": call_tool_dto.event_name, "payload": self._call_tool_dto.payload_dict}
             )
             text_contents = [
                 TextContent(type="text", text=f"error: {str(e)}")
@@ -91,7 +90,7 @@ class CallToolService:
     async def __get_create_epic_text_content(self) -> list[TextContent]:
         result = await CreateEpicService.get_instance()(
             CreateEpicDto.from_primitives(
-                self._payload_dict
+                self._call_tool_dto.payload_dict
             )
         )
 
@@ -103,7 +102,7 @@ class CallToolService:
     async def __get_create_linked_task_text_content(self) -> list[TextContent]:
         result = await CreateTaskService.get_instance()(
             CreateTaskDto.from_primitives(
-                self._payload_dict
+                self._call_tool_dto.payload_dict
             )
         )
 
@@ -122,7 +121,7 @@ class CallToolService:
     async def __get_create_work_item_text_content(self) -> list[TextContent]:
         result = await CreateWorkItemService.get_instance()(
             CreateWorkItemDto.from_primitives(
-                self._payload_dict
+                self._call_tool_dto.payload_dict
             )
         )
 
@@ -140,7 +139,7 @@ class CallToolService:
 
     async def __get_tasks_as_text_content(self) -> list[TextContent]:
         get_tasks_result_dto = await GetTasksService.get_instance()(
-            GetTasksDto.from_primitives(self._payload_dict)
+            GetTasksDto.from_primitives(self._call_tool_dto.payload_dict)
         )
         if not get_tasks_result_dto.tasks:
             return [TextContent(type="text", text="no tasks found.")]
@@ -157,7 +156,7 @@ class CallToolService:
     async def __get_update_task_text_content(self) -> list[TextContent]:
         update_task_result_dto = await UpdateTaskService.get_instance()(
             UpdateTaskDto.from_primitives(
-                self._payload_dict
+                self._call_tool_dto.payload_dict
             )
         )
 
@@ -174,7 +173,7 @@ class CallToolService:
 
     async def __get_search_text_content(self) -> list[TextContent]:
         search_result_dto = await SearchWorkItemsService.get_instance()(
-            SearchWorkItemsDto.from_primitives(self._payload_dict)
+            SearchWorkItemsDto.from_primitives(self._call_tool_dto.payload_dict)
         )
 
         if not search_result_dto.items:
@@ -192,7 +191,7 @@ class CallToolService:
 
     async def __get_detail_text_content(self) -> list[TextContent]:
         detail_result_dto = await GetWorkItemDetailService.get_instance()(
-            GetWorkItemDetailDto.from_primitives(self._payload_dict)
+            GetWorkItemDetailDto.from_primitives(self._call_tool_dto.payload_dict)
         )
 
         lines = [
@@ -220,7 +219,7 @@ class CallToolService:
 
     async def __get_search_projects_text_content(self) -> list[TextContent]:
         search_result_dto = await SearchProjectsService.get_instance()(
-            SearchProjectsDto.from_primitives(self._payload_dict)
+            SearchProjectsDto.from_primitives(self._call_tool_dto.payload_dict)
         )
 
         if not search_result_dto.projects:

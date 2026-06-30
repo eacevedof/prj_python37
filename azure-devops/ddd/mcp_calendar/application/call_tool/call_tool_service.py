@@ -8,6 +8,7 @@ from ddd.mcp_calendar.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_calendar.application.call_tool.call_tool_result_dto import (
     CallToolResultDto,
 )
+from ddd.calendar.domain.enums.preview_length_enum import PreviewLengthEnum
 from ddd.calendar.application import (
     ListEventsDto,
     ListEventsService,
@@ -113,7 +114,9 @@ class CallToolService:
 
         attendees_str = ", ".join(result.attendees) if result.attendees else "none"
         body_preview = (
-            result.body[:200] + "..." if len(result.body) > 200 else result.body
+            result.body[:PreviewLengthEnum.EVENT_BODY] + "..."
+            if len(result.body) > PreviewLengthEnum.EVENT_BODY
+            else result.body
         )
 
         return [

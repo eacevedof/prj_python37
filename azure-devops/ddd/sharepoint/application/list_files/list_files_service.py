@@ -30,11 +30,13 @@ class ListFilesService:
         Raises:
             SharePointException: If listing fails.
         """
-        repository = SharePointFilesRepository.get_instance(
+        sharepoint_files_repository = SharePointFilesRepository.get_instance(
             site_id=list_files_dto.site_id
         )
 
-        items = await repository.list_files(folder_path=list_files_dto.folder_path)
+        items = await sharepoint_files_repository.list_files(
+            folder_path=list_files_dto.folder_path
+        )
 
         return ListFilesResultDto.from_primitives({
             "items": items,

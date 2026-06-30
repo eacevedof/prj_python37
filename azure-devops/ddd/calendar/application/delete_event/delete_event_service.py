@@ -13,8 +13,10 @@ from ddd.calendar.infrastructure.repositories.calendar_events_repository import 
 class DeleteEventService:
     """Service for deleting calendar events."""
 
+    _calendar_events_repository: CalendarEventsRepository
+
     def __init__(self) -> None:
-        pass
+        self._calendar_events_repository = CalendarEventsRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -32,9 +34,7 @@ class DeleteEventService:
         Raises:
             CalendarException: If deletion fails.
         """
-        repository = CalendarEventsRepository.get_instance()
-
-        deleted = await repository.delete_event(
+        deleted = await self._calendar_events_repository.delete_event(
             user_id=delete_event_dto.user_id,
             event_id=delete_event_dto.event_id,
         )

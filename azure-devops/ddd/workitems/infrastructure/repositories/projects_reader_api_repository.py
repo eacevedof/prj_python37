@@ -4,6 +4,7 @@ from typing import final, Self, Any
 import aiohttp
 
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import EnvironmentReaderRawRepository
+from ddd.workitems.domain.enums import AzureApiEnum
 
 
 @final
@@ -46,6 +47,6 @@ class ProjectsReaderApiRepository:
         Returns:
             List of project dictionaries with id, name, description, etc.
         """
-        url = f"{self._base_url}?api-version=7.0&$top=500"
+        url = f"{self._base_url}?api-version={AzureApiEnum.API_VERSION.value}&$top=500"
         result = await self._request(url)
         return result.get("value", []) if result else []

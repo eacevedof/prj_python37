@@ -1,20 +1,22 @@
 from typing import final, Self, Any
 
+from ddd.shared.infrastructure.components.texter import Texter
+from ddd.workitems.domain.enums import WorkItemTypeEnum, WorkItemFieldEnum
+from ddd.workitems.infrastructure.repositories.epics_writer_api_repository import EpicsWriterApiRepository
 from ddd.workitems.application.create_wi_epic.create_epic_dto import CreateEpicDto
 from ddd.workitems.application.create_wi_epic.create_epic_result_dto import CreateEpicResultDto
-from ddd.workitems.domain.enums import WorkItemTypeEnum
-from ddd.workitems.infrastructure.repositories.epics_writer_api_repository import EpicsWriterApiRepository
 
 
 @final
 class CreateEpicService:
     """Service for creating Epic work items in Azure DevOps."""
 
-    _create_epic_dto: CreateEpicDto
+    _texter: Texter
     _epics_writer_api_repository: EpicsWriterApiRepository
+    _create_epic_dto: CreateEpicDto
 
     def __init__(self) -> None:
-        pass
+        self._texter = Texter.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -38,19 +40,22 @@ class CreateEpicService:
     async def __get_epic_after_creation(self) -> dict:
         fields = {}
 
+        description_parts: list[str] = []
         if self._create_epic_dto.description:
-            fields["System.Description"] = self._create_epic_dto.description
-
-        if self._create_epic_dto.assigned_to:
-            fields["System.AssignedTo"] = self._create_epic_dto.assigned_to
-
-        if self._create_epic_dto.tags:
-            fields["System.Tags"] = self._create_epic_dto.tags
-
+            description_parts.append(self._create_epic_dto.description)
         if self._create_epic_dto.departments:
             departments_text = ", ".join(self._create_epic_dto.departments)
-            current_description = fields.get("System.Description", "")
-            fields["System.Description"] = f"{current_description}\n\nDepartamentos: {departments_text}"
+            description_parts.append(f"Departamentos: {departments_text}")
+
+        if description_parts:
+            plain_description = "\n\n".join(description_parts)
+            fields[WorkItemFieldEnum.DESCRIPTION.value] = self._texter.get_html_from_plain_text(plain_description)
+
+        if self._create_epic_dto.assigned_to:
+            fields[WorkItemFieldEnum.ASSIGNED_TO.value] = self._create_epic_dto.assigned_to
+
+        if self._create_epic_dto.tags:
+            fields[WorkItemFieldEnum.TAGS.value] = self._create_epic_dto.tags
 
         return await self._epics_writer_api_repository.create_work_item(
             item_type=WorkItemTypeEnum.EPIC.value,
@@ -61,7 +66,7 @@ class CreateEpicService:
     def __get_primitives_from_api_response(self, api_resp_dict: dict[str, Any]) -> dict[str, Any]:
         return {
             "id": api_resp_dict.get("id", 0),
-            "title": api_resp_dict.get("fields", {}).get("System.Title", ""),
+            "title": api_resp_dict.get("fields", {}).get(WorkItemFieldEnum.TITLE.value, ""),
             "url": api_resp_dict.get("_links", {}).get("html", {}).get("href", ""),
             "project": self._create_epic_dto.project,
         }

@@ -20,6 +20,14 @@ class CommentDto:
             created_date=primitives.get("created_date", ""),
         )
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "text": self.text,
+            "created_by": self.created_by,
+            "created_date": self.created_date,
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class GetWorkItemDetailResultDto:
@@ -53,3 +61,17 @@ class GetWorkItemDetailResultDto:
             url=primitives.get("url", ""),
             comments=comments,
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "work_item_type": self.work_item_type,
+            "state": self.state,
+            "description": self.description,
+            "assigned_to": self.assigned_to,
+            "created_date": self.created_date,
+            "changed_date": self.changed_date,
+            "url": self.url,
+            "comments": [comment.to_dict() for comment in self.comments],
+        }

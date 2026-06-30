@@ -6,6 +6,7 @@ from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_sharepoint.domain.enums import ToolNameEnum
 from ddd.mcp_sharepoint.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_sharepoint.application.call_tool.call_tool_result_dto import CallToolResultDto
+from ddd.sharepoint.domain.enums.preview_length_enum import PreviewLengthEnum
 from ddd.sharepoint.application import (
     ListFilesDto,
     ListFilesService,
@@ -116,7 +117,7 @@ class CallToolService:
                 f"file downloaded:\n"
                 f"- path: {result.file_path}\n"
                 f"- size: {result.size} bytes\n"
-                f"- content_base64: {result.content_base64[:100]}{'...' if len(result.content_base64) > 100 else ''}"
+                f"- content_base64: {result.content_base64[:PreviewLengthEnum.CONTENT_BASE64]}{'...' if len(result.content_base64) > PreviewLengthEnum.CONTENT_BASE64 else ''}"
             )
         )]
 

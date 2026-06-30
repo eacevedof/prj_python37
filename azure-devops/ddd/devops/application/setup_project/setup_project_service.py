@@ -2,6 +2,7 @@ from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.repositories import EnvironmentReaderRawRepository
+from ddd.devops.domain.enums.local_project_const import LocalProjectConst
 from ddd.devops.application.setup_project.setup_project_dto import SetupProjectDto
 from ddd.devops.application.setup_project.setup_project_result_dto import (
     SetupProjectResultDto,
@@ -31,9 +32,9 @@ class SetupProjectService:
     ) -> SetupProjectResultDto:
         steps_completed: list[str] = []
 
-        port = await self._resolve_port(setup_project_dto.port)
-        app_folder = f"app-{setup_project_dto.project_name}"
-        server_name = f"local-{port}"
+        port = await self._get_next_port(setup_project_dto.port)
+        app_folder = f"{LocalProjectConst.APP_NAME_PREFIX}{setup_project_dto.project_name}"
+        server_name = f"{LocalProjectConst.SERVER_NAME_PREFIX}{port}"
 
         self._log_start(setup_project_dto.project_name, port, setup_project_dto.db_name)
 
@@ -84,7 +85,7 @@ class SetupProjectService:
             }
         )
 
-    async def _resolve_port(self, port: int | None) -> int:
+    async def _get_next_port(self, port: int | None) -> int:
         if port:
             return port
         vhosts_file = self._env_reader_raw_repository.get_local_vhosts_file()
