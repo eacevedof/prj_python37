@@ -8,7 +8,7 @@ from mcp.types import Tool, TextContent
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_local_devops.domain.enums import McpServerNameEnum
-from ddd.mcp_local_devops.infrastructure.repositories.tools_schema_repository import ToolsSchemaRepository
+from ddd.mcp_local_devops.infrastructure.repositories.tools_schema_reader_in_memory_repository import ToolsSchemaReaderInMemoryRepository
 from ddd.mcp_local_devops.application.call_tool import CallToolDto, CallToolService
 
 
@@ -18,13 +18,13 @@ class McpLocalDevOpsController:
 
     _logger: Logger
     _server: Server
-    _tools_schema_repository: ToolsSchemaRepository
+    _tools_schema_repository: ToolsSchemaReaderInMemoryRepository
     _call_tool_service: CallToolService
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
         self._server = Server(McpServerNameEnum.LOCAL_DEVOPS.value)
-        self._tools_schema_repository = ToolsSchemaRepository.get_instance()
+        self._tools_schema_repository = ToolsSchemaReaderInMemoryRepository.get_instance()
         self._call_tool_service = CallToolService.get_instance()
         self.__register_handlers()
 

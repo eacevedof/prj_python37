@@ -14,7 +14,6 @@ from ddd.devops.application.get_next_port.get_next_port_service import (
 )
 from ddd.devops.application.get_hashed_passwords import (
     GetHashedPasswordsDto,
-    HashedPasswordItemDto,
     GetHashedPasswordsResultDto,
     GetHashedPasswordsService,
 )
@@ -37,7 +36,6 @@ __all__ = [
     "GetNextPortResultDto",
     "GetNextPortService",
     "GetHashedPasswordsDto",
-    "HashedPasswordItemDto",
     "GetHashedPasswordsResultDto",
     "GetHashedPasswordsService",
     "RequestAnubisDto",

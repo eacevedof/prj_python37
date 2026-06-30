@@ -6,7 +6,7 @@ from ddd.mcp_calendar.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
     """Repository for Calendar MCP tool schemas."""
 
     @classmethod

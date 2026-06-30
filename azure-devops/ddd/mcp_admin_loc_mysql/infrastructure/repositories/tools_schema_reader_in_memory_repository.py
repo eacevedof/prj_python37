@@ -6,7 +6,7 @@ from ddd.mcp_admin_loc_mysql.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
     """Repository that provides MCP tool schemas for MySQL admin operations."""
 
     @classmethod

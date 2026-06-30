@@ -6,7 +6,7 @@ from ddd.mcp_sharepoint.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
     """Repository for SharePoint MCP tool schemas."""
 
     @classmethod

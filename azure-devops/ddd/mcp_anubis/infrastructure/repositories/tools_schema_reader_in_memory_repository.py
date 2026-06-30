@@ -6,7 +6,7 @@ from ddd.mcp_anubis.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
     """Repository for Anubis MCP tool schemas."""
 
     @classmethod

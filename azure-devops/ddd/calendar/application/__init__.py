@@ -1,6 +1,5 @@
 from ddd.calendar.application.list_events import (
     ListEventsDto,
-    EventItemDto,
     ListEventsResultDto,
     ListEventsService,
 )
@@ -32,7 +31,6 @@ from ddd.calendar.application.add_holiday import (
 
 __all__ = [
     "ListEventsDto",
-    "EventItemDto",
     "ListEventsResultDto",
     "ListEventsService",
     "GetEventDto",

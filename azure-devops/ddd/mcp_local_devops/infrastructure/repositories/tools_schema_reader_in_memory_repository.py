@@ -6,7 +6,7 @@ from ddd.mcp_local_devops.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
 
     @classmethod
     def get_instance(cls) -> Self:

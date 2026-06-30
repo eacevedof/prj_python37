@@ -3,7 +3,6 @@ from typing import final, Self, Any
 
 from mcp.types import TextContent
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_admin_loc_mysql.domain.enums import ToolNameEnum
 from ddd.mcp_admin_loc_mysql.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_admin_loc_mysql.application.call_tool.call_tool_result_dto import (
@@ -20,11 +19,9 @@ from ddd.devops.application import (
 class CallToolService:
     """Service that routes MCP tool calls to MySQL admin operations."""
 
-    _logger: Logger
     _payload_dict: dict[str, Any]
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
         self._payload_dict = {}
 
     @classmethod
@@ -34,36 +31,24 @@ class CallToolService:
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
         self._payload_dict = call_tool_dto.payload_dict
 
-        try:
-            if call_tool_dto.event_name == ToolNameEnum.MYSQL_LIST_DATABASES.value:
-                text_contents = await self.__handle_list_databases()
+        if call_tool_dto.event_name == ToolNameEnum.MYSQL_LIST_DATABASES.value:
+            text_contents = await self.__handle_list_databases()
 
-            elif call_tool_dto.event_name == ToolNameEnum.MYSQL_SHOW_TABLES.value:
-                text_contents = await self.__handle_show_tables()
+        elif call_tool_dto.event_name == ToolNameEnum.MYSQL_SHOW_TABLES.value:
+            text_contents = await self.__handle_show_tables()
 
-            elif call_tool_dto.event_name == ToolNameEnum.MYSQL_DESCRIBE_TABLE.value:
-                text_contents = await self.__handle_describe_table()
+        elif call_tool_dto.event_name == ToolNameEnum.MYSQL_DESCRIBE_TABLE.value:
+            text_contents = await self.__handle_describe_table()
 
-            elif call_tool_dto.event_name == ToolNameEnum.MYSQL_EXECUTE_QUERY.value:
-                text_contents = await self.__handle_execute_query()
+        elif call_tool_dto.event_name == ToolNameEnum.MYSQL_EXECUTE_QUERY.value:
+            text_contents = await self.__handle_execute_query()
 
-            else:
-                text_contents = [
-                    TextContent(
-                        type="text", text=f"unknown tool: {call_tool_dto.event_name}"
-                    )
-                ]
-
-        except Exception as e:
-            self._logger.write_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={
-                    "tool": call_tool_dto.event_name,
-                    "payload": self._payload_dict,
-                },
-            )
-            text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
+        else:
+            text_contents = [
+                TextContent(
+                    type="text", text=f"unknown tool: {call_tool_dto.event_name}"
+                )
+            ]
 
         return CallToolResultDto.from_primitives({"contents": text_contents})
 

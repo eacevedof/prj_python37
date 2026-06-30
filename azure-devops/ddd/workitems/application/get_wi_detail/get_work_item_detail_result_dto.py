@@ -3,33 +3,6 @@ from typing import Self, Any
 
 
 @dataclass(frozen=True, slots=True)
-class CommentDto:
-    """Single comment from a work item."""
-
-    id: int
-    text: str
-    created_by: str
-    created_date: str
-
-    @classmethod
-    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        return cls(
-            id=primitives.get("id", 0),
-            text=primitives.get("text", ""),
-            created_by=primitives.get("created_by", ""),
-            created_date=primitives.get("created_date", ""),
-        )
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "text": self.text,
-            "created_by": self.created_by,
-            "created_date": self.created_date,
-        }
-
-
-@dataclass(frozen=True, slots=True)
 class GetWorkItemDetailResultDto:
     """Output DTO containing work item detail with description and comments."""
 
@@ -42,12 +15,11 @@ class GetWorkItemDetailResultDto:
     created_date: str
     changed_date: str
     url: str
-    comments: list[CommentDto] = field(default_factory=list)
+    comments: list[dict] = field(default_factory=list)
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        comments_data = primitives.get("comments", [])
-        comments = [CommentDto.from_primitives(c) for c in comments_data]
+        comments = list(primitives.get("comments", []))
 
         return cls(
             id=primitives.get("id", 0),
@@ -73,5 +45,5 @@ class GetWorkItemDetailResultDto:
             "created_date": self.created_date,
             "changed_date": self.changed_date,
             "url": self.url,
-            "comments": [comment.to_dict() for comment in self.comments],
+            "comments": self.comments,
         }

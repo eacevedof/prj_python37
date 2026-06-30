@@ -2,7 +2,6 @@ from typing import final, Self, Any
 
 from mcp.types import TextContent
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_local_devops.domain.enums import ToolNameEnum
 from ddd.mcp_local_devops.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_local_devops.application.call_tool.call_tool_result_dto import CallToolResultDto
@@ -18,11 +17,9 @@ from ddd.devops.application import (
 class CallToolService:
     """Service that routes MCP tool calls to local devops operations."""
 
-    _logger: Logger
     _payload_dict: dict[str, Any]
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
         self._payload_dict = {}
 
     @classmethod
@@ -32,26 +29,15 @@ class CallToolService:
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
         self._payload_dict = call_tool_dto.payload_dict
 
-        try:
-            if call_tool_dto.event_name == ToolNameEnum.LOCAL_SETUP_PROJECT.value:
-                text_contents = await self.__get_setup_project_text_content()
+        if call_tool_dto.event_name == ToolNameEnum.LOCAL_SETUP_PROJECT.value:
+            text_contents = await self.__get_setup_project_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.LOCAL_GET_NEXT_PORT.value:
-                text_contents = await self.__get_next_port_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.LOCAL_GET_NEXT_PORT.value:
+            text_contents = await self.__get_next_port_text_content()
 
-            else:
-                text_contents = [
-                    TextContent(type="text", text=f"unknown tool: {call_tool_dto.event_name}")
-                ]
-
-        except Exception as e:
-            self._logger.write_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={"tool": call_tool_dto.event_name, "payload": self._payload_dict}
-            )
+        else:
             text_contents = [
-                TextContent(type="text", text=f"error: {str(e)}")
+                TextContent(type="text", text=f"unknown tool: {call_tool_dto.event_name}")
             ]
 
         return CallToolResultDto.from_primitives({

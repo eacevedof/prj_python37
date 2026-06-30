@@ -1,7 +1,6 @@
 from ddd.sharepoint.application.list_files import (
     ListFilesDto,
     ListFilesResultDto,
-    FileItemDto,
     ListFilesService,
 )
 from ddd.sharepoint.application.upload_file import (
@@ -23,7 +22,6 @@ from ddd.sharepoint.application.delete_file import (
 __all__ = [
     "ListFilesDto",
     "ListFilesResultDto",
-    "FileItemDto",
     "ListFilesService",
     "UploadFileDto",
     "UploadFileResultDto",

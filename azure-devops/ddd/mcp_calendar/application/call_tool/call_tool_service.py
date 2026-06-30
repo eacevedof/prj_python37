@@ -2,7 +2,6 @@ from typing import final, Self, Any
 
 from mcp.types import TextContent
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_calendar.domain.enums import ToolNameEnum
 from ddd.mcp_calendar.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_calendar.application.call_tool.call_tool_result_dto import (
@@ -29,11 +28,9 @@ from ddd.calendar.application import (
 class CallToolService:
     """Service that routes MCP tool calls to Calendar operations."""
 
-    _logger: Logger
     _payload_dict: dict[str, Any]
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
         self._payload_dict = {}
 
     @classmethod
@@ -43,42 +40,30 @@ class CallToolService:
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
         self._payload_dict = call_tool_dto.payload_dict
 
-        try:
-            if call_tool_dto.event_name == ToolNameEnum.LIST_CAL_EVENTS.value:
-                text_contents = await self.__get_list_events_text_content()
+        if call_tool_dto.event_name == ToolNameEnum.LIST_CAL_EVENTS.value:
+            text_contents = await self.__get_list_events_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.GET_CAL_EVENT.value:
-                text_contents = await self.__get_get_event_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.GET_CAL_EVENT.value:
+            text_contents = await self.__get_get_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.CREATE_CAL_EVENT.value:
-                text_contents = await self.__get_create_event_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.CREATE_CAL_EVENT.value:
+            text_contents = await self.__get_create_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.UPDATE_CAL_EVENT.value:
-                text_contents = await self.__get_update_event_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.UPDATE_CAL_EVENT.value:
+            text_contents = await self.__get_update_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.DELETE_CAL_EVENT.value:
-                text_contents = await self.__get_delete_event_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.DELETE_CAL_EVENT.value:
+            text_contents = await self.__get_delete_event_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.ADD_CAL_HOLIDAY.value:
-                text_contents = await self.__get_add_holiday_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.ADD_CAL_HOLIDAY.value:
+            text_contents = await self.__get_add_holiday_text_content()
 
-            else:
-                text_contents = [
-                    TextContent(
-                        type="text", text=f"unknown tool: {call_tool_dto.event_name}"
-                    )
-                ]
-
-        except Exception as e:
-            self._logger.write_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={
-                    "tool": call_tool_dto.event_name,
-                    "payload": self._payload_dict,
-                },
-            )
-            text_contents = [TextContent(type="text", text=f"error: {str(e)}")]
+        else:
+            text_contents = [
+                TextContent(
+                    type="text", text=f"unknown tool: {call_tool_dto.event_name}"
+                )
+            ]
 
         return CallToolResultDto.from_primitives({"contents": text_contents})
 
@@ -96,13 +81,13 @@ class CallToolService:
 
         lines = [f"calendar events for {result.user_id} ({result.total} events):\n"]
         for item in result.items:
-            all_day = " [all-day]" if item.is_all_day else ""
-            location = f" @ {item.location}" if item.location else ""
+            all_day = " [all-day]" if item["is_all_day"] else ""
+            location = f" @ {item['location']}" if item["location"] else ""
             lines.append(
-                f"- {item.subject}{all_day}\n"
-                f"  start: {item.start_datetime}\n"
-                f"  end: {item.end_datetime}\n"
-                f"  id: {item.id}{location}"
+                f"- {item['subject']}{all_day}\n"
+                f"  start: {item['start_datetime']}\n"
+                f"  end: {item['end_datetime']}\n"
+                f"  id: {item['id']}{location}"
             )
 
         return [TextContent(type="text", text="\n".join(lines))]

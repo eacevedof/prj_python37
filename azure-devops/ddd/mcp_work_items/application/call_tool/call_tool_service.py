@@ -2,7 +2,6 @@ from typing import final, Self
 
 from mcp.types import TextContent
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.mcp_work_items.domain.enums import ToolNameEnum
 from ddd.mcp_work_items.application.call_tool.call_tool_dto import CallToolDto
 from ddd.mcp_work_items.application.call_tool.call_tool_result_dto import CallToolResultDto
@@ -30,11 +29,10 @@ from ddd.workitems.application import (
 class CallToolService:
     """Service that routes MCP tool calls to work item operations."""
 
-    _logger: Logger
     _call_tool_dto: CallToolDto
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
+        pass
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -43,44 +41,33 @@ class CallToolService:
     async def __call__(self, call_tool_dto: CallToolDto) -> CallToolResultDto:
         self._call_tool_dto = call_tool_dto
 
-        try:
-            if call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC.value:
-                text_contents = await self.__get_create_epic_text_content()
+        if call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC.value:
+            text_contents = await self.__get_create_epic_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC_AND_TASKS.value:
-                text_contents = await self.__get_create_linked_task_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_EPIC_AND_TASKS.value:
+            text_contents = await self.__get_create_linked_task_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_WORK_ITEM.value:
-                text_contents = await self.__get_create_work_item_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_CREATE_WORK_ITEM.value:
+            text_contents = await self.__get_create_work_item_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_GET_TASKS.value:
-                text_contents = await self.__get_tasks_as_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_GET_TASKS.value:
+            text_contents = await self.__get_tasks_as_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_UPDATE_TASK.value:
-                text_contents = await self.__get_update_task_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_UPDATE_TASK.value:
+            text_contents = await self.__get_update_task_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH.value:
-                text_contents = await self.__get_search_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH.value:
+            text_contents = await self.__get_search_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_GET_DETAIL.value:
-                text_contents = await self.__get_detail_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_GET_DETAIL.value:
+            text_contents = await self.__get_detail_text_content()
 
-            elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH_PROJECTS.value:
-                text_contents = await self.__get_search_projects_text_content()
+        elif call_tool_dto.event_name == ToolNameEnum.WI_SEARCH_PROJECTS.value:
+            text_contents = await self.__get_search_projects_text_content()
 
-            else:
-                text_contents = [
-                    TextContent(type="text", text=f"unknown tool: {call_tool_dto.event_name}")
-                ]
-
-        except Exception as e:
-            self._logger.write_error(
-                module="CallToolService.__call__",
-                message=str(e),
-                context={"tool": call_tool_dto.event_name, "payload": self._call_tool_dto.payload_dict}
-            )
+        else:
             text_contents = [
-                TextContent(type="text", text=f"error: {str(e)}")
+                TextContent(type="text", text=f"unknown tool: {call_tool_dto.event_name}")
             ]
 
         return CallToolResultDto.from_primitives({
@@ -147,8 +134,8 @@ class CallToolService:
         lines = [f"tasks found: {get_tasks_result_dto.total}\n"]
         for task in get_tasks_result_dto.tasks:
             lines.append(
-                f"- #{task.id} [{task.state}] {task.title}\n"
-                f"  type: {task.work_item_type} | assigned_to: {task.assigned_to or 'n/a'} | due: {task.due_date or 'n/a'}"
+                f"- #{task['id']} [{task['state']}] {task['title']}\n"
+                f"  type: {task['work_item_type']} | assigned_to: {task.get('assigned_to') or 'n/a'} | due: {task.get('due_date') or 'n/a'}"
             )
 
         return [TextContent(type="text", text="\n".join(lines))]
@@ -182,9 +169,9 @@ class CallToolService:
         lines = [f"work items found: {search_result_dto.total}\n"]
         for item in search_result_dto.items:
             lines.append(
-                f"- #{item.id} [{item.state}] {item.title}\n"
-                f"  type: {item.work_item_type} | project: {item.project}\n"
-                f"  assigned_to: {item.assigned_to or 'n/a'} | created: {item.created_date} | changed: {item.changed_date}"
+                f"- #{item['id']} [{item['state']}] {item['title']}\n"
+                f"  type: {item['work_item_type']} | project: {item['project']}\n"
+                f"  assigned_to: {item.get('assigned_to') or 'n/a'} | created: {item['created_date']} | changed: {item['changed_date']}"
             )
 
         return [TextContent(type="text", text="\n".join(lines))]
@@ -212,8 +199,8 @@ class CallToolService:
             lines.append("")
             lines.append(f"comments ({len(detail_result_dto.comments)}):")
             for comment in detail_result_dto.comments:
-                lines.append(f"  [{comment.created_date}] {comment.created_by}:")
-                lines.append(f"    {comment.text}")
+                lines.append(f"  [{comment['created_date']}] {comment['created_by']}:")
+                lines.append(f"    {comment['text']}")
 
         return [TextContent(type="text", text="\n".join(lines))]
 
@@ -228,9 +215,9 @@ class CallToolService:
         lines = [f"projects found: {search_result_dto.total}\n"]
         for project in search_result_dto.projects:
             lines.append(
-                f"- {project.name} [{project.state}]\n"
-                f"  id: {project.id}\n"
-                f"  description: {project.description or 'n/a'}"
+                f"- {project.get('name', '')} [{project.get('state', '')}]\n"
+                f"  id: {project.get('id', '')}\n"
+                f"  description: {project.get('description', '') or 'n/a'}"
             )
 
         return [TextContent(type="text", text="\n".join(lines))]

@@ -6,7 +6,7 @@ from ddd.mcp_hashed_pwd.domain.enums import ToolNameEnum
 
 
 @final
-class ToolsSchemaRepository:
+class ToolsSchemaReaderInMemoryRepository:
     """Repository for Hashed Password MCP tool schemas."""
 
     @classmethod
