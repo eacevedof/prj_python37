@@ -7,6 +7,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.domain.exceptions.domain_exception import DomainException
 from ddd.mcp_anubis.domain.enums import McpServerNameEnum
 from ddd.mcp_anubis.application import (
     CallToolDto,
@@ -75,6 +76,8 @@ class McpAnubisController:
                     )
                 )
                 return result_dto.to_list()
+            except DomainException as e:
+                return [TextContent(type="text", text=str(e))]
             except Exception as e:
                 self.__log_exception(
                     module="mcp_anubis_controller._register_handlers.call_tool",

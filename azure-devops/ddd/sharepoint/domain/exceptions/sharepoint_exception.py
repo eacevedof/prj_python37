@@ -1,8 +1,10 @@
 from typing import final
 
+from ddd.shared.domain.exceptions.domain_exception import DomainException
+
 
 @final
-class SharePointException(Exception):
+class SharePointException(DomainException):
     """Exception for SharePoint operations."""
 
     def __init__(self, message: str) -> None:

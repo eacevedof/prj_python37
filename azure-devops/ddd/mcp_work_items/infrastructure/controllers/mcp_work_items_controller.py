@@ -7,6 +7,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.domain.exceptions.domain_exception import DomainException
 from ddd.mcp_work_items.domain.enums import McpServerNameEnum
 from ddd.mcp_work_items.application import CallToolDto, ListToolsService, CallToolService
 
@@ -70,6 +71,8 @@ class McpServerController:
                     })
                 )
                 return result_dto.to_list()
+            except DomainException as e:
+                return [TextContent(type="text", text=str(e))]
             except Exception as e:
                 self.__log_exception(
                     module="mcp_server_controller._register_handlers.call_tool",

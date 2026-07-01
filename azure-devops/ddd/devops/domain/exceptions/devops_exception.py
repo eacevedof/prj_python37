@@ -1,8 +1,10 @@
 from typing import final
 
+from ddd.shared.domain.exceptions.domain_exception import DomainException
+
 
 @final
-class DevOpsException(Exception):
+class DevOpsException(DomainException):
     """Exception for local DevOps operations."""
 
     def __init__(self, message: str, context: dict | None = None) -> None:

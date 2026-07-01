@@ -1,25 +1,13 @@
 from typing import final
 
 from ddd.shared.domain.enums.response_code_enum import ResponseCodeEnum
+from ddd.shared.domain.exceptions.domain_exception import DomainException
 
 
 @final
-class WorkItemsException(Exception):
-    _code: int
-    _message: str
-
+class WorkItemsException(DomainException):
     def __init__(self, message: str, code: int = ResponseCodeEnum.BAD_REQUEST) -> None:
-        self._message = message
-        self._code = code
-        super().__init__(self._message)
-
-    @property
-    def code(self) -> int:
-        return self._code
-
-    @property
-    def message(self) -> str:
-        return self._message
+        super().__init__(message, code)
 
     @classmethod
     def epic_not_found(cls, epic_id: int) -> "WorkItemsException":

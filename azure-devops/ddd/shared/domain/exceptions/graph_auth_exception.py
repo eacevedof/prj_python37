@@ -1,8 +1,10 @@
 from typing import final
 
+from ddd.shared.domain.exceptions.domain_exception import DomainException
+
 
 @final
-class GraphAuthException(Exception):
+class GraphAuthException(DomainException):
     """Exception for Microsoft Graph API authentication operations."""
 
     def __init__(self, message: str) -> None:

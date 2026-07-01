@@ -7,6 +7,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.domain.exceptions.domain_exception import DomainException
 from ddd.mcp_local_devops.domain.enums import McpServerNameEnum
 from ddd.mcp_local_devops.infrastructure.repositories.tools_schema_reader_in_memory_repository import ToolsSchemaReaderInMemoryRepository
 from ddd.mcp_local_devops.application.call_tool import CallToolDto, CallToolService
@@ -70,6 +71,8 @@ class McpLocalDevOpsController:
                 })
                 result = await self._call_tool_service(call_tool_dto)
                 return result.contents
+            except DomainException as e:
+                return [TextContent(type="text", text=str(e))]
             except Exception as e:
                 self.__log_exception(
                     module="McpLocalDevOpsController.call_tool",
