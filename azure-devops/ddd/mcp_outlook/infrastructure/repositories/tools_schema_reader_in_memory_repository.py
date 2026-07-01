@@ -18,6 +18,7 @@ class ToolsSchemaReaderInMemoryRepository:
             self._get_list_messages_schema(),
             self._get_get_message_schema(),
             self._get_list_attachments_schema(),
+            self._get_read_pdf_attachment_schema(),
         ]
 
     def _get_list_messages_schema(self) -> Tool:
@@ -91,5 +92,29 @@ class ToolsSchemaReaderInMemoryRepository:
                     },
                 },
                 "required": ["mailbox", "message_id"],
+            },
+        )
+
+    def _get_read_pdf_attachment_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.OUTLOOK_READ_PDF_ATTACHMENT.value,
+            description="download a pdf attachment of an outlook message and extract its text using microsoft graph api",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "mailbox": {
+                        "type": "string",
+                        "description": "mailbox user principal name or id (e.g., 'requests@contoso.com')",
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "description": "graph message id",
+                    },
+                    "attachment_id": {
+                        "type": "string",
+                        "description": "graph attachment id",
+                    },
+                },
+                "required": ["mailbox", "message_id", "attachment_id"],
             },
         )

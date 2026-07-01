@@ -7,6 +7,7 @@ from ddd.shared.infrastructure.components.texter import Texter
 from ddd.shared.infrastructure.components.slugger import Slugger
 from ddd.shared.infrastructure.components.date_timer import DateTimer
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.components.pdfer import Pdfer
 from ddd.shared.infrastructure.components.response_dto import (
     ResponseDto,
     SuccessResponseDto,
@@ -24,6 +25,7 @@ __all__ = [
     "Slugger",
     "DateTimer",
     "Logger",
+    "Pdfer",
     "ResponseDto",
     "SuccessResponseDto",
     "ErrorResponseDto",

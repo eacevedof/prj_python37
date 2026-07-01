@@ -104,3 +104,26 @@ class MessagesReaderGraphRepository(AbstractOutlookGraphRepository):
         if result is None:
             return []
         return result.get("value", [])
+
+    async def get_attachment(
+        self, mailbox: str, message_id: str, attachment_id: str
+    ) -> dict[str, Any] | None:
+        """Get a single attachment (with inline content) from a message.
+
+        Args:
+            mailbox: User principal name or id of the mailbox.
+            message_id: Graph message id.
+            attachment_id: Graph attachment id.
+
+        Returns:
+            Raw attachment dict (incl. id, name, contentType, size, contentBytes),
+            or None if not found.
+
+        Raises:
+            OutlookException: If the API request fails.
+        """
+        url = (
+            f"{self._graph_base_url}/users/{mailbox}/messages/{message_id}"
+            f"/attachments/{attachment_id}"
+        )
+        return await self._request("GET", url)

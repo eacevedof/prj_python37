@@ -25,3 +25,6 @@ class Encoder:
 
     def get_base64_decoded(self, base64_encoded: str) -> str:
         return base64.b64decode(base64_encoded).decode("utf-8")
+
+    def get_bytes_from_base64(self, base64_encoded: str) -> bytes:
+        return base64.b64decode(base64_encoded)

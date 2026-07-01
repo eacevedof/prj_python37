@@ -12,6 +12,8 @@ from ddd.outlook.application import (
     GetMessageService,
     ListAttachmentsDto,
     ListAttachmentsService,
+    ReadPdfAttachmentDto,
+    ReadPdfAttachmentService,
 )
 
 
@@ -39,6 +41,9 @@ class CallToolService:
 
         elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_LIST_ATTACHMENTS.value:
             text_contents = await self.__get_list_attachments_text_content()
+
+        elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_READ_PDF_ATTACHMENT.value:
+            text_contents = await self.__get_read_pdf_attachment_text_content()
 
         else:
             text_contents = [
@@ -106,3 +111,17 @@ class CallToolService:
             )
 
         return [TextContent(type="text", text="\n".join(lines))]
+
+    async def __get_read_pdf_attachment_text_content(self) -> list[TextContent]:
+        result = await ReadPdfAttachmentService.get_instance()(
+            ReadPdfAttachmentDto.from_primitives(self._payload_dict)
+        )
+
+        return [TextContent(
+            type="text",
+            text=(
+                f"pdf: {result.name} ({result.content_type}, {result.size} bytes)\n"
+                f"\n"
+                f"{result.text}"
+            )
+        )]

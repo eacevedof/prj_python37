@@ -9,3 +9,4 @@ class ToolNameEnum(str, Enum):
     OUTLOOK_LIST_MESSAGES = "outlook_list_messages"
     OUTLOOK_GET_MESSAGE = "outlook_get_message"
     OUTLOOK_LIST_ATTACHMENTS = "outlook_list_attachments"
+    OUTLOOK_READ_PDF_ATTACHMENT = "outlook_read_pdf_attachment"
