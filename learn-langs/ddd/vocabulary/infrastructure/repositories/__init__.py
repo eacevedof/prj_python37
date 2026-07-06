@@ -17,6 +17,8 @@ from ddd.vocabulary.infrastructure.repositories.word_groups_reader_sqlite_reposi
 from ddd.vocabulary.infrastructure.repositories.word_groups_writer_sqlite_repository import WordGroupsWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.app_config_reader_raw_repository import AppConfigReaderRawRepository
 from ddd.vocabulary.infrastructure.repositories.languages_reader_sqlite_repository import LanguagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.word_audios_reader_file_repository import WordAudiosReaderFileRepository
+from ddd.vocabulary.infrastructure.repositories.word_audios_writer_file_repository import WordAudiosWriterFileRepository
 
 __all__ = [
     "WordsEsReaderSqliteRepository",
@@ -38,4 +40,6 @@ __all__ = [
     "WordGroupsWriterSqliteRepository",
     "AppConfigReaderRawRepository",
     "LanguagesReaderSqliteRepository",
+    "WordAudiosReaderFileRepository",
+    "WordAudiosWriterFileRepository",
 ]

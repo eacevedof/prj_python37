@@ -5,7 +5,7 @@ import flet as ft
 from typing import Callable, Any, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.vocabulary.domain.enums import WordTypeEnum
+from ddd.vocabulary.domain.enums import LanguageCodeEnum, WordTypeEnum
 from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
 
 
@@ -28,6 +28,11 @@ class UpdateWordView(ft.Container):
         route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
         route_on_submit: Callable[[dict[str, Any]], None], # 2. Submit formulario (render paso 1)
         route_on_back: Callable[[], None],                 # 3. Botón cancelar/volver (acción secundaria)
+        route_on_play_audio: Callable[[dict[str, Any]], None],        # 4. Escuchar audio actual
+        route_on_regenerate_audio: Callable[[dict[str, Any]], None],  # 5. Regenerar audio (propuesta temp)
+        route_on_play_temp_audio: Callable[[str], None],              # 6. Escuchar propuesta temporal
+        route_on_accept_audio: Callable[[str], None],                 # 7. Aceptar propuesta (pasa a definitivo)
+        route_on_discard_audio: Callable[[str], None],                # 8. Rechazar propuesta
     ):
         super().__init__()
 
@@ -35,6 +40,11 @@ class UpdateWordView(ft.Container):
         self._route_on_mount = route_on_mount
         self._route_on_submit = route_on_submit
         self._route_on_back = route_on_back
+        self._route_on_play_audio = route_on_play_audio
+        self._route_on_regenerate_audio = route_on_regenerate_audio
+        self._route_on_play_temp_audio = route_on_play_temp_audio
+        self._route_on_accept_audio = route_on_accept_audio
+        self._route_on_discard_audio = route_on_discard_audio
 
         # Logger
         self._logger = Logger.get_instance()
@@ -56,6 +66,7 @@ class UpdateWordView(ft.Container):
         self._ft_groups_column: ft.Column | None = None
 
         # Componentes UI - Form fields
+        self._ft_word_id_field: ft.TextField | None = None
         self._ft_text_es_field: ft.TextField | None = None
         self._ft_text_nl_field: ft.TextField | None = None
         self._ft_word_type_dropdown: ft.Dropdown | None = None
@@ -70,6 +81,9 @@ class UpdateWordView(ft.Container):
         self._ft_last_image_container: ft.Container | None = None
         self._ft_images_grid: ft.Row | None = None
 
+        # Componentes UI - Audios
+        self._ft_audios_column: ft.Column | None = None
+
         self._build_initial_ui()
 
     @classmethod
@@ -79,6 +93,11 @@ class UpdateWordView(ft.Container):
             route_on_mount=primitives.get("on_mount"),
             route_on_submit=primitives.get("on_submit", lambda x: None),
             route_on_back=primitives.get("on_back", lambda: None),
+            route_on_play_audio=primitives.get("on_play_audio", lambda x: None),
+            route_on_regenerate_audio=primitives.get("on_regenerate_audio", lambda x: None),
+            route_on_play_temp_audio=primitives.get("on_play_temp_audio", lambda x: None),
+            route_on_accept_audio=primitives.get("on_accept_audio", lambda x: None),
+            route_on_discard_audio=primitives.get("on_discard_audio", lambda x: None),
         )
 
     # =========================================================================
@@ -96,6 +115,10 @@ class UpdateWordView(ft.Container):
         if dto.is_loading:
             self.update()
             return
+
+        # Id de la palabra (solo lectura)
+        if self._ft_word_id_field and dto.word_id is not None:
+            self._ft_word_id_field.value = str(dto.word_id)
 
         # Restaurar valores del formulario
         self._render_form_values(dto.form_values)
@@ -115,6 +138,10 @@ class UpdateWordView(ft.Container):
         self._selected_group_ids = [g.get("id", 0) for g in self._word_groups]
         self._render_word_groups()
 
+        # Audios por idioma (solo si el DTO los trae; los parciales usan render_audio_rows)
+        if dto.audio_languages:
+            self._render_audio_rows(list(dto.audio_languages))
+
         # Mensajes
         self._render_messages(dto)
 
@@ -122,6 +149,11 @@ class UpdateWordView(ft.Container):
         if dto.error_field:
             self._highlight_error_field(dto.error_field)
 
+        self.update()
+
+    def render_audio_rows(self, audio_rows: list[dict[str, Any]]) -> None:
+        """Actualiza solo la sección de audios (sin tocar el resto del formulario)."""
+        self._render_audio_rows(audio_rows)
         self.update()
 
     def show_snackbar(self, message: str, error: bool = False) -> None:
@@ -184,6 +216,12 @@ class UpdateWordView(ft.Container):
         self._ft_loading_indicator = ft.ProgressRing(visible=True)
 
         # Form fields
+        self._ft_word_id_field = ft.TextField(
+            label="ID",
+            width=120,
+            read_only=True,
+        )
+
         self._ft_text_es_field = ft.TextField(
             label="Palabra en espanol *",
             hint_text="Escribe la palabra en espanol",
@@ -227,6 +265,11 @@ class UpdateWordView(ft.Container):
             spacing=4,
         )
 
+        self._ft_audios_column = ft.Column(
+            controls=[],
+            spacing=4,
+        )
+
         # Contenedor para última imagen
         self._ft_last_image_container = ft.Container(
             content=ft.Text("No hay imágenes", italic=True, color=ft.Colors.GREY_500, size=12),
@@ -254,7 +297,7 @@ class UpdateWordView(ft.Container):
         # Buttons
         save_btn = ft.ElevatedButton(
             content=ft.Row(
-                [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar cambios")],
+                [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             on_click=lambda _: self._on_save_btn_click(),
@@ -262,7 +305,7 @@ class UpdateWordView(ft.Container):
                 bgcolor=ft.Colors.BLUE_600,
                 color=ft.Colors.WHITE,
             ),
-            width=180,
+            width=150,
         )
 
         cancel_btn = ft.OutlinedButton(
@@ -280,9 +323,11 @@ class UpdateWordView(ft.Container):
             tooltip="Volver",
         )
 
-        # Columna izquierda - Formulario
+        # Columna izquierda - Formulario, acciones, grupos y tags
         left_column = ft.Column(
             controls=[
+                self._ft_word_id_field,
+                ft.Container(height=8),
                 self._ft_text_es_field,
                 ft.Container(height=8),
                 self._ft_text_nl_field,
@@ -290,25 +335,36 @@ class UpdateWordView(ft.Container):
                 self._ft_word_type_dropdown,
                 ft.Container(height=8),
                 self._ft_notes_field,
-            ],
-            spacing=4,
-        )
-
-        # Columna derecha - Imagen, tags y grupos
-        right_column = ft.Column(
-            controls=[
-                ft.Text("Última imagen:", size=12, weight=ft.FontWeight.W_500),
-                self._ft_last_image_container,
-                ft.Container(height=10),
-                ft.Text("Tags:", size=12, weight=ft.FontWeight.W_500),
-                ft.Container(
-                    content=self._ft_tags_row,
-                    width=220,
+                ft.Container(height=12),
+                ft.Row(
+                    controls=[save_btn, cancel_btn],
+                    spacing=16,
                 ),
                 ft.Container(height=10),
                 ft.Text("Grupos:", size=12, weight=ft.FontWeight.W_500),
                 ft.Container(
                     content=self._ft_groups_column,
+                    width=400,
+                ),
+                ft.Container(height=10),
+                ft.Text("Tags:", size=12, weight=ft.FontWeight.W_500),
+                ft.Container(
+                    content=self._ft_tags_row,
+                    width=400,
+                ),
+            ],
+            spacing=4,
+        )
+
+        # Columna derecha - Imagen y audios
+        right_column = ft.Column(
+            controls=[
+                ft.Text("Última imagen:", size=12, weight=ft.FontWeight.W_500),
+                self._ft_last_image_container,
+                ft.Container(height=10),
+                ft.Text("Audios:", size=12, weight=ft.FontWeight.W_500),
+                ft.Container(
+                    content=self._ft_audios_column,
                     width=220,
                 ),
             ],
@@ -330,11 +386,6 @@ class UpdateWordView(ft.Container):
                     ft.Container(height=12),
                     self._ft_error_text,
                     self._ft_success_text,
-                    ft.Container(height=8),
-                    ft.Row(
-                        controls=[save_btn, cancel_btn],
-                        spacing=16,
-                    ),
                 ],
                 spacing=4,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -470,12 +521,86 @@ class UpdateWordView(ft.Container):
                 is_selected = group_id in self._selected_group_ids
 
                 checkbox = ft.Checkbox(
-                    label=group_title,
+                    label=f"{group_title} ({group_id})",
                     value=is_selected or is_generic,
                     disabled=is_generic,
                     on_change=lambda e, gid=group_id: self._toggle_group(gid, e.control.value),
                 )
                 self._ft_groups_column.controls.append(checkbox)
+
+    def _render_audio_rows(self, audio_rows: list[dict[str, Any]]) -> None:
+        """Renderiza la sección de audios por idioma (regenerar/aceptar/rechazar)."""
+        if not self._ft_audios_column:
+            return
+
+        self._ft_audios_column.controls.clear()
+
+        for audio_row in audio_rows:
+            lang_code = audio_row.get("lang_code", "")
+            lang_label = audio_row.get("label", lang_code)
+            has_temp = audio_row.get("has_temp", False)
+            is_generating = audio_row.get("is_generating", False)
+
+            row_controls: list[ft.Control] = [
+                ft.Text(lang_label, size=12, width=80),
+            ]
+
+            if is_generating:
+                row_controls.extend([
+                    ft.ProgressRing(width=16, height=16, stroke_width=2),
+                    ft.Text("Generando...", size=11, color=ft.Colors.GREY_600, italic=True),
+                ])
+            else:
+                row_controls.extend([
+                    ft.IconButton(
+                        icon=ft.Icons.PLAY_ARROW,
+                        icon_size=18,
+                        tooltip="Escuchar audio actual",
+                        on_click=lambda _, lc=lang_code: self._on_play_audio_btn_click(lc),
+                    ),
+                    ft.IconButton(
+                        icon=ft.Icons.REFRESH,
+                        icon_size=18,
+                        icon_color=ft.Colors.BLUE_700,
+                        tooltip="Regenerar audio (crea una propuesta temporal)",
+                        on_click=lambda _, lc=lang_code: self._on_regenerate_audio_btn_click(lc),
+                    ),
+                ])
+
+            self._ft_audios_column.controls.append(
+                ft.Row(controls=row_controls, spacing=0)
+            )
+
+            if has_temp and not is_generating:
+                self._ft_audios_column.controls.append(
+                    ft.Row(
+                        controls=[
+                            ft.Text("Propuesta:", size=11, color=ft.Colors.AMBER_800, width=80),
+                            ft.IconButton(
+                                icon=ft.Icons.PLAY_CIRCLE_OUTLINE,
+                                icon_size=18,
+                                icon_color=ft.Colors.AMBER_800,
+                                tooltip="Escuchar propuesta temporal",
+                                on_click=lambda _, lc=lang_code: self._route_on_play_temp_audio(lc),
+                            ),
+                            ft.IconButton(
+                                icon=ft.Icons.CHECK,
+                                icon_size=18,
+                                icon_color=ft.Colors.GREEN_700,
+                                tooltip="Aceptar: pasa a ser el audio definitivo",
+                                on_click=lambda _, lc=lang_code: self._route_on_accept_audio(lc),
+                            ),
+                            ft.IconButton(
+                                icon=ft.Icons.CLOSE,
+                                icon_size=18,
+                                icon_color=ft.Colors.RED_700,
+                                tooltip="Rechazar propuesta",
+                                on_click=lambda _, lc=lang_code: self._route_on_discard_audio(lc),
+                            ),
+                        ],
+                        spacing=0,
+                    )
+                )
 
     def _get_full_image_path(self, relative_path: str) -> str:
         """Construye la ruta completa de la imagen desde la ruta relativa."""
@@ -746,6 +871,28 @@ class UpdateWordView(ft.Container):
         """Maneja click en guardar cambios y notifica al controller."""
         form_data = self._get_form_data()
         self._route_on_submit(form_data)
+
+    def _on_play_audio_btn_click(self, lang_code: str) -> None:
+        """Maneja click en escuchar audio actual y notifica al controller."""
+        self._route_on_play_audio({
+            "lang_code": lang_code,
+            "text": self._get_audio_text_for_lang(lang_code),
+        })
+
+    def _on_regenerate_audio_btn_click(self, lang_code: str) -> None:
+        """Maneja click en regenerar audio y notifica al controller."""
+        self._route_on_regenerate_audio({
+            "lang_code": lang_code,
+            "text": self._get_audio_text_for_lang(lang_code),
+        })
+
+    def _get_audio_text_for_lang(self, lang_code: str) -> str:
+        """Texto actual del formulario a pronunciar para el idioma dado."""
+        if lang_code == LanguageCodeEnum.ES_ES.value and self._ft_text_es_field:
+            return self._ft_text_es_field.value or ""
+        if lang_code == LanguageCodeEnum.NL_NL.value and self._ft_text_nl_field:
+            return self._ft_text_nl_field.value or ""
+        return ""
 
     def _get_form_data(self) -> dict[str, Any]:
         """Obtiene los datos actuales del formulario."""

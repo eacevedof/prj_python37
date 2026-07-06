@@ -8,7 +8,6 @@ import flet as ft
 import pygame
 
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.shared.infrastructure.components.system.volumer import Volumer
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.finish_study_session import (
     FinishStudySessionDto,
@@ -61,25 +60,30 @@ class WordSliderController(BaseController):
     # =========================================================================
     def __init__(
         self,
-        lang_code: str,                      # Idioma destino a reproducir
-        tags: list[str],                     # Filtros de tags
-        group_id: int | None,                # Grupo de palabras
-        route_on_back: Callable[[], None],  # Navegación (volver al home)
+        lang_code: str,                                   # Idioma destino a reproducir
+        tags: list[str],                                  # Filtros de tags
+        group_id: int | None,                             # Grupo de palabras
+        start_index: int,                                 # Índice donde retomar (0 = desde el inicio)
+        route_on_back: Callable[[], None],                # Navegación (volver al home)
+        route_on_edit_word: Callable[[int, int], None],   # Navegación (editar palabra: word_id, índice para retomar)
     ):
         self._lang_code = lang_code
         self._tags = tags
         self._group_id = group_id
+        self._start_index = max(0, start_index)
         self._route_on_back = route_on_back
+        self._route_on_edit_word = route_on_edit_word
 
         # Estado interno de sesión
         self._session_id: int = 0
         self._words: list[SliderWordDto] = []
         self._current_index: int = 0
         self._is_stopped: bool = False
+        self._is_paused: bool = False
+        self._navigation_request: int | None = None  # índice pedido con anterior/siguiente
 
         # Servicios
         self._logger = Logger.get_instance()
-        self._volumer = Volumer.get_instance()
         self._start_session_service = StartWordSliderSessionService.get_instance()
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
@@ -90,6 +94,10 @@ class WordSliderController(BaseController):
             "on_mount": self._on_mount,
             "on_back": self._on_back_btn_click,
             "on_replay": self._on_replay_click,
+            "on_prev": self._on_prev_btn_click,
+            "on_next": self._on_next_btn_click,
+            "on_toggle_pause": self._on_toggle_pause_click,
+            "on_edit_word": self._on_edit_word_click,
         })
 
     # =========================================================================
@@ -125,20 +133,15 @@ class WordSliderController(BaseController):
             self._words = list(result.words)
             self._current_index = 0
             self._is_stopped = False
+            self._is_paused = False
+            self._navigation_request = None
 
             if not self._words:
                 self._ft_container.render(WordSliderViewDto.no_words())
                 return
 
-            # Sincronizar con el equipo: volumen maestro del sistema al máximo (best-effort)
-            try:
-                await asyncio.to_thread(self._volumer.set_to_max)
-            except Exception as e:
-                self._logger.log_error(
-                    "WordSliderController",
-                    f"No se pudo ajustar el volumen del sistema: {e}",
-                )
-
+            # El audio se reproduce al volumen actual de la máquina (no se toca
+            # el volumen maestro del sistema)
             await self._async_run_slider()
 
         except Exception as e:
@@ -150,12 +153,25 @@ class WordSliderController(BaseController):
             self._ft_container.render(WordSliderViewDto.error(str(e)))
 
     async def _async_run_slider(self) -> None:
-        """Recorre todas las palabras reproduciendo la secuencia de cada una."""
-        for index in range(len(self._words)):
+        """Recorre las palabras reproduciendo cada secuencia; admite saltos prev/next."""
+        index = min(self._start_index, len(self._words) - 1) if self._words else 0
+        # Retomar solo aplica a la primera pasada (al volver de editar una palabra)
+        self._start_index = 0
+        while index < len(self._words):
             if self._is_stopped:
                 return
             self._current_index = index
             await self._async_play_word(self._words[index])
+
+            if self._is_stopped:
+                return
+
+            if self._navigation_request is not None:
+                # Salto pedido con anterior/siguiente (si supera el final, completa)
+                index = min(self._navigation_request, len(self._words))
+                self._navigation_request = None
+            else:
+                index += 1
 
         if not self._is_stopped:
             self._show_session_complete()
@@ -223,7 +239,7 @@ class WordSliderController(BaseController):
 
     async def _play_text_audio(self, text: str, lang_code: str, word_id: int) -> None:
         """Genera (o reutiliza) y reproduce el audio de un texto."""
-        if self._is_stopped or not text:
+        if self._is_stopped or self._navigation_request is not None or not text:
             return
 
         try:
@@ -241,7 +257,7 @@ class WordSliderController(BaseController):
                 )
                 return
 
-            if self._is_stopped:
+            if self._is_stopped or self._navigation_request is not None:
                 return
 
             await asyncio.to_thread(self._play_audio_file, result.audio_path)
@@ -253,21 +269,28 @@ class WordSliderController(BaseController):
                 {"text": text, "lang_code": lang_code},
             )
 
-    @staticmethod
-    def _play_audio_file(audio_path: str) -> None:
-        """Reproduce un mp3 de forma sincrónica usando pygame (en thread aparte)."""
+    def _play_audio_file(self, audio_path: str) -> None:
+        """Reproduce un mp3 de forma sincrónica usando pygame (en thread aparte).
+
+        Respeta el volumen actual de la máquina (no ajusta el volumen del
+        sistema) y atiende pausa, saltos anterior/siguiente y parada.
+        """
         try:
             if not pygame.mixer.get_init():
                 pygame.mixer.init()
 
-            # Volumen al máximo por defecto (para escuchar a distancia)
-            pygame.mixer.music.set_volume(1.0)
-
             pygame.mixer.music.load(str(Path(audio_path).resolve()))
             pygame.mixer.music.play()
 
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
+            clock = pygame.time.Clock()
+            while True:
+                if self._is_stopped or self._navigation_request is not None:
+                    pygame.mixer.music.stop()
+                    break
+                # En pausa get_busy() devuelve False: seguir esperando la reanudación
+                if not pygame.mixer.music.get_busy() and not self._is_paused:
+                    break
+                clock.tick(10)
 
             # Liberar el archivo para que pueda reutilizarse/sobrescribirse
             pygame.mixer.music.unload()
@@ -280,6 +303,7 @@ class WordSliderController(BaseController):
     def _on_back_btn_click(self) -> None:
         """Detiene el slider, finaliza la sesión y vuelve al home."""
         self._is_stopped = True
+        self._is_paused = False
         self._stop_audio()
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()
@@ -287,19 +311,74 @@ class WordSliderController(BaseController):
     def _on_replay_click(self) -> None:
         """Reinicia el slider con las mismas palabras."""
         self._is_stopped = False
+        self._is_paused = False
+        self._navigation_request = None
         self._current_index = 0
         self._ft_container.page.run_task(self._async_run_slider)
+
+    def _on_prev_btn_click(self) -> None:
+        """Salta a la palabra anterior (corta la secuencia actual)."""
+        self._navigation_request = max(0, self._current_index - 1)
+        self._resume_if_paused()
+        self._stop_audio()
+
+    def _on_next_btn_click(self) -> None:
+        """Salta a la palabra siguiente (corta la secuencia actual)."""
+        self._navigation_request = self._current_index + 1
+        self._resume_if_paused()
+        self._stop_audio()
+
+    def _on_toggle_pause_click(self) -> None:
+        """Pausa/reanuda la reproducción (audio y temporizadores)."""
+        self._is_paused = not self._is_paused
+        try:
+            if pygame.mixer.get_init():
+                if self._is_paused:
+                    pygame.mixer.music.pause()
+                else:
+                    pygame.mixer.music.unpause()
+        except Exception:
+            pass
+
+    def _on_edit_word_click(self) -> None:
+        """Detiene el slider y navega a editar la palabra actual.
+
+        Pasa el índice actual para que, al volver de la edición, el slider
+        se retome en la misma palabra.
+        """
+        if not self._words:
+            return
+        word = self._words[self._current_index]
+        self._is_stopped = True
+        self._is_paused = False
+        self._stop_audio()
+        self._ft_container.page.run_task(self._async_finish_session)
+        self._route_on_edit_word(word.word_es_id, self._current_index)
 
     # =========================================================================
     # HELPERS PRIVADOS
     # =========================================================================
     async def _wait(self, seconds: int) -> bool:
-        """Espera en tramos de 1s para poder abortar pronto. False si se detuvo."""
-        for _ in range(seconds):
-            if self._is_stopped:
+        """Espera en tramos de 1s para poder abortar pronto.
+
+        Respeta la pausa (no consume tiempo) y devuelve False si se detuvo
+        o si hay un salto anterior/siguiente pendiente.
+        """
+        elapsed_seconds = 0
+        while elapsed_seconds < seconds:
+            if self._is_stopped or self._navigation_request is not None:
                 return False
+            if self._is_paused:
+                await asyncio.sleep(0.2)
+                continue
             await asyncio.sleep(1)
-        return not self._is_stopped
+            elapsed_seconds += 1
+        return not self._is_stopped and self._navigation_request is None
+
+    def _resume_if_paused(self) -> None:
+        """Sale del estado de pausa (al navegar con anterior/siguiente)."""
+        if self._is_paused:
+            self._is_paused = False
 
     def _render_phase(
         self,

@@ -27,12 +27,23 @@ class WordSliderView(ft.Container):
         route_on_mount: Callable[[], None] | None,
         route_on_back: Callable[[], None],
         route_on_replay: Callable[[], None] | None = None,
+        route_on_prev: Callable[[], None] | None = None,
+        route_on_next: Callable[[], None] | None = None,
+        route_on_toggle_pause: Callable[[], None] | None = None,
+        route_on_edit_word: Callable[[], None] | None = None,
     ):
         super().__init__()
 
         self._route_on_mount = route_on_mount
         self._route_on_back = route_on_back
         self._route_on_replay = route_on_replay
+        self._route_on_prev = route_on_prev
+        self._route_on_next = route_on_next
+        self._route_on_toggle_pause = route_on_toggle_pause
+        self._route_on_edit_word = route_on_edit_word
+
+        # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
+        self._is_paused: bool = False
 
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
@@ -40,6 +51,8 @@ class WordSliderView(ft.Container):
         # Componentes UI - Content Area
         self._ft_content_area: ft.Column | None = None
         self._ft_slider_card: SliderCardComp | None = None
+        self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_controls_row: ft.Row | None = None
         self._is_card_mounted: bool = False
 
         self._build_initial_ui()
@@ -51,6 +64,10 @@ class WordSliderView(ft.Container):
             route_on_mount=primitives.get("on_mount"),
             route_on_back=primitives.get("on_back", lambda: None),
             route_on_replay=primitives.get("on_replay"),
+            route_on_prev=primitives.get("on_prev"),
+            route_on_next=primitives.get("on_next"),
+            route_on_toggle_pause=primitives.get("on_toggle_pause"),
+            route_on_edit_word=primitives.get("on_edit_word"),
         )
 
     # =========================================================================
@@ -89,6 +106,40 @@ class WordSliderView(ft.Container):
         """Construye la estructura inicial de la UI."""
         self._ft_progress_text = ft.Text("Cargando...", size=14)
         self._ft_slider_card = SliderCardComp()
+
+        # Controles de reproducción: anterior | pausa | siguiente | editar palabra
+        self._ft_pause_btn = ft.IconButton(
+            icon=ft.Icons.PAUSE_CIRCLE,
+            icon_size=42,
+            tooltip="Pausar",
+            on_click=lambda _: self._on_pause_btn_click(),
+        )
+        self._ft_controls_row = ft.Row(
+            controls=[
+                ft.IconButton(
+                    icon=ft.Icons.SKIP_PREVIOUS,
+                    icon_size=42,
+                    tooltip="Palabra anterior",
+                    on_click=lambda _: self._on_prev_btn_click(),
+                ),
+                self._ft_pause_btn,
+                ft.IconButton(
+                    icon=ft.Icons.SKIP_NEXT,
+                    icon_size=42,
+                    tooltip="Palabra siguiente",
+                    on_click=lambda _: self._on_next_btn_click(),
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.EDIT,
+                    icon_size=36,
+                    icon_color=ft.Colors.AMBER_800,
+                    tooltip="Editar palabra (audio, contexto, traducción...)",
+                    on_click=lambda _: self._route_on_edit_word() if self._route_on_edit_word else None,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=16,
+        )
 
         self._ft_content_area = ft.Column(
             controls=[
@@ -156,6 +207,7 @@ class WordSliderView(ft.Container):
 
         # Montar la tarjeta persistente una sola vez para preservar la animación
         if not self._is_card_mounted:
+            self._reset_pause_button()
             self._ft_content_area.controls.clear()
             self._ft_content_area.controls.extend([
                 ft.Container(height=20),
@@ -163,6 +215,8 @@ class WordSliderView(ft.Container):
                     controls=[self._ft_slider_card],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
+                ft.Container(height=12),
+                self._ft_controls_row,
             ])
             self._is_card_mounted = True
 
@@ -255,6 +309,47 @@ class WordSliderView(ft.Container):
                 spacing=20,
             ),
         ])
+
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    def _on_prev_btn_click(self) -> None:
+        """Navega a la palabra anterior (la navegación reanuda la reproducción)."""
+        self._reset_pause_button()
+        if self._route_on_prev:
+            self._route_on_prev()
+        self.update()
+
+    def _on_next_btn_click(self) -> None:
+        """Navega a la palabra siguiente (la navegación reanuda la reproducción)."""
+        self._reset_pause_button()
+        if self._route_on_next:
+            self._route_on_next()
+        self.update()
+
+    def _on_pause_btn_click(self) -> None:
+        """Alterna el icono pausa/reanudar y notifica al controller."""
+        self._is_paused = not self._is_paused
+        self._apply_pause_icon()
+        if self._route_on_toggle_pause:
+            self._route_on_toggle_pause()
+        self.update()
+
+    def _reset_pause_button(self) -> None:
+        """Restaura el botón de pausa al estado reproduciendo."""
+        self._is_paused = False
+        self._apply_pause_icon()
+
+    def _apply_pause_icon(self) -> None:
+        """Sincroniza icono y tooltip del botón con el estado de pausa."""
+        if not self._ft_pause_btn:
+            return
+        if self._is_paused:
+            self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
+            self._ft_pause_btn.tooltip = "Reanudar"
+        else:
+            self._ft_pause_btn.icon = ft.Icons.PAUSE_CIRCLE
+            self._ft_pause_btn.tooltip = "Pausar"
 
     def _render_error(self, message: str) -> None:
         """Renderiza mensaje de error."""

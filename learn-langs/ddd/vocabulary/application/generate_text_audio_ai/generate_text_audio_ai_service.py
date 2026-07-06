@@ -17,7 +17,7 @@ from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_re
     GenerateTextAudioAiResultDto,
 )
 from ddd.vocabulary.domain.enums import TtsAccentEnum
-from ddd.vocabulary.domain.services import TtsVoiceSelectorService
+from ddd.vocabulary.domain.services import TtsAudioFilenameService, TtsVoiceSelectorService
 
 
 @final
@@ -45,16 +45,6 @@ class GenerateTextAudioAiService:
             cls._instance = cls()
         return cls._instance
 
-    def _build_filename(self, word_id: int, lang_code: str) -> str:
-        """Nombre autodocumentado del audio: word-<id>-<lang>-<accent>.mp3.
-
-        Incluir el acento en el nombre hace la caché autoinvalidante: si cambia
-        el acento configurado, cambia el nombre y el audio se regenera solo.
-        """
-        accent = TtsAccentEnum.for_lang(lang_code)
-        accent_label = accent.label if accent else lang_code.lower().replace("_", "-")
-        return f"word-{word_id}-{accent_label}.mp3"
-
     async def __call__(
         self,
         generate_text_audio_ai_dto: GenerateTextAudioAiDto
@@ -80,7 +70,7 @@ class GenerateTextAudioAiService:
 
         # Reutilizar audio cacheado si existe (nombre con id + idioma + acento)
         audio_dir = Path("data/audio")
-        audio_path = audio_dir / self._build_filename(word_id, lang_code)
+        audio_path = audio_dir / TtsAudioFilenameService.get_filename(word_id, lang_code)
 
         if audio_path.exists():
             return GenerateTextAudioAiResultDto.ok(

@@ -105,11 +105,24 @@ class AppRouter:
             return controller.ft_container
 
         if route_name == ControllerRouteEnum.WORD_SLIDER:
+            # Al editar desde el slider, la vuelta retoma el slider en la misma palabra
+            slider_resume_kwargs = {
+                "lang_code": kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
+                "tags": kwargs.get("tags", []),
+                "group_id": kwargs.get("group_id"),
+            }
             controller = WordSliderController(
                 lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
                 tags=kwargs.get("tags", []),
                 group_id=kwargs.get("group_id"),
+                start_index=kwargs.get("start_index", 0),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+                route_on_edit_word=lambda word_id, resume_index: self.navigate_to(
+                    ControllerRouteEnum.UPDATE_WORD,
+                    word_id=word_id,
+                    back_route=ControllerRouteEnum.WORD_SLIDER,
+                    back_route_kwargs={**slider_resume_kwargs, "start_index": resume_index},
+                ),
             )
             return controller.ft_container
 
@@ -132,10 +145,13 @@ class AppRouter:
             return controller.ft_container
 
         if route_name == ControllerRouteEnum.UPDATE_WORD:
+            # Ruta de vuelta: WORDS por defecto; el slider inyecta la suya para retomarse
+            back_route = kwargs.get("back_route", ControllerRouteEnum.WORDS)
+            back_route_kwargs = kwargs.get("back_route_kwargs", {})
             controller = UpdateWordController(
                 word_id=kwargs.get("word_id", 0),
-                on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
-                on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
+                on_success=lambda: self.navigate_to(back_route, **back_route_kwargs),
+                on_back=lambda: self.navigate_to(back_route, **back_route_kwargs),
             )
             return controller.ft_container
 
