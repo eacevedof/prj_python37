@@ -63,40 +63,46 @@ class AddWordIaImageService:
 
         word_es_text = word_es_data.get("text", "")
         word_es_notes = word_es_data.get("notes", "")
+        word_es_img_ia_context = (word_es_data.get("img_ia_context") or "").strip()
 
-        # Obtener tags de la palabra (en español)
-        tags_data = await self._tags_reader_sqlite_repository.get_tags_by_word_es_id(add_word_ia_dto.word_id)
-        tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
+        if word_es_img_ia_context:
+            # Contexto manual: si existe, es el UNICO contexto para la IA
+            # (se descartan grupos, tags y notas)
+            context = word_es_img_ia_context
+        else:
+            # Obtener tags de la palabra (en español)
+            tags_data = await self._tags_reader_sqlite_repository.get_tags_by_word_es_id(add_word_ia_dto.word_id)
+            tag_names = [tag.get("name", "") for tag in tags_data] if tags_data else []
 
-        # Obtener grupos asociados a la palabra
-        groups_data = await self._word_groups_reader_sqlite_repository.get_word_group_by_word_es_id(add_word_ia_dto.word_id)
+            # Obtener grupos asociados a la palabra
+            groups_data = await self._word_groups_reader_sqlite_repository.get_word_group_by_word_es_id(add_word_ia_dto.word_id)
 
-        # Construir contexto con grupos, tags y notas (todo en español)
-        context_parts = []
+            # Construir contexto con grupos, tags y notas (todo en español)
+            context_parts = []
 
-        # Agregar descripción de grupos y fuente (si no es migración)
-        if groups_data:
-            for group in groups_data:
-                group_description = group.get("description", "")
-                group_source = group.get("source", "")
+            # Agregar descripción de grupos y fuente (si no es migración)
+            if groups_data:
+                for group in groups_data:
+                    group_description = group.get("description", "")
+                    group_source = group.get("source", "")
 
-                # Agregar descripción del grupo si existe
-                if group_description:
-                    context_parts.append(f"Grupo: {group_description}")
+                    # Agregar descripción del grupo si existe
+                    if group_description:
+                        context_parts.append(f"Grupo: {group_description}")
 
-                # Agregar fuente si existe y NO es migración
-                if group_source and group_source.lower() not in ["migracion", "migration", "mig"]:
-                    context_parts.append(f"Fuente: {group_source}")
+                    # Agregar fuente si existe y NO es migración
+                    if group_source and group_source.lower() not in ["migracion", "migration", "mig"]:
+                        context_parts.append(f"Fuente: {group_source}")
 
-        # Agregar tags
-        if tag_names:
-            context_parts.append(f"Tags: {', '.join(tag_names)}")
+            # Agregar tags
+            if tag_names:
+                context_parts.append(f"Tags: {', '.join(tag_names)}")
 
-        # Agregar notas de la palabra
-        if word_es_notes:
-            context_parts.append(f"Notas: {word_es_notes}")
+            # Agregar notas de la palabra
+            if word_es_notes:
+                context_parts.append(f"Notas: {word_es_notes}")
 
-        context = ". ".join(context_parts) if context_parts else None
+            context = ". ".join(context_parts) if context_parts else None
 
         # Generar imagen con IA usando solo texto en español + contexto
         generate_ai_result = await self._generate_word_image_ai_service(

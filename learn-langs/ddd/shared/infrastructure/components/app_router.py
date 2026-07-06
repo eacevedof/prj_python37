@@ -71,11 +71,12 @@ class AppRouter:
                     tags=tags,
                     group_id=group_id,
                 ),
-                route_on_start_slider=lambda lang, tags, group_id: self.navigate_to(
+                route_on_start_slider=lambda lang, tags, group_id, is_random_order: self.navigate_to(
                     ControllerRouteEnum.WORD_SLIDER,
                     lang_code=lang,
                     tags=tags,
                     group_id=group_id,
+                    is_random_order=is_random_order,
                 ),
                 route_on_manage_words=lambda: self.navigate_to(
                     ControllerRouteEnum.WORDS,
@@ -105,23 +106,26 @@ class AppRouter:
             return controller.ft_container
 
         if route_name == ControllerRouteEnum.WORD_SLIDER:
-            # Al editar desde el slider, la vuelta retoma el slider en la misma palabra
+            # Al editar desde el slider, la vuelta retoma el slider en la misma
+            # palabra (por word_id: robusto también con orden aleatorio)
             slider_resume_kwargs = {
                 "lang_code": kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
                 "tags": kwargs.get("tags", []),
                 "group_id": kwargs.get("group_id"),
+                "is_random_order": kwargs.get("is_random_order", False),
             }
             controller = WordSliderController(
                 lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
                 tags=kwargs.get("tags", []),
                 group_id=kwargs.get("group_id"),
-                start_index=kwargs.get("start_index", 0),
+                start_word_id=kwargs.get("start_word_id", 0),
+                is_random_order=kwargs.get("is_random_order", False),
                 route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
-                route_on_edit_word=lambda word_id, resume_index: self.navigate_to(
+                route_on_edit_word=lambda word_id: self.navigate_to(
                     ControllerRouteEnum.UPDATE_WORD,
                     word_id=word_id,
                     back_route=ControllerRouteEnum.WORD_SLIDER,
-                    back_route_kwargs={**slider_resume_kwargs, "start_index": resume_index},
+                    back_route_kwargs={**slider_resume_kwargs, "start_word_id": word_id},
                 ),
             )
             return controller.ft_container

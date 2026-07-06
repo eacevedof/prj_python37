@@ -27,6 +27,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
             "word_type": word_es_entity.word_type.value,
             "image_path": word_es_entity.image_path,
             "notes": word_es_entity.notes,
+            "img_ia_context": word_es_entity.img_ia_context,
             "created_at": now,
             "updated_at": now,
         })
@@ -42,6 +43,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
                 "word_type": word_es_entity.word_type.value,
                 "image_path": word_es_entity.image_path,
                 "notes": word_es_entity.notes,
+                "img_ia_context": word_es_entity.img_ia_context,
                 "updated_at": now,
             },
             f"id = {word_es_entity.id}",

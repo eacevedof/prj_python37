@@ -14,9 +14,11 @@ class UpdateWordDto:
     text: str
     word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
+    img_ia_context: str = ""
     tags: list[str] = field(default_factory=list)
     group_ids: list[int] = field(default_factory=list)
     translations: dict[str, str] = field(default_factory=dict)  # lang_code -> text
+    translations_examples: dict[str, str] = field(default_factory=dict)  # lang_code -> ejemplos de uso
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -33,9 +35,11 @@ class UpdateWordDto:
             text=str(primitives.get("text", "")).strip(),
             word_type=word_type,
             notes=str(primitives.get("notes", "") or "").strip(),
+            img_ia_context=str(primitives.get("img_ia_context", "") or "").strip(),
             tags=list(primitives.get("tags", []) or []),
             group_ids=list(primitives.get("group_ids", []) or []),
             translations=dict(primitives.get("translations", {}) or {}),
+            translations_examples=dict(primitives.get("translations_examples", {}) or {}),
         )
 
     def validate(self) -> list[str]:

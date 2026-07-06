@@ -229,6 +229,8 @@ class WordSliderView(ft.Container):
             word_key=str(dto.current_index),
             image_file_path=word.get("image_file_path", ""),
             word_id=word.get("word_es_id", ""),
+            examples=word.get("examples", ""),
+            show_examples=dto.show_examples,
         )
 
     def _render_no_words(self) -> None:

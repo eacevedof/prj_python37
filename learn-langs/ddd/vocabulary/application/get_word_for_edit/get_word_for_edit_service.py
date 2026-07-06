@@ -52,10 +52,14 @@ class GetWordForEditService:
         if not word_data:
             return GetWordForEditResultDto.not_found(get_word_for_edit_dto.word_id)
 
-        # Cargar traducciones
+        # Cargar traducciones (texto + ejemplos de uso guardados en words_lang.notes)
         translations_raw = await self._words_lang_reader_sqlite_repository.get_all_for_word(get_word_for_edit_dto.word_id)
         translations = {
             t["lang_code"]: t["text"]
+            for t in translations_raw
+        }
+        translations_examples = {
+            t["lang_code"]: t.get("notes", "") or ""
             for t in translations_raw
         }
 
@@ -71,7 +75,9 @@ class GetWordForEditService:
             text=word_data.get("text", ""),
             word_type=word_data.get("word_type", WordTypeEnum.WORD.value),
             notes=word_data.get("notes", "") or "",
+            img_ia_context=word_data.get("img_ia_context", "") or "",
             translations=translations,
+            translations_examples=translations_examples,
             selected_tags=selected_tags,
             available_tags=all_tags_raw,
         )

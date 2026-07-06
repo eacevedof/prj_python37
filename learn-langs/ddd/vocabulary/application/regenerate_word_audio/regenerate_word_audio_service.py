@@ -1,5 +1,6 @@
 """Servicio para regenerar el audio de una palabra+idioma (propuesta temporal)."""
 
+import asyncio
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
@@ -85,7 +86,10 @@ class RegenerateWordAudioService:
             else:
                 model_used = OpenaiTtsModelEnum.TTS_1.value
 
-            audio_bytes = self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text(
+            # En thread: la llamada a la API es sincrónica y bloquearía el event
+            # loop de la UI mientras se genera la propuesta
+            audio_bytes = await asyncio.to_thread(
+                self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text,
                 model=model_used,
                 voice=voice_used,
                 input_text=text_to_generate,

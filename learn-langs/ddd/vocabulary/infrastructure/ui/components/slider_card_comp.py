@@ -87,13 +87,25 @@ class SliderCardComp(ft.Container):
             visible=False,
         )
 
-        # Columna de texto (palabra ES + traducción + pronunciación) - a la derecha
+        # Ejemplos de uso (se revelan en la fase final, antes de la siguiente
+        # palabra): enumerados con tipo de frase, neerlandés en negrita y
+        # traducción gris pegada debajo
+        self._ft_examples_column = ft.Column(
+            controls=[],
+            spacing=6,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            visible=False,
+        )
+
+        # Columna de texto (palabra ES + traducción + pronunciación + ejemplos) - a la derecha
         self._ft_text_column = ft.Column(
             controls=[
                 self._ft_word_switcher,
                 ft.Container(height=12),
                 self._ft_translation,
                 self._ft_pronunciation,
+                ft.Container(height=4),
+                self._ft_examples_column,
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,
@@ -142,6 +154,8 @@ class SliderCardComp(ft.Container):
         word_key: str,
         image_file_path: str = "",
         word_id: int | str = "",
+        examples: str = "",
+        show_examples: bool = False,
     ) -> None:
         """Actualiza la tarjeta. Anima/actualiza la imagen solo al cambiar de palabra."""
         self._ft_phase_label.value = phase_label
@@ -167,6 +181,77 @@ class SliderCardComp(ft.Container):
 
         self._ft_pronunciation.value = f"/{pronunciation}/" if pronunciation else ""
         self._ft_pronunciation.visible = show_translation and bool(pronunciation)
+
+        self._render_examples(examples, show_examples)
+
+    def _render_examples(self, examples: str, show_examples: bool) -> None:
+        """Renderiza los ejemplos: número + tipo en pequeño, neerlandés en
+        negrita y traducción gris pegada debajo."""
+        self._ft_examples_column.controls.clear()
+        example_items = self._get_example_items(examples) if show_examples else []
+        self._ft_examples_column.visible = bool(example_items)
+
+        for example_number, (type_tag, text_lang, text_es) in enumerate(example_items, start=1):
+            number_and_tag = f"{example_number}. {type_tag}" if type_tag else f"{example_number}."
+            header_row = ft.Row(
+                controls=[
+                    ft.Text(
+                        number_and_tag,
+                        size=SliderCardSizeEnum.EXAMPLES_TAG.value,
+                        italic=True,
+                        color=ft.Colors.GREY_500,
+                    ),
+                    ft.Text(
+                        text_lang,
+                        size=SliderCardSizeEnum.EXAMPLES.value,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.BLUE_GREY_900,
+                    ),
+                ],
+                spacing=6,
+                alignment=ft.MainAxisAlignment.CENTER,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+
+            pair_controls: list[ft.Control] = [header_row]
+            if text_es:
+                pair_controls.append(
+                    ft.Text(
+                        text_es,
+                        size=SliderCardSizeEnum.EXAMPLES_TRANSLATION.value,
+                        color=ft.Colors.GREY_600,
+                        text_align=ft.TextAlign.CENTER,
+                    )
+                )
+            self._ft_examples_column.controls.append(
+                ft.Column(
+                    controls=pair_controls,
+                    spacing=0,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+            )
+
+    @staticmethod
+    def _get_example_items(examples: str) -> list[tuple[str, str, str]]:
+        """Parsea '• [tipo] zin — traducción' en (tipo, nl, es); tipo opcional."""
+        example_items: list[tuple[str, str, str]] = []
+        for raw_line in examples.splitlines():
+            line = raw_line.strip()
+            while line and line[0] in "•-*":
+                line = line[1:].strip()
+            if not line:
+                continue
+            type_tag = ""
+            if line.startswith("[") and "]" in line:
+                type_tag, line = line[1:].split("]", 1)
+                type_tag = type_tag.strip()
+                line = line.strip()
+            if "—" in line:
+                text_lang, text_es = line.split("—", 1)
+                example_items.append((type_tag, text_lang.strip(), text_es.strip()))
+            else:
+                example_items.append((type_tag, line, ""))
+        return example_items
 
     def _get_full_image_path(self, image_file_path: str) -> str:
         """Construye la ruta completa de la imagen (base: data/images)."""

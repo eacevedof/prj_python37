@@ -20,6 +20,7 @@ class WordSliderViewDto:
     # Fase de reproducción de la palabra actual
     phase_label: str = ""
     show_translation: bool = False
+    show_examples: bool = False
 
     # Estados de la vista
     is_loading: bool = True
@@ -39,6 +40,7 @@ class WordSliderViewDto:
             current_word=dict(current_word) if current_word else None,
             phase_label=str(primitives.get("phase_label", "")),
             show_translation=bool(primitives.get("show_translation", False)),
+            show_examples=bool(primitives.get("show_examples", False)),
             is_loading=bool(primitives.get("is_loading", False)),
             is_session_complete=bool(primitives.get("is_session_complete", False)),
             has_no_words=bool(primitives.get("has_no_words", False)),
@@ -76,6 +78,7 @@ class WordSliderViewDto:
         current_word: dict[str, Any],
         phase_label: str,
         show_translation: bool,
+        show_examples: bool = False,
     ) -> Self:
         """DTO para una palabra reproduciéndose en una fase concreta."""
         return cls.from_primitives({
@@ -86,6 +89,7 @@ class WordSliderViewDto:
             "current_word": current_word,
             "phase_label": phase_label,
             "show_translation": show_translation,
+            "show_examples": show_examples,
             "is_loading": False,
         })
 

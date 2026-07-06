@@ -20,7 +20,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         """Obtiene una palabra por su ID."""
         query = f"""
         -- get_word_es_by_word_es_id
-        SELECT id, text, word_type, notes, created_at, updated_at
+        SELECT id, text, word_type, notes, img_ia_context, created_at, updated_at
         FROM words_es
         WHERE 1=1
         AND id = {word_es_id}
@@ -32,7 +32,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
         query = """
         -- get_word_es_by_text
         SELECT
-            id, text, word_type, notes, created_at, updated_at
+            id, text, word_type, notes, img_ia_context, created_at, updated_at
         FROM words_es
         WHERE 1=1
         AND text = ?

@@ -12,6 +12,7 @@ class StartWordSliderSessionDto:
     tags: list[str] = field(default_factory=list)
     group_id: int | None = None
     limit: int = 20
+    is_random_order: bool = False  # baraja las palabras (ignora la priorización SM-2)
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
@@ -23,6 +24,7 @@ class StartWordSliderSessionDto:
             tags=list(primitives.get("tags", []) or []),
             group_id=group_id,
             limit=int(primitives.get("limit", 20)),
+            is_random_order=bool(primitives.get("is_random_order", False)),
         )
 
     def validate(self) -> list[str]:

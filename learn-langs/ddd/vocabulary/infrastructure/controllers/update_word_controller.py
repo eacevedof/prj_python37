@@ -149,7 +149,11 @@ class UpdateWordController(BaseController):
                 text=result.text,
                 word_type=result.word_type,
                 notes=result.notes,
+                img_ia_context=result.img_ia_context,
                 translation_nl=result.translations.get(
+                    LanguageCodeEnum.NL_NL.value, ""
+                ),
+                examples_nl=result.translations_examples.get(
                     LanguageCodeEnum.NL_NL.value, ""
                 ),
                 selected_tags=list(result.selected_tags),
@@ -192,11 +196,15 @@ class UpdateWordController(BaseController):
             self._ft_container.render(dto)
             return
 
-        # Preparar traducciones
+        # Preparar traducciones (texto + ejemplos de uso)
         translations = {}
+        translations_examples = {}
         text_nl = (form_data.get("text_nl") or "").strip()
         if text_nl:
             translations[LanguageCodeEnum.NL_NL.value] = text_nl
+            translations_examples[LanguageCodeEnum.NL_NL.value] = (
+                form_data.get("examples_nl") or ""
+            ).strip()
 
         try:
             # Llamar servicio
@@ -207,7 +215,9 @@ class UpdateWordController(BaseController):
                 "tags": form_data.get("selected_tags", []),
                 "group_ids": form_data.get("selected_group_ids", []),
                 "translations": translations,
+                "translations_examples": translations_examples,
                 "notes": (form_data.get("notes") or "").strip(),
+                "img_ia_context": (form_data.get("img_ia_context") or "").strip(),
             })
 
             result = await self._update_word_service(update_dto)

@@ -85,6 +85,7 @@ class UpdateWordService:
                 word_type=WordTypeEnum(update_word_dto.word_type),
                 image_path=existing.get("image_path", ""),
                 notes=update_word_dto.notes,
+                img_ia_context=update_word_dto.img_ia_context,
             )
         )
 
@@ -94,10 +95,11 @@ class UpdateWordService:
         # Actualizar grupos
         await self._update_groups(update_word_dto.word_id, update_word_dto.group_ids)
 
-        # Actualizar traducciones
+        # Actualizar traducciones (texto + ejemplos de uso)
         translations_updated = await self._update_translations(
             update_word_dto.word_id,
             update_word_dto.translations,
+            update_word_dto.translations_examples,
         )
 
         return UpdateWordResultDto.from_primitives({
@@ -142,14 +144,21 @@ class UpdateWordService:
         self,
         word_id: int,
         translations: dict[str, str],
+        translations_examples: dict[str, str],
     ) -> dict[str, str]:
-        """Actualiza las traducciones de la palabra."""
+        """Actualiza las traducciones de la palabra.
+
+        Los ejemplos de uso se guardan en words_lang.notes; si el idioma no
+        viene en translations_examples se conservan los existentes.
+        """
         updated_translations: dict[str, str] = {}
 
         for lang_code, text in translations.items():
             existing_translation = await self._words_lang_reader_sqlite_repository.get_by_word_and_lang(
                 word_id, lang_code
             )
+
+            examples = translations_examples.get(lang_code)
 
             if text and text.strip():
                 if existing_translation:
@@ -161,7 +170,7 @@ class UpdateWordService:
                         text=text.strip(),
                         pronunciation=existing_translation.get("pronunciation", ""),
                         audio_path=existing_translation.get("audio_path", ""),
-                        notes=existing_translation.get("notes", ""),
+                        notes=examples.strip() if examples is not None else (existing_translation.get("notes", "") or ""),
                     )
                     await self._words_lang_writer_sqlite_repository.update(word_lang_entity)
                 else:
@@ -171,6 +180,7 @@ class UpdateWordService:
                         word_es_id=word_id,
                         lang_code=lang_code,
                         text=text.strip(),
+                        notes=(examples or "").strip(),
                     )
                     await self._words_lang_writer_sqlite_repository.create(word_lang_entity)
 

@@ -25,9 +25,9 @@ class HomeController(BaseController):
     """
     def __init__(
         self,
-        route_on_start_study: Callable[[str, list[str], int | None], None],       # 1. Botón primario (verde, izquierda)
-        route_on_start_image_study: Callable[[str, list[str], int | None], None], # 2. Botón secundario (morado, centro)
-        route_on_start_slider: Callable[[str, list[str], int | None], None],      # 3. Botón slider (teal)
+        route_on_start_study: Callable[[str, list[str], int | None], None],             # 1. Botón primario (verde, izquierda)
+        route_on_start_image_study: Callable[[str, list[str], int | None], None],       # 2. Botón secundario (morado, centro)
+        route_on_start_slider: Callable[[str, list[str], int | None, bool], None],      # 3. Botón Aprendizaje (verde) + orden aleatorio
         route_on_manage_words: Callable[[], None],                                 # 4. Botón gestión palabras (amarillo)
         route_on_manage_groups: Callable[[], None],                                # 5. Botón gestión grupos (naranja)
     ):
@@ -209,7 +209,7 @@ class HomeController(BaseController):
         )
 
     def _route_on_start_slider_click(self) -> None:
-        """Maneja click en slider (boton teal - abajo en UI)."""
+        """Maneja click en Aprendizaje (boton verde - abajo en UI)."""
         # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
         actual_group_id = self._ft_container.get_selected_group_id()
         if actual_group_id is not None:
@@ -218,5 +218,6 @@ class HomeController(BaseController):
         self._route_on_start_slider(
             str(self._selected_lang),
             self._selected_tags,
-            self._selected_group_id
+            self._selected_group_id,
+            self._ft_container.get_is_random_order(),
         )

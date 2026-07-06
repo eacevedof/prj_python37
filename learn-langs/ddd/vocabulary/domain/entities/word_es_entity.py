@@ -13,6 +13,7 @@ class WordEsEntity:
     word_type: WordTypeEnum
     image_path: str = ""
     notes: str = ""
+    img_ia_context: str = ""  # contexto manual para la imagen IA (si hay, manda)
     created_at: str = ""
     updated_at: str = ""
     tags: list[str] = field(default_factory=list)
@@ -32,6 +33,7 @@ class WordEsEntity:
             word_type=word_type,
             image_path=str(primitives.get("image_path", "") or "").strip(),
             notes=str(primitives.get("notes", "") or "").strip(),
+            img_ia_context=str(primitives.get("img_ia_context", "") or "").strip(),
             created_at=str(primitives.get("created_at", "") or ""),
             updated_at=str(primitives.get("updated_at", "") or ""),
             tags=list(primitives.get("tags", []) or []),
@@ -45,6 +47,7 @@ class WordEsEntity:
             "word_type": self.word_type.value,
             "image_path": self.image_path,
             "notes": self.notes,
+            "img_ia_context": self.img_ia_context,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "tags": self.tags,

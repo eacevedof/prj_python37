@@ -50,6 +50,7 @@ class HomeView(ft.Container):
         # Componentes UI
         self._ft_lang_dropdown: ft.Dropdown | None = None
         self._ft_group_dropdown: ft.Dropdown | None = None
+        self._ft_random_order_switch: ft.Switch | None = None
         self._ft_tags_row: ft.Row | None = None
         self._ft_stats_column: ft.Column | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
@@ -84,6 +85,12 @@ class HomeView(ft.Container):
         except (ValueError, TypeError) as e:
             self._logger.log_error(f"Invalid group_id value in dropdown: {self._ft_group_dropdown.value}. Error: {type(e).__name__}")
             return None
+
+    def get_is_random_order(self) -> bool:
+        """Retorna si el switch de orden aleatorio (Aprendizaje) esta activo."""
+        if not self._ft_random_order_switch:
+            return False
+        return bool(self._ft_random_order_switch.value)
 
     # =========================================================================
     # API PÚBLICA - RENDERIZADO
@@ -134,6 +141,13 @@ class HomeView(ft.Container):
             options=[],
         )
         self._ft_group_dropdown.on_change = self._on_group_dropdown_change
+
+        # Switch de orden aleatorio (aplica al Aprendizaje)
+        self._ft_random_order_switch = ft.Switch(
+            label="Orden aleatorio",
+            value=False,
+            tooltip="Reproduce las palabras del Aprendizaje sin un orden concreto",
+        )
 
         # Tags row
         self._ft_tags_row = ft.Row(
@@ -250,7 +264,12 @@ class HomeView(ft.Container):
                     width=400,
                     alignment=ft.Alignment.CENTER,
                 ),
-                ft.Container(height=30),
+                ft.Container(height=20),
+                ft.Row(
+                    controls=[self._ft_random_order_switch],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(height=10),
                 ft.Row(
                     controls=[slider_btn, image_study_btn],
                     alignment=ft.MainAxisAlignment.CENTER,

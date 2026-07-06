@@ -1,5 +1,6 @@
 """Servicio para iniciar sesión de slider (presentación auto-reproducida)."""
 
+import random
 from typing import final, Self
 
 from ddd.vocabulary.application.start_word_slider_session.start_word_slider_session_dto import (
@@ -69,6 +70,11 @@ class StartWordSliderSessionService:
             VocabularyException.no_words_for_slider(
                 start_word_slider_session_dto.lang_code
             )
+
+        # Orden aleatorio: baraja e ignora la priorización SM-2
+        if start_word_slider_session_dto.is_random_order:
+            words_data = list(words_data)
+            random.shuffle(words_data)
 
         # Crear sesión
         session_id = await self._sessions_writer_sqlite_repository.create_study_session(

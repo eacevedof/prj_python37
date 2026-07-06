@@ -14,7 +14,9 @@ class GetWordForEditResultDto:
     text: str = ""
     word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
+    img_ia_context: str = ""
     translations: dict[str, str] = field(default_factory=dict)
+    translations_examples: dict[str, str] = field(default_factory=dict)  # lang_code -> ejemplos de uso
     selected_tags: tuple[str, ...] = field(default_factory=tuple)
     available_tags: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     error_message: str | None = None
@@ -22,6 +24,7 @@ class GetWordForEditResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         translations = primitives.get("translations", {}) or {}
+        translations_examples = primitives.get("translations_examples", {}) or {}
         selected_tags = primitives.get("selected_tags", []) or []
         available_tags_raw = primitives.get("available_tags", []) or []
 
@@ -30,7 +33,9 @@ class GetWordForEditResultDto:
             text=str(primitives.get("text", "")),
             word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             notes=str(primitives.get("notes", "") or ""),
+            img_ia_context=str(primitives.get("img_ia_context", "") or ""),
             translations=dict(translations),
+            translations_examples=dict(translations_examples),
             selected_tags=tuple(selected_tags),
             available_tags=tuple(available_tags_raw),
             error_message=primitives.get("error_message"),
@@ -57,7 +62,9 @@ class GetWordForEditResultDto:
         text: str,
         word_type: str,
         notes: str,
+        img_ia_context: str,
         translations: dict[str, str],
+        translations_examples: dict[str, str],
         selected_tags: list[str],
         available_tags: list[dict[str, Any]],
     ) -> Self:
@@ -67,7 +74,9 @@ class GetWordForEditResultDto:
             "text": text,
             "word_type": word_type,
             "notes": notes,
+            "img_ia_context": img_ia_context,
             "translations": translations,
+            "translations_examples": translations_examples,
             "selected_tags": selected_tags,
             "available_tags": available_tags,
             "error_message": None,

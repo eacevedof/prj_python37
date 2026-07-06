@@ -30,3 +30,5 @@ flet.yaml
 requirements-dev.txt
 requirements-prod.txt
 /data/audio/
+/data/_tmp_migrations_check.db
+/data/learn_lang.backup-20260706.db

@@ -69,8 +69,10 @@ class UpdateWordView(ft.Container):
         self._ft_word_id_field: ft.TextField | None = None
         self._ft_text_es_field: ft.TextField | None = None
         self._ft_text_nl_field: ft.TextField | None = None
+        self._ft_examples_nl_field: ft.TextField | None = None
         self._ft_word_type_dropdown: ft.Dropdown | None = None
         self._ft_notes_field: ft.TextField | None = None
+        self._ft_img_ia_context_field: ft.TextField | None = None
         self._ft_tags_row: ft.Row | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
         self._ft_form_container: ft.Container | None = None
@@ -234,6 +236,15 @@ class UpdateWordView(ft.Container):
             width=400,
         )
 
+        self._ft_examples_nl_field = ft.TextField(
+            label="Ejemplos (Nederlands)",
+            hint_text="Frases de ejemplo: contextos donde usarla, cuando y como...",
+            width=400,
+            multiline=True,
+            min_lines=2,
+            max_lines=5,
+        )
+
         self._ft_word_type_dropdown = ft.Dropdown(
             label="Tipo",
             width=200,
@@ -248,6 +259,15 @@ class UpdateWordView(ft.Container):
         self._ft_notes_field = ft.TextField(
             label="Notas (opcional)",
             hint_text="Contexto, ejemplos de uso...",
+            width=400,
+            multiline=True,
+            min_lines=2,
+            max_lines=4,
+        )
+
+        self._ft_img_ia_context_field = ft.TextField(
+            label="Contexto imagen IA (opcional)",
+            hint_text="Si lo rellenas, la imagen IA se genera SOLO con este contexto",
             width=400,
             multiline=True,
             min_lines=2,
@@ -332,9 +352,13 @@ class UpdateWordView(ft.Container):
                 ft.Container(height=8),
                 self._ft_text_nl_field,
                 ft.Container(height=8),
+                self._ft_examples_nl_field,
+                ft.Container(height=8),
                 self._ft_word_type_dropdown,
                 ft.Container(height=8),
                 self._ft_notes_field,
+                ft.Container(height=8),
+                self._ft_img_ia_context_field,
                 ft.Container(height=12),
                 ft.Row(
                     controls=[save_btn, cancel_btn],
@@ -461,12 +485,20 @@ class UpdateWordView(ft.Container):
             self._ft_text_nl_field.value = form_values.get("text_nl", "")
             self._ft_text_nl_field.border_color = None
 
+        if self._ft_examples_nl_field:
+            self._ft_examples_nl_field.value = form_values.get("examples_nl", "")
+            self._ft_examples_nl_field.border_color = None
+
         if self._ft_word_type_dropdown:
             self._ft_word_type_dropdown.value = form_values.get("word_type", WordTypeEnum.WORD.value)
 
         if self._ft_notes_field:
             self._ft_notes_field.value = form_values.get("notes", "")
             self._ft_notes_field.border_color = None
+
+        if self._ft_img_ia_context_field:
+            self._ft_img_ia_context_field.value = form_values.get("img_ia_context", "")
+            self._ft_img_ia_context_field.border_color = None
 
     def _render_tags(self) -> None:
         """Renderiza los chips de tags."""
@@ -899,8 +931,10 @@ class UpdateWordView(ft.Container):
         return {
             "text_es": self._ft_text_es_field.value if self._ft_text_es_field else "",
             "text_nl": self._ft_text_nl_field.value if self._ft_text_nl_field else "",
+            "examples_nl": self._ft_examples_nl_field.value if self._ft_examples_nl_field else "",
             "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else WordTypeEnum.WORD.value,
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
+            "img_ia_context": self._ft_img_ia_context_field.value if self._ft_img_ia_context_field else "",
             "selected_tags": list(self._selected_tags),
             "selected_group_ids": list(self._selected_group_ids),
         }
