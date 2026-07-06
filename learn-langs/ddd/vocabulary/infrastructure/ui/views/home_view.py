@@ -163,6 +163,19 @@ class HomeView(ft.Container):
             color=ft.Colors.WHITE,
         )
 
+        slider_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.SLIDESHOW), ft.Text("Aprendizaje")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_start_slider(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.GREEN_600,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+        )
+
         image_study_btn = ft.ElevatedButton(
             content=ft.Row(
                 [ft.Icon(ft.Icons.QUIZ), ft.Text("Examen con imágenes")],
@@ -170,20 +183,7 @@ class HomeView(ft.Container):
             ),
             on_click=lambda _: self._route_on_start_image_study(),
             style=ft.ButtonStyle(
-                bgcolor=ft.Colors.PURPLE_600,
-                color=ft.Colors.WHITE,
-                padding=20,
-            ),
-        )
-
-        slider_btn = ft.ElevatedButton(
-            content=ft.Row(
-                [ft.Icon(ft.Icons.SLIDESHOW), ft.Text("Slider")],
-                alignment=ft.MainAxisAlignment.CENTER,
-            ),
-            on_click=lambda _: self._route_on_start_slider(),
-            style=ft.ButtonStyle(
-                bgcolor=ft.Colors.TEAL_600,
+                bgcolor=ft.Colors.BLUE_900,
                 color=ft.Colors.WHITE,
                 padding=20,
             ),
@@ -252,7 +252,7 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=30),
                 ft.Row(
-                    controls=[image_study_btn, slider_btn],
+                    controls=[slider_btn, image_study_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
