@@ -10,7 +10,7 @@ class SliderCardSizeEnum(IntEnum):
     WORD = 90
     TRANSLATION = 84
     PRONUNCIATION = 34
-    EXAMPLES = 22  # frase de ejemplo en neerlandés (negrita; 5 ejemplos por tarjeta)
-    EXAMPLES_TRANSLATION = 15  # traducción española del ejemplo (gris, pegada debajo)
+    EXAMPLES = 22  # frase del ejemplo en español (negrita: el reto a traducir)
+    EXAMPLES_TRANSLATION = 15  # solución en neerlandés (gris, pegada debajo)
     EXAMPLES_TAG = 12  # número + tipo de frase (can./inv./perf./vraag/bijzin...)
     IMAGE = 340  # lado de la imagen (cuadrada, fit=CONTAIN)

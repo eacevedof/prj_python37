@@ -185,14 +185,19 @@ class SliderCardComp(ft.Container):
         self._render_examples(examples, show_examples)
 
     def _render_examples(self, examples: str, show_examples: bool) -> None:
-        """Renderiza los ejemplos: número + tipo en pequeño, neerlandés en
-        negrita y traducción gris pegada debajo."""
+        """Renderiza los ejemplos: número + tipo en pequeño, ESPAÑOL en negrita
+        (el reto a traducir) y la solución en neerlandés en gris pegada debajo."""
         self._ft_examples_column.controls.clear()
         example_items = self._get_example_items(examples) if show_examples else []
         self._ft_examples_column.visible = bool(example_items)
 
         for example_number, (type_tag, text_lang, text_es) in enumerate(example_items, start=1):
             number_and_tag = f"{example_number}. {type_tag}" if type_tag else f"{example_number}."
+            # El español manda (negrita); si la línea no trae traducción, se
+            # muestra el neerlandés como texto principal
+            main_text = text_es or text_lang
+            solution_text = text_lang if text_es else ""
+
             header_row = ft.Row(
                 controls=[
                     ft.Text(
@@ -202,7 +207,7 @@ class SliderCardComp(ft.Container):
                         color=ft.Colors.GREY_500,
                     ),
                     ft.Text(
-                        text_lang,
+                        main_text,
                         size=SliderCardSizeEnum.EXAMPLES.value,
                         weight=ft.FontWeight.BOLD,
                         color=ft.Colors.BLUE_GREY_900,
@@ -214,10 +219,10 @@ class SliderCardComp(ft.Container):
             )
 
             pair_controls: list[ft.Control] = [header_row]
-            if text_es:
+            if solution_text:
                 pair_controls.append(
                     ft.Text(
-                        text_es,
+                        solution_text,
                         size=SliderCardSizeEnum.EXAMPLES_TRANSLATION.value,
                         color=ft.Colors.GREY_600,
                         text_align=ft.TextAlign.CENTER,

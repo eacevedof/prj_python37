@@ -4,7 +4,6 @@ import sys
 import traceback
 
 import flet as ft
-from flet import app_async
 
 # fix encoding for windows console
 if sys.platform == "win32":
@@ -55,6 +54,9 @@ async def fn_render(
     ft_page.window.height = get_app_config_result_dto.window_height
     ft_page.window.min_width = get_app_config_result_dto.window_min_width
     ft_page.window.min_height = get_app_config_result_dto.window_min_height
+    # Arrancar ocupando toda la pantalla disponible (el tamaño de config
+    # queda como tamaño al restaurar la ventana)
+    ft_page.window.maximized = True
 
     ft_container = ft.Container(expand=True)
     app_router = AppRouter(ft_page, ft_container)
