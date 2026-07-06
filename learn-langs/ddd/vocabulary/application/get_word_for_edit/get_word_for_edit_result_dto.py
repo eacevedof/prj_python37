@@ -15,6 +15,7 @@ class GetWordForEditResultDto:
     word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
     img_ia_context: str = ""
+    rules_help: str = ""
     translations: dict[str, str] = field(default_factory=dict)
     translations_examples: dict[str, str] = field(default_factory=dict)  # lang_code -> ejemplos de uso
     selected_tags: tuple[str, ...] = field(default_factory=tuple)
@@ -34,6 +35,7 @@ class GetWordForEditResultDto:
             word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             notes=str(primitives.get("notes", "") or ""),
             img_ia_context=str(primitives.get("img_ia_context", "") or ""),
+            rules_help=str(primitives.get("rules_help", "") or ""),
             translations=dict(translations),
             translations_examples=dict(translations_examples),
             selected_tags=tuple(selected_tags),
@@ -63,6 +65,7 @@ class GetWordForEditResultDto:
         word_type: str,
         notes: str,
         img_ia_context: str,
+        rules_help: str,
         translations: dict[str, str],
         translations_examples: dict[str, str],
         selected_tags: list[str],
@@ -75,6 +78,7 @@ class GetWordForEditResultDto:
             "word_type": word_type,
             "notes": notes,
             "img_ia_context": img_ia_context,
+            "rules_help": rules_help,
             "translations": translations,
             "translations_examples": translations_examples,
             "selected_tags": selected_tags,

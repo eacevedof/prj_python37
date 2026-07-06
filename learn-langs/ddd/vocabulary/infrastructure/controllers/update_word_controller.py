@@ -150,6 +150,7 @@ class UpdateWordController(BaseController):
                 word_type=result.word_type,
                 notes=result.notes,
                 img_ia_context=result.img_ia_context,
+                rules_help=result.rules_help,
                 translation_nl=result.translations.get(
                     LanguageCodeEnum.NL_NL.value, ""
                 ),
@@ -218,6 +219,7 @@ class UpdateWordController(BaseController):
                 "translations_examples": translations_examples,
                 "notes": (form_data.get("notes") or "").strip(),
                 "img_ia_context": (form_data.get("img_ia_context") or "").strip(),
+                "rules_help": (form_data.get("rules_help") or "").strip(),
             })
 
             result = await self._update_word_service(update_dto)

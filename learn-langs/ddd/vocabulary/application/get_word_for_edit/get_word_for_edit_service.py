@@ -76,6 +76,7 @@ class GetWordForEditService:
             word_type=word_data.get("word_type", WordTypeEnum.WORD.value),
             notes=word_data.get("notes", "") or "",
             img_ia_context=word_data.get("img_ia_context", "") or "",
+            rules_help=word_data.get("rules_help", "") or "",
             translations=translations,
             translations_examples=translations_examples,
             selected_tags=selected_tags,

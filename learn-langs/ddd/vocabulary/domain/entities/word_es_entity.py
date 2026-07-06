@@ -14,6 +14,7 @@ class WordEsEntity:
     image_path: str = ""
     notes: str = ""
     img_ia_context: str = ""  # contexto manual para la imagen IA (si hay, manda)
+    rules_help: str = ""  # reglas de uso (ayuda gramatical mostrada en el Aprendizaje)
     created_at: str = ""
     updated_at: str = ""
     tags: list[str] = field(default_factory=list)
@@ -34,6 +35,7 @@ class WordEsEntity:
             image_path=str(primitives.get("image_path", "") or "").strip(),
             notes=str(primitives.get("notes", "") or "").strip(),
             img_ia_context=str(primitives.get("img_ia_context", "") or "").strip(),
+            rules_help=str(primitives.get("rules_help", "") or "").strip(),
             created_at=str(primitives.get("created_at", "") or ""),
             updated_at=str(primitives.get("updated_at", "") or ""),
             tags=list(primitives.get("tags", []) or []),
@@ -48,6 +50,7 @@ class WordEsEntity:
             "image_path": self.image_path,
             "notes": self.notes,
             "img_ia_context": self.img_ia_context,
+            "rules_help": self.rules_help,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "tags": self.tags,

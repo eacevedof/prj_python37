@@ -86,6 +86,7 @@ class UpdateWordService:
                 image_path=existing.get("image_path", ""),
                 notes=update_word_dto.notes,
                 img_ia_context=update_word_dto.img_ia_context,
+                rules_help=update_word_dto.rules_help,
             )
         )
 

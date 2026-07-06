@@ -15,6 +15,7 @@ class UpdateWordDto:
     word_type: str = WordTypeEnum.WORD.value
     notes: str = ""
     img_ia_context: str = ""
+    rules_help: str = ""
     tags: list[str] = field(default_factory=list)
     group_ids: list[int] = field(default_factory=list)
     translations: dict[str, str] = field(default_factory=dict)  # lang_code -> text
@@ -36,6 +37,7 @@ class UpdateWordDto:
             word_type=word_type,
             notes=str(primitives.get("notes", "") or "").strip(),
             img_ia_context=str(primitives.get("img_ia_context", "") or "").strip(),
+            rules_help=str(primitives.get("rules_help", "") or "").strip(),
             tags=list(primitives.get("tags", []) or []),
             group_ids=list(primitives.get("group_ids", []) or []),
             translations=dict(primitives.get("translations", {}) or {}),

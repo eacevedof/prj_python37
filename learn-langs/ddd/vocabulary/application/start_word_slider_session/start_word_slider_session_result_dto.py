@@ -19,6 +19,9 @@ class SliderWordDto:
     # Ejemplos de uso en el idioma destino (words_lang.notes)
     examples_lang: str = ""
 
+    # Reglas de uso / ayuda gramatical (words_es.rules_help)
+    rules_help: str = ""
+
     # Imagen principal (opcional)
     image_file_path: str = ""
     image_mime_type: str = ""
@@ -33,6 +36,7 @@ class SliderWordDto:
             word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             pronunciation=str(primitives.get("pronunciation", "") or ""),
             examples_lang=str(primitives.get("examples_lang", "") or ""),
+            rules_help=str(primitives.get("rules_help", "") or ""),
             image_file_path=str(primitives.get("image_file_path", "") or ""),
             image_mime_type=str(primitives.get("image_mime_type", "") or ""),
             image_caption=str(primitives.get("image_caption", "") or ""),
@@ -46,6 +50,7 @@ class SliderWordDto:
             "word_type": self.word_type,
             "pronunciation": self.pronunciation,
             "examples_lang": self.examples_lang,
+            "rules_help": self.rules_help,
             "image_file_path": self.image_file_path,
             "image_mime_type": self.image_mime_type,
             "image_caption": self.image_caption,

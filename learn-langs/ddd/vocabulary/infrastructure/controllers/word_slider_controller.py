@@ -473,6 +473,7 @@ class WordSliderController(BaseController):
                 "pronunciation": self._pronunciation_for(word),
                 "image_file_path": word.image_file_path,
                 "examples": word.examples_lang,
+                "rules_help": word.rules_help,
             },
             phase_label=phase_label,
             show_translation=show_translation,

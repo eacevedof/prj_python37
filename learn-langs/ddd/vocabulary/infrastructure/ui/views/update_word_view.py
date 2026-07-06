@@ -73,6 +73,7 @@ class UpdateWordView(ft.Container):
         self._ft_word_type_dropdown: ft.Dropdown | None = None
         self._ft_notes_field: ft.TextField | None = None
         self._ft_img_ia_context_field: ft.TextField | None = None
+        self._ft_rules_help_field: ft.TextField | None = None
         self._ft_tags_row: ft.Row | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
         self._ft_form_container: ft.Container | None = None
@@ -274,6 +275,15 @@ class UpdateWordView(ft.Container):
             max_lines=4,
         )
 
+        self._ft_rules_help_field = ft.TextField(
+            label="Reglas de uso (ayuda)",
+            hint_text="Cuando y como se usa: se muestra en el Aprendizaje con el boton de ayuda",
+            width=400,
+            multiline=True,
+            min_lines=2,
+            max_lines=8,
+        )
+
         self._ft_tags_row = ft.Row(
             controls=[],
             wrap=True,
@@ -359,6 +369,8 @@ class UpdateWordView(ft.Container):
                 self._ft_notes_field,
                 ft.Container(height=8),
                 self._ft_img_ia_context_field,
+                ft.Container(height=8),
+                self._ft_rules_help_field,
                 ft.Container(height=12),
                 ft.Row(
                     controls=[save_btn, cancel_btn],
@@ -499,6 +511,10 @@ class UpdateWordView(ft.Container):
         if self._ft_img_ia_context_field:
             self._ft_img_ia_context_field.value = form_values.get("img_ia_context", "")
             self._ft_img_ia_context_field.border_color = None
+
+        if self._ft_rules_help_field:
+            self._ft_rules_help_field.value = form_values.get("rules_help", "")
+            self._ft_rules_help_field.border_color = None
 
     def _render_tags(self) -> None:
         """Renderiza los chips de tags."""
@@ -935,6 +951,7 @@ class UpdateWordView(ft.Container):
             "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else WordTypeEnum.WORD.value,
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "img_ia_context": self._ft_img_ia_context_field.value if self._ft_img_ia_context_field else "",
+            "rules_help": self._ft_rules_help_field.value if self._ft_rules_help_field else "",
             "selected_tags": list(self._selected_tags),
             "selected_group_ids": list(self._selected_group_ids),
         }

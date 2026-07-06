@@ -45,6 +45,10 @@ class WordSliderView(ft.Container):
         # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
         self._is_paused: bool = False
 
+        # Datos de la palabra actual para el modal de ayuda (reglas de uso)
+        self._current_word_text: str = ""
+        self._current_rules_help: str = ""
+
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
 
@@ -52,6 +56,7 @@ class WordSliderView(ft.Container):
         self._ft_content_area: ft.Column | None = None
         self._ft_slider_card: SliderCardComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_help_btn: ft.IconButton | None = None
         self._ft_controls_row: ft.Row | None = None
         self._is_card_mounted: bool = False
 
@@ -136,6 +141,7 @@ class WordSliderView(ft.Container):
                     tooltip="Editar palabra (audio, contexto, traducción...)",
                     on_click=lambda _: self._route_on_edit_word() if self._route_on_edit_word else None,
                 ),
+                self._get_built_help_button(),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=16,
@@ -204,6 +210,12 @@ class WordSliderView(ft.Container):
             return
 
         word = dto.current_word
+
+        # Datos para el modal de ayuda (habilitado solo si la palabra tiene reglas)
+        self._current_word_text = word.get("text_es", "")
+        self._current_rules_help = word.get("rules_help", "") or ""
+        if self._ft_help_btn:
+            self._ft_help_btn.disabled = not self._current_rules_help
 
         # Montar la tarjeta persistente una sola vez para preservar la animación
         if not self._is_card_mounted:
@@ -312,9 +324,51 @@ class WordSliderView(ft.Container):
             ),
         ])
 
+    def _get_built_help_button(self) -> ft.IconButton:
+        """Construye el botón de ayuda (reglas de uso) de la botonera."""
+        self._ft_help_btn = ft.IconButton(
+            icon=ft.Icons.HELP_OUTLINE,
+            icon_size=32,
+            icon_color=ft.Colors.BLUE_700,
+            tooltip="Reglas de uso: cuándo y cómo se usa",
+            on_click=lambda _: self._on_help_btn_click(),
+            disabled=True,
+        )
+        return self._ft_help_btn
+
     # =========================================================================
     # EVENT HANDLERS (Callbacks de UI)
     # =========================================================================
+    def _on_help_btn_click(self) -> None:
+        """Muestra el modal con las reglas de uso de la palabra actual."""
+        if not self._current_rules_help or not self.page:
+            return
+
+        def close_dialog(_) -> None:
+            dialog.open = False
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            title=ft.Text(self._current_word_text, size=22, weight=ft.FontWeight.BOLD),
+            content=ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text(self._current_rules_help, size=16, selectable=True),
+                    ],
+                    scroll=ft.ScrollMode.AUTO,
+                ),
+                width=650,
+                height=420,
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=close_dialog),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
+
     def _on_prev_btn_click(self) -> None:
         """Navega a la palabra anterior (la navegación reanuda la reproducción)."""
         self._reset_pause_button()
