@@ -4,6 +4,7 @@ from typing import Any, Callable, Self
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import GroupSourceLinkComp
 from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import WordSliderViewDto
 
@@ -51,6 +52,7 @@ class WordSliderView(ft.Container):
 
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
+        self._ft_group_source_link: GroupSourceLinkComp | None = None
 
         # Componentes UI - Content Area
         self._ft_content_area: ft.Column | None = None
@@ -96,6 +98,12 @@ class WordSliderView(ft.Container):
 
         self.update()
 
+    def render_group_source(self, group_source: str) -> None:
+        """Muestra la fuente del grupo en la cabecera (clicable si es enlace)."""
+        if self._ft_group_source_link:
+            self._ft_group_source_link.render(group_source)
+        self.update()
+
     # =========================================================================
     # LIFECYCLE HOOKS
     # =========================================================================
@@ -110,6 +118,7 @@ class WordSliderView(ft.Container):
     def _build_initial_ui(self) -> None:
         """Construye la estructura inicial de la UI."""
         self._ft_progress_text = ft.Text("Cargando...", size=14)
+        self._ft_group_source_link = GroupSourceLinkComp()
         self._ft_slider_card = SliderCardComp()
 
         # Controles de reproducción: anterior | pausa | siguiente | editar palabra
@@ -174,6 +183,7 @@ class WordSliderView(ft.Container):
                         back_btn,
                         self._ft_progress_text,
                         ft.Container(expand=True),
+                        self._ft_group_source_link,
                         ft.Icon(ft.Icons.SLIDESHOW, color=ft.Colors.BLUE_700),
                     ],
                     alignment=ft.MainAxisAlignment.START,
@@ -340,22 +350,35 @@ class WordSliderView(ft.Container):
     # EVENT HANDLERS (Callbacks de UI)
     # =========================================================================
     def _on_help_btn_click(self) -> None:
-        """Muestra el modal con las reglas de uso de la palabra actual."""
+        """Muestra el modal de reglas de uso pausando el slider automáticamente.
+
+        Al cerrar, reanuda solo si la pausa la provocó la propia ayuda.
+        """
         if not self._current_rules_help or not self.page:
             return
 
+        was_playing = not self._is_paused
+        if was_playing and self._route_on_toggle_pause:
+            self._is_paused = True
+            self._apply_pause_icon()
+            self._route_on_toggle_pause()
+
         def close_dialog(_) -> None:
             dialog.open = False
+            if was_playing and self._route_on_toggle_pause:
+                self._is_paused = False
+                self._apply_pause_icon()
+                self._route_on_toggle_pause()
             self.page.update()
 
         dialog = ft.AlertDialog(
+            modal=True,
             title=ft.Text(self._current_word_text, size=22, weight=ft.FontWeight.BOLD),
             content=ft.Container(
                 content=ft.Column(
-                    controls=[
-                        ft.Text(self._current_rules_help, size=16, selectable=True),
-                    ],
+                    controls=self._get_rules_controls(self._current_rules_help),
                     scroll=ft.ScrollMode.AUTO,
+                    spacing=6,
                 ),
                 width=650,
                 height=420,
@@ -368,6 +391,41 @@ class WordSliderView(ft.Container):
         self.page.overlay.append(dialog)
         dialog.open = True
         self.page.update()
+
+    @staticmethod
+    def _get_rules_controls(rules_text: str) -> list[ft.Control]:
+        """Convierte las reglas en controles: ítems enumerados y neerlandés en negrita."""
+        controls: list[ft.Control] = []
+        item_number = 0
+        for raw_line in rules_text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                controls.append(ft.Container(height=4))
+                continue
+
+            is_item = line[0] in "•-*"
+            while line and line[0] in "•-*":
+                line = line[1:].strip()
+
+            if not is_item:
+                controls.append(ft.Text(line, size=16, selectable=True))
+                continue
+
+            item_number += 1
+            if "—" in line:
+                text_lang, text_es = line.split("—", 1)
+                spans = [
+                    ft.TextSpan(f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)),
+                    ft.TextSpan(f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                    ft.TextSpan(f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)),
+                ]
+            else:
+                spans = [
+                    ft.TextSpan(f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)),
+                    ft.TextSpan(line, ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                ]
+            controls.append(ft.Text(spans=spans, size=16, selectable=True))
+        return controls
 
     def _on_prev_btn_click(self) -> None:
         """Navega a la palabra anterior (la navegación reanuda la reproducción)."""

@@ -4,6 +4,7 @@ from typing import Any, Callable, Self
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import GroupSourceLinkComp
 from ddd.vocabulary.infrastructure.ui.components.image_flashcard_comp import ImageFlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
@@ -48,6 +49,7 @@ class ImageStudyView(ft.Container):
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
         self._ft_score_text: ft.Text | None = None
+        self._ft_group_source_link: GroupSourceLinkComp | None = None
 
         # Componentes UI - Content Area
         self._ft_content_area: ft.Column | None = None
@@ -98,6 +100,12 @@ class ImageStudyView(ft.Container):
 
         self.update()
 
+    def render_group_source(self, group_source: str) -> None:
+        """Muestra la fuente del grupo en la cabecera (clicable si es enlace)."""
+        if self._ft_group_source_link:
+            self._ft_group_source_link.render(group_source)
+        self.update()
+
     # =========================================================================
     # LIFECYCLE HOOKS
     # =========================================================================
@@ -114,6 +122,7 @@ class ImageStudyView(ft.Container):
         # Header components
         self._ft_progress_text = ft.Text("Cargando...", size=14)
         self._ft_score_text = ft.Text("Score: 0%", size=14, weight=ft.FontWeight.BOLD)
+        self._ft_group_source_link = GroupSourceLinkComp()
 
         # Content area
         self._ft_content_area = ft.Column(
@@ -144,6 +153,7 @@ class ImageStudyView(ft.Container):
                         back_btn,
                         self._ft_progress_text,
                         ft.Container(expand=True),
+                        self._ft_group_source_link,
                         self._ft_score_text,
                     ],
                     alignment=ft.MainAxisAlignment.START,
@@ -490,7 +500,7 @@ class ImageStudyView(ft.Container):
                 pyperclip.copy(text)
                 message = "Palabras copiadas al portapapeles"
                 color = ft.Colors.GREEN_700
-            except Exception as e:
+            except Exception:
                 # Si pyperclip no está disponible, el texto ya es seleccionable manualmente
                 message = "Selecciona el texto para copiarlo manualmente (Ctrl+C)"
                 color = ft.Colors.BLUE_700

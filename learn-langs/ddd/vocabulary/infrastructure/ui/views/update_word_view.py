@@ -33,6 +33,7 @@ class UpdateWordView(ft.Container):
         route_on_play_temp_audio: Callable[[str], None],              # 6. Escuchar propuesta temporal
         route_on_accept_audio: Callable[[str], None],                 # 7. Aceptar propuesta (pasa a definitivo)
         route_on_discard_audio: Callable[[str], None],                # 8. Rechazar propuesta
+        route_on_generate_ia_image: Callable[[], None],               # 9. Generar imagen IA (sobrescribe la última)
     ):
         super().__init__()
 
@@ -45,6 +46,7 @@ class UpdateWordView(ft.Container):
         self._route_on_play_temp_audio = route_on_play_temp_audio
         self._route_on_accept_audio = route_on_accept_audio
         self._route_on_discard_audio = route_on_discard_audio
+        self._route_on_generate_ia_image = route_on_generate_ia_image
 
         # Logger
         self._logger = Logger.get_instance()
@@ -83,6 +85,8 @@ class UpdateWordView(ft.Container):
         # Componentes UI - Images
         self._ft_last_image_container: ft.Container | None = None
         self._ft_images_grid: ft.Row | None = None
+        self._ft_generate_image_btn: ft.ElevatedButton | None = None
+        self._ft_image_progress: ft.ProgressRing | None = None
 
         # Componentes UI - Audios
         self._ft_audios_column: ft.Column | None = None
@@ -101,6 +105,7 @@ class UpdateWordView(ft.Container):
             route_on_play_temp_audio=primitives.get("on_play_temp_audio", lambda x: None),
             route_on_accept_audio=primitives.get("on_accept_audio", lambda x: None),
             route_on_discard_audio=primitives.get("on_discard_audio", lambda x: None),
+            route_on_generate_ia_image=primitives.get("on_generate_ia_image", lambda: None),
         )
 
     # =========================================================================
@@ -157,6 +162,20 @@ class UpdateWordView(ft.Container):
     def render_audio_rows(self, audio_rows: list[dict[str, Any]]) -> None:
         """Actualiza solo la sección de audios (sin tocar el resto del formulario)."""
         self._render_audio_rows(audio_rows)
+        self.update()
+
+    def render_word_images(self, word_images: list[dict[str, Any]]) -> None:
+        """Actualiza solo la sección de imágenes (sin tocar el resto del formulario)."""
+        self._word_images = list(word_images)
+        self._render_images()
+        self.update()
+
+    def set_image_generating(self, is_generating: bool) -> None:
+        """Muestra/oculta el estado de generación de la imagen IA."""
+        if self._ft_generate_image_btn:
+            self._ft_generate_image_btn.disabled = is_generating
+        if self._ft_image_progress:
+            self._ft_image_progress.visible = is_generating
         self.update()
 
     def show_snackbar(self, message: str, error: bool = False) -> None:
@@ -267,8 +286,6 @@ class UpdateWordView(ft.Container):
         )
 
         self._ft_img_ia_context_field = ft.TextField(
-            label="Contexto imagen IA (opcional)",
-            hint_text="Si lo rellenas, la imagen IA se genera SOLO con este contexto",
             width=400,
             multiline=True,
             min_lines=2,
@@ -304,6 +321,22 @@ class UpdateWordView(ft.Container):
         self._ft_last_image_container = ft.Container(
             content=ft.Text("No hay imágenes", italic=True, color=ft.Colors.GREY_500, size=12),
             visible=False,
+        )
+
+        # Botón para generar imagen IA (sobrescribe la última imagen)
+        self._ft_image_progress = ft.ProgressRing(width=16, height=16, stroke_width=2, visible=False)
+        self._ft_generate_image_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.AUTO_AWESOME, size=16), ft.Text("Imagen IA")],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=6,
+            ),
+            on_click=lambda _: self._route_on_generate_ia_image(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.PURPLE_600,
+                color=ft.Colors.WHITE,
+            ),
+            tooltip="Genera la imagen con IA y sobrescribe la última",
         )
 
         # Grid de imágenes (listado)
@@ -368,6 +401,7 @@ class UpdateWordView(ft.Container):
                 ft.Container(height=8),
                 self._ft_notes_field,
                 ft.Container(height=8),
+                ft.Text("Contexto imagen IA:", size=12, weight=ft.FontWeight.W_500),
                 self._ft_img_ia_context_field,
                 ft.Container(height=8),
                 self._ft_rules_help_field,
@@ -397,6 +431,11 @@ class UpdateWordView(ft.Container):
             controls=[
                 ft.Text("Última imagen:", size=12, weight=ft.FontWeight.W_500),
                 self._ft_last_image_container,
+                ft.Container(height=6),
+                ft.Row(
+                    controls=[self._ft_generate_image_btn, self._ft_image_progress],
+                    spacing=8,
+                ),
                 ft.Container(height=10),
                 ft.Text("Audios:", size=12, weight=ft.FontWeight.W_500),
                 ft.Container(

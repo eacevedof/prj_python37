@@ -30,6 +30,14 @@ from ddd.vocabulary.application.discard_word_audio import (
     DiscardWordAudioDto,
     DiscardWordAudioService,
 )
+from ddd.vocabulary.application.add_word_ia_image import (
+    AddWordIaImageDto,
+    AddWordIaImageService,
+)
+from ddd.vocabulary.application.delete_word_image import (
+    DeleteWordImageDto,
+    DeleteWordImageService,
+)
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.infrastructure.repositories import (
@@ -71,6 +79,7 @@ class UpdateWordController(BaseController):
         # Estado interno
         self._available_tags: list[dict[str, Any]] = []
         self._audio_rows: list[dict[str, Any]] = []
+        self._word_images: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -80,6 +89,8 @@ class UpdateWordController(BaseController):
         self._regenerate_word_audio_service = RegenerateWordAudioService.get_instance()
         self._accept_word_audio_service = AcceptWordAudioService.get_instance()
         self._discard_word_audio_service = DiscardWordAudioService.get_instance()
+        self._add_word_ia_image_service = AddWordIaImageService.get_instance()
+        self._delete_word_image_service = DeleteWordImageService.get_instance()
         self._images_reader = ImagesReaderSqliteRepository.get_instance()
         self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
         self._word_audios_reader = WordAudiosReaderFileRepository.get_instance()
@@ -94,6 +105,7 @@ class UpdateWordController(BaseController):
             "on_play_temp_audio": self._on_play_temp_audio_click,
             "on_accept_audio": self._on_accept_audio_click,
             "on_discard_audio": self._on_discard_audio_click,
+            "on_generate_ia_image": self._on_generate_ia_image_click,
         })
 
     # =========================================================================
@@ -133,6 +145,7 @@ class UpdateWordController(BaseController):
 
             # Cargar imagenes de la palabra
             word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
+            self._word_images = list(word_images)
 
             # Cargar grupos de la palabra
             word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(self._word_id)
@@ -386,6 +399,55 @@ class UpdateWordController(BaseController):
         self._set_audio_row(lang_code, has_temp=False)
         self._ft_container.render_audio_rows(self._audio_rows)
         self._ft_container.show_snackbar("Propuesta de audio descartada")
+
+    # =========================================================================
+    # EVENT HANDLERS - IMAGEN IA (genera y sobrescribe la última)
+    # =========================================================================
+    def _on_generate_ia_image_click(self) -> None:
+        """Maneja click en Imagen IA (botón morado bajo la última imagen)."""
+        async def _task():
+            await self._async_generate_ia_image()
+        self._ft_container.page.run_task(_task)
+
+    async def _async_generate_ia_image(self) -> None:
+        """Genera la imagen con IA y sobrescribe la última (borra la anterior)."""
+        previous_last_image_id = int(self._word_images[-1].get("id", 0)) if self._word_images else 0
+
+        self._ft_container.set_image_generating(True)
+        try:
+            add_result = await self._add_word_ia_image_service(
+                AddWordIaImageDto.from_primitives({
+                    "word_id": self._word_id,
+                    "lang_code": LanguageCodeEnum.NL_NL.value,
+                })
+            )
+
+            if not add_result.success:
+                self._ft_container.show_snackbar(add_result.error_message or "Error", error=True)
+                return
+
+            # Sobrescribir: eliminar la imagen que era la última hasta ahora
+            if previous_last_image_id:
+                await self._delete_word_image_service(
+                    DeleteWordImageDto.from_primitives({"image_id": previous_last_image_id})
+                )
+
+            self._word_images = list(
+                await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
+            )
+            self._ft_container.render_word_images(self._word_images)
+            self._ft_container.show_snackbar("Imagen IA generada (última imagen sobrescrita)")
+
+        except Exception as e:
+            self._logger.log_error(
+                "UpdateWordController",
+                f"Error generando imagen IA: {e}",
+                {"word_id": self._word_id},
+            )
+            self._ft_container.show_snackbar(f"Error generando imagen: {e}", error=True)
+
+        finally:
+            self._ft_container.set_image_generating(False)
 
     # =========================================================================
     # HELPERS PRIVADOS

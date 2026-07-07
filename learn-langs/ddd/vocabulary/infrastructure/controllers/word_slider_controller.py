@@ -25,6 +25,7 @@ from ddd.vocabulary.application.start_word_slider_session import (
 )
 from ddd.vocabulary.domain.enums import LanguageCodeEnum, StudyModeEnum
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
+from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view import WordSliderView
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import WordSliderViewDto
 
@@ -97,6 +98,7 @@ class WordSliderController(BaseController):
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
         self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
         # Vista
         self._ft_container = WordSliderView.from_primitives({
@@ -156,6 +158,9 @@ class WordSliderController(BaseController):
             if not self._words:
                 self._ft_container.render(WordSliderViewDto.no_words())
                 return
+
+            # Mostrar la fuente del grupo en la cabecera (si no es de migración)
+            self._ft_container.render_group_source(await self._get_group_source())
 
             # El audio se reproduce al volumen actual de la máquina (no se toca
             # el volumen maestro del sistema)
@@ -445,6 +450,18 @@ class WordSliderController(BaseController):
     def _is_run_cancelled(self, run_token: int) -> bool:
         """True si el slider se detuvo o este bucle quedó obsoleto (otro arrancó)."""
         return self._is_stopped or run_token != self._run_token
+
+    async def _get_group_source(self) -> str:
+        """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
+        if self._group_id is None:
+            return ""
+        word_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
+            self._group_id
+        )
+        group_source = ((word_group or {}).get("source") or "").strip()
+        if group_source.lower() in ("migracion", "migration", "mig"):
+            return ""
+        return group_source
 
     def _resume_if_paused(self) -> None:
         """Sale del estado de pausa (al navegar con anterior/siguiente)."""

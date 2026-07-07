@@ -29,6 +29,7 @@ from ddd.vocabulary.application.generate_text_audio_ai import (
 )
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
+from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.image_study_view import ImageStudyView
 from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
@@ -77,6 +78,7 @@ class ImageStudyController(BaseController):
         self._finish_session_service = FinishStudySessionService.get_instance()
         self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
         self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
         # Vista
         self._ft_container = ImageStudyView.from_primitives({
@@ -131,6 +133,9 @@ class ImageStudyController(BaseController):
             if not self._words:
                 self._ft_container.render(ImageStudyViewDto.no_words())
                 return
+
+            # Mostrar la fuente del grupo en la cabecera (si no es de migración)
+            self._ft_container.render_group_source(await self._get_group_source())
 
             self._show_current_word()
 
@@ -426,6 +431,18 @@ class ImageStudyController(BaseController):
             "image_mime_type": word.image_mime_type,
             "image_caption": word.image_caption,
         }
+
+    async def _get_group_source(self) -> str:
+        """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
+        if self._group_id is None:
+            return ""
+        word_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
+            self._group_id
+        )
+        group_source = ((word_group or {}).get("source") or "").strip()
+        if group_source.lower() in ("migracion", "migration", "mig"):
+            return ""
+        return group_source
 
     def _pronunciation_for(self, word: ImageStudyWordDto) -> str:
         """Pronunciación escrita: para neerlandés, aproximación leíble en español
