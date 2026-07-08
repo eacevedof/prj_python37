@@ -3,8 +3,8 @@ from typing import Any
 
 import aiohttp
 
-from ddd.shared.infrastructure.repositories.access_token_reader_graph_repository import (
-    AccessTokenReaderGraphRepository,
+from ddd.shared.infrastructure.repositories.access_token_reader_device_graph_repository import (
+    AccessTokenReaderDeviceGraphRepository,
 )
 from ddd.outlook.domain.enums.graph_api_enum import GraphApiEnum
 from ddd.outlook.domain.enums.http_status_enum import HttpStatusEnum
@@ -21,7 +21,7 @@ class AbstractOutlookGraphRepository(ABC):
 
     def __init__(self) -> None:
         self._access_token_reader_graph_repository = (
-            AccessTokenReaderGraphRepository.get_instance()
+            AccessTokenReaderDeviceGraphRepository.get_instance()
         )
 
     async def _get_headers(self) -> dict[str, str]:

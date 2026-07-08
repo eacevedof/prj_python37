@@ -4,6 +4,7 @@
 .prod
 .env
 .env-prod
+.outlook-token-cache.json
 .venv-wsl
 .venv-win
 .venv

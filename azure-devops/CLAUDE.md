@@ -78,6 +78,7 @@ azure-devops/
 | `mcp_work_items` | create_epic, create_task, get_tasks, update_task, search_work_items | Gestion de work items Azure DevOps |
 | `mcp_calendar` | create_event, list_events, get_event, update_event, delete_event, add_holiday | Gestion de calendario |
 | `mcp_sharepoint` | - | Integracion SharePoint |
+| `mcp_outlook` | outlook_list_messages, outlook_get_message, outlook_list_attachments, outlook_read_pdf_attachment | Lectura de buzones Outlook via Microsoft Graph |
 | `mcp_local_devops` | local_setup_project, local_get_next_port | Setup de proyectos PHP locales |
 | `mcp_hashed_pwd` | get_hashed_passwords | Generacion de passwords hasheados |
 | `mcp_anubis` | request_anubis | Consultas a Anubis |
@@ -90,6 +91,9 @@ azure-devops/
 
 # Ejecutar servidor MCP (stdio)
 python -m ddd
+
+# Login delegado Outlook (device code, una sola vez; renueva solo)
+python -m ddd.outlook.infrastructure.cli.device_login_cli
 
 # Linting y formateo
 ruff check --fix .

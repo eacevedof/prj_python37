@@ -7,6 +7,9 @@ python-dotenv==1.2.2
 # MCP Server
 mcp
 
+# Microsoft Graph auth (delegated device code flow)
+msal==1.37.0
+
 # Crypto
 cryptography==46.0.7
 pynacl==1.6.2
