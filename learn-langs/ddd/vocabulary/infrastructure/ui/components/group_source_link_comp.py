@@ -1,6 +1,7 @@
 """Componente: fuente del grupo en cabecera (clicable si contiene un enlace)."""
 
 import re
+import webbrowser
 
 import flet as ft
 
@@ -61,6 +62,8 @@ class GroupSourceLinkComp(ft.Container):
                 spacing=4,
             ),
             tooltip=source_url,
-            on_click=lambda _: self.page.launch_url(source_url) if self.page else None,
+            # webbrowser (stdlib): abre el navegador por defecto de forma síncrona;
+            # page.launch_url en Flet 0.85 es async y llamado en sync no hace nada
+            on_click=lambda _: webbrowser.open(source_url),
         )
         self.visible = True
