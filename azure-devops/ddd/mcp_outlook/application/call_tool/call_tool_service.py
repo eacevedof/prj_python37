@@ -14,6 +14,8 @@ from ddd.outlook.application import (
     ListAttachmentsService,
     ReadPdfAttachmentDto,
     ReadPdfAttachmentService,
+    DownloadAttachmentDto,
+    DownloadAttachmentService,
 )
 
 
@@ -45,14 +47,17 @@ class CallToolService:
         elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_READ_PDF_ATTACHMENT.value:
             text_contents = await self.__get_read_pdf_attachment_text_content()
 
+        elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_DOWNLOAD_ATTACHMENT.value:
+            text_contents = await self.__get_download_attachment_text_content()
+
         else:
             text_contents = [
-                TextContent(type="text", text=f"unknown tool: {call_tool_dto.event_name}")
+                TextContent(
+                    type="text", text=f"unknown tool: {call_tool_dto.event_name}"
+                )
             ]
 
-        return CallToolResultDto.from_primitives({
-            "contents": text_contents
-        })
+        return CallToolResultDto.from_primitives({"contents": text_contents})
 
     async def __get_list_messages_text_content(self) -> list[TextContent]:
         result = await ListMessagesService.get_instance()(
@@ -80,19 +85,21 @@ class CallToolService:
             GetMessageDto.from_primitives(self._payload_dict)
         )
 
-        return [TextContent(
-            type="text",
-            text=(
-                f"message:\n"
-                f"- id: {result.id}\n"
-                f"- subject: {result.subject}\n"
-                f"- from: {result.from_address}\n"
-                f"- to: {', '.join(result.to)}\n"
-                f"- received: {result.received}\n"
-                f"- has_attachments: {result.has_attachments}\n"
-                f"- body:\n{result.body_text}"
+        return [
+            TextContent(
+                type="text",
+                text=(
+                    f"message:\n"
+                    f"- id: {result.id}\n"
+                    f"- subject: {result.subject}\n"
+                    f"- from: {result.from_address}\n"
+                    f"- to: {', '.join(result.to)}\n"
+                    f"- received: {result.received}\n"
+                    f"- has_attachments: {result.has_attachments}\n"
+                    f"- body:\n{result.body_text}"
+                ),
             )
-        )]
+        ]
 
     async def __get_list_attachments_text_content(self) -> list[TextContent]:
         result = await ListAttachmentsService.get_instance()(
@@ -112,16 +119,36 @@ class CallToolService:
 
         return [TextContent(type="text", text="\n".join(lines))]
 
+    async def __get_download_attachment_text_content(self) -> list[TextContent]:
+        result = await DownloadAttachmentService.get_instance()(
+            DownloadAttachmentDto.from_primitives(self._payload_dict)
+        )
+
+        return [
+            TextContent(
+                type="text",
+                text=(
+                    f"attachment saved:\n"
+                    f"- name: {result.name}\n"
+                    f"- content_type: {result.content_type}\n"
+                    f"- size: {result.size} bytes\n"
+                    f"- path: {result.saved_path}"
+                ),
+            )
+        ]
+
     async def __get_read_pdf_attachment_text_content(self) -> list[TextContent]:
         result = await ReadPdfAttachmentService.get_instance()(
             ReadPdfAttachmentDto.from_primitives(self._payload_dict)
         )
 
-        return [TextContent(
-            type="text",
-            text=(
-                f"pdf: {result.name} ({result.content_type}, {result.size} bytes)\n"
-                f"\n"
-                f"{result.text}"
+        return [
+            TextContent(
+                type="text",
+                text=(
+                    f"pdf: {result.name} ({result.content_type}, {result.size} bytes)\n"
+                    f"\n"
+                    f"{result.text}"
+                ),
             )
-        )]
+        ]

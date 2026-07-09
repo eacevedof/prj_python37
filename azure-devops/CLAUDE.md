@@ -1,6 +1,6 @@
 # Azure DevOps MCP Server
 
-Coleccion de MCP Servers para integrar Claude Code con Azure DevOps, SharePoint, Calendar y herramientas de desarrollo local. Implementado con FastAPI y arquitectura DDD.
+Coleccion de MCP Servers para integrar Claude Code con Azure DevOps, Outlook (Microsoft Graph), Git, SharePoint, Calendar, MySQL local y herramientas de desarrollo local. Implementado con FastAPI y arquitectura DDD.
 
 ---
 
@@ -53,13 +53,18 @@ azure-devops/
     ├── __init__.py           # Entry point MCP servers
     │
     ├── mcp_work_items/       # MCP: Azure DevOps Work Items
+    ├── mcp_outlook/          # MCP: Outlook (lectura buzon + adjuntos)
+    ├── mcp_git/              # MCP: Git/commits (rama integracion, squash)
     ├── mcp_calendar/         # MCP: Calendar/Events
     ├── mcp_sharepoint/       # MCP: SharePoint
     ├── mcp_local_devops/     # MCP: Local Dev Setup
     ├── mcp_hashed_pwd/       # MCP: Password Hashing
     ├── mcp_anubis/           # MCP: Anubis Integration
+    ├── mcp_admin_loc_mysql/  # MCP: MySQL local (admin)
     │
     ├── workitems/            # Domain: Work Items (Epic, Task)
+    ├── outlook/              # Domain: Outlook mail (Graph delegado + CLI login)
+    ├── git/                  # Domain: Git/commits
     ├── calendar/             # Domain: Calendar Events
     ├── sharepoint/           # Domain: SharePoint
     ├── devops/               # Domain: DevOps Tools
@@ -78,10 +83,12 @@ azure-devops/
 | `mcp_work_items` | create_epic, create_task, get_tasks, update_task, search_work_items | Gestion de work items Azure DevOps |
 | `mcp_calendar` | create_event, list_events, get_event, update_event, delete_event, add_holiday | Gestion de calendario |
 | `mcp_sharepoint` | - | Integracion SharePoint |
-| `mcp_outlook` | outlook_list_messages, outlook_get_message, outlook_list_attachments, outlook_read_pdf_attachment | Lectura de buzones Outlook via Microsoft Graph |
+| `mcp_outlook` | outlook_list_messages, outlook_get_message, outlook_list_attachments, outlook_read_pdf_attachment, outlook_download_attachment | Lectura de buzones Outlook via Microsoft Graph + descarga de adjuntos a disco |
+| `mcp_git` | git_create_integration_branch, git_list_task_commits, git_squash_task_commits, git_push_branch | Rama de integracion + squash 1 commit/tarea (formato commits-skill) |
 | `mcp_local_devops` | local_setup_project, local_get_next_port | Setup de proyectos PHP locales |
 | `mcp_hashed_pwd` | get_hashed_passwords | Generacion de passwords hasheados |
 | `mcp_anubis` | request_anubis | Consultas a Anubis |
+| `mcp_admin_loc_mysql` | mysql_list_databases, mysql_show_tables, mysql_describe_table, mysql_execute_query | Administracion de MySQL local |
 
 ## Comandos de Desarrollo
 
@@ -121,7 +128,14 @@ AZURE_ORGANIZATION_NAME=mi-org
 AZURE_PAT=xxxx
 AZURE_API_VERSION=7.1
 
-# SharePoint
+# Outlook (Microsoft Graph - Mail.Read DELEGADO, device code flow, public client SIN secret)
+# La cache de tokens va cifrada con DPAPI en .outlook-token-cache.bin (git-ignored)
+OUTLOOK_TENANT_ID=xxxx
+OUTLOOK_CLIENT_ID=xxxx
+OUTLOOK_DEFAULT_MAILBOX=yo@empresa.com
+OUTLOOK_DOWNLOADS_PATH=C:/ruta/descargas
+
+# SharePoint (client_credentials - solo si se activa el MCP sharepoint)
 SHAREPOINT_TENANT_ID=xxxx
 SHAREPOINT_CLIENT_ID=xxxx
 SHAREPOINT_CLIENT_SECRET=xxxx

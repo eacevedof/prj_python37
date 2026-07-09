@@ -18,6 +18,11 @@ from ddd.outlook.application.read_pdf_attachment import (
     ReadPdfAttachmentResultDto,
     ReadPdfAttachmentService,
 )
+from ddd.outlook.application.download_attachment import (
+    DownloadAttachmentDto,
+    DownloadAttachmentResultDto,
+    DownloadAttachmentService,
+)
 
 __all__ = [
     "ListMessagesDto",
@@ -32,4 +37,7 @@ __all__ = [
     "ReadPdfAttachmentDto",
     "ReadPdfAttachmentResultDto",
     "ReadPdfAttachmentService",
+    "DownloadAttachmentDto",
+    "DownloadAttachmentResultDto",
+    "DownloadAttachmentService",
 ]

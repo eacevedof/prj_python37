@@ -19,6 +19,7 @@ class ToolsSchemaReaderInMemoryRepository:
             self._get_get_message_schema(),
             self._get_list_attachments_schema(),
             self._get_read_pdf_attachment_schema(),
+            self._get_download_attachment_schema(),
         ]
 
     def _get_list_messages_schema(self) -> Tool:
@@ -92,6 +93,34 @@ class ToolsSchemaReaderInMemoryRepository:
                     },
                 },
                 "required": ["message_id"],
+            },
+        )
+
+    def _get_download_attachment_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.OUTLOOK_DOWNLOAD_ATTACHMENT.value,
+            description="download an outlook message attachment (any file type) and save it to disk using microsoft graph api",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "mailbox": {
+                        "type": "string",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "description": "graph message id",
+                    },
+                    "attachment_id": {
+                        "type": "string",
+                        "description": "graph attachment id",
+                    },
+                    "target_dir": {
+                        "type": "string",
+                        "description": "optional destination folder; defaults to the OUTLOOK_DOWNLOADS_PATH env var",
+                    },
+                },
+                "required": ["message_id", "attachment_id"],
             },
         )
 
