@@ -36,6 +36,9 @@ class EnvironmentReaderEnvRepository:
     def get_outlook_downloads_path(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.OUTLOOK_DOWNLOADS_PATH)
 
+    def get_outlook_archive_path(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.OUTLOOK_ARCHIVE_PATH)
+
     def get_sharepoint_client_id(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_CLIENT_ID)
 

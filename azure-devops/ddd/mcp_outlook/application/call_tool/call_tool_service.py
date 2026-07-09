@@ -16,6 +16,8 @@ from ddd.outlook.application import (
     ReadPdfAttachmentService,
     DownloadAttachmentDto,
     DownloadAttachmentService,
+    ArchiveMessageDto,
+    ArchiveMessageService,
 )
 
 
@@ -49,6 +51,9 @@ class CallToolService:
 
         elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_DOWNLOAD_ATTACHMENT.value:
             text_contents = await self.__get_download_attachment_text_content()
+
+        elif call_tool_dto.event_name == ToolNameEnum.OUTLOOK_ARCHIVE_MESSAGE.value:
+            text_contents = await self.__get_archive_message_text_content()
 
         else:
             text_contents = [
@@ -136,6 +141,26 @@ class CallToolService:
                 ),
             )
         ]
+
+    async def __get_archive_message_text_content(self) -> list[TextContent]:
+        result = await ArchiveMessageService.get_instance()(
+            ArchiveMessageDto.from_primitives(self._payload_dict)
+        )
+
+        lines = [
+            "message archived:",
+            f"- subject: {result.subject}",
+            f"- from: {result.from_address} | received: {result.received}",
+            f"- folder: {result.folder_path}",
+            f"- email file: {result.email_file_path}",
+            f"- attachments saved: {len(result.attachments)}/{result.total_attachments}",
+        ]
+        for attachment in result.attachments:
+            lines.append(
+                f"  - {attachment['name']} ({attachment['size']} bytes) -> {attachment['saved_path']}"
+            )
+
+        return [TextContent(type="text", text="\n".join(lines))]
 
     async def __get_read_pdf_attachment_text_content(self) -> list[TextContent]:
         result = await ReadPdfAttachmentService.get_instance()(

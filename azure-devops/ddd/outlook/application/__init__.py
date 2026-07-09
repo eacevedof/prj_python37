@@ -23,6 +23,11 @@ from ddd.outlook.application.download_attachment import (
     DownloadAttachmentResultDto,
     DownloadAttachmentService,
 )
+from ddd.outlook.application.archive_message import (
+    ArchiveMessageDto,
+    ArchiveMessageResultDto,
+    ArchiveMessageService,
+)
 
 __all__ = [
     "ListMessagesDto",
@@ -40,4 +45,7 @@ __all__ = [
     "DownloadAttachmentDto",
     "DownloadAttachmentResultDto",
     "DownloadAttachmentService",
+    "ArchiveMessageDto",
+    "ArchiveMessageResultDto",
+    "ArchiveMessageService",
 ]

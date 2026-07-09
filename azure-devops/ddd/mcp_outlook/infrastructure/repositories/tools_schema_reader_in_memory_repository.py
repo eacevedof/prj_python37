@@ -20,6 +20,7 @@ class ToolsSchemaReaderInMemoryRepository:
             self._get_list_attachments_schema(),
             self._get_read_pdf_attachment_schema(),
             self._get_download_attachment_schema(),
+            self._get_archive_message_schema(),
         ]
 
     def _get_list_messages_schema(self) -> Tool:
@@ -121,6 +122,30 @@ class ToolsSchemaReaderInMemoryRepository:
                     },
                 },
                 "required": ["message_id", "attachment_id"],
+            },
+        )
+
+    def _get_archive_message_schema(self) -> Tool:
+        return Tool(
+            name=ToolNameEnum.OUTLOOK_ARCHIVE_MESSAGE.value,
+            description="archive an outlook message to disk: creates one folder per email ('YYYYMMDD-<subject-slug>') holding the message as email.txt plus every attachment alongside it",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "mailbox": {
+                        "type": "string",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "description": "graph message id",
+                    },
+                    "target_dir": {
+                        "type": "string",
+                        "description": "optional base folder where the per-email folder is created (typically the client folder, e.g. 'C:/projects/docus/bbva'); defaults to the OUTLOOK_ARCHIVE_PATH env var",
+                    },
+                },
+                "required": ["message_id"],
             },
         )
 
