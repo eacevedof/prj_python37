@@ -12,6 +12,9 @@ from ddd.outlook.domain.exceptions.outlook_exception import OutlookException
 from ddd.outlook.infrastructure.repositories.messages_reader_graph_repository import (
     MessagesReaderGraphRepository,
 )
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import (
+    EnvironmentReaderEnvRepository,
+)
 
 
 @final
@@ -36,8 +39,12 @@ class ReadPdfAttachmentService:
     async def __call__(
         self, read_pdf_attachment_dto: ReadPdfAttachmentDto
     ) -> ReadPdfAttachmentResultDto:
+        mailbox = (
+            read_pdf_attachment_dto.mailbox
+            or EnvironmentReaderEnvRepository.get_instance().get_outlook_default_mailbox()
+        )
         attachment = await self._messages_reader_graph_repository.get_attachment(
-            mailbox=read_pdf_attachment_dto.mailbox,
+            mailbox=mailbox,
             message_id=read_pdf_attachment_dto.message_id,
             attachment_id=read_pdf_attachment_dto.attachment_id,
         )
@@ -61,9 +68,11 @@ class ReadPdfAttachmentService:
         pdf_bytes = self._encoder.get_bytes_from_base64(content_bytes_b64)
         text = self._pdfer.get_text_from_bytes(pdf_bytes)
 
-        return ReadPdfAttachmentResultDto.from_primitives({
-            "name": name,
-            "content_type": content_type,
-            "size": int(attachment.get("size", 0)),
-            "text": text,
-        })
+        return ReadPdfAttachmentResultDto.from_primitives(
+            {
+                "name": name,
+                "content_type": content_type,
+                "size": int(attachment.get("size", 0)),
+                "text": text,
+            }
+        )

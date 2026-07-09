@@ -30,7 +30,7 @@ class ToolsSchemaReaderInMemoryRepository:
                 "properties": {
                     "mailbox": {
                         "type": "string",
-                        "description": "mailbox user principal name or id (e.g., 'requests@contoso.com')",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
                     },
                     "folder": {
                         "type": "string",
@@ -51,7 +51,7 @@ class ToolsSchemaReaderInMemoryRepository:
                         "description": "optional full-text search query over the messages",
                     },
                 },
-                "required": ["mailbox"],
+                "required": [],
             },
         )
 
@@ -64,14 +64,14 @@ class ToolsSchemaReaderInMemoryRepository:
                 "properties": {
                     "mailbox": {
                         "type": "string",
-                        "description": "mailbox user principal name or id (e.g., 'requests@contoso.com')",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
                     },
                     "message_id": {
                         "type": "string",
                         "description": "graph message id",
                     },
                 },
-                "required": ["mailbox", "message_id"],
+                "required": ["message_id"],
             },
         )
 
@@ -84,14 +84,14 @@ class ToolsSchemaReaderInMemoryRepository:
                 "properties": {
                     "mailbox": {
                         "type": "string",
-                        "description": "mailbox user principal name or id (e.g., 'requests@contoso.com')",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
                     },
                     "message_id": {
                         "type": "string",
                         "description": "graph message id",
                     },
                 },
-                "required": ["mailbox", "message_id"],
+                "required": ["message_id"],
             },
         )
 
@@ -104,7 +104,7 @@ class ToolsSchemaReaderInMemoryRepository:
                 "properties": {
                     "mailbox": {
                         "type": "string",
-                        "description": "mailbox user principal name or id (e.g., 'requests@contoso.com')",
+                        "description": "optional mailbox user principal name or id (e.g., 'requests@contoso.com'); defaults to the OUTLOOK_DEFAULT_MAILBOX env var",
                     },
                     "message_id": {
                         "type": "string",
@@ -115,6 +115,6 @@ class ToolsSchemaReaderInMemoryRepository:
                         "description": "graph attachment id",
                     },
                 },
-                "required": ["mailbox", "message_id", "attachment_id"],
+                "required": ["message_id", "attachment_id"],
             },
         )

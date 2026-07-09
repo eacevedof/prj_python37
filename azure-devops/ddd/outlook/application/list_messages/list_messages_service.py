@@ -7,6 +7,9 @@ from ddd.outlook.application.list_messages.list_messages_result_dto import (
 from ddd.outlook.infrastructure.repositories.messages_reader_graph_repository import (
     MessagesReaderGraphRepository,
 )
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import (
+    EnvironmentReaderEnvRepository,
+)
 
 
 @final
@@ -27,15 +30,21 @@ class ListMessagesService:
     async def __call__(
         self, list_messages_dto: ListMessagesDto
     ) -> ListMessagesResultDto:
+        mailbox = (
+            list_messages_dto.mailbox
+            or EnvironmentReaderEnvRepository.get_instance().get_outlook_default_mailbox()
+        )
         messages = await self._messages_reader_graph_repository.list_messages(
-            mailbox=list_messages_dto.mailbox,
+            mailbox=mailbox,
             folder=list_messages_dto.folder,
             top=list_messages_dto.top,
             unread_only=list_messages_dto.unread_only,
             search=list_messages_dto.search,
         )
 
-        return ListMessagesResultDto.from_primitives({
-            "messages": messages,
-            "total": len(messages),
-        })
+        return ListMessagesResultDto.from_primitives(
+            {
+                "messages": messages,
+                "total": len(messages),
+            }
+        )

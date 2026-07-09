@@ -30,6 +30,9 @@ class EnvironmentReaderEnvRepository:
     def get_outlook_client_id(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.OUTLOOK_CLIENT_ID)
 
+    def get_outlook_default_mailbox(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.OUTLOOK_DEFAULT_MAILBOX)
+
     def get_sharepoint_client_id(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.SHAREPOINT_CLIENT_ID)
 

@@ -9,6 +9,9 @@ from ddd.outlook.application.get_message.get_message_result_dto import (
 from ddd.outlook.infrastructure.repositories.messages_reader_graph_repository import (
     MessagesReaderGraphRepository,
 )
+from ddd.shared.infrastructure.repositories.environment_reader_env_repository import (
+    EnvironmentReaderEnvRepository,
+)
 
 
 @final
@@ -29,8 +32,12 @@ class GetMessageService:
         return cls()
 
     async def __call__(self, get_message_dto: GetMessageDto) -> GetMessageResultDto:
+        mailbox = (
+            get_message_dto.mailbox
+            or EnvironmentReaderEnvRepository.get_instance().get_outlook_default_mailbox()
+        )
         message = await self._messages_reader_graph_repository.get_message(
-            mailbox=get_message_dto.mailbox,
+            mailbox=mailbox,
             message_id=get_message_dto.message_id,
         )
         if message is None:
