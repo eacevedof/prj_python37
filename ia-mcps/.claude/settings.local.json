@@ -34,7 +34,20 @@
       "Bash(C:/projects/prj_python37/ia-mcps/.venv-win/Scripts/python.exe -m ddd.mcp_memory)",
       "Bash(C:/projects/prj_python37/ia-mcps/.venv-win/Scripts/python.exe *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'fix: serialize DTOs to dict in CallToolService for JSON compatibility *)"
+      "Bash(git commit -m 'fix: serialize DTOs to dict in CallToolService for JSON compatibility *)",
+      "Read(//c/projects/temper/ai/obsidian/projects/automation/**)",
+      "Read(//c/projects/prj_python37/azure-devops/ddd/mcp_anubis/**)",
+      "Read(//c/projects/prj_python37/azure-devops/.venv-win/Scripts/**)",
+      "Read(//c/projects/prj_python37/azure-devops/**)",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m ddd.mcp_anubis)",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m ddd.mcp_pdf)",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -c \"from weasyprint import HTML\")",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -c \"import weasyprint; print\\(weasyprint.__version__\\)\")",
+      "Bash(where libgobject-2.0-0.dll)",
+      "Bash(where gtk3-runtime *)",
+      "Read(//c/Program Files/GTK3-Runtime Win64/**)",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m pip show weasyprint)",
+      "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m pip show pydyf)"
     ]
   }
 }
