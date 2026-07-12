@@ -12,7 +12,7 @@ class SliderSequenceEnum(int, Enum):
     """
 
     PAIR_REPETITIONS = 8  # ciclos español -> idioma destino por palabra
-    FIRST_ES_WAIT_SECONDS = 15  # tras el primer español (arranque de la palabra)
+    FIRST_ES_WAIT_SECONDS = 10  # tras el primer español (tiempo para contestar antes del NL)
     ES_TO_LANG_WAIT_SECONDS = 5  # tras el español, antes del idioma destino
     LANG_TO_ES_WAIT_SECONDS = 3  # tras el idioma destino, antes de volver al español
     NEXT_WORD_WAIT_SECONDS = 20  # tras el último ciclo (mostrando ejemplos si hay)

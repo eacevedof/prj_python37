@@ -56,7 +56,7 @@ class WordSliderController(BaseController):
     Responsabilidades:
     - Orquestar el flujo temporizado entre Vista y Servicios
     - Reproducir la secuencia de audio por palabra (cadencia en SliderSequenceEnum):
-        1. Pronuncia ES -> espera (15s el primer ciclo, 5s el resto)
+        1. Pronuncia ES -> espera (10s el primer ciclo, 5s el resto)
         2. Pronuncia idioma destino -> espera 3s y vuelve al español (x8)
         3. En el último ciclo, tras el idioma destino espera 20s
            (mostrando ejemplos si hay) y salta a la siguiente palabra
@@ -246,10 +246,10 @@ class WordSliderController(BaseController):
     async def _async_play_word(self, word: SliderWordDto, run_token: int) -> None:
         """Reproduce la secuencia temporizada de una palabra (SliderSequenceEnum).
 
-        8 ciclos español -> idioma destino: tras el primer español 15s (arranque
-        de la palabra), tras el resto 5s; tras el idioma destino 3s y vuelta al
-        español. En el último ciclo, la espera tras el idioma destino es de 20s
-        mostrando los ejemplos de uso si existen.
+        8 ciclos español -> idioma destino: tras el primer español 10s (tiempo
+        para contestar antes de oír el NL), tras el resto 5s; tras el idioma
+        destino 3s y vuelta al español. En el último ciclo, la espera tras el
+        idioma destino es de 20s mostrando los ejemplos de uso si existen.
         """
         lang_name = self._lang_display_name()
         total_repetitions = SliderSequenceEnum.PAIR_REPETITIONS.value
