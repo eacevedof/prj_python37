@@ -1,3 +1,5 @@
+from ddd.vocabulary.infrastructure.repositories.activity_states_reader_sqlite_repository import ActivityStatesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.activity_states_writer_sqlite_repository import ActivityStatesWriterSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_es_reader_sqlite_repository import WordsEsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_pagination_reader_sqlite_repository import WordsPaginationReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.words_es_writer_sqlite_repository import WordsEsWriterSqliteRepository
@@ -21,6 +23,8 @@ from ddd.vocabulary.infrastructure.repositories.word_audios_reader_file_reposito
 from ddd.vocabulary.infrastructure.repositories.word_audios_writer_file_repository import WordAudiosWriterFileRepository
 
 __all__ = [
+    "ActivityStatesReaderSqliteRepository",
+    "ActivityStatesWriterSqliteRepository",
     "WordsEsReaderSqliteRepository",
     "WordsPaginationReaderSqliteRepository",
     "WordsEsWriterSqliteRepository",

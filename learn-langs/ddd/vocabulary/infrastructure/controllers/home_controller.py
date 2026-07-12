@@ -6,8 +6,11 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
+from ddd.vocabulary.application.get_last_activity_state import (
+    GetLastActivityStateService,
+)
 from ddd.vocabulary.application.load_home import LoadHomeDto, LoadHomeService
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.home_view import HomeView
 from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
@@ -23,16 +26,25 @@ class HomeController(BaseController):
     - Manejar callbacks de la Vista
     - NO hereda de ft.Container
     """
+
     def __init__(
         self,
-        route_on_start_study: Callable[[str, list[str], int | None], None],             # 1. Botón primario (verde, izquierda)
-        route_on_start_image_study: Callable[[str, list[str], int | None], None],       # 2. Botón secundario (morado, centro)
-        route_on_start_slider: Callable[[str, list[str], int | None, bool], None],      # 3. Botón Aprendizaje (verde) + orden aleatorio
-        route_on_manage_words: Callable[[], None],                                 # 4. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],                                # 5. Botón gestión grupos (naranja)
+        route_on_resume: Callable[
+            [dict], None
+        ],  # 1. Botón continuar (teal, si hay estado)
+        route_on_start_image_study: Callable[
+            [str, list[str], int | None], None
+        ],  # 2. Botón secundario (morado, centro)
+        route_on_start_slider: Callable[
+            [str, list[str], int | None, bool], None
+        ],  # 3. Botón Aprendizaje (verde) + orden aleatorio
+        route_on_manage_words: Callable[
+            [], None
+        ],  # 4. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],  # 5. Botón gestión grupos (naranja)
     ):
         # Callbacks de navegación (inyectados desde app_router)
-        self._route_on_start_study = route_on_start_study
+        self._route_on_resume = route_on_resume
         self._route_on_start_image_study = route_on_start_image_study
         self._route_on_start_slider = route_on_start_slider
         self._route_on_manage_words = route_on_manage_words
@@ -40,24 +52,32 @@ class HomeController(BaseController):
 
         self._logger = Logger.get_instance()
         self._load_home_service = LoadHomeService.get_instance()
-        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._get_last_activity_state_service = (
+            GetLastActivityStateService.get_instance()
+        )
+        self._word_groups_reader_sqlite_repository = (
+            WordGroupsReaderSqliteRepository.get_instance()
+        )
 
         self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.NL_NL
         self._selected_tags: list[str] = []
         self._selected_group_id: int | None = None
         self._all_groups: list[dict] = []
+        self._resume_state: dict | None = None
 
-        self._ft_container = HomeView.from_primitives({
-            "on_mount": self._on_mount,
-            "on_lang_change": self._on_lang_change,
-            "on_group_change": self._on_group_change,
-            "on_tag_toggle": self._on_tag_toggle,
-            "on_start_study": self._route_on_start_study_click,
-            "on_start_image_study": self._route_on_start_image_study_click,
-            "on_start_slider": self._route_on_start_slider_click,
-            "on_manage_words": self._route_on_manage_words,
-            "on_manage_groups": self._route_on_manage_groups,
-        })
+        self._ft_container = HomeView.from_primitives(
+            {
+                "on_mount": self._on_mount,
+                "on_lang_change": self._on_lang_change,
+                "on_group_change": self._on_group_change,
+                "on_tag_toggle": self._on_tag_toggle,
+                "on_resume": self._route_on_resume_click,
+                "on_start_image_study": self._route_on_start_image_study_click,
+                "on_start_slider": self._route_on_start_slider_click,
+                "on_manage_words": self._route_on_manage_words,
+                "on_manage_groups": self._route_on_manage_groups,
+            }
+        )
 
     # =========================================================================
     # API PÚBLICA
@@ -83,22 +103,27 @@ class HomeController(BaseController):
         """Carga datos del servicio y actualiza la vista."""
         try:
             load_home_result_dto = await self._load_home_service(
-                LoadHomeDto.from_primitives({
-                    "lang_code": str(self._selected_lang),
-                })
+                LoadHomeDto.from_primitives(
+                    {
+                        "lang_code": str(self._selected_lang),
+                    }
+                )
             )
 
             if not load_home_result_dto.success:
                 self._ft_container.render(
                     HomeViewDto.error(
-                        message=load_home_result_dto.error_message or "Error desconocido",
+                        message=load_home_result_dto.error_message
+                        or "Error desconocido",
                         selected_lang_code=str(self._selected_lang),
                     )
                 )
                 return
 
             # Cargar grupos disponibles
-            all_groups_raw = await self._word_groups_reader_sqlite_repository.get_all_word_groups()
+            all_groups_raw = (
+                await self._word_groups_reader_sqlite_repository.get_all_word_groups()
+            )
 
             # Ordenar grupos: generic al final, resto por ID desc
             generic_group = None
@@ -119,6 +144,9 @@ class HomeController(BaseController):
             if self._selected_group_id is None and self._all_groups:
                 self._selected_group_id = self._all_groups[0].get("id", 0)
 
+            # Última actividad reanudable (botón Continuar)
+            self._resume_state = await self._get_resume_state()
+
             self._ft_container.render(
                 HomeViewDto.ok(
                     tags=list(load_home_result_dto.tags),
@@ -127,9 +155,9 @@ class HomeController(BaseController):
                     selected_tags=self._selected_tags,
                     groups=self._all_groups,
                     selected_group_id=self._selected_group_id,
+                    resume_state=self._resume_state,
                 )
             )
-
 
         except Exception as e:
             self._logger.log_error(
@@ -176,18 +204,45 @@ class HomeController(BaseController):
 
         self._ft_container.page.run_task(self._async_load_data)
 
-    def _route_on_start_study_click(self) -> None:
-        """Maneja click en comenzar estudio (boton verde - abajo en UI)."""
-        # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
-        actual_group_id = self._ft_container.get_selected_group_id()
-        if actual_group_id is not None:
-            self._selected_group_id = actual_group_id
+    def _route_on_resume_click(self) -> None:
+        """Maneja click en Continuar: retoma la última actividad guardada."""
+        if not self._resume_state:
+            return
+        self._route_on_resume(self._resume_state)
 
-        self._route_on_start_study(
-            str(self._selected_lang),
-            self._selected_tags,
-            self._selected_group_id
+    async def _get_resume_state(self) -> dict | None:
+        """Carga el último estado de actividad y lo enriquece para la vista."""
+        try:
+            last_state = await self._get_last_activity_state_service()
+        except Exception as e:
+            self._logger.log_error(
+                "HomeController",
+                f"Error cargando estado de actividad: {e}",
+            )
+            return None
+
+        if not last_state:
+            return None
+
+        try:
+            activity_label = ActivityEnum(last_state.activity).display_name
+        except ValueError:
+            activity_label = last_state.activity
+
+        group_title = next(
+            (
+                str(group.get("title", ""))
+                for group in self._all_groups
+                if group.get("id") == last_state.group_id
+            ),
+            "",
         )
+
+        return {
+            **last_state.to_dict(),
+            "activity_label": activity_label,
+            "group_title": group_title,
+        }
 
     def _route_on_start_image_study_click(self) -> None:
         """Maneja click en comenzar estudio con imagenes (boton morado - abajo en UI)."""
@@ -200,12 +255,14 @@ class HomeController(BaseController):
         self._logger.log_debug(
             "HomeController",
             f"Starting image study with group_id={self._selected_group_id}",
-            {"lang": str(self._selected_lang), "tags": self._selected_tags, "group_id": self._selected_group_id},
+            {
+                "lang": str(self._selected_lang),
+                "tags": self._selected_tags,
+                "group_id": self._selected_group_id,
+            },
         )
         self._route_on_start_image_study(
-            str(self._selected_lang),
-            self._selected_tags,
-            self._selected_group_id
+            str(self._selected_lang), self._selected_tags, self._selected_group_id
         )
 
     def _route_on_start_slider_click(self) -> None:

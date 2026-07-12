@@ -9,7 +9,6 @@ class ControllerRouteEnum(StrEnum):
     """Rutas de vistas disponibles en la aplicacion."""
 
     HOME = "home"
-    STUDY = "study"
     IMAGE_STUDY = "image_study"
     WORD_SLIDER = "word_slider"
     WORDS = "words"

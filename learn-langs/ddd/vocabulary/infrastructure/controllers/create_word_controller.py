@@ -16,7 +16,6 @@ from ddd.vocabulary.application.create_word_group import (
 from ddd.vocabulary.domain.enums import LanguageCodeEnum
 from ddd.vocabulary.infrastructure.ui.views.create_word_view import CreateWordView
 from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
-from ddd.vocabulary.infrastructure.repositories import TagsReaderSqliteRepository
 
 class CreateWordController(BaseController):
     """

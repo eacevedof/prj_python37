@@ -33,23 +33,27 @@ class GenerateWordAudioAiResultDto:
         audio_path: str,
         voice_used: str,
         model_used: str,
-        text_generated: str
+        text_generated: str,
     ) -> Self:
-        return cls.from_primitives({
-            "word_lang_id": word_lang_id,
-            "audio_path": audio_path,
-            "voice_used": voice_used,
-            "model_used": model_used,
-            "text_generated": text_generated,
-        })
+        return cls.from_primitives(
+            {
+                "word_lang_id": word_lang_id,
+                "audio_path": audio_path,
+                "voice_used": voice_used,
+                "model_used": model_used,
+                "text_generated": text_generated,
+            }
+        )
 
     # @deuda: el caso de uso devuelve este ResultDto de error en vez de lanzar
     # VocabularyException para que el controller la capture (migrar a raise + catch).
     @classmethod
     def error(cls, message: str) -> Self:
-        return cls.from_primitives({
-            "error_message": message,
-        })
+        return cls.from_primitives(
+            {
+                "error_message": message,
+            }
+        )
 
     @property
     def success(self) -> bool:

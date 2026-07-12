@@ -102,7 +102,7 @@ class Logger:
             title: Optional title/context for the error (default: "")
             context: Optional context dictionary with additional debug info
         """
-        log_content = f"[EXCEPTION]"
+        log_content = "[EXCEPTION]"
         if title:
             log_content += f" {title}"
 

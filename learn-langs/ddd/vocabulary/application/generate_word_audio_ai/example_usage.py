@@ -23,15 +23,17 @@ async def example_generate_audio_for_translation():
 
     # Generar audio para word_lang_id = 1 (debe existir en BD)
     # La voz se selecciona automáticamente según el lang_code
-    dto = GenerateWordAudioAiDto.from_primitives({
-        "word_lang_id": 1,  # ID de traducción en words_lang
-        # text y lang_code se obtienen de BD automáticamente
-    })
+    dto = GenerateWordAudioAiDto.from_primitives(
+        {
+            "word_lang_id": 1,  # ID de traducción en words_lang
+            # text y lang_code se obtienen de BD automáticamente
+        }
+    )
 
     result = await audio_service(dto)
 
     if result.success:
-        print(f"✓ Audio generado exitosamente")
+        print("✓ Audio generado exitosamente")
         print(f"  - ID traducción: {result.word_lang_id}")
         print(f"  - Texto: '{result.text_generated}'")
         print(f"  - Voz usada: {result.voice_used}")
@@ -49,16 +51,18 @@ async def example_generate_audio_custom_voice():
     audio_service = GenerateWordAudioAiService.get_instance()
 
     # Generar audio con voz específica
-    dto = GenerateWordAudioAiDto.from_primitives({
-        "word_lang_id": 1,
-        "voice": "shimmer",  # Voz femenina suave
-        "speed": 0.9,  # 10% más lento
-    })
+    dto = GenerateWordAudioAiDto.from_primitives(
+        {
+            "word_lang_id": 1,
+            "voice": "shimmer",  # Voz femenina suave
+            "speed": 0.9,  # 10% más lento
+        }
+    )
 
     result = await audio_service(dto)
 
     if result.success:
-        print(f"✓ Audio con voz personalizada generado")
+        print("✓ Audio con voz personalizada generado")
         print(f"  - Voz: {result.voice_used}")
         print(f"  - Archivo: {result.audio_path}")
     else:
@@ -78,9 +82,11 @@ async def example_batch_generate_multiple_translations():
     results = []
 
     for word_lang_id in word_lang_ids:
-        dto = GenerateWordAudioAiDto.from_primitives({
-            "word_lang_id": word_lang_id,
-        })
+        dto = GenerateWordAudioAiDto.from_primitives(
+            {
+                "word_lang_id": word_lang_id,
+            }
+        )
 
         result = await audio_service(dto)
         results.append(result)
@@ -103,17 +109,19 @@ async def example_override_text():
     audio_service = GenerateWordAudioAiService.get_instance()
 
     # Sobrescribir texto (útil para pronunciaciones alternativas)
-    dto = GenerateWordAudioAiDto.from_primitives({
-        "word_lang_id": 1,
-        "text": "Hallo daar! Hoe gaat het vandaag?",  # Texto personalizado
-        "lang_code": "nl_NL",  # Especificar idioma
-        "speed": 0.85,  # Más lento para aprender
-    })
+    dto = GenerateWordAudioAiDto.from_primitives(
+        {
+            "word_lang_id": 1,
+            "text": "Hallo daar! Hoe gaat het vandaag?",  # Texto personalizado
+            "lang_code": "nl_NL",  # Especificar idioma
+            "speed": 0.85,  # Más lento para aprender
+        }
+    )
 
     result = await audio_service(dto)
 
     if result.success:
-        print(f"✓ Audio con texto personalizado generado")
+        print("✓ Audio con texto personalizado generado")
         print(f"  - Texto: '{result.text_generated}'")
         print(f"  - Archivo: {result.audio_path}")
     else:
@@ -123,9 +131,9 @@ async def example_override_text():
 async def main():
     """Ejecutar todos los ejemplos."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EJEMPLOS DE USO: GenerateWordAudioAiService")
-    print("="*60)
+    print("=" * 60)
 
     try:
         # Ejemplo 1: Básico
@@ -143,13 +151,13 @@ async def main():
     except Exception as e:
         print(f"\n✗ Error general: {e}")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("NOTAS:")
     print("- Los word_lang_id deben existir en la tabla words_lang")
     print("- Los audios se guardan en data/audio/")
     print("- El audio_path se actualiza automáticamente en BD")
     print("- Voces disponibles: alloy, echo, fable, onyx, nova, shimmer")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
 
 if __name__ == "__main__":

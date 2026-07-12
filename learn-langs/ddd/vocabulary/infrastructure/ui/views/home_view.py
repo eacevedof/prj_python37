@@ -23,15 +23,23 @@ class HomeView(ft.Container):
     # =========================================================================
     def __init__(
         self,
-        route_on_mount: Callable[[], None] | None,         # 1. Lifecycle (se ejecuta primero)
-        route_on_lang_change: Callable[[str], None],       # 2. Dropdown idiomas (render paso 1)
-        route_on_group_change: Callable[[int], None],      # 3. Dropdown grupos (render paso 1.5)
-        route_on_tag_toggle: Callable[[str], None],        # 4. Tags (render paso 2)
-        route_on_start_study: Callable[[], None],          # 5. Botón acción primaria (verde)
-        route_on_start_image_study: Callable[[], None],    # 6. Botón acción secundaria (morado)
-        route_on_start_slider: Callable[[], None],         # 7. Botón slider (teal)
-        route_on_manage_words: Callable[[], None],         # 8. Botón gestión palabras (amarillo)
-        route_on_manage_groups: Callable[[], None],        # 9. Botón gestión grupos (naranja)
+        route_on_mount: Callable[[], None] | None,  # 1. Lifecycle (se ejecuta primero)
+        route_on_lang_change: Callable[
+            [str], None
+        ],  # 2. Dropdown idiomas (render paso 1)
+        route_on_group_change: Callable[
+            [int], None
+        ],  # 3. Dropdown grupos (render paso 1.5)
+        route_on_tag_toggle: Callable[[str], None],  # 4. Tags (render paso 2)
+        route_on_resume: Callable[[], None],  # 5. Botón continuar (teal, si hay estado)
+        route_on_start_image_study: Callable[
+            [], None
+        ],  # 6. Botón acción secundaria (morado)
+        route_on_start_slider: Callable[[], None],  # 7. Botón slider (teal)
+        route_on_manage_words: Callable[
+            [], None
+        ],  # 8. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],  # 9. Botón gestión grupos (naranja)
     ):
         super().__init__()
 
@@ -41,7 +49,7 @@ class HomeView(ft.Container):
         self._route_on_lang_change = route_on_lang_change
         self._route_on_group_change = route_on_group_change
         self._route_on_tag_toggle = route_on_tag_toggle
-        self._route_on_start_study = route_on_start_study
+        self._route_on_resume = route_on_resume
         self._route_on_start_image_study = route_on_start_image_study
         self._route_on_start_slider = route_on_start_slider
         self._route_on_manage_words = route_on_manage_words
@@ -55,6 +63,8 @@ class HomeView(ft.Container):
         self._ft_stats_column: ft.Column | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
         self._ft_content_column: ft.Column | None = None
+        self._ft_resume_btn: ft.ElevatedButton | None = None
+        self._ft_resume_text: ft.Text | None = None
 
         self._build_initial_ui()
 
@@ -66,8 +76,10 @@ class HomeView(ft.Container):
             route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
             route_on_group_change=primitives.get("on_group_change", lambda x: None),
             route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
-            route_on_start_study=primitives.get("on_start_study", lambda: None),
-            route_on_start_image_study=primitives.get("on_start_image_study", lambda: None),
+            route_on_resume=primitives.get("on_resume", lambda: None),
+            route_on_start_image_study=primitives.get(
+                "on_start_image_study", lambda: None
+            ),
             route_on_start_slider=primitives.get("on_start_slider", lambda: None),
             route_on_manage_words=primitives.get("on_manage_words", lambda: None),
             route_on_manage_groups=primitives.get("on_manage_groups", lambda: None),
@@ -83,7 +95,9 @@ class HomeView(ft.Container):
         try:
             return int(self._ft_group_dropdown.value)
         except (ValueError, TypeError) as e:
-            self._logger.log_error(f"Invalid group_id value in dropdown: {self._ft_group_dropdown.value}. Error: {type(e).__name__}")
+            self._logger.log_error(
+                f"Invalid group_id value in dropdown: {self._ft_group_dropdown.value}. Error: {type(e).__name__}"
+            )
             return None
 
     def get_is_random_order(self) -> bool:
@@ -108,6 +122,7 @@ class HomeView(ft.Container):
         self._render_group_dropdown(home_view_dto)
         self._render_tags(home_view_dto)
         self._render_stats(home_view_dto)
+        self._render_resume(home_view_dto)
         self.update()
 
     # =========================================================================
@@ -166,15 +181,20 @@ class HomeView(ft.Container):
         )
 
         # Botones de acción
-        # "Comenzar estudio" es de uso poco frecuente: pequeño y al final (junto a gestión)
-        start_btn = ft.ElevatedButton(
+        # "Continuar": retoma la última actividad guardada (visible solo si hay estado)
+        self._ft_resume_text = ft.Text("Continuar")
+        self._ft_resume_btn = ft.ElevatedButton(
             content=ft.Row(
-                [ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Comenzar estudio")],
+                [ft.Icon(ft.Icons.PLAY_CIRCLE), self._ft_resume_text],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            on_click=lambda _: self._route_on_start_study(),
-            bgcolor=ft.Colors.GREEN_600,
-            color=ft.Colors.WHITE,
+            on_click=lambda _: self._route_on_resume(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.TEAL_700,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+            visible=False,
         )
 
         slider_btn = ft.ElevatedButton(
@@ -271,13 +291,18 @@ class HomeView(ft.Container):
                 ),
                 ft.Container(height=10),
                 ft.Row(
+                    controls=[self._ft_resume_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(height=10),
+                ft.Row(
                     controls=[slider_btn, image_study_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
                 ft.Container(height=10),
                 ft.Row(
-                    controls=[manage_btn, manage_groups_btn, start_btn],
+                    controls=[manage_btn, manage_groups_btn],
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                 ),
@@ -313,7 +338,7 @@ class HomeView(ft.Container):
         self._ft_group_dropdown.options = [
             ft.dropdown.Option(
                 key=str(group["id"]),
-                text=f"{group["id"]} - {group["title"]} ({group.get("word_count", 0)} palabras) - {int(group.get("avg_score", 0) * 100)}%"
+                text=f"{group['id']} - {group['title']} ({group.get('word_count', 0)} palabras) - {int(group.get('avg_score', 0) * 100)}%",
             )
             for group in home_view_dto.group_options
         ]
@@ -359,6 +384,26 @@ class HomeView(ft.Container):
                 )
                 self._ft_tags_row.controls.append(chip)
 
+    def _render_resume(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza el botón Continuar (visible solo si hay actividad que retomar)."""
+        if not self._ft_resume_btn or not self._ft_resume_text:
+            return
+
+        resume_state = home_view_dto.resume_state
+        if not resume_state:
+            self._ft_resume_btn.visible = False
+            return
+
+        activity_label = resume_state.get("activity_label", "actividad")
+        group_title = resume_state.get("group_title", "")
+        word_index = int(resume_state.get("word_index", 0))
+        total_words = int(resume_state.get("total_words", 0))
+
+        detail = f" · {group_title}" if group_title else ""
+        progress = f" ({word_index + 1}/{total_words})" if total_words else ""
+        self._ft_resume_text.value = f"Continuar {activity_label}{detail}{progress}"
+        self._ft_resume_btn.visible = True
+
     def _render_stats(self, home_view_dto: HomeViewDto) -> None:
         """Renderiza las estadísticas."""
         if not self._ft_stats_column or not home_view_dto.stats:
@@ -370,22 +415,33 @@ class HomeView(ft.Container):
         avg_score_percent = int(avg_score * 100)
 
         self._ft_stats_column.controls.clear()
-        self._ft_stats_column.controls.extend([
-            ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
-            ft.Divider(height=1),
-            ft.Row([
-                ft.Text("Total palabras:"),
-                ft.Text(str(total_words), weight=ft.FontWeight.BOLD),
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            ft.Row([
-                ft.Text("Pendientes de repaso:"),
-                ft.Text(str(due_for_review), weight=ft.FontWeight.BOLD),
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            ft.Row([
-                ft.Text("Score promedio:"),
-                ft.Text(f"{avg_score_percent}%", weight=ft.FontWeight.BOLD),
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-        ])
+        self._ft_stats_column.controls.extend(
+            [
+                ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
+                ft.Divider(height=1),
+                ft.Row(
+                    [
+                        ft.Text("Total palabras:"),
+                        ft.Text(str(total_words), weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Pendientes de repaso:"),
+                        ft.Text(str(due_for_review), weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Score promedio:"),
+                        ft.Text(f"{avg_score_percent}%", weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+            ]
+        )
 
     def _show_error(self, message: str) -> None:
         """Muestra un mensaje de error."""

@@ -10,3 +10,4 @@ class RelationTypeEnum(str, Enum):
     ANTONYM = "ANTONYM"
     RELATED = "RELATED"
     CONJUGATION = "CONJUGATION"
+    EXAMPLE = "EXAMPLE"  # frase de ejemplo de una palabra madre (a=madre, b=frase)

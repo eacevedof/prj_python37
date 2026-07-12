@@ -27,8 +27,13 @@ class SliderWordDto:
     image_mime_type: str = ""
     image_caption: str = ""
 
+    # Palabra madre si esta entrada es una frase de ejemplo (relación EXAMPLE)
+    parent_word_es_id: int | None = None
+
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        parent_raw = primitives.get("parent_word_es_id")
+
         return cls(
             word_es_id=int(primitives.get("word_es_id", 0)),
             text_es=str(primitives.get("text_es", "")),
@@ -40,6 +45,7 @@ class SliderWordDto:
             image_file_path=str(primitives.get("image_file_path", "") or ""),
             image_mime_type=str(primitives.get("image_mime_type", "") or ""),
             image_caption=str(primitives.get("image_caption", "") or ""),
+            parent_word_es_id=int(parent_raw) if parent_raw is not None else None,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -54,6 +60,7 @@ class SliderWordDto:
             "image_file_path": self.image_file_path,
             "image_mime_type": self.image_mime_type,
             "image_caption": self.image_caption,
+            "parent_word_es_id": self.parent_word_es_id,
         }
 
 

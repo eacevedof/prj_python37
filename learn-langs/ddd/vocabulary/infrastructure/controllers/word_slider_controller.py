@@ -18,16 +18,30 @@ from ddd.vocabulary.application.generate_text_audio_ai import (
     GenerateTextAudioAiDto,
     GenerateTextAudioAiService,
 )
+from ddd.vocabulary.application.clear_activity_state import (
+    ClearActivityStateDto,
+    ClearActivityStateService,
+)
+from ddd.vocabulary.application.reset_word_metrics import (
+    ResetWordMetricsDto,
+    ResetWordMetricsService,
+)
+from ddd.vocabulary.application.save_activity_state import (
+    SaveActivityStateDto,
+    SaveActivityStateService,
+)
 from ddd.vocabulary.application.start_word_slider_session import (
     StartWordSliderSessionDto,
     StartWordSliderSessionService,
     SliderWordDto,
 )
-from ddd.vocabulary.domain.enums import LanguageCodeEnum, StudyModeEnum
+from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum, StudyModeEnum
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view import WordSliderView
-from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import WordSliderViewDto
+from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import (
+    WordSliderViewDto,
+)
 
 
 class WordSliderController(BaseController):
@@ -54,8 +68,8 @@ class WordSliderController(BaseController):
 
     # Fase final (refuerzo español + idioma destino)
     _FINAL_REPETITIONS = 3
-    _FINAL_ES_TO_LANG_WAIT_SECONDS = 3   # tras el español, antes del idioma destino
-    _FINAL_PAUSE_SECONDS = 4             # tras el idioma destino
+    _FINAL_ES_TO_LANG_WAIT_SECONDS = 3  # tras el español, antes del idioma destino
+    _FINAL_PAUSE_SECONDS = 4  # tras el idioma destino
 
     # Espera antes de pasar a la siguiente palabra (mostrando ejemplos si hay)
     _NEXT_WORD_WAIT_SECONDS = 20
@@ -65,13 +79,13 @@ class WordSliderController(BaseController):
     # =========================================================================
     def __init__(
         self,
-        lang_code: str,                              # Idioma destino a reproducir
-        tags: list[str],                             # Filtros de tags
-        group_id: int | None,                        # Grupo de palabras
-        start_word_id: int,                          # Palabra donde retomar (0 = desde el inicio)
-        is_random_order: bool,                       # Baraja las palabras (sin orden concreto)
-        route_on_back: Callable[[], None],           # Navegación (volver al home)
-        route_on_edit_word: Callable[[int], None],   # Navegación (editar palabra actual)
+        lang_code: str,  # Idioma destino a reproducir
+        tags: list[str],  # Filtros de tags
+        group_id: int | None,  # Grupo de palabras
+        start_word_id: int,  # Palabra donde retomar (0 = desde el inicio)
+        is_random_order: bool,  # Baraja las palabras (sin orden concreto)
+        route_on_back: Callable[[], None],  # Navegación (volver al home)
+        route_on_edit_word: Callable[[int], None],  # Navegación (editar palabra actual)
     ):
         self._lang_code = lang_code
         self._tags = tags
@@ -88,8 +102,12 @@ class WordSliderController(BaseController):
         self._current_index: int = 0
         self._is_stopped: bool = False
         self._is_paused: bool = False
-        self._navigation_request: int | None = None  # índice pedido con anterior/siguiente
-        self._run_token: int = 0  # identifica el bucle vigente; invalida bucles/hilos obsoletos
+        self._navigation_request: int | None = (
+            None  # índice pedido con anterior/siguiente
+        )
+        self._run_token: int = (
+            0  # identifica el bucle vigente; invalida bucles/hilos obsoletos
+        )
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -97,19 +115,27 @@ class WordSliderController(BaseController):
         self._start_session_service = StartWordSliderSessionService.get_instance()
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
+        self._reset_word_metrics_service = ResetWordMetricsService.get_instance()
+        self._save_activity_state_service = SaveActivityStateService.get_instance()
+        self._clear_activity_state_service = ClearActivityStateService.get_instance()
         self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
-        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = (
+            WordGroupsReaderSqliteRepository.get_instance()
+        )
 
         # Vista
-        self._ft_container = WordSliderView.from_primitives({
-            "on_mount": self._on_mount,
-            "on_back": self._on_back_btn_click,
-            "on_replay": self._on_replay_click,
-            "on_prev": self._on_prev_btn_click,
-            "on_next": self._on_next_btn_click,
-            "on_toggle_pause": self._on_toggle_pause_click,
-            "on_edit_word": self._on_edit_word_click,
-        })
+        self._ft_container = WordSliderView.from_primitives(
+            {
+                "on_mount": self._on_mount,
+                "on_back": self._on_back_btn_click,
+                "on_replay": self._on_replay_click,
+                "on_prev": self._on_prev_btn_click,
+                "on_next": self._on_next_btn_click,
+                "on_toggle_pause": self._on_toggle_pause_click,
+                "on_edit_word": self._on_edit_word_click,
+                "on_reset_word": self._on_reset_word_click,
+            }
+        )
 
     # =========================================================================
     # API PÚBLICA
@@ -131,13 +157,15 @@ class WordSliderController(BaseController):
         self._ft_container.render(WordSliderViewDto.initial())
 
         try:
-            start_dto = StartWordSliderSessionDto.from_primitives({
-                "lang_code": self._lang_code,
-                "tags": self._tags,
-                "group_id": self._group_id,
-                "limit": 1000,  # todas las palabras/imágenes del grupo (tope alto)
-                "is_random_order": self._is_random_order,
-            })
+            start_dto = StartWordSliderSessionDto.from_primitives(
+                {
+                    "lang_code": self._lang_code,
+                    "tags": self._tags,
+                    "group_id": self._group_id,
+                    "limit": 1000,  # todas las palabras/imágenes del grupo (tope alto)
+                    "is_random_order": self._is_random_order,
+                }
+            )
 
             result = await self._start_session_service(start_dto)
 
@@ -150,8 +178,11 @@ class WordSliderController(BaseController):
             # Retomar tras editar: localizar la palabra por id (robusto también
             # con orden aleatorio, donde el índice cambia entre sesiones)
             self._start_index = next(
-                (index for index, word in enumerate(self._words)
-                 if word.word_es_id == self._start_word_id),
+                (
+                    index
+                    for index, word in enumerate(self._words)
+                    if word.word_es_id == self._start_word_id
+                ),
                 0,
             )
 
@@ -170,7 +201,11 @@ class WordSliderController(BaseController):
             self._logger.log_error(
                 "WordSliderController",
                 f"Error iniciando sesión: {e}",
-                {"lang_code": self._lang_code, "tags": self._tags, "group_id": self._group_id},
+                {
+                    "lang_code": self._lang_code,
+                    "tags": self._tags,
+                    "group_id": self._group_id,
+                },
             )
             self._ft_container.render(WordSliderViewDto.error(str(e)))
 
@@ -200,6 +235,7 @@ class WordSliderController(BaseController):
             if self._is_run_cancelled(run_token):
                 return
             self._current_index = index
+            await self._async_save_activity_state(self._words[index], index)
             await self._async_play_word(self._words[index], run_token)
 
             if self._is_run_cancelled(run_token):
@@ -221,7 +257,9 @@ class WordSliderController(BaseController):
 
         # Fase 1: Español -> espera 10s
         self._render_phase(word, show_translation=False, phase_label="🔊 Español")
-        await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token)
+        await self._play_text_audio(
+            word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token
+        )
         if not await self._wait(self._ES_WAIT_SECONDS, run_token):
             return
 
@@ -249,7 +287,9 @@ class WordSliderController(BaseController):
                 show_translation=True,
                 phase_label=f"🔊 Español + {lang_name} ({repetition + 1}/{self._FINAL_REPETITIONS})",
             )
-            await self._play_text_audio(word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token)
+            await self._play_text_audio(
+                word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token
+            )
             # Tras el español, esperar antes de pronunciar el idioma destino
             if not await self._wait(self._FINAL_ES_TO_LANG_WAIT_SECONDS, run_token):
                 return
@@ -287,11 +327,13 @@ class WordSliderController(BaseController):
             )
 
         try:
-            dto = FinishStudySessionDto.from_primitives({
-                "session_id": self._session_id,
-                "lang_code": self._lang_code,
-                "study_mode": StudyModeEnum.SLIDER.value,
-            })
+            dto = FinishStudySessionDto.from_primitives(
+                {
+                    "session_id": self._session_id,
+                    "lang_code": self._lang_code,
+                    "study_mode": StudyModeEnum.SLIDER.value,
+                }
+            )
             await self._finish_session_service(dto)
         except Exception as e:
             self._logger.log_error(
@@ -300,17 +342,25 @@ class WordSliderController(BaseController):
                 {"session_id": self._session_id},
             )
 
-    async def _play_text_audio(self, text: str, lang_code: str, word_id: int, run_token: int) -> None:
+    async def _play_text_audio(
+        self, text: str, lang_code: str, word_id: int, run_token: int
+    ) -> None:
         """Genera (o reutiliza) y reproduce el audio de un texto."""
-        if self._is_run_cancelled(run_token) or self._navigation_request is not None or not text:
+        if (
+            self._is_run_cancelled(run_token)
+            or self._navigation_request is not None
+            or not text
+        ):
             return
 
         try:
-            audio_dto = GenerateTextAudioAiDto.from_primitives({
-                "text": text,
-                "lang_code": lang_code,
-                "word_id": word_id,
-            })
+            audio_dto = GenerateTextAudioAiDto.from_primitives(
+                {
+                    "text": text,
+                    "lang_code": lang_code,
+                    "word_id": word_id,
+                }
+            )
             result = await self._generate_audio_service(audio_dto)
 
             if not result.success:
@@ -322,11 +372,17 @@ class WordSliderController(BaseController):
 
             # Puerta de pausa: no arrancar un audio nuevo mientras esté en pausa
             while self._is_paused:
-                if self._is_run_cancelled(run_token) or self._navigation_request is not None:
+                if (
+                    self._is_run_cancelled(run_token)
+                    or self._navigation_request is not None
+                ):
                     return
                 await asyncio.sleep(0.2)
 
-            if self._is_run_cancelled(run_token) or self._navigation_request is not None:
+            if (
+                self._is_run_cancelled(run_token)
+                or self._navigation_request is not None
+            ):
                 return
 
             await asyncio.to_thread(self._play_audio_file, result.audio_path, run_token)
@@ -354,7 +410,10 @@ class WordSliderController(BaseController):
 
             clock = pygame.time.Clock()
             while True:
-                if self._is_run_cancelled(run_token) or self._navigation_request is not None:
+                if (
+                    self._is_run_cancelled(run_token)
+                    or self._navigation_request is not None
+                ):
                     pygame.mixer.music.stop()
                     break
                 # En pausa, seguir esperando la reanudación sin avanzar la secuencia
@@ -427,6 +486,46 @@ class WordSliderController(BaseController):
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_edit_word(word.word_es_id)
 
+    def _on_reset_word_click(self) -> None:
+        """Reinicia el progreso de estudio (SM-2) de la palabra actual.
+
+        La vista ya pidió confirmación; el slider sigue reproduciendo.
+        """
+        if not self._words:
+            return
+        word = self._words[self._current_index]
+        self._ft_container.page.run_task(self._async_reset_word, word)
+
+    async def _async_reset_word(self, word: SliderWordDto) -> None:
+        """Ejecuta el reinicio via servicio y avisa del resultado en un snackbar."""
+        try:
+            reset_dto = ResetWordMetricsDto.from_primitives(
+                {
+                    "word_es_id": word.word_es_id,
+                    "lang_code": self._lang_code,
+                }
+            )
+            result = await self._reset_word_metrics_service(reset_dto)
+            message = (
+                f"Progreso reiniciado: {word.text_es}"
+                if result.is_reset
+                else f"La palabra ya estaba como nueva: {word.text_es}"
+            )
+            self._show_snackbar(message, ft.Colors.GREEN_700)
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error reiniciando palabra: {e}",
+                {"word_es_id": word.word_es_id, "lang_code": self._lang_code},
+            )
+            self._show_snackbar("No se pudo reiniciar la palabra", ft.Colors.RED_700)
+
+    def _show_snackbar(self, message: str, bgcolor: str) -> None:
+        """Muestra un aviso flotante sin interrumpir la reproducción."""
+        snackbar = ft.SnackBar(content=ft.Text(message), bgcolor=bgcolor, open=True)
+        self._ft_container.page.overlay.append(snackbar)
+        self._ft_container.page.update()
+
     # =========================================================================
     # HELPERS PRIVADOS
     # =========================================================================
@@ -438,14 +537,19 @@ class WordSliderController(BaseController):
         """
         elapsed_seconds = 0
         while elapsed_seconds < seconds:
-            if self._is_run_cancelled(run_token) or self._navigation_request is not None:
+            if (
+                self._is_run_cancelled(run_token)
+                or self._navigation_request is not None
+            ):
                 return False
             if self._is_paused:
                 await asyncio.sleep(0.2)
                 continue
             await asyncio.sleep(1)
             elapsed_seconds += 1
-        return not self._is_run_cancelled(run_token) and self._navigation_request is None
+        return (
+            not self._is_run_cancelled(run_token) and self._navigation_request is None
+        )
 
     def _is_run_cancelled(self, run_token: int) -> bool:
         """True si el slider se detuvo o este bucle quedó obsoleto (otro arrancó)."""
@@ -455,8 +559,10 @@ class WordSliderController(BaseController):
         """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
         if self._group_id is None:
             return ""
-        word_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
-            self._group_id
+        word_group = (
+            await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
+                self._group_id
+            )
         )
         group_source = ((word_group or {}).get("source") or "").strip()
         if group_source.lower() in ("migracion", "migration", "mig"):
@@ -478,32 +584,77 @@ class WordSliderController(BaseController):
         """Renderiza la palabra actual en una fase concreta (si no se detuvo)."""
         if self._is_stopped:
             return
-        self._ft_container.render(WordSliderViewDto.sliding(
-            session_id=self._session_id,
-            lang_code=self._lang_code,
-            total_words=len(self._words),
-            current_index=self._current_index,
-            current_word={
-                "word_es_id": word.word_es_id,
-                "text_es": word.text_es,
-                "text_lang": word.text_lang,
-                "pronunciation": self._pronunciation_for(word),
-                "image_file_path": word.image_file_path,
-                "examples": word.examples_lang,
-                "rules_help": word.rules_help,
-            },
-            phase_label=phase_label,
-            show_translation=show_translation,
-            show_examples=show_examples,
-        ))
+        self._ft_container.render(
+            WordSliderViewDto.sliding(
+                session_id=self._session_id,
+                lang_code=self._lang_code,
+                total_words=len(self._words),
+                current_index=self._current_index,
+                current_word={
+                    "word_es_id": word.word_es_id,
+                    "text_es": word.text_es,
+                    "text_lang": word.text_lang,
+                    "pronunciation": self._pronunciation_for(word),
+                    "image_file_path": word.image_file_path,
+                    "examples": word.examples_lang,
+                    "rules_help": word.rules_help,
+                },
+                phase_label=phase_label,
+                show_translation=show_translation,
+                show_examples=show_examples,
+            )
+        )
 
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesión completada y finaliza via servicio."""
         self._is_stopped = True
         self._ft_container.page.run_task(self._async_finish_session)
-        self._ft_container.render(WordSliderViewDto.session_complete(
-            total_words=len(self._words),
-        ))
+        self._ft_container.page.run_task(self._async_clear_activity_state)
+        self._ft_container.render(
+            WordSliderViewDto.session_complete(
+                total_words=len(self._words),
+            )
+        )
+
+    async def _async_save_activity_state(self, word: SliderWordDto, index: int) -> None:
+        """Guarda el punto actual para poder retomarlo desde el Home (best-effort)."""
+        try:
+            await self._save_activity_state_service(
+                SaveActivityStateDto.from_primitives(
+                    {
+                        "activity": ActivityEnum.WORD_SLIDER.value,
+                        "lang_code": self._lang_code,
+                        "tags": self._tags,
+                        "group_id": self._group_id,
+                        "word_es_id": word.word_es_id,
+                        "word_index": index,
+                        "total_words": len(self._words),
+                        "is_random_order": self._is_random_order,
+                    }
+                )
+            )
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error guardando estado de actividad: {e}",
+                {"word_es_id": word.word_es_id},
+            )
+
+    async def _async_clear_activity_state(self) -> None:
+        """Borra el estado guardado: la sesión terminó, no hay nada que retomar."""
+        try:
+            await self._clear_activity_state_service(
+                ClearActivityStateDto.from_primitives(
+                    {
+                        "activity": ActivityEnum.WORD_SLIDER.value,
+                    }
+                )
+            )
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error borrando estado de actividad: {e}",
+            )
 
     def _lang_display_name(self) -> str:
         """Nombre del idioma destino para las etiquetas de fase."""

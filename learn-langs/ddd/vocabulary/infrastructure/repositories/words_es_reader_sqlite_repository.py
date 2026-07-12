@@ -182,7 +182,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
     async def get_total_words_es_by_word_type(self, word_type: str | None = None) -> int:
         """Cuenta el total de palabras."""
         if word_type:
-            query = f"""
+            query = """
             -- count
             SELECT
                 COUNT(*) as count
@@ -192,7 +192,7 @@ class WordsEsReaderSqliteRepository(AbstractSqliteRepository):
             """
             return await self._query_scalar(query, (word_type,), "count") or 0
 
-        query = f"""
+        query = """
         -- count
         SELECT COUNT(*) as count
         FROM words_es

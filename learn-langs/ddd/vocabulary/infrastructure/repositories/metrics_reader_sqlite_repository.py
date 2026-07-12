@@ -16,7 +16,9 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
     def get_instance(cls) -> Self:
         return cls()
 
-    async def get_by_word_and_lang(self, word_es_id: int, lang_code: str) -> dict | None:
+    async def get_by_word_and_lang(
+        self, word_es_id: int, lang_code: str
+    ) -> dict | None:
         """Obtiene métricas de una palabra en un idioma específico."""
         return await self._query_one(
             f"""
@@ -31,117 +33,6 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
             """,
             (lang_code,),
         )
-
-    async def get_words_for_review(
-        self,
-        lang_code: str,
-        tag_names: list[str] | None = None,
-        group_id: int | None = None,
-        limit: int = 20,
-    ) -> list[dict]:
-        """
-        Obtiene palabras para repaso ordenadas por prioridad:
-        1. Nunca examinadas (total_attempts = 0 o NULL)
-        2. Más falladas (intentos - score total)
-        3. Más antiguas sin examinar (last_reviewed_at más antiguo)
-        4. Aleatorio
-        """
-        # Construir filtro de grupo
-        group_join = ""
-        group_where = ""
-        if group_id is not None:
-            group_join = "INNER JOIN word_es_groups weg ON we.id = weg.word_es_id"
-            group_where = f"AND weg.group_id = {group_id}"
-
-        if tag_names:
-            placeholders = self._get_placeholders(len(tag_names))
-            query = f"""
-            -- get_words_for_review 1
-            SELECT DISTINCT
-                we.id as word_es_id,
-                we.text as text_es,
-                we.word_type,
-                wl.text as text_lang,
-                wl.pronunciation,
-                COALESCE(wm.repetitions, 0) as repetitions,
-                COALESCE(wm.easiness_factor, 2.5) as easiness_factor,
-                COALESCE(wm.interval_days, 1) as interval_days,
-                wm.next_review_at,
-                COALESCE(wm.total_attempts, 0) as total_attempts
-            FROM words_es we
-            INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
-            INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
-            INNER JOIN tags t ON wt.tag_id = t.id AND t.name IN ({placeholders})
-            {group_join}
-            LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-            WHERE 1=1
-            {group_where}
-            ORDER BY
-                -- Prioridad 1: Nunca examinadas
-                CASE
-                    WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
-                    ELSE 1
-                END ASC,
-                -- Prioridad 2: Más falladas (fallos ponderados)
-                CASE
-                    WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
-                    ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
-                END DESC,
-                -- Prioridad 3: Más antiguas sin examinar
-                CASE
-                    WHEN wm.last_reviewed_at IS NULL THEN 0
-                    ELSE 1
-                END ASC,
-                wm.last_reviewed_at ASC,
-                -- Prioridad 4: Aleatorio
-                RANDOM()
-            LIMIT {limit}
-            """
-            params = (lang_code,) + tuple(tag_names) + (lang_code,)
-        else:
-            query = f"""
-            -- get_words_for_review 2
-            SELECT
-                we.id as word_es_id,
-                we.text as text_es,
-                we.word_type,
-                wl.text as text_lang,
-                wl.pronunciation,
-                COALESCE(wm.repetitions, 0) as repetitions,
-                COALESCE(wm.easiness_factor, 2.5) as easiness_factor,
-                COALESCE(wm.interval_days, 1) as interval_days,
-                wm.next_review_at,
-                COALESCE(wm.total_attempts, 0) as total_attempts
-            FROM words_es we
-            INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
-            {group_join}
-            LEFT JOIN word_metrics wm ON we.id = wm.word_es_id AND wm.lang_code = ?
-            WHERE 1=1
-            {group_where}
-            ORDER BY
-                -- Prioridad 1: Nunca examinadas
-                CASE
-                    WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
-                    ELSE 1
-                END ASC,
-                -- Prioridad 2: Más falladas (fallos ponderados)
-                CASE
-                    WHEN wm.total_attempts IS NULL OR wm.total_attempts = 0 THEN 0
-                    ELSE (wm.total_attempts - COALESCE(wm.total_score, 0))
-                END DESC,
-                -- Prioridad 3: Más antiguas sin examinar
-                CASE
-                    WHEN wm.last_reviewed_at IS NULL THEN 0
-                    ELSE 1
-                END ASC,
-                wm.last_reviewed_at ASC,
-                -- Prioridad 4: Aleatorio
-                RANDOM()
-            LIMIT {limit}
-            """
-            params = (lang_code, lang_code)
-
-        return await self._query(query, params)
 
     async def get_words_for_slider(
         self,
@@ -186,7 +77,11 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 COALESCE(wm.total_attempts, 0) as total_attempts,
                 img.file_path as image_file_path,
                 img.mime_type as image_mime_type,
-                img.caption as image_caption
+                img.caption as image_caption,
+                (
+                    SELECT MIN(rel.word_es_id_a) FROM word_es_relations rel
+                    WHERE rel.word_es_id_b = we.id AND rel.relation_type = 'EXAMPLE'
+                ) as parent_word_es_id
             FROM words_es we
             INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
             INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
@@ -240,7 +135,11 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 COALESCE(wm.total_attempts, 0) as total_attempts,
                 img.file_path as image_file_path,
                 img.mime_type as image_mime_type,
-                img.caption as image_caption
+                img.caption as image_caption,
+                (
+                    SELECT MIN(rel.word_es_id_a) FROM word_es_relations rel
+                    WHERE rel.word_es_id_b = we.id AND rel.relation_type = 'EXAMPLE'
+                ) as parent_word_es_id
             FROM words_es we
             INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
             {group_join}
@@ -294,10 +193,16 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         """
         # DEBUG: Log del group_id recibido
         from ddd.shared.infrastructure.components.logger import Logger
+
         Logger.get_instance().log_debug(
             "MetricsReaderSqliteRepository",
             f"get_words_with_images_for_review called with group_id={group_id}",
-            {"lang_code": lang_code, "tag_names": tag_names, "group_id": group_id, "limit": limit},
+            {
+                "lang_code": lang_code,
+                "tag_names": tag_names,
+                "group_id": group_id,
+                "limit": limit,
+            },
         )
 
         # Construir filtro de grupo
@@ -410,7 +315,6 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
             params = (lang_code, lang_code)
 
         return await self._query(query, params)
-
 
     async def get_stats_for_lang(self, lang_code: str) -> dict:
         """Obtiene estadísticas generales para un idioma."""

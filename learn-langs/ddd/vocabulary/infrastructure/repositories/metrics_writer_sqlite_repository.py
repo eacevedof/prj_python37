@@ -22,19 +22,22 @@ class MetricsWriterSqliteRepository(AbstractSqliteRepository):
         """Crea nuevas métricas para una palabra y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        return await self._insert_into("word_metrics", {
-            "word_es_id": word_metric_entity.word_es_id,
-            "lang_code": word_metric_entity.lang_code,
-            "repetitions": word_metric_entity.repetitions,
-            "easiness_factor": word_metric_entity.easiness_factor,
-            "interval_days": word_metric_entity.interval_days,
-            "next_review_at": word_metric_entity.next_review_at,
-            "last_reviewed_at": now,
-            "total_attempts": word_metric_entity.total_attempts,
-            "total_score": word_metric_entity.total_score,
-            "created_at": now,
-            "updated_at": now,
-        })
+        return await self._insert_into(
+            "word_metrics",
+            {
+                "word_es_id": word_metric_entity.word_es_id,
+                "lang_code": word_metric_entity.lang_code,
+                "repetitions": word_metric_entity.repetitions,
+                "easiness_factor": word_metric_entity.easiness_factor,
+                "interval_days": word_metric_entity.interval_days,
+                "next_review_at": word_metric_entity.next_review_at,
+                "last_reviewed_at": now,
+                "total_attempts": word_metric_entity.total_attempts,
+                "total_score": word_metric_entity.total_score,
+                "created_at": now,
+                "updated_at": now,
+            },
+        )
 
     async def update(self, word_metric_entity: WordMetricEntity) -> bool:
         """Actualiza métricas existentes."""
@@ -88,20 +91,24 @@ class MetricsWriterSqliteRepository(AbstractSqliteRepository):
         else:
             return await self.create(word_metric_entity)
 
-    async def reset_metrics(self, word_metric_entity: WordMetricEntity) -> bool:
-        """Reinicia las métricas de una palabra (para re-aprender)."""
+    async def reset_metrics(self, word_es_id: int, lang_code: str) -> bool:
+        """Reinicia el progreso SM-2 de una palabra en un idioma: queda como nueva
+        (vuelve al bucket de máxima prioridad 'nunca examinadas')."""
         rows = await self._sqlite.update(
             f"""
             UPDATE word_metrics
             SET repetitions = 0,
                 easiness_factor = 2.5,
                 interval_days = 1,
-                next_review_at = datetime('now'),
+                next_review_at = NULL,
+                last_reviewed_at = NULL,
+                total_attempts = 0,
+                total_score = 0,
                 updated_at = datetime('now')
             WHERE 1=1
-            AND word_es_id = {word_metric_entity.word_es_id}
+            AND word_es_id = {word_es_id}
             AND lang_code = ?
             """,
-            (word_metric_entity.lang_code,),
+            (lang_code,),
         )
         return rows > 0

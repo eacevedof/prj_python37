@@ -4,9 +4,13 @@ from typing import Any, Callable, Self
 
 import flet as ft
 
-from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import GroupSourceLinkComp
+from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import (
+    GroupSourceLinkComp,
+)
 from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
-from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import WordSliderViewDto
+from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import (
+    WordSliderViewDto,
+)
 
 
 class WordSliderView(ft.Container):
@@ -32,6 +36,7 @@ class WordSliderView(ft.Container):
         route_on_next: Callable[[], None] | None = None,
         route_on_toggle_pause: Callable[[], None] | None = None,
         route_on_edit_word: Callable[[], None] | None = None,
+        route_on_reset_word: Callable[[], None] | None = None,
     ):
         super().__init__()
 
@@ -42,6 +47,7 @@ class WordSliderView(ft.Container):
         self._route_on_next = route_on_next
         self._route_on_toggle_pause = route_on_toggle_pause
         self._route_on_edit_word = route_on_edit_word
+        self._route_on_reset_word = route_on_reset_word
 
         # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
         self._is_paused: bool = False
@@ -75,6 +81,7 @@ class WordSliderView(ft.Container):
             route_on_next=primitives.get("on_next"),
             route_on_toggle_pause=primitives.get("on_toggle_pause"),
             route_on_edit_word=primitives.get("on_edit_word"),
+            route_on_reset_word=primitives.get("on_reset_word"),
         )
 
     # =========================================================================
@@ -121,7 +128,7 @@ class WordSliderView(ft.Container):
         self._ft_group_source_link = GroupSourceLinkComp()
         self._ft_slider_card = SliderCardComp()
 
-        # Controles de reproducción: anterior | pausa | siguiente | editar palabra
+        # Controles de reproducción: anterior | pausa | siguiente | ayuda | editar | reiniciar
         self._ft_pause_btn = ft.IconButton(
             icon=ft.Icons.PAUSE_CIRCLE,
             icon_size=42,
@@ -143,14 +150,23 @@ class WordSliderView(ft.Container):
                     tooltip="Palabra siguiente",
                     on_click=lambda _: self._on_next_btn_click(),
                 ),
+                self._get_built_help_button(),
                 ft.IconButton(
                     icon=ft.Icons.EDIT,
                     icon_size=36,
                     icon_color=ft.Colors.AMBER_800,
                     tooltip="Editar palabra (audio, contexto, traducción...)",
-                    on_click=lambda _: self._route_on_edit_word() if self._route_on_edit_word else None,
+                    on_click=lambda _: (
+                        self._route_on_edit_word() if self._route_on_edit_word else None
+                    ),
                 ),
-                self._get_built_help_button(),
+                ft.IconButton(
+                    icon=ft.Icons.RESTART_ALT,
+                    icon_size=36,
+                    icon_color=ft.Colors.RED_700,
+                    tooltip="Reiniciar palabra: su progreso de estudio vuelve a cero",
+                    on_click=lambda _: self._on_reset_btn_click(),
+                ),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=16,
@@ -216,7 +232,11 @@ class WordSliderView(ft.Container):
 
     def _render_sliding(self, dto: WordSliderViewDto) -> None:
         """Renderiza la palabra actual en su fase de reproducción."""
-        if not self._ft_content_area or not dto.current_word or not self._ft_slider_card:
+        if (
+            not self._ft_content_area
+            or not dto.current_word
+            or not self._ft_slider_card
+        ):
             return
 
         word = dto.current_word
@@ -231,15 +251,17 @@ class WordSliderView(ft.Container):
         if not self._is_card_mounted:
             self._reset_pause_button()
             self._ft_content_area.controls.clear()
-            self._ft_content_area.controls.extend([
-                ft.Container(height=20),
-                ft.Row(
-                    controls=[self._ft_slider_card],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                ft.Container(height=12),
-                self._ft_controls_row,
-            ])
+            self._ft_content_area.controls.extend(
+                [
+                    ft.Container(height=20),
+                    ft.Row(
+                        controls=[self._ft_slider_card],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    ft.Container(height=12),
+                    self._ft_controls_row,
+                ]
+            )
             self._is_card_mounted = True
 
         self._ft_slider_card.render(
@@ -262,26 +284,28 @@ class WordSliderView(ft.Container):
 
         self._is_card_mounted = False
         self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
-            ft.Container(height=40),
-            ft.Icon(ft.Icons.INBOX_OUTLINED, size=60, color=ft.Colors.ORANGE_400),
-            ft.Container(height=20),
-            ft.Text(
-                "No hay palabras para reproducir",
-                size=20,
-                weight=ft.FontWeight.BOLD,
-            ),
-            ft.Text(
-                "Selecciona otro grupo o idioma con traducciones disponibles",
-                size=14,
-                color=ft.Colors.GREY_600,
-            ),
-            ft.Container(height=30),
-            ft.ElevatedButton(
-                content=ft.Text("Volver"),
-                on_click=lambda _: self._route_on_back(),
-            ),
-        ])
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=40),
+                ft.Icon(ft.Icons.INBOX_OUTLINED, size=60, color=ft.Colors.ORANGE_400),
+                ft.Container(height=20),
+                ft.Text(
+                    "No hay palabras para reproducir",
+                    size=20,
+                    weight=ft.FontWeight.BOLD,
+                ),
+                ft.Text(
+                    "Selecciona otro grupo o idioma con traducciones disponibles",
+                    size=14,
+                    color=ft.Colors.GREY_600,
+                ),
+                ft.Container(height=30),
+                ft.ElevatedButton(
+                    content=ft.Text("Volver"),
+                    on_click=lambda _: self._route_on_back(),
+                ),
+            ]
+        )
 
     def _render_session_complete(self, dto: WordSliderViewDto) -> None:
         """Renderiza sesión completada."""
@@ -319,27 +343,29 @@ class WordSliderView(ft.Container):
         action_buttons.append(home_btn)
 
         self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
-            ft.Container(height=20),
-            ft.Icon(ft.Icons.CELEBRATION, size=50, color=ft.Colors.AMBER_500),
-            ft.Container(height=10),
-            ft.Text("¡Slider completado!", size=24, weight=ft.FontWeight.BOLD),
-            ft.Container(height=10),
-            ft.Text(f"Palabras reproducidas: {dto.total_words}", size=18),
-            ft.Container(height=40),
-            ft.Row(
-                controls=action_buttons,
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=20,
-            ),
-        ])
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=20),
+                ft.Icon(ft.Icons.CELEBRATION, size=50, color=ft.Colors.AMBER_500),
+                ft.Container(height=10),
+                ft.Text("¡Slider completado!", size=24, weight=ft.FontWeight.BOLD),
+                ft.Container(height=10),
+                ft.Text(f"Palabras reproducidas: {dto.total_words}", size=18),
+                ft.Container(height=40),
+                ft.Row(
+                    controls=action_buttons,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                ),
+            ]
+        )
 
     def _get_built_help_button(self) -> ft.IconButton:
         """Construye el botón de ayuda (reglas de uso) de la botonera."""
         self._ft_help_btn = ft.IconButton(
             icon=ft.Icons.HELP_OUTLINE,
             icon_size=32,
-            icon_color=ft.Colors.BLUE_700,
+            icon_color=ft.Colors.GREEN_700,
             tooltip="Reglas de uso: cuándo y cómo se usa",
             on_click=lambda _: self._on_help_btn_click(),
             disabled=True,
@@ -415,17 +441,76 @@ class WordSliderView(ft.Container):
             if "—" in line:
                 text_lang, text_es = line.split("—", 1)
                 spans = [
-                    ft.TextSpan(f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)),
-                    ft.TextSpan(f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)),
-                    ft.TextSpan(f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)),
+                    ft.TextSpan(
+                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
+                    ),
+                    ft.TextSpan(
+                        f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)
+                    ),
+                    ft.TextSpan(
+                        f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)
+                    ),
                 ]
             else:
                 spans = [
-                    ft.TextSpan(f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)),
+                    ft.TextSpan(
+                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
+                    ),
                     ft.TextSpan(line, ft.TextStyle(weight=ft.FontWeight.BOLD)),
                 ]
             controls.append(ft.Text(spans=spans, size=16, selectable=True))
         return controls
+
+    def _on_reset_btn_click(self) -> None:
+        """Pide confirmación para reiniciar el progreso de la palabra actual.
+
+        Pausa el slider mientras el diálogo está abierto; al cerrar, reanuda
+        solo si la pausa la provocó el propio diálogo.
+        """
+        if not self.page or not self._route_on_reset_word:
+            return
+
+        was_playing = not self._is_paused
+        if was_playing and self._route_on_toggle_pause:
+            self._is_paused = True
+            self._apply_pause_icon()
+            self._route_on_toggle_pause()
+
+        def close_dialog(_) -> None:
+            dialog.open = False
+            if was_playing and self._route_on_toggle_pause:
+                self._is_paused = False
+                self._apply_pause_icon()
+                self._route_on_toggle_pause()
+            self.page.update()
+
+        def confirm_reset(event) -> None:
+            if self._route_on_reset_word:
+                self._route_on_reset_word()
+            close_dialog(event)
+
+        dialog = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Reiniciar palabra", size=22, weight=ft.FontWeight.BOLD),
+            content=ft.Text(
+                f"El progreso de estudio de «{self._current_word_text}» volverá a cero "
+                "y entrará al entrenamiento como palabra nueva. La palabra, sus "
+                "traducciones, audios e imágenes no se tocan.",
+                size=16,
+            ),
+            actions=[
+                ft.TextButton("Cancelar", on_click=close_dialog),
+                ft.TextButton(
+                    "Reiniciar",
+                    on_click=confirm_reset,
+                    style=ft.ButtonStyle(color=ft.Colors.RED_700),
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
 
     def _on_prev_btn_click(self) -> None:
         """Navega a la palabra anterior (la navegación reanuda la reproducción)."""
@@ -472,15 +557,17 @@ class WordSliderView(ft.Container):
 
         self._is_card_mounted = False
         self._ft_content_area.controls.clear()
-        self._ft_content_area.controls.extend([
-            ft.Container(height=40),
-            ft.Icon(ft.Icons.ERROR_OUTLINE, size=60, color=ft.Colors.RED_400),
-            ft.Container(height=20),
-            ft.Text("Error", size=20, weight=ft.FontWeight.BOLD),
-            ft.Text(message, size=14, color=ft.Colors.GREY_600),
-            ft.Container(height=30),
-            ft.ElevatedButton(
-                content=ft.Text("Volver"),
-                on_click=lambda _: self._route_on_back(),
-            ),
-        ])
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=40),
+                ft.Icon(ft.Icons.ERROR_OUTLINE, size=60, color=ft.Colors.RED_400),
+                ft.Container(height=20),
+                ft.Text("Error", size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(message, size=14, color=ft.Colors.GREY_600),
+                ft.Container(height=30),
+                ft.ElevatedButton(
+                    content=ft.Text("Volver"),
+                    on_click=lambda _: self._route_on_back(),
+                ),
+            ]
+        )

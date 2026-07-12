@@ -27,16 +27,19 @@ class StartWordSliderSessionService:
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
     def __init__(self) -> None:
-        self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
-        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
+        self._metrics_reader_sqlite_repository = (
+            MetricsReaderSqliteRepository.get_instance()
+        )
+        self._sessions_writer_sqlite_repository = (
+            SessionsWriterSqliteRepository.get_instance()
+        )
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
     async def __call__(
-        self,
-        start_word_slider_session_dto: StartWordSliderSessionDto
+        self, start_word_slider_session_dto: StartWordSliderSessionDto
     ) -> StartWordSliderSessionResultDto:
         """
         Inicia una nueva sesión de slider.
@@ -61,7 +64,9 @@ class StartWordSliderSessionService:
         # Incluye imagen principal (opcional) para mostrarla en el slider.
         words_data = await self._metrics_reader_sqlite_repository.get_words_for_slider(
             lang_code=start_word_slider_session_dto.lang_code,
-            tag_names=start_word_slider_session_dto.tags if start_word_slider_session_dto.tags else None,
+            tag_names=start_word_slider_session_dto.tags
+            if start_word_slider_session_dto.tags
+            else None,
             group_id=start_word_slider_session_dto.group_id,
             limit=start_word_slider_session_dto.limit,
         )
@@ -71,27 +76,70 @@ class StartWordSliderSessionService:
                 start_word_slider_session_dto.lang_code
             )
 
-        # Orden aleatorio: baraja e ignora la priorización SM-2
+        # Bloques palabra madre + sus frases de ejemplo (relación EXAMPLE):
+        # la madre conserva su posición (SM-2) y sus frases van justo detrás.
+        word_blocks = self._build_word_blocks(words_data)
+
+        # Orden aleatorio: baraja bloques enteros (ignora la priorización SM-2
+        # pero mantiene cada frase detrás de su palabra madre)
         if start_word_slider_session_dto.is_random_order:
-            words_data = list(words_data)
-            random.shuffle(words_data)
+            random.shuffle(word_blocks)
+
+        words_data = [word for block in word_blocks for word in block]
 
         # Crear sesión
         session_id = await self._sessions_writer_sqlite_repository.create_study_session(
-            StudySessionEntity.from_primitives({
-                "id": 0,
-                "lang_code": start_word_slider_session_dto.lang_code,
-                "study_mode": StudyModeEnum.SLIDER.value,
-                "tags_filter": start_word_slider_session_dto.tags if start_word_slider_session_dto.tags else [],
-            })
+            StudySessionEntity.from_primitives(
+                {
+                    "id": 0,
+                    "lang_code": start_word_slider_session_dto.lang_code,
+                    "study_mode": StudyModeEnum.SLIDER.value,
+                    "tags_filter": start_word_slider_session_dto.tags
+                    if start_word_slider_session_dto.tags
+                    else [],
+                }
+            )
         )
 
         # Construir resultado
-        return StartWordSliderSessionResultDto.from_primitives({
-            "session_id": session_id,
-            "lang_code": start_word_slider_session_dto.lang_code,
-            "study_mode": StudyModeEnum.SLIDER.value,
-            "started_at": "",
-            "words": words_data,
-            "tags_filter": start_word_slider_session_dto.tags,
-        })
+        return StartWordSliderSessionResultDto.from_primitives(
+            {
+                "session_id": session_id,
+                "lang_code": start_word_slider_session_dto.lang_code,
+                "study_mode": StudyModeEnum.SLIDER.value,
+                "started_at": "",
+                "words": words_data,
+                "tags_filter": start_word_slider_session_dto.tags,
+            }
+        )
+
+    @staticmethod
+    def _build_word_blocks(words_data: list[dict]) -> list[list[dict]]:
+        """
+        Agrupa las palabras en bloques [madre, frase1, frase2, ...].
+
+        Una fila con parent_word_es_id es una frase de ejemplo: se cuelga de su
+        palabra madre si está en el resultado; si no (filtro de tags, límite),
+        forma bloque propio en su posición. Las frases se ordenan por id
+        (orden de creación en la migración).
+        """
+        fetched_ids = {word["word_es_id"] for word in words_data}
+        sentences_by_parent: dict[int, list[dict]] = {}
+        blocks: list[list[dict]] = []
+
+        for word in words_data:
+            parent_id = word.get("parent_word_es_id")
+            if parent_id is not None and parent_id in fetched_ids:
+                sentences_by_parent.setdefault(parent_id, []).append(word)
+
+        for word in words_data:
+            parent_id = word.get("parent_word_es_id")
+            if parent_id is not None and parent_id in fetched_ids:
+                continue
+            sentences = sorted(
+                sentences_by_parent.get(word["word_es_id"], []),
+                key=lambda sentence: sentence["word_es_id"],
+            )
+            blocks.append([word, *sentences])
+
+        return blocks

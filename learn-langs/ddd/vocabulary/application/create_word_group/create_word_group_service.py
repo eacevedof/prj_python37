@@ -10,7 +10,6 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordGroupsReaderSqliteRepository,
     WordGroupsWriterSqliteRepository,
 )
-from ddd.vocabulary.domain.exceptions import VocabularyException
 
 
 @final

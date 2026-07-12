@@ -534,7 +534,7 @@ class ListWordsController(BaseController):
                 if result.success:
                     await self._refresh_images_dialog()
                     # No recargar lista completa para mantener posición de scroll
-                    self._ft_container.show_snackbar(f"Imagen IA generada exitosamente")
+                    self._ft_container.show_snackbar("Imagen IA generada exitosamente")
                 else:
                     self._ft_container.show_snackbar(
                         result.error_message or "Error generando imagen IA",

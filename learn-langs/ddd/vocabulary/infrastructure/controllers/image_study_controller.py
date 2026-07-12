@@ -10,9 +10,17 @@ import pygame
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
+from ddd.vocabulary.application.clear_activity_state import (
+    ClearActivityStateDto,
+    ClearActivityStateService,
+)
 from ddd.vocabulary.application.finish_study_session import (
     FinishStudySessionDto,
     FinishStudySessionService,
+)
+from ddd.vocabulary.application.save_activity_state import (
+    SaveActivityStateDto,
+    SaveActivityStateService,
 )
 from ddd.vocabulary.application.record_answer import (
     RecordAnswerDto,
@@ -27,11 +35,13 @@ from ddd.vocabulary.application.generate_text_audio_ai import (
     GenerateTextAudioAiDto,
     GenerateTextAudioAiService,
 )
-from ddd.vocabulary.domain.enums import LanguageCodeEnum
+from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.image_study_view import ImageStudyView
-from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
+from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import (
+    ImageStudyViewDto,
+)
 
 
 class ImageStudyController(BaseController):
@@ -50,16 +60,18 @@ class ImageStudyController(BaseController):
     # =========================================================================
     def __init__(
         self,
-        lang_code: str,                      # Parámetro de sesión: idioma a practicar
-        tags: list[str],                     # Parámetro de sesión: filtros de tags
-        group_id: int | None,                # Parámetro de sesión: grupo de palabras
+        lang_code: str,  # Parámetro de sesión: idioma a practicar
+        tags: list[str],  # Parámetro de sesión: filtros de tags
+        group_id: int | None,  # Parámetro de sesión: grupo de palabras
         route_on_back: Callable[[], None],  # Callback de navegación (volver al home)
+        start_word_id: int = 0,  # Palabra donde retomar (0 = desde el inicio)
     ):
         # Parámetros de sesión (inyectados desde app_router)
         self._lang_code = lang_code
         self._tags = tags
         self._group_id = group_id
         self._route_on_back = route_on_back
+        self._start_word_id = max(0, start_word_id)
 
         # Estado interno de sesión
         self._session_id: int = 0
@@ -76,20 +88,26 @@ class ImageStudyController(BaseController):
         self._start_session_service = StartImageStudySessionService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
+        self._save_activity_state_service = SaveActivityStateService.get_instance()
+        self._clear_activity_state_service = ClearActivityStateService.get_instance()
         self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
         self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
-        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = (
+            WordGroupsReaderSqliteRepository.get_instance()
+        )
 
         # Vista
-        self._ft_container = ImageStudyView.from_primitives({
-            "on_mount": self._on_mount,
-            "on_answer": self._on_input_answer,
-            "on_skip": self._on_skip_btn_click,
-            "on_timeout": self._on_timer_timeout,
-            "on_back": self._on_back_btn_click,
-            "on_retry_failed": self._on_retry_failed_click,
-            "on_play_audio": self._on_play_audio_click,
-        })
+        self._ft_container = ImageStudyView.from_primitives(
+            {
+                "on_mount": self._on_mount,
+                "on_answer": self._on_input_answer,
+                "on_skip": self._on_skip_btn_click,
+                "on_timeout": self._on_timer_timeout,
+                "on_back": self._on_back_btn_click,
+                "on_retry_failed": self._on_retry_failed_click,
+                "on_play_audio": self._on_play_audio_click,
+            }
+        )
 
     # =========================================================================
     # API PÚBLICA
@@ -114,16 +132,22 @@ class ImageStudyController(BaseController):
         self._logger.log_debug(
             "ImageStudyController",
             f"Starting session with group_id={self._group_id}",
-            {"lang_code": self._lang_code, "tags": self._tags, "group_id": self._group_id},
-        )
-
-        try:
-            start_dto = StartImageStudySessionDto.from_primitives({
+            {
                 "lang_code": self._lang_code,
                 "tags": self._tags,
                 "group_id": self._group_id,
-                "limit": 40,
-            })
+            },
+        )
+
+        try:
+            start_dto = StartImageStudySessionDto.from_primitives(
+                {
+                    "lang_code": self._lang_code,
+                    "tags": self._tags,
+                    "group_id": self._group_id,
+                    "limit": 40,
+                }
+            )
 
             result = await self._start_session_service(start_dto)
 
@@ -133,6 +157,17 @@ class ImageStudyController(BaseController):
             if not self._words:
                 self._ft_container.render(ImageStudyViewDto.no_words())
                 return
+
+            # Retomar sesión: localizar la palabra guardada por id (0 = inicio)
+            self._current_index = next(
+                (
+                    index
+                    for index, word in enumerate(self._words)
+                    if word.word_es_id == self._start_word_id
+                ),
+                0,
+            )
+            self._start_word_id = 0
 
             # Mostrar la fuente del grupo en la cabecera (si no es de migración)
             self._ft_container.render_group_source(await self._get_group_source())
@@ -157,13 +192,15 @@ class ImageStudyController(BaseController):
         response_time = int((time.time() - self._start_time) * 1000)
 
         try:
-            record_dto = RecordAnswerDto.from_primitives({
-                "session_id": self._session_id,
-                "word_es_id": word.word_es_id,
-                "user_input": user_input,
-                "expected_text": word.text_lang,
-                "response_time_ms": response_time,
-            })
+            record_dto = RecordAnswerDto.from_primitives(
+                {
+                    "session_id": self._session_id,
+                    "word_es_id": word.word_es_id,
+                    "user_input": user_input,
+                    "expected_text": word.text_lang,
+                    "response_time_ms": response_time,
+                }
+            )
 
             result = await self._record_answer_service(record_dto)
 
@@ -173,16 +210,18 @@ class ImageStudyController(BaseController):
 
             # Rastrear palabras falladas (cualquier respuesta incorrecta)
             if not result.is_correct:
-                self._failed_words.append({
-                    "word_es_id": word.word_es_id,
-                    "text_es": word.text_es,
-                    "text_lang": word.text_lang,
-                    "word_type": word.word_type,
-                    "pronunciation": word.pronunciation,
-                    "image_file_path": word.image_file_path,
-                    "image_mime_type": word.image_mime_type,
-                    "image_caption": word.image_caption,
-                })
+                self._failed_words.append(
+                    {
+                        "word_es_id": word.word_es_id,
+                        "text_es": word.text_es,
+                        "text_lang": word.text_lang,
+                        "word_type": word.word_type,
+                        "pronunciation": word.pronunciation,
+                        "image_file_path": word.image_file_path,
+                        "image_mime_type": word.image_mime_type,
+                        "image_caption": word.image_caption,
+                    }
+                )
 
             # Mostrar resultado en vista
             dto = ImageStudyViewDto.with_result(
@@ -225,11 +264,13 @@ class ImageStudyController(BaseController):
     async def _async_finish_session(self) -> None:
         """Finaliza la sesión via servicio."""
         try:
-            dto = FinishStudySessionDto.from_primitives({
-                "session_id": self._session_id,
-                "lang_code": self._lang_code,
-                "study_mode": "IMAGE_TYPING",
-            })
+            dto = FinishStudySessionDto.from_primitives(
+                {
+                    "session_id": self._session_id,
+                    "lang_code": self._lang_code,
+                    "study_mode": "IMAGE_TYPING",
+                }
+            )
             await self._finish_session_service(dto)
 
         except Exception as e:
@@ -247,8 +288,7 @@ class ImageStudyController(BaseController):
 
             # Convertir palabras falladas a ImageStudyWordDto
             failed_words_dto = [
-                ImageStudyWordDto.from_primitives(word)
-                for word in self._failed_words
+                ImageStudyWordDto.from_primitives(word) for word in self._failed_words
             ]
 
             # Reiniciar estado con palabras falladas
@@ -260,12 +300,14 @@ class ImageStudyController(BaseController):
             self._is_session_complete = False
 
             # Crear nueva sesión
-            start_dto = StartImageStudySessionDto.from_primitives({
-                "lang_code": self._lang_code,
-                "tags": self._tags,
-                "group_id": self._group_id,
-                "limit": len(failed_words_dto),
-            })
+            start_dto = StartImageStudySessionDto.from_primitives(
+                {
+                    "lang_code": self._lang_code,
+                    "tags": self._tags,
+                    "group_id": self._group_id,
+                    "limit": len(failed_words_dto),
+                }
+            )
             result = await self._start_session_service(start_dto)
             self._session_id = result.session_id
 
@@ -310,11 +352,13 @@ class ImageStudyController(BaseController):
         if not text:
             return
         try:
-            audio_dto = GenerateTextAudioAiDto.from_primitives({
-                "text": text,
-                "lang_code": lang_code,
-                "word_id": word_id,
-            })
+            audio_dto = GenerateTextAudioAiDto.from_primitives(
+                {
+                    "text": text,
+                    "lang_code": lang_code,
+                    "word_id": word_id,
+                }
+            )
             result = await self._generate_text_audio_service(audio_dto)
             if not result.success:
                 self._logger.log_error(
@@ -346,20 +390,26 @@ class ImageStudyController(BaseController):
     # =========================================================================
     def _on_input_answer(self, user_input: str) -> None:
         """Maneja respuesta del usuario en input field (centro en UI)."""
+
         async def _task():
             await self._async_process_answer(user_input)
+
         self._ft_container.page.run_task(_task)
 
     def _on_skip_btn_click(self) -> None:
         """Maneja click en boton skip (boton skip junto al input)."""
+
         async def _task():
             await self._async_process_answer("")
+
         self._ft_container.page.run_task(_task)
 
     def _on_timer_timeout(self) -> None:
         """Maneja timeout del timer (arriba en UI)."""
+
         async def _task():
             await self._async_process_answer("")
+
         self._ft_container.page.run_task(_task)
 
     def _on_back_btn_click(self) -> None:
@@ -373,8 +423,10 @@ class ImageStudyController(BaseController):
 
     def _on_play_audio_click(self) -> None:
         """Maneja click en boton de audio (pista)."""
+
         async def _task():
             await self._async_play_audio()
+
         self._ft_container.page.run_task(_task)
 
     # =========================================================================
@@ -400,6 +452,9 @@ class ImageStudyController(BaseController):
         )
         self._ft_container.render(dto)
 
+        # Guardar el punto actual para poder retomarlo desde el Home
+        self._ft_container.page.run_task(self._async_save_activity_state)
+
         # Reproducir el audio en español en cuanto aparece la palabra
         self._ft_container.page.run_task(self._async_play_source_audio)
 
@@ -407,12 +462,58 @@ class ImageStudyController(BaseController):
         """Muestra pantalla de sesion completada y finaliza via servicio."""
         self._is_session_complete = True
         self._ft_container.page.run_task(self._async_finish_session)
+        self._ft_container.page.run_task(self._async_clear_activity_state)
 
-        self._ft_container.render(ImageStudyViewDto.session_complete(
-            total_score=self._total_score,
-            answers_count=self._answers_count,
-            failed_words=self._failed_words,
-        ))
+        self._ft_container.render(
+            ImageStudyViewDto.session_complete(
+                total_score=self._total_score,
+                answers_count=self._answers_count,
+                failed_words=self._failed_words,
+            )
+        )
+
+    async def _async_save_activity_state(self) -> None:
+        """Guarda el punto actual para poder retomarlo desde el Home (best-effort)."""
+        if self._current_index >= len(self._words):
+            return
+        word = self._words[self._current_index]
+        try:
+            await self._save_activity_state_service(
+                SaveActivityStateDto.from_primitives(
+                    {
+                        "activity": ActivityEnum.IMAGE_STUDY.value,
+                        "lang_code": self._lang_code,
+                        "tags": self._tags,
+                        "group_id": self._group_id,
+                        "word_es_id": word.word_es_id,
+                        "word_index": self._current_index,
+                        "total_words": len(self._words),
+                        "is_random_order": False,
+                    }
+                )
+            )
+        except Exception as e:
+            self._logger.log_error(
+                "ImageStudyController",
+                f"Error guardando estado de actividad: {e}",
+                {"word_es_id": word.word_es_id},
+            )
+
+    async def _async_clear_activity_state(self) -> None:
+        """Borra el estado guardado: la sesión terminó, no hay nada que retomar."""
+        try:
+            await self._clear_activity_state_service(
+                ClearActivityStateDto.from_primitives(
+                    {
+                        "activity": ActivityEnum.IMAGE_STUDY.value,
+                    }
+                )
+            )
+        except Exception as e:
+            self._logger.log_error(
+                "ImageStudyController",
+                f"Error borrando estado de actividad: {e}",
+            )
 
     def _next_word(self) -> None:
         """Avanza a la siguiente palabra."""
@@ -436,8 +537,10 @@ class ImageStudyController(BaseController):
         """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
         if self._group_id is None:
             return ""
-        word_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
-            self._group_id
+        word_group = (
+            await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
+                self._group_id
+            )
         )
         group_source = ((word_group or {}).get("source") or "").strip()
         if group_source.lower() in ("migracion", "migration", "mig"):
