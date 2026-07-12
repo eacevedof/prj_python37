@@ -35,7 +35,12 @@ from ddd.vocabulary.application.start_word_slider_session import (
     StartWordSliderSessionService,
     SliderWordDto,
 )
-from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum, StudyModeEnum
+from ddd.vocabulary.domain.enums import (
+    ActivityEnum,
+    LanguageCodeEnum,
+    SliderSequenceEnum,
+    StudyModeEnum,
+)
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view import WordSliderView
@@ -50,29 +55,16 @@ class WordSliderController(BaseController):
 
     Responsabilidades:
     - Orquestar el flujo temporizado entre Vista y Servicios
-    - Reproducir la secuencia de audio por palabra:
-        1. Pronuncia ES -> espera 10s
-        2. Pronuncia idioma destino -> espera 8s (x3)
-        3. Pronuncia ES + idioma destino (refuerzo final)
-        4. Salta a la siguiente palabra
+    - Reproducir la secuencia de audio por palabra (cadencia en SliderSequenceEnum):
+        1. Pronuncia ES -> espera (15s el primer ciclo, 5s el resto)
+        2. Pronuncia idioma destino -> espera 3s y vuelve al español (x8)
+        3. En el último ciclo, tras el idioma destino espera 20s
+           (mostrando ejemplos si hay) y salta a la siguiente palabra
     - Crear ViewDTOs y pasarlos a la Vista
     """
 
     # Idioma origen del vocabulario (siempre español)
     _SOURCE_LANG_CODE: str = LanguageCodeEnum.ES_ES.value
-
-    # Tiempos de la secuencia (segundos)
-    _ES_WAIT_SECONDS = 10
-    _LANG_WAIT_SECONDS = 8
-    _LANG_REPETITIONS = 3
-
-    # Fase final (refuerzo español + idioma destino)
-    _FINAL_REPETITIONS = 3
-    _FINAL_ES_TO_LANG_WAIT_SECONDS = 3  # tras el español, antes del idioma destino
-    _FINAL_PAUSE_SECONDS = 4  # tras el idioma destino
-
-    # Espera antes de pasar a la siguiente palabra (mostrando ejemplos si hay)
-    _NEXT_WORD_WAIT_SECONDS = 20
 
     # =========================================================================
     # CONSTRUCCIÓN
@@ -252,67 +244,73 @@ class WordSliderController(BaseController):
             self._show_session_complete()
 
     async def _async_play_word(self, word: SliderWordDto, run_token: int) -> None:
-        """Reproduce la secuencia temporizada de una palabra."""
+        """Reproduce la secuencia temporizada de una palabra (SliderSequenceEnum).
+
+        8 ciclos español -> idioma destino: tras el primer español 15s (arranque
+        de la palabra), tras el resto 5s; tras el idioma destino 3s y vuelta al
+        español. En el último ciclo, la espera tras el idioma destino es de 20s
+        mostrando los ejemplos de uso si existen.
+        """
         lang_name = self._lang_display_name()
+        total_repetitions = SliderSequenceEnum.PAIR_REPETITIONS.value
 
-        # Fase 1: Español -> espera 10s
-        self._render_phase(word, show_translation=False, phase_label="🔊 Español")
-        await self._play_text_audio(
-            word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token
-        )
-        if not await self._wait(self._ES_WAIT_SECONDS, run_token):
-            return
-
-        # Fase 2: Idioma destino -> espera 8s (x3)
-        for repetition in range(self._LANG_REPETITIONS):
+        for repetition in range(total_repetitions):
             if self._is_run_cancelled(run_token):
                 return
-            self._render_phase(
-                word,
-                show_translation=True,
-                phase_label=f"🔊 {lang_name} ({repetition + 1}/{self._LANG_REPETITIONS})",
-            )
-            await self._play_text_audio(
-                word.text_lang, self._lang_code, word.word_es_id, run_token
-            )
-            if not await self._wait(self._LANG_WAIT_SECONDS, run_token):
-                return
 
-        # Fase 3: Español + idioma destino (refuerzo final, x3)
-        for repetition in range(self._FINAL_REPETITIONS):
-            if self._is_run_cancelled(run_token):
-                return
+            # Español (en el primer ciclo sin revelar aún la traducción y con
+            # espera larga para asimilar la palabra)
             self._render_phase(
                 word,
-                show_translation=True,
-                phase_label=f"🔊 Español + {lang_name} ({repetition + 1}/{self._FINAL_REPETITIONS})",
+                show_translation=repetition > 0,
+                phase_label=f"🔊 Español ({repetition + 1}/{total_repetitions})",
             )
             await self._play_text_audio(
                 word.text_es, self._SOURCE_LANG_CODE, word.word_es_id, run_token
             )
-            # Tras el español, esperar antes de pronunciar el idioma destino
-            if not await self._wait(self._FINAL_ES_TO_LANG_WAIT_SECONDS, run_token):
-                return
-            await self._play_text_audio(
-                word.text_lang, self._lang_code, word.word_es_id, run_token
+            es_wait_seconds = (
+                SliderSequenceEnum.FIRST_ES_WAIT_SECONDS.value
+                if repetition == 0
+                else SliderSequenceEnum.ES_TO_LANG_WAIT_SECONDS.value
             )
-            # Tras el idioma destino, pausa antes de la siguiente repetición / palabra
-            if not await self._wait(self._FINAL_PAUSE_SECONDS, run_token):
+            if not await self._wait(es_wait_seconds, run_token):
                 return
 
-        # Fase 4: espera 20s antes de la siguiente palabra, mostrando los
-        # ejemplos de uso si existen
-        if self._is_run_cancelled(run_token) or self._navigation_request is not None:
-            return
-        if word.examples_lang:
+            # Idioma destino
             self._render_phase(
                 word,
                 show_translation=True,
-                phase_label="📚 Ejemplos de uso",
-                show_examples=True,
+                phase_label=f"🔊 {lang_name} ({repetition + 1}/{total_repetitions})",
             )
-        if not await self._wait(self._NEXT_WORD_WAIT_SECONDS, run_token):
-            return
+            await self._play_text_audio(
+                word.text_lang, self._lang_code, word.word_es_id, run_token
+            )
+
+            is_last_repetition = repetition == total_repetitions - 1
+            if not is_last_repetition:
+                if not await self._wait(
+                    SliderSequenceEnum.LANG_TO_ES_WAIT_SECONDS.value, run_token
+                ):
+                    return
+                continue
+
+            # Último ciclo: espera larga mostrando los ejemplos de uso si existen
+            if (
+                self._is_run_cancelled(run_token)
+                or self._navigation_request is not None
+            ):
+                return
+            if word.examples_lang:
+                self._render_phase(
+                    word,
+                    show_translation=True,
+                    phase_label="📚 Ejemplos de uso",
+                    show_examples=True,
+                )
+            if not await self._wait(
+                SliderSequenceEnum.NEXT_WORD_WAIT_SECONDS.value, run_token
+            ):
+                return
 
     async def _async_finish_session(self) -> None:
         """Finaliza la sesión via servicio y restaura el modo de energía."""
