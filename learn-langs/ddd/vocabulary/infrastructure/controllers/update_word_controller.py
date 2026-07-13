@@ -346,6 +346,9 @@ class UpdateWordController(BaseController):
         self._set_audio_row(lang_code, is_generating=True)
         self._ft_container.render_audio_rows(self._audio_rows)
 
+        # Liberar el reproductor antes de que el servicio borre el definitivo (WinError 5).
+        await asyncio.to_thread(self._release_audio_player)
+
         result = await self._regenerate_word_audio_service(
             RegenerateWordAudioDto.from_primitives({
                 "word_id": self._word_id,
@@ -368,6 +371,9 @@ class UpdateWordController(BaseController):
 
     async def _async_accept_audio(self, lang_code: str) -> None:
         """Acepta la propuesta temporal via servicio."""
+        # Liberar el reproductor: si el mp3 sigue cargado en pygame, en Windows el
+        # rename del temporal al definitivo falla con WinError 5 (Acceso denegado).
+        await asyncio.to_thread(self._release_audio_player)
         result = await self._accept_word_audio_service(
             AcceptWordAudioDto.from_primitives({
                 "word_id": self._word_id,
@@ -385,6 +391,8 @@ class UpdateWordController(BaseController):
 
     async def _async_discard_audio(self, lang_code: str) -> None:
         """Descarta la propuesta temporal via servicio."""
+        # Liberar el reproductor antes de borrar el temporal (evita WinError 5 en Windows).
+        await asyncio.to_thread(self._release_audio_player)
         result = await self._discard_word_audio_service(
             DiscardWordAudioDto.from_primitives({
                 "word_id": self._word_id,
@@ -475,11 +483,28 @@ class UpdateWordController(BaseController):
 
     @staticmethod
     def _play_audio_file(audio_path: str) -> None:
-        """Reproduce un mp3 de forma sincrónica con pygame (en thread aparte)."""
+        """Reproduce un mp3 de forma sincrónica con pygame (en thread aparte).
+
+        Al terminar libera el fichero con unload(): en Windows pygame mantiene el
+        handle del mp3 abierto tras load(), y eso impide luego renombrarlo o borrarlo
+        (aceptar/regenerar/descartar audio) provocando WinError 5.
+        """
         if not pygame.mixer.get_init():
             pygame.mixer.init()
         pygame.mixer.music.load(str(Path(audio_path).resolve()))
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
+        pygame.mixer.music.unload()
+
+    @staticmethod
+    def _release_audio_player() -> None:
+        """Detiene y descarga el reproductor para liberar el handle del mp3.
+
+        Necesario en Windows antes de renombrar/borrar el fichero de audio: si pygame
+        lo tiene cargado, el sistema deniega la operación (WinError 5 - Acceso denegado).
+        """
+        if pygame.mixer.get_init():
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
         pygame.mixer.music.unload()
