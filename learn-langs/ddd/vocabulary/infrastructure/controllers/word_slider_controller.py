@@ -162,7 +162,8 @@ class WordSliderController(BaseController):
             result = await self._start_session_service(start_dto)
 
             self._session_id = result.session_id
-            self._words = list(result.words)
+            # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
+            self._words = [SliderWordDto.from_primitives(w) for w in result.words]
             self._current_index = 0
             self._is_stopped = False
             self._is_paused = False

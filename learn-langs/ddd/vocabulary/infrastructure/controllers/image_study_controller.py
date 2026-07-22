@@ -35,7 +35,12 @@ from ddd.vocabulary.application.generate_text_audio_ai import (
     GenerateTextAudioAiDto,
     GenerateTextAudioAiService,
 )
-from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum
+from ddd.vocabulary.domain.enums import (
+    ActivityEnum,
+    ImageStudySequenceEnum,
+    LanguageCodeEnum,
+    SliderSequenceEnum,
+)
 from ddd.vocabulary.domain.services import DutchToSpanishPhoneticService
 from ddd.vocabulary.infrastructure.repositories import WordGroupsReaderSqliteRepository
 from ddd.vocabulary.infrastructure.ui.views.image_study_view import ImageStudyView
@@ -152,7 +157,10 @@ class ImageStudyController(BaseController):
             result = await self._start_session_service(start_dto)
 
             self._session_id = result.session_id
-            self._words = list(result.words)
+            # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
+            self._words = [
+                ImageStudyWordDto.from_primitives(w) for w in result.words
+            ]
 
             if not self._words:
                 self._ft_container.render(ImageStudyViewDto.no_words())
@@ -240,13 +248,22 @@ class ImageStudyController(BaseController):
             )
             self._ft_container.render(dto)
 
-            # Al revisar: reproducir el audio del idioma destino y esperar 3s
-            await self._play_text_audio(
-                word.text_lang,
-                self._lang_code,
-                word.word_es_id,
-            )
-            await asyncio.sleep(3)
+            # Como en el aprendizaje: al fallar se pronuncia el neerlandés y se
+            # deja tiempo para ver la corrección; al acertar, solo una breve
+            # confirmación antes de pasar a la siguiente palabra.
+            if not result.is_correct:
+                await self._play_text_audio(
+                    word.text_lang,
+                    self._lang_code,
+                    word.word_es_id,
+                )
+                await asyncio.sleep(
+                    ImageStudySequenceEnum.WRONG_REVIEW_WAIT_SECONDS.value
+                )
+            else:
+                await asyncio.sleep(
+                    ImageStudySequenceEnum.CORRECT_REVIEW_WAIT_SECONDS.value
+                )
             self._next_word()
 
         except Exception as e:
@@ -449,6 +466,7 @@ class ImageStudyController(BaseController):
             current_word=self._word_to_dict(word),
             total_score=self._total_score,
             answers_count=self._answers_count,
+            timer_seconds=SliderSequenceEnum.FIRST_ES_WAIT_SECONDS.value,
         )
         self._ft_container.render(dto)
 

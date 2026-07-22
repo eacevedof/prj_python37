@@ -207,7 +207,7 @@ class ImageStudyView(ft.Container):
         )
 
         self._ft_timer = TimerComp(
-            seconds=20,
+            seconds=dto.timer_seconds,
             on_timeout=self._route_on_timeout,
             auto_start=True,
         )

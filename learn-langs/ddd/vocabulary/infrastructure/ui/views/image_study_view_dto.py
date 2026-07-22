@@ -17,6 +17,9 @@ class ImageStudyViewDto:
     # Palabra actual con imagen (inmutable)
     current_word: dict[str, Any] | None = None
 
+    # Duración del temporizador de respuesta en segundos (igual que el aprendizaje)
+    timer_seconds: int = 20
+
     # Stats acumulados
     total_score: float = 0.0
     answers_count: int = 0
@@ -54,6 +57,7 @@ class ImageStudyViewDto:
             total_words=int(primitives.get("total_words", 0)),
             current_index=int(primitives.get("current_index", 0)),
             current_word=dict(current_word) if current_word else None,
+            timer_seconds=int(primitives.get("timer_seconds", 20)),
             total_score=total_score,
             answers_count=answers_count,
             avg_score_percent=avg_score_percent,
@@ -96,6 +100,7 @@ class ImageStudyViewDto:
         current_word: dict[str, Any],
         total_score: float,
         answers_count: int,
+        timer_seconds: int = 20,
     ) -> Self:
         """DTO para estado de estudio activo con imagen."""
         return cls.from_primitives({
@@ -106,6 +111,7 @@ class ImageStudyViewDto:
             "current_word": current_word,
             "total_score": total_score,
             "answers_count": answers_count,
+            "timer_seconds": timer_seconds,
             "is_loading": False,
         })
 

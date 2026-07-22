@@ -6,8 +6,8 @@ import flet as ft
 from typing import Callable, Any, Self
 
 from ddd.vocabulary.domain.enums import WordTypeEnum
-from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
-    ListWordsViewDto,
+from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import ListWordsViewDto
+from ddd.vocabulary.infrastructure.ui.views.word_list_item_view_dto import (
     WordListItemViewDto,
 )
 
@@ -335,7 +335,9 @@ class ListWordsView(ft.Container):
             )
             return
 
-        for word in list_words_view_dto.words:
+        # dto.words son primitivos (dict); rehidratamos a DTO tipado para renderizar
+        for word_primitives in list_words_view_dto.words:
+            word = WordListItemViewDto.from_primitives(word_primitives)
             tile = self._build_word_tile(word)
             self._ft_words_list.controls.append(tile)
 

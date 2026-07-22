@@ -3,55 +3,20 @@
 from dataclasses import dataclass, field
 from typing import Self, Any
 
-from ddd.vocabulary.domain.enums import LanguageCodeEnum, WordTypeEnum
-
-
-@dataclass(frozen=True, slots=True)
-class WordListItemViewDto:
-    """DTO para un item de palabra en la lista de la vista."""
-
-    id: int = 0
-    text: str = ""
-    word_type: str = WordTypeEnum.WORD.value
-    notes: str = ""
-    created_at: str = ""
-    image_count: int = 0
-    last_image_path: str = ""
-    tags: tuple[str, ...] = field(default_factory=tuple)
-    groups: tuple[str, ...] = field(default_factory=tuple)
-    translation_nl: str = ""
-
-    @classmethod
-    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        translations = primitives.get("translations", {}) or {}
-        tags_list = primitives.get("tags", []) or []
-        groups_list = primitives.get("groups", []) or []
-
-        # Filtrar grupos, excluyendo "generic"
-        non_generic_groups = [
-            g for g in groups_list
-            if isinstance(g, str) and g.lower() != "generic"
-        ]
-
-        return cls(
-            id=int(primitives.get("id", 0)),
-            text=str(primitives.get("text", "")),
-            word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
-            notes=str(primitives.get("notes", "") or ""),
-            created_at=str(primitives.get("created_at", "") or "")[:10],
-            image_count=int(primitives.get("image_count", 0)),
-            last_image_path=str(primitives.get("last_image_path", "") or ""),
-            tags=tuple(tags_list),
-            groups=tuple(non_generic_groups),
-            translation_nl=translations.get(LanguageCodeEnum.NL_NL.value, ""),
-        )
+from ddd.vocabulary.infrastructure.ui.views.word_list_item_view_dto import (
+    WordListItemViewDto,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class ListWordsViewDto:
-    """DTO inmutable que el Controller pasa a la Vista."""
+    """DTO inmutable que el Controller pasa a la Vista.
 
-    words: tuple[WordListItemViewDto, ...] = field(default_factory=tuple)
+    `words` contiene solo primitivos (tuple[dict]); la vista rehidrata con
+    WordListItemViewDto.from_primitives(w) para renderizar cada item.
+    """
+
+    words: tuple[dict, ...] = field(default_factory=tuple)
     total_count: int = 0
     has_more: bool = False
     page: int = 0
@@ -63,7 +28,8 @@ class ListWordsViewDto:
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         words_raw = primitives.get("words", []) or []
         words = tuple(
-            w if isinstance(w, WordListItemViewDto) else WordListItemViewDto.from_primitives(w)
+            w.to_dict() if isinstance(w, WordListItemViewDto)
+            else WordListItemViewDto.from_primitives(w).to_dict()
             for w in words_raw
         )
         return cls(
@@ -84,7 +50,7 @@ class ListWordsViewDto:
     @classmethod
     def ok(
         cls,
-        words: list[WordListItemViewDto],
+        words: list[dict],
         total_count: int,
         has_more: bool,
         page: int = 0,

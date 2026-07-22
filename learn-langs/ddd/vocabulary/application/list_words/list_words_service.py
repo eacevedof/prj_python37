@@ -3,9 +3,9 @@
 from typing import final, Self
 
 from ddd.vocabulary.application.list_words.list_words_dto import ListWordsDto
+from ddd.vocabulary.application.list_words.word_item_dto import WordItemDto
 from ddd.vocabulary.application.list_words.list_words_result_dto import (
     ListWordsResultDto,
-    WordItemDto,
 )
 from ddd.vocabulary.infrastructure.repositories import (
     WordsEsReaderSqliteRepository,

@@ -7,7 +7,11 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
-from ddd.vocabulary.application.list_words import ListWordsDto, ListWordsService
+from ddd.vocabulary.application.list_words import (
+    ListWordsDto,
+    ListWordsService,
+    WordItemDto,
+)
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
 from ddd.vocabulary.application.get_word_images import (
     GetWordImagesDto,
@@ -30,8 +34,8 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordGroupsReaderSqliteRepository,
 )
 from ddd.vocabulary.infrastructure.ui.views.list_words_view import ListWordsView
-from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import (
-    ListWordsViewDto,
+from ddd.vocabulary.infrastructure.ui.views.list_words_view_dto import ListWordsViewDto
+from ddd.vocabulary.infrastructure.ui.views.word_list_item_view_dto import (
     WordListItemViewDto,
 )
 
@@ -134,9 +138,9 @@ class ListWordsController(BaseController):
                 })
             )
 
-            # Cargar palabras
+            # Cargar palabras (result.words son primitivos; rehidratamos a DTO tipado)
             words_data = []
-            for w in result.words:
+            for w in [WordItemDto.from_primitives(word) for word in result.words]:
                 word_data = {
                     "id": w.id,
                     "text": w.text,
@@ -167,7 +171,9 @@ class ListWordsController(BaseController):
             self._words = [WordListItemViewDto.from_primitives(w) for w in words_data]
 
             view_dto = ListWordsViewDto.ok(
-                words=self._words,
+                # ViewDto expone primitivos; self._words se mantiene tipado para
+                # la lógica interna del controller (diálogo de imágenes, etc.)
+                words=[w.to_dict() for w in self._words],
                 total_count=result.total_count,
                 has_more=result.has_more,
                 page=self._current_page,
