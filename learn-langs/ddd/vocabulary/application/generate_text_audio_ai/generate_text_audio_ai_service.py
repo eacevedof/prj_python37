@@ -82,49 +82,43 @@ class GenerateTextAudioAiService:
             )
 
         # Seleccionar voz (lógica de dominio) y generar audio con tts-1
-        try:
-            voice_used = generate_text_audio_ai_dto.voice or TtsVoiceSelectorService.select(lang_code)
+        voice_used = generate_text_audio_ai_dto.voice or TtsVoiceSelectorService.select(lang_code)
 
-            speed = generate_text_audio_ai_dto.speed
-            if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
-                speed = 1.0
+        speed = generate_text_audio_ai_dto.speed
+        if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
+            speed = 1.0
 
-            # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
-            accent = TtsAccentEnum.for_lang(lang_code)
-            instructions = accent.instructions if accent else ""
-            if instructions:
-                model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
-            else:
-                model_used = OpenaiTtsModelEnum.TTS_1.value
+        # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
+        accent = TtsAccentEnum.for_lang(lang_code)
+        instructions = accent.instructions if accent else ""
+        if instructions:
+            model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
+        else:
+            model_used = OpenaiTtsModelEnum.TTS_1.value
 
-            # En thread: la llamada a la API es sincrónica y bloquearía el event
-            # loop de la UI (clics de pausa/navegación sin respuesta)
-            audio_bytes = await asyncio.to_thread(
-                self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text,
-                model=model_used,
-                voice=voice_used,
-                input_text=text_to_generate,
-                speed=speed,
-                response_format=OpenaiTtsFormatEnum.MP3,
-                instructions=instructions,
-            )
+        # En thread: la llamada a la API es sincrónica y bloquearía el event
+        # loop de la UI (clics de pausa/navegación sin respuesta)
+        audio_bytes = await asyncio.to_thread(
+            self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text,
+            model=model_used,
+            voice=voice_used,
+            input_text=text_to_generate,
+            speed=speed,
+            response_format=OpenaiTtsFormatEnum.MP3,
+            instructions=instructions,
+        )
 
-            audio_dir.mkdir(parents=True, exist_ok=True)
-            audio_path.write_bytes(audio_bytes)
+        audio_dir.mkdir(parents=True, exist_ok=True)
+        audio_path.write_bytes(audio_bytes)
 
-            self._logger.log_info(
-                "GenerateTextAudioAiService",
-                f"Audio generado: {audio_path} con voz '{voice_used}'"
-            )
+        self._logger.log_info(
+            "GenerateTextAudioAiService",
+            f"Audio generado: {audio_path} con voz '{voice_used}'"
+        )
 
-            return GenerateTextAudioAiResultDto.ok(
-                audio_path=str(audio_path),
-                voice_used=voice_used,
-                model_used=model_used,
-                text_generated=text_to_generate,
-            )
-
-        except Exception as e:
-            error_msg = f"Error al generar audio: {str(e)}"
-            self._logger.log_error("GenerateTextAudioAiService", error_msg)
-            return GenerateTextAudioAiResultDto.error(error_msg)
+        return GenerateTextAudioAiResultDto.ok(
+            audio_path=str(audio_path),
+            voice_used=voice_used,
+            model_used=model_used,
+            text_generated=text_to_generate,
+        )

@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import final, Self
 
-from ddd.shared.infrastructure.components.logger import Logger
 from ddd.vocabulary.application.add_word_image.add_word_image_dto import (
     AddWordImageDto,
 )
@@ -22,8 +21,7 @@ class AddWordImageService:
     _instance: "AddWordImageService | None" = None
 
     def __init__(self) -> None:
-        self._logger = Logger.get_instance()
-        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -41,23 +39,14 @@ class AddWordImageService:
         Returns:
             AddWordImageResultDto con el resultado.
         """
-        try:
-            if dto.source_type == "URL" and dto.url:
-                return await self._add_from_url(dto)
-            elif dto.source_type == "LOCAL" and dto.file_path:
-                return await self._add_from_file(dto)
-            else:
-                return AddWordImageResultDto.error(
-                    "Debe proporcionar URL o archivo"
-                )
-
-        except Exception as e:
-            self._logger.log_error(
-                "AddWordImageService",
-                f"Error agregando imagen: {e}",
-                {"word_id": dto.word_id, "source_type": dto.source_type},
+        if dto.source_type == "URL" and dto.url:
+            return await self._add_from_url(dto)
+        elif dto.source_type == "LOCAL" and dto.file_path:
+            return await self._add_from_file(dto)
+        else:
+            return AddWordImageResultDto.error(
+                "Debe proporcionar URL o archivo"
             )
-            return AddWordImageResultDto.error(str(e))
 
     async def _add_from_url(self, dto: AddWordImageDto) -> AddWordImageResultDto:
         """Agrega imagen desde URL."""

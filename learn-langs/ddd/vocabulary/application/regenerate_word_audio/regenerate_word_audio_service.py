@@ -71,51 +71,45 @@ class RegenerateWordAudioService:
         if not text_to_generate:
             return RegenerateWordAudioResultDto.error("No hay texto para generar audio")
 
-        try:
-            voice_used = regenerate_word_audio_dto.voice or TtsVoiceSelectorService.select(lang_code)
+        voice_used = regenerate_word_audio_dto.voice or TtsVoiceSelectorService.select(lang_code)
 
-            speed = regenerate_word_audio_dto.speed
-            if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
-                speed = 1.0
+        speed = regenerate_word_audio_dto.speed
+        if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
+            speed = 1.0
 
-            # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
-            accent = TtsAccentEnum.for_lang(lang_code)
-            instructions = accent.instructions if accent else ""
-            if instructions:
-                model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
-            else:
-                model_used = OpenaiTtsModelEnum.TTS_1.value
+        # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
+        accent = TtsAccentEnum.for_lang(lang_code)
+        instructions = accent.instructions if accent else ""
+        if instructions:
+            model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
+        else:
+            model_used = OpenaiTtsModelEnum.TTS_1.value
 
-            # En thread: la llamada a la API es sincrónica y bloquearía el event
-            # loop de la UI mientras se genera la propuesta
-            audio_bytes = await asyncio.to_thread(
-                self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text,
-                model=model_used,
-                voice=voice_used,
-                input_text=text_to_generate,
-                speed=speed,
-                response_format=OpenaiTtsFormatEnum.MP3,
-                instructions=instructions,
-            )
+        # En thread: la llamada a la API es sincrónica y bloquearía el event
+        # loop de la UI mientras se genera la propuesta
+        audio_bytes = await asyncio.to_thread(
+            self._gpt_tts_1_reader_api_repository.get_audio_bytes_from_text,
+            model=model_used,
+            voice=voice_used,
+            input_text=text_to_generate,
+            speed=speed,
+            response_format=OpenaiTtsFormatEnum.MP3,
+            instructions=instructions,
+        )
 
-            # Solo tras generar con éxito: borrar el definitivo y guardar la propuesta
-            self._word_audios_writer_file_repository.delete_audio(word_id, lang_code)
-            temp_audio_path = self._word_audios_writer_file_repository.save_temp_audio(
-                word_id, lang_code, audio_bytes
-            )
+        # Solo tras generar con éxito: borrar el definitivo y guardar la propuesta
+        self._word_audios_writer_file_repository.delete_audio(word_id, lang_code)
+        temp_audio_path = self._word_audios_writer_file_repository.save_temp_audio(
+            word_id, lang_code, audio_bytes
+        )
 
-            self._logger.log_info(
-                "RegenerateWordAudioService",
-                f"Audio regenerado (temporal): {temp_audio_path} con voz '{voice_used}'"
-            )
+        self._logger.log_info(
+            "RegenerateWordAudioService",
+            f"Audio regenerado (temporal): {temp_audio_path} con voz '{voice_used}'"
+        )
 
-            return RegenerateWordAudioResultDto.ok(
-                temp_audio_path=temp_audio_path,
-                voice_used=voice_used,
-                model_used=model_used,
-            )
-
-        except Exception as e:
-            error_msg = f"Error al regenerar audio: {str(e)}"
-            self._logger.log_error("RegenerateWordAudioService", error_msg)
-            return RegenerateWordAudioResultDto.error(error_msg)
+        return RegenerateWordAudioResultDto.ok(
+            temp_audio_path=temp_audio_path,
+            voice_used=voice_used,
+            model_used=model_used,
+        )

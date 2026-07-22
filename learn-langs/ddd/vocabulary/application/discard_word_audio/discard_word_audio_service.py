@@ -45,17 +45,11 @@ class DiscardWordAudioService:
         if not lang_code:
             return DiscardWordAudioResultDto.error("Se requiere lang_code")
 
-        try:
-            self._word_audios_writer_file_repository.delete_temp_audio(word_id, lang_code)
+        self._word_audios_writer_file_repository.delete_temp_audio(word_id, lang_code)
 
-            self._logger.log_info(
-                "DiscardWordAudioService",
-                f"Propuesta de audio descartada: palabra #{word_id} ({lang_code})"
-            )
+        self._logger.log_info(
+            "DiscardWordAudioService",
+            f"Propuesta de audio descartada: palabra #{word_id} ({lang_code})"
+        )
 
-            return DiscardWordAudioResultDto.ok()
-
-        except Exception as e:
-            error_msg = f"Error al descartar audio: {str(e)}"
-            self._logger.log_error("DiscardWordAudioService", error_msg)
-            return DiscardWordAudioResultDto.error(error_msg)
+        return DiscardWordAudioResultDto.ok()

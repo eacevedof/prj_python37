@@ -50,19 +50,13 @@ class AcceptWordAudioService:
                 f"No hay audio temporal que aceptar para la palabra #{word_id} ({lang_code})"
             )
 
-        try:
-            audio_path = self._word_audios_writer_file_repository.promote_temp_audio(
-                word_id, lang_code
-            )
+        audio_path = self._word_audios_writer_file_repository.promote_temp_audio(
+            word_id, lang_code
+        )
 
-            self._logger.log_info(
-                "AcceptWordAudioService",
-                f"Audio aceptado como definitivo: {audio_path}"
-            )
+        self._logger.log_info(
+            "AcceptWordAudioService",
+            f"Audio aceptado como definitivo: {audio_path}"
+        )
 
-            return AcceptWordAudioResultDto.ok(audio_path=audio_path)
-
-        except Exception as e:
-            error_msg = f"Error al aceptar audio: {str(e)}"
-            self._logger.log_error("AcceptWordAudioService", error_msg)
-            return AcceptWordAudioResultDto.error(error_msg)
+        return AcceptWordAudioResultDto.ok(audio_path=audio_path)

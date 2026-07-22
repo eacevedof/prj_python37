@@ -346,67 +346,96 @@ class UpdateWordController(BaseController):
         self._set_audio_row(lang_code, is_generating=True)
         self._ft_container.render_audio_rows(self._audio_rows)
 
-        # Liberar el reproductor antes de que el servicio borre el definitivo (WinError 5).
-        await asyncio.to_thread(self._release_audio_player)
+        try:
+            # Liberar el reproductor antes de que el servicio borre el definitivo (WinError 5).
+            await asyncio.to_thread(self._release_audio_player)
 
-        result = await self._regenerate_word_audio_service(
-            RegenerateWordAudioDto.from_primitives({
-                "word_id": self._word_id,
-                "lang_code": lang_code,
-                "text": text_to_speak,
-            })
-        )
+            result = await self._regenerate_word_audio_service(
+                RegenerateWordAudioDto.from_primitives({
+                    "word_id": self._word_id,
+                    "lang_code": lang_code,
+                    "text": text_to_speak,
+                })
+            )
 
-        if not result.success:
+            if not result.success:
+                self._set_audio_row(lang_code, is_generating=False)
+                self._ft_container.render_audio_rows(self._audio_rows)
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                return
+
+            self._set_audio_row(lang_code, is_generating=False, has_temp=True)
+            self._ft_container.render_audio_rows(self._audio_rows)
+
+            # Reproducir la propuesta para comprobarla de inmediato
+            await asyncio.to_thread(self._play_audio_file, result.temp_audio_path)
+
+        except Exception as e:
+            self._logger.log_error(
+                "UpdateWordController",
+                f"Error regenerando audio: {e}",
+                {"word_id": self._word_id, "lang_code": lang_code},
+            )
             self._set_audio_row(lang_code, is_generating=False)
             self._ft_container.render_audio_rows(self._audio_rows)
-            self._ft_container.show_snackbar(result.error_message or "Error", error=True)
-            return
-
-        self._set_audio_row(lang_code, is_generating=False, has_temp=True)
-        self._ft_container.render_audio_rows(self._audio_rows)
-
-        # Reproducir la propuesta para comprobarla de inmediato
-        await asyncio.to_thread(self._play_audio_file, result.temp_audio_path)
+            self._ft_container.show_snackbar(f"Error regenerando audio: {e}", error=True)
 
     async def _async_accept_audio(self, lang_code: str) -> None:
         """Acepta la propuesta temporal via servicio."""
-        # Liberar el reproductor: si el mp3 sigue cargado en pygame, en Windows el
-        # rename del temporal al definitivo falla con WinError 5 (Acceso denegado).
-        await asyncio.to_thread(self._release_audio_player)
-        result = await self._accept_word_audio_service(
-            AcceptWordAudioDto.from_primitives({
-                "word_id": self._word_id,
-                "lang_code": lang_code,
-            })
-        )
+        try:
+            # Liberar el reproductor: si el mp3 sigue cargado en pygame, en Windows el
+            # rename del temporal al definitivo falla con WinError 5 (Acceso denegado).
+            await asyncio.to_thread(self._release_audio_player)
+            result = await self._accept_word_audio_service(
+                AcceptWordAudioDto.from_primitives({
+                    "word_id": self._word_id,
+                    "lang_code": lang_code,
+                })
+            )
 
-        if not result.success:
-            self._ft_container.show_snackbar(result.error_message or "Error", error=True)
-            return
+            if not result.success:
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                return
 
-        self._set_audio_row(lang_code, has_temp=False)
-        self._ft_container.render_audio_rows(self._audio_rows)
-        self._ft_container.show_snackbar("Audio aceptado como definitivo")
+            self._set_audio_row(lang_code, has_temp=False)
+            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.show_snackbar("Audio aceptado como definitivo")
+
+        except Exception as e:
+            self._logger.log_error(
+                "UpdateWordController",
+                f"Error aceptando audio: {e}",
+                {"word_id": self._word_id, "lang_code": lang_code},
+            )
+            self._ft_container.show_snackbar(f"Error aceptando audio: {e}", error=True)
 
     async def _async_discard_audio(self, lang_code: str) -> None:
         """Descarta la propuesta temporal via servicio."""
-        # Liberar el reproductor antes de borrar el temporal (evita WinError 5 en Windows).
-        await asyncio.to_thread(self._release_audio_player)
-        result = await self._discard_word_audio_service(
-            DiscardWordAudioDto.from_primitives({
-                "word_id": self._word_id,
-                "lang_code": lang_code,
-            })
-        )
+        try:
+            # Liberar el reproductor antes de borrar el temporal (evita WinError 5 en Windows).
+            await asyncio.to_thread(self._release_audio_player)
+            result = await self._discard_word_audio_service(
+                DiscardWordAudioDto.from_primitives({
+                    "word_id": self._word_id,
+                    "lang_code": lang_code,
+                })
+            )
 
-        if not result.success:
-            self._ft_container.show_snackbar(result.error_message or "Error", error=True)
-            return
+            if not result.success:
+                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                return
 
-        self._set_audio_row(lang_code, has_temp=False)
-        self._ft_container.render_audio_rows(self._audio_rows)
-        self._ft_container.show_snackbar("Propuesta de audio descartada")
+            self._set_audio_row(lang_code, has_temp=False)
+            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.show_snackbar("Propuesta de audio descartada")
+
+        except Exception as e:
+            self._logger.log_error(
+                "UpdateWordController",
+                f"Error descartando audio: {e}",
+                {"word_id": self._word_id, "lang_code": lang_code},
+            )
+            self._ft_container.show_snackbar(f"Error descartando audio: {e}", error=True)
 
     # =========================================================================
     # EVENT HANDLERS - IMAGEN IA (genera y sobrescribe la última)
