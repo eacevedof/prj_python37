@@ -466,7 +466,7 @@ class ImageStudyController(BaseController):
             current_word=self._word_to_dict(word),
             total_score=self._total_score,
             answers_count=self._answers_count,
-            timer_seconds=SliderSequenceEnum.FIRST_ES_WAIT_SECONDS.value,
+            timer_seconds=self._get_timer_seconds(word),
         )
         self._ft_container.render(dto)
 
@@ -550,6 +550,17 @@ class ImageStudyController(BaseController):
             "image_mime_type": word.image_mime_type,
             "image_caption": word.image_caption,
         }
+
+    def _get_timer_seconds(self, word: ImageStudyWordDto) -> int:
+        """Tiempo para contestar: más para frases (>2 palabras) que para una palabra."""
+        if self._has_more_than_two_words(word.text_lang):
+            return ImageStudySequenceEnum.MULTI_WORD_ANSWER_TIMER_SECONDS.value
+        return SliderSequenceEnum.FIRST_ES_WAIT_SECONDS.value
+
+    @staticmethod
+    def _has_more_than_two_words(text: str) -> bool:
+        """True si el texto tiene más de dos palabras (frase)."""
+        return len(text.split()) > 2
 
     async def _get_group_source(self) -> str:
         """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""

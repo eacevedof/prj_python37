@@ -33,8 +33,8 @@ class ImageStudyWordDto:
             pronunciation=str(primitives.get("pronunciation", "") or ""),
             repetitions=int(primitives.get("repetitions", 0)),
             easiness_factor=float(primitives.get("easiness_factor", 2.5)),
-            image_file_path=str(primitives.get("image_file_path", "")),
-            image_mime_type=str(primitives.get("image_mime_type", "")),
+            image_file_path=str(primitives.get("image_file_path", "") or ""),
+            image_mime_type=str(primitives.get("image_mime_type", "") or ""),
             image_caption=str(primitives.get("image_caption", "") or ""),
         )
 

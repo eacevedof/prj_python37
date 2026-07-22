@@ -24,6 +24,8 @@ class ImageFlashcardComp(ft.Container):
         self.show_translation = show_translation
         self.word_id = word_id
         self._card_content: ft.Column | None = None
+        # Nº de controles del prompt base (imagen+caption o texto): reveal trunca hasta aquí
+        self._base_control_count = 0
 
         self._build_ui()
 
@@ -31,35 +33,60 @@ class ImageFlashcardComp(ft.Container):
         """Construye la UI del componente."""
         # Construir ruta completa de imagen
         full_image_path = self._get_full_image_path()
+        has_image = bool(full_image_path) and Path(full_image_path).exists()
 
-        # Imagen principal
-        image_widget = ft.Image(
-            src=full_image_path,
-            width=250,
-            height=250,
-            fit=ft.BoxFit.CONTAIN,
-            border_radius=8,
-        )
-
-        # Contenido de la tarjeta
-        card_controls = [
-            ft.Container(
-                content=image_widget,
-                alignment=ft.Alignment.CENTER,
-            ),
-        ]
-
-        # Caption si existe
-        if self.image_caption:
-            card_controls.append(
-                ft.Text(
-                    self.image_caption,
-                    size=12,
-                    italic=True,
-                    color=ft.Colors.GREY_600,
-                    text_align=ft.TextAlign.CENTER,
+        # Zona visual: imagen si existe; si no, el texto español como prompt
+        # (la imagen es OPCIONAL en el examen).
+        if has_image:
+            card_controls = [
+                ft.Container(
+                    content=ft.Image(
+                        src=full_image_path,
+                        width=250,
+                        height=250,
+                        fit=ft.BoxFit.CONTAIN,
+                        border_radius=8,
+                    ),
+                    alignment=ft.Alignment.CENTER,
+                ),
+            ]
+            # Caption (texto español) bajo la imagen si existe
+            if self.image_caption:
+                card_controls.append(
+                    ft.Text(
+                        self.image_caption,
+                        size=12,
+                        italic=True,
+                        color=ft.Colors.GREY_600,
+                        text_align=ft.TextAlign.CENTER,
+                    )
                 )
-            )
+        else:
+            # Sin imagen: el texto español es el prompt principal
+            card_controls = [
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Icon(ft.Icons.TRANSLATE, size=44, color=ft.Colors.BLUE_200),
+                            ft.Container(height=10),
+                            ft.Text(
+                                self.image_caption or "—",
+                                size=30,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.BLUE_GREY_800,
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    height=250,
+                    alignment=ft.Alignment.CENTER,
+                ),
+            ]
+
+        # Controles del prompt base (para truncar en reveal_translation)
+        self._base_control_count = len(card_controls)
 
         # Mostrar traducción si está habilitado
         if self.show_translation and self.text_lang:
@@ -133,9 +160,9 @@ class ImageFlashcardComp(ft.Container):
         """Muestra la traducción."""
         self.show_translation = True
         if self._card_content and self.text_lang:
-            # Limpiar controles de traducción previos si existen
+            # Limpiar controles de traducción previos (dejar solo el prompt base)
             # para evitar duplicados
-            while len(self._card_content.controls) > 2:
+            while len(self._card_content.controls) > self._base_control_count:
                 self._card_content.controls.pop()
 
             self._card_content.controls.extend([

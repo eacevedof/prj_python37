@@ -189,7 +189,8 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
         2. Más falladas (intentos - score total)
         3. Más antiguas sin examinar (last_reviewed_at más antiguo)
         4. Aleatorio
-        Solo incluye palabras de tipo WORD que tienen imagen principal.
+        La imagen principal es OPCIONAL (LEFT JOIN): incluye palabras con y sin
+        imagen; si no hay, image_file_path viene NULL y se muestra solo el texto.
         """
         # DEBUG: Log del group_id recibido
         from ddd.shared.infrastructure.components.logger import Logger
@@ -232,7 +233,7 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 img.caption as image_caption
             FROM words_es we
             INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
-            INNER JOIN word_es_images img ON we.id = img.word_es_id
+            LEFT JOIN word_es_images img ON we.id = img.word_es_id
             AND img.is_primary = 1
             AND img.is_active = 1
             INNER JOIN word_es_tags wt ON we.id = wt.word_es_id
@@ -283,7 +284,7 @@ class MetricsReaderSqliteRepository(AbstractSqliteRepository):
                 img.caption as image_caption
             FROM words_es we
             INNER JOIN words_lang wl ON we.id = wl.word_es_id AND wl.lang_code = ?
-            INNER JOIN word_es_images img ON we.id = img.word_es_id
+            LEFT JOIN word_es_images img ON we.id = img.word_es_id
             AND img.is_primary = 1
             AND img.is_active = 1
             {group_join}

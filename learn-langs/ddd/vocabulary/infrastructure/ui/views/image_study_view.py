@@ -277,7 +277,7 @@ class ImageStudyView(ft.Container):
         self._ft_image_flashcard.set_result_style(is_correct)
 
     def _render_no_words(self) -> None:
-        """Renderiza mensaje cuando no hay palabras con imágenes."""
+        """Renderiza mensaje cuando no hay palabras para practicar."""
         if not self._ft_content_area:
             return
 
@@ -285,18 +285,18 @@ class ImageStudyView(ft.Container):
         self._ft_content_area.controls.extend([
             ft.Container(height=40),
             ft.Icon(
-                ft.Icons.IMAGE_NOT_SUPPORTED_OUTLINED,
+                ft.Icons.INBOX_OUTLINED,
                 size=60,
                 color=ft.Colors.ORANGE_400,
             ),
             ft.Container(height=20),
             ft.Text(
-                "No hay palabras con imágenes para practicar",
+                "No hay palabras para practicar",
                 size=20,
                 weight=ft.FontWeight.BOLD,
             ),
             ft.Text(
-                "Añade imágenes a las palabras en el idioma seleccionado",
+                "Añade o traduce palabras en el idioma seleccionado (la imagen es opcional)",
                 size=14,
                 color=ft.Colors.GREY_600,
             ),
