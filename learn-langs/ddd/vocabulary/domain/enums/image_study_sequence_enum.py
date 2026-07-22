@@ -11,6 +11,6 @@ class ImageStudySequenceEnum(int, Enum):
     define el tiempo extra para frases y las esperas de revisión tras responder.
     """
 
-    MULTI_WORD_ANSWER_TIMER_SECONDS = 15  # frases (>2 palabras): más tiempo para teclear
+    MULTI_WORD_ANSWER_TIMER_SECONDS = 20  # frases (>2 palabras): más tiempo para teclear
     WRONG_REVIEW_WAIT_SECONDS = 4  # tras fallar: se oye el NL y da tiempo a ver la corrección
     CORRECT_REVIEW_WAIT_SECONDS = 1  # tras acertar: breve confirmación antes de la siguiente
