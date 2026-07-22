@@ -5,6 +5,9 @@ from typing import final, Self
 from ddd.vocabulary.application.save_activity_state.save_activity_state_dto import (
     SaveActivityStateDto,
 )
+from ddd.vocabulary.application.save_activity_state.save_activity_state_result_dto import (
+    SaveActivityStateResultDto,
+)
 from ddd.vocabulary.domain.exceptions import VocabularyException
 from ddd.vocabulary.infrastructure.repositories import (
     ActivityStatesWriterSqliteRepository,
@@ -26,7 +29,9 @@ class SaveActivityStateService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, save_activity_state_dto: SaveActivityStateDto) -> None:
+    async def __call__(
+        self, save_activity_state_dto: SaveActivityStateDto
+    ) -> SaveActivityStateResultDto:
         """
         Guarda el estado de la actividad (una fila por actividad).
 
@@ -37,7 +42,7 @@ class SaveActivityStateService:
         if errors:
             VocabularyException.bad_request_custom(", ".join(errors))
 
-        await self._activity_states_writer_sqlite_repository.upsert_activity_state(
+        affected_rows = await self._activity_states_writer_sqlite_repository.upsert_activity_state(
             activity=save_activity_state_dto.activity,
             lang_code=save_activity_state_dto.lang_code,
             tags=save_activity_state_dto.tags,
@@ -47,3 +52,8 @@ class SaveActivityStateService:
             total_words=save_activity_state_dto.total_words,
             is_random_order=save_activity_state_dto.is_random_order,
         )
+
+        return SaveActivityStateResultDto.from_primitives({
+            "activity": save_activity_state_dto.activity,
+            "is_saved": affected_rows > 0,
+        })

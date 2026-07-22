@@ -10,7 +10,8 @@ from ddd.vocabulary.domain.services.tts_audio_filename_service import TtsAudioFi
 class WordAudiosReaderFileRepository:
     """Lectura de los mp3 de pronunciación en data/audio (datasource: file)."""
 
-    _AUDIO_DIR = Path("data/audio")
+    # Ruta absoluta a data/audio (independiente del CWD): parents[4] = raíz del proyecto
+    _AUDIO_DIR = Path(__file__).resolve().parents[4] / "data" / "audio"
 
     @classmethod
     def get_instance(cls) -> Self:

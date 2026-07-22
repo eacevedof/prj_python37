@@ -8,6 +8,7 @@ from typing import Self, Any
 class GetLastActivityStateResultDto:
     """Último estado de actividad guardado (para el botón Continuar del Home)."""
 
+    has_state: bool = False  # False: no hay nada guardado que retomar
     activity: str = ""
     lang_code: str = ""
     tags: list[str] = field(default_factory=list)
@@ -23,6 +24,7 @@ class GetLastActivityStateResultDto:
         group_id_raw = primitives.get("group_id")
 
         return cls(
+            has_state=bool(primitives.get("has_state", False)),
             activity=str(primitives.get("activity", "")),
             lang_code=str(primitives.get("lang_code", "")),
             tags=list(primitives.get("tags", []) or []),
@@ -36,6 +38,7 @@ class GetLastActivityStateResultDto:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "has_state": self.has_state,
             "activity": self.activity,
             "lang_code": self.lang_code,
             "tags": self.tags,

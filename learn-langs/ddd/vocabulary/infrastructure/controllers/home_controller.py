@@ -221,7 +221,7 @@ class HomeController(BaseController):
             )
             return None
 
-        if not last_state:
+        if not last_state.has_state:
             return None
 
         try:

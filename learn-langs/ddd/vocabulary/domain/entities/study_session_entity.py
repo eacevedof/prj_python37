@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass, field
 from typing import Self, Any
 
@@ -25,20 +24,11 @@ class StudySessionEntity:
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        study_mode_str = str(primitives.get("study_mode", "TYPING")).upper()
-        try:
-            study_mode = StudyModeEnum(study_mode_str)
-        except ValueError:
-            study_mode = StudyModeEnum.TYPING
+        study_mode = StudyModeEnum.coerce(primitives.get("study_mode", "TYPING"))
 
-        tags_filter_raw = primitives.get("tags_filter", [])
-        if isinstance(tags_filter_raw, str):
-            try:
-                tags_filter = json.loads(tags_filter_raw) if tags_filter_raw else []
-            except json.JSONDecodeError:
-                tags_filter = []
-        else:
-            tags_filter = list(tags_filter_raw or [])
+        # tags_filter llega ya como lista: la frontera de persistencia
+        # (SessionsReaderSqliteRepository) deserializa la columna JSON.
+        tags_filter = list(primitives.get("tags_filter", []) or [])
 
         return cls(
             id=int(primitives.get("id", 0)),

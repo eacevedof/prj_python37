@@ -22,11 +22,7 @@ class WordEsEntity:
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        word_type_str = str(primitives.get("word_type", "WORD")).upper()
-        try:
-            word_type = WordTypeEnum(word_type_str)
-        except ValueError:
-            word_type = WordTypeEnum.WORD
+        word_type = WordTypeEnum.coerce(primitives.get("word_type", "WORD"))
 
         return cls(
             id=int(primitives.get("id", 0)),

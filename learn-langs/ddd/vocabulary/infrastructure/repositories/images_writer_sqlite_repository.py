@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import final, Self
 from datetime import datetime
 
+from ddd.shared.infrastructure.components.image_inspector import ImageInspector
 from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 from ddd.vocabulary.domain.entities import WordImageEntity
 from ddd.vocabulary.domain.enums import ImageSourceEnum
@@ -19,6 +20,7 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
 
     def __init__(self) -> None:
         super().__init__()
+        self._image_inspector = ImageInspector.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -55,13 +57,13 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         # Si es la primera imagen de la palabra, hacerla primaria
         is_primary = word_image_entity.is_primary
         count = await self._query_scalar(
-            f"""
+            """
             SELECT COUNT(*) as count FROM word_es_images
             WHERE 1=1
-            AND word_es_id = {word_image_entity.word_es_id}
+            AND word_es_id = ?
             AND is_active = 1
             """,
-            (),
+            (word_image_entity.word_es_id,),
             "count",
         )
         if count == 0:
@@ -106,20 +108,10 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         # Escribir archivo
         file_path.write_bytes(image_bytes)
 
-        # Obtener dimensiones si es posible
+        # Obtener dimensiones (best-effort via componente; no bloquea el guardado)
         width, height = word_image_entity.width, word_image_entity.height
         if width is None or height is None:
-            # @deuda: try/except en repositorio (lo prohíbe la spec DDD). Extraer la lectura
-            # de dimensiones con PIL a un componente compartido (p.ej. ImageInspector/Imager).
-            try:
-                from PIL import Image
-                import io
-                img = Image.open(io.BytesIO(image_bytes))
-                width, height = img.size
-            except ImportError:
-                pass
-            except Exception:
-                pass
+            width, height = self._image_inspector.get_dimensions(image_bytes)
 
         # Crear entidad actualizada con el path y dimensiones
         updated_entity = WordImageEntity(
@@ -202,15 +194,18 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
     async def update(self, word_image_entity: WordImageEntity) -> bool:
         """Actualiza caption, alt_text, sort_order, is_primary de una imagen."""
         rows = await self._sqlite.update(
-            f"""
+            """
             UPDATE word_es_images
-            SET caption = ?, alt_text = ?, sort_order = {word_image_entity.sort_order}, is_primary = {1 if word_image_entity.is_primary else 0}, updated_at = datetime('now')
+            SET caption = ?, alt_text = ?, sort_order = ?, is_primary = ?, updated_at = datetime('now')
             WHERE 1=1
-            AND id = {word_image_entity.id}
+            AND id = ?
             """,
             (
                 word_image_entity.caption,
                 word_image_entity.alt_text,
+                word_image_entity.sort_order,
+                1 if word_image_entity.is_primary else 0,
+                word_image_entity.id,
             ),
         )
         return rows > 0
@@ -218,12 +213,13 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
     async def soft_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Soft delete de una imagen."""
         rows = await self._sqlite.update(
-            f"""
+            """
             UPDATE word_es_images
             SET is_active = 0, updated_at = datetime('now')
             WHERE 1=1
-            AND id = {word_image_entity.id}
+            AND id = ?
             """,
+            (word_image_entity.id,),
         )
         return rows > 0
 
@@ -236,18 +232,19 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
             file_path.unlink()
 
         # Eliminar registro
-        rows = await self._delete_where("word_es_images", f"id = {word_image_entity.id}")
+        rows = await self._delete_where("word_es_images", "id = ?", (word_image_entity.id,))
         return rows > 0
 
     async def delete_all_by_word(self, word_es_entity_id: int) -> int:
         """Elimina todas las imagenes de una palabra."""
         # Obtener archivos a eliminar
         images = await self._query(
-            f"""
+            """
             SELECT file_path FROM word_es_images
             WHERE 1=1
-            AND word_es_id = {word_es_entity_id}
+            AND word_es_id = ?
             """,
+            (word_es_entity_id,),
         )
 
         # Eliminar archivos
@@ -258,4 +255,4 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
                 file_path.unlink()
 
         # Eliminar registros
-        return await self._delete_where("word_es_images", f"word_es_id = {word_es_entity_id}")
+        return await self._delete_where("word_es_images", "word_es_id = ?", (word_es_entity_id,))

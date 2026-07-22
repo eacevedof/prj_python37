@@ -83,7 +83,8 @@ class GenerateWordAudioAiService:
             return GenerateWordAudioAiResultDto.error("No hay texto para generar audio")
 
         # Verificar si ya existe el audio
-        audio_dir = Path("data/audio")
+        # Ruta absoluta a data/audio (independiente del CWD): parents[4] = raíz del proyecto
+        audio_dir = Path(__file__).resolve().parents[4] / "data" / "audio"
         audio_filename = f"{word_lang_dict['id']}_{lang_code}.mp3"
         audio_path = audio_dir / audio_filename
 

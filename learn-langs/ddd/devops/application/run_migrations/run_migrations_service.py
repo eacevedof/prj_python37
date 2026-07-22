@@ -100,7 +100,14 @@ class RunMigrationsService:
         migration_file: Path,
         version: str,
     ) -> dict[str, str]:
-        """Aplica una migración individual. Captura el fallo para no abortar el lote."""
+        """Aplica una migración individual.
+
+        NOTA DDD: try/except DELIBERADO de orquestación de LOTE (no es swallow). Se
+        captura el fallo de UNA migración para no abortar el run entero y reportar su
+        estado FAILED en el RunMigrationsResultDto, de modo que el resto de migraciones
+        pendientes se sigan aplicando. El error no se oculta: viaja en el resultado por
+        fichero (str(e)) hasta el controller.
+        """
         try:
             sql_content = self._migration_files_reader_file_repository.get_sql_content(migration_file)
             await self._migrations_writer_sqlite_repository.apply_migration(

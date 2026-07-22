@@ -1,8 +1,8 @@
 """Repositorio de lectura para estados de actividad (retomar sesión)."""
 
-import json
 from typing import final, Self
 
+from ddd.shared.infrastructure.components.json_parser import JsonParser
 from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
@@ -12,6 +12,7 @@ class ActivityStatesReaderSqliteRepository(AbstractSqliteRepository):
 
     def __init__(self) -> None:
         super().__init__()
+        self._json_parser = JsonParser.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -31,16 +32,12 @@ class ActivityStatesReaderSqliteRepository(AbstractSqliteRepository):
         )
         return self._parse_row(row)
 
-    @staticmethod
-    def _parse_row(row: dict | None) -> dict | None:
+    def _parse_row(self, row: dict | None) -> dict | None:
         """Deserializa la fila (tags JSON -> list, flags -> bool)."""
         if not row:
             return None
 
         parsed = dict(row)
-        try:
-            parsed["tags"] = json.loads(row.get("tags") or "[]")
-        except (ValueError, TypeError):
-            parsed["tags"] = []
+        parsed["tags"] = self._json_parser.parse_list(row.get("tags"))
         parsed["is_random_order"] = bool(row.get("is_random_order", 0))
         return parsed

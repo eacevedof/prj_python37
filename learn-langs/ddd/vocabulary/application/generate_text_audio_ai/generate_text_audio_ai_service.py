@@ -34,17 +34,13 @@ class GenerateTextAudioAiService:
     # de fichero + instrucción). Si un idioma tiene acento -> gpt-4o-mini-tts;
     # si no -> tts-1 (sin control de acento).
 
-    _instance: "GenerateTextAudioAiService | None" = None
-
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
         self._gpt_tts_1_reader_api_repository = GptTts1ReaderApiRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        return cls()
 
     async def __call__(
         self,
@@ -70,7 +66,8 @@ class GenerateTextAudioAiService:
             return GenerateTextAudioAiResultDto.error("Se requiere word_id")
 
         # Reutilizar audio cacheado si existe (nombre con id + idioma + acento)
-        audio_dir = Path("data/audio")
+        # Ruta absoluta a data/audio (independiente del CWD): parents[4] = raíz del proyecto
+        audio_dir = Path(__file__).resolve().parents[4] / "data" / "audio"
         audio_path = audio_dir / TtsAudioFilenameService.get_filename(word_id, lang_code)
 
         if audio_path.exists():
@@ -90,11 +87,10 @@ class GenerateTextAudioAiService:
 
         # Acento por idioma: con instrucción -> gpt-4o-mini-tts; si no -> tts-1
         accent = TtsAccentEnum.for_lang(lang_code)
+        model_used = OpenaiTtsModelEnum.TTS_1.value
         instructions = accent.instructions if accent else ""
         if instructions:
             model_used = OpenaiTtsModelEnum.GPT_4O_MINI_TTS.value
-        else:
-            model_used = OpenaiTtsModelEnum.TTS_1.value
 
         # En thread: la llamada a la API es sincrónica y bloquearía el event
         # loop de la UI (clics de pausa/navegación sin respuesta)

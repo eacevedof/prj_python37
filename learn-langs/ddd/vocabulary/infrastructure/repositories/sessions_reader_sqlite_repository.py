@@ -2,6 +2,7 @@
 
 from typing import final, Self
 
+from ddd.shared.infrastructure.components.json_parser import JsonParser
 from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 
 
@@ -11,28 +12,44 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
 
     def __init__(self) -> None:
         super().__init__()
+        self._json_parser = JsonParser.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
 
+    def _with_parsed_tags(self, row: dict | None) -> dict | None:
+        """Deserializa la columna JSON tags_filter -> list (frontera de persistencia)."""
+        if not row:
+            return row
+        row["tags_filter"] = self._json_parser.parse_list(row.get("tags_filter"))
+        return row
+
+    def _with_parsed_tags_rows(self, rows: list[dict]) -> list[dict]:
+        """Aplica _with_parsed_tags a cada fila."""
+        for row in rows:
+            row["tags_filter"] = self._json_parser.parse_list(row.get("tags_filter"))
+        return rows
+
     async def get_study_session_by_study_session_id(self, session_id: int) -> dict | None:
         """Obtiene una sesión por su ID."""
-        return await self._query_one(
-            f"""
+        row = await self._query_one(
+            """
             -- get_study_session_by_study_session_id
             SELECT id, lang_code, study_mode, started_at, finished_at,
                    total_words, total_score, average_score, tags_filter
             FROM study_sessions
             WHERE 1=1
-            AND id = {session_id}
+            AND id = ?
             """,
+            (session_id,),
         )
+        return self._with_parsed_tags(row)
 
     async def get_active_study_sessions_by_lang_code(self, lang_code: str | None = None) -> dict | None:
         """Obtiene la sesión activa (sin finalizar)."""
         if lang_code:
-            return await self._query_one(
+            row = await self._query_one(
                 """
                 -- get_active_study_sessions_by_lang_code 1
                 SELECT id, lang_code, study_mode, started_at, finished_at,
@@ -47,7 +64,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 (lang_code,),
             )
         else:
-            return await self._query_one(
+            row = await self._query_one(
                 """
                 -- get_active_study_sessions_by_lang_code 2
                 SELECT id, lang_code, study_mode, started_at, finished_at,
@@ -59,6 +76,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 LIMIT 1
                 """,
             )
+        return self._with_parsed_tags(row)
 
     async def get_recent_sessions_by_lang_code(
         self,
@@ -67,7 +85,7 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
     ) -> list[dict]:
         """Obtiene las sesiones recientes."""
         if lang_code:
-            return await self._query(
+            rows = await self._query(
                 """
                 -- get_recent_sessions_by_lang_code
                 SELECT
@@ -77,12 +95,12 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 WHERE 1=1
                 AND lang_code = ?
                 ORDER BY started_at DESC
-                LIMIT {limit}
+                LIMIT ?
                 """,
-                (lang_code,),
+                (lang_code, limit),
             )
         else:
-            return await self._query(
+            rows = await self._query(
                 """
                 -- get_recent_sessions_by_lang_code
                 SELECT
@@ -91,9 +109,11 @@ class SessionsReaderSqliteRepository(AbstractSqliteRepository):
                 FROM study_sessions
                 WHERE 1=1
                 ORDER BY started_at DESC
-                LIMIT {limit}
+                LIMIT ?
                 """,
+                (limit,),
             )
+        return self._with_parsed_tags_rows(rows)
 
     async def get_study_sessions_stats_by_lang_code(
         self,

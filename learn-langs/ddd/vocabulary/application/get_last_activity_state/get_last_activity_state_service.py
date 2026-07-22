@@ -25,11 +25,11 @@ class GetLastActivityStateService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self) -> GetLastActivityStateResultDto | None:
-        """Retorna el estado más reciente o None si no hay ninguno guardado."""
+    async def __call__(self) -> GetLastActivityStateResultDto:
+        """Retorna el estado más reciente; has_state=False si no hay nada que retomar."""
         state = await self._activity_states_reader_sqlite_repository.get_last_activity_state()
 
         if not state:
-            return None
+            return GetLastActivityStateResultDto.from_primitives({"has_state": False})
 
-        return GetLastActivityStateResultDto.from_primitives(state)
+        return GetLastActivityStateResultDto.from_primitives({**state, "has_state": True})
