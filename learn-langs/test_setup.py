@@ -145,7 +145,7 @@ async def test_spaced_repetition():
     scores = [1.0, 0.8, 1.0, 0.3, 1.0]  # Secuencia de scores
 
     for i, score in enumerate(scores):
-        result = SpacedRepetitionService.calculate_from_score(
+        result = SpacedRepetitionService.get_instance().get_next_review_from_score(
             score=score,
             repetitions=repetitions,
             easiness_factor=easiness,

@@ -20,6 +20,7 @@ class RecordAnswerService:
     """Servicio para registrar respuestas y actualizar metricas SM-2."""
 
     _record_answer_dto: RecordAnswerDto
+    _spaced_repetition_service: SpacedRepetitionService
     _sessions_reader_sqlite_repository: SessionsReaderSqliteRepository
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
     _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
@@ -28,6 +29,7 @@ class RecordAnswerService:
     _answers_writer_sqlite_repository: AnswersWriterSqliteRepository
 
     def __init__(self) -> None:
+        self._spaced_repetition_service = SpacedRepetitionService.get_instance()
         self._sessions_reader_sqlite_repository = SessionsReaderSqliteRepository.get_instance()
         self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
         self._metrics_reader_sqlite_repository = MetricsReaderSqliteRepository.get_instance()
@@ -81,7 +83,7 @@ class RecordAnswerService:
 
         # Calcular nuevas metricas SM-2
         if current_metrics:
-            sm2_result = SpacedRepetitionService.calculate_from_score(
+            sm2_result = self._spaced_repetition_service.get_next_review_from_score(
                 score=score,
                 repetitions=current_metrics["repetitions"],
                 easiness_factor=current_metrics["easiness_factor"],
@@ -90,7 +92,7 @@ class RecordAnswerService:
             total_attempts = current_metrics["total_attempts"] + 1
             total_score = current_metrics["total_score"] + score
         else:
-            sm2_result = SpacedRepetitionService.calculate_from_score(score=score)
+            sm2_result = self._spaced_repetition_service.get_next_review_from_score(score=score)
             total_attempts = 1
             total_score = score
 

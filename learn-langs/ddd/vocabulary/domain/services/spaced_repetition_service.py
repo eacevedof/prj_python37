@@ -1,16 +1,8 @@
-from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import final
+from typing import final, Self
 
-
-@dataclass(frozen=True, slots=True)
-class SM2Result:
-    """Resultado del cálculo SM-2."""
-
-    repetitions: int
-    easiness_factor: float
-    interval_days: int
-    next_review_at: str
+from ddd.vocabulary.domain.enums import EasinessFactorEnum, SM2QualityEnum
+from ddd.vocabulary.domain.services.sm2_result import SM2Result
 
 
 @final
@@ -20,14 +12,16 @@ class SpacedRepetitionService:
 
     El algoritmo SM-2 (SuperMemo 2) calcula el intervalo óptimo
     para repasar una palabra basándose en la calidad de la respuesta.
+
+    Constantes en enums: EasinessFactorEnum (factores) y SM2QualityEnum (score->calidad).
     """
 
-    DEFAULT_EASINESS_FACTOR = 2.5
-    MIN_EASINESS_FACTOR = 1.3
-
     @classmethod
-    def calculate_next_review(
-        cls,
+    def get_instance(cls) -> Self:
+        return cls()
+
+    def get_next_review(
+        self,
         quality: int,
         repetitions: int,
         easiness_factor: float,
@@ -63,7 +57,7 @@ class SpacedRepetitionService:
         # Ajustar factor de facilidad
         # EF' = EF + (0.1 - (5-q) * (0.08 + (5-q) * 0.02))
         new_easiness = easiness_factor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
-        new_easiness = max(cls.MIN_EASINESS_FACTOR, new_easiness)
+        new_easiness = max(EasinessFactorEnum.MINIMUM.value, new_easiness)
 
         # Calcular fecha de próximo repaso
         next_review_date = datetime.now() + timedelta(days=new_interval)
@@ -76,12 +70,11 @@ class SpacedRepetitionService:
             next_review_at=next_review_at,
         )
 
-    @classmethod
-    def calculate_from_score(
-        cls,
+    def get_next_review_from_score(
+        self,
         score: float,
         repetitions: int = 0,
-        easiness_factor: float = DEFAULT_EASINESS_FACTOR,
+        easiness_factor: float = EasinessFactorEnum.DEFAULT.value,
         interval_days: int = 1,
     ) -> SM2Result:
         """
@@ -96,89 +89,5 @@ class SpacedRepetitionService:
         Returns:
             SM2Result con los nuevos valores.
         """
-        quality = cls._score_to_quality(score)
-        return cls.calculate_next_review(quality, repetitions, easiness_factor, interval_days)
-
-    @staticmethod
-    def _score_to_quality(score: float) -> int:
-        """Convierte score (0.0-1.0) a quality (0-5)."""
-        if score >= 1.0:
-            return 5
-        elif score >= 0.9:
-            return 4
-        elif score >= 0.7:
-            return 3
-        elif score >= 0.5:
-            return 2
-        elif score > 0.0:
-            return 1
-        else:
-            return 0
-
-    @classmethod
-    def is_due_for_review(cls, next_review_at: str) -> bool:
-        """
-        Verifica si una palabra necesita repaso.
-
-        Args:
-            next_review_at: Fecha de próximo repaso en formato ISO.
-
-        Returns:
-            True si debe ser repasada (fecha pasada o actual).
-        """
-        if not next_review_at:
-            return True
-
-        try:
-            review_date = datetime.fromisoformat(next_review_at.replace(" ", "T"))
-            return datetime.now() >= review_date
-        except ValueError:
-            return True
-
-    @classmethod
-    def calculate_priority_score(
-        cls,
-        next_review_at: str,
-        easiness_factor: float,
-        total_attempts: int,
-    ) -> float:
-        """
-        Calcula un score de prioridad para ordenar palabras a estudiar.
-
-        Factores considerados:
-        - Días de retraso (mayor prioridad si más vencida)
-        - Factor de facilidad (menor EF = más difícil = mayor prioridad)
-        - Intentos totales (menos intentos = más nueva = mayor prioridad)
-
-        Args:
-            next_review_at: Fecha próximo repaso.
-            easiness_factor: Factor de facilidad actual.
-            total_attempts: Intentos totales históricos.
-
-        Returns:
-            Score de prioridad (mayor = más urgente).
-        """
-        priority = 0.0
-
-        # Factor 1: Días de retraso
-        if next_review_at:
-            try:
-                review_date = datetime.fromisoformat(next_review_at.replace(" ", "T"))
-                days_overdue = (datetime.now() - review_date).days
-                if days_overdue > 0:
-                    priority += days_overdue * 10
-                else:
-                    priority -= abs(days_overdue)
-            except ValueError:
-                priority += 100  # Si no tiene fecha, alta prioridad
-        else:
-            priority += 100  # Palabras nuevas tienen alta prioridad
-
-        # Factor 2: Dificultad (EF bajo = más difícil)
-        priority += (cls.DEFAULT_EASINESS_FACTOR - easiness_factor) * 20
-
-        # Factor 3: Palabras con pocos intentos
-        if total_attempts < 5:
-            priority += (5 - total_attempts) * 5
-
-        return priority
+        quality = SM2QualityEnum.from_score(score).value
+        return self.get_next_review(quality, repetitions, easiness_factor, interval_days)
