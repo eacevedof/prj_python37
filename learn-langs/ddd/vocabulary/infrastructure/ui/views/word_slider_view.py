@@ -51,6 +51,8 @@ class WordSliderView(ft.Container):
 
         # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
         self._is_paused: bool = False
+        # Hay un diálogo (ayuda/reiniciar) abierto: ignora los atajos de teclado
+        self._is_modal_open: bool = False
 
         # Datos de la palabra actual para el modal de ayuda (reglas de uso)
         self._current_word_text: str = ""
@@ -115,9 +117,30 @@ class WordSliderView(ft.Container):
     # LIFECYCLE HOOKS
     # =========================================================================
     def did_mount(self) -> None:
-        """Flet llama esto al montar."""
+        """Flet llama esto al montar: engancha los atajos de teclado del slider."""
+        if self.page:
+            self.page.on_keyboard_event = self._on_keyboard
         if self._route_on_mount:
             self._route_on_mount()
+
+    def will_unmount(self) -> None:
+        """Flet llama esto al desmontar: suelta el atajo para no afectar a otras vistas."""
+        if self.page and self.page.on_keyboard_event is self._on_keyboard:
+            self.page.on_keyboard_event = None
+
+    def _on_keyboard(self, event: ft.KeyboardEvent) -> None:
+        """Atajos del slider: ← anterior · espacio pausa/reanuda · → siguiente.
+
+        Se ignoran si hay un diálogo abierto o si se pulsa con ctrl/alt/meta.
+        """
+        if self._is_modal_open or event.ctrl or event.alt or event.meta:
+            return
+        if event.key == "Arrow Left":
+            self._on_prev_btn_click()
+        elif event.key == "Arrow Right":
+            self._on_next_btn_click()
+        elif event.key == " ":
+            self._on_pause_btn_click()
 
     # =========================================================================
     # CONSTRUCCIÓN DE UI
@@ -383,6 +406,7 @@ class WordSliderView(ft.Container):
         if not self._current_rules_help or not self.page:
             return
 
+        self._is_modal_open = True
         was_playing = not self._is_paused
         if was_playing and self._route_on_toggle_pause:
             self._is_paused = True
@@ -390,6 +414,7 @@ class WordSliderView(ft.Container):
             self._route_on_toggle_pause()
 
         def close_dialog(_) -> None:
+            self._is_modal_open = False
             dialog.open = False
             if was_playing and self._route_on_toggle_pause:
                 self._is_paused = False
@@ -470,6 +495,7 @@ class WordSliderView(ft.Container):
         if not self.page or not self._route_on_reset_word:
             return
 
+        self._is_modal_open = True
         was_playing = not self._is_paused
         if was_playing and self._route_on_toggle_pause:
             self._is_paused = True
@@ -477,6 +503,7 @@ class WordSliderView(ft.Container):
             self._route_on_toggle_pause()
 
         def close_dialog(_) -> None:
+            self._is_modal_open = False
             dialog.open = False
             if was_playing and self._route_on_toggle_pause:
                 self._is_paused = False
