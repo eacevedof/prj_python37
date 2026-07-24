@@ -126,9 +126,10 @@ async def test_score_calculator():
         ("hallo", "", "Vacío"),
     ]
 
+    score_calculator_service = ScoreCalculatorService.get_instance()
     for expected, user_input, description in test_cases:
-        score = ScoreCalculatorService.calculate(expected, user_input)
-        quality = ScoreCalculatorService.score_to_quality(score)
+        score = score_calculator_service.calculate(expected, user_input)
+        quality = score_calculator_service.score_to_quality(score)
         print(f"   '{expected}' vs '{user_input}' ({description}): score={score}, quality={quality}")
 
 

@@ -56,6 +56,8 @@ class ImageStudyView(ft.Container):
         self._ft_image_flashcard: ImageFlashcardComp | None = None
         self._ft_input_field: InputFieldComp | None = None
         self._ft_timer: TimerComp | None = None
+        self._ft_pause_btn: ft.IconButton | None = None
+        self._is_paused: bool = False
 
         self._build_initial_ui()
 
@@ -142,7 +144,7 @@ class ImageStudyView(ft.Container):
         back_btn = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
             on_click=lambda _: self._route_on_back(),
-            tooltip="Volver",
+            tooltip="Salir del examen (abortar — no cuenta nada)",
         )
 
         # Layout principal
@@ -212,49 +214,57 @@ class ImageStudyView(ft.Container):
             auto_start=True,
         )
 
-        # Botón de audio (hint)
-        audio_button = None
+        # Botonera: pausa/reanudar (+ audio pista si está disponible)
+        self._is_paused = False
+        self._ft_pause_btn = ft.IconButton(
+            icon=ft.Icons.PAUSE_CIRCLE,
+            icon_size=32,
+            tooltip="Pausar",
+            on_click=lambda _: self._on_pause_click(),
+            style=ft.ButtonStyle(color=ft.Colors.BLUE_GREY_700),
+        )
+        buttons_row_controls = [self._ft_pause_btn]
         if self._route_on_play_audio:
-            audio_button = ft.Container(
-                content=ft.IconButton(
+            buttons_row_controls.append(
+                ft.IconButton(
                     icon=ft.Icons.VOLUME_UP,
                     icon_size=32,
                     tooltip="Escuchar pronunciación (pista)",
                     on_click=lambda _: self._route_on_play_audio(),
-                    style=ft.ButtonStyle(
-                        color=ft.Colors.BLUE_700,
-                    ),
-                ),
-                alignment=ft.Alignment.CENTER,
+                    style=ft.ButtonStyle(color=ft.Colors.BLUE_700),
+                )
             )
 
         self._ft_content_area.controls.clear()
-        controls_to_add = [
+        self._ft_content_area.controls.extend([
             ft.Container(height=10),
-            ft.Container(
-                content=self._ft_timer,
-                alignment=ft.Alignment.CENTER,
-            ),
+            ft.Container(content=self._ft_timer, alignment=ft.Alignment.CENTER),
             ft.Container(height=15),
-            ft.Container(
-                content=self._ft_image_flashcard,
-                alignment=ft.Alignment.CENTER,
+            ft.Container(content=self._ft_image_flashcard, alignment=ft.Alignment.CENTER),
+            ft.Container(height=10),
+            ft.Row(
+                controls=buttons_row_controls,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=16,
             ),
-        ]
-
-        # Agregar botón de audio si está disponible
-        if audio_button:
-            controls_to_add.extend([
-                ft.Container(height=10),
-                audio_button,
-            ])
-
-        controls_to_add.extend([
             ft.Container(height=10),
             self._ft_input_field,
         ])
 
-        self._ft_content_area.controls.extend(controls_to_add)
+    def _on_pause_click(self) -> None:
+        """Pausa/reanuda el temporizador del examen (solo estado de vista)."""
+        if not self._ft_timer or not self._ft_pause_btn:
+            return
+        self._is_paused = not self._is_paused
+        if self._is_paused:
+            self._ft_timer.stop()
+            self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
+            self._ft_pause_btn.tooltip = "Reanudar"
+        else:
+            self._ft_timer.start()
+            self._ft_pause_btn.icon = ft.Icons.PAUSE_CIRCLE
+            self._ft_pause_btn.tooltip = "Pausar"
+        self.update()
 
     def _render_with_result(self, dto: ImageStudyViewDto) -> None:
         """Renderiza resultado de respuesta."""

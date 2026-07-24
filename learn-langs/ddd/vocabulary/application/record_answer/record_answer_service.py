@@ -20,6 +20,7 @@ class RecordAnswerService:
     """Servicio para registrar respuestas y actualizar metricas SM-2."""
 
     _record_answer_dto: RecordAnswerDto
+    _score_calculator_service: ScoreCalculatorService
     _spaced_repetition_service: SpacedRepetitionService
     _sessions_reader_sqlite_repository: SessionsReaderSqliteRepository
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
@@ -29,6 +30,7 @@ class RecordAnswerService:
     _answers_writer_sqlite_repository: AnswersWriterSqliteRepository
 
     def __init__(self) -> None:
+        self._score_calculator_service = ScoreCalculatorService.get_instance()
         self._spaced_repetition_service = SpacedRepetitionService.get_instance()
         self._sessions_reader_sqlite_repository = SessionsReaderSqliteRepository.get_instance()
         self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
@@ -70,7 +72,7 @@ class RecordAnswerService:
             VocabularyException.session_already_finished(record_answer_dto.session_id)
 
         # Calcular score
-        score = ScoreCalculatorService.calculate(
+        score = self._score_calculator_service.calculate(
             record_answer_dto.expected_text,
             record_answer_dto.user_input,
         )

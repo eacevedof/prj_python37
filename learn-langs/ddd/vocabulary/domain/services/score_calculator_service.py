@@ -1,12 +1,17 @@
-from typing import final
+from typing import final, Self
+
+from ddd.vocabulary.domain.enums import OptionalPunctuationEnum
 
 
 @final
 class ScoreCalculatorService:
     """Servicio de dominio para calcular score de respuestas."""
 
-    @staticmethod
-    def calculate(expected: str, user_input: str) -> float:
+    @classmethod
+    def get_instance(cls) -> Self:
+        return cls()
+
+    def calculate(self, expected: str, user_input: str) -> float:
         """
         Calcula score de 0.0 a 1.0 basado en similitud Levenshtein.
 
@@ -22,13 +27,13 @@ class ScoreCalculatorService:
         if not user_input or not user_input.strip():
             return 0.0
 
-        expected_clean = expected.lower().strip()
-        input_clean = user_input.lower().strip()
+        expected_clean = self._normalize(expected)
+        input_clean = self._normalize(user_input)
 
         if expected_clean == input_clean:
             return 1.0
 
-        distance = ScoreCalculatorService._levenshtein_distance(expected_clean, input_clean)
+        distance = self._levenshtein_distance(expected_clean, input_clean)
         max_len = max(len(expected_clean), len(input_clean))
 
         if max_len == 0:
@@ -42,11 +47,20 @@ class ScoreCalculatorService:
 
         return round(similarity, 2)
 
-    @staticmethod
-    def _levenshtein_distance(s1: str, s2: str) -> int:
+    def _normalize(self, text: str) -> str:
+        """Normaliza para comparar: minúsculas, sin puntuación opcional (,;!?.) y
+        espacios colapsados (la puntuación se sustituye por espacio para no unir palabras)."""
+        lowered = text.lower()
+        without_punctuation = "".join(
+            " " if OptionalPunctuationEnum.is_optional(char) else char
+            for char in lowered
+        )
+        return " ".join(without_punctuation.split())
+
+    def _levenshtein_distance(self, s1: str, s2: str) -> int:
         """Calcula la distancia de Levenshtein entre dos strings."""
         if len(s1) < len(s2):
-            return ScoreCalculatorService._levenshtein_distance(s2, s1)
+            return self._levenshtein_distance(s2, s1)
 
         if len(s2) == 0:
             return len(s1)
@@ -64,8 +78,7 @@ class ScoreCalculatorService:
 
         return previous_row[-1]
 
-    @staticmethod
-    def score_to_quality(score: float) -> int:
+    def score_to_quality(self, score: float) -> int:
         """
         Convierte score (0.0-1.0) a quality (0-5) para SM-2.
 

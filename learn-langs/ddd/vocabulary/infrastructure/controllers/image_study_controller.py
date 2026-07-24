@@ -26,6 +26,14 @@ from ddd.vocabulary.application.record_answer import (
     RecordAnswerDto,
     RecordAnswerService,
 )
+from ddd.vocabulary.application.evaluate_answer import (
+    EvaluateAnswerDto,
+    EvaluateAnswerService,
+)
+from ddd.vocabulary.application.discard_study_session import (
+    DiscardStudySessionDto,
+    DiscardStudySessionService,
+)
 from ddd.vocabulary.application.start_image_study_session import (
     StartImageStudySessionDto,
     StartImageStudySessionService,
@@ -60,9 +68,6 @@ class ImageStudyController(BaseController):
     - Manejar callbacks de la Vista
     """
 
-    # =========================================================================
-    # CONSTRUCCIÓN
-    # =========================================================================
     def __init__(
         self,
         lang_code: str,  # Parámetro de sesión: idioma a practicar
@@ -87,11 +92,16 @@ class ImageStudyController(BaseController):
         self._answers_count: int = 0
         self._failed_words: list[dict[str, Any]] = []
         self._is_session_complete: bool = False
+        # Respuestas acumuladas en memoria; se persisten SOLO al completar (replay).
+        # Al abortar se descartan (nada de lo realizado cuenta).
+        self._buffered_answers: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
         self._start_session_service = StartImageStudySessionService.get_instance()
+        self._evaluate_answer_service = EvaluateAnswerService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
+        self._discard_session_service = DiscardStudySessionService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
         self._save_activity_state_service = SaveActivityStateService.get_instance()
         self._clear_activity_state_service = ClearActivityStateService.get_instance()
@@ -102,17 +112,15 @@ class ImageStudyController(BaseController):
         )
 
         # Vista
-        self._ft_container = ImageStudyView.from_primitives(
-            {
-                "on_mount": self._on_mount,
-                "on_answer": self._on_input_answer,
-                "on_skip": self._on_skip_btn_click,
-                "on_timeout": self._on_timer_timeout,
-                "on_back": self._on_back_btn_click,
-                "on_retry_failed": self._on_retry_failed_click,
-                "on_play_audio": self._on_play_audio_click,
-            }
-        )
+        self._ft_container = ImageStudyView.from_primitives({
+            "on_mount": self._on_mount,
+            "on_answer": self._on_input_answer,
+            "on_skip": self._on_skip_btn_click,
+            "on_timeout": self._on_timer_timeout,
+            "on_back": self._on_back_btn_click,
+            "on_retry_failed": self._on_retry_failed_click,
+            "on_play_audio": self._on_play_audio_click,
+        })
 
     # =========================================================================
     # API PÚBLICA
@@ -132,6 +140,7 @@ class ImageStudyController(BaseController):
     async def _async_start_session(self) -> None:
         """Inicia la sesión de estudio con imágenes cargando palabras del servicio."""
         self._ft_container.render(ImageStudyViewDto.initial())
+        self._buffered_answers = []
 
         # DEBUG: Log del group_id
         self._logger.log_debug(
@@ -145,14 +154,12 @@ class ImageStudyController(BaseController):
         )
 
         try:
-            start_dto = StartImageStudySessionDto.from_primitives(
-                {
-                    "lang_code": self._lang_code,
-                    "tags": self._tags,
-                    "group_id": self._group_id,
-                    "limit": 40,
-                }
-            )
+            start_dto = StartImageStudySessionDto.from_primitives({
+                "lang_code": self._lang_code,
+                "tags": self._tags,
+                "group_id": self._group_id,
+                "limit": 40,
+            })
 
             result = await self._start_session_service(start_dto)
 
@@ -200,17 +207,23 @@ class ImageStudyController(BaseController):
         response_time = int((time.time() - self._start_time) * 1000)
 
         try:
-            record_dto = RecordAnswerDto.from_primitives(
-                {
-                    "session_id": self._session_id,
-                    "word_es_id": word.word_es_id,
-                    "user_input": user_input,
-                    "expected_text": word.text_lang,
-                    "response_time_ms": response_time,
-                }
+            # Evaluar SIN persistir; la respuesta se acumula y se persiste al completar
+            result = await self._evaluate_answer_service(
+                EvaluateAnswerDto.from_primitives(
+                    {
+                        "expected_text": word.text_lang,
+                        "user_input": user_input,
+                    }
+                )
             )
 
-            result = await self._record_answer_service(record_dto)
+            self._buffered_answers.append({
+                "session_id": self._session_id,
+                "word_es_id": word.word_es_id,
+                "user_input": user_input,
+                "expected_text": word.text_lang,
+                "response_time_ms": response_time,
+            })
 
             # Actualizar stats internas
             self._total_score += result.score
@@ -297,6 +310,49 @@ class ImageStudyController(BaseController):
                 {"session_id": self._session_id},
             )
 
+    async def _async_commit_and_finish(self) -> None:
+        """Al COMPLETAR: persiste todas las respuestas acumuladas y finaliza la sesión."""
+        await self._async_commit_answers()
+        await self._async_finish_session()
+        await self._async_clear_activity_state()
+
+    async def _async_commit_answers(self) -> None:
+        """Persiste (replay) cada respuesta acumulada: métricas SM-2 + answer + progreso."""
+        for buffered_answer in self._buffered_answers:
+            try:
+                await self._record_answer_service(
+                    RecordAnswerDto.from_primitives(buffered_answer)
+                )
+            except Exception as e:
+                self._logger.log_error(
+                    "ImageStudyController",
+                    f"Error persistiendo respuesta al completar: {e}",
+                    {"word_es_id": buffered_answer.get("word_es_id")},
+                )
+        self._buffered_answers = []
+
+    async def _async_abort(self) -> None:
+        """Aborta el examen: descarta el buffer y borra la sesión vacía.
+
+        Como las respuestas solo estaban en memoria (no persistidas), borrar la
+        sesión deja la BD como si el examen no hubiera ocurrido.
+        """
+        # Si el examen ya se completó (persistido), salir no debe borrar nada.
+        if self._is_session_complete:
+            return
+        self._buffered_answers = []
+        try:
+            await self._discard_session_service(
+                DiscardStudySessionDto.from_primitives({"session_id": self._session_id})
+            )
+            await self._async_clear_activity_state()
+        except Exception as e:
+            self._logger.log_error(
+                "ImageStudyController",
+                f"Error abortando examen: {e}",
+                {"session_id": self._session_id},
+            )
+
     async def _async_retry_failed(self) -> None:
         """Reinicia la sesión con solo las palabras falladas."""
         try:
@@ -315,6 +371,7 @@ class ImageStudyController(BaseController):
             self._answers_count = 0
             self._failed_words = []
             self._is_session_complete = False
+            self._buffered_answers = []
 
             # Crear nueva sesión
             start_dto = StartImageStudySessionDto.from_primitives(
@@ -430,8 +487,8 @@ class ImageStudyController(BaseController):
         self._ft_container.page.run_task(_task)
 
     def _on_back_btn_click(self) -> None:
-        """Maneja click en boton volver (arriba izquierda en UI)."""
-        self._ft_container.page.run_task(self._async_finish_session)
+        """Salir del examen (abortar): no cuenta nada de lo realizado."""
+        self._ft_container.page.run_task(self._async_abort)
         self._route_on_back()
 
     def _on_retry_failed_click(self) -> None:
@@ -477,10 +534,9 @@ class ImageStudyController(BaseController):
         self._ft_container.page.run_task(self._async_play_source_audio)
 
     def _show_session_complete(self) -> None:
-        """Muestra pantalla de sesion completada y finaliza via servicio."""
+        """Completa el examen: persiste TODO lo acumulado y finaliza la sesión."""
         self._is_session_complete = True
-        self._ft_container.page.run_task(self._async_finish_session)
-        self._ft_container.page.run_task(self._async_clear_activity_state)
+        self._ft_container.page.run_task(self._async_commit_and_finish)
 
         self._ft_container.render(
             ImageStudyViewDto.session_complete(
