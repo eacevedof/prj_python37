@@ -26,7 +26,7 @@ from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteReposit
 class GenerateWordImageAiService:
     """Servicio para generar imagenes con gpt-image-1.5."""
 
-    _instance: "GenerateWordImageAiService | None" = None
+    __instance: "GenerateWordImageAiService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -35,9 +35,9 @@ class GenerateWordImageAiService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self,

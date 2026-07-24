@@ -18,13 +18,13 @@ class Awaker:
     _ES_SYSTEM_REQUIRED = 0x00000001
     _ES_DISPLAY_REQUIRED = 0x00000002
 
-    _instance: "Awaker | None" = None
+    __instance: "Awaker | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def keep_awake(self) -> None:
         """Activa el modo sin suspensión (sistema + pantalla encendida)."""

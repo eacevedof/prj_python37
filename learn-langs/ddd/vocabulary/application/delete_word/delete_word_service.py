@@ -20,7 +20,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class DeleteWordService:
     """Servicio para eliminar palabras con sus dependencias."""
 
-    _delete_word_dto: DeleteWordDto
+    __delete_word_dto: DeleteWordDto
     _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
     _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
     _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
@@ -53,7 +53,7 @@ class DeleteWordService:
         Raises:
             VocabularyException: Si la validacion falla o la palabra no existe.
         """
-        self._delete_word_dto = delete_word_dto
+        self.__delete_word_dto = delete_word_dto
 
         # Validar DTO
         errors = delete_word_dto.validate()

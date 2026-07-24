@@ -16,7 +16,7 @@ from ddd.vocabulary.infrastructure.repositories import SessionsWriterSqliteRepos
 class FinishStudySessionService:
     """Servicio para finalizar sesiones de estudio."""
 
-    _instance: "FinishStudySessionService | None" = None
+    __instance: "FinishStudySessionService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -24,9 +24,9 @@ class FinishStudySessionService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
 
     async def __call__(

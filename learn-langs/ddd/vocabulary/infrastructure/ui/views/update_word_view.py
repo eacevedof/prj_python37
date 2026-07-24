@@ -52,16 +52,16 @@ class UpdateWordView(ft.Container):
         self._logger = Logger.get_instance()
 
         # Estado local de tags seleccionados
-        self._selected_tags: list[str] = []
-        self._available_tags: list[dict[str, Any]] = []
+        self.__selected_tags: list[str] = []
+        self.__available_tags: list[dict[str, Any]] = []
 
         # Estado local de imagenes
-        self._word_images: list[dict[str, Any]] = []
+        self.__word_images: list[dict[str, Any]] = []
 
         # Estado local de grupos
-        self._word_groups: list[dict[str, Any]] = []
-        self._available_groups: list[dict[str, Any]] = []
-        self._selected_group_ids: list[int] = []
+        self.__word_groups: list[dict[str, Any]] = []
+        self.__available_groups: list[dict[str, Any]] = []
+        self.__selected_group_ids: list[int] = []
 
         # Componentes UI - Header
         self._ft_word_groups_text: ft.Text | None = None
@@ -132,18 +132,18 @@ class UpdateWordView(ft.Container):
         self._render_form_values(dto.form_values)
 
         # Tags disponibles
-        self._available_tags = list(dto.available_tags)
-        self._selected_tags = list(dto.form_values.get("selected_tags", []))
+        self.__available_tags = list(dto.available_tags)
+        self.__selected_tags = list(dto.form_values.get("selected_tags", []))
         self._render_tags()
 
         # Imagenes disponibles
-        self._word_images = list(dto.word_images)
+        self.__word_images = list(dto.word_images)
         self._render_images()
 
         # Grupos de palabras
-        self._word_groups = list(dto.word_groups)
-        self._available_groups = list(dto.available_groups)
-        self._selected_group_ids = [g.get("id", 0) for g in self._word_groups]
+        self.__word_groups = list(dto.word_groups)
+        self.__available_groups = list(dto.available_groups)
+        self.__selected_group_ids = [g.get("id", 0) for g in self.__word_groups]
         self._render_word_groups()
 
         # Audios por idioma (solo si el DTO los trae; los parciales usan render_audio_rows)
@@ -166,7 +166,7 @@ class UpdateWordView(ft.Container):
 
     def render_word_images(self, word_images: list[dict[str, Any]]) -> None:
         """Actualiza solo la sección de imágenes (sin tocar el resto del formulario)."""
-        self._word_images = list(word_images)
+        self.__word_images = list(word_images)
         self._render_images()
         self.update()
 
@@ -562,7 +562,7 @@ class UpdateWordView(ft.Container):
 
         self._ft_tags_row.controls.clear()
 
-        if not self._available_tags:
+        if not self.__available_tags:
             self._ft_tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
@@ -572,9 +572,9 @@ class UpdateWordView(ft.Container):
                 )
             )
         else:
-            for tag in self._available_tags:
+            for tag in self.__available_tags:
                 tag_name = tag.get("name", "")
-                is_selected = tag_name in self._selected_tags
+                is_selected = tag_name in self.__selected_tags
                 chip = ft.Chip(
                     label=ft.Text(tag_name, size=10),
                     selected=is_selected,
@@ -591,7 +591,7 @@ class UpdateWordView(ft.Container):
 
         self._ft_groups_column.controls.clear()
 
-        if not self._available_groups:
+        if not self.__available_groups:
             self._ft_groups_column.controls.append(
                 ft.Text(
                     "No hay grupos disponibles",
@@ -601,11 +601,11 @@ class UpdateWordView(ft.Container):
                 )
             )
         else:
-            for group in self._available_groups:
+            for group in self.__available_groups:
                 group_id = group.get("id", 0)
                 group_title = group.get("title", "")
                 is_generic = group_title.lower() == "generic"
-                is_selected = group_id in self._selected_group_ids
+                is_selected = group_id in self.__selected_group_ids
 
                 checkbox = ft.Checkbox(
                     label=f"{group_title} ({group_id})",
@@ -713,7 +713,7 @@ class UpdateWordView(ft.Container):
         # Limpiar grid
         self._ft_images_grid.controls.clear()
 
-        if not self._word_images:
+        if not self.__word_images:
             self._ft_last_image_container.visible = False
             self._ft_images_grid.controls.append(
                 ft.Text(
@@ -726,12 +726,12 @@ class UpdateWordView(ft.Container):
             return
 
         # Mostrar última imagen (la última del array)
-        last_image = self._word_images[-1]
+        last_image = self.__word_images[-1]
         self._render_last_image(last_image)
 
         # Mostrar grid de todas las imagenes
         thumbnails_added = 0
-        for image_data in self._word_images:
+        for image_data in self.__word_images:
             relative_path = image_data.get("file_path", "")
             if not relative_path:
                 continue
@@ -939,19 +939,19 @@ class UpdateWordView(ft.Container):
     # =========================================================================
     def _toggle_tag(self, tag_name: str) -> None:
         """Alterna seleccion de tag (estado local)."""
-        if tag_name in self._selected_tags:
-            self._selected_tags.remove(tag_name)
+        if tag_name in self.__selected_tags:
+            self.__selected_tags.remove(tag_name)
         else:
-            self._selected_tags.append(tag_name)
+            self.__selected_tags.append(tag_name)
         self._render_tags()
         self.update()
 
     def _toggle_group(self, group_id: int, is_checked: bool) -> None:
         """Alterna selección de grupo (estado local)."""
-        if is_checked and group_id not in self._selected_group_ids:
-            self._selected_group_ids.append(group_id)
-        elif not is_checked and group_id in self._selected_group_ids:
-            self._selected_group_ids.remove(group_id)
+        if is_checked and group_id not in self.__selected_group_ids:
+            self.__selected_group_ids.append(group_id)
+        elif not is_checked and group_id in self.__selected_group_ids:
+            self.__selected_group_ids.remove(group_id)
         self.update()
 
     def _on_save_btn_click(self) -> None:
@@ -991,6 +991,6 @@ class UpdateWordView(ft.Container):
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
             "img_ia_context": self._ft_img_ia_context_field.value if self._ft_img_ia_context_field else "",
             "rules_help": self._ft_rules_help_field.value if self._ft_rules_help_field else "",
-            "selected_tags": list(self._selected_tags),
-            "selected_group_ids": list(self._selected_group_ids),
+            "selected_tags": list(self.__selected_tags),
+            "selected_group_ids": list(self.__selected_group_ids),
         }

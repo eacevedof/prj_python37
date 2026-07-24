@@ -21,7 +21,7 @@ from ddd.vocabulary.domain.exceptions.vocabulary_exception import VocabularyExce
 class DeleteWordImageService:
     """Servicio para eliminar imagenes de palabras."""
 
-    _instance: "DeleteWordImageService | None" = None
+    __instance: "DeleteWordImageService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -30,9 +30,9 @@ class DeleteWordImageService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(self, delete_word_image_dto: DeleteWordImageDto) -> DeleteWordImageResultDto:
         """

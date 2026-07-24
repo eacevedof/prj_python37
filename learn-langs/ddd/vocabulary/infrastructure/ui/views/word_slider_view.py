@@ -50,13 +50,13 @@ class WordSliderView(ft.Container):
         self._route_on_reset_word = route_on_reset_word
 
         # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
-        self._is_paused: bool = False
+        self.__is_paused: bool = False
         # Hay un diálogo (ayuda/reiniciar) abierto: ignora los atajos de teclado
-        self._is_modal_open: bool = False
+        self.__is_modal_open: bool = False
 
         # Datos de la palabra actual para el modal de ayuda (reglas de uso)
-        self._current_word_text: str = ""
-        self._current_rules_help: str = ""
+        self.__current_word_text: str = ""
+        self.__current_rules_help: str = ""
 
         # Componentes UI - Header
         self._ft_progress_text: ft.Text | None = None
@@ -68,7 +68,7 @@ class WordSliderView(ft.Container):
         self._ft_pause_btn: ft.IconButton | None = None
         self._ft_help_btn: ft.IconButton | None = None
         self._ft_controls_row: ft.Row | None = None
-        self._is_card_mounted: bool = False
+        self.__is_card_mounted: bool = False
 
         self._build_initial_ui()
 
@@ -133,7 +133,7 @@ class WordSliderView(ft.Container):
 
         Se ignoran si hay un diálogo abierto o si se pulsa con ctrl/alt/meta.
         """
-        if self._is_modal_open or event.ctrl or event.alt or event.meta:
+        if self.__is_modal_open or event.ctrl or event.alt or event.meta:
             return
         if event.key == "Arrow Left":
             self._on_prev_btn_click()
@@ -243,7 +243,7 @@ class WordSliderView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._is_card_mounted = False
+        self.__is_card_mounted = False
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.append(
             ft.Container(
@@ -265,13 +265,13 @@ class WordSliderView(ft.Container):
         word = dto.current_word
 
         # Datos para el modal de ayuda (habilitado solo si la palabra tiene reglas)
-        self._current_word_text = word.get("text_es", "")
-        self._current_rules_help = word.get("rules_help", "") or ""
+        self.__current_word_text = word.get("text_es", "")
+        self.__current_rules_help = word.get("rules_help", "") or ""
         if self._ft_help_btn:
-            self._ft_help_btn.disabled = not self._current_rules_help
+            self._ft_help_btn.disabled = not self.__current_rules_help
 
         # Montar la tarjeta persistente una sola vez para preservar la animación
-        if not self._is_card_mounted:
+        if not self.__is_card_mounted:
             self._reset_pause_button()
             self._ft_content_area.controls.clear()
             self._ft_content_area.controls.extend(
@@ -285,7 +285,7 @@ class WordSliderView(ft.Container):
                     self._ft_controls_row,
                 ]
             )
-            self._is_card_mounted = True
+            self.__is_card_mounted = True
 
         self._ft_slider_card.render(
             text_es=word.get("text_es", ""),
@@ -305,7 +305,7 @@ class WordSliderView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._is_card_mounted = False
+        self.__is_card_mounted = False
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend(
             [
@@ -335,7 +335,7 @@ class WordSliderView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._is_card_mounted = False
+        self.__is_card_mounted = False
         action_buttons = []
 
         if self._route_on_replay:
@@ -403,31 +403,31 @@ class WordSliderView(ft.Container):
 
         Al cerrar, reanuda solo si la pausa la provocó la propia ayuda.
         """
-        if not self._current_rules_help or not self.page:
+        if not self.__current_rules_help or not self.page:
             return
 
-        self._is_modal_open = True
-        was_playing = not self._is_paused
+        self.__is_modal_open = True
+        was_playing = not self.__is_paused
         if was_playing and self._route_on_toggle_pause:
-            self._is_paused = True
+            self.__is_paused = True
             self._apply_pause_icon()
             self._route_on_toggle_pause()
 
         def close_dialog(_) -> None:
-            self._is_modal_open = False
+            self.__is_modal_open = False
             dialog.open = False
             if was_playing and self._route_on_toggle_pause:
-                self._is_paused = False
+                self.__is_paused = False
                 self._apply_pause_icon()
                 self._route_on_toggle_pause()
             self.page.update()
 
         dialog = ft.AlertDialog(
             modal=True,
-            title=ft.Text(self._current_word_text, size=22, weight=ft.FontWeight.BOLD),
+            title=ft.Text(self.__current_word_text, size=22, weight=ft.FontWeight.BOLD),
             content=ft.Container(
                 content=ft.Column(
-                    controls=self._get_rules_controls(self._current_rules_help),
+                    controls=self._get_rules_controls(self.__current_rules_help),
                     scroll=ft.ScrollMode.AUTO,
                     spacing=6,
                 ),
@@ -495,18 +495,18 @@ class WordSliderView(ft.Container):
         if not self.page or not self._route_on_reset_word:
             return
 
-        self._is_modal_open = True
-        was_playing = not self._is_paused
+        self.__is_modal_open = True
+        was_playing = not self.__is_paused
         if was_playing and self._route_on_toggle_pause:
-            self._is_paused = True
+            self.__is_paused = True
             self._apply_pause_icon()
             self._route_on_toggle_pause()
 
         def close_dialog(_) -> None:
-            self._is_modal_open = False
+            self.__is_modal_open = False
             dialog.open = False
             if was_playing and self._route_on_toggle_pause:
-                self._is_paused = False
+                self.__is_paused = False
                 self._apply_pause_icon()
                 self._route_on_toggle_pause()
             self.page.update()
@@ -520,7 +520,7 @@ class WordSliderView(ft.Container):
             modal=True,
             title=ft.Text("Reiniciar palabra", size=22, weight=ft.FontWeight.BOLD),
             content=ft.Text(
-                f"El progreso de estudio de «{self._current_word_text}» volverá a cero "
+                f"El progreso de estudio de «{self.__current_word_text}» volverá a cero "
                 "y entrará al entrenamiento como palabra nueva. La palabra, sus "
                 "traducciones, audios e imágenes no se tocan.",
                 size=16,
@@ -555,7 +555,7 @@ class WordSliderView(ft.Container):
 
     def _on_pause_btn_click(self) -> None:
         """Alterna el icono pausa/reanudar y notifica al controller."""
-        self._is_paused = not self._is_paused
+        self.__is_paused = not self.__is_paused
         self._apply_pause_icon()
         if self._route_on_toggle_pause:
             self._route_on_toggle_pause()
@@ -563,14 +563,14 @@ class WordSliderView(ft.Container):
 
     def _reset_pause_button(self) -> None:
         """Restaura el botón de pausa al estado reproduciendo."""
-        self._is_paused = False
+        self.__is_paused = False
         self._apply_pause_icon()
 
     def _apply_pause_icon(self) -> None:
         """Sincroniza icono y tooltip del botón con el estado de pausa."""
         if not self._ft_pause_btn:
             return
-        if self._is_paused:
+        if self.__is_paused:
             self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
             self._ft_pause_btn.tooltip = "Reanudar"
         else:
@@ -582,7 +582,7 @@ class WordSliderView(ft.Container):
         if not self._ft_content_area:
             return
 
-        self._is_card_mounted = False
+        self.__is_card_mounted = False
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend(
             [

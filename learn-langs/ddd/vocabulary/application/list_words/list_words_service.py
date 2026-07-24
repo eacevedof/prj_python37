@@ -19,7 +19,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class ListWordsService:
     """Servicio para listar palabras con filtros."""
 
-    _list_words_dto: ListWordsDto
+    __list_words_dto: ListWordsDto
     _words_pagination_reader_sqlite_repository: WordsPaginationReaderSqliteRepository
     _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
     _images_reader_sqlite_repository: ImagesReaderSqliteRepository
@@ -45,7 +45,7 @@ class ListWordsService:
         Returns:
             ListWordsResultDto con las palabras encontradas.
         """
-        self._list_words_dto = list_words_dto
+        self.__list_words_dto = list_words_dto
 
         # Filtros para el repositorio de paginación (search incluye id, texto y grupo)
         filters = {

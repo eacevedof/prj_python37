@@ -22,7 +22,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class StartWordSliderSessionService:
     """Servicio para iniciar una sesión de slider."""
 
-    _start_word_slider_session_dto: StartWordSliderSessionDto
+    __start_word_slider_session_dto: StartWordSliderSessionDto
     _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
@@ -53,7 +53,7 @@ class StartWordSliderSessionService:
         Raises:
             VocabularyException: Si no hay palabras disponibles.
         """
-        self._start_word_slider_session_dto = start_word_slider_session_dto
+        self.__start_word_slider_session_dto = start_word_slider_session_dto
 
         # Validar
         errors = start_word_slider_session_dto.validate()

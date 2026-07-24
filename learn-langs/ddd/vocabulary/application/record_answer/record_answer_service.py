@@ -19,7 +19,7 @@ from ddd.vocabulary.domain.exceptions import VocabularyException
 class RecordAnswerService:
     """Servicio para registrar respuestas y actualizar metricas SM-2."""
 
-    _record_answer_dto: RecordAnswerDto
+    __record_answer_dto: RecordAnswerDto
     _score_calculator_service: ScoreCalculatorService
     _spaced_repetition_service: SpacedRepetitionService
     _sessions_reader_sqlite_repository: SessionsReaderSqliteRepository
@@ -56,7 +56,7 @@ class RecordAnswerService:
         Raises:
             VocabularyException: Si la sesion no existe o esta finalizada.
         """
-        self._record_answer_dto = record_answer_dto
+        self.__record_answer_dto = record_answer_dto
 
         # Validar DTO
         errors = record_answer_dto.validate()

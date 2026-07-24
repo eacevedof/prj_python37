@@ -19,7 +19,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class StartImageStudySessionService:
     """Servicio para iniciar una sesión de estudio con imágenes."""
 
-    _start_image_study_session_dto: StartImageStudySessionDto
+    __start_image_study_session_dto: StartImageStudySessionDto
     _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
     _sessions_writer_sqlite_repository: SessionsWriterSqliteRepository
 
@@ -47,7 +47,7 @@ class StartImageStudySessionService:
         Raises:
             VocabularyException: Si no hay palabras con imágenes disponibles.
         """
-        self._start_image_study_session_dto = start_image_study_session_dto
+        self.__start_image_study_session_dto = start_image_study_session_dto
 
         # Validar
         errors = start_image_study_session_dto.validate()

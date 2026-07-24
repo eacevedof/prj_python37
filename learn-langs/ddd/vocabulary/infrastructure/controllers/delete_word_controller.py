@@ -22,7 +22,7 @@ class DeleteWordController:
     no tiene vista propia (no hereda de BaseController).
     """
 
-    _instance: "DeleteWordController | None" = None
+    __instance: "DeleteWordController | None" = None
 
     # =========================================================================
     # CONSTRUCCIÓN
@@ -33,9 +33,9 @@ class DeleteWordController:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     # =========================================================================
     # API PÚBLICA

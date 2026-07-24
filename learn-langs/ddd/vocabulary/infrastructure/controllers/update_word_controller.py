@@ -77,9 +77,9 @@ class UpdateWordController(BaseController):
         self._route_on_back = on_back
 
         # Estado interno
-        self._available_tags: list[dict[str, Any]] = []
-        self._audio_rows: list[dict[str, Any]] = []
-        self._word_images: list[dict[str, Any]] = []
+        self.__available_tags: list[dict[str, Any]] = []
+        self.__audio_rows: list[dict[str, Any]] = []
+        self.__word_images: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -141,11 +141,11 @@ class UpdateWordController(BaseController):
                 return
 
             # Guardar tags disponibles
-            self._available_tags = list(result.available_tags)
+            self.__available_tags = list(result.available_tags)
 
             # Cargar imagenes de la palabra
             word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
-            self._word_images = list(word_images)
+            self.__word_images = list(word_images)
 
             # Cargar grupos de la palabra
             word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(self._word_id)
@@ -154,7 +154,7 @@ class UpdateWordController(BaseController):
             all_groups = await self._word_groups_reader.get_all_word_groups()
 
             # Estado de audios por idioma (español origen + neerlandés destino)
-            self._audio_rows = self._get_initial_audio_rows()
+            self.__audio_rows = self._get_initial_audio_rows()
 
             # Renderizar
             update_word_view_dto = UpdateWordViewDto.with_data(
@@ -171,11 +171,11 @@ class UpdateWordController(BaseController):
                     LanguageCodeEnum.NL_NL.value, ""
                 ),
                 selected_tags=list(result.selected_tags),
-                available_tags=self._available_tags,
+                available_tags=self.__available_tags,
                 available_groups=all_groups,
                 word_groups=word_groups,
                 word_images=word_images,
-                audio_languages=self._audio_rows,
+                audio_languages=self.__audio_rows,
             )
             self._ft_container.render(update_word_view_dto)
 
@@ -204,7 +204,7 @@ class UpdateWordController(BaseController):
             dto = UpdateWordViewDto.error(
                 message="La palabra en espanol es obligatoria",
                 form_values=form_data,
-                available_tags=self._available_tags,
+                available_tags=self.__available_tags,
                 error_field="text_es",
             )
             self._ft_container.render(dto)
@@ -252,7 +252,7 @@ class UpdateWordController(BaseController):
             dto = UpdateWordViewDto.error(
                 message=e.message,
                 form_values=form_data,
-                available_tags=self._available_tags,
+                available_tags=self.__available_tags,
             )
             self._ft_container.render(dto)
 
@@ -265,7 +265,7 @@ class UpdateWordController(BaseController):
             dto = UpdateWordViewDto.error(
                 message=str(e),
                 form_values=form_data,
-                available_tags=self._available_tags,
+                available_tags=self.__available_tags,
             )
             self._ft_container.render(dto)
 
@@ -344,7 +344,7 @@ class UpdateWordController(BaseController):
             return
 
         self._set_audio_row(lang_code, is_generating=True)
-        self._ft_container.render_audio_rows(self._audio_rows)
+        self._ft_container.render_audio_rows(self.__audio_rows)
 
         try:
             # Liberar el reproductor antes de que el servicio borre el definitivo (WinError 5).
@@ -360,12 +360,12 @@ class UpdateWordController(BaseController):
 
             if not result.success:
                 self._set_audio_row(lang_code, is_generating=False)
-                self._ft_container.render_audio_rows(self._audio_rows)
+                self._ft_container.render_audio_rows(self.__audio_rows)
                 self._ft_container.show_snackbar(result.error_message or "Error", error=True)
                 return
 
             self._set_audio_row(lang_code, is_generating=False, has_temp=True)
-            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.render_audio_rows(self.__audio_rows)
 
             # Reproducir la propuesta para comprobarla de inmediato
             await asyncio.to_thread(self._play_audio_file, result.temp_audio_path)
@@ -377,7 +377,7 @@ class UpdateWordController(BaseController):
                 {"word_id": self._word_id, "lang_code": lang_code},
             )
             self._set_audio_row(lang_code, is_generating=False)
-            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.render_audio_rows(self.__audio_rows)
             self._ft_container.show_snackbar(f"Error regenerando audio: {e}", error=True)
 
     async def _async_accept_audio(self, lang_code: str) -> None:
@@ -398,7 +398,7 @@ class UpdateWordController(BaseController):
                 return
 
             self._set_audio_row(lang_code, has_temp=False)
-            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.render_audio_rows(self.__audio_rows)
             self._ft_container.show_snackbar("Audio aceptado como definitivo")
 
         except Exception as e:
@@ -426,7 +426,7 @@ class UpdateWordController(BaseController):
                 return
 
             self._set_audio_row(lang_code, has_temp=False)
-            self._ft_container.render_audio_rows(self._audio_rows)
+            self._ft_container.render_audio_rows(self.__audio_rows)
             self._ft_container.show_snackbar("Propuesta de audio descartada")
 
         except Exception as e:
@@ -448,7 +448,7 @@ class UpdateWordController(BaseController):
 
     async def _async_generate_ia_image(self) -> None:
         """Genera la imagen con IA y sobrescribe la última (borra la anterior)."""
-        previous_last_image_id = int(self._word_images[-1].get("id", 0)) if self._word_images else 0
+        previous_last_image_id = int(self.__word_images[-1].get("id", 0)) if self.__word_images else 0
 
         self._ft_container.set_image_generating(True)
         try:
@@ -469,10 +469,10 @@ class UpdateWordController(BaseController):
                     DeleteWordImageDto.from_primitives({"image_id": previous_last_image_id})
                 )
 
-            self._word_images = list(
+            self.__word_images = list(
                 await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
             )
-            self._ft_container.render_word_images(self._word_images)
+            self._ft_container.render_word_images(self.__word_images)
             self._ft_container.show_snackbar("Imagen IA generada (última imagen sobrescrita)")
 
         except Exception as e:
@@ -505,7 +505,7 @@ class UpdateWordController(BaseController):
 
     def _set_audio_row(self, lang_code: str, **changes: Any) -> None:
         """Actualiza el estado de la fila de audio del idioma dado."""
-        for audio_row in self._audio_rows:
+        for audio_row in self.__audio_rows:
             if audio_row.get("lang_code") == lang_code:
                 audio_row.update(changes)
                 return

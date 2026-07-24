@@ -84,20 +84,20 @@ class WordSliderController(BaseController):
         self._group_id = group_id
         self._start_word_id = max(0, start_word_id)
         self._is_random_order = is_random_order
-        self._start_index = 0
+        self.__start_index = 0
         self._route_on_back = route_on_back
         self._route_on_edit_word = route_on_edit_word
 
         # Estado interno de sesión
-        self._session_id: int = 0
-        self._words: list[SliderWordDto] = []
-        self._current_index: int = 0
-        self._is_stopped: bool = False
-        self._is_paused: bool = False
-        self._navigation_request: int | None = (
+        self.__session_id: int = 0
+        self.__words: list[SliderWordDto] = []
+        self.__current_index: int = 0
+        self.__is_stopped: bool = False
+        self.__is_paused: bool = False
+        self.__navigation_request: int | None = (
             None  # índice pedido con anterior/siguiente
         )
-        self._run_token: int = (
+        self.__run_token: int = (
             0  # identifica el bucle vigente; invalida bucles/hilos obsoletos
         )
 
@@ -161,25 +161,25 @@ class WordSliderController(BaseController):
 
             result = await self._start_session_service(start_dto)
 
-            self._session_id = result.session_id
+            self.__session_id = result.session_id
             # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
-            self._words = [SliderWordDto.from_primitives(w) for w in result.words]
-            self._current_index = 0
-            self._is_stopped = False
-            self._is_paused = False
-            self._navigation_request = None
+            self.__words = [SliderWordDto.from_primitives(w) for w in result.words]
+            self.__current_index = 0
+            self.__is_stopped = False
+            self.__is_paused = False
+            self.__navigation_request = None
             # Retomar tras editar: localizar la palabra por id (robusto también
             # con orden aleatorio, donde el índice cambia entre sesiones)
-            self._start_index = next(
+            self.__start_index = next(
                 (
                     index
-                    for index, word in enumerate(self._words)
+                    for index, word in enumerate(self.__words)
                     if word.word_es_id == self._start_word_id
                 ),
                 0,
             )
 
-            if not self._words:
+            if not self.__words:
                 self._ft_container.render(WordSliderViewDto.no_words())
                 return
 
@@ -208,8 +208,8 @@ class WordSliderController(BaseController):
         Cada arranque invalida el bucle anterior via _run_token: si por cualquier
         motivo quedara un bucle vivo, se corta solo (evita audios solapados).
         """
-        self._run_token += 1
-        run_token = self._run_token
+        self.__run_token += 1
+        run_token = self.__run_token
 
         # Mientras el slider reproduce, el equipo no debe suspenderse ni apagar
         # la pantalla (best-effort; se restaura al finalizar la sesión)
@@ -221,23 +221,23 @@ class WordSliderController(BaseController):
                 f"No se pudo activar el modo sin suspensión: {e}",
             )
 
-        index = min(self._start_index, len(self._words) - 1) if self._words else 0
+        index = min(self.__start_index, len(self.__words) - 1) if self.__words else 0
         # Retomar solo aplica a la primera pasada (al volver de editar una palabra)
-        self._start_index = 0
-        while index < len(self._words):
+        self.__start_index = 0
+        while index < len(self.__words):
             if self._is_run_cancelled(run_token):
                 return
-            self._current_index = index
-            await self._async_save_activity_state(self._words[index], index)
-            await self._async_play_word(self._words[index], run_token)
+            self.__current_index = index
+            await self._async_save_activity_state(self.__words[index], index)
+            await self._async_play_word(self.__words[index], run_token)
 
             if self._is_run_cancelled(run_token):
                 return
 
-            if self._navigation_request is not None:
+            if self.__navigation_request is not None:
                 # Salto pedido con anterior/siguiente (si supera el final, completa)
-                index = min(self._navigation_request, len(self._words))
-                self._navigation_request = None
+                index = min(self.__navigation_request, len(self.__words))
+                self.__navigation_request = None
             else:
                 index += 1
 
@@ -298,7 +298,7 @@ class WordSliderController(BaseController):
             # Último ciclo: espera larga mostrando los ejemplos de uso si existen
             if (
                 self._is_run_cancelled(run_token)
-                or self._navigation_request is not None
+                or self.__navigation_request is not None
             ):
                 return
             if word.examples_lang:
@@ -328,7 +328,7 @@ class WordSliderController(BaseController):
         try:
             dto = FinishStudySessionDto.from_primitives(
                 {
-                    "session_id": self._session_id,
+                    "session_id": self.__session_id,
                     "lang_code": self._lang_code,
                     "study_mode": StudyModeEnum.SLIDER.value,
                 }
@@ -338,7 +338,7 @@ class WordSliderController(BaseController):
             self._logger.log_error(
                 "WordSliderController",
                 f"Error finalizando sesión: {e}",
-                {"session_id": self._session_id},
+                {"session_id": self.__session_id},
             )
 
     async def _play_text_audio(
@@ -347,7 +347,7 @@ class WordSliderController(BaseController):
         """Genera (o reutiliza) y reproduce el audio de un texto."""
         if (
             self._is_run_cancelled(run_token)
-            or self._navigation_request is not None
+            or self.__navigation_request is not None
             or not text
         ):
             return
@@ -370,17 +370,17 @@ class WordSliderController(BaseController):
                 return
 
             # Puerta de pausa: no arrancar un audio nuevo mientras esté en pausa
-            while self._is_paused:
+            while self.__is_paused:
                 if (
                     self._is_run_cancelled(run_token)
-                    or self._navigation_request is not None
+                    or self.__navigation_request is not None
                 ):
                     return
                 await asyncio.sleep(0.2)
 
             if (
                 self._is_run_cancelled(run_token)
-                or self._navigation_request is not None
+                or self.__navigation_request is not None
             ):
                 return
 
@@ -411,12 +411,12 @@ class WordSliderController(BaseController):
             while True:
                 if (
                     self._is_run_cancelled(run_token)
-                    or self._navigation_request is not None
+                    or self.__navigation_request is not None
                 ):
                     pygame.mixer.music.stop()
                     break
                 # En pausa, seguir esperando la reanudación sin avanzar la secuencia
-                if not pygame.mixer.music.get_busy() and not self._is_paused:
+                if not pygame.mixer.music.get_busy() and not self.__is_paused:
                     break
                 clock.tick(10)
 
@@ -430,40 +430,40 @@ class WordSliderController(BaseController):
     # =========================================================================
     def _on_back_btn_click(self) -> None:
         """Detiene el slider, finaliza la sesión y vuelve al home."""
-        self._is_stopped = True
-        self._is_paused = False
+        self.__is_stopped = True
+        self.__is_paused = False
         self._stop_audio()
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_back()
 
     def _on_replay_click(self) -> None:
         """Reinicia el slider con las mismas palabras (ignora doble clic)."""
-        if not self._is_stopped:
+        if not self.__is_stopped:
             return
-        self._is_stopped = False
-        self._is_paused = False
-        self._navigation_request = None
-        self._current_index = 0
+        self.__is_stopped = False
+        self.__is_paused = False
+        self.__navigation_request = None
+        self.__current_index = 0
         self._ft_container.page.run_task(self._async_run_slider)
 
     def _on_prev_btn_click(self) -> None:
         """Salta a la palabra anterior (corta la secuencia actual)."""
-        self._navigation_request = max(0, self._current_index - 1)
+        self.__navigation_request = max(0, self.__current_index - 1)
         self._resume_if_paused()
         self._stop_audio()
 
     def _on_next_btn_click(self) -> None:
         """Salta a la palabra siguiente (corta la secuencia actual)."""
-        self._navigation_request = self._current_index + 1
+        self.__navigation_request = self.__current_index + 1
         self._resume_if_paused()
         self._stop_audio()
 
     def _on_toggle_pause_click(self) -> None:
         """Pausa/reanuda la reproducción (audio y temporizadores)."""
-        self._is_paused = not self._is_paused
+        self.__is_paused = not self.__is_paused
         try:
             if pygame.mixer.get_init():
-                if self._is_paused:
+                if self.__is_paused:
                     pygame.mixer.music.pause()
                 else:
                     pygame.mixer.music.unpause()
@@ -476,11 +476,11 @@ class WordSliderController(BaseController):
         Al volver de la edición, el slider se retoma en esa misma palabra
         (localizada por id, ver _async_start_session).
         """
-        if not self._words:
+        if not self.__words:
             return
-        word = self._words[self._current_index]
-        self._is_stopped = True
-        self._is_paused = False
+        word = self.__words[self.__current_index]
+        self.__is_stopped = True
+        self.__is_paused = False
         self._stop_audio()
         self._ft_container.page.run_task(self._async_finish_session)
         self._route_on_edit_word(word.word_es_id)
@@ -490,9 +490,9 @@ class WordSliderController(BaseController):
 
         La vista ya pidió confirmación; el slider sigue reproduciendo.
         """
-        if not self._words:
+        if not self.__words:
             return
-        word = self._words[self._current_index]
+        word = self.__words[self.__current_index]
         self._ft_container.page.run_task(self._async_reset_word, word)
 
     async def _async_reset_word(self, word: SliderWordDto) -> None:
@@ -538,21 +538,21 @@ class WordSliderController(BaseController):
         while elapsed_seconds < seconds:
             if (
                 self._is_run_cancelled(run_token)
-                or self._navigation_request is not None
+                or self.__navigation_request is not None
             ):
                 return False
-            if self._is_paused:
+            if self.__is_paused:
                 await asyncio.sleep(0.2)
                 continue
             await asyncio.sleep(1)
             elapsed_seconds += 1
         return (
-            not self._is_run_cancelled(run_token) and self._navigation_request is None
+            not self._is_run_cancelled(run_token) and self.__navigation_request is None
         )
 
     def _is_run_cancelled(self, run_token: int) -> bool:
         """True si el slider se detuvo o este bucle quedó obsoleto (otro arrancó)."""
-        return self._is_stopped or run_token != self._run_token
+        return self.__is_stopped or run_token != self.__run_token
 
     async def _get_group_source(self) -> str:
         """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
@@ -570,8 +570,8 @@ class WordSliderController(BaseController):
 
     def _resume_if_paused(self) -> None:
         """Sale del estado de pausa (al navegar con anterior/siguiente)."""
-        if self._is_paused:
-            self._is_paused = False
+        if self.__is_paused:
+            self.__is_paused = False
 
     def _render_phase(
         self,
@@ -581,14 +581,14 @@ class WordSliderController(BaseController):
         show_examples: bool = False,
     ) -> None:
         """Renderiza la palabra actual en una fase concreta (si no se detuvo)."""
-        if self._is_stopped:
+        if self.__is_stopped:
             return
         self._ft_container.render(
             WordSliderViewDto.sliding(
-                session_id=self._session_id,
+                session_id=self.__session_id,
                 lang_code=self._lang_code,
-                total_words=len(self._words),
-                current_index=self._current_index,
+                total_words=len(self.__words),
+                current_index=self.__current_index,
                 current_word={
                     "word_es_id": word.word_es_id,
                     "text_es": word.text_es,
@@ -606,12 +606,12 @@ class WordSliderController(BaseController):
 
     def _show_session_complete(self) -> None:
         """Muestra pantalla de sesión completada y finaliza via servicio."""
-        self._is_stopped = True
+        self.__is_stopped = True
         self._ft_container.page.run_task(self._async_finish_session)
         self._ft_container.page.run_task(self._async_clear_activity_state)
         self._ft_container.render(
             WordSliderViewDto.session_complete(
-                total_words=len(self._words),
+                total_words=len(self.__words),
             )
         )
 
@@ -627,7 +627,7 @@ class WordSliderController(BaseController):
                         "group_id": self._group_id,
                         "word_es_id": word.word_es_id,
                         "word_index": index,
-                        "total_words": len(self._words),
+                        "total_words": len(self.__words),
                         "is_random_order": self._is_random_order,
                     }
                 )

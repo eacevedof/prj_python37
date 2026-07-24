@@ -57,7 +57,7 @@ class ImageStudyView(ft.Container):
         self._ft_input_field: InputFieldComp | None = None
         self._ft_timer: TimerComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
-        self._is_paused: bool = False
+        self.__is_paused: bool = False
 
         self._build_initial_ui()
 
@@ -215,7 +215,7 @@ class ImageStudyView(ft.Container):
         )
 
         # Botonera: pausa/reanudar (+ audio pista si está disponible)
-        self._is_paused = False
+        self.__is_paused = False
         self._ft_pause_btn = ft.IconButton(
             icon=ft.Icons.PAUSE_CIRCLE,
             icon_size=32,
@@ -255,8 +255,8 @@ class ImageStudyView(ft.Container):
         """Pausa/reanuda el temporizador del examen (solo estado de vista)."""
         if not self._ft_timer or not self._ft_pause_btn:
             return
-        self._is_paused = not self._is_paused
-        if self._is_paused:
+        self.__is_paused = not self.__is_paused
+        if self.__is_paused:
             self._ft_timer.stop()
             self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
             self._ft_pause_btn.tooltip = "Reanudar"

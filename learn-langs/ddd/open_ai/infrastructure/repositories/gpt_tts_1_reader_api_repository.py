@@ -10,14 +10,14 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 class GptTts1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repositorio para generación de audio/pronunciación usando tts-1."""
 
-    _instance: "GptTts1ReaderApiRepository | None" = None
+    __instance: "GptTts1ReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
         """Retorna la instancia singleton."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def get_audio_bytes_from_text(
         self,

@@ -84,17 +84,17 @@ class ImageStudyController(BaseController):
         self._start_word_id = max(0, start_word_id)
 
         # Estado interno de sesión
-        self._session_id: int = 0
-        self._words: list[ImageStudyWordDto] = []
-        self._current_index: int = 0
-        self._start_time: float = 0
-        self._total_score: float = 0
-        self._answers_count: int = 0
-        self._failed_words: list[dict[str, Any]] = []
-        self._is_session_complete: bool = False
+        self.__session_id: int = 0
+        self.__words: list[ImageStudyWordDto] = []
+        self.__current_index: int = 0
+        self.__start_time: float = 0
+        self.__total_score: float = 0
+        self.__answers_count: int = 0
+        self.__failed_words: list[dict[str, Any]] = []
+        self.__is_session_complete: bool = False
         # Respuestas acumuladas en memoria; se persisten SOLO al completar (replay).
         # Al abortar se descartan (nada de lo realizado cuenta).
-        self._buffered_answers: list[dict[str, Any]] = []
+        self.__buffered_answers: list[dict[str, Any]] = []
 
         # Servicios
         self._logger = Logger.get_instance()
@@ -140,7 +140,7 @@ class ImageStudyController(BaseController):
     async def _async_start_session(self) -> None:
         """Inicia la sesión de estudio con imágenes cargando palabras del servicio."""
         self._ft_container.render(ImageStudyViewDto.initial())
-        self._buffered_answers = []
+        self.__buffered_answers = []
 
         # DEBUG: Log del group_id
         self._logger.log_debug(
@@ -163,21 +163,21 @@ class ImageStudyController(BaseController):
 
             result = await self._start_session_service(start_dto)
 
-            self._session_id = result.session_id
+            self.__session_id = result.session_id
             # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
-            self._words = [
+            self.__words = [
                 ImageStudyWordDto.from_primitives(w) for w in result.words
             ]
 
-            if not self._words:
+            if not self.__words:
                 self._ft_container.render(ImageStudyViewDto.no_words())
                 return
 
             # Retomar sesión: localizar la palabra guardada por id (0 = inicio)
-            self._current_index = next(
+            self.__current_index = next(
                 (
                     index
-                    for index, word in enumerate(self._words)
+                    for index, word in enumerate(self.__words)
                     if word.word_es_id == self._start_word_id
                 ),
                 0,
@@ -200,11 +200,11 @@ class ImageStudyController(BaseController):
     async def _async_process_answer(self, user_input: str) -> None:
         """Procesa y registra la respuesta del usuario via servicio."""
         # Evitar procesar si la sesión ya está completa
-        if self._is_session_complete:
+        if self.__is_session_complete:
             return
 
-        word = self._words[self._current_index]
-        response_time = int((time.time() - self._start_time) * 1000)
+        word = self.__words[self.__current_index]
+        response_time = int((time.time() - self.__start_time) * 1000)
 
         try:
             # Evaluar SIN persistir; la respuesta se acumula y se persiste al completar
@@ -217,8 +217,8 @@ class ImageStudyController(BaseController):
                 )
             )
 
-            self._buffered_answers.append({
-                "session_id": self._session_id,
+            self.__buffered_answers.append({
+                "session_id": self.__session_id,
                 "word_es_id": word.word_es_id,
                 "user_input": user_input,
                 "expected_text": word.text_lang,
@@ -226,12 +226,12 @@ class ImageStudyController(BaseController):
             })
 
             # Actualizar stats internas
-            self._total_score += result.score
-            self._answers_count += 1
+            self.__total_score += result.score
+            self.__answers_count += 1
 
             # Rastrear palabras falladas (cualquier respuesta incorrecta)
             if not result.is_correct:
-                self._failed_words.append(
+                self.__failed_words.append(
                     {
                         "word_es_id": word.word_es_id,
                         "text_es": word.text_es,
@@ -246,13 +246,13 @@ class ImageStudyController(BaseController):
 
             # Mostrar resultado en vista
             dto = ImageStudyViewDto.with_result(
-                session_id=self._session_id,
+                session_id=self.__session_id,
                 lang_code=self._lang_code,
-                total_words=len(self._words),
-                current_index=self._current_index,
+                total_words=len(self.__words),
+                current_index=self.__current_index,
                 current_word=self._word_to_dict(word),
-                total_score=self._total_score,
-                answers_count=self._answers_count,
+                total_score=self.__total_score,
+                answers_count=self.__answers_count,
                 last_result={
                     "is_correct": result.is_correct,
                     "score": result.score,
@@ -284,7 +284,7 @@ class ImageStudyController(BaseController):
                 "ImageStudyController",
                 f"Error registrando respuesta: {e}",
                 {
-                    "session_id": self._session_id,
+                    "session_id": self.__session_id,
                     "word_es_id": word.word_es_id,
                     "user_input": user_input,
                 },
@@ -296,7 +296,7 @@ class ImageStudyController(BaseController):
         try:
             dto = FinishStudySessionDto.from_primitives(
                 {
-                    "session_id": self._session_id,
+                    "session_id": self.__session_id,
                     "lang_code": self._lang_code,
                     "study_mode": "IMAGE_TYPING",
                 }
@@ -307,7 +307,7 @@ class ImageStudyController(BaseController):
             self._logger.log_error(
                 "ImageStudyController",
                 f"Error finalizando sesión: {e}",
-                {"session_id": self._session_id},
+                {"session_id": self.__session_id},
             )
 
     async def _async_commit_and_finish(self) -> None:
@@ -318,7 +318,7 @@ class ImageStudyController(BaseController):
 
     async def _async_commit_answers(self) -> None:
         """Persiste (replay) cada respuesta acumulada: métricas SM-2 + answer + progreso."""
-        for buffered_answer in self._buffered_answers:
+        for buffered_answer in self.__buffered_answers:
             try:
                 await self._record_answer_service(
                     RecordAnswerDto.from_primitives(buffered_answer)
@@ -329,7 +329,7 @@ class ImageStudyController(BaseController):
                     f"Error persistiendo respuesta al completar: {e}",
                     {"word_es_id": buffered_answer.get("word_es_id")},
                 )
-        self._buffered_answers = []
+        self.__buffered_answers = []
 
     async def _async_abort(self) -> None:
         """Aborta el examen: descarta el buffer y borra la sesión vacía.
@@ -338,19 +338,19 @@ class ImageStudyController(BaseController):
         sesión deja la BD como si el examen no hubiera ocurrido.
         """
         # Si el examen ya se completó (persistido), salir no debe borrar nada.
-        if self._is_session_complete:
+        if self.__is_session_complete:
             return
-        self._buffered_answers = []
+        self.__buffered_answers = []
         try:
             await self._discard_session_service(
-                DiscardStudySessionDto.from_primitives({"session_id": self._session_id})
+                DiscardStudySessionDto.from_primitives({"session_id": self.__session_id})
             )
             await self._async_clear_activity_state()
         except Exception as e:
             self._logger.log_error(
                 "ImageStudyController",
                 f"Error abortando examen: {e}",
-                {"session_id": self._session_id},
+                {"session_id": self.__session_id},
             )
 
     async def _async_retry_failed(self) -> None:
@@ -361,17 +361,17 @@ class ImageStudyController(BaseController):
 
             # Convertir palabras falladas a ImageStudyWordDto
             failed_words_dto = [
-                ImageStudyWordDto.from_primitives(word) for word in self._failed_words
+                ImageStudyWordDto.from_primitives(word) for word in self.__failed_words
             ]
 
             # Reiniciar estado con palabras falladas
-            self._words = failed_words_dto
-            self._current_index = 0
-            self._total_score = 0
-            self._answers_count = 0
-            self._failed_words = []
-            self._is_session_complete = False
-            self._buffered_answers = []
+            self.__words = failed_words_dto
+            self.__current_index = 0
+            self.__total_score = 0
+            self.__answers_count = 0
+            self.__failed_words = []
+            self.__is_session_complete = False
+            self.__buffered_answers = []
 
             # Crear nueva sesión
             start_dto = StartImageStudySessionDto.from_primitives(
@@ -383,7 +383,7 @@ class ImageStudyController(BaseController):
                 }
             )
             result = await self._start_session_service(start_dto)
-            self._session_id = result.session_id
+            self.__session_id = result.session_id
 
             # Mostrar primera palabra
             self._show_current_word()
@@ -401,9 +401,9 @@ class ImageStudyController(BaseController):
         Usa el mismo camino que la reproducción automática (gpt-4o-mini-tts con
         acento), para que el botón suene igual.
         """
-        if self._current_index >= len(self._words):
+        if self.__current_index >= len(self.__words):
             return
-        word = self._words[self._current_index]
+        word = self.__words[self.__current_index]
         await self._play_text_audio(
             word.text_lang,
             self._lang_code,
@@ -412,9 +412,9 @@ class ImageStudyController(BaseController):
 
     async def _async_play_source_audio(self) -> None:
         """Reproduce el audio en español de la palabra actual (al aparecer)."""
-        if self._current_index >= len(self._words):
+        if self.__current_index >= len(self.__words):
             return
-        word = self._words[self._current_index]
+        word = self.__words[self.__current_index]
         await self._play_text_audio(
             word.text_es,
             LanguageCodeEnum.ES_ES.value,
@@ -508,21 +508,21 @@ class ImageStudyController(BaseController):
     # =========================================================================
     def _show_current_word(self) -> None:
         """Muestra la palabra actual o completa sesion si no hay mas."""
-        if self._current_index >= len(self._words):
+        if self.__current_index >= len(self.__words):
             self._show_session_complete()
             return
 
-        self._start_time = time.time()
-        word = self._words[self._current_index]
+        self.__start_time = time.time()
+        word = self.__words[self.__current_index]
 
         dto = ImageStudyViewDto.studying(
-            session_id=self._session_id,
+            session_id=self.__session_id,
             lang_code=self._lang_code,
-            total_words=len(self._words),
-            current_index=self._current_index,
+            total_words=len(self.__words),
+            current_index=self.__current_index,
             current_word=self._word_to_dict(word),
-            total_score=self._total_score,
-            answers_count=self._answers_count,
+            total_score=self.__total_score,
+            answers_count=self.__answers_count,
             timer_seconds=self._get_timer_seconds(word),
         )
         self._ft_container.render(dto)
@@ -535,22 +535,22 @@ class ImageStudyController(BaseController):
 
     def _show_session_complete(self) -> None:
         """Completa el examen: persiste TODO lo acumulado y finaliza la sesión."""
-        self._is_session_complete = True
+        self.__is_session_complete = True
         self._ft_container.page.run_task(self._async_commit_and_finish)
 
         self._ft_container.render(
             ImageStudyViewDto.session_complete(
-                total_score=self._total_score,
-                answers_count=self._answers_count,
-                failed_words=self._failed_words,
+                total_score=self.__total_score,
+                answers_count=self.__answers_count,
+                failed_words=self.__failed_words,
             )
         )
 
     async def _async_save_activity_state(self) -> None:
         """Guarda el punto actual para poder retomarlo desde el Home (best-effort)."""
-        if self._current_index >= len(self._words):
+        if self.__current_index >= len(self.__words):
             return
-        word = self._words[self._current_index]
+        word = self.__words[self.__current_index]
         try:
             await self._save_activity_state_service(
                 SaveActivityStateDto.from_primitives(
@@ -560,8 +560,8 @@ class ImageStudyController(BaseController):
                         "tags": self._tags,
                         "group_id": self._group_id,
                         "word_es_id": word.word_es_id,
-                        "word_index": self._current_index,
-                        "total_words": len(self._words),
+                        "word_index": self.__current_index,
+                        "total_words": len(self.__words),
                         "is_random_order": False,
                     }
                 )
@@ -591,7 +591,7 @@ class ImageStudyController(BaseController):
 
     def _next_word(self) -> None:
         """Avanza a la siguiente palabra."""
-        self._current_index += 1
+        self.__current_index += 1
         self._show_current_word()
 
     def _word_to_dict(self, word: ImageStudyWordDto) -> dict[str, Any]:

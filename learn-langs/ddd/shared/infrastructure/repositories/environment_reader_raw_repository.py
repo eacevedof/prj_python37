@@ -8,14 +8,14 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
-    _instance: "EnvironmentReaderRawRepository | None" = None
+    __instance: "EnvironmentReaderRawRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
         """Retorna la instancia singleton."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def get(self, key: str, default: str = "") -> str:
         """

@@ -15,7 +15,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class LoadHomeService:
     """Servicio para cargar datos del home (tags y estadísticas)."""
 
-    _load_home_dto: LoadHomeDto
+    __load_home_dto: LoadHomeDto
 
     _tags_reader_sqlite_repository: TagsReaderSqliteRepository
     _metrics_reader_sqlite_repository: MetricsReaderSqliteRepository
@@ -40,7 +40,7 @@ class LoadHomeService:
         Returns:
             LoadHomeResultDto con tags y stats.
         """
-        self._load_home_dto = load_home_dto
+        self.__load_home_dto = load_home_dto
 
         # Cargar tags
         tags_raw = await self._tags_reader_sqlite_repository.get_all_tags()

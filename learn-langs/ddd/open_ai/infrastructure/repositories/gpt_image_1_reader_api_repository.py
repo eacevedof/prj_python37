@@ -14,14 +14,14 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 class GptImage1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repositorio para generación de imágenes usando gpt-image-1.5."""
 
-    _instance: "GptImage1ReaderApiRepository | None" = None
+    __instance: "GptImage1ReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
         """Retorna la instancia singleton."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def get_base64_images_from_text(
         self,

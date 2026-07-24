@@ -9,16 +9,16 @@ from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 class WordGroupsReaderSqliteRepository(AbstractSqliteRepository):
     """Repositorio para lectura de grupos de palabras."""
 
-    _instance: "WordGroupsReaderSqliteRepository | None" = None
+    __instance: "WordGroupsReaderSqliteRepository | None" = None
 
     def __init__(self) -> None:
         super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def get_all_word_groups(self) -> list[dict]:
         """

@@ -49,12 +49,12 @@ class CreateWordView(ft.Container):
         self._ft_loading_ring: ft.ProgressRing | None = None
 
         # Estado local de tags seleccionados
-        self._selected_tags: list[str] = []
-        self._available_tags: list[dict[str, Any]] = []
+        self.__selected_tags: list[str] = []
+        self.__available_tags: list[dict[str, Any]] = []
 
         # Estado local de grupos seleccionados
         self._selected_group_ids: list[int] = []
-        self._available_groups: list[dict[str, Any]] = []
+        self.__available_groups: list[dict[str, Any]] = []
 
         self._build_initial_ui()
 
@@ -81,12 +81,12 @@ class CreateWordView(ft.Container):
         self._render_form_values(dto.form_values)
 
         # Tags disponibles
-        self._available_tags = list(dto.available_tags)
-        self._selected_tags = list(dto.form_values.get("selected_tags", []))
+        self.__available_tags = list(dto.available_tags)
+        self.__selected_tags = list(dto.form_values.get("selected_tags", []))
         self._render_tags()
 
         # Grupos disponibles
-        self._available_groups = list(dto.available_groups)
+        self.__available_groups = list(dto.available_groups)
         self._selected_group_ids = list(dto.selected_group_ids)
         self._render_groups()
 
@@ -301,7 +301,7 @@ class CreateWordView(ft.Container):
 
         self._ft_tags_row.controls.clear()
 
-        if not self._available_tags:
+        if not self.__available_tags:
             self._ft_tags_row.controls.append(
                 ft.Text(
                     "No hay tags disponibles",
@@ -311,9 +311,9 @@ class CreateWordView(ft.Container):
                 )
             )
         else:
-            for tag in self._available_tags:
+            for tag in self.__available_tags:
                 tag_name = tag.get("name", "")
-                is_selected = tag_name in self._selected_tags
+                is_selected = tag_name in self.__selected_tags
                 chip = ft.Chip(
                     label=ft.Text(tag_name, size=12),
                     selected=is_selected,
@@ -326,7 +326,7 @@ class CreateWordView(ft.Container):
         """Actualiza el selector de grupos."""
         if self._ft_groups_selector:
             self._ft_groups_selector.refresh_groups(
-                self._available_groups,
+                self.__available_groups,
                 self._selected_group_ids,
             )
 
@@ -368,10 +368,10 @@ class CreateWordView(ft.Container):
 
     def _toggle_tag(self, tag_name: str) -> None:
         """Alterna selección de tag (estado local)."""
-        if tag_name in self._selected_tags:
-            self._selected_tags.remove(tag_name)
+        if tag_name in self.__selected_tags:
+            self.__selected_tags.remove(tag_name)
         else:
-            self._selected_tags.append(tag_name)
+            self.__selected_tags.append(tag_name)
         self._render_tags()
         self.update()
 
@@ -465,6 +465,6 @@ class CreateWordView(ft.Container):
             "text_lang": self._ft_text_lang_field.value if self._ft_text_lang_field else "",
             "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else WordTypeEnum.WORD.value,
             "notes": self._ft_notes_field.value if self._ft_notes_field else "",
-            "selected_tags": list(self._selected_tags),
+            "selected_tags": list(self.__selected_tags),
             "selected_group_ids": list(self._selected_group_ids),
         }

@@ -12,7 +12,7 @@ from ddd.vocabulary.infrastructure.repositories import AppConfigReaderRawReposit
 class GetAppConfigService:
     """Servicio para obtener la configuracion de la aplicacion."""
 
-    _instance: "GetAppConfigService | None" = None
+    __instance: "GetAppConfigService | None" = None
     _cached_config: GetAppConfigResultDto | None = None
     _app_config_reader_raw_repository: AppConfigReaderRawRepository
 
@@ -21,9 +21,9 @@ class GetAppConfigService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def __call__(self) -> GetAppConfigResultDto:
         """
@@ -44,5 +44,5 @@ class GetAppConfigService:
     @classmethod
     def clear_cache(cls) -> None:
         """Limpia la cache de configuracion."""
-        if cls._instance:
-            cls._instance._cached_config = None
+        if cls.__instance:
+            cls.__instance._cached_config = None

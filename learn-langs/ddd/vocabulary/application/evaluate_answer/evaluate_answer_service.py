@@ -20,16 +20,16 @@ class EvaluateAnswerService:
     solo al COMPLETAR el examen (replay), no aquí.
     """
 
-    _instance: "EvaluateAnswerService | None" = None
+    __instance: "EvaluateAnswerService | None" = None
 
     def __init__(self) -> None:
         self._score_calculator_service = ScoreCalculatorService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self, evaluate_answer_dto: EvaluateAnswerDto

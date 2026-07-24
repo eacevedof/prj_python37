@@ -26,7 +26,7 @@ class SliderCardComp(ft.Container):
         super().__init__()
 
         # Clave de la palabra actualmente mostrada (para no re-animar entre fases)
-        self._current_key: str = ""
+        self.__current_key: str = ""
 
         # Etiqueta de fase (qué se está pronunciando)
         self._ft_phase_label = ft.Text(
@@ -162,8 +162,8 @@ class SliderCardComp(ft.Container):
         self._ft_word_id.value = f"#{word_id}" if word_id != "" else ""
 
         # Animar la palabra ES y refrescar imagen solo cuando cambia la palabra
-        if word_key != self._current_key:
-            self._current_key = word_key
+        if word_key != self.__current_key:
+            self.__current_key = word_key
             self._ft_word_switcher.content = ft.Text(
                 text_es,
                 key=word_key,

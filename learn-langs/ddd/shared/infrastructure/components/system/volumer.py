@@ -13,13 +13,13 @@ class Volumer:
     COM, etc.) se propaga al llamante: el componente no captura ni registra.
     """
 
-    _instance: "Volumer | None" = None
+    __instance: "Volumer | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def set_to_max(self) -> None:
         """Sube el volumen maestro del sistema al máximo (100%)."""

@@ -9,16 +9,16 @@ from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
 class ImagesReaderSqliteRepository(AbstractSqliteRepository):
     """Repository para leer imagenes de palabras."""
 
-    _instance: "ImagesReaderSqliteRepository | None" = None
+    __instance: "ImagesReaderSqliteRepository | None" = None
 
     def __init__(self) -> None:
         super().__init__()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def get_word_es_image_by_word_es_image_id(self, word_es_image_id: int) -> dict | None:
         """Obtiene una imagen por ID."""

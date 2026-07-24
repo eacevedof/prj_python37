@@ -13,14 +13,14 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 class GptWhisper1ReaderApiRepository(AbstractOpenAIApiRepository):
     """Repository for speech-to-text transcription using Whisper-1."""
 
-    _instance: "GptWhisper1ReaderApiRepository | None" = None
+    __instance: "GptWhisper1ReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
         """Returns the singleton instance."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def transcribe_audio_file(
         self,

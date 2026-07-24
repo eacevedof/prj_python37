@@ -19,7 +19,7 @@ from ddd.vocabulary.domain.exceptions import VocabularyException
 class CreateWordService:
     """Servicio para crear palabras en español con traducciones y tags."""
 
-    _create_word_dto: CreateWordDto
+    __create_word_dto: CreateWordDto
     _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
     _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
     _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
@@ -52,7 +52,7 @@ class CreateWordService:
         Raises:
             VocabularyException: Si la validacion falla o la palabra ya existe.
         """
-        self._create_word_dto = create_word_dto
+        self.__create_word_dto = create_word_dto
 
         # Validar DTO
         errors = create_word_dto.validate()

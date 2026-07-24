@@ -21,7 +21,7 @@ class DiscardStudySessionService:
     BD como si el examen no hubiera ocurrido.
     """
 
-    _instance: "DiscardStudySessionService | None" = None
+    __instance: "DiscardStudySessionService | None" = None
 
     def __init__(self) -> None:
         self._sessions_writer_sqlite_repository = (
@@ -30,9 +30,9 @@ class DiscardStudySessionService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self, discard_study_session_dto: DiscardStudySessionDto

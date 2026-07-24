@@ -21,7 +21,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class GetWordForEditService:
     """Servicio para obtener datos completos de una palabra para edicion."""
 
-    _instance: "GetWordForEditService | None" = None
+    __instance: "GetWordForEditService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -31,9 +31,9 @@ class GetWordForEditService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(self, get_word_for_edit_dto: GetWordForEditDto) -> GetWordForEditResultDto:
         """

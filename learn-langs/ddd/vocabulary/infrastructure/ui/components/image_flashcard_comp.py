@@ -25,7 +25,7 @@ class ImageFlashcardComp(ft.Container):
         self.word_id = word_id
         self._card_content: ft.Column | None = None
         # Nº de controles del prompt base (imagen+caption o texto): reveal trunca hasta aquí
-        self._base_control_count = 0
+        self.__base_control_count = 0
 
         self._build_ui()
 
@@ -86,7 +86,7 @@ class ImageFlashcardComp(ft.Container):
             ]
 
         # Controles del prompt base (para truncar en reveal_translation)
-        self._base_control_count = len(card_controls)
+        self.__base_control_count = len(card_controls)
 
         # Mostrar traducción si está habilitado
         if self.show_translation and self.text_lang:
@@ -162,7 +162,7 @@ class ImageFlashcardComp(ft.Container):
         if self._card_content and self.text_lang:
             # Limpiar controles de traducción previos (dejar solo el prompt base)
             # para evitar duplicados
-            while len(self._card_content.controls) > self._base_control_count:
+            while len(self._card_content.controls) > self.__base_control_count:
                 self._card_content.controls.pop()
 
             self._card_content.controls.extend([

@@ -20,7 +20,7 @@ class DiscardWordAudioService:
     reproducción (caché por nombre de fichero con el acento activo).
     """
 
-    _instance: "DiscardWordAudioService | None" = None
+    __instance: "DiscardWordAudioService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -28,9 +28,9 @@ class DiscardWordAudioService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self,

@@ -7,7 +7,7 @@ from typing import final, Self
 class SqliteConnector:
     """Gestiona la conexión a SQLite."""
 
-    _instance: "SqliteConnector | None" = None
+    __instance: "SqliteConnector | None" = None
     _db_path: str = ""
     _initialized: bool = False
 
@@ -16,11 +16,11 @@ class SqliteConnector:
 
     @classmethod
     def get_instance(cls, db_path: str = "") -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
+        if cls.__instance is None:
+            cls.__instance = cls()
         if db_path:
-            cls._instance._db_path = db_path
-        return cls._instance
+            cls.__instance._db_path = db_path
+        return cls.__instance
 
     @classmethod
     def set_db_path(cls, db_path: str) -> None:

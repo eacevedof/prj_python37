@@ -11,14 +11,14 @@ from ddd.open_ai.infrastructure.repositories.abstract_open_ai_api_repository imp
 class GptChatReaderApiRepository(AbstractOpenAIApiRepository):
     """Repository for chat completions using GPT models."""
 
-    _instance: "GptChatReaderApiRepository | None" = None
+    __instance: "GptChatReaderApiRepository | None" = None
 
     @classmethod
     def get_instance(cls) -> Self:
         """Returns the singleton instance."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def get_chat_completion(
         self,

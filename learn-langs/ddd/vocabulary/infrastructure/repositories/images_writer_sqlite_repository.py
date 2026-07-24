@@ -15,7 +15,7 @@ from ddd.vocabulary.domain.enums import ImageSourceEnum
 class ImagesWriterSqliteRepository(AbstractSqliteRepository):
     """Repository para escribir imagenes de palabras."""
 
-    _instance: "ImagesWriterSqliteRepository | None" = None
+    __instance: "ImagesWriterSqliteRepository | None" = None
     _images_dir: Path | None = None
 
     def __init__(self) -> None:
@@ -24,10 +24,10 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-            cls._instance._ensure_images_dir()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+            cls.__instance._ensure_images_dir()
+        return cls.__instance
 
     def _ensure_images_dir(self) -> None:
         """Asegura que existe el directorio de imagenes."""

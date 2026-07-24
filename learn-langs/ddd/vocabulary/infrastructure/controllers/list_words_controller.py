@@ -71,12 +71,12 @@ class ListWordsController(BaseController):
         self._route_on_edit = route_on_edit
 
         # Estado del controller
-        self._current_search: str = ""
-        self._current_page: int = 0
-        self._words: list[WordListItemViewDto] = []
-        self._current_word_for_image: int | None = None
-        self._current_dialog: ft.AlertDialog | None = None
-        self._current_images_column: ft.Column | None = None
+        self.__current_search: str = ""
+        self.__current_page: int = 0
+        self.__words: list[WordListItemViewDto] = []
+        self.__current_word_for_image: int | None = None
+        self.__current_dialog: ft.AlertDialog | None = None
+        self.__current_images_column: ft.Column | None = None
 
         # Servicios e infraestructura
         self._ft_file_picker = ft.FilePicker()
@@ -132,9 +132,9 @@ class ListWordsController(BaseController):
         try:
             result = await self._list_words_service(
                 ListWordsDto.from_primitives({
-                    "search": self._current_search,
+                    "search": self.__current_search,
                     "limit": self._PAGE_SIZE,
-                    "offset": self._current_page * self._PAGE_SIZE,
+                    "offset": self.__current_page * self._PAGE_SIZE,
                 })
             )
 
@@ -168,15 +168,15 @@ class ListWordsController(BaseController):
 
                 words_data.append(word_data)
 
-            self._words = [WordListItemViewDto.from_primitives(w) for w in words_data]
+            self.__words = [WordListItemViewDto.from_primitives(w) for w in words_data]
 
             view_dto = ListWordsViewDto.ok(
-                # ViewDto expone primitivos; self._words se mantiene tipado para
+                # ViewDto expone primitivos; self.__words se mantiene tipado para
                 # la lógica interna del controller (diálogo de imágenes, etc.)
-                words=[w.to_dict() for w in self._words],
+                words=[w.to_dict() for w in self.__words],
                 total_count=result.total_count,
                 has_more=result.has_more,
-                page=self._current_page,
+                page=self.__current_page,
                 page_size=self._PAGE_SIZE,
             )
             self._ft_container.render(view_dto)
@@ -185,7 +185,7 @@ class ListWordsController(BaseController):
             self._logger.log_error(
                 "ListWordsController",
                 f"Error cargando palabras: {e}",
-                {"search": self._current_search},
+                {"search": self.__current_search},
             )
             self._ft_container.render(ListWordsViewDto.error(f"Error al cargar: {e}"))
 
@@ -194,19 +194,19 @@ class ListWordsController(BaseController):
     # =========================================================================
     def _on_search_input(self, search_text: str) -> None:
         """Maneja cambio en busqueda (search field - header)."""
-        self._current_search = search_text
-        self._current_page = 0  # nueva búsqueda -> volver a la primera página
+        self.__current_search = search_text
+        self.__current_page = 0  # nueva búsqueda -> volver a la primera página
         self._ft_container.page.run_task(self._async_load_words)
 
     def _on_prev_page_click(self) -> None:
         """Va a la página anterior."""
-        if self._current_page > 0:
-            self._current_page -= 1
+        if self.__current_page > 0:
+            self.__current_page -= 1
             self._ft_container.page.run_task(self._async_load_words)
 
     def _on_next_page_click(self) -> None:
         """Va a la página siguiente."""
-        self._current_page += 1
+        self.__current_page += 1
         self._ft_container.page.run_task(self._async_load_words)
 
     def _on_zoom_image_click(self, image_full_path: str) -> None:
@@ -222,7 +222,7 @@ class ListWordsController(BaseController):
 
     def _on_images_btn_click(self, word_id: int) -> None:
         """Maneja click en imagenes (botón image - item lista)."""
-        self._current_word_for_image = word_id
+        self.__current_word_for_image = word_id
         async def _task():
             await self._async_show_images_dialog(word_id)
         self._ft_container.page.run_task(_task)
@@ -259,7 +259,7 @@ class ListWordsController(BaseController):
         """Muestra dialogo de imagenes."""
         try:
             # Buscar la palabra
-            word = next((w for w in self._words if w.id == word_id), None)
+            word = next((w for w in self.__words if w.id == word_id), None)
             if not word:
                 return
 
@@ -286,10 +286,10 @@ class ListWordsController(BaseController):
 
     def _render_images_list(self, images: list[dict]) -> None:
         """Renderiza la lista de imagenes en el column actual."""
-        if not self._current_images_column:
+        if not self.__current_images_column:
             return
 
-        self._current_images_column.controls.clear()
+        self.__current_images_column.controls.clear()
 
         if images:
             for img_dict in images:
@@ -342,9 +342,9 @@ class ListWordsController(BaseController):
                     alignment=ft.MainAxisAlignment.START,
                     spacing=8,
                 )
-                self._current_images_column.controls.append(ft_row)
+                self.__current_images_column.controls.append(ft_row)
         else:
-            self._current_images_column.controls.append(
+            self.__current_images_column.controls.append(
                 ft.Text("No hay imagenes", italic=True, color=ft.Colors.GREY_500)
             )
 
@@ -373,11 +373,11 @@ class ListWordsController(BaseController):
 
     async def _refresh_images_dialog(self) -> None:
         """Recarga las imagenes en el dialogo actual."""
-        if not self._current_word_for_image or not self._current_images_column:
+        if not self.__current_word_for_image or not self.__current_images_column:
             return
 
         result = await self._get_word_images_service(
-            GetWordImagesDto.from_primitives({"word_id": self._current_word_for_image})
+            GetWordImagesDto.from_primitives({"word_id": self.__current_word_for_image})
         )
 
         if result.success:
@@ -390,7 +390,7 @@ class ListWordsController(BaseController):
         images: list[dict],
     ) -> None:
         """Muestra el dialogo con las imagenes."""
-        self._current_images_column = ft.Column(
+        self.__current_images_column = ft.Column(
             controls=[],
             spacing=10,
             scroll=ft.ScrollMode.AUTO,
@@ -426,7 +426,7 @@ class ListWordsController(BaseController):
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        self._current_images_column,
+                        self.__current_images_column,
                         ft.Divider(),
                         ft.Text("Agregar imagen:", weight=ft.FontWeight.BOLD, size=14),
                         ft.Row(
@@ -465,7 +465,7 @@ class ListWordsController(BaseController):
             ],
         )
 
-        self._current_dialog = ft_dialog
+        self.__current_dialog = ft_dialog
         self._ft_container.page.show_dialog(ft_dialog)
 
     async def handle_pick_files(self, e: ft.Event[ft.Button]):
@@ -474,10 +474,10 @@ class ListWordsController(BaseController):
             allow_multiple=False,
         )
 
-        if ft_file_picker_files and self._current_word_for_image:
+        if ft_file_picker_files and self.__current_word_for_image:
             ft_file_picker_file = ft_file_picker_files[0]
             await self._add_image_from_file(
-                self._current_word_for_image,
+                self.__current_word_for_image,
                 ft_file_picker_file.path,
                 ft_file_picker_file.name,
             )

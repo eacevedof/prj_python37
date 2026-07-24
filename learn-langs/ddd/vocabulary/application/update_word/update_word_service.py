@@ -22,7 +22,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class UpdateWordService:
     """Servicio para actualizar palabras en espanol con traducciones y tags."""
 
-    _update_word_dto: UpdateWordDto
+    __update_word_dto: UpdateWordDto
     _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
     _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
     _words_lang_reader_sqlite_repository: WordsLangReaderSqliteRepository
@@ -60,7 +60,7 @@ class UpdateWordService:
         Raises:
             VocabularyException: Si la validacion falla o la palabra no existe.
         """
-        self._update_word_dto = update_word_dto
+        self.__update_word_dto = update_word_dto
 
         # Validar DTO
         errors = update_word_dto.validate()

@@ -18,16 +18,16 @@ from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteReposit
 class AddWordImageService:
     """Servicio para agregar imagenes a palabras."""
 
-    _instance: "AddWordImageService | None" = None
+    __instance: "AddWordImageService | None" = None
 
     def __init__(self) -> None:
         self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(self, dto: AddWordImageDto) -> AddWordImageResultDto:
         """

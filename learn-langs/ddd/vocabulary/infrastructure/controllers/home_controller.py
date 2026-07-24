@@ -59,11 +59,11 @@ class HomeController(BaseController):
             WordGroupsReaderSqliteRepository.get_instance()
         )
 
-        self._selected_lang: LanguageCodeEnum = LanguageCodeEnum.NL_NL
-        self._selected_tags: list[str] = []
-        self._selected_group_id: int | None = None
-        self._all_groups: list[dict] = []
-        self._resume_state: dict | None = None
+        self.__selected_lang: LanguageCodeEnum = LanguageCodeEnum.NL_NL
+        self.__selected_tags: list[str] = []
+        self.__selected_group_id: int | None = None
+        self.__all_groups: list[dict] = []
+        self.__resume_state: dict | None = None
 
         self._ft_container = HomeView.from_primitives(
             {
@@ -105,7 +105,7 @@ class HomeController(BaseController):
             load_home_result_dto = await self._load_home_service(
                 LoadHomeDto.from_primitives(
                     {
-                        "lang_code": str(self._selected_lang),
+                        "lang_code": str(self.__selected_lang),
                     }
                 )
             )
@@ -115,7 +115,7 @@ class HomeController(BaseController):
                     HomeViewDto.error(
                         message=load_home_result_dto.error_message
                         or "Error desconocido",
-                        selected_lang_code=str(self._selected_lang),
+                        selected_lang_code=str(self.__selected_lang),
                     )
                 )
                 return
@@ -138,24 +138,24 @@ class HomeController(BaseController):
             other_groups.sort(key=lambda g: g.get("id", 0), reverse=True)
 
             # Construir lista final: otros grupos + generic al final
-            self._all_groups = other_groups + ([generic_group] if generic_group else [])
+            self.__all_groups = other_groups + ([generic_group] if generic_group else [])
 
             # Si no hay grupo seleccionado, seleccionar el primero de la lista ordenada
-            if self._selected_group_id is None and self._all_groups:
-                self._selected_group_id = self._all_groups[0].get("id", 0)
+            if self.__selected_group_id is None and self.__all_groups:
+                self.__selected_group_id = self.__all_groups[0].get("id", 0)
 
             # Última actividad reanudable (botón Continuar)
-            self._resume_state = await self._get_resume_state()
+            self.__resume_state = await self._get_resume_state()
 
             self._ft_container.render(
                 HomeViewDto.ok(
                     tags=list(load_home_result_dto.tags),
                     stats=load_home_result_dto.stats,
-                    selected_lang_code=str(self._selected_lang),
-                    selected_tags=self._selected_tags,
-                    groups=self._all_groups,
-                    selected_group_id=self._selected_group_id,
-                    resume_state=self._resume_state,
+                    selected_lang_code=str(self.__selected_lang),
+                    selected_tags=self.__selected_tags,
+                    groups=self.__all_groups,
+                    selected_group_id=self.__selected_group_id,
+                    resume_state=self.__resume_state,
                 )
             )
 
@@ -163,12 +163,12 @@ class HomeController(BaseController):
             self._logger.log_error(
                 "HomeController",
                 f"Error cargando datos: {e}",
-                {"lang_code": str(self._selected_lang)},
+                {"lang_code": str(self.__selected_lang)},
             )
             self._ft_container.render(
                 HomeViewDto.error(
                     message=str(e),
-                    selected_lang_code=str(self._selected_lang),
+                    selected_lang_code=str(self.__selected_lang),
                 )
             )
 
@@ -178,15 +178,15 @@ class HomeController(BaseController):
     def _on_lang_change(self, lang_code: str) -> None:
         """Maneja el cambio de idioma (dropdown - arriba en UI)."""
         try:
-            self._selected_lang = LanguageCodeEnum(lang_code)
+            self.__selected_lang = LanguageCodeEnum(lang_code)
         except ValueError:
-            self._selected_lang = LanguageCodeEnum.NL_NL
+            self.__selected_lang = LanguageCodeEnum.NL_NL
 
         self._ft_container.page.run_task(self._async_load_data)
 
     def _on_group_change(self, group_id: int) -> None:
         """Maneja el cambio de grupo (dropdown - arriba en UI)."""
-        self._selected_group_id = group_id
+        self.__selected_group_id = group_id
         # DEBUG: Log del cambio de grupo
         self._logger.log_debug(
             "HomeController",
@@ -197,18 +197,18 @@ class HomeController(BaseController):
 
     def _on_tag_toggle(self, tag_name: str) -> None:
         """Alterna la seleccion de un tag (chips - medio en UI)."""
-        if tag_name in self._selected_tags:
-            self._selected_tags.remove(tag_name)
+        if tag_name in self.__selected_tags:
+            self.__selected_tags.remove(tag_name)
         else:
-            self._selected_tags.append(tag_name)
+            self.__selected_tags.append(tag_name)
 
         self._ft_container.page.run_task(self._async_load_data)
 
     def _route_on_resume_click(self) -> None:
         """Maneja click en Continuar: retoma la última actividad guardada."""
-        if not self._resume_state:
+        if not self.__resume_state:
             return
-        self._route_on_resume(self._resume_state)
+        self._route_on_resume(self.__resume_state)
 
     async def _get_resume_state(self) -> dict | None:
         """Carga el último estado de actividad y lo enriquece para la vista."""
@@ -232,7 +232,7 @@ class HomeController(BaseController):
         group_title = next(
             (
                 str(group.get("title", ""))
-                for group in self._all_groups
+                for group in self.__all_groups
                 if group.get("id") == last_state.group_id
             ),
             "",
@@ -249,20 +249,20 @@ class HomeController(BaseController):
         # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
         actual_group_id = self._ft_container.get_selected_group_id()
         if actual_group_id is not None:
-            self._selected_group_id = actual_group_id
+            self.__selected_group_id = actual_group_id
 
         # DEBUG: Log del group_id seleccionado
         self._logger.log_debug(
             "HomeController",
-            f"Starting image study with group_id={self._selected_group_id}",
+            f"Starting image study with group_id={self.__selected_group_id}",
             {
-                "lang": str(self._selected_lang),
-                "tags": self._selected_tags,
-                "group_id": self._selected_group_id,
+                "lang": str(self.__selected_lang),
+                "tags": self.__selected_tags,
+                "group_id": self.__selected_group_id,
             },
         )
         self._route_on_start_image_study(
-            str(self._selected_lang), self._selected_tags, self._selected_group_id
+            str(self.__selected_lang), self.__selected_tags, self.__selected_group_id
         )
 
     def _route_on_start_slider_click(self) -> None:
@@ -270,11 +270,11 @@ class HomeController(BaseController):
         # Leer el valor actual del dropdown (workaround para on_change que no se dispara)
         actual_group_id = self._ft_container.get_selected_group_id()
         if actual_group_id is not None:
-            self._selected_group_id = actual_group_id
+            self.__selected_group_id = actual_group_id
 
         self._route_on_start_slider(
-            str(self._selected_lang),
-            self._selected_tags,
-            self._selected_group_id,
+            str(self.__selected_lang),
+            self.__selected_tags,
+            self.__selected_group_id,
             self._ft_container.get_is_random_order(),
         )

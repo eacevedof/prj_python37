@@ -19,7 +19,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class AcceptWordAudioService:
     """Acepta la propuesta temporal: el mp3 -temp pasa a ser el definitivo (el ideal)."""
 
-    _instance: "AcceptWordAudioService | None" = None
+    __instance: "AcceptWordAudioService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -28,9 +28,9 @@ class AcceptWordAudioService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self,

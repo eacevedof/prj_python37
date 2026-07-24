@@ -9,7 +9,7 @@ from typing import final, Self
 class AppConfigReaderRawRepository:
     """Repository para leer configuracion de la aplicacion desde env o defaults."""
 
-    _instance: "AppConfigReaderRawRepository | None" = None
+    __instance: "AppConfigReaderRawRepository | None" = None
 
     # Defaults
     _DEFAULT_APP_TITLE = "Learn Languages"
@@ -25,9 +25,9 @@ class AppConfigReaderRawRepository:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     def get_app_title(self) -> str:
         return os.getenv("APP_TITLE", self._DEFAULT_APP_TITLE)

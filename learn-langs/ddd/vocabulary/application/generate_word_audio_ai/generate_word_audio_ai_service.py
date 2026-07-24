@@ -30,7 +30,7 @@ from ddd.vocabulary.infrastructure.repositories import (
 class GenerateWordAudioAiService:
     """Servicio para generar audio con el acento del idioma (gpt-4o-mini-tts / tts-1)."""
 
-    _instance: "GenerateWordAudioAiService | None" = None
+    __instance: "GenerateWordAudioAiService | None" = None
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
@@ -46,9 +46,9 @@ class GenerateWordAudioAiService:
 
     @classmethod
     def get_instance(cls) -> Self:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
     async def __call__(
         self, generate_word_audio_ai_dto: GenerateWordAudioAiDto

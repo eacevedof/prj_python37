@@ -47,8 +47,8 @@ class CreateWordController(BaseController):
         self._create_word_group_service = CreateWordGroupService.get_instance()
 
         # Cache de tags y grupos
-        self._available_tags: list[dict[str, Any]] = []
-        self._available_groups: list[dict[str, Any]] = []
+        self.__available_tags: list[dict[str, Any]] = []
+        self.__available_groups: list[dict[str, Any]] = []
 
         self._ft_container = CreateWordView.from_primitives({
             "on_mount": self._on_mount,
@@ -78,26 +78,26 @@ class CreateWordController(BaseController):
         try:
             # Cargar tags via servicio
             tag_result = await self._get_tags_service()
-            self._available_tags = []
+            self.__available_tags = []
             if tag_result.success:
-                self._available_tags = list(tag_result.tags)
+                self.__available_tags = list(tag_result.tags)
 
             word_group_result = await self._get_word_groups_service()
-            self._available_groups = []
+            self.__available_groups = []
             if word_group_result.success:
-                self._available_groups = [
+                self.__available_groups = [
                     {"id": word_group.id, "title": word_group.title, "description": word_group.description}
                     for word_group in word_group_result.groups
                 ]
 
             generic_group_ids = [
-                word_group["id"] for word_group in self._available_groups if word_group["title"] == "generic"
+                word_group["id"] for word_group in self.__available_groups if word_group["title"] == "generic"
             ]
 
             self._ft_container.render(
                 CreateWordViewDto.empty(
-                    available_tags=self._available_tags,
-                    available_groups=self._available_groups,
+                    available_tags=self.__available_tags,
+                    available_groups=self.__available_groups,
                     selected_group_ids=generic_group_ids,
                 )
             )
@@ -109,12 +109,12 @@ class CreateWordController(BaseController):
             )
             # Encontrar ID del grupo "generic" para pre-seleccionarlo
             generic_group_ids = [
-                word_group["id"] for word_group in self._available_groups if word_group["title"] == "generic"
+                word_group["id"] for word_group in self.__available_groups if word_group["title"] == "generic"
             ]
             self._ft_container.render(
                 CreateWordViewDto.empty(
                     available_tags=[],
-                    available_groups=self._available_groups,
+                    available_groups=self.__available_groups,
                     selected_group_ids=generic_group_ids,
                 )
             )
@@ -148,7 +148,7 @@ class CreateWordController(BaseController):
                 # Recargar lista de grupos
                 groups_result = await self._get_word_groups_service()
                 if groups_result.success:
-                    self._available_groups = [
+                    self.__available_groups = [
                         {"id": g.id, "title": g.title, "description": g.description}
                         for g in groups_result.groups
                     ]
@@ -163,8 +163,8 @@ class CreateWordController(BaseController):
                     self._ft_container.render(
                         CreateWordViewDto.from_primitives({
                             "form_values": self._ft_container._get_form_data(),
-                            "available_tags": self._available_tags,
-                            "available_groups": self._available_groups,
+                            "available_tags": self.__available_tags,
+                            "available_groups": self.__available_groups,
                             "selected_group_ids": current_selected,
                             "success_message": f"Grupo '{title}' creado correctamente",
                         })
@@ -174,8 +174,8 @@ class CreateWordController(BaseController):
                 self._ft_container.render(
                     CreateWordViewDto.from_primitives({
                         "form_values": self._ft_container._get_form_data(),
-                        "available_tags": self._available_tags,
-                        "available_groups": self._available_groups,
+                        "available_tags": self.__available_tags,
+                        "available_groups": self.__available_groups,
                         "selected_group_ids": self._ft_container._selected_group_ids,
                         "error_message": result.error_message,
                     })
@@ -189,8 +189,8 @@ class CreateWordController(BaseController):
             self._ft_container.render(
                 CreateWordViewDto.from_primitives({
                     "form_values": self._ft_container._get_form_data(),
-                    "available_tags": self._available_tags,
-                    "available_groups": self._available_groups,
+                    "available_tags": self.__available_tags,
+                    "available_groups": self.__available_groups,
                     "selected_group_ids": self._ft_container._selected_group_ids,
                     "error_message": str(e),
                 })
@@ -205,8 +205,8 @@ class CreateWordController(BaseController):
                 CreateWordViewDto.error(
                     message="La palabra en espanol es obligatoria",
                     form_values=form_data,
-                    available_tags=self._available_tags,
-                    available_groups=self._available_groups,
+                    available_tags=self.__available_tags,
+                    available_groups=self.__available_groups,
                     error_field="text_es",
                 )
             )
@@ -232,14 +232,14 @@ class CreateWordController(BaseController):
 
             # Encontrar ID del grupo "generic" para pre-seleccionarlo tras éxito
             generic_group_ids = [
-                g["id"] for g in self._available_groups if g["title"] == "generic"
+                g["id"] for g in self.__available_groups if g["title"] == "generic"
             ]
 
             self._ft_container.render(
                 CreateWordViewDto.success(
                     message=f"Palabra '{create_word_result_dto.text}' creada correctamente",
-                    available_tags=self._available_tags,
-                    available_groups=self._available_groups,
+                    available_tags=self.__available_tags,
+                    available_groups=self.__available_groups,
                     selected_group_ids=generic_group_ids,
                 )
             )
@@ -258,7 +258,7 @@ class CreateWordController(BaseController):
                 CreateWordViewDto.error(
                     message=str(e),
                     form_values=form_data,
-                    available_tags=self._available_tags,
-                    available_groups=self._available_groups,
+                    available_tags=self.__available_tags,
+                    available_groups=self.__available_groups,
                 )
             )
