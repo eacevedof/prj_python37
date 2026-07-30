@@ -38,8 +38,10 @@ apk: ## build android apk with timestamp
 	@echo "flet.yaml generated successfully"
 	@mv requirements.txt requirements-dev.txt 2>/dev/null || true
 	@cp requirements-prod.txt requirements.txt
-	flet build apk --module-name front_controller --verbose
-	@mv requirements-dev.txt requirements.txt 2>/dev/null || true
+	@PYTHONUTF8=1 flet build apk --module-name front_controller --verbose; \
+		status=$$?; \
+		mv requirements-dev.txt requirements.txt 2>/dev/null || true; \
+		[ $$status -eq 0 ] || { echo "flet build apk FAILED (exit $$status)"; exit $$status; }
 	@echo "Renaming APK with timestamp..."
 	@find build/apk -name "*.apk" -type f -exec sh -c 'for f; do mv "$$f" "$${f%.apk}-$(TIMESTAMP).apk"; done' sh {} +
 	@echo "APK generated: build/apk/*-$(TIMESTAMP).apk"
