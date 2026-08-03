@@ -46,3 +46,6 @@ apk: ## build android apk with timestamp
 	@find build/apk -name "*.apk" -type f -exec sh -c 'for f; do mv "$$f" "$${f%.apk}-$(TIMESTAMP).apk"; done' sh {} +
 	@echo "APK generated: build/apk/*-$(TIMESTAMP).apk"
 
+sync-resources: ## sync local audios/images to the CDN (vars: scope=all|audios|images, dry=1)
+	.venv-win/Scripts/python.exe sync_resources.py $(if $(scope),--scope $(scope)) $(if $(dry),--dry-run)
+

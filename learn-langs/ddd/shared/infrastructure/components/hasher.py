@@ -24,7 +24,7 @@ class Hasher:
         cipher = Cipher(
             algorithms.AES(salt_in_md5.encode("utf-8")),
             modes.CBC(iv.encode("utf-8")),
-            backend=default_backend()
+            backend=default_backend(),
         )
         encryptor = cipher.encryptor()
 
@@ -33,7 +33,9 @@ class Hasher:
         padding_length = block_size - (len(plaintext) % block_size)
         padded_plaintext = plaintext + chr(padding_length) * padding_length
 
-        encrypted = encryptor.update(padded_plaintext.encode("utf-8")) + encryptor.finalize()
+        encrypted = (
+            encryptor.update(padded_plaintext.encode("utf-8")) + encryptor.finalize()
+        )
         return encrypted.hex()
 
     def get_decrypted_data(self, encrypted_hex: str) -> str:
@@ -43,7 +45,7 @@ class Hasher:
         cipher = Cipher(
             algorithms.AES(salt_in_md5.encode("utf-8")),
             modes.CBC(iv.encode("utf-8")),
-            backend=default_backend()
+            backend=default_backend(),
         )
         decryptor = cipher.decryptor()
 
@@ -60,7 +62,9 @@ class Hasher:
 
     def does_password_match(self, hashed_password: str, plain_password: str) -> bool:
         try:
-            return pwhash.verify(hashed_password.encode("utf-8"), plain_password.encode("utf-8"))
+            return pwhash.verify(
+                hashed_password.encode("utf-8"), plain_password.encode("utf-8")
+            )
         except Exception:
             return False
 
@@ -72,7 +76,7 @@ class Hasher:
         return pwhash.str(
             plain_text.encode("utf-8"),
             opslimit=pwhash.OPSLIMIT_INTERACTIVE,
-            memlimit=pwhash.MEMLIMIT_INTERACTIVE
+            memlimit=pwhash.MEMLIMIT_INTERACTIVE,
         ).decode("utf-8")
 
     def get_md5_hash(self, text: str) -> str:

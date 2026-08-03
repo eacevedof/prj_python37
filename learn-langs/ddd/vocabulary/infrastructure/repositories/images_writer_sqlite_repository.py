@@ -102,7 +102,9 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         """Guarda bytes de imagen en disco y crea el registro. Retorna la entidad creada."""
         self._ensure_images_dir()
 
-        filename = self._generate_filename(word_image_entity.word_es_id, word_image_entity.mime_type)
+        filename = self._generate_filename(
+            word_image_entity.word_es_id, word_image_entity.mime_type
+        )
         file_path = self._images_dir / filename
 
         # Escribir archivo
@@ -151,11 +153,15 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
             is_primary=updated_entity.is_primary,
         )
 
-    async def save_svg_content(self, word_image_entity: WordImageEntity, svg_content: str) -> WordImageEntity:
+    async def save_svg_content(
+        self, word_image_entity: WordImageEntity, svg_content: str
+    ) -> WordImageEntity:
         """Guarda contenido SVG y retorna la entidad creada."""
         self._ensure_images_dir()
 
-        filename = self._generate_filename(word_image_entity.word_es_id, "image/svg+xml")
+        filename = self._generate_filename(
+            word_image_entity.word_es_id, "image/svg+xml"
+        )
         file_path = self._images_dir / filename
 
         # Escribir archivo SVG
@@ -210,6 +216,18 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         )
         return rows > 0
 
+    async def update_file_sync(
+        self, word_es_image_id: int, file_url: str, file_synced_md5: str
+    ) -> bool:
+        """Guarda la URL del CDN y el md5 del fichero ya subido (sync)."""
+        rows_affected = await self._update_where(
+            "word_es_images",
+            {"file_url": file_url, "file_synced_md5": file_synced_md5},
+            "id = ?",
+            (word_es_image_id,),
+        )
+        return rows_affected > 0
+
     async def soft_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Soft delete de una imagen."""
         rows = await self._sqlite.update(
@@ -232,7 +250,9 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
             file_path.unlink()
 
         # Eliminar registro
-        rows = await self._delete_where("word_es_images", "id = ?", (word_image_entity.id,))
+        rows = await self._delete_where(
+            "word_es_images", "id = ?", (word_image_entity.id,)
+        )
         return rows > 0
 
     async def delete_all_by_word(self, word_es_entity_id: int) -> int:
@@ -255,4 +275,6 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
                 file_path.unlink()
 
         # Eliminar registros
-        return await self._delete_where("word_es_images", "word_es_id = ?", (word_es_entity_id,))
+        return await self._delete_where(
+            "word_es_images", "word_es_id = ?", (word_es_entity_id,)
+        )

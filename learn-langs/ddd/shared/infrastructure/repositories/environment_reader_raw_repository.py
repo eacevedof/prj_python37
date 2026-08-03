@@ -69,9 +69,23 @@ class EnvironmentReaderRawRepository:
     def get_local_base_env_file(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.LOCAL_BASE_ENV_FILE)
 
+    def get_cdn_upload_url(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.CDN_UPLOAD_URL)
+
+    def get_cdn_resources_url(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.CDN_RESOURCES_URL)
+
+    def get_cdn_domain(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.CDN_DOMAIN)
+
+    def get_cdn_user(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.CDN_USER)
+
+    def get_cdn_password(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.CDN_PASSWORD)
+
     def __get_required(self, key: EnvvarsKeysEnum) -> str:
         value = os.getenv(key)
         if value is None:
             raise ValueError(f"Missing required environment variable: {key}")
         return value
-

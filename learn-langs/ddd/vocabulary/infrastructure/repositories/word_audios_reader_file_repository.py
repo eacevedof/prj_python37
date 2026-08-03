@@ -3,7 +3,9 @@
 from pathlib import Path
 from typing import final, Self
 
-from ddd.vocabulary.domain.services.tts_audio_filename_service import TtsAudioFilenameService
+from ddd.vocabulary.domain.services.tts_audio_filename_service import (
+    TtsAudioFilenameService,
+)
 
 
 @final
@@ -17,11 +19,26 @@ class WordAudiosReaderFileRepository:
     def get_instance(cls) -> Self:
         return cls()
 
+    def get_all_audio_filenames(self) -> list[str]:
+        """Todos los mp3 definitivos en data/audio (excluye las propuestas -temp)."""
+        if not self._AUDIO_DIR.exists():
+            return []
+        return sorted(
+            path.name
+            for path in self._AUDIO_DIR.glob("*.mp3")
+            if not path.name.endswith("-temp.mp3")
+        )
+
     def get_audio_path(self, word_id: int, lang_code: str) -> str:
-        return str(self._AUDIO_DIR / TtsAudioFilenameService.get_filename(word_id, lang_code))
+        return str(
+            self._AUDIO_DIR / TtsAudioFilenameService.get_filename(word_id, lang_code)
+        )
 
     def get_temp_audio_path(self, word_id: int, lang_code: str) -> str:
-        return str(self._AUDIO_DIR / TtsAudioFilenameService.get_temp_filename(word_id, lang_code))
+        return str(
+            self._AUDIO_DIR
+            / TtsAudioFilenameService.get_temp_filename(word_id, lang_code)
+        )
 
     def has_audio(self, word_id: int, lang_code: str) -> bool:
         return Path(self.get_audio_path(word_id, lang_code)).exists()

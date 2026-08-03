@@ -5,6 +5,7 @@ from typing import final
 @final
 class EnvvarsKeysEnum(StrEnum):
     """Environment variable keys used by the application."""
+
     APP_DEFAULT_PROJECT = "APP_DEFAULT_PROJECT"
     APP_LOG_PATH = "APP_LOG_PATH"
 
@@ -13,6 +14,12 @@ class EnvvarsKeysEnum(StrEnum):
     AZURE_PAT = "AZURE_PAT"
 
     OPENAI_API_KEY = "OPENAI_API_KEY"
+
+    CDN_UPLOAD_URL = "CDN_UPLOAD_URL"
+    CDN_RESOURCES_URL = "CDN_RESOURCES_URL"
+    CDN_DOMAIN = "CDN_DOMAIN"
+    CDN_USER = "CDN_USER"
+    CDN_PASSWORD = "CDN_PASSWORD"
 
     SHAREPOINT_CLIENT_ID = "SHAREPOINT_CLIENT_ID"
     SHAREPOINT_CLIENT_SECRET = "SHAREPOINT_CLIENT_SECRET"

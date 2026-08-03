@@ -59,8 +59,7 @@ class TtsAccentEnum(Enum):
     NL_GRONINGS = (
         LanguageCodeEnum.NL_NL.value,
         "nl-nl-gronings",
-        "Spreek Nederlands met een Gronings accent uit het noorden "
-        "van Nederland.",
+        "Spreek Nederlands met een Gronings accent uit het noorden van Nederland.",
     )
 
     # ── Neerlandés de Bélgica / Flamenco (activo: NL_VLAAMS) ──────────────────
@@ -82,6 +81,14 @@ class TtsAccentEnum(Enum):
         for accent in cls:
             if accent.lang_code == lang_code:
                 return accent
+        return None
+
+    @classmethod
+    def lang_for_label(cls, label: str) -> str | None:
+        """Reverso de la etiqueta de fichero al idioma (nl-nl-haarlem -> nl_NL)."""
+        for accent in cls:
+            if accent.label == label:
+                return accent.lang_code
         return None
 
     @classmethod

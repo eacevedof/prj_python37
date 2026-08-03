@@ -22,16 +22,19 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
         """Crea una nueva traducción y retorna el ID generado."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        return await self._insert_into("words_lang", {
-            "word_es_id": word_lang_entity.word_es_id,
-            "lang_code": word_lang_entity.lang_code,
-            "text": word_lang_entity.text.strip(),
-            "pronunciation": word_lang_entity.pronunciation,
-            "audio_path": word_lang_entity.audio_path,
-            "notes": word_lang_entity.notes,
-            "created_at": now,
-            "updated_at": now,
-        })
+        return await self._insert_into(
+            "words_lang",
+            {
+                "word_es_id": word_lang_entity.word_es_id,
+                "lang_code": word_lang_entity.lang_code,
+                "text": word_lang_entity.text.strip(),
+                "pronunciation": word_lang_entity.pronunciation,
+                "audio_path": word_lang_entity.audio_path,
+                "notes": word_lang_entity.notes,
+                "created_at": now,
+                "updated_at": now,
+            },
+        )
 
     async def update(self, word_lang_entity: WordLangEntity) -> bool:
         """Actualiza una traducción existente."""
@@ -59,7 +62,9 @@ class WordsLangWriterSqliteRepository(AbstractSqliteRepository):
         )
         return rows_affected > 0
 
-    async def delete_by_word_and_lang_code(self, word_es_id: int, lang_code: str) -> bool:
+    async def delete_by_word_and_lang_code(
+        self, word_es_id: int, lang_code: str
+    ) -> bool:
         """Elimina una traducción específica de una palabra."""
         rows_affected = await self._delete_where(
             "words_lang",

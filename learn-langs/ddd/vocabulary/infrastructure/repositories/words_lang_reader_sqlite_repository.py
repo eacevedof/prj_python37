@@ -27,7 +27,9 @@ class WordsLangReaderSqliteRepository(AbstractSqliteRepository):
         """
         return await self._query_one(query)
 
-    async def get_by_word_and_lang(self, word_es_id: int, lang_code: str) -> dict | None:
+    async def get_by_word_and_lang(
+        self, word_es_id: int, lang_code: str
+    ) -> dict | None:
         """Obtiene una traducción específica de una palabra."""
         query = f"""
             SELECT id, word_es_id, lang_code, text, pronunciation, audio_path,
