@@ -19,6 +19,10 @@ python-dotenv~=1.2.2
 # Used in: main.py, ddd/vocabulary/infrastructure/ui/
 flet~=0.85.2
 
+# flet-audio - reproductor de audio multiplataforma (Windows/Android); sustituye a pygame
+# Used in: ddd/shared/infrastructure/components/audio_player.py
+flet-audio~=0.85.2
+
 # ============================================================================
 # DATABASE
 # ============================================================================
@@ -49,10 +53,6 @@ openai~=2.41.0
 # pyperclip - Cross-platform clipboard access
 # Used in: Clipboard operations for text/images
 pyperclip~=1.11.0
-
-# flet-audio - reproductor de audio multiplataforma (Windows/Android)
-# Used in: ddd/shared/infrastructure/components/audio_player.py (sustituye a pygame)
-flet-audio~=0.85.2
 
 # pycaw - Windows master volume control (Core Audio)
 # Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
