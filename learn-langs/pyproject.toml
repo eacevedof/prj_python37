@@ -1,0 +1,29 @@
+[project]
+name = "learn-langs"
+version = "1.0.0"
+description = "Learn Languages App with Spaced Repetition"
+requires-python = ">=3.12"
+# flet 0.85 empaqueta las deps (y detecta extensiones como flet-audio) desde AQUI,
+# no desde requirements.txt. Bounds SUELTAS (>=) a proposito: el build de Android
+# compila para el target movil y algunas libs con parte nativa (pydantic-core) no
+# tienen wheel para la ultima version; con >= pip retrocede a una version con wheel
+# movil disponible. Con pins ~= exactos el build FALLA (p.ej. pydantic-core 2.46.4).
+dependencies = [
+    # flet/flet-audio PINEADOS: el cliente Flutter del APK es 0.85.2 (lo fija la
+    # plantilla de `flet build`); con >= pip metia flet-python 0.86.5 y el handshake
+    # 0.85<->0.86 moria en silencio -> pantalla en blanco. Ambos lados deben ser iguales.
+    "flet==0.85.2",
+    "flet-audio==0.85.2",
+    "aiosqlite>=0.19.0",
+    "pydantic>=2.5.0",
+    "python-dotenv>=1.0.0",
+    "openai>=1.0.0",
+    "pyperclip>=1.8.0",
+]
+
+[tool.flet]
+org = "com.flet"
+product = "learn-langs"
+
+[tool.flet.app]
+module = "front_controller"
