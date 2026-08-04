@@ -168,6 +168,9 @@ class ImageStudyView(ft.Container):
                 self._ft_content_area,
             ],
             expand=True,
+            # spacing por defecto de Column = 10: apretar los márgenes del
+            # separador (cabecera → hr → contenido)
+            spacing=4,
         )
         self.expand = True
         self.padding = 20
@@ -242,19 +245,21 @@ class ImageStudyView(ft.Container):
                 )
             )
 
+        # Espaciados compactos, replicando los del Aprendizaje (mismo modo de
+        # presentación): el alto es el recurso escaso en tablet
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend([
-            ft.Container(height=10),
+            ft.Container(height=8),
             ft.Container(content=self._ft_timer, alignment=ft.Alignment.CENTER),
-            ft.Container(height=15),
+            ft.Container(height=8),
             ft.Container(content=self._ft_image_flashcard, alignment=ft.Alignment.CENTER),
-            ft.Container(height=10),
+            ft.Container(height=4),
             ft.Row(
                 controls=buttons_row_controls,
                 alignment=ft.MainAxisAlignment.CENTER,
                 spacing=16,
             ),
-            ft.Container(height=10),
+            ft.Container(height=6),
             self._ft_input_field,
         ])
 

@@ -95,6 +95,10 @@ class ImageStudyController(BaseController):
         # Al abortar se descartan (nada de lo realizado cuenta).
         self.__buffered_answers: list[dict[str, Any]] = []
 
+        # Al salir del examen: corta el audio en curso y evita que arranquen
+        # nuevos (los audios seguían sonando tras volver al home)
+        self.__is_exited: bool = False
+
         # Servicios
         self._logger = Logger.get_instance()
         self._audio_player = AudioPlayer.get_instance()
@@ -429,7 +433,7 @@ class ImageStudyController(BaseController):
 
     async def _play_text_audio(self, text: str, lang_code: str, word_id: int) -> None:
         """Genera (o reutiliza de cache) y reproduce el audio de un texto."""
-        if not text:
+        if not text or self.__is_exited:
             return
         try:
             audio_dto = GenerateTextAudioAiDto.from_primitives(
@@ -446,8 +450,10 @@ class ImageStudyController(BaseController):
                     f"Error generando audio: {result.error_message}",
                 )
                 return
+            if self.__is_exited:
+                return
             await self._audio_player.play_until_end(
-                self._ft_container.page, result.audio_path, lambda: False
+                self._ft_container.page, result.audio_path, lambda: self.__is_exited
             )
         except Exception as e:
             self._logger.log_error(
@@ -485,6 +491,9 @@ class ImageStudyController(BaseController):
 
     def _on_back_btn_click(self) -> None:
         """Salir del examen (abortar): no cuenta nada de lo realizado."""
+        # Cortar el audio ANTES de navegar: si no, seguía sonando en el home
+        self.__is_exited = True
+        self._ft_container.page.run_task(self._audio_player.stop)
         self._ft_container.page.run_task(self._async_abort)
         self._route_on_back()
 

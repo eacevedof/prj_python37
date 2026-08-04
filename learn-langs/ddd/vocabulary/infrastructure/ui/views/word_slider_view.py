@@ -8,6 +8,7 @@ from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import (
     GroupSourceLinkComp,
 )
 from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_scale, is_portrait
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import (
     WordSliderViewDto,
 )
@@ -231,6 +232,9 @@ class WordSliderView(ft.Container):
                 self._ft_content_area,
             ],
             expand=True,
+            # spacing por defecto de Column = 10: apretar los márgenes del
+            # separador (cabecera → hr → contenido)
+            spacing=4,
         )
         self.expand = True
         self.padding = 20
@@ -276,17 +280,22 @@ class WordSliderView(ft.Container):
             self._ft_content_area.controls.clear()
             self._ft_content_area.controls.extend(
                 [
-                    ft.Container(height=20),
-                    ft.Row(
-                        controls=[self._ft_slider_card],
-                        alignment=ft.MainAxisAlignment.CENTER,
+                    ft.Container(height=8),
+                    # Container (NO Row): un Row da ancho ILIMITADO a sus hijos
+                    # y las frases largas se salían por la derecha sin envolver
+                    ft.Container(
+                        content=self._ft_slider_card,
+                        alignment=ft.Alignment.CENTER,
                     ),
-                    ft.Container(height=12),
+                    ft.Container(height=4),
                     self._ft_controls_row,
                 ]
             )
             self.__is_card_mounted = True
 
+        # Escala/orientación reales: las lee la vista (montada) y se las pasa
+        # al comp, que no puede leer self.page (mismo patrón que el examen)
+        self._ft_slider_card.set_page_context(get_page_scale(self), is_portrait(self))
         self._ft_slider_card.render(
             text_es=word.get("text_es", ""),
             text_lang=word.get("text_lang", ""),

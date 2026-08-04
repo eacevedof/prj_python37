@@ -64,6 +64,7 @@ class ImageFlashcardComp(ft.Container):
             weight=ft.FontWeight.BOLD,
             color=ft.Colors.BLUE_900,
             text_align=ft.TextAlign.CENTER,
+            style=ft.TextStyle(height=1.0),  # interlineado mínimo al envolver
         )
 
         # Columna de texto: palabra + (tras reveal) respuesta correcta
@@ -120,10 +121,22 @@ class ImageFlashcardComp(ft.Container):
             right=4,
         )
 
-        self.content = ft.Stack(controls=[body, word_id_badge])
+        # Padding superior para que el badge del id no pise la palabra
+        body_with_margin = ft.Container(
+            content=body,
+            padding=ft.Padding(top=max(18, round(24 * scale)), left=0, right=0, bottom=0),
+        )
+
+        self.content = ft.Stack(controls=[body_with_margin, word_id_badge])
         self.bgcolor = ft.Colors.BLUE_50
         self.border_radius = 20
-        self.padding = round(40 * scale)
+        # Vertical reducido: el alto es el recurso escaso (sobre todo en tablet)
+        self.padding = ft.Padding(
+            left=round(40 * scale),
+            right=round(40 * scale),
+            top=round(12 * scale),
+            bottom=round(6 * scale),
+        )
         self.alignment = ft.Alignment.CENTER
 
     def _get_full_image_path(self) -> str:
@@ -141,9 +154,9 @@ class ImageFlashcardComp(ft.Container):
 
         scale = self.__scale
         self._card_content.controls.extend([
-            ft.Container(height=8),
+            ft.Container(height=4),
             ft.Divider(height=2, color=ft.Colors.BLUE_300),
-            ft.Container(height=6),
+            ft.Container(height=2),
             ft.Text(
                 "Respuesta correcta:",
                 size=max(11, round(14 * scale)),
@@ -159,6 +172,7 @@ class ImageFlashcardComp(ft.Container):
                 weight=ft.FontWeight.BOLD,
                 color=ft.Colors.GREEN_700,
                 text_align=ft.TextAlign.CENTER,
+                style=ft.TextStyle(height=1.0),  # interlineado mínimo al envolver
             ),
         ])
 

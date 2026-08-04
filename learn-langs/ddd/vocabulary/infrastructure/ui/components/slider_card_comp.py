@@ -4,13 +4,14 @@ from pathlib import Path
 
 import flet as ft
 
-from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_size
 from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
 
 
 class SliderCardComp(ft.Container):
     """
     Tarjeta del slider, pensada para verse a distancia (modo kiosko).
+
+    __TRANSLATION_FACTOR reduce la traducción respecto al tamaño del enum.
 
     Responsabilidades:
     - Mostrar la imagen de la palabra (si existe), a la izquierda
@@ -23,6 +24,8 @@ class SliderCardComp(ft.Container):
     y evitar que el contenido se corte en alto.
     """
 
+    __TRANSLATION_FACTOR = 0.75
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -30,9 +33,14 @@ class SliderCardComp(ft.Container):
         self.__current_key: str = ""
 
         # Escala de tamaños según la página real (1.0 = escritorio/kiosko;
-        # en tablet encoge para que quepa todo) y layout vertical en retrato
+        # en tablet encoge para que quepa todo) y layout vertical en retrato.
+        # Los valores objetivo los pasa la VISTA vía set_page_context: el comp
+        # no lee self.page (flet 0.86 lanza si no está montado y el primer
+        # render llega antes del montaje — mismo patrón que el examen)
         self.__scale: float = 1.0
         self.__is_vertical_layout: bool = False
+        self.__target_scale: float = 1.0
+        self.__target_vertical: bool = False
 
         # Etiqueta de fase (qué se está pronunciando)
         self._ft_phase_label = ft.Text(
@@ -76,13 +84,16 @@ class SliderCardComp(ft.Container):
         )
 
         # Traducción y pronunciación (se revelan en la fase del idioma destino)
+        # La traducción algo más pequeña que el enum: al revelarse junto a la
+        # pronunciación empujaba la botonera fuera de la vista
         self._ft_translation = ft.Text(
             "",
-            size=SliderCardSizeEnum.TRANSLATION.value,
+            size=round(SliderCardSizeEnum.TRANSLATION.value * self.__TRANSLATION_FACTOR),
             weight=ft.FontWeight.W_400,
             color=ft.Colors.BLUE_100,  # muy tenue, casi del color de fondo (BLUE_50)
             text_align=ft.TextAlign.CENTER,
             visible=False,
+            style=ft.TextStyle(height=1.0),  # interlineado mínimo al envolver
         )
         self._ft_pronunciation = ft.Text(
             "",
@@ -107,7 +118,7 @@ class SliderCardComp(ft.Container):
         self._ft_text_column = ft.Column(
             controls=[
                 self._ft_word_switcher,
-                ft.Container(height=12),
+                ft.Container(height=6),
                 self._ft_translation,
                 self._ft_pronunciation,
                 ft.Container(height=4),
@@ -139,16 +150,18 @@ class SliderCardComp(ft.Container):
                     alignment=ft.MainAxisAlignment.END,
                 ),
                 self._ft_phase_label,
-                ft.Container(height=16),
+                ft.Container(height=8),
                 self._ft_body_holder,
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=0,
-            scroll=ft.ScrollMode.AUTO,
+            # OJO: sin scroll aquí — un scrollable se EXPANDE a todo el alto
+            # disponible (la tarjeta se inflaba y escondía la botonera);
+            # el desborde lo cubre el scroll del content area de la vista
         )
         self.alignment = ft.Alignment.CENTER
-        self.padding = 40
+        self.padding = ft.Padding(left=40, right=40, top=12, bottom=12)
         self.border_radius = 20
         self.bgcolor = ft.Colors.BLUE_50
         self.expand = True
@@ -183,6 +196,9 @@ class SliderCardComp(ft.Container):
                 weight=ft.FontWeight.BOLD,
                 color=ft.Colors.BLUE_900,
                 text_align=ft.TextAlign.CENTER,
+                # interlineado mínimo: al envolver frases largas el 1.4 por
+                # defecto de Flutter deja huecos enormes entre líneas
+                style=ft.TextStyle(height=1.0),
             )
             full_image_path = self._get_full_image_path(image_file_path)
             self._ft_image.src = full_image_path
@@ -196,27 +212,32 @@ class SliderCardComp(ft.Container):
 
         self._render_examples(examples, show_examples)
 
+    def set_page_context(self, ui_scale: float, is_vertical: bool) -> None:
+        """La vista (ya montada) informa del tamaño/orientación reales de la página."""
+        self.__target_scale = ui_scale
+        self.__target_vertical = is_vertical
+
     def _apply_responsive_sizes(self) -> None:
-        """Recalcula la escala según el tamaño real de la página y la aplica.
-
-        1.0 en escritorio (los tamaños del enum son para kiosko); en pantallas
-        pequeñas (tablet) encoge proporcionalmente para que el contenido quepa.
-        """
-        page_width, page_height = get_page_size(self)
-        if not page_width or not page_height:
-            return
-
-        scale = max(0.4, min(1.0, page_width / 1280, page_height / 900))
+        """Aplica la escala objetivo (1.0 escritorio kiosko; <1 tablet)."""
+        scale = self.__target_scale
         if abs(scale - self.__scale) < 0.05:
             return
         self.__scale = scale
 
         self._ft_phase_label.size = round(SliderCardSizeEnum.PHASE.value * scale)
-        self._ft_translation.size = round(SliderCardSizeEnum.TRANSLATION.value * scale)
+        self._ft_translation.size = round(
+            SliderCardSizeEnum.TRANSLATION.value * scale * self.__TRANSLATION_FACTOR
+        )
         self._ft_pronunciation.size = round(SliderCardSizeEnum.PRONUNCIATION.value * scale)
         self._ft_image.width = round(SliderCardSizeEnum.IMAGE.value * scale)
         self._ft_image.height = round(SliderCardSizeEnum.IMAGE.value * scale)
-        self.padding = round(40 * scale)
+        # Vertical reducido: el alto es el recurso escaso (sobre todo en tablet)
+        self.padding = ft.Padding(
+            left=round(40 * scale),
+            right=round(40 * scale),
+            top=round(12 * scale),
+            bottom=round(6 * scale),
+        )
         # La palabra ES se re-crea al cambiar de palabra; refrescar la actual
         if isinstance(self._ft_word_switcher.content, ft.Text):
             self._ft_word_switcher.content.size = round(SliderCardSizeEnum.WORD.value * scale)
@@ -224,11 +245,13 @@ class SliderCardComp(ft.Container):
     def _apply_responsive_layout(self) -> None:
         """En retrato (ancho < alto) apila imagen y texto en vertical; en
         apaisado/escritorio mantiene el layout horizontal imagen | texto."""
-        page_width, page_height = get_page_size(self)
-        if not page_width or not page_height:
-            return
+        vertical = self.__target_vertical
 
-        vertical = page_width < page_height
+        # En pantallas pequeñas la tarjeta envuelve su contenido en vez de
+        # expandirse a toda la pantalla (expand + center = márgenes enormes
+        # que empujan la botonera de navegación fuera de la vista)
+        self.expand = not (vertical or self.__scale < 0.95)
+
         if vertical == self.__is_vertical_layout:
             return
         self.__is_vertical_layout = vertical
