@@ -248,7 +248,7 @@ class ManageWordGroupsView(ft.Container):
 
             def copy_error(e):
                 self.page.set_clipboard(message)
-                self.page.show_snack_bar(
+                self.page.show_dialog(
                     ft.SnackBar(content=ft.Text("Error copiado al portapapeles"), duration=1500)
                 )
 
@@ -273,10 +273,11 @@ class ManageWordGroupsView(ft.Container):
             dialog.open = True
             self.page.update()
         else:
-            # Para mensajes normales, usar snackbar
-            self.page.snack_bar = ft.SnackBar(
-                content=ft.Text(message),
-                bgcolor=ft.Colors.GREEN,
+            # Para mensajes normales, usar snackbar (flet 0.86: show_dialog)
+            self.page.show_dialog(
+                ft.SnackBar(
+                    content=ft.Text(message),
+                    bgcolor=ft.Colors.GREEN,
+                )
             )
-            self.page.snack_bar.open = True
             self.page.update()

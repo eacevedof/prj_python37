@@ -127,6 +127,8 @@ class ImageStudyView(ft.Container):
         self._ft_group_source_link = GroupSourceLinkComp()
 
         # Content area
+        # scroll AUTO: en pantallas bajas (tablet) el input y la botonera quedaban
+        # ocultos bajo el borde sin forma de llegar a ellos
         self._ft_content_area = ft.Column(
             controls=[
                 ft.Container(
@@ -138,6 +140,7 @@ class ImageStudyView(ft.Container):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,
             expand=True,
+            scroll=ft.ScrollMode.AUTO,
         )
 
         # Back button
@@ -515,9 +518,12 @@ class ImageStudyView(ft.Container):
                 message = "Selecciona el texto para copiarlo manualmente (Ctrl+C)"
                 color = ft.Colors.BLUE_700
 
-            self.page.snack_bar = ft.SnackBar(
-                content=ft.Text(message),
-                bgcolor=color,
+            # flet 0.86: page.snack_bar ya no existe; los diálogos se muestran
+            # con show_dialog (el SnackBar es un DialogControl)
+            self.page.show_dialog(
+                ft.SnackBar(
+                    content=ft.Text(message),
+                    bgcolor=color,
+                )
             )
-            self.page.snack_bar.open = True
             self.page.update()

@@ -17,11 +17,11 @@ python-dotenv~=1.2.2
 
 # flet - Cross-platform UI framework (Windows, Mac, Linux, Web, Mobile)
 # Used in: main.py, ddd/vocabulary/infrastructure/ui/
-flet~=0.85.2
+flet==0.86.5
 
 # flet-audio - reproductor de audio multiplataforma (Windows/Android); sustituye a pygame
 # Used in: ddd/shared/infrastructure/components/audio_player.py
-flet-audio~=0.85.2
+flet-audio==0.86.5
 
 # ============================================================================
 # DATABASE

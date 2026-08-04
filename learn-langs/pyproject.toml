@@ -9,11 +9,13 @@ requires-python = ">=3.12"
 # tienen wheel para la ultima version; con >= pip retrocede a una version con wheel
 # movil disponible. Con pins ~= exactos el build FALLA (p.ej. pydantic-core 2.46.4).
 dependencies = [
-    # flet/flet-audio PINEADOS: el cliente Flutter del APK es 0.85.2 (lo fija la
-    # plantilla de `flet build`); con >= pip metia flet-python 0.86.5 y el handshake
-    # 0.85<->0.86 moria en silencio -> pantalla en blanco. Ambos lados deben ser iguales.
-    "flet==0.85.2",
-    "flet-audio==0.85.2",
+    # flet/flet-audio PINEADOS a la MISMA version que flet-cli del .venv-win: el
+    # cliente Flutter del APK lo fija la plantilla de `flet build` (= version de la
+    # CLI) y el handshake entre versiones distintas muere en silencio -> pantalla en
+    # blanco. Para subir de version: pip install -U flet flet-cli flet-audio
+    # flet-desktop en el venv + subir estos pins A LA VEZ + pm clear en el dispositivo.
+    "flet==0.86.5",
+    "flet-audio==0.86.5",
     "aiosqlite>=0.19.0",
     "pydantic>=2.5.0",
     "python-dotenv>=1.0.0",

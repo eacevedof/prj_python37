@@ -119,7 +119,7 @@ class ListWordsView(ft.Container):
 
             def copy_error(e):
                 self.page.set_clipboard(message)
-                self.page.show_snack_bar(
+                self.page.show_dialog(
                     ft.SnackBar(content=ft.Text("Error copiado al portapapeles"), duration=1500)
                 )
 
