@@ -4,6 +4,7 @@ from pathlib import Path
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_size
 from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
 
 
@@ -201,8 +202,7 @@ class SliderCardComp(ft.Container):
         1.0 en escritorio (los tamaños del enum son para kiosko); en pantallas
         pequeñas (tablet) encoge proporcionalmente para que el contenido quepa.
         """
-        page_width = getattr(self.page, "width", None) if self.page else None
-        page_height = getattr(self.page, "height", None) if self.page else None
+        page_width, page_height = get_page_size(self)
         if not page_width or not page_height:
             return
 
@@ -224,8 +224,7 @@ class SliderCardComp(ft.Container):
     def _apply_responsive_layout(self) -> None:
         """En retrato (ancho < alto) apila imagen y texto en vertical; en
         apaisado/escritorio mantiene el layout horizontal imagen | texto."""
-        page_width = getattr(self.page, "width", None) if self.page else None
-        page_height = getattr(self.page, "height", None) if self.page else None
+        page_width, page_height = get_page_size(self)
         if not page_width or not page_height:
             return
 

@@ -1,11 +1,26 @@
-"""Componente de flashcard con imagen para mostrar palabras."""
+"""Componente de flashcard con imagen para el examen.
+
+Réplica visual de la tarjeta del Aprendizaje (SliderCardComp): tarjeta azul,
+imagen a un lado (o arriba en retrato) y palabra ES en grande, con tamaños
+escalados al tamaño real de la pantalla. La lógica de examen se mantiene:
+la traducción queda oculta hasta reveal_translation() y el borde marca el
+resultado (verde/rojo).
+"""
 
 from pathlib import Path
+
 import flet as ft
+
+from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
 
 
 class ImageFlashcardComp(ft.Container):
-    """Componente que muestra una imagen de palabra como flashcard."""
+    """Flashcard del examen: mismo look & feel que la tarjeta del Aprendizaje."""
+
+    # La palabra/respuesta del examen conviven con timer+input: algo más
+    # pequeñas que en el slider puro (factores sobre los tamaños kiosko)
+    __WORD_FACTOR = 0.8
+    __TRANSLATION_FACTOR = 0.7
 
     def __init__(
         self,
@@ -15,6 +30,8 @@ class ImageFlashcardComp(ft.Container):
         pronunciation: str = "",
         show_translation: bool = False,
         word_id: int | str = "",
+        ui_scale: float = 1.0,
+        is_vertical: bool = False,
     ):
         super().__init__()
         self.image_file_path = image_file_path
@@ -23,104 +40,75 @@ class ImageFlashcardComp(ft.Container):
         self.pronunciation = pronunciation
         self.show_translation = show_translation
         self.word_id = word_id
+        # Escala/orientación las pasa la vista (ya montada); el comp se crea
+        # ANTES de montarse y aquí self.page aún no es accesible (flet 0.86 lanza)
+        self.__scale = ui_scale
+        self.__is_vertical = is_vertical
         self._card_content: ft.Column | None = None
-        # Nº de controles del prompt base (imagen+caption o texto): reveal trunca hasta aquí
+        # Nº de controles del prompt base (palabra ES): reveal trunca hasta aquí
         self.__base_control_count = 0
 
         self._build_ui()
 
     def _build_ui(self) -> None:
-        """Construye la UI del componente."""
-        # Construir ruta completa de imagen
+        """Construye la UI del componente (layout de la tarjeta del slider)."""
+        scale = self.__scale
+
         full_image_path = self._get_full_image_path()
         has_image = bool(full_image_path) and Path(full_image_path).exists()
 
-        # Zona visual: imagen si existe; si no, el texto español como prompt
-        # (la imagen es OPCIONAL en el examen).
-        if has_image:
-            card_controls = [
-                ft.Container(
-                    content=ft.Image(
-                        src=full_image_path,
-                        width=250,
-                        height=250,
-                        fit=ft.BoxFit.CONTAIN,
-                        border_radius=8,
-                    ),
-                    alignment=ft.Alignment.CENTER,
-                ),
-            ]
-            # Caption (texto español) bajo la imagen si existe
-            if self.image_caption:
-                card_controls.append(
-                    ft.Text(
-                        self.image_caption,
-                        size=12,
-                        italic=True,
-                        color=ft.Colors.GREY_600,
-                        text_align=ft.TextAlign.CENTER,
-                    )
-                )
-        else:
-            # Sin imagen: el texto español es el prompt principal
-            card_controls = [
-                ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            ft.Icon(ft.Icons.TRANSLATE, size=44, color=ft.Colors.BLUE_200),
-                            ft.Container(height=10),
-                            ft.Text(
-                                self.image_caption or "—",
-                                size=30,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.BLUE_GREY_800,
-                                text_align=ft.TextAlign.CENTER,
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                    height=250,
-                    alignment=ft.Alignment.CENTER,
-                ),
-            ]
-
-        # Controles del prompt base (para truncar en reveal_translation)
-        self.__base_control_count = len(card_controls)
-
-        # Mostrar traducción si está habilitado
-        if self.show_translation and self.text_lang:
-            card_controls.extend([
-                ft.Container(height=16),
-                ft.Divider(height=1, color=ft.Colors.GREY_300),
-                ft.Container(height=12),
-                ft.Text(
-                    self.text_lang,
-                    size=28,
-                    weight=ft.FontWeight.W_500,
-                    color=ft.Colors.GREEN_700,
-                    text_align=ft.TextAlign.CENTER,
-                ),
-            ])
-
-            if self.pronunciation:
-                card_controls.append(
-                    ft.Text(
-                        f"/{self.pronunciation}/",
-                        size=16,
-                        italic=True,
-                        color=ft.Colors.GREY_600,
-                        text_align=ft.TextAlign.CENTER,
-                    )
-                )
-
-        self._card_content = ft.Column(
-            controls=card_controls,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            alignment=ft.MainAxisAlignment.CENTER,
+        # Palabra ES en grande: es el reto a traducir (con o sin imagen)
+        word_text = ft.Text(
+            self.image_caption or "—",
+            size=round(SliderCardSizeEnum.WORD.value * scale * self.__WORD_FACTOR),
+            weight=ft.FontWeight.BOLD,
+            color=ft.Colors.BLUE_900,
+            text_align=ft.TextAlign.CENTER,
         )
 
-        # Id de la palabra como overlay (no toca _card_content -> reveal_translation intacto)
+        # Columna de texto: palabra + (tras reveal) respuesta correcta
+        self._card_content = ft.Column(
+            controls=[word_text],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=0,
+        )
+        self.__base_control_count = 1
+
+        # Soporta traducción visible desde el inicio (no se usa en examen)
+        if self.show_translation and self.text_lang:
+            self._append_translation_controls()
+
+        image_side = round(SliderCardSizeEnum.IMAGE.value * scale)
+        image_container = ft.Container(
+            content=ft.Image(
+                src=full_image_path,
+                width=image_side,
+                height=image_side,
+                fit=ft.BoxFit.CONTAIN,
+                border_radius=12,
+            ),
+            alignment=ft.Alignment.CENTER,
+            visible=has_image,
+        )
+
+        # Como en el slider: imagen | texto en apaisado, apilado en retrato
+        if self.__is_vertical or not has_image:
+            body: ft.Control = ft.Column(
+                controls=[image_container, self._card_content],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=16,
+            )
+        else:
+            body = ft.Row(
+                controls=[image_container, self._card_content],
+                alignment=ft.MainAxisAlignment.CENTER,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=48,
+            )
+
+        # Id de la palabra como overlay (depuración de audios/imágenes)
         word_id_badge = ft.Container(
             content=ft.Text(
                 f"#{self.word_id}" if self.word_id != "" else "",
@@ -132,73 +120,67 @@ class ImageFlashcardComp(ft.Container):
             right=4,
         )
 
-        self.content = ft.Stack(controls=[self._card_content, word_id_badge])
-        self.width = 350
-        self.height = 380
-        self.bgcolor = ft.Colors.WHITE
-        self.border_radius = 16
-        self.padding = 16
-        self.shadow = ft.BoxShadow(
-            spread_radius=1,
-            blur_radius=15,
-            color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK),
-            offset=ft.Offset(0, 4),
-        )
+        self.content = ft.Stack(controls=[body, word_id_badge])
+        self.bgcolor = ft.Colors.BLUE_50
+        self.border_radius = 20
+        self.padding = round(40 * scale)
         self.alignment = ft.Alignment.CENTER
 
     def _get_full_image_path(self) -> str:
-        """Construye la ruta completa de la imagen."""
+        """Construye la ruta completa de la imagen (base: data/images)."""
         if not self.image_file_path:
             return ""
 
-        # Ruta base: C:\projects\prj_python37\learn-langs\data\images
         base_path = Path(__file__).parent.parent.parent.parent.parent.parent / "data" / "images"
-        full_path = base_path / self.image_file_path
-        return str(full_path)
+        return str(base_path / self.image_file_path)
+
+    def _append_translation_controls(self) -> None:
+        """Añade la respuesta correcta (grande, verde) + pronunciación."""
+        if not self._card_content or not self.text_lang:
+            return
+
+        scale = self.__scale
+        self._card_content.controls.extend([
+            ft.Container(height=8),
+            ft.Divider(height=2, color=ft.Colors.BLUE_300),
+            ft.Container(height=6),
+            ft.Text(
+                "Respuesta correcta:",
+                size=max(11, round(14 * scale)),
+                weight=ft.FontWeight.BOLD,
+                color=ft.Colors.BLUE_700,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Text(
+                self.text_lang,
+                size=round(
+                    SliderCardSizeEnum.TRANSLATION.value * scale * self.__TRANSLATION_FACTOR
+                ),
+                weight=ft.FontWeight.BOLD,
+                color=ft.Colors.GREEN_700,
+                text_align=ft.TextAlign.CENTER,
+            ),
+        ])
+
+        if self.pronunciation:
+            self._card_content.controls.append(
+                ft.Text(
+                    f"/{self.pronunciation}/",
+                    size=round(SliderCardSizeEnum.PRONUNCIATION.value * scale),
+                    italic=True,
+                    color=ft.Colors.GREY_600,
+                    text_align=ft.TextAlign.CENTER,
+                )
+            )
 
     def reveal_translation(self) -> None:
-        """Muestra la traducción."""
+        """Muestra la traducción (respuesta correcta del examen)."""
         self.show_translation = True
         if self._card_content and self.text_lang:
             # Limpiar controles de traducción previos (dejar solo el prompt base)
-            # para evitar duplicados
             while len(self._card_content.controls) > self.__base_control_count:
                 self._card_content.controls.pop()
-
-            self._card_content.controls.extend([
-                ft.Container(height=8),
-                ft.Divider(height=2, color=ft.Colors.BLUE_300),
-                ft.Container(height=6),
-                ft.Text(
-                    "Respuesta correcta:",
-                    size=13,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.Colors.BLUE_700,
-                    text_align=ft.TextAlign.CENTER,
-                ),
-                ft.Container(height=2),
-                ft.Text(
-                    self.text_lang,
-                    size=22,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.Colors.GREEN_700,
-                    text_align=ft.TextAlign.CENTER,
-                ),
-            ])
-
-            if self.pronunciation:
-                self._card_content.controls.append(
-                    ft.Text(
-                        f"/{self.pronunciation}/",
-                        size=13,
-                        italic=True,
-                        color=ft.Colors.GREY_700,
-                        text_align=ft.TextAlign.CENTER,
-                    )
-                )
-
-            # Aumentar altura para mostrar la traducción
-            self.height = 480
+            self._append_translation_controls()
             self.update()
 
     def set_result_style(self, is_correct: bool) -> None:

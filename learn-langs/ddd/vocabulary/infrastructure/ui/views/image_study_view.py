@@ -8,6 +8,7 @@ from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import G
 from ddd.vocabulary.infrastructure.ui.components.image_flashcard_comp import ImageFlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_scale, is_portrait
 from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
 
@@ -195,7 +196,8 @@ class ImageStudyView(ft.Container):
 
         word = dto.current_word
 
-        # Crear componentes dinámicos
+        # Crear componentes dinámicos. Escala/orientación se calculan aquí (la
+        # vista ya está montada; el comp aún no y no puede leer self.page)
         self._ft_image_flashcard = ImageFlashcardComp(
             image_file_path=word.get("image_file_path", ""),
             image_caption=word.get("text_es", ""),  # Solo español, sin traducción
@@ -203,6 +205,8 @@ class ImageStudyView(ft.Container):
             pronunciation=word.get("pronunciation", ""),
             show_translation=False,
             word_id=word.get("word_es_id", ""),
+            ui_scale=get_page_scale(self),
+            is_vertical=is_portrait(self),
         )
 
         self._ft_input_field = InputFieldComp(
