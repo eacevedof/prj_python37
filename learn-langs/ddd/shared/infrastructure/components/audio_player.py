@@ -2,12 +2,14 @@
 
 Sustituye a pygame (que NO existe en el runtime Android de Flet). El control Audio
 de Flet funciona en Windows y Android; `src` acepta una ruta local o una URL (CDN),
-asi que el mismo reproductor sirve para el fichero local o para
-resources.theframework.es. El control (un Service) se monta una vez en page.services.
+asi que el mismo reproductor sirve para el fichero local o resources.theframework.es.
 
-La reproduccion es asincrona; `play_until_end` espera al final del audio o a que el
-llamante pida parar (should_stop) — replica el bucle bloqueante que tenia pygame,
-pero sobre el loop asyncio (sin hilo aparte).
+Patron fiable (segun la propia libreria flet_audio): el `src` va en el CONSTRUCTOR
+y se usa `autoplay=True`. Asi NO dependemos de propagar un cambio de `src` a un Audio
+ya montado (no llegaba al backend -> "Null is not a supported source type") ni del
+invoke `play()` (que se colgaba -> TimeoutException). Se crea un Audio nuevo por
+reproduccion y se retira de la pagina al terminar o parar. `play_until_end` espera al
+final del audio (evento COMPLETED) o a que should_stop() pida parar.
 """
 
 import asyncio
@@ -25,9 +27,9 @@ class AudioPlayer:
     _POLL_SECONDS: float = 0.05
 
     def __init__(self) -> None:
-        self._audio = fta.Audio(on_state_changed=self._on_state_changed)
         self._completed = asyncio.Event()
-        self._is_mounted = False
+        self._page: ft.Page | None = None
+        self._current_audio: fta.Audio | None = None
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -39,40 +41,45 @@ class AudioPlayer:
         src: str,
         should_stop: Callable[[], bool],
     ) -> None:
-        """Reproduce src y espera a que termine, o a que should_stop() sea True."""
-        self._mount(page)
-        self._audio.src = src
+        """Reproduce src (autoplay) y espera a que termine o a que should_stop() sea True."""
+        self._page = page
+        self._detach_current()
         self._completed.clear()
-        await self._audio.play()
+
+        audio = fta.Audio(src=src, autoplay=True, on_state_change=self._on_state_change)
+        self._current_audio = audio
+        page.services.append(audio)
+        page.update()  # autoplay arranca al anadirse (el src ya viene en el constructor)
+
         while not self._completed.is_set():
             if should_stop():
-                await self._audio.pause()
+                self._detach_current()
                 return
             await asyncio.sleep(self._POLL_SECONDS)
+        self._detach_current()
 
     async def pause(self) -> None:
-        if self._is_mounted:
-            await self._audio.pause()
+        if self._current_audio is not None:
+            await self._current_audio.pause()
 
     async def resume(self) -> None:
-        if self._is_mounted:
-            await self._audio.resume()
+        if self._current_audio is not None:
+            await self._current_audio.resume()
 
     async def stop(self) -> None:
-        """Para y libera el fichero (necesario para renombrar/borrar el mp3)."""
+        """Para la reproduccion actual retirando el control de la pagina."""
         self._completed.set()
-        if self._is_mounted:
-            await self._audio.release()
+        self._detach_current()
 
-    def _mount(self, page: ft.Page) -> None:
-        """Monta el control Audio en la pagina (idempotente)."""
-        if self._is_mounted:
-            return
-        page.services.append(self._audio)
-        page.update()
-        self._is_mounted = True
+    def _detach_current(self) -> None:
+        """Retira el Audio actual de la pagina (para y limpia la reproduccion)."""
+        if self._current_audio is not None and self._page is not None:
+            if self._current_audio in self._page.services:
+                self._page.services.remove(self._current_audio)
+                self._page.update()
+        self._current_audio = None
 
-    def _on_state_changed(self, event: object) -> None:
+    def _on_state_change(self, event: object) -> None:
         state = getattr(event, "state", None) or getattr(event, "data", None)
         if state == AudioState.COMPLETED or str(state).lower().endswith("completed"):
             self._completed.set()
