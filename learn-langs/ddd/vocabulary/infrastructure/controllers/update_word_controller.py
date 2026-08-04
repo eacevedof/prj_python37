@@ -1,12 +1,10 @@
 """Controller para actualizacion de palabra."""
 
-import asyncio
-from pathlib import Path
 from typing import Callable, Any
 
 import flet as ft
-import pygame
 
+from ddd.shared.infrastructure.components.audio_player import AudioPlayer
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.update_word import UpdateWordDto, UpdateWordService
@@ -46,7 +44,9 @@ from ddd.vocabulary.infrastructure.repositories import (
     WordGroupsReaderSqliteRepository,
 )
 from ddd.vocabulary.infrastructure.ui.views.update_word_view import UpdateWordView
-from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import UpdateWordViewDto
+from ddd.vocabulary.infrastructure.ui.views.update_word_view_dto import (
+    UpdateWordViewDto,
+)
 
 
 class UpdateWordController(BaseController):
@@ -65,9 +65,9 @@ class UpdateWordController(BaseController):
     # =========================================================================
     def __init__(
         self,
-        word_id: int,                           # 1. Dato requerido (ID de palabra a editar)
-        on_success: Callable[[], None],         # 2. Callback primario (al guardar cambios)
-        on_back: Callable[[], None],            # 3. Callback secundario (cancelar/volver)
+        word_id: int,  # 1. Dato requerido (ID de palabra a editar)
+        on_success: Callable[[], None],  # 2. Callback primario (al guardar cambios)
+        on_back: Callable[[], None],  # 3. Callback secundario (cancelar/volver)
     ):
         # Datos iniciales
         self._word_id = word_id
@@ -83,6 +83,7 @@ class UpdateWordController(BaseController):
 
         # Servicios
         self._logger = Logger.get_instance()
+        self._audio_player = AudioPlayer.get_instance()
         self._update_word_service = UpdateWordService.get_instance()
         self._get_word_for_edit_service = GetWordForEditService.get_instance()
         self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
@@ -96,17 +97,19 @@ class UpdateWordController(BaseController):
         self._word_audios_reader = WordAudiosReaderFileRepository.get_instance()
 
         # Vista
-        self._ft_container = UpdateWordView.from_primitives({
-            "on_mount": self._on_mount,
-            "on_submit": self._on_save_btn_click,
-            "on_back": self._route_on_back,
-            "on_play_audio": self._on_play_audio_click,
-            "on_regenerate_audio": self._on_regenerate_audio_click,
-            "on_play_temp_audio": self._on_play_temp_audio_click,
-            "on_accept_audio": self._on_accept_audio_click,
-            "on_discard_audio": self._on_discard_audio_click,
-            "on_generate_ia_image": self._on_generate_ia_image_click,
-        })
+        self._ft_container = UpdateWordView.from_primitives(
+            {
+                "on_mount": self._on_mount,
+                "on_submit": self._on_save_btn_click,
+                "on_back": self._route_on_back,
+                "on_play_audio": self._on_play_audio_click,
+                "on_regenerate_audio": self._on_regenerate_audio_click,
+                "on_play_temp_audio": self._on_play_temp_audio_click,
+                "on_accept_audio": self._on_accept_audio_click,
+                "on_discard_audio": self._on_discard_audio_click,
+                "on_generate_ia_image": self._on_generate_ia_image_click,
+            }
+        )
 
     # =========================================================================
     # API PÚBLICA
@@ -136,7 +139,9 @@ class UpdateWordController(BaseController):
             )
 
             if not result.success:
-                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    result.error_message or "Error", error=True
+                )
                 self._route_on_back()
                 return
 
@@ -144,11 +149,15 @@ class UpdateWordController(BaseController):
             self.__available_tags = list(result.available_tags)
 
             # Cargar imagenes de la palabra
-            word_images = await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
+            word_images = await self._images_reader.get_word_es_images_by_word_es_id(
+                self._word_id
+            )
             self.__word_images = list(word_images)
 
             # Cargar grupos de la palabra
-            word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(self._word_id)
+            word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(
+                self._word_id
+            )
 
             # Cargar todos los grupos disponibles
             all_groups = await self._word_groups_reader.get_all_word_groups()
@@ -192,8 +201,10 @@ class UpdateWordController(BaseController):
     # =========================================================================
     def _on_save_btn_click(self, form_data: dict[str, Any]) -> None:
         """Maneja click en guardar cambios (boton azul - abajo en UI)."""
+
         async def _task():
             await self._async_submit(form_data)
+
         self._ft_container.page.run_task(_task)
 
     async def _async_submit(self, form_data: dict[str, Any]) -> None:
@@ -222,18 +233,20 @@ class UpdateWordController(BaseController):
 
         try:
             # Llamar servicio
-            update_dto = UpdateWordDto.from_primitives({
-                "word_id": self._word_id,
-                "text": text_es,
-                "word_type": form_data.get("word_type", "WORD"),
-                "tags": form_data.get("selected_tags", []),
-                "group_ids": form_data.get("selected_group_ids", []),
-                "translations": translations,
-                "translations_examples": translations_examples,
-                "notes": (form_data.get("notes") or "").strip(),
-                "img_ia_context": (form_data.get("img_ia_context") or "").strip(),
-                "rules_help": (form_data.get("rules_help") or "").strip(),
-            })
+            update_dto = UpdateWordDto.from_primitives(
+                {
+                    "word_id": self._word_id,
+                    "text": text_es,
+                    "word_type": form_data.get("word_type", "WORD"),
+                    "tags": form_data.get("selected_tags", []),
+                    "group_ids": form_data.get("selected_group_ids", []),
+                    "translations": translations,
+                    "translations_examples": translations_examples,
+                    "notes": (form_data.get("notes") or "").strip(),
+                    "img_ia_context": (form_data.get("img_ia_context") or "").strip(),
+                    "rules_help": (form_data.get("rules_help") or "").strip(),
+                }
+            )
 
             result = await self._update_word_service(update_dto)
 
@@ -274,33 +287,47 @@ class UpdateWordController(BaseController):
     # =========================================================================
     def _on_play_audio_click(self, audio_payload: dict[str, Any]) -> None:
         """Maneja click en escuchar audio actual (lo genera si no existe)."""
+
         async def _task():
             await self._async_play_audio(audio_payload)
+
         self._ft_container.page.run_task(_task)
 
     def _on_regenerate_audio_click(self, audio_payload: dict[str, Any]) -> None:
         """Maneja click en regenerar audio (borra el actual, crea propuesta temporal)."""
+
         async def _task():
             await self._async_regenerate_audio(audio_payload)
+
         self._ft_container.page.run_task(_task)
 
     def _on_play_temp_audio_click(self, lang_code: str) -> None:
         """Maneja click en escuchar la propuesta temporal."""
+
         async def _task():
-            temp_audio_path = self._word_audios_reader.get_temp_audio_path(self._word_id, lang_code)
-            await asyncio.to_thread(self._play_audio_file, temp_audio_path)
+            temp_audio_path = self._word_audios_reader.get_temp_audio_path(
+                self._word_id, lang_code
+            )
+            await self._audio_player.play_until_end(
+                self._ft_container.page, temp_audio_path, lambda: False
+            )
+
         self._ft_container.page.run_task(_task)
 
     def _on_accept_audio_click(self, lang_code: str) -> None:
         """Maneja click en aceptar la propuesta (pasa a ser el audio definitivo)."""
+
         async def _task():
             await self._async_accept_audio(lang_code)
+
         self._ft_container.page.run_task(_task)
 
     def _on_discard_audio_click(self, lang_code: str) -> None:
         """Maneja click en rechazar la propuesta temporal."""
+
         async def _task():
             await self._async_discard_audio(lang_code)
+
         self._ft_container.page.run_task(_task)
 
     async def _async_play_audio(self, audio_payload: dict[str, Any]) -> None:
@@ -314,17 +341,23 @@ class UpdateWordController(BaseController):
 
         try:
             result = await self._generate_text_audio_service(
-                GenerateTextAudioAiDto.from_primitives({
-                    "text": text_to_speak,
-                    "lang_code": lang_code,
-                    "word_id": self._word_id,
-                })
+                GenerateTextAudioAiDto.from_primitives(
+                    {
+                        "text": text_to_speak,
+                        "lang_code": lang_code,
+                        "word_id": self._word_id,
+                    }
+                )
             )
             if not result.success:
-                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    result.error_message or "Error", error=True
+                )
                 return
 
-            await asyncio.to_thread(self._play_audio_file, result.audio_path)
+            await self._audio_player.play_until_end(
+                self._ft_container.page, result.audio_path, lambda: False
+            )
 
         except Exception as e:
             self._logger.log_error(
@@ -332,7 +365,9 @@ class UpdateWordController(BaseController):
                 f"Error reproduciendo audio: {e}",
                 {"word_id": self._word_id, "lang_code": lang_code},
             )
-            self._ft_container.show_snackbar(f"Error reproduciendo audio: {e}", error=True)
+            self._ft_container.show_snackbar(
+                f"Error reproduciendo audio: {e}", error=True
+            )
 
     async def _async_regenerate_audio(self, audio_payload: dict[str, Any]) -> None:
         """Regenera el audio: borra el definitivo, crea propuesta temporal y la reproduce."""
@@ -340,7 +375,9 @@ class UpdateWordController(BaseController):
         text_to_speak = str(audio_payload.get("text", "")).strip()
 
         if not text_to_speak:
-            self._ft_container.show_snackbar("No hay texto para generar el audio", error=True)
+            self._ft_container.show_snackbar(
+                "No hay texto para generar el audio", error=True
+            )
             return
 
         self._set_audio_row(lang_code, is_generating=True)
@@ -348,27 +385,33 @@ class UpdateWordController(BaseController):
 
         try:
             # Liberar el reproductor antes de que el servicio borre el definitivo (WinError 5).
-            await asyncio.to_thread(self._release_audio_player)
+            await self._audio_player.stop()
 
             result = await self._regenerate_word_audio_service(
-                RegenerateWordAudioDto.from_primitives({
-                    "word_id": self._word_id,
-                    "lang_code": lang_code,
-                    "text": text_to_speak,
-                })
+                RegenerateWordAudioDto.from_primitives(
+                    {
+                        "word_id": self._word_id,
+                        "lang_code": lang_code,
+                        "text": text_to_speak,
+                    }
+                )
             )
 
             if not result.success:
                 self._set_audio_row(lang_code, is_generating=False)
                 self._ft_container.render_audio_rows(self.__audio_rows)
-                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    result.error_message or "Error", error=True
+                )
                 return
 
             self._set_audio_row(lang_code, is_generating=False, has_temp=True)
             self._ft_container.render_audio_rows(self.__audio_rows)
 
             # Reproducir la propuesta para comprobarla de inmediato
-            await asyncio.to_thread(self._play_audio_file, result.temp_audio_path)
+            await self._audio_player.play_until_end(
+                self._ft_container.page, result.temp_audio_path, lambda: False
+            )
 
         except Exception as e:
             self._logger.log_error(
@@ -378,23 +421,29 @@ class UpdateWordController(BaseController):
             )
             self._set_audio_row(lang_code, is_generating=False)
             self._ft_container.render_audio_rows(self.__audio_rows)
-            self._ft_container.show_snackbar(f"Error regenerando audio: {e}", error=True)
+            self._ft_container.show_snackbar(
+                f"Error regenerando audio: {e}", error=True
+            )
 
     async def _async_accept_audio(self, lang_code: str) -> None:
         """Acepta la propuesta temporal via servicio."""
         try:
             # Liberar el reproductor: si el mp3 sigue cargado en pygame, en Windows el
             # rename del temporal al definitivo falla con WinError 5 (Acceso denegado).
-            await asyncio.to_thread(self._release_audio_player)
+            await self._audio_player.stop()
             result = await self._accept_word_audio_service(
-                AcceptWordAudioDto.from_primitives({
-                    "word_id": self._word_id,
-                    "lang_code": lang_code,
-                })
+                AcceptWordAudioDto.from_primitives(
+                    {
+                        "word_id": self._word_id,
+                        "lang_code": lang_code,
+                    }
+                )
             )
 
             if not result.success:
-                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    result.error_message or "Error", error=True
+                )
                 return
 
             self._set_audio_row(lang_code, has_temp=False)
@@ -413,16 +462,20 @@ class UpdateWordController(BaseController):
         """Descarta la propuesta temporal via servicio."""
         try:
             # Liberar el reproductor antes de borrar el temporal (evita WinError 5 en Windows).
-            await asyncio.to_thread(self._release_audio_player)
+            await self._audio_player.stop()
             result = await self._discard_word_audio_service(
-                DiscardWordAudioDto.from_primitives({
-                    "word_id": self._word_id,
-                    "lang_code": lang_code,
-                })
+                DiscardWordAudioDto.from_primitives(
+                    {
+                        "word_id": self._word_id,
+                        "lang_code": lang_code,
+                    }
+                )
             )
 
             if not result.success:
-                self._ft_container.show_snackbar(result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    result.error_message or "Error", error=True
+                )
                 return
 
             self._set_audio_row(lang_code, has_temp=False)
@@ -435,45 +488,61 @@ class UpdateWordController(BaseController):
                 f"Error descartando audio: {e}",
                 {"word_id": self._word_id, "lang_code": lang_code},
             )
-            self._ft_container.show_snackbar(f"Error descartando audio: {e}", error=True)
+            self._ft_container.show_snackbar(
+                f"Error descartando audio: {e}", error=True
+            )
 
     # =========================================================================
     # EVENT HANDLERS - IMAGEN IA (genera y sobrescribe la última)
     # =========================================================================
     def _on_generate_ia_image_click(self) -> None:
         """Maneja click en Imagen IA (botón morado bajo la última imagen)."""
+
         async def _task():
             await self._async_generate_ia_image()
+
         self._ft_container.page.run_task(_task)
 
     async def _async_generate_ia_image(self) -> None:
         """Genera la imagen con IA y sobrescribe la última (borra la anterior)."""
-        previous_last_image_id = int(self.__word_images[-1].get("id", 0)) if self.__word_images else 0
+        previous_last_image_id = (
+            int(self.__word_images[-1].get("id", 0)) if self.__word_images else 0
+        )
 
         self._ft_container.set_image_generating(True)
         try:
             add_result = await self._add_word_ia_image_service(
-                AddWordIaImageDto.from_primitives({
-                    "word_id": self._word_id,
-                    "lang_code": LanguageCodeEnum.NL_NL.value,
-                })
+                AddWordIaImageDto.from_primitives(
+                    {
+                        "word_id": self._word_id,
+                        "lang_code": LanguageCodeEnum.NL_NL.value,
+                    }
+                )
             )
 
             if not add_result.success:
-                self._ft_container.show_snackbar(add_result.error_message or "Error", error=True)
+                self._ft_container.show_snackbar(
+                    add_result.error_message or "Error", error=True
+                )
                 return
 
             # Sobrescribir: eliminar la imagen que era la última hasta ahora
             if previous_last_image_id:
                 await self._delete_word_image_service(
-                    DeleteWordImageDto.from_primitives({"image_id": previous_last_image_id})
+                    DeleteWordImageDto.from_primitives(
+                        {"image_id": previous_last_image_id}
+                    )
                 )
 
             self.__word_images = list(
-                await self._images_reader.get_word_es_images_by_word_es_id(self._word_id)
+                await self._images_reader.get_word_es_images_by_word_es_id(
+                    self._word_id
+                )
             )
             self._ft_container.render_word_images(self.__word_images)
-            self._ft_container.show_snackbar("Imagen IA generada (última imagen sobrescrita)")
+            self._ft_container.show_snackbar(
+                "Imagen IA generada (última imagen sobrescrita)"
+            )
 
         except Exception as e:
             self._logger.log_error(
@@ -510,30 +579,4 @@ class UpdateWordController(BaseController):
                 audio_row.update(changes)
                 return
 
-    @staticmethod
-    def _play_audio_file(audio_path: str) -> None:
-        """Reproduce un mp3 de forma sincrónica con pygame (en thread aparte).
-
-        Al terminar libera el fichero con unload(): en Windows pygame mantiene el
-        handle del mp3 abierto tras load(), y eso impide luego renombrarlo o borrarlo
-        (aceptar/regenerar/descartar audio) provocando WinError 5.
-        """
-        if not pygame.mixer.get_init():
-            pygame.mixer.init()
-        pygame.mixer.music.load(str(Path(audio_path).resolve()))
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
-        pygame.mixer.music.unload()
-
-    @staticmethod
-    def _release_audio_player() -> None:
-        """Detiene y descarga el reproductor para liberar el handle del mp3.
-
-        Necesario en Windows antes de renombrar/borrar el fichero de audio: si pygame
-        lo tiene cargado, el sistema deniega la operación (WinError 5 - Acceso denegado).
-        """
-        if pygame.mixer.get_init():
-            pygame.mixer.music.stop()
-            pygame.mixer.music.unload()
-        pygame.mixer.music.unload()
+    # (audio: pygame reemplazado por AudioPlayer/ft.Audio — ver _audio_player)

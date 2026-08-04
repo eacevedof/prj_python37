@@ -2,12 +2,11 @@
 
 import asyncio
 import time
-from pathlib import Path
 from typing import Any, Callable
 
 import flet as ft
-import pygame
 
+from ddd.shared.infrastructure.components.audio_player import AudioPlayer
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.clear_activity_state import (
@@ -98,6 +97,7 @@ class ImageStudyController(BaseController):
 
         # Servicios
         self._logger = Logger.get_instance()
+        self._audio_player = AudioPlayer.get_instance()
         self._start_session_service = StartImageStudySessionService.get_instance()
         self._evaluate_answer_service = EvaluateAnswerService.get_instance()
         self._record_answer_service = RecordAnswerService.get_instance()
@@ -112,15 +112,17 @@ class ImageStudyController(BaseController):
         )
 
         # Vista
-        self._ft_container = ImageStudyView.from_primitives({
-            "on_mount": self._on_mount,
-            "on_answer": self._on_input_answer,
-            "on_skip": self._on_skip_btn_click,
-            "on_timeout": self._on_timer_timeout,
-            "on_back": self._on_back_btn_click,
-            "on_retry_failed": self._on_retry_failed_click,
-            "on_play_audio": self._on_play_audio_click,
-        })
+        self._ft_container = ImageStudyView.from_primitives(
+            {
+                "on_mount": self._on_mount,
+                "on_answer": self._on_input_answer,
+                "on_skip": self._on_skip_btn_click,
+                "on_timeout": self._on_timer_timeout,
+                "on_back": self._on_back_btn_click,
+                "on_retry_failed": self._on_retry_failed_click,
+                "on_play_audio": self._on_play_audio_click,
+            }
+        )
 
     # =========================================================================
     # API PÚBLICA
@@ -154,20 +156,20 @@ class ImageStudyController(BaseController):
         )
 
         try:
-            start_dto = StartImageStudySessionDto.from_primitives({
-                "lang_code": self._lang_code,
-                "tags": self._tags,
-                "group_id": self._group_id,
-                "limit": 40,
-            })
+            start_dto = StartImageStudySessionDto.from_primitives(
+                {
+                    "lang_code": self._lang_code,
+                    "tags": self._tags,
+                    "group_id": self._group_id,
+                    "limit": 40,
+                }
+            )
 
             result = await self._start_session_service(start_dto)
 
             self.__session_id = result.session_id
             # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
-            self.__words = [
-                ImageStudyWordDto.from_primitives(w) for w in result.words
-            ]
+            self.__words = [ImageStudyWordDto.from_primitives(w) for w in result.words]
 
             if not self.__words:
                 self._ft_container.render(ImageStudyViewDto.no_words())
@@ -217,13 +219,15 @@ class ImageStudyController(BaseController):
                 )
             )
 
-            self.__buffered_answers.append({
-                "session_id": self.__session_id,
-                "word_es_id": word.word_es_id,
-                "user_input": user_input,
-                "expected_text": word.text_lang,
-                "response_time_ms": response_time,
-            })
+            self.__buffered_answers.append(
+                {
+                    "session_id": self.__session_id,
+                    "word_es_id": word.word_es_id,
+                    "user_input": user_input,
+                    "expected_text": word.text_lang,
+                    "response_time_ms": response_time,
+                }
+            )
 
             # Actualizar stats internas
             self.__total_score += result.score
@@ -343,7 +347,9 @@ class ImageStudyController(BaseController):
         self.__buffered_answers = []
         try:
             await self._discard_session_service(
-                DiscardStudySessionDto.from_primitives({"session_id": self.__session_id})
+                DiscardStudySessionDto.from_primitives(
+                    {"session_id": self.__session_id}
+                )
             )
             await self._async_clear_activity_state()
         except Exception as e:
@@ -440,24 +446,15 @@ class ImageStudyController(BaseController):
                     f"Error generando audio: {result.error_message}",
                 )
                 return
-            await asyncio.to_thread(self._play_audio_file, result.audio_path)
+            await self._audio_player.play_until_end(
+                self._ft_container.page, result.audio_path, lambda: False
+            )
         except Exception as e:
             self._logger.log_error(
                 "ImageStudyController",
                 f"Error reproduciendo audio: {e}",
                 {"text": text, "lang_code": lang_code},
             )
-
-    @staticmethod
-    def _play_audio_file(audio_path: str) -> None:
-        """Reproduce un mp3 de forma sincrónica con pygame (en thread aparte)."""
-        if not pygame.mixer.get_init():
-            pygame.mixer.init()
-        pygame.mixer.music.load(str(Path(audio_path).resolve()))
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
-        pygame.mixer.music.unload()
 
     # =========================================================================
     # EVENT HANDLERS (orden visual/lógico en UI: flashcard → input → timer → back)

@@ -50,9 +50,9 @@ openai~=2.41.0
 # Used in: Clipboard operations for text/images
 pyperclip~=1.11.0
 
-# pygame - Audio playback
-# Used in: ddd/vocabulary/infrastructure/controllers/study_controller.py
-pygame~=2.6.1
+# flet-audio - reproductor de audio multiplataforma (Windows/Android)
+# Used in: ddd/shared/infrastructure/components/audio_player.py (sustituye a pygame)
+flet-audio~=0.85.2
 
 # pycaw - Windows master volume control (Core Audio)
 # Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)

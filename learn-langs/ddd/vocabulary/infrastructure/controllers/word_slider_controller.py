@@ -1,12 +1,11 @@
 """Controller para el Word Slider (presentación auto-reproducida con audio)."""
 
 import asyncio
-from pathlib import Path
 from typing import Callable
 
 import flet as ft
-import pygame
 
+from ddd.shared.infrastructure.components.audio_player import AudioPlayer
 from ddd.shared.infrastructure.components.logger import Logger
 from ddd.shared.infrastructure.components.system.awaker import Awaker
 from ddd.shared.infrastructure.controllers import BaseController
@@ -104,6 +103,7 @@ class WordSliderController(BaseController):
         # Servicios
         self._logger = Logger.get_instance()
         self._awaker = Awaker.get_instance()
+        self._audio_player = AudioPlayer.get_instance()
         self._start_session_service = StartWordSliderSessionService.get_instance()
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
         self._finish_session_service = FinishStudySessionService.get_instance()
@@ -384,7 +384,14 @@ class WordSliderController(BaseController):
             ):
                 return
 
-            await asyncio.to_thread(self._play_audio_file, result.audio_path, run_token)
+            await self._audio_player.play_until_end(
+                self._ft_container.page,
+                result.audio_path,
+                lambda: (
+                    self._is_run_cancelled(run_token)
+                    or self.__navigation_request is not None
+                ),
+            )
 
         except Exception as e:
             self._logger.log_error(
@@ -393,37 +400,7 @@ class WordSliderController(BaseController):
                 {"text": text, "lang_code": lang_code},
             )
 
-    def _play_audio_file(self, audio_path: str, run_token: int) -> None:
-        """Reproduce un mp3 de forma sincrónica usando pygame (en thread aparte).
-
-        Respeta el volumen actual de la máquina (no ajusta el volumen del
-        sistema) y atiende pausa, saltos anterior/siguiente, parada y
-        cancelación del bucle (run_token).
-        """
-        try:
-            if not pygame.mixer.get_init():
-                pygame.mixer.init()
-
-            pygame.mixer.music.load(str(Path(audio_path).resolve()))
-            pygame.mixer.music.play()
-
-            clock = pygame.time.Clock()
-            while True:
-                if (
-                    self._is_run_cancelled(run_token)
-                    or self.__navigation_request is not None
-                ):
-                    pygame.mixer.music.stop()
-                    break
-                # En pausa, seguir esperando la reanudación sin avanzar la secuencia
-                if not pygame.mixer.music.get_busy() and not self.__is_paused:
-                    break
-                clock.tick(10)
-
-            # Liberar el archivo para que pueda reutilizarse/sobrescribirse
-            pygame.mixer.music.unload()
-        except Exception as e:
-            raise Exception(f"Error reproduciendo audio con pygame: {e}")
+    # (audio: pygame reemplazado por AudioPlayer/ft.Audio — ver _audio_player.play_until_end)
 
     # =========================================================================
     # EVENT HANDLERS
@@ -461,14 +438,10 @@ class WordSliderController(BaseController):
     def _on_toggle_pause_click(self) -> None:
         """Pausa/reanuda la reproducción (audio y temporizadores)."""
         self.__is_paused = not self.__is_paused
-        try:
-            if pygame.mixer.get_init():
-                if self.__is_paused:
-                    pygame.mixer.music.pause()
-                else:
-                    pygame.mixer.music.unpause()
-        except Exception:
-            pass
+        if self.__is_paused:
+            self._ft_container.page.run_task(self._audio_player.pause)
+        else:
+            self._ft_container.page.run_task(self._audio_player.resume)
 
     def _on_edit_word_click(self) -> None:
         """Detiene el slider y navega a editar la palabra actual.
@@ -672,11 +645,6 @@ class WordSliderController(BaseController):
             return self._dutch_phonetic_service.transcribe(word.text_lang)
         return word.pronunciation
 
-    @staticmethod
-    def _stop_audio() -> None:
+    def _stop_audio(self) -> None:
         """Detiene cualquier audio en reproducción (best-effort)."""
-        try:
-            if pygame.mixer.get_init():
-                pygame.mixer.music.stop()
-        except Exception:
-            pass
+        self._ft_container.page.run_task(self._audio_player.stop)
