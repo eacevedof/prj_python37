@@ -11,6 +11,8 @@
 --   4) 🛬 komen vs aankomen vs "we zijn te laat" en la tarjeta 670 (Schiet op, we komen te
 --        laat): por que komen y no aankomen (aan), y el matiz de "we zijn te laat".
 --        (El contraste te laat vs laat ya lo cubre 20260721000001.)
+--   5) 🧳 meenemen vs brengen vs meebrengen en la tarjeta 662 (Ik nam hem mee naar huis):
+--        por que meenemen y no brengen/meebrengen para "llevar" (direccion take/bring).
 --   Todas keyeadas por el texto nl_NL (rebuild-robusto), idempotentes por emoji guarda.
 --   Solo UPDATE de words_es.rules_help; no toca words_lang/audio, imagenes ni notes.
 
@@ -93,3 +95,43 @@ UPDATE words_es SET rules_help = rules_help || '
 Regla: llegar tarde a algo (en general) → te laat komen; enfatizar el destino/hora de arribo → aankomen; constatar que ya es tarde → we zijn te laat.'
 WHERE id IN (SELECT word_es_id FROM words_lang WHERE lang_code='nl_NL' AND text='Schiet op, we komen te laat!')
   AND COALESCE(rules_help,'') NOT LIKE '%🛬%';
+
+-- 5) meenemen vs brengen vs meebrengen -------------------------------------
+
+-- 662 · Ik nam hem mee naar huis (me lo lleve a casa)
+UPDATE words_es SET rules_help = rules_help || '
+
+🧳 meenemen vs brengen vs meebrengen (por que meenemen y no brengen):
+El espanol "llevar" es ambiguo; el neerlandes separa segun la DIRECCION y si acompanas o entregas (como take vs bring en ingles).
+• meenemen (mee + nemen) = llevarSE algo / a alguien CONTIGO, desde aqui hacia otro sitio (te acompana en tu camino). Ik nam hem mee naar huis = me lo lleve a casa (vino CONMIGO). Neem je jas mee = llevate la chaqueta.
+• brengen = llevar/traer algo a un DESTINO o a alguien y dejarlo/entregarlo (foco en el destino o el receptor). Ik bracht hem naar huis = le lleve a casa (le acompane y le deje alli). Ik breng het pakket naar de post. Aqui tambien seria correcto "Ik bracht hem naar huis", pero cambia el foco: entregar/dejar en casa, no que viniera contigo.
+• meebrengen (mee + brengen) = traer/llevar algo CONSIGO hacia un destino (hacia donde vas o donde esta el otro). Breng iets lekkers mee naar het feest = trae algo rico a la fiesta.
+Regla direccional: sale de aqui contigo → (mee)nemen; va hacia un destino/alguien para entregar o aparecer alli → (mee)brengen. Por eso "me lo lleve (conmigo) a casa" = nam hem mee; "le lleve (le deje) a casa" = bracht hem naar huis.
+Ojo: el "conmigo" lo aporta mee(nemen), NO el pronombre hem. hem solo dice QUE/QUIEN es el objeto y es ambiguo: "a el" (persona/animal) o "lo" para una cosa de-woord (de paraplu → Ik nam hem mee naar huis = me lo lleve a casa). El sentido de acompanar/llevar contigo viene del mee, no de hem.
+Y sin el mee? "Ik nam hem naar huis" NO es idiomatico: nemen a secas = coger/agarrar, no expresa acompanar a alguien a un sitio, asi que queda cojo. Un neerlandofono diria nam hem mee naar huis (vino conmigo) o bracht hem naar huis (le deje alli). Contraste: con un medio de transporte nemen SI va sin mee → Ik nam de bus naar huis = fui a casa en bus (ahi lo que "tomas" es el bus, no a alguien a quien acompanas).'
+WHERE id IN (SELECT word_es_id FROM words_lang WHERE lang_code='nl_NL' AND text='Ik nam hem mee naar huis.')
+  AND COALESCE(rules_help,'') NOT LIKE '%🧳%';
+
+-- 662 (bis) · regla clara nemen vs brengen (los dos = "llevar")
+UPDATE words_es SET rules_help = rules_help || '
+
+🎯 nemen vs brengen (los dos se traducen "llevar") — LA REGLA INFALIBLE:
+El neerlandes no piensa en "llevar", piensa en la DIRECCION respecto a ti:
+► brengen = LLEVAR-Y-DEJAR. Lo transportas hasta un destino o a una persona y ALLI SE QUEDA (tu no te lo quedas). Piensa: ENTREGAR / DEJAR ALLI / hacer un recado. Siempre hay un destino (naar...) o un receptor.
+► nemen / meenemen = COGER-Y-LLEVARLO CONMIGO. Lo agarras y va CONTIGO, te acompana; no lo entregas. Piensa: llevarme algo encima / que venga conmigo.
+
+⏱️ TEST DE 1 SEGUNDO — al final, la cosa o persona: se queda alli (sin ti) o sigue contigo?
+• Se queda alli, tu la dejas → brengen.
+• Sigue contigo, te acompana → (mee)nemen.
+
+Ejemplos que lo fijan:
+• Ik breng de kinderen naar school = llevo a los ninos al cole (los DEJO alli y me voy) → brengen.
+• Ik neem de kinderen mee naar het park = me llevo a los ninos al parque (vienen CONMIGO) → meenemen.
+• Breng dit even naar Jan = llevale esto a Jan (ENTREGASELO) → brengen.
+• Neem je paraplu mee = llevate el paraguas (CONTIGO al salir) → meenemen.
+• Kun je me naar het station brengen? = me puedes llevar a la estacion? (me DEJAS alli) → brengen.
+• De ober brengt het eten = el camarero trae/lleva la comida (te la ENTREGA) → brengen.
+
+Nota espanol: brengen tapa "llevar" Y "traer" (solo significa transportar hasta un destino); no te fies de la traduccion espanola, fijate en si se ENTREGA/QUEDA (brengen) o ACOMPANA a alguien (nemen).'
+WHERE id IN (SELECT word_es_id FROM words_lang WHERE lang_code='nl_NL' AND text='Ik nam hem mee naar huis.')
+  AND COALESCE(rules_help,'') NOT LIKE '%🎯%';
