@@ -1,4 +1,4 @@
--- Learn Languages App - Ayuda gramatical: weer / ben vergeten / verbo reflexivo
+-- Learn Languages App - Ayuda gramatical: weer / ben vergeten / verbo reflexivo / komen-aankomen
 -- Migration: 20260805000001-grammar-help-weer-vergeten-reflexive.sql
 -- Description: Bloques de ayuda (APPEND a words_es.rules_help) para varias tarjetas nl_NL:
 --   1) 🔄 weer vs nog eens / nog een keer / opnieuw / alweer, en las 3 frases con "weer":
@@ -8,6 +8,9 @@
 --        (presente, habito): tarjeta 680.
 --   3) 🪞 marca de verbo reflexivo (zich afvragen) en la tarjeta 324 (unica reflexiva
 --        fuera del grupo 17, que ya lo marca en su rules_help/notes).
+--   4) 🛬 komen vs aankomen vs "we zijn te laat" en la tarjeta 670 (Schiet op, we komen te
+--        laat): por que komen y no aankomen (aan), y el matiz de "we zijn te laat".
+--        (El contraste te laat vs laat ya lo cubre 20260721000001.)
 --   Todas keyeadas por el texto nl_NL (rebuild-robusto), idempotentes por emoji guarda.
 --   Solo UPDATE de words_es.rules_help; no toca words_lang/audio, imagenes ni notes.
 
@@ -77,3 +80,16 @@ Contraste: vragen (sin reflexivo) = preguntar A ALGUIEN (Ik vraag het aan hem); 
 Ademas es SEPARABLE (af): en la oracion principal el prefijo af va al final → Ik vraag me af..., y la subordinada (of hij zou komen) cuelga detras.'
 WHERE id IN (SELECT word_es_id FROM words_lang WHERE lang_code='nl_NL' AND text='Ik vraag me af of hij zou komen.')
   AND COALESCE(rules_help,'') NOT LIKE '%🪞%';
+
+-- 4) komen vs aankomen vs zijn te laat -------------------------------------
+
+-- 670 · Schiet op, we komen te laat! (date prisa, que llegamos tarde)
+UPDATE words_es SET rules_help = rules_help || '
+
+🛬 komen vs aankomen vs "we zijn te laat":
+• Aqui el verbo es komen (venir/presentarse), NO aankomen. "te laat komen" es la EXPRESION FIJA de llegar tarde (a una cita, el tren, la clase, el trabajo): We komen te laat = vamos a llegar tarde. Por eso NO lleva "aan".
+• aankomen = llegar A UN DESTINO, con foco en el punto o la hora de arribo: De trein komt om 8 uur aan (el tren llega a las 8), We zijn om drie uur aangekomen (llegamos a las tres). Se usa cuando marcas/enfatizas el sitio o el momento exacto de llegar. "We komen te laat aan" es posible (llegar tarde AL destino, tipico de un tren/vuelo), pero para "vamos a llegar tarde" el neerlandes dice "we komen te laat" a secas.
+• Se podria decir "Schiet op, we zijn te laat"? Si, correcto y muy usado, pero cambia el matiz temporal: we komen te laat = vamos a llegar tarde (aun de camino, proyeccion a futuro con presente); we zijn te laat = ya vamos/estamos tarde (estado actual, la hora ya paso). komen mira la llegada; zijn constata el retraso ahora. Ambas sirven para meter prisa.
+Regla: llegar tarde a algo (en general) → te laat komen; enfatizar el destino/hora de arribo → aankomen; constatar que ya es tarde → we zijn te laat.'
+WHERE id IN (SELECT word_es_id FROM words_lang WHERE lang_code='nl_NL' AND text='Schiet op, we komen te laat!')
+  AND COALESCE(rules_help,'') NOT LIKE '%🛬%';
