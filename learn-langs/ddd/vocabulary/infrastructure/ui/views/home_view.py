@@ -212,7 +212,7 @@ class HomeView(ft.Container):
 
         image_study_btn = ft.ElevatedButton(
             content=ft.Row(
-                [ft.Icon(ft.Icons.QUIZ), ft.Text("Examen con imágenes")],
+                [ft.Icon(ft.Icons.QUIZ), ft.Text("Examen")],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             on_click=lambda _: self._route_on_start_image_study(),

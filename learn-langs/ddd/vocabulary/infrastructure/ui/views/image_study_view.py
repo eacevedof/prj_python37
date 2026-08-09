@@ -34,6 +34,7 @@ class ImageStudyView(ft.Container):
         route_on_timeout: Callable[[], None],
         route_on_back: Callable[[], None],
         route_on_retry_failed: Callable[[], None],
+        route_on_pause: Callable[[bool], None] | None = None,
         route_on_play_audio: Callable[[], None] | None = None,
     ):
         super().__init__()
@@ -45,6 +46,7 @@ class ImageStudyView(ft.Container):
         self._route_on_timeout = route_on_timeout
         self._route_on_back = route_on_back
         self._route_on_retry_failed = route_on_retry_failed
+        self._route_on_pause = route_on_pause or (lambda _paused: None)
         self._route_on_play_audio = route_on_play_audio
 
         # Componentes UI - Header
@@ -59,6 +61,9 @@ class ImageStudyView(ft.Container):
         self._ft_timer: TimerComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
         self.__is_paused: bool = False
+        # True mientras se muestra la corrección (auto-avance): el botón de pausa
+        # congela el avance en vez de tocar el temporizador (ya parado).
+        self.__in_review: bool = False
 
         self._build_initial_ui()
 
@@ -72,6 +77,7 @@ class ImageStudyView(ft.Container):
             route_on_timeout=primitives.get("on_timeout", lambda: None),
             route_on_back=primitives.get("on_back", lambda: None),
             route_on_retry_failed=primitives.get("on_retry_failed", lambda: None),
+            route_on_pause=primitives.get("on_pause", lambda _paused: None),
             route_on_play_audio=primitives.get("on_play_audio"),
         )
 
@@ -113,9 +119,25 @@ class ImageStudyView(ft.Container):
     # LIFECYCLE HOOKS
     # =========================================================================
     def did_mount(self) -> None:
-        """Flet llama esto al montar."""
+        """Flet llama esto al montar: engancha el atajo de teclado del examen."""
+        if self.page:
+            self.page.on_keyboard_event = self._on_keyboard
         if self._route_on_mount:
             self._route_on_mount()
+
+    def will_unmount(self) -> None:
+        """Flet llama esto al desmontar: suelta el atajo para no afectar a otras vistas."""
+        if self.page and self.page.on_keyboard_event is self._on_keyboard:
+            self.page.on_keyboard_event = None
+
+    def _on_keyboard(self, event: ft.KeyboardEvent) -> None:
+        """Atajo del examen: Ctrl+Espacio pausa/reanuda (pregunta o revisión).
+
+        Se usa Ctrl+Espacio (no el espacio suelto) para no interferir con el tecleo
+        de respuestas que llevan espacios. Es el mismo gesto que en el Aprendizaje.
+        """
+        if event.key == " " and event.ctrl and not event.alt and not event.meta:
+            self._on_pause_click()
 
     # =========================================================================
     # CONSTRUCCIÓN DE UI
@@ -183,6 +205,7 @@ class ImageStudyView(ft.Container):
         if not self._ft_content_area:
             return
 
+        self._ft_pause_btn = None  # sin pregunta activa: Ctrl+Espacio no-op
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.append(
             ft.Container(
@@ -226,6 +249,7 @@ class ImageStudyView(ft.Container):
 
         # Botonera: pausa/reanudar (+ audio pista si está disponible)
         self.__is_paused = False
+        self.__in_review = False  # arrancamos en fase de pregunta
         self._ft_pause_btn = ft.IconButton(
             icon=ft.Icons.PAUSE_CIRCLE,
             icon_size=32,
@@ -264,18 +288,23 @@ class ImageStudyView(ft.Container):
         ])
 
     def _on_pause_click(self) -> None:
-        """Pausa/reanuda el temporizador del examen (solo estado de vista)."""
-        if not self._ft_timer or not self._ft_pause_btn:
+        """Pausa/reanuda el examen: durante la pregunta detiene el temporizador;
+        durante la revisión congela el auto-avance (vía callback al controller)."""
+        if not self._ft_pause_btn:
             return
         self.__is_paused = not self.__is_paused
         if self.__is_paused:
-            self._ft_timer.stop()
+            if not self.__in_review and self._ft_timer:
+                self._ft_timer.stop()
             self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
             self._ft_pause_btn.tooltip = "Reanudar"
         else:
-            self._ft_timer.start()
+            if not self.__in_review and self._ft_timer:
+                self._ft_timer.start()
             self._ft_pause_btn.icon = ft.Icons.PAUSE_CIRCLE
             self._ft_pause_btn.tooltip = "Pausar"
+        # Avisar al controller para que el auto-avance respete la pausa
+        self._route_on_pause(self.__is_paused)
         self.update()
 
     def _render_with_result(self, dto: ImageStudyViewDto) -> None:
@@ -290,19 +319,30 @@ class ImageStudyView(ft.Container):
         # Mostrar resultado
         is_correct = dto.last_result.get("is_correct", False)
         correct_answer = dto.last_result.get("correct_answer", "")
+        user_input = dto.last_result.get("user_input", "")
 
         self._ft_input_field.set_disabled(True)
-        self._ft_input_field.show_result(is_correct, correct_answer)
+        self._ft_input_field.show_result(is_correct, correct_answer, user_input)
 
         # Revelar traducción en flashcard
         self._ft_image_flashcard.reveal_translation()
         self._ft_image_flashcard.set_result_style(is_correct)
+
+        # Fase de revisión: el botón de pausa ahora congela el AUTO-AVANCE (no el
+        # temporizador, que ya está parado). El botón sigue visible del render de
+        # la pregunta; lo dejamos en estado "Pausar" (la revisión arranca sin pausa).
+        self.__in_review = True
+        self.__is_paused = False
+        if self._ft_pause_btn:
+            self._ft_pause_btn.icon = ft.Icons.PAUSE_CIRCLE
+            self._ft_pause_btn.tooltip = "Pausar"
 
     def _render_no_words(self) -> None:
         """Renderiza mensaje cuando no hay palabras para practicar."""
         if not self._ft_content_area:
             return
 
+        self._ft_pause_btn = None  # sin pregunta activa: Ctrl+Espacio no-op
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend([
             ft.Container(height=40),
@@ -334,6 +374,7 @@ class ImageStudyView(ft.Container):
         if not self._ft_content_area:
             return
 
+        self._ft_pause_btn = None  # sesión terminada: Ctrl+Espacio no-op
         controls = [
             ft.Container(height=20),
             ft.Icon(
@@ -492,6 +533,7 @@ class ImageStudyView(ft.Container):
         if not self._ft_content_area:
             return
 
+        self._ft_pause_btn = None  # sin pregunta activa: Ctrl+Espacio no-op
         self._ft_content_area.controls.clear()
         self._ft_content_area.controls.extend([
             ft.Container(height=40),

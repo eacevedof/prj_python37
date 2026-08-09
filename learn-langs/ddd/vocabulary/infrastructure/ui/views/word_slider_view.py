@@ -130,18 +130,24 @@ class WordSliderView(ft.Container):
             self.page.on_keyboard_event = None
 
     def _on_keyboard(self, event: ft.KeyboardEvent) -> None:
-        """Atajos del slider: ← anterior · espacio pausa/reanuda · → siguiente.
+        """Atajos del slider: ← anterior · → siguiente · espacio (o Ctrl+Espacio)
+        pausa/reanuda.
 
-        Se ignoran si hay un diálogo abierto o si se pulsa con ctrl/alt/meta.
+        Pausa: espacio suelto o Ctrl+Espacio (este último es el atajo unificado con
+        el Examen, donde el espacio suelto se reserva para teclear). Navegación con
+        flechas sin modificador. Se ignoran si hay un diálogo abierto o con alt/meta.
         """
-        if self.__is_modal_open or event.ctrl or event.alt or event.meta:
+        if self.__is_modal_open or event.alt or event.meta:
             return
-        if event.key == "Arrow Left":
+        if event.key == " ":
+            # espacio suelto o Ctrl+Espacio → pausa/play (aquí no hay campo de texto)
+            self._on_pause_btn_click()
+        elif event.ctrl:
+            return
+        elif event.key == "Arrow Left":
             self._on_prev_btn_click()
         elif event.key == "Arrow Right":
             self._on_next_btn_click()
-        elif event.key == " ":
-            self._on_pause_btn_click()
 
     # =========================================================================
     # CONSTRUCCIÓN DE UI

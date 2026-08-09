@@ -13,4 +13,4 @@ class ImageStudySequenceEnum(int, Enum):
 
     MULTI_WORD_ANSWER_TIMER_SECONDS = 30  # frases (>2 palabras): más tiempo para teclear
     WRONG_REVIEW_WAIT_SECONDS = 4  # tras fallar: se oye el NL y da tiempo a ver la corrección
-    CORRECT_REVIEW_WAIT_SECONDS = 1  # tras acertar: breve confirmación antes de la siguiente
+    CORRECT_REVIEW_WAIT_SECONDS = 5  # tras acertar: ~5s para ver la palabra antes de la siguiente

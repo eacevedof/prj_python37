@@ -163,7 +163,7 @@ class ImageStudyViewDto:
             return "Cargando..."
         if self.total_words == 0:
             return ""
-        return f"Imagen {self.current_index + 1} de {self.total_words}"
+        return f"Pregunta {self.current_index + 1} de {self.total_words}"
 
     @property
     def score_text(self) -> str:

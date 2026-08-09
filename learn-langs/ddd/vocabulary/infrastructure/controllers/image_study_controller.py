@@ -91,6 +91,9 @@ class ImageStudyController(BaseController):
         self.__answers_count: int = 0
         self.__failed_words: list[dict[str, Any]] = []
         self.__is_session_complete: bool = False
+        # Pausa global: el mismo botón detiene el temporizador durante la pregunta
+        # y congela el auto-avance durante la revisión de la respuesta.
+        self.__is_paused: bool = False
         # Respuestas acumuladas en memoria; se persisten SOLO al completar (replay).
         # Al abortar se descartan (nada de lo realizado cuenta).
         self.__buffered_answers: list[dict[str, Any]] = []
@@ -121,6 +124,7 @@ class ImageStudyController(BaseController):
                 "on_mount": self._on_mount,
                 "on_answer": self._on_input_answer,
                 "on_skip": self._on_skip_btn_click,
+                "on_pause": self._on_pause_toggle,
                 "on_timeout": self._on_timer_timeout,
                 "on_back": self._on_back_btn_click,
                 "on_retry_failed": self._on_retry_failed_click,
@@ -209,6 +213,9 @@ class ImageStudyController(BaseController):
         if self.__is_session_complete:
             return
 
+        # La revisión arranca siempre sin pausa (si se pausó durante la pregunta)
+        self.__is_paused = False
+
         word = self.__words[self.__current_index]
         response_time = int((time.time() - self.__start_time) * 1000)
 
@@ -265,24 +272,25 @@ class ImageStudyController(BaseController):
                     "is_correct": result.is_correct,
                     "score": result.score,
                     "correct_answer": word.text_lang,
+                    "user_input": user_input,
                 },
             )
             self._ft_container.render(dto)
 
-            # Como en el aprendizaje: al fallar se pronuncia el neerlandés y se
-            # deja tiempo para ver la corrección; al acertar, solo una breve
-            # confirmación antes de pasar a la siguiente palabra.
+            # Al fallar se pronuncia el neerlandés y se deja más tiempo para ver la
+            # corrección; al acertar, solo una breve confirmación. El auto-avance es
+            # PAUSABLE: mientras esté en pausa el contador no corre.
             if not result.is_correct:
                 await self._play_text_audio(
                     word.text_lang,
                     self._lang_code,
                     word.word_es_id,
                 )
-                await asyncio.sleep(
+                await self._pausable_wait(
                     ImageStudySequenceEnum.WRONG_REVIEW_WAIT_SECONDS.value
                 )
             else:
-                await asyncio.sleep(
+                await self._pausable_wait(
                     ImageStudySequenceEnum.CORRECT_REVIEW_WAIT_SECONDS.value
                 )
             self._next_word()
@@ -298,6 +306,18 @@ class ImageStudyController(BaseController):
                 },
             )
             self._next_word()
+
+    async def _pausable_wait(self, seconds: float) -> None:
+        """Espera 'seconds' de reloj efectivo, pero congela el contador mientras
+        esté en pausa. Sale antes si se completa/aborta la sesión."""
+        step = 0.1
+        elapsed = 0.0
+        while elapsed < seconds:
+            if self.__is_session_complete or self.__is_exited:
+                return
+            if not self.__is_paused:
+                elapsed += step
+            await asyncio.sleep(step)
 
     async def _async_finish_session(self) -> None:
         """Finaliza la sesión via servicio."""
@@ -481,6 +501,14 @@ class ImageStudyController(BaseController):
 
         self._ft_container.page.run_task(_task)
 
+    def _on_pause_toggle(self, is_paused: bool) -> None:
+        """Pausa/reanuda el flujo (lo emite el botón de la vista).
+
+        Durante la pregunta la vista detiene su temporizador; aquí guardamos el
+        estado para que el auto-avance de la revisión también respete la pausa.
+        """
+        self.__is_paused = is_paused
+
     def _on_timer_timeout(self) -> None:
         """Maneja timeout del timer (arriba en UI)."""
 
@@ -519,6 +547,7 @@ class ImageStudyController(BaseController):
             return
 
         self.__start_time = time.time()
+        self.__is_paused = False  # cada pregunta arranca sin pausa
         word = self.__words[self.__current_index]
 
         dto = ImageStudyViewDto.studying(

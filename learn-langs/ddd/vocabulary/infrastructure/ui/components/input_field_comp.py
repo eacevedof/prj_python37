@@ -21,6 +21,8 @@ class InputFieldComp(ft.Container):
         self.disabled = disabled
         self._text_field: ft.TextField | None = None
         self._submit_btn: ft.ElevatedButton | None = None
+        # Área de corrección (al fallar): cómo se escribe + lo que escribió el usuario en rojo
+        self._result_area: ft.Column | None = None
 
         self._build_ui()
 
@@ -55,8 +57,21 @@ class InputFieldComp(ft.Container):
             disabled=self.disabled,
         )
 
+        # Al fallar: se muestra lo que escribió el usuario en ROJO ENCIMA del campo.
+        # Ancho fijo para que las frases largas ajusten línea en la tablet.
+        self._result_area = ft.Column(
+            controls=[],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=2,
+        )
+
         self.content = ft.Column(
             controls=[
+                ft.Container(
+                    content=self._result_area,
+                    width=360,
+                    alignment=ft.Alignment.CENTER,
+                ),
                 ft.Row(
                     controls=[
                         self._text_field,
@@ -108,26 +123,44 @@ class InputFieldComp(ft.Container):
             self._submit_btn.disabled = disabled
         self.update()
 
-    def show_result(self, is_correct: bool, correct_answer: str) -> None:
-        """Muestra el resultado de la respuesta."""
-        if self._text_field:
-            if is_correct:
-                self._text_field.border_color = ft.Colors.GREEN_500
-                self._text_field.focused_border_color = ft.Colors.GREEN_500
-            else:
-                self._text_field.border_color = ft.Colors.RED_500
-                self._text_field.focused_border_color = ft.Colors.RED_500
-                self._text_field.helper_text = f"Correcto: {correct_answer}"
-                self._text_field.helper_style = ft.TextStyle(
-                    color=ft.Colors.RED_700,
-                    weight=ft.FontWeight.BOLD,
+    def show_result(
+        self, is_correct: bool, correct_answer: str, user_input: str = ""
+    ) -> None:
+        """Muestra el resultado de la respuesta.
+
+        Al fallar: borde rojo y, ENCIMA del campo, lo que escribió el usuario en
+        ROJO (la traducción correcta ya se revela en la flashcard).
+        """
+        if not self._text_field:
+            return
+
+        if self._result_area is not None:
+            self._result_area.controls.clear()
+
+        if is_correct:
+            self._text_field.border_color = ft.Colors.GREEN_500
+            self._text_field.focused_border_color = ft.Colors.GREEN_500
+        else:
+            self._text_field.border_color = ft.Colors.RED_500
+            self._text_field.focused_border_color = ft.Colors.RED_500
+            if self._result_area is not None:
+                self._result_area.controls.append(
+                    ft.Text(
+                        user_input or "(vacío)",
+                        size=18,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.RED_600,
+                        text_align=ft.TextAlign.CENTER,
+                        selectable=True,
+                    )
                 )
-            self.update()
+        self.update()
 
     def reset_style(self) -> None:
         """Resetea el estilo del campo."""
+        if self._result_area is not None:
+            self._result_area.controls.clear()
         if self._text_field:
             self._text_field.border_color = None
             self._text_field.focused_border_color = ft.Colors.BLUE_700
-            self._text_field.helper_text = None
             self.clear()
