@@ -60,10 +60,14 @@ class ImageStudyView(ft.Container):
         self._ft_input_field: InputFieldComp | None = None
         self._ft_timer: TimerComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_help_btn: ft.IconButton | None = None
         self.__is_paused: bool = False
         # True mientras se muestra la corrección (auto-avance): el botón de pausa
         # congela el avance en vez de tocar el temporizador (ya parado).
         self.__in_review: bool = False
+        # Datos para el modal de ayuda (reglas de uso) de la palabra actual
+        self.__current_word_text: str = ""
+        self.__current_rules_help: str = ""
 
         self._build_initial_ui()
 
@@ -222,6 +226,10 @@ class ImageStudyView(ft.Container):
 
         word = dto.current_word
 
+        # Datos para el modal de ayuda (habilitado solo si la palabra tiene reglas)
+        self.__current_word_text = word.get("text_es", "")
+        self.__current_rules_help = word.get("rules_help", "") or ""
+
         # Crear componentes dinámicos. Escala/orientación se calculan aquí (la
         # vista ya está montada; el comp aún no y no puede leer self.page)
         self._ft_image_flashcard = ImageFlashcardComp(
@@ -268,6 +276,10 @@ class ImageStudyView(ft.Container):
                     style=ft.ButtonStyle(color=ft.Colors.BLUE_700),
                 )
             )
+        # Botón de ayuda (reglas de uso), igual que en Aprendizaje: habilitado solo
+        # si la palabra tiene reglas; al abrirlo se pausa el examen (temporizador o
+        # auto-avance) y al cerrarlo se reanuda.
+        buttons_row_controls.append(self._get_built_help_button())
 
         # Espaciados compactos, replicando los del Aprendizaje (mismo modo de
         # presentación): el alto es el recurso escaso en tablet
@@ -306,6 +318,101 @@ class ImageStudyView(ft.Container):
         # Avisar al controller para que el auto-avance respete la pausa
         self._route_on_pause(self.__is_paused)
         self.update()
+
+    def _get_built_help_button(self) -> ft.IconButton:
+        """Construye el botón de ayuda (reglas de uso) de la botonera del examen."""
+        self._ft_help_btn = ft.IconButton(
+            icon=ft.Icons.HELP_OUTLINE,
+            icon_size=32,
+            icon_color=ft.Colors.GREEN_700,
+            tooltip="Reglas de uso: cuándo y cómo se usa",
+            on_click=lambda _: self._on_help_btn_click(),
+            disabled=not self.__current_rules_help,
+        )
+        return self._ft_help_btn
+
+    def _on_help_btn_click(self) -> None:
+        """Muestra el modal de reglas de uso pausando el examen automáticamente.
+
+        Al abrir pausa (temporizador durante la pregunta o auto-avance durante la
+        revisión); al cerrar reanuda solo si la pausa la provocó la propia ayuda.
+        """
+        if not self.__current_rules_help or not self.page:
+            return
+
+        paused_by_help = not self.__is_paused
+        if paused_by_help:
+            self._on_pause_click()
+
+        def close_dialog(_) -> None:
+            dialog.open = False
+            if paused_by_help and self.__is_paused:
+                self._on_pause_click()
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            modal=True,
+            title=ft.Text(self.__current_word_text, size=22, weight=ft.FontWeight.BOLD),
+            content=ft.Container(
+                content=ft.Column(
+                    controls=self._get_rules_controls(self.__current_rules_help),
+                    scroll=ft.ScrollMode.AUTO,
+                    spacing=6,
+                ),
+                width=650,
+                height=420,
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=close_dialog),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
+
+    @staticmethod
+    def _get_rules_controls(rules_text: str) -> list[ft.Control]:
+        """Convierte las reglas en controles: ítems enumerados y neerlandés en negrita."""
+        controls: list[ft.Control] = []
+        item_number = 0
+        for raw_line in rules_text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                controls.append(ft.Container(height=4))
+                continue
+
+            is_item = line[0] in "•-*"
+            while line and line[0] in "•-*":
+                line = line[1:].strip()
+
+            if not is_item:
+                controls.append(ft.Text(line, size=16, selectable=True))
+                continue
+
+            item_number += 1
+            if "—" in line:
+                text_lang, text_es = line.split("—", 1)
+                spans = [
+                    ft.TextSpan(
+                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
+                    ),
+                    ft.TextSpan(
+                        f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)
+                    ),
+                    ft.TextSpan(
+                        f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)
+                    ),
+                ]
+            else:
+                spans = [
+                    ft.TextSpan(
+                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
+                    ),
+                    ft.TextSpan(line, ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                ]
+            controls.append(ft.Text(spans=spans, size=16, selectable=True))
+        return controls
 
     def _render_with_result(self, dto: ImageStudyViewDto) -> None:
         """Renderiza resultado de respuesta."""

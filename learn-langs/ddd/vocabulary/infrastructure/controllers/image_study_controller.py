@@ -637,6 +637,7 @@ class ImageStudyController(BaseController):
             "text_lang": word.text_lang,
             "word_type": word.word_type,
             "pronunciation": self._pronunciation_for(word),
+            "rules_help": word.rules_help,
             "image_file_path": word.image_file_path,
             "image_mime_type": word.image_mime_type,
             "image_caption": word.image_caption,

@@ -1,5 +1,5 @@
 -- Learn Languages App - Ampliar ayuda del imperativo "Word eens rustig!"
--- Migration: 20260809000001-help-imperative-word-eens-rustig.sql
+-- Migration: 20260809000007-help-imperative-word-eens-rustig.sql
 -- Description: Actualiza el rules_help de la frase 'calmate' (grupo worden) para
 --   incorporar la explicacion completa del IMPERATIVO neerlandes surgida en tutoria:
 --   (1) por que es "Word" y no "Wordt" (imperativo = stam pura, sin -t; el -t es del

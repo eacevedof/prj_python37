@@ -4,6 +4,9 @@ import flet as ft
 from typing import Callable, Any, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import (
+    EnvironmentReaderRawRepository,
+)
 from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
 
 
@@ -311,7 +314,22 @@ class HomeView(ft.Container):
             scroll=ft.ScrollMode.AUTO,
         )
 
-        self.content = self._ft_content_column
+        # Etiqueta de versión (build) arriba a la derecha, en pequeño.
+        version = EnvironmentReaderRawRepository.get_instance().get_app_version()
+        version_label = ft.Container(
+            content=ft.Text(
+                f"v{version}",
+                size=11,
+                color=ft.Colors.GREY_500,
+            ),
+            top=4,
+            right=8,
+        )
+
+        self.content = ft.Stack(
+            controls=[self._ft_content_column, version_label],
+            expand=True,
+        )
         self.expand = True
         self.padding = 20
 

@@ -15,6 +15,7 @@ class ImageStudyWordDto:
     text_lang: str
     word_type: str
     pronunciation: str = ""
+    rules_help: str = ""
     repetitions: int = 0
     easiness_factor: float = 2.5
 
@@ -31,6 +32,7 @@ class ImageStudyWordDto:
             text_lang=str(primitives.get("text_lang", "")),
             word_type=str(primitives.get("word_type", WordTypeEnum.WORD.value)),
             pronunciation=str(primitives.get("pronunciation", "") or ""),
+            rules_help=str(primitives.get("rules_help", "") or ""),
             repetitions=int(primitives.get("repetitions", 0)),
             easiness_factor=float(primitives.get("easiness_factor", 2.5)),
             image_file_path=str(primitives.get("image_file_path", "") or ""),
@@ -45,6 +47,7 @@ class ImageStudyWordDto:
             "text_lang": self.text_lang,
             "word_type": self.word_type,
             "pronunciation": self.pronunciation,
+            "rules_help": self.rules_help,
             "repetitions": self.repetitions,
             "easiness_factor": self.easiness_factor,
             "image_file_path": self.image_file_path,

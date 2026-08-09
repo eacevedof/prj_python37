@@ -8,6 +8,10 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
+    # Versión de la app. Se INCREMENTA a mano cada vez que se genera un compilado (APK).
+    # Se muestra en la UI (Home, arriba a la derecha) para saber qué build corre la tablet.
+    APP_VERSION: str = "1.0.0"
+
     __instance: "EnvironmentReaderRawRepository | None" = None
 
     @classmethod
@@ -29,6 +33,10 @@ class EnvironmentReaderRawRepository:
             str: Valor de la variable o default
         """
         return os.getenv(key, default)
+
+    def get_app_version(self) -> str:
+        """Retorna la versión de la app (build). Se incrementa a mano por compilado."""
+        return self.APP_VERSION
 
     def get_azure_organization_name(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.AZURE_ORGANIZATION_NAME)
