@@ -10,7 +10,7 @@ class EnvironmentReaderRawRepository:
 
     # Versión de la app. Se INCREMENTA a mano cada vez que se genera un compilado (APK).
     # Se muestra en la UI (Home, arriba a la derecha) para saber qué build corre la tablet.
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "1.0.1"
 
     __instance: "EnvironmentReaderRawRepository | None" = None
 
