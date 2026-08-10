@@ -277,15 +277,16 @@ class ImageStudyController(BaseController):
             )
             self._ft_container.render(dto)
 
-            # Al fallar se pronuncia el neerlandés y se deja más tiempo para ver la
-            # corrección; al acertar, solo una breve confirmación. El auto-avance es
-            # PAUSABLE: mientras esté en pausa el contador no corre.
+            # Tanto al acertar como al fallar se pronuncia el neerlandés antes de
+            # avanzar (refuerzo auditivo de la palabra correcta). Al fallar se deja
+            # más tiempo para ver la corrección. El auto-avance es PAUSABLE: mientras
+            # esté en pausa el contador no corre.
+            await self._play_text_audio(
+                word.text_lang,
+                self._lang_code,
+                word.word_es_id,
+            )
             if not result.is_correct:
-                await self._play_text_audio(
-                    word.text_lang,
-                    self._lang_code,
-                    word.word_es_id,
-                )
                 await self._pausable_wait(
                     ImageStudySequenceEnum.WRONG_REVIEW_WAIT_SECONDS.value
                 )

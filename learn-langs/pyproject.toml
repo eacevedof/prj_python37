@@ -1,6 +1,6 @@
 [project]
 name = "learn-langs"
-version = "1.0.1"
+version = "1.1.1"
 description = "Learn Languages App with Spaced Repetition"
 requires-python = ">=3.12"
 # flet 0.85 empaqueta las deps (y detecta extensiones como flet-audio) desde AQUI,

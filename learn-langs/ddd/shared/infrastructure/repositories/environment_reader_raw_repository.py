@@ -8,9 +8,12 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
-    # Versión de la app. Se INCREMENTA a mano cada vez que se genera un compilado (APK).
-    # Se muestra en la UI (Home, arriba a la derecha) para saber qué build corre la tablet.
-    APP_VERSION: str = "1.0.1"
+    # Versión de la app. Se sube el dígito MEDIO (minor) una vez por LOTE de migraciones
+    # pendientes (aún no registradas en la tabla `migrations`) y se mantiene hasta que ese
+    # lote entra en `migrations`; la siguiente migración nueva abre lote y vuelve a subir.
+    # Ej.: 1.0.1 → (mig1..3 pendientes) 1.1.1 → (entran en migrations; mig4) 1.2.1 …
+    # Debe ir sincronizada con pyproject.toml [project].version. Se muestra en Home (arr-dcha).
+    APP_VERSION: str = "1.1.1"
 
     __instance: "EnvironmentReaderRawRepository | None" = None
 
