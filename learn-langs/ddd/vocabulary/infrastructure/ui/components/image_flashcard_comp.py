@@ -113,9 +113,9 @@ class ImageFlashcardComp(ft.Container):
         word_id_badge = ft.Container(
             content=ft.Text(
                 f"#{self.word_id}" if self.word_id != "" else "",
-                size=14,
-                color=ft.Colors.GREY_500,
-                weight=ft.FontWeight.W_500,
+                size=18,
+                color=ft.Colors.GREY_600,
+                weight=ft.FontWeight.BOLD,
             ),
             top=2,
             right=4,

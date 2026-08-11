@@ -54,9 +54,9 @@ class SliderCardComp(ft.Container):
         # Id de la palabra (pequeño, para depurar qué audio no se generó/suena)
         self._ft_word_id = ft.Text(
             "",
-            size=16,
-            color=ft.Colors.GREY_400,
-            weight=ft.FontWeight.W_500,
+            size=20,
+            color=ft.Colors.GREY_600,
+            weight=ft.FontWeight.BOLD,
         )
 
         # Imagen de la palabra (opcional) - a la izquierda

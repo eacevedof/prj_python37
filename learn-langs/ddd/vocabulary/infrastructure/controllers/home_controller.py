@@ -140,12 +140,33 @@ class HomeController(BaseController):
             # Construir lista final: otros grupos + generic al final
             self.__all_groups = other_groups + ([generic_group] if generic_group else [])
 
-            # Si no hay grupo seleccionado, seleccionar el primero de la lista ordenada
-            if self.__selected_group_id is None and self.__all_groups:
-                self.__selected_group_id = self.__all_groups[0].get("id", 0)
+            # Último estado de actividad (sirve para 2 cosas: recordar el grupo
+            # practicado en el selector y decidir el botón Continuar).
+            last_state = await self._get_last_activity_state_safe()
 
-            # Última actividad reanudable (botón Continuar)
-            self.__resume_state = await self._get_resume_state()
+            # Grupo por defecto del selector: el ÚLTIMO practicado (persiste tras
+            # completar/abortar gracias al soft-clear); si no hay o ya no existe en la
+            # lista, el primero de la lista ordenada.
+            if self.__selected_group_id is None and self.__all_groups:
+                known_ids = {g.get("id") for g in self.__all_groups}
+                last_group_id = (
+                    last_state.group_id
+                    if (last_state and last_state.has_state)
+                    else None
+                )
+                if last_group_id in known_ids:
+                    self.__selected_group_id = last_group_id
+                else:
+                    self.__selected_group_id = self.__all_groups[0].get("id", 0)
+
+            # Botón Continuar: solo si hay una posición REALMENTE retomable (una sesión
+            # soft-cleared queda con total_words=0 → no se ofrece retomar, pero su grupo
+            # sí se recuerda arriba).
+            self.__resume_state = (
+                self._build_resume_state(last_state)
+                if (last_state and last_state.total_words > 0)
+                else None
+            )
 
             self._ft_container.render(
                 HomeViewDto.ok(
@@ -210,10 +231,10 @@ class HomeController(BaseController):
             return
         self._route_on_resume(self.__resume_state)
 
-    async def _get_resume_state(self) -> dict | None:
-        """Carga el último estado de actividad y lo enriquece para la vista."""
+    async def _get_last_activity_state_safe(self):
+        """Lee el último estado de actividad (o None si falla/no hay)."""
         try:
-            last_state = await self._get_last_activity_state_service()
+            return await self._get_last_activity_state_service()
         except Exception as e:
             self._logger.log_error(
                 "HomeController",
@@ -221,7 +242,9 @@ class HomeController(BaseController):
             )
             return None
 
-        if not last_state.has_state:
+    def _build_resume_state(self, last_state) -> dict | None:
+        """Enriquece el último estado (ya leído) para el botón Continuar."""
+        if not last_state or not last_state.has_state:
             return None
 
         try:

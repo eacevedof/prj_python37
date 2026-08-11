@@ -42,11 +42,13 @@ class ClearActivityStateService:
         if errors:
             VocabularyException.bad_request_custom(", ".join(errors))
 
-        deleted_rows = await self._activity_states_writer_sqlite_repository.delete_activity_state(
+        # Soft-clear: no borramos la fila, solo la marcamos no-retomable (posición a 0)
+        # conservando group_id/lang/tags → el Home recuerda el último grupo practicado.
+        cleared_rows = await self._activity_states_writer_sqlite_repository.soft_clear_activity_state(
             activity=clear_activity_state_dto.activity,
         )
 
         return ClearActivityStateResultDto.from_primitives({
             "activity": clear_activity_state_dto.activity,
-            "is_cleared": deleted_rows > 0,
+            "is_cleared": cleared_rows > 0,
         })

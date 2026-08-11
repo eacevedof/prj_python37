@@ -64,3 +64,19 @@ class ActivityStatesWriterSqliteRepository(AbstractSqliteRepository):
             "activity = ?",
             (activity,),
         )
+
+    async def soft_clear_activity_state(self, activity: str) -> int:
+        """Marca la actividad como NO retomable (posición a 0) pero CONSERVA
+        lang_code/tags/group_id como 'último grupo practicado', para que el selector
+        de grupo del Home lo recuerde tras completar o abortar el examen/aprendizaje."""
+        return await self._sqlite.update(
+            """
+            UPDATE activity_states
+            SET word_es_id = 0,
+                word_index = 0,
+                total_words = 0,
+                updated_at = datetime('now')
+            WHERE activity = ?
+            """,
+            (activity,),
+        )

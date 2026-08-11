@@ -8,12 +8,12 @@ from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
 class EnvironmentReaderRawRepository:
     """Repository for reading environment variables required by the application."""
 
-    # Versión de la app. Se sube el dígito MEDIO (minor) una vez por LOTE de migraciones
-    # pendientes (aún no registradas en la tabla `migrations`) y se mantiene hasta que ese
-    # lote entra en `migrations`; la siguiente migración nueva abre lote y vuelve a subir.
-    # Ej.: 1.0.1 → (mig1..3 pendientes) 1.1.1 → (entran en migrations; mig4) 1.2.1 …
-    # Debe ir sincronizada con pyproject.toml [project].version. Se muestra en Home (arr-dcha).
-    APP_VERSION: str = "1.1.1"
+    # Versión de la app (sincronizada con pyproject.toml [project].version; se muestra en
+    # Home arr-dcha). Dos disparadores de bump:
+    #  - LOTE de migraciones de contenido pendientes → sube el dígito MEDIO dejando patch .1
+    #    (1.0.1 → 1.1.1 → 1.2.1); un bump por lote, se mantiene hasta que entra en `migrations`.
+    #  - FEATURE de código nueva → bump MINOR normal con patch 0 (x.(y+1).0), p.ej. 1.1.1 → 1.2.0.
+    APP_VERSION: str = "1.2.0"
 
     __instance: "EnvironmentReaderRawRepository | None" = None
 
