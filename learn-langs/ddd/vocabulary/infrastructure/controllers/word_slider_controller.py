@@ -7,7 +7,6 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.audio_player import AudioPlayer
 from ddd.shared.infrastructure.components.logger import Logger
-from ddd.shared.infrastructure.components.system.awaker import Awaker
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.finish_study_session import (
     FinishStudySessionDto,
@@ -102,7 +101,6 @@ class WordSliderController(BaseController):
 
         # Servicios
         self._logger = Logger.get_instance()
-        self._awaker = Awaker.get_instance()
         self._audio_player = AudioPlayer.get_instance()
         self._start_session_service = StartWordSliderSessionService.get_instance()
         self._generate_audio_service = GenerateTextAudioAiService.get_instance()
@@ -211,16 +209,6 @@ class WordSliderController(BaseController):
         self.__run_token += 1
         run_token = self.__run_token
 
-        # Mientras el slider reproduce, el equipo no debe suspenderse ni apagar
-        # la pantalla (best-effort; se restaura al finalizar la sesión)
-        try:
-            self._awaker.keep_awake()
-        except Exception as e:
-            self._logger.log_error(
-                "WordSliderController",
-                f"No se pudo activar el modo sin suspensión: {e}",
-            )
-
         index = min(self.__start_index, len(self.__words) - 1) if self.__words else 0
         # Retomar solo aplica a la primera pasada (al volver de editar una palabra)
         self.__start_index = 0
@@ -314,17 +302,7 @@ class WordSliderController(BaseController):
                 return
 
     async def _async_finish_session(self) -> None:
-        """Finaliza la sesión via servicio y restaura el modo de energía."""
-        # Restaurar la suspensión normal del sistema (mismo hilo del event loop
-        # que la activó, requisito de SetThreadExecutionState)
-        try:
-            self._awaker.restore()
-        except Exception as e:
-            self._logger.log_error(
-                "WordSliderController",
-                f"No se pudo restaurar el modo de energía: {e}",
-            )
-
+        """Finaliza la sesión via servicio."""
         try:
             dto = FinishStudySessionDto.from_primitives(
                 {
