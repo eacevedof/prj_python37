@@ -17,6 +17,7 @@ try:
     from ddd.shared.domain.enums import ControllerRouteEnum  # noqa: E402
     from ddd.shared.infrastructure.components.logger import Logger  # noqa: E402
     from ddd.shared.infrastructure.components.app_router import AppRouter  # noqa: E402
+    from ddd.shared.infrastructure.components.system.awaker import Awaker  # noqa: E402
     from ddd.devops.application.run_migrations import (  # noqa: E402
         RunMigrationsDto,
         RunMigrationsService,
@@ -89,6 +90,8 @@ async def fn_render(ft_page: ft.Page) -> None:
         # Arrancar ocupando toda la pantalla disponible (el tamaño de config
         # queda como tamaño al restaurar la ventana)
         ft_page.window.maximized = True
+
+        Awaker.get_instance().keep_awake()
 
         ft_container = ft.Container(expand=True)
         app_router = AppRouter(ft_page, ft_container)
