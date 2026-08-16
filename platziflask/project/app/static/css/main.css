@@ -1,0 +1,23 @@
+body > *{
+  margin: 0;
+  padding: 0;
+}
+
+.div-container {
+  display: grid;
+  grid-template-columns: 1fr 80fr 1fr;
+  grid-template-rows: auto;
+  align-items: stretch;
+}
+
+.div-row:hover {
+  border:1px solid green;
+}
+
+.div-row2:hover {
+  border:1px solid orange;
+}
+
+.div-container2{
+  display: grid;
+}

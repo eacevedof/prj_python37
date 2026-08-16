@@ -1,0 +1,147 @@
+from typing import final, Self
+
+from ddd.vocabulary.application.create_word.create_word_dto import CreateWordDto
+from ddd.vocabulary.application.create_word.create_word_result_dto import CreateWordResultDto
+from ddd.vocabulary.domain.entities import WordEsEntity, WordLangEntity
+from ddd.vocabulary.domain.enums import WordTypeEnum
+from ddd.vocabulary.infrastructure.repositories import (
+    WordsEsReaderSqliteRepository,
+    WordsEsWriterSqliteRepository,
+    WordsLangWriterSqliteRepository,
+    TagsReaderSqliteRepository,
+    WordGroupsReaderSqliteRepository,
+    WordGroupsWriterSqliteRepository,
+)
+from ddd.vocabulary.domain.exceptions import VocabularyException
+
+
+@final
+class CreateWordService:
+    """Servicio para crear palabras en español con traducciones y tags."""
+
+    __create_word_dto: CreateWordDto
+    _words_es_reader_sqlite_repository: WordsEsReaderSqliteRepository
+    _words_es_writer_sqlite_repository: WordsEsWriterSqliteRepository
+    _words_lang_writer_sqlite_repository: WordsLangWriterSqliteRepository
+    _tags_reader_sqlite_repository: TagsReaderSqliteRepository
+    _word_groups_reader_sqlite_repository: WordGroupsReaderSqliteRepository
+    _word_groups_writer_sqlite_repository: WordGroupsWriterSqliteRepository
+
+    def __init__(self) -> None:
+        self._words_es_reader_sqlite_repository = WordsEsReaderSqliteRepository.get_instance()
+        self._words_es_writer_sqlite_repository = WordsEsWriterSqliteRepository.get_instance()
+        self._words_lang_writer_sqlite_repository = WordsLangWriterSqliteRepository.get_instance()
+        self._tags_reader_sqlite_repository = TagsReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
+
+    @classmethod
+    def get_instance(cls) -> Self:
+        return cls()
+
+    async def __call__(self, create_word_dto: CreateWordDto) -> CreateWordResultDto:
+        """
+        Crea una nueva palabra con sus traducciones y tags.
+
+        Args:
+            create_word_dto: Datos de la palabra a crear.
+
+        Returns:
+            CreateWordResultDto con la palabra creada.
+
+        Raises:
+            VocabularyException: Si la validacion falla o la palabra ya existe.
+        """
+        self.__create_word_dto = create_word_dto
+
+        # Validar DTO
+        errors = create_word_dto.validate()
+        if errors:
+            VocabularyException.word_creation_failed(", ".join(errors))
+
+        # Verificar que no exista
+        existing = await self._words_es_reader_sqlite_repository.get_word_es_by_text(create_word_dto.text)
+        if existing:
+            VocabularyException.word_already_exists(create_word_dto.text)
+
+        # Crear palabra
+        new_word_es_id = await self._words_es_writer_sqlite_repository.create_new_word_es(
+            WordEsEntity(
+                id=0,
+                text=create_word_dto.text,
+                word_type=WordTypeEnum(create_word_dto.word_type),
+                image_path=create_word_dto.image_path,
+                notes=create_word_dto.notes,
+            )
+        )
+
+        # Anadir tags
+        tags_added = await self._add_tags(new_word_es_id, create_word_dto.tags)
+        # Anadir traducciones
+        translations_added = await self._add_translations(new_word_es_id, create_word_dto.translations)
+        # Anadir grupos (siempre al menos "generic")
+        await self._add_groups(new_word_es_id, create_word_dto.group_ids)
+
+        return CreateWordResultDto.from_primitives({
+            "id": new_word_es_id,
+            "text": create_word_dto.text,
+            "word_type": create_word_dto.word_type,
+            "image_path": create_word_dto.image_path,
+            "notes": create_word_dto.notes,
+            "tags": tags_added,
+            "translations": translations_added,
+        })
+
+    async def _add_tags(self, word_id: int, tag_names: list[str]) -> list[str]:
+        """Añade tags a la palabra, creándolos si no existen."""
+        if not tag_names:
+            return []
+
+        added_tags: list[str] = []
+
+        for tag_name in tag_names:
+            tag = await self._tags_reader_sqlite_repository.get_tag_by_tag_name(tag_name)
+            if tag:
+                await self._words_es_writer_sqlite_repository.add_tag(word_id, tag["id"])
+                added_tags.append(tag_name)
+
+        return added_tags
+
+    async def _add_translations(
+        self,
+        word_id: int,
+        translations: dict[str, str],
+    ) -> dict[str, str]:
+        """Añade traducciones a la palabra."""
+        if not translations:
+            return {}
+
+        added_translations: dict[str, str] = {}
+
+        for lang_code, text in translations.items():
+            if text and text.strip():
+                word_lang_entity = WordLangEntity(
+                    id=0,
+                    word_es_id=word_id,
+                    lang_code=lang_code,
+                    text=text.strip(),
+                )
+                await self._words_lang_writer_sqlite_repository.create(word_lang_entity)
+                added_translations[lang_code] = text.strip()
+
+        return added_translations
+
+    async def _add_groups(self, word_id: int, group_ids: list[int]) -> None:
+        """
+        Asocia grupos a la palabra.
+        Si no hay grupos especificados, asocia con el grupo "generic".
+        """
+        # Si no hay grupos especificados, usar "generic"
+        if not group_ids:
+            generic_group = await self._word_groups_reader_sqlite_repository.get_word_group_by_title("generic")
+            if generic_group:
+                group_ids = [generic_group["id"]]
+
+        # Asociar grupos
+        if group_ids:
+            await self._word_groups_writer_sqlite_repository.set_word_groups(word_id, group_ids)

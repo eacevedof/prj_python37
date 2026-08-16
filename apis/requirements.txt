@@ -1,0 +1,7 @@
+-e git+https://github.com/eacevedof/prj_python37.git@29fcd14a97de9018bd8f611fa3b2228a9217d45e#egg=apis&subdirectory=apis
+certifi==2019.9.11
+chardet==3.0.4
+idna==2.8
+python-dotenv==0.10.3
+requests==2.22.0
+urllib3==1.25.6

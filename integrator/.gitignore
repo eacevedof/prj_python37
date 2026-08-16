@@ -1,0 +1,5 @@
+/mysql/credentials.json
+/integrator.egg-info
+/config/*
+!/config/contexts
+!/config/mapping

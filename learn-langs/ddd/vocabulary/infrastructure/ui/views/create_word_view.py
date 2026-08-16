@@ -1,0 +1,470 @@
+"""Vista para crear palabras - Solo renderizado."""
+
+import flet as ft
+from typing import Callable, Any, Self
+
+from ddd.vocabulary.domain.enums import WordTypeEnum
+from ddd.vocabulary.infrastructure.ui.components.word_groups_selector_comp import WordGroupsSelectorComp
+from ddd.vocabulary.infrastructure.ui.views.create_word_view_dto import CreateWordViewDto
+
+
+class CreateWordView(ft.Container):
+    """
+    Vista de creación de palabra.
+
+    Responsabilidades:
+    - Renderizar UI basada en CreateWordViewDto
+    - Emitir eventos al Controller via callbacks
+    - NO tiene lógica de negocio
+    - NO importa repositorios ni servicios
+    """
+
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
+    def __init__(
+        self,
+        route_on_mount: Callable[[], None] | None,                # 1. Lifecycle (se ejecuta primero)
+        route_on_submit: Callable[[dict[str, Any]], None],        # 2. Botón guardar (acción primaria)
+        route_on_back: Callable[[], None],                        # 3. Botón cancelar (acción secundaria)
+        route_on_create_group: Callable[[str, str], None] | None = None,  # 4. Crear grupo
+    ):
+        super().__init__()
+
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
+        self._route_on_submit = route_on_submit
+        self._route_on_back = route_on_back
+        self._route_on_create_group = route_on_create_group
+
+        # Form fields
+        self._ft_text_es_field: ft.TextField | None = None
+        self._ft_text_lang_field: ft.TextField | None = None
+        self._ft_word_type_dropdown: ft.Dropdown | None = None
+        self._ft_notes_field: ft.TextField | None = None
+        self._ft_tags_row: ft.Row | None = None
+        self._ft_groups_selector: WordGroupsSelectorComp | None = None
+        self._ft_error_text: ft.Text | None = None
+        self._ft_success_text: ft.Text | None = None
+        self._ft_loading_ring: ft.ProgressRing | None = None
+
+        # Estado local de tags seleccionados
+        self.__selected_tags: list[str] = []
+        self.__available_tags: list[dict[str, Any]] = []
+
+        # Estado local de grupos seleccionados
+        self._selected_group_ids: list[int] = []
+        self.__available_groups: list[dict[str, Any]] = []
+
+        self._build_initial_ui()
+
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
+        return cls(
+            route_on_mount=primitives.get("on_mount"),
+            route_on_submit=primitives.get("on_submit", lambda x: None),
+            route_on_back=primitives.get("on_back", lambda: None),
+            route_on_create_group=primitives.get("on_create_group"),
+        )
+
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, dto: CreateWordViewDto) -> None:
+        """Renderiza la vista basado en el DTO."""
+        # Loading state
+        if self._ft_loading_ring:
+            self._ft_loading_ring.visible = dto.is_loading
+
+        # Restaurar valores del formulario
+        self._render_form_values(dto.form_values)
+
+        # Tags disponibles
+        self.__available_tags = list(dto.available_tags)
+        self.__selected_tags = list(dto.form_values.get("selected_tags", []))
+        self._render_tags()
+
+        # Grupos disponibles
+        self.__available_groups = list(dto.available_groups)
+        self._selected_group_ids = list(dto.selected_group_ids)
+        self._render_groups()
+
+        # Mensajes
+        self._render_messages(dto)
+
+        # Highlight campo con error
+        if dto.error_field:
+            self._highlight_error_field(dto.error_field)
+
+        self.update()
+
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
+    def did_mount(self) -> None:
+        """Flet llama esto al montar. Notifica al Controller."""
+        if self._route_on_mount:
+            self._route_on_mount()
+
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
+        self._ft_text_es_field = ft.TextField(
+            label="Palabra en español *",
+            hint_text="Escribe la palabra en español",
+            width=400,
+            autofocus=True,
+        )
+
+        self._ft_text_lang_field = ft.TextField(
+            label="Traducción (Nederlands)",
+            hint_text="Escribe la traducción",
+            width=400,
+        )
+
+        self._ft_word_type_dropdown = ft.Dropdown(
+            label="Tipo",
+            width=200,
+            options=[
+                ft.dropdown.Option(WordTypeEnum.WORD.value, "Palabra"),
+                ft.dropdown.Option(WordTypeEnum.PHRASE.value, "Frase"),
+                ft.dropdown.Option(WordTypeEnum.SENTENCE.value, "Oración"),
+            ],
+            value=WordTypeEnum.WORD.value,
+        )
+
+        self._ft_notes_field = ft.TextField(
+            label="Notas (opcional)",
+            hint_text="Contexto, ejemplos de uso...",
+            width=400,
+            multiline=True,
+            min_lines=2,
+            max_lines=4,
+        )
+
+        self._ft_tags_row = ft.Row(
+            controls=[],
+            wrap=True,
+            spacing=8,
+        )
+
+        # Grupos selector (inicialmente vacío, se actualiza en render)
+        self._ft_groups_selector = WordGroupsSelectorComp(
+            groups=[],
+            selected_group_ids=[],
+            on_change=self._on_groups_change,
+        )
+
+        # Botón para crear nuevo grupo
+        create_group_btn = ft.TextButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.ADD, size=16), ft.Text("Crear grupo", size=12)],
+                spacing=4,
+            ),
+            on_click=lambda _: self._show_create_group_dialog(),
+        )
+
+        self._ft_error_text = ft.Text(
+            color=ft.Colors.RED_700,
+            visible=False,
+        )
+
+        self._ft_success_text = ft.Text(
+            color=ft.Colors.GREEN_700,
+            visible=False,
+        )
+
+        self._ft_loading_ring = ft.ProgressRing(
+            visible=False,
+            width=20,
+            height=20,
+        )
+
+        save_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._on_save_btn_click(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.GREEN_600,
+                color=ft.Colors.WHITE,
+            ),
+            width=150,
+        )
+
+        cancel_btn = ft.OutlinedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.CLOSE), ft.Text("Cancelar")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_back(),
+            width=150,
+        )
+
+        back_btn = ft.IconButton(
+            icon=ft.Icons.ARROW_BACK,
+            on_click=lambda _: self._route_on_back(),
+            tooltip="Volver",
+        )
+
+        form_card = ft.Container(
+            content=ft.Column(
+                controls=[
+                    self._ft_text_es_field,
+                    ft.Container(height=10),
+                    self._ft_text_lang_field,
+                    ft.Container(height=10),
+                    self._ft_word_type_dropdown,
+                    ft.Container(height=10),
+                    self._ft_notes_field,
+                    ft.Container(height=16),
+                    ft.Text("Tags:", size=14, weight=ft.FontWeight.W_500),
+                    self._ft_tags_row,
+                    ft.Container(height=16),
+                    ft.Row(
+                        [
+                            ft.Text("Grupos:", size=14, weight=ft.FontWeight.W_500),
+                            create_group_btn,
+                        ],
+                        spacing=8,
+                    ),
+                    self._ft_groups_selector,
+                    ft.Container(height=16),
+                    self._ft_error_text,
+                    self._ft_success_text,
+                    ft.Container(height=8),
+                    ft.Row(
+                        controls=[save_btn, cancel_btn, self._ft_loading_ring],
+                        spacing=16,
+                    ),
+                ],
+                spacing=4,
+                horizontal_alignment=ft.CrossAxisAlignment.START,
+            ),
+            padding=24,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=12,
+            border=ft.Border.all(1, ft.Colors.GREY_300),
+            width=500,
+        )
+
+        self.content = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        back_btn,
+                        ft.Text(
+                            "Crear nueva palabra",
+                            size=24,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                    ],
+                ),
+                ft.Divider(height=1),
+                ft.Container(height=20),
+                ft.Row(
+                    controls=[form_card],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ],
+            expand=True,
+            horizontal_alignment=ft.CrossAxisAlignment.START,
+        )
+        self.expand = True
+        self.padding = 20
+
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
+    def _render_form_values(self, form_values: dict[str, Any]) -> None:
+        """Restaura valores del formulario."""
+        if self._ft_text_es_field:
+            self._ft_text_es_field.value = form_values.get("text_es", "")
+
+        if self._ft_text_lang_field:
+            self._ft_text_lang_field.value = form_values.get("text_lang", "")
+
+        if self._ft_word_type_dropdown:
+            self._ft_word_type_dropdown.value = form_values.get("word_type", WordTypeEnum.WORD.value)
+
+        if self._ft_notes_field:
+            self._ft_notes_field.value = form_values.get("notes", "")
+
+    def _render_tags(self) -> None:
+        """Renderiza los chips de tags."""
+        if not self._ft_tags_row:
+            return
+
+        self._ft_tags_row.controls.clear()
+
+        if not self.__available_tags:
+            self._ft_tags_row.controls.append(
+                ft.Text(
+                    "No hay tags disponibles",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=12,
+                )
+            )
+        else:
+            for tag in self.__available_tags:
+                tag_name = tag.get("name", "")
+                is_selected = tag_name in self.__selected_tags
+                chip = ft.Chip(
+                    label=ft.Text(tag_name, size=12),
+                    selected=is_selected,
+                    on_select=lambda e, t=tag_name: self._toggle_tag(t),
+                    bgcolor=tag.get("color") if is_selected else None,
+                )
+                self._ft_tags_row.controls.append(chip)
+
+    def _render_groups(self) -> None:
+        """Actualiza el selector de grupos."""
+        if self._ft_groups_selector:
+            self._ft_groups_selector.refresh_groups(
+                self.__available_groups,
+                self._selected_group_ids,
+            )
+
+    def _render_messages(self, dto: CreateWordViewDto) -> None:
+        """Renderiza mensajes de error/éxito."""
+        if self._ft_error_text:
+            if dto.error_message:
+                self._ft_error_text.value = dto.error_message
+                self._ft_error_text.visible = True
+            else:
+                self._ft_error_text.visible = False
+
+        if self._ft_success_text:
+            if dto.success_message:
+                self._ft_success_text.value = dto.success_message
+                self._ft_success_text.visible = True
+            else:
+                self._ft_success_text.visible = False
+
+    def _highlight_error_field(self, field_name: str) -> None:
+        """Destaca el campo con error."""
+        field_map = {
+            "text_es": self._ft_text_es_field,
+            "text_lang": self._ft_text_lang_field,
+            "notes": self._ft_notes_field,
+        }
+        target_field = field_map.get(field_name)
+        if target_field:
+            target_field.border_color = ft.Colors.RED_700
+            target_field.focus()
+
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    def _on_save_btn_click(self) -> None:
+        """Maneja click en guardar y notifica al controller."""
+        form_data = self._get_form_data()
+        self._route_on_submit(form_data)
+
+    def _toggle_tag(self, tag_name: str) -> None:
+        """Alterna selección de tag (estado local)."""
+        if tag_name in self.__selected_tags:
+            self.__selected_tags.remove(tag_name)
+        else:
+            self.__selected_tags.append(tag_name)
+        self._render_tags()
+        self.update()
+
+    def _on_groups_change(self, selected_group_ids: list[int]) -> None:
+        """Callback cuando cambia la selección de grupos."""
+        self._selected_group_ids = selected_group_ids
+
+    def _show_create_group_dialog(self) -> None:
+        """Muestra el diálogo para crear un nuevo grupo."""
+        if not self.page:
+            return
+
+        title_field = ft.TextField(
+            label="Título del grupo *",
+            hint_text="Ej: verbos, sustantivos, frases útiles",
+            autofocus=True,
+            width=400,
+        )
+
+        description_field = ft.TextField(
+            label="Descripción (opcional)",
+            hint_text="Breve descripción del grupo",
+            multiline=True,
+            min_lines=2,
+            max_lines=3,
+            width=400,
+        )
+
+        error_text = ft.Text(
+            color=ft.Colors.RED_700,
+            visible=False,
+        )
+
+        def on_save():
+            title = (title_field.value or "").strip()
+            if not title:
+                error_text.value = "El título es obligatorio"
+                error_text.visible = True
+                dialog.update()
+                return
+
+            description = (description_field.value or "").strip()
+
+            # Cerrar el diálogo
+            dialog.open = False
+            self.page.update()
+
+            # Notificar al controller
+            if self._route_on_create_group:
+                self._route_on_create_group(title, description)
+
+        def on_cancel():
+            dialog.open = False
+            self.page.update()
+
+        dialog = ft.AlertDialog(
+            title=ft.Text("Crear nuevo grupo"),
+            content=ft.Column(
+                controls=[
+                    title_field,
+                    ft.Container(height=10),
+                    description_field,
+                    ft.Container(height=8),
+                    error_text,
+                ],
+                tight=True,
+                width=400,
+            ),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda _: on_cancel()),
+                ft.ElevatedButton(
+                    "Crear",
+                    on_click=lambda _: on_save(),
+                    style=ft.ButtonStyle(
+                        bgcolor=ft.Colors.BLUE_600,
+                        color=ft.Colors.WHITE,
+                    ),
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+
+        self.page.overlay.append(dialog)
+        dialog.open = True
+        self.page.update()
+
+    def _get_form_data(self) -> dict[str, Any]:
+        """Obtiene los datos actuales del formulario."""
+        return {
+            "text_es": self._ft_text_es_field.value if self._ft_text_es_field else "",
+            "text_lang": self._ft_text_lang_field.value if self._ft_text_lang_field else "",
+            "word_type": self._ft_word_type_dropdown.value if self._ft_word_type_dropdown else WordTypeEnum.WORD.value,
+            "notes": self._ft_notes_field.value if self._ft_notes_field else "",
+            "selected_tags": list(self.__selected_tags),
+            "selected_group_ids": list(self._selected_group_ids),
+        }

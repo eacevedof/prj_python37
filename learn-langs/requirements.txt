@@ -1,0 +1,79 @@
+# Learn Languages App 2026-06-07
+# packages got from: https://pypi.org/<package-name>
+# Uses compatible releases (~=) for security patches without breaking changes
+# Installation: pip install -r requirements.txt
+
+# ============================================================================
+# CORE
+# ============================================================================
+
+# python-dotenv - Load environment variables from .env file
+# Supports: OPENAI_API_KEY, APP_LOG_PATH
+python-dotenv~=1.2.2
+
+# ============================================================================
+# UI FRAMEWORK
+# ============================================================================
+
+# flet - Cross-platform UI framework (Windows, Mac, Linux, Web, Mobile)
+# Used in: main.py, ddd/vocabulary/infrastructure/ui/
+flet==0.86.5
+
+# flet-audio - reproductor de audio multiplataforma (Windows/Android); sustituye a pygame
+# Used in: ddd/shared/infrastructure/components/audio_player.py
+flet-audio==0.86.5
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+
+# aiosqlite - Async SQLite database adapter
+# Used in: ddd/shared/infrastructure/repositories/sqlite_connection.py
+aiosqlite~=0.22.1
+
+# ============================================================================
+# VALIDATION
+# ============================================================================
+
+# pydantic - Data validation using Python type annotations
+# Used in: DTOs across the application
+pydantic~=2.13.4
+
+# ============================================================================
+# AI/ML
+# ============================================================================
+
+# openai - https://developers.openai.com/api/reference/python/resources/images/methods/generate
+openai~=2.41.0
+
+# ============================================================================
+# UTILITIES
+# ============================================================================
+
+# pyperclip - Cross-platform clipboard access
+# Used in: Clipboard operations for text/images
+pyperclip~=1.11.0
+
+# pycaw - Windows master volume control (Core Audio)
+# Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
+pycaw~=20251023
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# ruff - Fast Python linter and formatter
+# Usage: ruff check .
+ruff~=0.15.16
+
+# mypy - Static type checker
+# Usage: mypy .
+mypy~=2.1.0
+
+# pytest - Testing framework
+# Usage: pytest
+pytest~=9.0.3
+
+# pytest-asyncio - Async test support for pytest
+# Required for: Testing async functions
+pytest-asyncio~=1.4.0

@@ -1,0 +1,9 @@
+flask
+flask-bootstrap4
+flask-wtf
+flask-testing
+blinker
+firebase-admin
+flask-login
+flask_mail
+# colorama

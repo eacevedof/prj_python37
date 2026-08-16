@@ -1,0 +1,22 @@
+.idea
+.vscode
+.dev
+.prod
+.env
+.env-prod
+.venv-wsl
+.venv-win
+.venv
+
+# Logs (except .gitkeep)
+logs/*
+!logs/.gitkeep
+.claude/*.png
+
+# ChromaDB data (sensitive project memory - auto-generated, user-specific)
+data/
+chroma/
+.chroma/
+*.db
+memory.json
+**/*.sqlite

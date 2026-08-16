@@ -1,0 +1,23 @@
+﻿ID;Cantidad;Precio unitario;Venta total;Fecha compra;Estado;Línea Producto;Código Producto;Nombre cliente;Ciudad;País;Territorio;Tamaño pedido
+10145;45;83,26;3746,7;25/08/2023;Shipped;Motorcycles;S10_1678;Toys4GrownUps,com;Pasadena;USA;NA;Medium
+10159;0;100;0;10/10/2023;Shipped;Motorcycles;S10_1678;Corporate Gift Ideas Co,;San Francisco;USA;NA;Medium
+10168;36;96,66;3479,76;28/10/2023;Shipped;Motorcycles;S10_1678;Technics Stores Inc,;Burlingame;USA;NA;Medium
+10180;29;86,13;2497,.77;11/11/2023;Shipped;Motorcycles;S10_1678;Daedalus Designs Imports;Lille;France;EMEA;Small
+10188;48;100;5512,32;18/11/2023;Shipped;Motorcycles;S10_1678;Herkku Gifts;Bergen;Norway;EMEA;Medium
+10201;22;98,57;2168,54;12/01/2023;Shippe;Motorcycles;S10_1678;Mini Wheels Co,;San Francisco;USA;NA;Small
+10237;23;100;2333,12;04/05/2024;Shipped;Motorcycles;S10_1678;Vitachrome Inc,;NYC;USA;NA;Small
+10251;28;100;3188,64;12/01/2023;Shipped;Motorcycles;S10_1678;Tekni Collectables Inc,;Newark;USA;NA;Medium
+10375;42;34,91;1466,22;02/03/2024;Shipped;Motorcycles;S10_1678;La Rochelle Gifts;Nantes;France;EMEA;Small
+10388;84;76,36;6414,24;03/03/2024;Shipped;Motorcycles;S10_1678;FunGiftIdeas,com;New Bedford;USA;NA;Medium
+10403;48;100;4869,12;04/08/2024;Shipped;Motorcycles;S10_1678;UK Collectables, Ltd,;Liverpool;UK;EMEA;Small
+10228;29;100;6463,23;03/10/2024;Shipped;Classic Cars;S10_1949;Cambridge Collectables Co,;Cambridge;USA;NA;Medium
+10245;34;100;6120,34;05/04/2024;Shipped;Classic Cars;S10_1949;Super Scale Inc,;New Haven;USA;NA;Medium
+10291;37;100;7136,19;09/08/2024;Shipped;Classic Cars;S10_1949;Scandinavian Gift Ideas;Boras;Sweden;EMEA;Large
+10304;47;100;10172,7;10/11/2024;Shipped;Classic Cars;S10_1949;Auto Assoc, & Cie,;Versailles;France;EMEA;Large
+10322;40;100;6000,4;11/04/2024;Shipped;Classic Cars;S10_1949;Online Diecast Creations Co,;Nashua;USA;NA;Medium
+10391;40;100;6000,4;11/04/2024;Shipped;Classic Cars;S10_1949;Online Diecast Creations Co,;Nashua;USA;NA;Medium
+10391;48;100;4833,12;03/09/2024;Shipped;Classic Cars;S10_1949;Anna's Decorations, Ltd;North Sydney;Australia;APAC;Small
+10411;46;100;8280,46;05/01/2024;Shipped;Classic Cars;S10_1949;Quebec Home Shopping Network;Montreal;Canada;NA;Medium
+10134;27;100;3307,77;07/01/2023;Shipped;Motorcycles;S10_2016;Lyon Souveniers;Paris;France;EMEA;Medium
+10159;37;100;5016,83;10/10/2023;Shipped;Motorcycles;S10_2016;Corporate Gift Ideas Co,;San Francisco;USA;NA;Medium
+10159;37;100;5016,83;10/10/2023;Shipped;Motorcycles;S10_2016;Corporate Gift Ideas Co,;San Francisco;USA;NA;Medium

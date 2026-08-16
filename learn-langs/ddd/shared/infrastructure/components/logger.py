@@ -1,0 +1,118 @@
+import os
+import re
+import traceback
+from datetime import datetime
+from pathlib import Path
+from typing import final, Self
+
+from ddd.shared.domain.enums.envvars_keys_enum import EnvvarsKeysEnum
+
+
+@final
+class Logger:
+    """Simple file-based logger for application events and errors."""
+
+    _DEFAULT_LOG_PATH: str = str(Path(__file__).resolve().parents[4] / "logs")
+    __instance: "Logger | None" = None
+
+    @classmethod
+    def get_instance(cls) -> Self:
+        """Retorna la instancia singleton."""
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
+
+    def log_error(self, module: str, message: str, context: dict | None = None) -> None:
+        log_content = f"[ERROR] {module}: {message}"
+        if context:
+            log_content += f"\nContext: {context}"
+        self.__write_log("error.log", log_content)
+
+
+    def __write_log(self, file_path: str, content: str) -> None:
+        environ_path_folder = os.getenv(EnvvarsKeysEnum.APP_LOG_PATH, self._DEFAULT_LOG_PATH)
+        logs_folder_path = Path(environ_path_folder).resolve()
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        log_file_path = logs_folder_path / file_path
+        final_dir = log_file_path.parent
+
+        if not final_dir.exists():
+            final_dir.mkdir(parents=True, exist_ok=True)
+
+        file_name = log_file_path.stem
+        ext = log_file_path.suffix.lstrip(".") or "log"
+
+        if "sql" in file_path:
+            ext = "sql"
+
+        file_name = f"{today}-{file_name}"
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        final_log_path = final_dir / f"{file_name}.{ext}"
+        content = content.strip()
+
+        if ext == "sql":
+            content = self.__get_normalized_margin_for_sql(content)
+
+        log_entry = f"\n[{now}]\n{content}"
+        if ext == "sql":
+            log_entry = f"\n-- [{now}]\n{content}"
+
+        with open(final_log_path, "a", encoding="utf-8") as f:
+            f.write(log_entry)
+
+
+    def __get_normalized_margin_for_sql(self, content: str) -> str:
+        content = f"{content}\n"
+        return re.sub(r"^ {8}", "", content, flags=re.MULTILINE)
+
+
+    def log_info(self, module: str, message: str) -> None:
+        log_content = f"[INFO] {module}: {message}"
+        self.__write_log("info.log", log_content)
+
+
+    def log_debug(self, module: str, message: str, data: dict | None = None) -> None:
+        log_content = f"[DEBUG] {module}: {message}"
+        if data:
+            log_content += f"\nData: {data}"
+        self.__write_log("debug.log", log_content)
+
+
+    def log_sql(self, query: str) -> None:
+        """Log SQL query."""
+        self.__write_log("sql.sql", query)
+
+
+    def error_sql(self, message: str, context: dict | None = None) -> None:
+        """Log error message."""
+        self.log_error("Repository", message, context)
+
+    def log_exception(
+        self,
+        exception: BaseException,
+        title: str = "",
+        context: dict | None = None
+    ) -> None:
+        """Log exception with full traceback.
+
+        Args:
+            exception: The exception to log with complete traceback
+            title: Optional title/context for the error (default: "")
+            context: Optional context dictionary with additional debug info
+        """
+        log_content = "[EXCEPTION]"
+        if title:
+            log_content += f" {title}"
+
+        log_content += f"\n{type(exception).__name__}: {exception}"
+
+        if context:
+            log_content += f"\nContext: {context}"
+
+        if exception.__traceback__:
+            tb_lines = traceback.format_exception(type(exception), exception, exception.__traceback__)
+            log_content += f"\n\nTraceback:\n{''.join(tb_lines)}"
+
+        self.__write_log("error.log", log_content)

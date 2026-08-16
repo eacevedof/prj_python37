@@ -1,0 +1,49 @@
+from ddd.vocabulary.infrastructure.repositories.activity_states_reader_sqlite_repository import ActivityStatesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.activity_states_writer_sqlite_repository import ActivityStatesWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_es_reader_sqlite_repository import WordsEsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_pagination_reader_sqlite_repository import WordsPaginationReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_es_writer_sqlite_repository import WordsEsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_lang_reader_sqlite_repository import WordsLangReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.words_lang_writer_sqlite_repository import WordsLangWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.tags_reader_sqlite_repository import TagsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.tags_writer_sqlite_repository import TagsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.metrics_reader_sqlite_repository import MetricsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.metrics_writer_sqlite_repository import MetricsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.sessions_reader_sqlite_repository import SessionsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.sessions_writer_sqlite_repository import SessionsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.answers_reader_sqlite_repository import AnswersReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.answers_writer_sqlite_repository import AnswersWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.images_reader_sqlite_repository import ImagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.images_writer_sqlite_repository import ImagesWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.word_groups_reader_sqlite_repository import WordGroupsReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.word_groups_writer_sqlite_repository import WordGroupsWriterSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.app_config_reader_raw_repository import AppConfigReaderRawRepository
+from ddd.vocabulary.infrastructure.repositories.languages_reader_sqlite_repository import LanguagesReaderSqliteRepository
+from ddd.vocabulary.infrastructure.repositories.word_audios_reader_file_repository import WordAudiosReaderFileRepository
+from ddd.vocabulary.infrastructure.repositories.word_audios_writer_file_repository import WordAudiosWriterFileRepository
+
+__all__ = [
+    "ActivityStatesReaderSqliteRepository",
+    "ActivityStatesWriterSqliteRepository",
+    "WordsEsReaderSqliteRepository",
+    "WordsPaginationReaderSqliteRepository",
+    "WordsEsWriterSqliteRepository",
+    "WordsLangReaderSqliteRepository",
+    "WordsLangWriterSqliteRepository",
+    "TagsReaderSqliteRepository",
+    "TagsWriterSqliteRepository",
+    "MetricsReaderSqliteRepository",
+    "MetricsWriterSqliteRepository",
+    "SessionsReaderSqliteRepository",
+    "SessionsWriterSqliteRepository",
+    "AnswersReaderSqliteRepository",
+    "AnswersWriterSqliteRepository",
+    "ImagesReaderSqliteRepository",
+    "ImagesWriterSqliteRepository",
+    "WordGroupsReaderSqliteRepository",
+    "WordGroupsWriterSqliteRepository",
+    "AppConfigReaderRawRepository",
+    "LanguagesReaderSqliteRepository",
+    "WordAudiosReaderFileRepository",
+    "WordAudiosWriterFileRepository",
+]

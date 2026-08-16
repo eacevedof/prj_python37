@@ -1,0 +1,8 @@
+.idea
+.vscode
+pyprint/.env
+pyprint/config/access.json
+pyprint/logs/*
+compiled/linux
+compiled/win
+compiled/macos

@@ -1,0 +1,171 @@
+"""DTO de vista para Image Study."""
+
+from dataclasses import dataclass, field
+from typing import Self, Any
+
+
+@dataclass(frozen=True, slots=True)
+class ImageStudyViewDto:
+    """DTO inmutable que el Controller pasa a la Vista de estudio con imágenes."""
+
+    # Estado de la sesión
+    session_id: int = 0
+    lang_code: str = ""
+    total_words: int = 0
+    current_index: int = 0
+
+    # Palabra actual con imagen (inmutable)
+    current_word: dict[str, Any] | None = None
+
+    # Duración del temporizador de respuesta en segundos (igual que el aprendizaje)
+    timer_seconds: int = 20
+
+    # Stats acumulados
+    total_score: float = 0.0
+    answers_count: int = 0
+    avg_score_percent: int = 0
+
+    # Resultado de última respuesta (inmutable)
+    last_result: dict[str, Any] | None = None
+
+    # Palabras falladas (inmutable tuple de dicts)
+    failed_words: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+
+    # Estados de la vista
+    is_loading: bool = True
+    is_session_complete: bool = False
+    has_no_words: bool = False
+    error_message: str | None = None
+
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        total_score = float(primitives.get("total_score", 0.0))
+        answers_count = int(primitives.get("answers_count", 0))
+        avg_score_percent = int((total_score / answers_count * 100)) if answers_count > 0 else 0
+
+        # Congelar dicts internos
+        current_word = primitives.get("current_word")
+        last_result = primitives.get("last_result")
+
+        # Congelar lista de palabras falladas
+        failed_words_raw = primitives.get("failed_words", [])
+        failed_words = tuple(dict(w) for w in failed_words_raw) if failed_words_raw else tuple()
+
+        return cls(
+            session_id=int(primitives.get("session_id", 0)),
+            lang_code=str(primitives.get("lang_code", "")),
+            total_words=int(primitives.get("total_words", 0)),
+            current_index=int(primitives.get("current_index", 0)),
+            current_word=dict(current_word) if current_word else None,
+            timer_seconds=int(primitives.get("timer_seconds", 20)),
+            total_score=total_score,
+            answers_count=answers_count,
+            avg_score_percent=avg_score_percent,
+            last_result=dict(last_result) if last_result else None,
+            failed_words=failed_words,
+            is_loading=bool(primitives.get("is_loading", False)),
+            is_session_complete=bool(primitives.get("is_session_complete", False)),
+            has_no_words=bool(primitives.get("has_no_words", False)),
+            error_message=primitives.get("error_message"),
+        )
+
+    @classmethod
+    def initial(cls) -> Self:
+        """DTO inicial - cargando."""
+        return cls.from_primitives({"is_loading": True})
+
+    @classmethod
+    def no_words(cls) -> Self:
+        """DTO cuando no hay palabras con imágenes."""
+        return cls.from_primitives({
+            "is_loading": False,
+            "has_no_words": True,
+        })
+
+    @classmethod
+    def error(cls, message: str) -> Self:
+        """DTO de error."""
+        return cls.from_primitives({
+            "is_loading": False,
+            "error_message": message,
+        })
+
+    @classmethod
+    def studying(
+        cls,
+        session_id: int,
+        lang_code: str,
+        total_words: int,
+        current_index: int,
+        current_word: dict[str, Any],
+        total_score: float,
+        answers_count: int,
+        timer_seconds: int = 20,
+    ) -> Self:
+        """DTO para estado de estudio activo con imagen."""
+        return cls.from_primitives({
+            "session_id": session_id,
+            "lang_code": lang_code,
+            "total_words": total_words,
+            "current_index": current_index,
+            "current_word": current_word,
+            "total_score": total_score,
+            "answers_count": answers_count,
+            "timer_seconds": timer_seconds,
+            "is_loading": False,
+        })
+
+    @classmethod
+    def with_result(
+        cls,
+        session_id: int,
+        lang_code: str,
+        total_words: int,
+        current_index: int,
+        current_word: dict[str, Any],
+        total_score: float,
+        answers_count: int,
+        last_result: dict[str, Any],
+    ) -> Self:
+        """DTO con resultado de respuesta."""
+        return cls.from_primitives({
+            "session_id": session_id,
+            "lang_code": lang_code,
+            "total_words": total_words,
+            "current_index": current_index,
+            "current_word": current_word,
+            "total_score": total_score,
+            "answers_count": answers_count,
+            "last_result": last_result,
+            "is_loading": False,
+        })
+
+    @classmethod
+    def session_complete(
+        cls,
+        total_score: float,
+        answers_count: int,
+        failed_words: list[dict[str, Any]] | None = None,
+    ) -> Self:
+        """DTO para sesión completada."""
+        return cls.from_primitives({
+            "total_score": total_score,
+            "answers_count": answers_count,
+            "failed_words": failed_words or [],
+            "is_loading": False,
+            "is_session_complete": True,
+        })
+
+    @property
+    def progress_text(self) -> str:
+        """Texto de progreso."""
+        if self.is_loading:
+            return "Cargando..."
+        if self.total_words == 0:
+            return ""
+        return f"Pregunta {self.current_index + 1} de {self.total_words}"
+
+    @property
+    def score_text(self) -> str:
+        """Texto de score."""
+        return f"Score: {self.avg_score_percent}%"

@@ -1,0 +1,486 @@
+"""Vista del Home - Solo renderizado, sin lógica de negocio."""
+
+import flet as ft
+from typing import Callable, Any, Self
+
+from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import (
+    EnvironmentReaderRawRepository,
+)
+from ddd.vocabulary.infrastructure.ui.views.home_view_dto import HomeViewDto
+
+
+class HomeView(ft.Container):
+    """
+    Vista del Home.
+
+    Responsabilidades:
+    - Renderizar UI basada en HomeViewDto
+    - Emitir eventos al Controller via callbacks
+    - NO tiene lógica de negocio
+    - NO importa repositorios ni servicios
+    """
+
+    # =========================================================================
+    # CONSTRUCCIÓN (Public API)
+    # =========================================================================
+    def __init__(
+        self,
+        route_on_mount: Callable[[], None] | None,  # 1. Lifecycle (se ejecuta primero)
+        route_on_lang_change: Callable[
+            [str], None
+        ],  # 2. Dropdown idiomas (render paso 1)
+        route_on_group_change: Callable[
+            [int], None
+        ],  # 3. Dropdown grupos (render paso 1.5)
+        route_on_tag_toggle: Callable[[str], None],  # 4. Tags (render paso 2)
+        route_on_resume: Callable[[], None],  # 5. Botón continuar (teal, si hay estado)
+        route_on_start_image_study: Callable[
+            [], None
+        ],  # 6. Botón acción secundaria (morado)
+        route_on_start_slider: Callable[[], None],  # 7. Botón slider (teal)
+        route_on_manage_words: Callable[
+            [], None
+        ],  # 8. Botón gestión palabras (amarillo)
+        route_on_manage_groups: Callable[[], None],  # 9. Botón gestión grupos (naranja)
+    ):
+        super().__init__()
+
+        self._logger = Logger.get_instance()
+        # Callbacks al controller (en orden de ejecución)
+        self._route_on_mount = route_on_mount
+        self._route_on_lang_change = route_on_lang_change
+        self._route_on_group_change = route_on_group_change
+        self._route_on_tag_toggle = route_on_tag_toggle
+        self._route_on_resume = route_on_resume
+        self._route_on_start_image_study = route_on_start_image_study
+        self._route_on_start_slider = route_on_start_slider
+        self._route_on_manage_words = route_on_manage_words
+        self._route_on_manage_groups = route_on_manage_groups
+
+        # Componentes UI
+        self._ft_lang_dropdown: ft.Dropdown | None = None
+        self._ft_group_dropdown: ft.Dropdown | None = None
+        self._ft_random_order_switch: ft.Switch | None = None
+        self._ft_tags_row: ft.Row | None = None
+        self._ft_stats_column: ft.Column | None = None
+        self._ft_loading_indicator: ft.ProgressRing | None = None
+        self._ft_content_column: ft.Column | None = None
+        self._ft_resume_btn: ft.ElevatedButton | None = None
+        self._ft_resume_text: ft.Text | None = None
+
+        self._build_initial_ui()
+
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
+        return cls(
+            route_on_mount=primitives.get("on_mount"),
+            route_on_lang_change=primitives.get("on_lang_change", lambda x: None),
+            route_on_group_change=primitives.get("on_group_change", lambda x: None),
+            route_on_tag_toggle=primitives.get("on_tag_toggle", lambda x: None),
+            route_on_resume=primitives.get("on_resume", lambda: None),
+            route_on_start_image_study=primitives.get(
+                "on_start_image_study", lambda: None
+            ),
+            route_on_start_slider=primitives.get("on_start_slider", lambda: None),
+            route_on_manage_words=primitives.get("on_manage_words", lambda: None),
+            route_on_manage_groups=primitives.get("on_manage_groups", lambda: None),
+        )
+
+    # =========================================================================
+    # API PÚBLICA - GETTERS
+    # =========================================================================
+    def get_selected_group_id(self) -> int | None:
+        """Retorna el group_id actualmente seleccionado en el dropdown."""
+        if not self._ft_group_dropdown or not self._ft_group_dropdown.value:
+            return None
+        try:
+            return int(self._ft_group_dropdown.value)
+        except (ValueError, TypeError) as e:
+            self._logger.log_error(
+                f"Invalid group_id value in dropdown: {self._ft_group_dropdown.value}. Error: {type(e).__name__}"
+            )
+            return None
+
+    def get_is_random_order(self) -> bool:
+        """Retorna si el switch de orden aleatorio (Aprendizaje) esta activo."""
+        if not self._ft_random_order_switch:
+            return False
+        return bool(self._ft_random_order_switch.value)
+
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza la vista con los datos del DTO."""
+        if self._ft_loading_indicator:
+            self._ft_loading_indicator.visible = home_view_dto.is_loading
+
+        if home_view_dto.error_message:
+            self._show_error(home_view_dto.error_message)
+            return
+
+        self._render_language_dropdown(home_view_dto)
+        self._render_group_dropdown(home_view_dto)
+        self._render_tags(home_view_dto)
+        self._render_stats(home_view_dto)
+        self._render_resume(home_view_dto)
+        self.update()
+
+    # =========================================================================
+    # LIFECYCLE HOOKS (Flet)
+    # =========================================================================
+    def did_mount(self) -> None:
+        """Flet llama esto al montar. Notifica al Controller."""
+        if self._route_on_mount:
+            self._route_on_mount()
+
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI (Privado)
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
+        # Loading indicator
+        self._ft_loading_indicator = ft.ProgressRing(visible=True)
+
+        # Dropdown de idiomas (se llena en render)
+        self._ft_lang_dropdown = ft.Dropdown(
+            label="Idioma a practicar",
+            width=400,
+            options=[],
+        )
+        self._ft_lang_dropdown.on_change = self._on_lang_dropdown_change
+
+        # Dropdown de grupos (se llena en render)
+        self._ft_group_dropdown = ft.Dropdown(
+            label="Grupo de palabras",
+            width=550,
+            options=[],
+        )
+        self._ft_group_dropdown.on_change = self._on_group_dropdown_change
+
+        # Switch de orden aleatorio (aplica al Aprendizaje)
+        self._ft_random_order_switch = ft.Switch(
+            label="Orden aleatorio",
+            value=False,
+            tooltip="Reproduce las palabras del Aprendizaje sin un orden concreto",
+        )
+
+        # Tags row
+        self._ft_tags_row = ft.Row(
+            controls=[],
+            wrap=True,
+            spacing=8,
+            run_spacing=8,
+        )
+
+        # Stats column
+        self._ft_stats_column = ft.Column(
+            controls=[
+                ft.Text("Cargando estadisticas...", italic=True),
+            ],
+            spacing=8,
+        )
+
+        # Botones de acción
+        # "Continuar": retoma la última actividad guardada (visible solo si hay estado)
+        self._ft_resume_text = ft.Text("Continuar")
+        self._ft_resume_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.PLAY_CIRCLE), self._ft_resume_text],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_resume(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.TEAL_700,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+            visible=False,
+        )
+
+        slider_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.SLIDESHOW), ft.Text("Aprendizaje")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_start_slider(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.GREEN_600,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+        )
+
+        image_study_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.QUIZ), ft.Text("Examen")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_start_image_study(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.BLUE_900,
+                color=ft.Colors.WHITE,
+                padding=20,
+            ),
+        )
+
+        manage_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.EDIT), ft.Text("Palabras")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_manage_words(),
+            bgcolor=ft.Colors.YELLOW_700,
+            color=ft.Colors.BLACK,
+        )
+
+        manage_groups_btn = ft.ElevatedButton(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.FOLDER), ft.Text("Grupos")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_manage_groups(),
+            bgcolor=ft.Colors.ORANGE_700,
+            color=ft.Colors.WHITE,
+        )
+
+        # Layout principal
+        self._ft_content_column = ft.Column(
+            controls=[
+                ft.Container(height=20),
+                ft.Text(
+                    "Que quieres practicar hoy?",
+                    size=28,
+                    weight=ft.FontWeight.BOLD,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Container(height=30),
+                ft.Row(
+                    controls=[self._ft_loading_indicator],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(
+                    content=self._ft_lang_dropdown,
+                    alignment=ft.Alignment.CENTER,
+                ),
+                ft.Container(height=10),
+                ft.Container(
+                    content=self._ft_group_dropdown,
+                    alignment=ft.Alignment.CENTER,
+                ),
+                ft.Container(height=20),
+                ft.Text("Filtrar por tags (opcional):", size=14),
+                ft.Container(
+                    content=self._ft_tags_row,
+                    padding=10,
+                ),
+                ft.Container(height=20),
+                ft.Container(
+                    content=ft.Card(
+                        content=ft.Container(
+                            content=self._ft_stats_column,
+                            padding=16,
+                        ),
+                    ),
+                    width=400,
+                    alignment=ft.Alignment.CENTER,
+                ),
+                ft.Container(height=20),
+                ft.Row(
+                    controls=[self._ft_random_order_switch],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(height=10),
+                ft.Row(
+                    controls=[self._ft_resume_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.Container(height=10),
+                ft.Row(
+                    controls=[slider_btn, image_study_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                ),
+                ft.Container(height=10),
+                ft.Row(
+                    controls=[manage_btn, manage_groups_btn],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll=ft.ScrollMode.AUTO,
+        )
+
+        # Etiqueta de versión (build) arriba a la derecha, en pequeño.
+        version = EnvironmentReaderRawRepository.get_instance().get_app_version()
+        version_label = ft.Container(
+            content=ft.Text(
+                f"v{version}",
+                size=11,
+                color=ft.Colors.GREY_500,
+            ),
+            top=4,
+            right=8,
+        )
+
+        self.content = ft.Stack(
+            controls=[self._ft_content_column, version_label],
+            expand=True,
+        )
+        self.expand = True
+        self.padding = 20
+
+    # =========================================================================
+    # RENDERIZADO PARCIAL (en orden de ejecución en render())
+    # =========================================================================
+
+    def _render_language_dropdown(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza el dropdown de idiomas."""
+        if not self._ft_lang_dropdown:
+            return
+
+        self._ft_lang_dropdown.options = [
+            ft.dropdown.Option(key=lang["code"], text=lang["display_name"])
+            for lang in home_view_dto.language_options
+        ]
+        self._ft_lang_dropdown.value = home_view_dto.selected_lang_code
+
+    def _render_group_dropdown(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza el dropdown de grupos."""
+        if not self._ft_group_dropdown:
+            return
+
+        self._ft_group_dropdown.options = [
+            ft.dropdown.Option(
+                key=str(group["id"]),
+                text=f"{group['id']} - {group['title']} ({group.get('word_count', 0)} palabras) - {int(group.get('avg_score', 0) * 100)}%",
+            )
+            for group in home_view_dto.group_options
+        ]
+
+        # Asegurar que el handler on_change esté conectado
+        self._ft_group_dropdown.on_change = self._on_group_dropdown_change
+
+        # Si hay un grupo seleccionado, establecerlo
+        if home_view_dto.selected_group_id:
+            self._ft_group_dropdown.value = str(home_view_dto.selected_group_id)
+        elif home_view_dto.group_options:
+            # Por defecto seleccionar el primer grupo (probablemente "generic")
+            self._ft_group_dropdown.value = str(home_view_dto.group_options[0]["id"])
+
+    def _render_tags(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza los chips de tags."""
+        if not self._ft_tags_row:
+            return
+
+        self._ft_tags_row.controls.clear()
+
+        if not home_view_dto.tags:
+            self._ft_tags_row.controls.append(
+                ft.Text(
+                    "No hay tags disponibles",
+                    italic=True,
+                    color=ft.Colors.GREY_500,
+                    size=12,
+                )
+            )
+        else:
+            for tag in home_view_dto.tags:
+                tag_name = tag.get("name", "")
+                is_selected = tag.get("is_selected", False)
+                color = tag.get("color", "#6B7280")
+
+                chip = ft.Chip(
+                    label=ft.Text(tag_name),
+                    selected=is_selected,
+                    on_select=lambda e, t=tag_name: self._route_on_tag_toggle(t),
+                    bgcolor=color if is_selected else None,
+                    selected_color=ft.Colors.WHITE,
+                )
+                self._ft_tags_row.controls.append(chip)
+
+    def _render_resume(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza el botón Continuar (visible solo si hay actividad que retomar)."""
+        if not self._ft_resume_btn or not self._ft_resume_text:
+            return
+
+        resume_state = home_view_dto.resume_state
+        if not resume_state:
+            self._ft_resume_btn.visible = False
+            return
+
+        activity_label = resume_state.get("activity_label", "actividad")
+        group_title = resume_state.get("group_title", "")
+        word_index = int(resume_state.get("word_index", 0))
+        total_words = int(resume_state.get("total_words", 0))
+
+        detail = f" · {group_title}" if group_title else ""
+        progress = f" ({word_index + 1}/{total_words})" if total_words else ""
+        self._ft_resume_text.value = f"Continuar {activity_label}{detail}{progress}"
+        self._ft_resume_btn.visible = True
+
+    def _render_stats(self, home_view_dto: HomeViewDto) -> None:
+        """Renderiza las estadísticas."""
+        if not self._ft_stats_column or not home_view_dto.stats:
+            return
+
+        total_words = home_view_dto.stats.get("total_words", 0)
+        due_for_review = home_view_dto.stats.get("due_for_review", 0)
+        avg_score = float(home_view_dto.stats.get("avg_score", 0) or 0)
+        avg_score_percent = int(avg_score * 100)
+
+        self._ft_stats_column.controls.clear()
+        self._ft_stats_column.controls.extend(
+            [
+                ft.Text("Estadisticas", weight=ft.FontWeight.BOLD, size=16),
+                ft.Divider(height=1),
+                ft.Row(
+                    [
+                        ft.Text("Total palabras:"),
+                        ft.Text(str(total_words), weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Pendientes de repaso:"),
+                        ft.Text(str(due_for_review), weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Row(
+                    [
+                        ft.Text("Score promedio:"),
+                        ft.Text(f"{avg_score_percent}%", weight=ft.FontWeight.BOLD),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+            ]
+        )
+
+    def _show_error(self, message: str) -> None:
+        """Muestra un mensaje de error."""
+        if self._ft_stats_column:
+            self._ft_stats_column.controls.clear()
+            self._ft_stats_column.controls.append(
+                ft.Text(f"Error: {message}", color=ft.Colors.RED_700)
+            )
+        self.update()
+
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    def _on_lang_dropdown_change(self, e: ft.ControlEvent) -> None:
+        """Maneja el cambio de idioma y notifica al controller."""
+        self._route_on_lang_change(e.control.value)
+
+    def _on_group_dropdown_change(self, e: ft.ControlEvent) -> None:
+        """Maneja el cambio de grupo y notifica al controller."""
+        # DEBUG: Verificar si el evento se dispara
+        print(f"[DEBUG VIEW] Group dropdown changed! value={e.control.value}")
+        group_id = int(e.control.value) if e.control.value else 0
+        print(f"[DEBUG VIEW] Calling controller with group_id={group_id}")
+        self._route_on_group_change(group_id)

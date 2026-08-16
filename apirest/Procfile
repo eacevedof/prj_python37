@@ -1,0 +1,1 @@
+web: gunicorn learnlang.wsgi --log-file -

@@ -1,0 +1,102 @@
+"""Servicio para generar imagenes de palabras con IA (gpt-image-1.5)."""
+
+import base64
+from typing import final, Self
+
+from ddd.shared.infrastructure.components.logger import Logger
+from ddd.open_ai.domain.enums import (
+    OpenaiImageModelEnum,
+    OpenaiImageQualityEnum,
+    OpenaiImageResponseFormatEnum,
+    OpenaiImageSizeEnum,
+)
+from ddd.open_ai.infrastructure.repositories import GptImage1ReaderApiRepository
+from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_dto import (
+    GenerateWordImageAiDto,
+)
+from ddd.vocabulary.application.generate_word_image_ai.generate_word_image_ai_result_dto import (
+    GenerateWordImageAiResultDto,
+)
+from ddd.vocabulary.domain.entities import WordImageEntity
+from ddd.vocabulary.domain.enums import ImageSourceEnum
+from ddd.vocabulary.domain.services import WordImagePromptBuilderService
+from ddd.vocabulary.infrastructure.repositories import ImagesWriterSqliteRepository
+
+@final
+class GenerateWordImageAiService:
+    """Servicio para generar imagenes con gpt-image-1.5."""
+
+    __instance: "GenerateWordImageAiService | None" = None
+
+    def __init__(self) -> None:
+        self._logger = Logger.get_instance()
+        self._gpt_image_1_reader_api_repository = GptImage1ReaderApiRepository.get_instance()
+        self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
+        self._word_image_prompt_builder_service = WordImagePromptBuilderService.get_instance()
+
+    @classmethod
+    def get_instance(cls) -> Self:
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
+
+    async def __call__(
+        self,
+        generate_word_image_ai_dto: GenerateWordImageAiDto
+    ) -> GenerateWordImageAiResultDto:
+        """
+        Genera una imagen para una palabra usando gpt-image-1.5.
+
+        Args:
+            generate_word_image_ai_dto: DTO con palabra en español y traducción.
+
+        Returns:
+            GenerateWordImageAiResultDto con el resultado.
+        """
+        if not generate_word_image_ai_dto.word_es or not generate_word_image_ai_dto.word_lang:
+            return GenerateWordImageAiResultDto.error(
+                "Se requiere palabra en español y traducción"
+            )
+
+        # Construir el prompt (lógica de dominio) y generar la imagen (gpt-image-1.5)
+        prompt_used = self._word_image_prompt_builder_service.get_prompt(
+            word_es=generate_word_image_ai_dto.word_es,
+            context=generate_word_image_ai_dto.context,
+        )
+
+        base64_images = self._gpt_image_1_reader_api_repository.get_base64_images_from_text(
+            openai_model=OpenaiImageModelEnum.GPT_IMAGE_1_5,
+            prompt=prompt_used,
+            result_number=1,
+            size=OpenaiImageSizeEnum.SIZE_1024,
+            quality=OpenaiImageQualityEnum.STANDARD,
+        )
+
+        image_b64 = base64_images[0][OpenaiImageResponseFormatEnum.B64_JSON] if base64_images else ""
+
+        # Decodificar imagen desde base64
+        image_bytes = base64.b64decode(image_b64)
+
+        # Guardar imagen en disco y BD
+        word_image_entity = WordImageEntity(
+            id=0,
+            word_es_id=generate_word_image_ai_dto.word_id,
+            source_type=ImageSourceEnum.AI_GENERATED,
+            file_path="",
+            mime_type="image/png",
+            original_url="",  # No hay URL, imagen viene en base64
+            caption=generate_word_image_ai_dto.word_es,  # Solo español, sin revelar traducción
+        )
+
+        word_img_entity = await self._images_writer_sqlite_repository.save_image_bytes(
+            word_image_entity,
+            image_bytes
+        )
+
+        return GenerateWordImageAiResultDto.ok(
+            image_id=word_img_entity.id,
+            word_id=generate_word_image_ai_dto.word_id,
+            file_path=word_img_entity.file_path,
+            dalle_url="",  # No hay URL, imagen viene en base64
+            prompt_used=prompt_used,
+        )

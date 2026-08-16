@@ -1,0 +1,12 @@
+# Development dependencies
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+bandit==1.7.5
+
+# Additional testing tools
+httpx==0.25.2  # Already in requirements.txt but needed for testing
+faker==20.1.0  # For generating test data

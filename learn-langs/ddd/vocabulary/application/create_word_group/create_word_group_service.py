@@ -1,0 +1,80 @@
+"""Servicio para crear grupos de palabras."""
+
+from typing import final, Self
+
+from ddd.shared.infrastructure.components.logger import Logger
+from ddd.vocabulary.application.create_word_group.create_word_group_dto import CreateWordGroupDto
+from ddd.vocabulary.application.create_word_group.create_word_group_result_dto import CreateWordGroupResultDto
+from ddd.vocabulary.domain.entities import WordGroupEntity
+from ddd.vocabulary.infrastructure.repositories import (
+    WordGroupsReaderSqliteRepository,
+    WordGroupsWriterSqliteRepository,
+)
+
+
+@final
+class CreateWordGroupService:
+    """Servicio para crear un nuevo grupo de palabras."""
+
+    __instance: "CreateWordGroupService | None" = None
+
+    def __init__(self) -> None:
+        self._logger = Logger.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_groups_writer_sqlite_repository = WordGroupsWriterSqliteRepository.get_instance()
+
+    @classmethod
+    def get_instance(cls) -> Self:
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
+
+    async def __call__(
+        self,
+        create_word_group_dto: CreateWordGroupDto
+    ) -> CreateWordGroupResultDto:
+        """
+        Crea un nuevo grupo de palabras.
+
+        Args:
+            create_word_group_dto: DTO con datos del grupo.
+
+        Returns:
+            CreateWordGroupResultDto con el resultado.
+        """
+        # Validar DTO
+        errors = create_word_group_dto.validate()
+        if errors:
+            return CreateWordGroupResultDto.error("; ".join(errors))
+
+        # Verificar que no exista un grupo con el mismo título
+        existing = await self._word_groups_reader_sqlite_repository.get_word_group_by_title(
+            create_word_group_dto.title
+        )
+        if existing:
+            return CreateWordGroupResultDto.error(
+                f"A group with title '{create_word_group_dto.title}' already exists"
+            )
+
+        # Crear entidad
+        word_group_entity = WordGroupEntity(
+            id=0,
+            title=create_word_group_dto.title,
+            description=create_word_group_dto.description,
+            source=create_word_group_dto.source,
+        )
+
+        # Validar entidad
+        errors = word_group_entity.validate()
+        if errors:
+            return CreateWordGroupResultDto.error("; ".join(errors))
+
+        word_group_created = await self._word_groups_writer_sqlite_repository.create(word_group_entity)
+
+        return CreateWordGroupResultDto.ok(
+            group_id=word_group_created["id"],
+            title=word_group_created["title"],
+            description=word_group_created.get("description", ""),
+            source=word_group_created.get("source", ""),
+        )
+

@@ -1,0 +1,1 @@
+# Local DevOps automation module

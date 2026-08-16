@@ -1,0 +1,1 @@
+# StaticAssets module

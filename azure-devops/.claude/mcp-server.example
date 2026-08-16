@@ -1,0 +1,13 @@
+// esto va en: C:\Users\<usuario-windows>\.claude.json
+
+ "mcpServers": {
+    "azure-devops": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "cd /d C:\\project-path\azure-devops && C:\\project-path\azure-devops\\.venv-win\\Scripts\\python.exe -m ddd.mcp_work_items.infrastructure.controllers.mcp_server_controller"
+      ],
+      "env": {}
+    }
+  }
