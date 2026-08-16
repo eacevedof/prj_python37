@@ -3,6 +3,7 @@ from typing import Self, final
 
 from ddd.shared.infrastructure.components.file_hasher import FileHasher
 from ddd.shared.infrastructure.repositories import ResourcesWriterCdnRepository
+from ddd.vocabulary.domain.enums.media_file_ext_enum import MediaFileExtEnum
 from ddd.vocabulary.domain.enums.resource_kind_enum import ResourceKindEnum
 from ddd.vocabulary.domain.enums.resource_sync_scope_enum import ResourceSyncScopeEnum
 from ddd.vocabulary.domain.enums.resource_sync_status_enum import ResourceSyncStatusEnum
@@ -44,7 +45,7 @@ class SyncResourcesToCdnService:
     dry_run no sube nada (marca lo que se subiria como PENDING).
     """
 
-    _AUDIO_FILE_EXT: str = "mp3"
+    _AUDIO_FILE_EXT: str = MediaFileExtEnum.MP3.value
 
     def __init__(self) -> None:
         self._file_hasher = FileHasher.get_instance()

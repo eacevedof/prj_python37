@@ -15,6 +15,9 @@ class WordAudiosReaderFileRepository:
     # Ruta absoluta a data/audio (independiente del CWD): parents[4] = raíz del proyecto
     _AUDIO_DIR = Path(__file__).resolve().parents[4] / "data" / "audio"
 
+    def __init__(self) -> None:
+        self._tts_audio_filename_service = TtsAudioFilenameService.get_instance()
+
     @classmethod
     def get_instance(cls) -> Self:
         return cls()
@@ -31,13 +34,14 @@ class WordAudiosReaderFileRepository:
 
     def get_audio_path(self, word_id: int, lang_code: str) -> str:
         return str(
-            self._AUDIO_DIR / TtsAudioFilenameService.get_filename(word_id, lang_code)
+            self._AUDIO_DIR
+            / self._tts_audio_filename_service.get_filename(word_id, lang_code)
         )
 
     def get_temp_audio_path(self, word_id: int, lang_code: str) -> str:
         return str(
             self._AUDIO_DIR
-            / TtsAudioFilenameService.get_temp_filename(word_id, lang_code)
+            / self._tts_audio_filename_service.get_temp_filename(word_id, lang_code)
         )
 
     def has_audio(self, word_id: int, lang_code: str) -> bool:

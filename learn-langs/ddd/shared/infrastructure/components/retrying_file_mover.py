@@ -4,6 +4,8 @@ import time
 from pathlib import Path
 from typing import Self
 
+from ddd.shared.domain.enums.file_move_retry_enum import FileMoveRetryEnum
+
 
 class RetryingFileMover:
     """Renombra/borra ficheros reintentando ante locks transitorios (Windows).
@@ -15,8 +17,8 @@ class RetryingFileMover:
     no ocultación de fallos.
     """
 
-    _RETRIES = 5
-    _BACKOFF_SECONDS = 0.15
+    _RETRIES: int = FileMoveRetryEnum.RETRIES.value
+    _BACKOFF_SECONDS: float = FileMoveRetryEnum.BACKOFF_SECONDS.value
 
     @classmethod
     def get_instance(cls) -> Self:

@@ -4,13 +4,14 @@ from typing import Self, final
 import aiosqlite
 
 from ddd.devops.domain.enums.migrations_schema_enum import MigrationsSchemaEnum
+from ddd.devops.domain.enums.sqlite_pragma_enum import SqlitePragmaEnum
 
 
 @final
 class MigrationsWriterSqliteRepository:
     """Escritura del registro de migraciones (datasource: sqlite)."""
 
-    _PRAGMA_FOREIGN_KEYS = "PRAGMA foreign_keys = ON"
+    _PRAGMA_FOREIGN_KEYS: str = SqlitePragmaEnum.FOREIGN_KEYS_ON.value
 
     _CREATE_TABLE_SQL = (
         f"CREATE TABLE IF NOT EXISTS {MigrationsSchemaEnum.TABLE} ("

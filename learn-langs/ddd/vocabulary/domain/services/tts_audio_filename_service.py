@@ -1,8 +1,9 @@
 """Servicio de dominio: nombre del fichero mp3 de una palabra+idioma."""
 
-from typing import final
+from typing import Self, final
 
 from ddd.vocabulary.domain.enums.tts_accent_enum import TtsAccentEnum
+from ddd.vocabulary.domain.enums.tts_audio_file_enum import TtsAudioFileEnum
 
 
 @final
@@ -14,17 +15,21 @@ class TtsAudioFilenameService:
     Haarlem por defecto en nl_NL), cambia el nombre y el audio se regenera solo.
     """
 
-    _TEMP_SUFFIX = "-temp"
+    _NAME_PREFIX: str = TtsAudioFileEnum.NAME_PREFIX.value
+    _EXTENSION: str = TtsAudioFileEnum.EXTENSION.value
+    _TEMP_SUFFIX: str = TtsAudioFileEnum.TEMP_SUFFIX.value
 
-    @staticmethod
-    def get_filename(word_id: int, lang_code: str) -> str:
+    @classmethod
+    def get_instance(cls) -> Self:
+        return cls()
+
+    def get_filename(self, word_id: int, lang_code: str) -> str:
         """Nombre del audio definitivo (el ideal) de la palabra+idioma."""
         accent = TtsAccentEnum.for_lang(lang_code)
         accent_label = accent.label if accent else lang_code.lower().replace("_", "-")
-        return f"word-{word_id}-{accent_label}.mp3"
+        return f"{self._NAME_PREFIX}{word_id}-{accent_label}{self._EXTENSION}"
 
-    @classmethod
-    def get_temp_filename(cls, word_id: int, lang_code: str) -> str:
+    def get_temp_filename(self, word_id: int, lang_code: str) -> str:
         """Nombre del audio temporal (propuesta pendiente de aceptar/descartar)."""
-        filename = cls.get_filename(word_id, lang_code)
-        return filename.replace(".mp3", f"{cls._TEMP_SUFFIX}.mp3")
+        filename = self.get_filename(word_id, lang_code)
+        return filename.replace(self._EXTENSION, f"{self._TEMP_SUFFIX}{self._EXTENSION}")

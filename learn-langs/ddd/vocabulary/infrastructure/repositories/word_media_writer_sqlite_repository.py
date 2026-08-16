@@ -29,7 +29,7 @@ class WordMediaWriterSqliteRepository(AbstractSqliteRepository):
 
         Preserva id/created_at en la actualizacion (ON CONFLICT DO UPDATE).
         """
-        await self._sqlite.insert(
+        await self._sqlite_connector.insert(
             """
             INSERT INTO word_es_media
                 (word_es_id, lang_code, file_ext, filename, file_url, file_synced_md5)

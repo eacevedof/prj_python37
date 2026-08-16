@@ -32,6 +32,7 @@ class GenerateWordImageAiService:
         self._logger = Logger.get_instance()
         self._gpt_image_1_reader_api_repository = GptImage1ReaderApiRepository.get_instance()
         self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
+        self._word_image_prompt_builder_service = WordImagePromptBuilderService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -58,7 +59,7 @@ class GenerateWordImageAiService:
             )
 
         # Construir el prompt (lógica de dominio) y generar la imagen (gpt-image-1.5)
-        prompt_used = WordImagePromptBuilderService.build(
+        prompt_used = self._word_image_prompt_builder_service.get_prompt(
             word_es=generate_word_image_ai_dto.word_es,
             context=generate_word_image_ai_dto.context,
         )

@@ -86,15 +86,15 @@ class UpdateWordController(BaseController):
         self._audio_player = AudioPlayer.get_instance()
         self._update_word_service = UpdateWordService.get_instance()
         self._get_word_for_edit_service = GetWordForEditService.get_instance()
-        self._generate_text_audio_service = GenerateTextAudioAiService.get_instance()
+        self._generate_text_audio_ai_service = GenerateTextAudioAiService.get_instance()
         self._regenerate_word_audio_service = RegenerateWordAudioService.get_instance()
         self._accept_word_audio_service = AcceptWordAudioService.get_instance()
         self._discard_word_audio_service = DiscardWordAudioService.get_instance()
         self._add_word_ia_image_service = AddWordIaImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
-        self._images_reader = ImagesReaderSqliteRepository.get_instance()
-        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
-        self._word_audios_reader = WordAudiosReaderFileRepository.get_instance()
+        self._images_reader_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
+        self._word_audios_reader_file_repository = WordAudiosReaderFileRepository.get_instance()
 
         # Vista
         self._ft_container = UpdateWordView.from_primitives(
@@ -149,18 +149,18 @@ class UpdateWordController(BaseController):
             self.__available_tags = list(result.available_tags)
 
             # Cargar imagenes de la palabra
-            word_images = await self._images_reader.get_word_es_images_by_word_es_id(
+            word_images = await self._images_reader_sqlite_repository.get_word_es_images_by_word_es_id(
                 self._word_id
             )
             self.__word_images = list(word_images)
 
             # Cargar grupos de la palabra
-            word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(
+            word_groups = await self._word_groups_reader_sqlite_repository.get_word_group_by_word_es_id(
                 self._word_id
             )
 
             # Cargar todos los grupos disponibles
-            all_groups = await self._word_groups_reader.get_all_word_groups()
+            all_groups = await self._word_groups_reader_sqlite_repository.get_all_word_groups()
 
             # Estado de audios por idioma (español origen + neerlandés destino)
             self.__audio_rows = self._get_initial_audio_rows()
@@ -305,7 +305,7 @@ class UpdateWordController(BaseController):
         """Maneja click en escuchar la propuesta temporal."""
 
         async def _task():
-            temp_audio_path = self._word_audios_reader.get_temp_audio_path(
+            temp_audio_path = self._word_audios_reader_file_repository.get_temp_audio_path(
                 self._word_id, lang_code
             )
             await self._audio_player.play_until_end(
@@ -340,7 +340,7 @@ class UpdateWordController(BaseController):
             return
 
         try:
-            result = await self._generate_text_audio_service(
+            result = await self._generate_text_audio_ai_service(
                 GenerateTextAudioAiDto.from_primitives(
                     {
                         "text": text_to_speak,
@@ -535,7 +535,7 @@ class UpdateWordController(BaseController):
                 )
 
             self.__word_images = list(
-                await self._images_reader.get_word_es_images_by_word_es_id(
+                await self._images_reader_sqlite_repository.get_word_es_images_by_word_es_id(
                     self._word_id
                 )
             )
@@ -564,7 +564,7 @@ class UpdateWordController(BaseController):
             {
                 "lang_code": lang_code_enum.value,
                 "label": lang_code_enum.display_name,
-                "has_temp": self._word_audios_reader.has_temp_audio(
+                "has_temp": self._word_audios_reader_file_repository.has_temp_audio(
                     self._word_id, lang_code_enum.value
                 ),
                 "is_generating": False,

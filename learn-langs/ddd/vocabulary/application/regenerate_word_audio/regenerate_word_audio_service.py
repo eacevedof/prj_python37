@@ -38,6 +38,7 @@ class RegenerateWordAudioService:
         self._logger = Logger.get_instance()
         self._gpt_tts_1_reader_api_repository = GptTts1ReaderApiRepository.get_instance()
         self._word_audios_writer_file_repository = WordAudiosWriterFileRepository.get_instance()
+        self._tts_voice_selector_service = TtsVoiceSelectorService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -71,7 +72,7 @@ class RegenerateWordAudioService:
         if not text_to_generate:
             return RegenerateWordAudioResultDto.error("No hay texto para generar audio")
 
-        voice_used = regenerate_word_audio_dto.voice or TtsVoiceSelectorService.select(lang_code)
+        voice_used = regenerate_word_audio_dto.voice or self._tts_voice_selector_service.get_voice(lang_code)
 
         speed = regenerate_word_audio_dto.speed
         if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:

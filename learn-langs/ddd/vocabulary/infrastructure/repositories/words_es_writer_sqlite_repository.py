@@ -63,7 +63,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
 
     async def add_tag(self, word_id: int, tag_id: int) -> bool:
         """Añade un tag a una palabra."""
-        await self._sqlite.insert(f"""
+        await self._sqlite_connector.insert(f"""
         INSERT OR IGNORE INTO word_es_tags (word_es_id, tag_id) VALUES ({word_id}, {tag_id})""",
         )
         return True
@@ -93,7 +93,7 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
         relation_type: str,
     ) -> None:
         """Añade una relación entre dos palabras."""
-        await self._sqlite.insert(
+        await self._sqlite_connector.insert(
             f"""
             INSERT OR IGNORE INTO word_es_relations
             (word_es_id_a, word_es_id_b, relation_type)
@@ -114,5 +114,5 @@ class WordsEsWriterSqliteRepository(AbstractSqliteRepository):
             OR (word_es_id_a = {word_id_b} AND word_es_id_b = {word_id_a})
         )
         """
-        rows_affected = await self._sqlite.delete(query)
+        rows_affected = await self._sqlite_connector.delete(query)
         return rows_affected > 0

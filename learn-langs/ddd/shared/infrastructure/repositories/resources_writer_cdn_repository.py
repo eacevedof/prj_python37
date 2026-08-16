@@ -11,6 +11,7 @@ from typing import Self, final
 
 import httpx
 
+from ddd.shared.domain.enums.cdn_request_enum import CdnRequestEnum, CdnTimeoutEnum
 from ddd.shared.infrastructure.repositories.environment_reader_raw_repository import (
     EnvironmentReaderRawRepository,
 )
@@ -20,12 +21,12 @@ from ddd.shared.infrastructure.repositories.environment_reader_raw_repository im
 class ResourcesWriterCdnRepository:
     """Sube recursos al CDN: login (token AES) + subida multipart."""
 
-    _LOGIN_PATH: str = "/security/login"
-    _UPLOAD_PATH: str = "/upload"
-    _UPLOAD_FIELD: str = "file"
-    _TOKEN_POST_KEY: str = "resource-usertoken"
-    _FOLDER_POST_KEY: str = "folderdomain"
-    _DEFAULT_TIMEOUT: int = 120
+    _LOGIN_PATH: str = CdnRequestEnum.LOGIN_PATH.value
+    _UPLOAD_PATH: str = CdnRequestEnum.UPLOAD_PATH.value
+    _UPLOAD_FIELD: str = CdnRequestEnum.UPLOAD_FIELD.value
+    _TOKEN_POST_KEY: str = CdnRequestEnum.TOKEN_POST_KEY.value
+    _FOLDER_POST_KEY: str = CdnRequestEnum.FOLDER_POST_KEY.value
+    _DEFAULT_TIMEOUT: int = CdnTimeoutEnum.DEFAULT_SECONDS.value
 
     def __init__(self) -> None:
         environment_reader_raw_repository = (

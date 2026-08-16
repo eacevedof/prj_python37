@@ -29,7 +29,7 @@ class ActivityStatesWriterSqliteRepository(AbstractSqliteRepository):
         is_random_order: bool,
     ) -> int:
         """Guarda (o actualiza) el estado de una actividad. Una fila por actividad."""
-        return await self._sqlite.update(
+        return await self._sqlite_connector.update(
             """
             INSERT INTO activity_states
                 (activity, lang_code, tags, group_id, word_es_id,
@@ -69,7 +69,7 @@ class ActivityStatesWriterSqliteRepository(AbstractSqliteRepository):
         """Marca la actividad como NO retomable (posición a 0) pero CONSERVA
         lang_code/tags/group_id como 'último grupo practicado', para que el selector
         de grupo del Home lo recuerde tras completar o abortar el examen/aprendizaje."""
-        return await self._sqlite.update(
+        return await self._sqlite_connector.update(
             """
             UPDATE activity_states
             SET word_es_id = 0,

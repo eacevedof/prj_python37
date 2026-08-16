@@ -1,7 +1,6 @@
 """Servicio para generar audio de un texto arbitrario con IA (tts-1)."""
 
 import asyncio
-from pathlib import Path
 from typing import final, Self
 
 from ddd.shared.infrastructure.components.logger import Logger
@@ -17,8 +16,14 @@ from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_dt
 from ddd.vocabulary.application.generate_text_audio_ai.generate_text_audio_ai_result_dto import (
     GenerateTextAudioAiResultDto,
 )
-from ddd.vocabulary.domain.enums import TtsAccentEnum
-from ddd.vocabulary.domain.services import TtsAudioFilenameService, TtsVoiceSelectorService
+from ddd.vocabulary.domain.enums import AudioSourceEnum, TtsAccentEnum
+from ddd.vocabulary.domain.services import TtsVoiceSelectorService
+from ddd.vocabulary.infrastructure.repositories.word_audios_reader_file_repository import (
+    WordAudiosReaderFileRepository,
+)
+from ddd.vocabulary.infrastructure.repositories.word_audios_writer_file_repository import (
+    WordAudiosWriterFileRepository,
+)
 
 
 @final
@@ -37,6 +42,9 @@ class GenerateTextAudioAiService:
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
         self._gpt_tts_1_reader_api_repository = GptTts1ReaderApiRepository.get_instance()
+        self._word_audios_reader_file_repository = WordAudiosReaderFileRepository.get_instance()
+        self._word_audios_writer_file_repository = WordAudiosWriterFileRepository.get_instance()
+        self._tts_voice_selector_service = TtsVoiceSelectorService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -65,21 +73,22 @@ class GenerateTextAudioAiService:
         if word_id <= 0:
             return GenerateTextAudioAiResultDto.error("Se requiere word_id")
 
-        # Reutilizar audio cacheado si existe (nombre con id + idioma + acento)
-        # Ruta absoluta a data/audio (independiente del CWD): parents[4] = raíz del proyecto
-        audio_dir = Path(__file__).resolve().parents[4] / "data" / "audio"
-        audio_path = audio_dir / TtsAudioFilenameService.get_filename(word_id, lang_code)
-
-        if audio_path.exists():
+        # Reutilizar audio cacheado si existe (nombre con id + idioma + acento);
+        # la ruta y el nombre los resuelve el repositorio de ficheros.
+        if self._word_audios_reader_file_repository.has_audio(word_id, lang_code):
             return GenerateTextAudioAiResultDto.ok(
-                audio_path=str(audio_path),
-                voice_used="cached",
-                model_used="cached",
+                audio_path=self._word_audios_reader_file_repository.get_audio_path(
+                    word_id, lang_code
+                ),
+                voice_used=AudioSourceEnum.CACHED.value,
+                model_used=AudioSourceEnum.CACHED.value,
                 text_generated=text_to_generate,
             )
 
         # Seleccionar voz (lógica de dominio) y generar audio con tts-1
-        voice_used = generate_text_audio_ai_dto.voice or TtsVoiceSelectorService.select(lang_code)
+        voice_used = generate_text_audio_ai_dto.voice or self._tts_voice_selector_service.get_voice(
+            lang_code
+        )
 
         speed = generate_text_audio_ai_dto.speed
         if not OpenaiTtsConstraintsEnum.MIN_SPEED.value <= speed <= OpenaiTtsConstraintsEnum.MAX_SPEED.value:
@@ -104,8 +113,9 @@ class GenerateTextAudioAiService:
             instructions=instructions,
         )
 
-        audio_dir.mkdir(parents=True, exist_ok=True)
-        audio_path.write_bytes(audio_bytes)
+        audio_path = self._word_audios_writer_file_repository.save_audio(
+            word_id, lang_code, audio_bytes
+        )
 
         self._logger.log_info(
             "GenerateTextAudioAiService",

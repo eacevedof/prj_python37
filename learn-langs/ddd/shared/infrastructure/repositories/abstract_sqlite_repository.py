@@ -10,12 +10,12 @@ from ddd.shared.infrastructure.components.logger import Logger
 class AbstractSqliteRepository(ABC):
     """Repositorio base con helpers comunes para SQLite."""
 
-    _sqlite: SqliteConnector
+    _sqlite_connector: SqliteConnector
     _logger: Logger
     _last_insert_id: int | None = None
 
     def __init__(self) -> None:
-        self._sqlite = SqliteConnector.get_instance()
+        self._sqlite_connector = SqliteConnector.get_instance()
         self._logger = Logger.get_instance()
         self._last_insert_id = None
 
@@ -169,7 +169,7 @@ class AbstractSqliteRepository(ABC):
 
         query = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
 
-        self._last_insert_id = await self._sqlite.insert(query, values)
+        self._last_insert_id = await self._sqlite_connector.insert(query, values)
         return self._last_insert_id
 
     async def _update_where(
@@ -200,7 +200,7 @@ class AbstractSqliteRepository(ABC):
 
         query = f"UPDATE {table} SET {set_clause} WHERE {where}"
 
-        return await self._sqlite.update(query, values)
+        return await self._sqlite_connector.update(query, values)
 
     async def _delete_where(
         self,
@@ -221,7 +221,7 @@ class AbstractSqliteRepository(ABC):
         """
         query = f"DELETE FROM {table} WHERE {where}"
 
-        return await self._sqlite.delete(query, where_params)
+        return await self._sqlite_connector.delete(query, where_params)
 
     async def _query(self, sql: str, params: tuple = ()) -> list[dict]:
         """
@@ -235,7 +235,7 @@ class AbstractSqliteRepository(ABC):
             Lista de diccionarios con los resultados.
         """
         self._logger.log_sql(sql)
-        return await self._sqlite.fetch_all(sql, params)
+        return await self._sqlite_connector.fetch_all(sql, params)
 
     async def _query_one(self, sql: str, params: tuple = ()) -> dict | None:
         """
@@ -249,7 +249,7 @@ class AbstractSqliteRepository(ABC):
             Diccionario con el resultado o None.
         """
         self._logger.log_sql(sql)
-        return await self._sqlite.fetch_one(sql, params)
+        return await self._sqlite_connector.fetch_one(sql, params)
 
     async def _query_scalar(
         self,

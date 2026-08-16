@@ -3,6 +3,7 @@
 from typing import Any, Self, final
 
 from ddd.shared.infrastructure.repositories import AbstractSqliteRepository
+from ddd.vocabulary.domain.enums.words_pagination_enum import WordsPaginationEnum
 
 
 @final
@@ -17,7 +18,7 @@ class WordsPaginationReaderSqliteRepository(AbstractSqliteRepository):
     - limit / offset: paginación.
     """
 
-    _DEFAULT_LIMIT: int = 100
+    _DEFAULT_LIMIT: int = WordsPaginationEnum.DEFAULT_LIMIT.value
 
     def __init__(self) -> None:
         super().__init__()

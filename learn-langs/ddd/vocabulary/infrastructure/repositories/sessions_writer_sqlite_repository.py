@@ -52,7 +52,7 @@ class SessionsWriterSqliteRepository(AbstractSqliteRepository):
         """Finaliza una sesión de estudio."""
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        rows = await self._sqlite.update(
+        rows = await self._sqlite_connector.update(
             f"""
             UPDATE study_sessions
             SET finished_at = ?

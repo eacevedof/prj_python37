@@ -32,7 +32,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             VALUES (?, ?, ?, datetime('now'), datetime('now'))
         """
 
-        group_id = await self._sqlite.insert(query, (entity.title, entity.description, entity.source))
+        group_id = await self._sqlite_connector.insert(query, (entity.title, entity.description, entity.source))
 
         return {
             "id": group_id,
@@ -61,7 +61,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             WHERE id = ?
         """
 
-        await self._sqlite.update(query, (entity.title, entity.description, entity.source, group_id))
+        await self._sqlite_connector.update(query, (entity.title, entity.description, entity.source, group_id))
 
         return {
             "id": group_id,
@@ -81,7 +81,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             True si se eliminó correctamente.
         """
         query = "DELETE FROM word_groups WHERE id = ?"
-        await self._sqlite.delete(query, (group_id,))
+        await self._sqlite_connector.delete(query, (group_id,))
         return True
 
     async def associate_word(self, word_id: int, group_id: int) -> bool:
@@ -100,7 +100,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             VALUES (?, ?)
         """
 
-        await self._sqlite.insert(query, (word_id, group_id))
+        await self._sqlite_connector.insert(query, (word_id, group_id))
         return True
 
     async def disassociate_word(self, word_id: int, group_id: int) -> bool:
@@ -119,7 +119,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             WHERE word_es_id = ? AND group_id = ?
         """
 
-        await self._sqlite.delete(query, (word_id, group_id))
+        await self._sqlite_connector.delete(query, (word_id, group_id))
         return True
 
     async def clear_word_groups(self, word_id: int) -> bool:
@@ -133,7 +133,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             True si se eliminaron correctamente.
         """
         query = "DELETE FROM word_es_groups WHERE word_es_id = ?"
-        await self._sqlite.delete(query, (word_id,))
+        await self._sqlite_connector.delete(query, (word_id,))
         return True
 
     async def set_word_groups(self, word_id: int, group_ids: list[int]) -> bool:
@@ -148,7 +148,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
             True si se establecieron correctamente.
         """
         # Eliminar grupos existentes
-        await self._sqlite.delete(
+        await self._sqlite_connector.delete(
             "DELETE FROM word_es_groups WHERE word_es_id = ?",
             (word_id,),
         )
@@ -156,7 +156,7 @@ class WordGroupsWriterSqliteRepository(AbstractSqliteRepository):
         # Insertar nuevos grupos
         if group_ids:
             for group_id in group_ids:
-                await self._sqlite.insert(
+                await self._sqlite_connector.insert(
                     "INSERT INTO word_es_groups (word_es_id, group_id) VALUES (?, ?)",
                     (word_id, group_id),
                 )

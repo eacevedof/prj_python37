@@ -43,6 +43,7 @@ class GenerateWordAudioAiService:
         self._words_lang_writer_sqlite_repository = (
             WordsLangWriterSqliteRepository.get_instance()
         )
+        self._tts_voice_selector_service = TtsVoiceSelectorService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -104,7 +105,7 @@ class GenerateWordAudioAiService:
         # que "regenerar": acento del idioma -> gpt-4o-mini-tts; sin acento -> tts-1
         voice_used = (
             generate_word_audio_ai_dto.voice
-            or TtsVoiceSelectorService.select(lang_code)
+            or self._tts_voice_selector_service.get_voice(lang_code)
         )
 
         speed = generate_word_audio_ai_dto.speed

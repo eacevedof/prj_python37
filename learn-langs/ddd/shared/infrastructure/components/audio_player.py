@@ -19,12 +19,14 @@ import flet as ft
 import flet_audio as fta
 from flet_audio.types import AudioState
 
+from ddd.shared.domain.enums.audio_playback_enum import AudioPlaybackEnum
+
 
 @final
 class AudioPlayer:
     """Reproduce mp3 (local o URL) con el Audio nativo de Flet. Multiplataforma."""
 
-    _POLL_SECONDS: float = 0.05
+    _POLL_SECONDS: float = AudioPlaybackEnum.POLL_SECONDS.value
 
     def __init__(self) -> None:
         self._completed = asyncio.Event()

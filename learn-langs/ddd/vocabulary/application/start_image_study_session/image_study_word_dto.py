@@ -1,6 +1,6 @@
 """DTO de una palabra con imagen para la sesión de estudio."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Self, Any
 
 from ddd.vocabulary.domain.enums import WordTypeEnum

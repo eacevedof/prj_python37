@@ -11,6 +11,7 @@ from pathlib import Path
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.enums.card_text_factor_enum import CardTextFactorEnum
 from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
 
 
@@ -19,8 +20,8 @@ class ImageFlashcardComp(ft.Container):
 
     # La palabra/respuesta del examen conviven con timer+input: algo más
     # pequeñas que en el slider puro (factores sobre los tamaños kiosko)
-    __WORD_FACTOR = 0.8
-    __TRANSLATION_FACTOR = 0.7
+    __WORD_FACTOR: float = CardTextFactorEnum.IMAGE_CARD_WORD.value
+    __TRANSLATION_FACTOR: float = CardTextFactorEnum.IMAGE_CARD_TRANSLATION.value
 
     def __init__(
         self,

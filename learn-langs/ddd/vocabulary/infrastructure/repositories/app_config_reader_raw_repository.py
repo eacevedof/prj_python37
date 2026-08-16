@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import final, Self
 
+from ddd.vocabulary.domain.enums.app_config_default_enum import AppConfigDefaultEnum
+
 
 @final
 class AppConfigReaderRawRepository:
@@ -11,14 +13,14 @@ class AppConfigReaderRawRepository:
 
     __instance: "AppConfigReaderRawRepository | None" = None
 
-    # Defaults
-    _DEFAULT_APP_TITLE = "Learn Languages"
+    # Defaults (enumerados en el dominio; aquí solo se tipan para el type-checker)
+    _DEFAULT_APP_TITLE: str = AppConfigDefaultEnum.APP_TITLE.value
 
-    _DEFAULT_WINDOW_WIDTH = 900
-    _DEFAULT_WINDOW_HEIGHT = 950
+    _DEFAULT_WINDOW_WIDTH: int = AppConfigDefaultEnum.WINDOW_WIDTH.value
+    _DEFAULT_WINDOW_HEIGHT: int = AppConfigDefaultEnum.WINDOW_HEIGHT.value
 
-    _DEFAULT_WINDOW_MIN_WIDTH = 800
-    _DEFAULT_WINDOW_MIN_HEIGHT = 950
+    _DEFAULT_WINDOW_MIN_WIDTH: int = AppConfigDefaultEnum.WINDOW_MIN_WIDTH.value
+    _DEFAULT_WINDOW_MIN_HEIGHT: int = AppConfigDefaultEnum.WINDOW_MIN_HEIGHT.value
 
     def __init__(self) -> None:
         self._base_path = Path(__file__).parent.parent.parent.parent.parent

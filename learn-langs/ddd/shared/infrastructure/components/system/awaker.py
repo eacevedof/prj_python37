@@ -4,6 +4,8 @@ import ctypes
 import sys
 from typing import final, Self
 
+from ddd.shared.domain.enums.execution_state_enum import ExecutionStateEnum
+
 
 @final
 class Awaker:
@@ -14,9 +16,9 @@ class Awaker:
     (en Flet, dentro de tareas async del event loop). En otros SO es un no-op.
     """
 
-    _ES_CONTINUOUS = 0x80000000
-    _ES_SYSTEM_REQUIRED = 0x00000001
-    _ES_DISPLAY_REQUIRED = 0x00000002
+    _ES_CONTINUOUS: int = ExecutionStateEnum.CONTINUOUS.value
+    _ES_SYSTEM_REQUIRED: int = ExecutionStateEnum.SYSTEM_REQUIRED.value
+    _ES_DISPLAY_REQUIRED: int = ExecutionStateEnum.DISPLAY_REQUIRED.value
 
     __instance: "Awaker | None" = None
 

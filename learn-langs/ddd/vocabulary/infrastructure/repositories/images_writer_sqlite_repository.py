@@ -69,7 +69,7 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
         if count == 0:
             is_primary = True
 
-        return await self._sqlite.insert(
+        return await self._sqlite_connector.insert(
             """
             INSERT INTO word_es_images (
                 word_es_id, source_type, file_path, mime_type,
@@ -199,7 +199,7 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
 
     async def update(self, word_image_entity: WordImageEntity) -> bool:
         """Actualiza caption, alt_text, sort_order, is_primary de una imagen."""
-        rows = await self._sqlite.update(
+        rows = await self._sqlite_connector.update(
             """
             UPDATE word_es_images
             SET caption = ?, alt_text = ?, sort_order = ?, is_primary = ?, updated_at = datetime('now')
@@ -230,7 +230,7 @@ class ImagesWriterSqliteRepository(AbstractSqliteRepository):
 
     async def soft_delete(self, word_image_entity: WordImageEntity) -> bool:
         """Soft delete de una imagen."""
-        rows = await self._sqlite.update(
+        rows = await self._sqlite_connector.update(
             """
             UPDATE word_es_images
             SET is_active = 0, updated_at = datetime('now')

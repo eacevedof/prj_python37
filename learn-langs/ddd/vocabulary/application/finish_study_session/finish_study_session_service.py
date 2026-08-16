@@ -20,7 +20,7 @@ class FinishStudySessionService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._sessions_writer_sqlite_repository_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
+        self._sessions_writer_sqlite_repository = SessionsWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -46,7 +46,7 @@ class FinishStudySessionService:
             return FinishStudySessionResultDto.ok(0)
 
 
-        await self._sessions_writer_sqlite_repository_sqlite_repository.finish_study_session_by_session_id(
+        await self._sessions_writer_sqlite_repository.finish_study_session_by_session_id(
             StudySessionEntity.from_primitives({
                 "id": finish_study_session_dto.session_id,
                 "lang_code": finish_study_session_dto.lang_code,

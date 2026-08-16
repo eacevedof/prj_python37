@@ -25,8 +25,8 @@ class DeleteWordImageService:
 
     def __init__(self) -> None:
         self._logger = Logger.get_instance()
-        self._images_reader_sqlite_repository_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
-        self._images_writer_sqlite_repository_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
+        self._images_reader_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
+        self._images_writer_sqlite_repository = ImagesWriterSqliteRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -45,7 +45,7 @@ class DeleteWordImageService:
             DeleteWordImageResultDto con el resultado.
         """
 
-        word_es_image_entity = await self._images_reader_sqlite_repository_sqlite_repository.get_word_es_image_by_word_es_image_id(
+        word_es_image_entity = await self._images_reader_sqlite_repository.get_word_es_image_by_word_es_image_id(
             delete_word_image_dto.image_id
         )
 
@@ -53,6 +53,6 @@ class DeleteWordImageService:
             VocabularyException.custom_not_found(f"Image not found for image_id {delete_word_image_dto.image_id}")
 
         word_es_image_dict = WordImageEntity.from_primitives(word_es_image_entity)
-        await self._images_writer_sqlite_repository_sqlite_repository.hard_delete(word_es_image_dict)
+        await self._images_writer_sqlite_repository.hard_delete(word_es_image_dict)
 
         return DeleteWordImageResultDto.ok(delete_word_image_dto.image_id)

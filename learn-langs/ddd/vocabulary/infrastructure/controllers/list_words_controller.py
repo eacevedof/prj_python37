@@ -13,6 +13,7 @@ from ddd.vocabulary.application.list_words import (
     WordItemDto,
 )
 from ddd.vocabulary.application.delete_word import DeleteWordDto, DeleteWordService
+from ddd.vocabulary.domain.enums.words_pagination_enum import WordsPaginationEnum
 from ddd.vocabulary.application.get_word_images import (
     GetWordImagesDto,
     GetWordImagesService,
@@ -53,8 +54,8 @@ class ListWordsController(BaseController):
     - NO usa repositorios directamente
     """
 
-    # Tamaño de página para el listado paginado
-    _PAGE_SIZE: int = 100
+    # Tamaño de página para el listado paginado (enumerado en el dominio)
+    _PAGE_SIZE: int = WordsPaginationEnum.PAGE_SIZE.value
 
     # =========================================================================
     # CONSTRUCCIÓN
@@ -87,8 +88,8 @@ class ListWordsController(BaseController):
         self._add_word_image_service = AddWordImageService.get_instance()
         self._add_word_ia_image_service = AddWordIaImageService.get_instance()
         self._delete_word_image_service = DeleteWordImageService.get_instance()
-        self._images_reader = ImagesReaderSqliteRepository.get_instance()
-        self._word_groups_reader = WordGroupsReaderSqliteRepository.get_instance()
+        self._images_reader_sqlite_repository = ImagesReaderSqliteRepository.get_instance()
+        self._word_groups_reader_sqlite_repository = WordGroupsReaderSqliteRepository.get_instance()
 
         # Vista (instancia de ListWordsView)
         self._ft_container = ListWordsView.from_primitives({
@@ -156,14 +157,14 @@ class ListWordsController(BaseController):
 
                 # Si tiene imágenes, cargar la última
                 if w.image_count > 0:
-                    images = await self._images_reader.get_word_es_images_by_word_es_id(w.id)
+                    images = await self._images_reader_sqlite_repository.get_word_es_images_by_word_es_id(w.id)
                     if images:
                         # get_by_word_id ya ordena por is_primary DESC, sort_order, created_at
                         # Así que el último elemento es la última imagen agregada
                         word_data["last_image_path"] = images[-1].get("file_path", "")
 
                 # Cargar grupos de la palabra
-                word_groups = await self._word_groups_reader.get_word_group_by_word_es_id(w.id)
+                word_groups = await self._word_groups_reader_sqlite_repository.get_word_group_by_word_es_id(w.id)
                 word_data["groups"] = [g.get("title", "") for g in word_groups]
 
                 words_data.append(word_data)

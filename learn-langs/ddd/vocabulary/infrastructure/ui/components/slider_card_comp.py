@@ -4,6 +4,7 @@ from pathlib import Path
 
 import flet as ft
 
+from ddd.vocabulary.infrastructure.ui.enums.card_text_factor_enum import CardTextFactorEnum
 from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import SliderCardSizeEnum
 
 
@@ -24,7 +25,7 @@ class SliderCardComp(ft.Container):
     y evitar que el contenido se corte en alto.
     """
 
-    __TRANSLATION_FACTOR = 0.75
+    __TRANSLATION_FACTOR: float = CardTextFactorEnum.SLIDER_CARD_TRANSLATION.value
 
     def __init__(self) -> None:
         super().__init__()

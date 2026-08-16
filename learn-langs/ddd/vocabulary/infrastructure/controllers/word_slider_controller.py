@@ -102,13 +102,13 @@ class WordSliderController(BaseController):
         # Servicios
         self._logger = Logger.get_instance()
         self._audio_player = AudioPlayer.get_instance()
-        self._start_session_service = StartWordSliderSessionService.get_instance()
-        self._generate_audio_service = GenerateTextAudioAiService.get_instance()
-        self._finish_session_service = FinishStudySessionService.get_instance()
+        self._start_word_slider_session_service = StartWordSliderSessionService.get_instance()
+        self._generate_text_audio_ai_service = GenerateTextAudioAiService.get_instance()
+        self._finish_study_session_service = FinishStudySessionService.get_instance()
         self._reset_word_metrics_service = ResetWordMetricsService.get_instance()
         self._save_activity_state_service = SaveActivityStateService.get_instance()
         self._clear_activity_state_service = ClearActivityStateService.get_instance()
-        self._dutch_phonetic_service = DutchToSpanishPhoneticService.get_instance()
+        self._dutch_to_spanish_phonetic_service = DutchToSpanishPhoneticService.get_instance()
         self._word_groups_reader_sqlite_repository = (
             WordGroupsReaderSqliteRepository.get_instance()
         )
@@ -157,7 +157,7 @@ class WordSliderController(BaseController):
                 }
             )
 
-            result = await self._start_session_service(start_dto)
+            result = await self._start_word_slider_session_service(start_dto)
 
             self.__session_id = result.session_id
             # result.words son primitivos (list[dict]); rehidratamos a DTO tipado
@@ -311,7 +311,7 @@ class WordSliderController(BaseController):
                     "study_mode": StudyModeEnum.SLIDER.value,
                 }
             )
-            await self._finish_session_service(dto)
+            await self._finish_study_session_service(dto)
         except Exception as e:
             self._logger.log_error(
                 "WordSliderController",
@@ -338,7 +338,7 @@ class WordSliderController(BaseController):
                     "word_id": word_id,
                 }
             )
-            result = await self._generate_audio_service(audio_dto)
+            result = await self._generate_text_audio_ai_service(audio_dto)
 
             if not result.success:
                 self._logger.log_error(
@@ -620,7 +620,7 @@ class WordSliderController(BaseController):
             LanguageCodeEnum.NL_BE.value,
         )
         if is_dutch:
-            return self._dutch_phonetic_service.transcribe(word.text_lang)
+            return self._dutch_to_spanish_phonetic_service.transcribe(word.text_lang)
         return word.pronunciation
 
     def _stop_audio(self) -> None:

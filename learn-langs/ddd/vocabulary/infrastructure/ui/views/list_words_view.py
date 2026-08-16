@@ -421,9 +421,6 @@ class ListWordsView(ft.Container):
         elif word.word_type == WordTypeEnum.SENTENCE.value:
             icon = ft.Icons.NOTES
 
-        # Badge de imagenes
-        image_badge = f" ({word.image_count})" if word.image_count > 0 else ""
-
         # Subtitulo con traduccion y grupos
         subtitle_parts = [word.word_type, word.created_at]
         if word.translation_nl:
