@@ -1,27 +1,33 @@
 <script setup lang="ts">
 /**
- * Muestra un mensaje de error, o nada si no lo hay.
+ * Muestra un error, o nada si no lo hay.
  *
- * Vive en `shared/infrastructure/views/` y NO en `components/`, y la distincion
- * importa: en este proyecto `components/` significa lo mismo que en el backend
- * (Logger, utilidades sin interfaz). Los trozos de pantalla reutilizables son
- * VISTAS. Si no se fija por escrito, en dos semanas `components` significa dos
- * cosas distintas en los dos repos.
+ * El mensaje que llega aqui lo escribio el caso de uso del backend, asi que
+ * dice algo util ("la lista 3 tiene 2 tareas sin terminar") y no un codigo.
+ *
+ * `role="alert"` hace que un lector de pantalla lo anuncie al aparecer. Sin eso,
+ * quien no ve la pantalla pulsa un boton y no se entera de que ha fallado.
  */
 defineProps<{ message: string }>();
 </script>
 
 <template>
-    <p v-if="message" class="error-banner" role="alert">{{ message }}</p>
+    <p v-if="message" class="error" role="alert">{{ message }}</p>
 </template>
 
 <style scoped>
-.error-banner {
-    margin: 0 0 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
-    background: #fdecea;
-    color: #a4262c;
-    border: 1px solid #f3c2c0;
+.error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-block: 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    /* Filete lateral en vez de borde completo: senala sin encajonar. */
+    border-inline-start: 3px solid var(--danger);
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: var(--text-sm);
+    text-wrap: pretty;
 }
 </style>

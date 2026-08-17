@@ -1,53 +1,270 @@
-/* Estilos globales minimos. Sin libreria de CSS a proposito: el ejemplar tiene
-   que poder leerse entero, y una libreria de estilos anade mucho que aprender
-   sin ensenar nada sobre la arquitectura. */
+/* =============================================================================
+   SISTEMA DE DISENO
+   =============================================================================
+
+   Todo el aspecto de la aplicacion sale de las variables de este fichero. Si
+   quieres cambiar el look de tu PoC, cambia estos valores y no toques nada mas:
+   las vistas no llevan ni un color ni un tamano escrito a mano.
+
+   No hay libreria de CSS (ni Tailwind, ni Bootstrap) a proposito. Son ~200
+   lineas que se leen de una sentada, y asi el ejemplar se puede entender entero
+   sin aprender antes las convenciones de otra herramienta.
+
+   Lo que si se usa es CSS moderno de verdad: variables, `color-scheme`,
+   propiedades logicas, `clamp()` para tipografia fluida, `:focus-visible` y
+   respeto por `prefers-reduced-motion`.
+   ========================================================================== */
+
 :root {
-    --text: #1f2328;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --surface: #f3f4f6;
-    --accent: #4f8ef7;
+    /* ---- COLOR ---------------------------------------------------------
+       Los neutros NO son grises puros: llevan un sesgo hacia el verde-azulado
+       del acento. Un gris puro al lado de un acento con color se ve
+       "sin elegir"; este se ve escogido a proposito.                       */
+    --surface: #fbfcfc; /* fondo de pagina */
+    --surface-raised: #f0f4f3; /* campos, chips, zonas destacadas */
+    --surface-hover: #e8eeed;
+    --border: #dde5e4; /* filete fino: separa sin dibujar cajas */
+    --border-strong: #c3d0ce;
+
+    --text: #16201f; /* casi negro, con el mismo sesgo */
+    --text-muted: #5b6b69; /* secundario: fechas, contadores */
+    --text-subtle: #8a9997; /* terciario: pistas, vacios */
+
+    /* UN solo acento, y se gasta en lo que se puede pulsar. */
+    --accent: #0f6b62;
+    --accent-hover: #0b544d;
+    --accent-soft: #e2efed; /* fondo tenue del mismo tono */
+    --on-accent: #ffffff;
+
+    /* Color SEMANTICO, separado del acento: solo comunica estado. */
+    --danger: #a33a3a;
+    --danger-soft: #fbeceb;
+
+    --focus: #0f6b62;
+
+    /* ---- TIPOGRAFIA -----------------------------------------------------
+       Dos roles, y la distincion es real:
+         sans -> texto que se lee
+         mono -> datos que se COMPARAN (contadores, fechas)
+       Los numeros en monoespaciada se alinean en columna y se leen de un
+       vistazo, que es justo lo que quieres en una lista.
+
+       Pilas del sistema, sin webfonts: no hay descarga, no hay salto de
+       maquetacion al cargar, y el PoC funciona sin red.                     */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    /* Escala tipografica. El titulo usa clamp() para adaptarse al ancho sin
+       necesidad de media queries. */
+    --text-xs: 0.75rem;
+    --text-sm: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-lg: 1.0625rem;
+    --text-xl: clamp(1.25rem, 1rem + 1.2vw, 1.6rem);
+
+    /* ---- ESPACIADO ------------------------------------------------------
+       Escala de 4px. Usar SIEMPRE estos valores: en cuanto alguien escribe
+       "13px porque queda mejor", el ritmo vertical se rompe y ya no se
+       recupera.                                                             */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+
+    --radius-sm: 4px;
+    --radius-md: 7px;
+    --radius-pill: 999px;
+
+    --ring: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
+    --content-width: 46rem;
+
+    /* Le dice al navegador de que color es el fondo, para que pinte con el
+       tema correcto los controles nativos (checkbox, scrollbar, selector de
+       fecha) sin tener que estilarlos uno a uno. */
+    color-scheme: light;
 }
 
-* {
+/* ---- TEMA OSCURO --------------------------------------------------------
+   Solo se redefinen las VARIABLES, nunca los componentes. Esa es la regla que
+   hace que el tema oscuro no se quede a medias: si un color solo existiera
+   dentro de este bloque, en tema claro no tendria valor.
+
+   No es una inversion automatica: el acento se aclara para que siga
+   contrastando sobre fondo oscuro, cosa que invertir no consigue.           */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface: #0e1413;
+        --surface-raised: #172120;
+        --surface-hover: #1e2a29;
+        --border: #263433;
+        --border-strong: #3a4c4a;
+
+        --text: #e7eeed;
+        --text-muted: #94a7a4;
+        --text-subtle: #6d807e;
+
+        --accent: #4cb5a7;
+        --accent-hover: #6ac9bc;
+        --accent-soft: #12302c;
+        --on-accent: #06201d;
+
+        --danger: #e08585;
+        --danger-soft: #2c1a1a;
+
+        --focus: #4cb5a7;
+
+        color-scheme: dark;
+    }
+}
+
+/* ---- BASE --------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    /* Fondo explicito y desde una variable: nunca heredado. */
+    background: var(--surface);
     color: var(--text);
-    background: #fff;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    /* Reparte las palabras entre lineas para que no quede una suelta. */
+    text-wrap: balance;
 }
 
 h1 {
-    font-size: 1.5rem;
-    margin: 0 0 1rem;
+    font-size: var(--text-xl);
 }
+
+/* ---- CONTROLES ----------------------------------------------------------
+   Se estilan por elemento y no por clase: son pocos, y asi una vista nueva ya
+   sale bien sin acordarse de ninguna clase.                                 */
 
 input,
 button {
     font: inherit;
-    padding: 0.45rem 0.6rem;
+    color: inherit;
+}
+
+input[type="text"],
+input[type="date"],
+input:not([type]) {
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    background: #fff;
-    color: var(--text);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input::placeholder {
+    color: var(--text-subtle);
+}
+
+input[type="date"] {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+/* Pinta el check nativo con el acento: un control nativo bien coloreado se
+   comporta mejor que uno reinventado con divs (teclado, lectores de pantalla,
+   estados). */
+input[type="checkbox"] {
+    accent-color: var(--accent);
+    inline-size: 1.05rem;
+    block-size: 1.05rem;
+    margin: 0;
+    cursor: pointer;
 }
 
 input[type="color"] {
-    padding: 0.15rem;
-    width: 2.6rem;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    cursor: pointer;
 }
 
 button {
-    cursor: pointer;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
     background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+    color: var(--on-accent);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s;
 }
 
 button:hover {
-    filter: brightness(0.95);
+    background: var(--accent-hover);
+}
+
+button:disabled {
+    background: var(--border);
+    color: var(--text-subtle);
+    cursor: not-allowed;
+}
+
+/* Boton discreto para acciones secundarias y destructivas. */
+button.is-quiet {
+    padding: var(--space-1) var(--space-2);
+    background: none;
+    color: var(--text-subtle);
+    font-size: var(--text-lg);
+    line-height: 1;
+}
+
+button.is-quiet:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+/* ---- FOCO ---------------------------------------------------------------
+   `:focus-visible` y no `:focus`: el anillo sale al navegar con teclado y no
+   al hacer clic con el raton, que es lo que la gente acaba desactivando (y
+   entonces la aplicacion deja de poder usarse sin raton).                    */
+:focus {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+input:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+}
+
+/* ---- ACCESIBILIDAD ------------------------------------------------------
+   Quien haya pedido menos movimiento en su sistema, no lo recibe. No es un
+   detalle: para algunas personas la animacion produce mareo.                */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useTasksStore } from "@/modules/tasks_mod/infrastructure/stores/useTasksStore";
+import AppEmptyState from "@/modules/shared/infrastructure/views/AppEmptyState.vue";
 import AppErrorBanner from "@/modules/shared/infrastructure/views/AppErrorBanner.vue";
 import AppLayout from "@/modules/shared/infrastructure/views/AppLayout.vue";
 
@@ -17,11 +18,28 @@ function getListId(): number {
     return Number(route.params["id"] ?? 0);
 }
 
+const doneCount = computed<number>(() => tasksStore.tasks.length - tasksStore.openCount);
+
+/**
+ * Si una fecha ya paso.
+ *
+ * Esto es PRESENTACION, no negocio: solo decide de que color se pinta la fecha.
+ * Una regla de negocio de verdad (por ejemplo "no dejar cerrar una lista con
+ * tareas vencidas") iria en el caso de uso del backend, que es el unico sitio
+ * donde se puede imponer.
+ */
+function isOverdue(dueDate: string | null, isDone: boolean): boolean {
+    if (dueDate === null || isDone) {
+        return false;
+    }
+    return dueDate < new Date().toISOString().slice(0, 10);
+}
+
 onMounted(() => {
     void tasksStore.searchTasks(getListId());
 });
 
-// Si se navega de una lista a otra sin salir de esta pantalla, Vue reutiliza el
+// Al navegar de una lista a otra sin salir de esta pantalla, Vue reutiliza el
 // componente y `onMounted` no se vuelve a ejecutar. Sin esto, se verian las
 // tareas de la lista anterior.
 watch(
@@ -50,99 +68,186 @@ async function onCreate(): Promise<void> {
 
 <template>
     <AppLayout>
-        <RouterLink to="/" class="back">&larr; Listas</RouterLink>
+        <RouterLink to="/" class="back">Listas</RouterLink>
         <h1>Tareas</h1>
 
         <AppErrorBanner :message="tasksStore.error" />
 
-        <form class="new-task" @submit.prevent="onCreate">
-            <input v-model="newTitle" placeholder="Que hay que hacer" maxlength="200" />
-            <input v-model="newDueDate" type="date" title="Fecha limite" />
-            <button type="submit">Anadir</button>
+        <form class="new" @submit.prevent="onCreate">
+            <input
+                v-model="newTitle"
+                type="text"
+                placeholder="Qué hay que hacer"
+                maxlength="200"
+                aria-label="Título de la tarea"
+            />
+            <input v-model="newDueDate" type="date" aria-label="Fecha límite" />
+            <button type="submit" :disabled="!newTitle.trim()">Añadir</button>
         </form>
 
-        <p v-if="tasksStore.isLoading">Cargando...</p>
+        <AppEmptyState v-if="tasksStore.isLoading" message="Cargando…" />
 
-        <ul v-else class="tasks">
-            <li v-for="task in tasksStore.tasks" :key="task.id" class="tasks__item">
-                <input
-                    type="checkbox"
-                    :checked="task.isDone"
-                    @change="tasksStore.setTaskDone(task.id, !task.isDone, getListId())"
-                />
-                <span class="tasks__title" :class="{ 'tasks__title--done': task.isDone }">
-                    {{ task.title }}
+        <template v-else-if="tasksStore.tasks.length > 0">
+            <ul class="rows">
+                <li
+                    v-for="task in tasksStore.tasks"
+                    :key="task.id"
+                    class="row"
+                    :class="{ 'row--done': task.isDone }"
+                >
+                    <input
+                        type="checkbox"
+                        :checked="task.isDone"
+                        :aria-label="`Marcar «${task.title}» como hecha`"
+                        @change="tasksStore.setTaskDone(task.id, !task.isDone, getListId())"
+                    />
+
+                    <span class="row__title">{{ task.title }}</span>
+
+                    <!-- La fecha va en monoespaciada para que las columnas
+                         cuadren, y en rojo si ya paso: el estado se ve, no hay
+                         que leerlo. -->
+                    <time
+                        v-if="task.dueDate"
+                        class="row__due"
+                        :class="{ 'row__due--overdue': isOverdue(task.dueDate, task.isDone) }"
+                        :datetime="task.dueDate"
+                    >
+                        {{ task.dueDate }}
+                    </time>
+
+                    <button
+                        type="button"
+                        class="is-quiet"
+                        :aria-label="`Borrar la tarea ${task.title}`"
+                        @click="tasksStore.deleteTask(task.id, getListId())"
+                    >
+                        &times;
+                    </button>
+                </li>
+            </ul>
+
+            <p class="summary">
+                <span class="summary__bar" aria-hidden="true">
+                    <span
+                        class="summary__fill"
+                        :style="{ inlineSize: `${(doneCount / tasksStore.tasks.length) * 100}%` }"
+                    />
                 </span>
-                <span v-if="task.dueDate" class="tasks__due">{{ task.dueDate }}</span>
-                <button class="tasks__delete" title="Borrar" @click="tasksStore.deleteTask(task.id, getListId())">
-                    &times;
-                </button>
-            </li>
-        </ul>
+                {{ doneCount }} de {{ tasksStore.tasks.length }} hechas
+            </p>
+        </template>
 
-        <p v-if="!tasksStore.isLoading && tasksStore.tasks.length === 0" class="empty">
-            Esta lista no tiene tareas.
-        </p>
-
-        <p v-else-if="!tasksStore.isLoading" class="summary">
-            {{ tasksStore.openCount }} sin terminar de {{ tasksStore.tasks.length }}
-        </p>
+        <AppEmptyState v-else message="Esta lista no tiene tareas todavía." />
     </AppLayout>
 </template>
 
 <style scoped>
 .back {
     display: inline-block;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
+    margin-block-end: var(--space-2);
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
     text-decoration: none;
-    font-size: 0.9rem;
 }
-.new-task {
+
+.back::before {
+    content: "← ";
+}
+
+.back:hover {
+    color: var(--accent);
+}
+
+.new {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-2);
+    margin-block-end: var(--space-5);
 }
-.new-task input:not([type="date"]) {
+
+.new input[type="text"] {
     flex: 1;
+    min-inline-size: 0;
 }
-.tasks {
+
+.rows {
     list-style: none;
     margin: 0;
     padding: 0;
+    border-block-start: 1px solid var(--border);
 }
-.tasks__item {
+
+.row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.7rem 0.25rem;
-    border-bottom: 1px solid var(--border);
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    padding-inline: var(--space-2);
+    border-block-end: 1px solid var(--border);
+    transition: background-color 0.12s;
 }
-.tasks__title {
+
+.row:hover {
+    background: var(--surface-hover);
+}
+
+.row__title {
     flex: 1;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    transition: color 0.15s;
 }
-.tasks__title--done {
+
+/* Una tarea hecha se APAGA en vez de ponerse verde: lo que tiene que destacar
+   es lo que queda por hacer, no lo que ya esta. */
+.row--done .row__title {
+    color: var(--text-subtle);
     text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.row__due {
+    flex: none;
     color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
 }
-.tasks__due {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+
+.row__due--overdue {
+    color: var(--danger);
+    font-weight: 500;
 }
-.tasks__delete {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    cursor: pointer;
-    line-height: 1;
+
+.row--done .row__due {
+    color: var(--text-subtle);
 }
-.tasks__delete:hover {
-    color: #a4262c;
-}
-.empty,
+
 .summary {
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block: var(--space-4) 0;
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Barra de avance: el mismo dato que el texto, pero legible de un vistazo. */
+.summary__bar {
+    flex: 1;
+    max-inline-size: 8rem;
+    block-size: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-raised);
+    overflow: hidden;
+}
+
+.summary__fill {
+    display: block;
+    block-size: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    transition: inline-size 0.25s ease-out;
 }
 </style>
