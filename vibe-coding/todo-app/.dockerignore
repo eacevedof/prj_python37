@@ -37,6 +37,9 @@ frontend_web/dist/
 .mypy_cache/
 .ruff_cache/
 
+# ---- PRUEBAS Y TRASTEO ----
+_scratch/
+
 # ---- COSAS QUE NO SE EJECUTAN EN EL SERVIDOR ----
 .git/
 .gitignore

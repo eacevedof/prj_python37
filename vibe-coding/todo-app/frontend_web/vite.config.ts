@@ -15,11 +15,11 @@ export default defineConfig({
         alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
     },
     server: {
-        port: 5173,
+        port: 6002,
         proxy: {
-            // EN DESARROLLO: el front corre en el 5173 y la API en el 8000, que
+            // EN DESARROLLO: el front corre en el 6002 y la API en el 6001, que
             // son origenes distintos. Este proxy hace que el navegador crea que
-            // todo viene del 5173.
+            // todo viene del 6002.
             //
             // No es un apano: es lo que reproduce en local la situacion real. En
             // el contenedor, la MISMA aplicacion de Python sirve el front y la
@@ -27,11 +27,11 @@ export default defineConfig({
             //   - el backend no necesita configurar CORS en ningun entorno
             //   - las llamadas del front son siempre a `/api/...`, sin dominio
             "/api": {
-                target: "http://127.0.0.1:8000",
+                target: "http://127.0.0.1:6001",
                 changeOrigin: true,
             },
             "/health-check": {
-                target: "http://127.0.0.1:8000",
+                target: "http://127.0.0.1:6001",
                 changeOrigin: true,
             },
         },

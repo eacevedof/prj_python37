@@ -38,3 +38,9 @@ frontend_web/dist/
 .idea/
 .vscode/
 .DS_Store
+
+# Pruebas y trasteo. Si necesitas crear algo para probar y tiene que vivir dentro
+# del repo, mete/o aqui: se ignora entero y no se cuela en un commit ni en la
+# imagen de Docker. Lo ideal sigue siendo usar /tmp, pero cuando no se pueda,
+# este es el sitio.
+_scratch/

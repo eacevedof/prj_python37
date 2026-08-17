@@ -148,7 +148,7 @@ login.
 El navegador pide `/api/...` al mismo sitio del que descargó la página. En los dos
 entornos:
 
-- **desarrollo** — el proxy de `vite.config.ts` manda `/api` al puerto 8000
+- **desarrollo** — el proxy de `vite.config.ts` manda `/api` al puerto 6001
 - **contenedor** — la misma aplicación de Python sirve la página y la API
 
 Consecuencia práctica: **el backend no necesita configurar CORS en ningún sitio**,
@@ -180,6 +180,6 @@ devuelve la API en objetos tuyos.
 
 ```bash
 make front-install     # una vez
-make front-local         # http://localhost:5173, con make local en otra terminal
+make front-local         # http://localhost:6002, con make local en otra terminal
 make front-build       # compila comprobando tipos
 ```

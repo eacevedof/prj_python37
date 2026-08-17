@@ -2,7 +2,7 @@
 #
 # Levanta SOLO la API, con el codigo montado desde tu disco y recarga automatica.
 # El front NO va aqui: en desarrollo se arranca aparte con `make front-local`
-# (Vite, puerto 5173), que tiene recarga instantanea y mensajes de error mucho
+# (Vite, puerto 6002), que tiene recarga instantanea y mensajes de error mucho
 # mejores. El proxy de `vite.config.ts` manda `/api` a este contenedor.
 #
 #   make up-local     arranca esto
@@ -24,7 +24,7 @@ services:
     environment:
       TZ: UTC
     ports:
-      - "8000:8000"
+      - "6001:6001"
     volumes:
       # Codigo montado: guardar un fichero recarga el servidor.
       - ../backend_web/src:/app/backend_web/src
@@ -34,4 +34,4 @@ services:
       # storage/ ENTERO, no solo los logs: aqui vive la base de datos. Sin esta
       # linea, los datos se irian con el contenedor cada vez que lo recreases.
       - ../backend_web/storage:/app/backend_web/storage
-    command: uvicorn public.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn public.main:app --host 0.0.0.0 --port 6001 --reload

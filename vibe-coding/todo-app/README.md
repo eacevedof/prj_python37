@@ -10,14 +10,14 @@ Cada regla de `../vibe-specs/` tiene aquí su ejemplo real y comentado.
 ```bash
 make venv-install                       # una vez
 cp backend_web/.env.example backend_web/.env
-make local                              # API en http://127.0.0.1:8000
+make local                              # API en http://127.0.0.1:6001
 ```
 
 En otra terminal, el front:
 
 ```bash
 make front-install                      # una vez
-make front-local                        # http://localhost:5173
+make front-local                        # http://localhost:6002
 ```
 
 ### O sin instalar nada: un contenedor efímero
@@ -26,7 +26,7 @@ Si solo quieres **verlo funcionando**, esto no pide `.env`, ni venv, ni npm, y n
 deja nada en tu disco:
 
 ```bash
-make up-ephemeral                       # http://localhost:8081
+make up-ephemeral                       # http://localhost:6004
 ```
 
 Ctrl-C y desaparece: ni contenedor, ni base de datos, ni logs. Cada arranque
@@ -35,7 +35,7 @@ empieza de cero.
 Y para verlo **con tu configuración y tus datos**, tal como se despliega:
 
 ```bash
-make up-deploy-local                    # http://localhost:8080
+make up-deploy-local                    # http://localhost:6003
 ```
 
 ## Comprobar que está bien
@@ -76,7 +76,7 @@ DELETE /api/tasks/{id}
 ```
 
 ```bash
-curl -H "X-Api-Key: change-me-local-only" localhost:8000/api/lists
+curl -H "X-Api-Key: change-me-local-only" localhost:6001/api/lists
 ```
 
 ## Los ficheros que hay que leer

@@ -72,10 +72,13 @@ RUN mkdir -p /app/backend_web/storage/database /app/backend_web/storage/logs
 
 WORKDIR /app/backend_web
 
-EXPOSE 8000
+# La API escucha en el 6001 tambien DENTRO del contenedor: un solo numero que
+# recordar. El 8000 se evita porque suele estar cogido en las maquinas de
+# desarrollo, y el 6000 porque los navegadores lo bloquean (X11).
+EXPOSE 6001
 
 # UN solo worker, a proposito. SQLite es un fichero: varios procesos escribiendo
 # a la vez funcionan (hay WAL y espera activa configurados), pero es una
 # complicacion que un PoC no necesita. Si algun dia hace falta mas capacidad, lo
 # que toca no es subir workers: es cambiar de motor de base de datos.
-CMD ["uvicorn", "public.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+CMD ["uvicorn", "public.main:app", "--host", "0.0.0.0", "--port", "6001", "--workers", "1"]

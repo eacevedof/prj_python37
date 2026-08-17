@@ -63,7 +63,7 @@ make local
 En otra terminal:
 
 ```bash
-curl localhost:8000/health-check
+curl localhost:6001/health-check
 ```
 
 Tiene que responder `{"status":"ok",...}`. **No sigas hasta que responda.** Si
@@ -128,7 +128,7 @@ minutos; treinta ficheros después, una tarde.
 
 ```bash
 make front-install
-make front-local      # http://localhost:5173
+make front-local      # http://localhost:6002
 ```
 
 Con `make local` corriendo en otra terminal. El front habla con la API a través del
@@ -138,13 +138,13 @@ estarán cuando se despliegue.
 ## Paso 8 · Verlo entero como se va a desplegar
 
 ```bash
-make up-deploy-local      # http://localhost:8080
+make up-deploy-local      # http://localhost:6003
 ```
 
 Y si lo que quieres es enseñárselo a alguien sin que tenga que instalar nada:
 
 ```bash
-make up-ephemeral         # http://localhost:8081
+make up-ephemeral         # http://localhost:6004
 ```
 
 Ese no pide `.env` ni deja nada en disco: cada arranque empieza de cero. Va bien
@@ -160,6 +160,27 @@ en el servidor funciona.
 Antes de enseñárselo a nadie: [`60-checklist-poc.md`](60-checklist-poc.md).
 
 ---
+
+## Si necesitas trastear
+
+Tarde o temprano vas a querer crear algo para probar: un script suelto, un volcado
+de datos, una copia de un fichero antes de tocarlo.
+
+**Que no acabe en el repositorio.** Dos sitios válidos, en este orden:
+
+1. **Fuera del proyecto** (`/tmp/loquesea`). Es lo mejor: no puede colarse.
+2. **`_scratch/`**, dentro del proyecto. Está en el `.gitignore` y en el
+   `.dockerignore`, así que ni entra en un commit ni acaba dentro de la imagen.
+
+Lo que no se hace es dejarlo suelto en medio del código. Pasa de verdad: en este
+mismo kit, un `mkdir -p` lanzado desde la carpeta equivocada creó un
+`backend_web/backend_web/` que nadie usaba, se commiteó, y `docker build` lo metió
+dentro de la imagen. Ahora hay un test que lo caza
+(`test_no_hay_carpetas_de_paquete_vacias`), pero es mejor no llegar ahí.
+
+> Truco relacionado: antes de un `mkdir -p` con ruta relativa, mira en qué carpeta
+> estás. El `cd` se arrastra entre comandos y esa es la forma más fácil de crear un
+> árbol paralelo sin enterarte.
 
 ## Los cuatro errores que se repiten
 

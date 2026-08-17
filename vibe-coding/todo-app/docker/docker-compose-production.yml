@@ -55,12 +55,12 @@ services:
     networks: [web]
     labels:
       # Enrutado por etiquetas de Traefik. Si tu servidor usa otra cosa (nginx,
-      # Caddy), borra este bloque y publica el puerto 8000.
+      # Caddy), borra este bloque y publica el puerto 6001.
       - traefik.enable=true
       - "traefik.http.routers.${APP_NAME}-production.rule=Host(`${APP_DOMAIN}`)"
       - traefik.http.routers.${APP_NAME}-production.entrypoints=websecure
       - traefik.http.routers.${APP_NAME}-production.tls.certresolver=letsencrypt
-      - traefik.http.services.${APP_NAME}-production.loadbalancer.server.port=8000
+      - traefik.http.services.${APP_NAME}-production.loadbalancer.server.port=6001
 
 networks:
   # Red del proxy inverso. Tiene que existir ya en el servidor; este compose no

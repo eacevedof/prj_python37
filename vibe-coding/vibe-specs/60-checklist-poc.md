@@ -17,7 +17,7 @@ que se descubre que falla lo básico.
 ## 2 · Funciona de verdad
 
 - [ ] `make up-deploy-local` levanta la imagen **real** y todo funciona en
-      `http://localhost:8080`. Esto es lo que se despliega: si aquí falla, en el
+      `http://localhost:6003`. Esto es lo que se despliega: si aquí falla, en el
       servidor falla.
 - [ ] El recorrido completo, hecho a mano en el navegador: crear, listar,
       modificar, borrar.

@@ -14,7 +14,7 @@
 #
 # La diferencia es DESARROLLO vs DESPLEGABLE, no front vs back.
 #
-# Aqui no hay front a proposito: en desarrollo lo sirve Vite en el 5173, con
+# Aqui no hay front a proposito: en desarrollo lo sirve Vite en el 6002, con
 # recarga instantanea y mejores mensajes de error, y su proxy manda `/api` a este
 # contenedor. Para ver el conjunto tal como se despliega: `make up-deploy-local`.
 #
@@ -41,4 +41,4 @@ WORKDIR /app/backend_web
 
 # El comando real esta en el compose, para tenerlo a la vista junto a los
 # puertos y los volumenes.
-CMD ["uvicorn", "public.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "public.main:app", "--host", "0.0.0.0", "--port", "6001", "--reload"]
