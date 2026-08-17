@@ -84,7 +84,7 @@ up-ephemeral: ## levanta el to-do ENTERO en un contenedor EFIMERO: no pide nada 
 	docker run --rm -it \
 		-p $(EPHEMERAL_PORT):$(API_PORT) \
 		-e APP_ENV=local \
-		-e API_KEY=$(EPHEMERAL_API_KEY) \
+		-e APP_API_KEY=$(EPHEMERAL_API_KEY) \
 		--name cont-local-todo-app-ephemeral \
 		todo-app:ephemeral
 

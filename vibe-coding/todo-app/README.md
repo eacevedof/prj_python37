@@ -76,7 +76,7 @@ DELETE /api/tasks/{id}
 ```
 
 ```bash
-curl -H "X-Api-Key: changethisinproduction-430186268586" localhost:6001/api/lists
+curl -H "X-Api-Key: change-this-in-production-20260901" localhost:6001/api/lists
 ```
 
 ## Los ficheros que hay que leer

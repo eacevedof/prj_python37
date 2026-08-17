@@ -11,7 +11,7 @@ from src.modules.shared.infrastructure.repositories.configuration.environment_re
 def get_database_path() -> Path:
     """Ruta absoluta del fichero .db, creando su carpeta si no existe.
 
-    DB_PATH es RELATIVO a backend_web/ a proposito: el mismo `.env` vale corriendo
+    APP_DB_PATH es RELATIVO a backend_web/ a proposito: el mismo `.env` vale corriendo
     en tu maquina y dentro del contenedor, donde el codigo esta en otra ruta.
     """
     # parents[3]: config -> core -> src -> backend_web

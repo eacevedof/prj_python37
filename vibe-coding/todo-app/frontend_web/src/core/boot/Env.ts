@@ -31,7 +31,7 @@ export function getRuntimeConfig(): AppConfig {
 
 export function getBuildConfig(): AppConfig {
     return {
-        apiKey: import.meta.env.VITE_API_KEY,
-        apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
+        apiKey: import.meta.env.VITE_APP_API_KEY,
+        apiBaseUrl: import.meta.env.VITE_APP_API_BASE_URL,
     };
 }

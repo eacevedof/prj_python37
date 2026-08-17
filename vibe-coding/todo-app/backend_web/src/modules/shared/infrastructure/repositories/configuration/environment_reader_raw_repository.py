@@ -3,6 +3,7 @@ from typing import Self, final
 from src.core.boot.env import get
 from src.modules.shared.domain.enums.app_version_enum import AppVersionEnum
 from src.modules.shared.domain.enums.boolean_input_enum import BooleanInputEnum
+from src.modules.shared.domain.enums.env_default_enum import EnvDefaultEnum
 from src.modules.shared.domain.enums.env_var_enum import EnvVarEnum
 from src.modules.shared.domain.enums.environment_enum import EnvironmentEnum
 
@@ -16,14 +17,19 @@ class EnvironmentReaderRawRepository:
 
       1. De un vistazo se ve QUE necesita un `.env` completo: son los metodos de
          esta clase.
-      2. La conversion de tipo ocurre una vez y en un sitio (`is_debug` devuelve
-         bool, no la cadena "1").
-      3. El dia que la configuracion venga de otro sitio (Vault, un fichero json),
-         se cambia aqui y el resto de la app no se entera.
+      2. La conversion de tipo y el valor por defecto ocurren una vez y en un
+         sitio (`is_debug` devuelve bool, no la cadena "1").
+      3. El dia que la configuracion venga de otro sitio (Vault, un fichero
+         json), se cambia aqui y el resto de la app no se entera.
+
+    Los valores por defecto viven en `EnvDefaultEnum`, no escritos aqui en linea:
+    asi se pueden leer todos juntos y preguntarse que pasa si falta cada uno.
+
+    (Unica excepcion documentada: `Logger` lee `APP_LOG_PATH` directamente,
+    porque es un componente y no puede depender de codigo de la aplicacion.)
 
     Se llama `RawRepository` porque su datasource es "raw" (el entorno del
-    proceso), igual que otros son `SqliteRepository` o `ApiRepository`. El segmento
-    del datasource en el nombre es obligatorio en este proyecto.
+    proceso), igual que otros son `SqliteRepository` o `ApiRepository`.
     """
 
     @classmethod
@@ -37,16 +43,20 @@ class EnvironmentReaderRawRepository:
         return app_version
 
     def get_environment(self) -> str:
-        return get(EnvVarEnum.APP_ENV)
+        """El entorno actual. Si no esta definido: production (ver EnvDefaultEnum)."""
+        return get(EnvVarEnum.APP_ENV, EnvDefaultEnum.ENVIRONMENT)
 
     def get_db_path(self) -> str:
-        return get(EnvVarEnum.DB_PATH, "storage/database/todo_app.db")
+        return get(EnvVarEnum.APP_DB_PATH, EnvDefaultEnum.DB_PATH)
 
     def get_log_path(self) -> str:
-        return get(EnvVarEnum.APP_LOG_PATH, "storage/logs")
+        return get(EnvVarEnum.APP_LOG_PATH, EnvDefaultEnum.LOG_PATH)
+
+    def get_time_zone(self) -> str:
+        return get(EnvVarEnum.APP_TIME_ZONE, EnvDefaultEnum.TIME_ZONE)
 
     def get_api_key(self) -> str:
-        return get(EnvVarEnum.API_KEY)
+        return get(EnvVarEnum.APP_API_KEY, EnvDefaultEnum.API_KEY)
 
     def is_local(self) -> bool:
         return self.get_environment() == EnvironmentEnum.LOCAL.value
@@ -68,15 +78,17 @@ class EnvironmentReaderRawRepository:
         variable no esta definida**. Si la defines, en los dos se respeta lo que
         digas. Production es el unico que no la mira.
 
-        Por que production no la mira: un `APP_DEBUG=1` olvidado en un `.env` de
-        produccion es de las cosas que pasan de verdad, y expondria trazas y datos
-        internos a cualquiera. La regla vive aqui, en codigo, para que no dependa
-        de que alguien se acuerde.
+        Y como `APP_ENV` sin definir vale `production`, un `.env` vacio del todo
+        deja la depuracion apagada: dos capas que fallan hacia el lado seguro.
 
-        Por que en local viene encendido: si estas desarrollando, lo normal es
-        querer ver el error entero. Pero se puede apagar, y a veces interesa —
-        por ejemplo para comprobar que lo que ve un cliente cuando algo revienta
-        es el mensaje generico y no la traza.
+        Por que production no la mira: un `APP_DEBUG=1` olvidado en un `.env` de
+        produccion es de las cosas que pasan de verdad, y expondria trazas y
+        datos internos a cualquiera.
+
+        Por que en local viene encendida: si estas desarrollando, lo normal es
+        querer ver el error entero. Pero se puede apagar, y a veces interesa:
+        para comprobar que lo que ve un cliente cuando algo revienta es el
+        mensaje generico y no la traza.
         """
         if self.is_production():
             return False

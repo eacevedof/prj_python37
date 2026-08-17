@@ -18,9 +18,9 @@
 #
 #   APP_NAME=mi-poc                                 nombre del contenedor y de la imagen
 #   APP_DOMAIN=develop-mi-poc.ejemplo.com           dominio publico
-#   HOST_STORAGE_PATH=/ruta/absoluta/en/el/servidor/storage
+#   APP_HOST_STORAGE_PATH=/ruta/absoluta/en/el/servidor/storage
 #
-# HOST_STORAGE_PATH tiene que ser una ruta ABSOLUTA del servidor y tiene que
+# APP_HOST_STORAGE_PATH tiene que ser una ruta ABSOLUTA del servidor y tiene que
 # existir antes de arrancar. Ahi viven la base de datos y los logs: es lo unico
 # que sobrevive a un redespliegue.
 #
@@ -40,8 +40,8 @@ services:
     volumes:
       # Configuracion y estado, desde el host. El codigo NO se monta: va horneado
       # en la imagen.
-      - ${HOST_STORAGE_PATH}/.env:/app/backend_web/.env
-      - ${HOST_STORAGE_PATH}/storage:/app/backend_web/storage
+      - ${APP_HOST_STORAGE_PATH}/.env:/app/backend_web/.env
+      - ${APP_HOST_STORAGE_PATH}/storage:/app/backend_web/storage
     networks: [web]
     labels:
       # Enrutado por etiquetas de Traefik. Si tu servidor usa otra cosa (nginx,
@@ -57,4 +57,4 @@ networks:
   # la crea (`external: true`) para no duplicar la red de la infraestructura.
   web:
     external: true
-    name: ${PROXY_NETWORK:-web}
+    name: ${APP_PROXY_NETWORK:-web}

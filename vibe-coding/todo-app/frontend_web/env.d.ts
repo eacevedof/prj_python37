@@ -4,8 +4,8 @@
 // seria `any` y el TypeScript estricto no serviria de nada justo en el borde por
 // donde entra la configuracion.
 interface ImportMetaEnv {
-    readonly VITE_API_BASE_URL: string;
-    readonly VITE_API_KEY: string;
+    readonly VITE_APP_API_BASE_URL: string;
+    readonly VITE_APP_API_KEY: string;
 }
 
 interface ImportMeta {

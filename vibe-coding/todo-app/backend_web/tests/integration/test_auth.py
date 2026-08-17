@@ -52,7 +52,7 @@ def test_credencial_vacia_en_el_entorno_deniega_todo(
     # monkeypatch y no os.environ directamente para que el cambio se deshaga solo
     # al terminar el test; si no, el siguiente test se encontraria la variable
     # vacia y fallaria sin motivo aparente.
-    monkeypatch.setenv("API_KEY", "")
+    monkeypatch.setenv("APP_API_KEY", "")
 
     response = anonymous_client.get("/api/lists", headers={"X-Api-Key": ""})
 

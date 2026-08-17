@@ -87,7 +87,7 @@ def _app_environment(sqlite_connection: sqlite3.Connection, monkeypatch: pytest.
        porque main.py la importo a su propio espacio de nombres: parchear el
        original no cambiaria la referencia que main ya tiene.
     """
-    monkeypatch.setenv("API_KEY", "test-api-key")
+    monkeypatch.setenv("APP_API_KEY", "test-api-key")
     monkeypatch.setattr("public.main.init_db", lambda: None)
     yield
 
