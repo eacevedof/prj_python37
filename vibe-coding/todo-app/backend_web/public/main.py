@@ -22,6 +22,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from src.core.boot.env import get_env_file_path
 from src.core.config.database import init_db
 from src.core.routes.routes import Routes
 from src.modules.devops_mod.application.run_migrations.run_migrations_dto import RunMigrationsDto
@@ -34,10 +35,61 @@ from src.modules.shared.domain.enums.request_key_enum import RequestKeyEnum
 from src.modules.shared.domain.enums.response_code_enum import ResponseCodeEnum
 from src.modules.shared.domain.enums.response_key_enum import ResponseKeyEnum
 from src.modules.shared.domain.enums.response_message_enum import ResponseMessageEnum
+from src.modules.shared.infrastructure.components.logger.logger import Logger
 from src.modules.shared.infrastructure.components.tokener.tokener import Tokener
 from src.modules.shared.infrastructure.repositories.configuration.environment_reader_raw_repository import (
     EnvironmentReaderRawRepository,
 )
+
+
+def _get_env_file_keys(env_file_path: Path) -> list[str]:
+    """Los NOMBRES de variable que hay en el fichero. NUNCA los valores.
+
+    Sirve para distinguir "el fichero no llego" de "el fichero llego pero le
+    falta la variable", que son dos problemas distintos con el mismo sintoma.
+    """
+    if not env_file_path.is_file():
+        return []
+    return [
+        line.split("=", 1)[0].strip()
+        for line in env_file_path.read_text(encoding="utf-8", errors="replace").splitlines()
+        if "=" in line and not line.strip().startswith("#")
+    ]
+
+
+def _log_app_config() -> None:
+    """Deja constancia de la configuracion con la que ha arrancado la app.
+
+    Se escribe SIEMPRE, en cada arranque, a la consola y a
+    `storage/logs/<fecha>-debug.log`. No es una traza de depuracion temporal: es
+    lo primero que hace falta mirar cuando algo va mal en un entorno al que no te
+    puedes conectar.
+
+    **Nunca escribe el valor de la credencial**, solo si esta puesta y cuantos
+    caracteres tiene. La longitud es util de verdad: si esperas 34 y ves 35, hay
+    un espacio o un salto de linea colado; si ves 0, el fichero no llego.
+    """
+    environment_reader_raw_repository = EnvironmentReaderRawRepository.get_instance()
+    env_file_path = get_env_file_path()
+    api_key = environment_reader_raw_repository.get_api_key()
+    api_key_state = f"definida ({len(api_key)} caracteres)" if api_key else "VACIA -> la API respondera 401 a todo"
+
+    content = "\n".join(
+        [
+            f"  fichero .env    : {env_file_path}",
+            f"    existe        : {env_file_path.exists()}",
+            f"    es un fichero : {env_file_path.is_file()}",
+            f"    claves dentro : {_get_env_file_keys(env_file_path)}",
+            f"  APP_ENV         : {environment_reader_raw_repository.get_environment()!r}",
+            f"  APP_DEBUG       : {environment_reader_raw_repository.is_debug()} (efectivo, segun el entorno)",
+            f"  APP_DB_PATH     : {environment_reader_raw_repository.get_db_path()!r}",
+            f"  APP_LOG_PATH    : {environment_reader_raw_repository.get_log_path()!r}",
+            f"  APP_TIME_ZONE   : {environment_reader_raw_repository.get_time_zone()!r}",
+            f"  APP_API_KEY     : {api_key_state}",
+        ]
+    )
+    print(f"[config] configuracion efectiva al arrancar:\n{content}")
+    Logger.get_instance().log_debug(content, "Arranque: configuracion efectiva")
 
 
 def _run_migrations() -> None:
@@ -73,6 +125,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     decision del kit: desplegar es levantar la app, y no hay forma de olvidarse un
     paso. Son idempotentes, asi que arrancar mil veces no hace nada mil veces.
     """
+    _log_app_config()
     init_db()
     _run_migrations()
     yield
