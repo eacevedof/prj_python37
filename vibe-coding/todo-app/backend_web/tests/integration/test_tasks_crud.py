@@ -67,9 +67,7 @@ def test_modificar_una_tarea(client: TestClient) -> None:
     list_id = _get_new_list_id(client)
     task_id = client.post("/api/tasks", json={"id_list": list_id, "title": "Leche"}).json()["data"]["id"]
 
-    response = client.put(
-        f"/api/tasks/{task_id}", json={"id_list": list_id, "title": "Leche desnatada"}
-    )
+    response = client.put(f"/api/tasks/{task_id}", json={"id_list": list_id, "title": "Leche desnatada"})
 
     assert response.status_code == 200
     assert response.json()["data"]["title"] == "Leche desnatada"

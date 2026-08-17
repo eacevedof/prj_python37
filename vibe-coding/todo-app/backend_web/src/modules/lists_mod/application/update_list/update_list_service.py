@@ -54,12 +54,14 @@ class UpdateListService:
             # mismo, y decirle cual de las dos filtraria informacion sin necesidad.
             ListsException.not_found_custom(f"no existe la lista {self._update_list_dto.list_id}")
 
-        return UpdateListResultDto.from_primitives({
-            ListFieldEnum.LIST_ID: self._update_list_dto.list_id,
-            ListFieldEnum.NAME: self._update_list_dto.name,
-            ListFieldEnum.COLOR: self._update_list_dto.color,
-            ListFieldEnum.POSITION: self._update_list_dto.position,
-        })
+        return UpdateListResultDto.from_primitives(
+            {
+                ListFieldEnum.LIST_ID: self._update_list_dto.list_id,
+                ListFieldEnum.NAME: self._update_list_dto.name,
+                ListFieldEnum.COLOR: self._update_list_dto.color,
+                ListFieldEnum.POSITION: self._update_list_dto.position,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._update_list_dto.list_id <= 0:
@@ -67,9 +69,7 @@ class UpdateListService:
         if not self._update_list_dto.name:
             ListsException.bad_request_custom("name es obligatorio")
         if len(self._update_list_dto.name) > ListLimitEnum.NAME_MAX_LENGTH:
-            ListsException.bad_request_custom(
-                f"name no puede pasar de {ListLimitEnum.NAME_MAX_LENGTH} caracteres"
-            )
+            ListsException.bad_request_custom(f"name no puede pasar de {ListLimitEnum.NAME_MAX_LENGTH} caracteres")
         if self._update_list_dto.color is not None and not re.match(
             ListLimitEnum.COLOR_PATTERN, self._update_list_dto.color
         ):

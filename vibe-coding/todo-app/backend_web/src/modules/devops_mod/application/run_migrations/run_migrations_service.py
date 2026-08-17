@@ -1,7 +1,5 @@
 from typing import Self, final
 
-from src.modules.shared.domain.enums.response_key_enum import ResponseKeyEnum
-
 from src.modules.devops_mod.application.run_migrations.run_migrations_dto import RunMigrationsDto
 from src.modules.devops_mod.application.run_migrations.run_migrations_result_dto import RunMigrationsResultDto
 from src.modules.devops_mod.domain.enums.migration_file_enum import MigrationFileEnum
@@ -15,6 +13,7 @@ from src.modules.devops_mod.infrastructure.repositories.migrations_reader_sqlite
     MigrationsReaderSqliteRepository,
 )
 from src.modules.devops_mod.infrastructure.runners.migration_runner import MigrationRunner
+from src.modules.shared.domain.enums.response_key_enum import ResponseKeyEnum
 
 
 @final
@@ -96,13 +95,15 @@ class RunMigrationsService:
             else:
                 failed_count += 1
 
-        return RunMigrationsResultDto.from_primitives({
-            MigrationResultEnum.TOTAL_MIGRATIONS: len(migration_files),
-            MigrationResultEnum.APPLIED_COUNT: applied_count,
-            MigrationResultEnum.SKIPPED_COUNT: skipped_count,
-            MigrationResultEnum.FAILED_COUNT: failed_count,
-            MigrationResultEnum.MIGRATIONS: results,
-        })
+        return RunMigrationsResultDto.from_primitives(
+            {
+                MigrationResultEnum.TOTAL_MIGRATIONS: len(migration_files),
+                MigrationResultEnum.APPLIED_COUNT: applied_count,
+                MigrationResultEnum.SKIPPED_COUNT: skipped_count,
+                MigrationResultEnum.FAILED_COUNT: failed_count,
+                MigrationResultEnum.MIGRATIONS: results,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         """Toda la validacion de entrada, junta y al principio del caso de uso.

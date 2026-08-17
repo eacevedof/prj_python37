@@ -54,10 +54,12 @@ class DeleteListService:
         if not is_deleted:
             ListsException.not_found_custom(f"no existe la lista {self._delete_list_dto.list_id}")
 
-        return DeleteListResultDto.from_primitives({
-            ListFieldEnum.LIST_ID: self._delete_list_dto.list_id,
-            ListFieldEnum.IS_DELETED: True,
-        })
+        return DeleteListResultDto.from_primitives(
+            {
+                ListFieldEnum.LIST_ID: self._delete_list_dto.list_id,
+                ListFieldEnum.IS_DELETED: True,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._delete_list_dto.list_id <= 0:

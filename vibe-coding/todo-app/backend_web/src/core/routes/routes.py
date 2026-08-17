@@ -1,4 +1,5 @@
-from typing import Any, Callable, final
+from collections.abc import Callable
+from typing import Any, final
 
 from src.modules.lists_mod.infrastructure.controllers.create_list_controller import CreateListController
 from src.modules.lists_mod.infrastructure.controllers.delete_list_controller import DeleteListController

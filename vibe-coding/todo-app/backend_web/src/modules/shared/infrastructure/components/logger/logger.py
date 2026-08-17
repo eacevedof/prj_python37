@@ -1,5 +1,5 @@
 import traceback
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Self, final
 
@@ -42,12 +42,14 @@ class Logger:
         Lo llama el `except Exception` de cada controller. La traza va al fichero y
         NO al cliente: el cliente recibe ResponseMessageEnum.UNEXPECTED_ERROR.
         """
-        content = "\n".join([
-            title,
-            f"tipo:    {type(throwable).__name__}",
-            f"mensaje: {throwable}",
-            f"traza:\n{''.join(traceback.format_exception(throwable))}",
-        ])
+        content = "\n".join(
+            [
+                title,
+                f"tipo:    {type(throwable).__name__}",
+                f"mensaje: {throwable}",
+                f"traza:\n{''.join(traceback.format_exception(throwable))}",
+            ]
+        )
         self.__write(self._ERROR_FILE, f"[ERROR] {content}")
 
     def __write(self, file_name: str, content: str) -> None:
@@ -57,8 +59,8 @@ class Logger:
         base_dir = Path(__file__).resolve().parents[6] / logs_path
         base_dir.mkdir(parents=True, exist_ok=True)
 
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
+        now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")
         with open(base_dir / f"{today}-{file_name}", "a", encoding="utf-8") as file_handle:
             file_handle.write(f"\n[{now}]\n{content.strip()}\n")
 

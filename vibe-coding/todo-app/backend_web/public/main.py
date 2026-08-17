@@ -11,13 +11,16 @@ rutas se declaran en `src/core/routes/routes.py` y se registran aqui en un bucle
 Ventaja: la lista completa de endpoints de la API cabe en una pantalla.
 """
 
+import json
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncIterator, Callable
+from typing import Any
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.core.config.database import init_db
 from src.core.routes.routes import Routes
@@ -26,6 +29,7 @@ from src.modules.devops_mod.application.run_migrations.run_migrations_service im
 from src.modules.devops_mod.domain.enums.migration_result_enum import MigrationResultEnum
 from src.modules.shared.domain.enums.auth_enum import AuthEnum
 from src.modules.shared.domain.enums.auth_scope_enum import AuthScopeEnum
+from src.modules.shared.domain.enums.frontend_enum import FrontendEnum
 from src.modules.shared.domain.enums.request_key_enum import RequestKeyEnum
 from src.modules.shared.domain.enums.response_code_enum import ResponseCodeEnum
 from src.modules.shared.domain.enums.response_key_enum import ResponseKeyEnum
@@ -186,4 +190,91 @@ def _register_routes() -> None:
         app.add_api_route(path, _get_handler(controller_callable), methods=[http_method])
 
 
+def _get_frontend_dist_path() -> Path:
+    """Carpeta con el front ya compilado.
+
+    parents[2]: public -> backend_web -> raiz del proyecto.
+
+    La ruta es la MISMA en tu maquina y dentro del contenedor, y eso es
+    deliberado: la imagen reproduce la estructura del repositorio en vez de
+    inventarse otra. Cuando local y produccion tienen rutas distintas, "funciona
+    en mi maquina" deja de significar nada.
+    """
+    return Path(__file__).resolve().parents[2] / FrontendEnum.DIST_FOLDER
+
+
+def _get_index_html() -> str:
+    """El `index.html` del front, con la configuracion inyectada.
+
+    AQUI ES DONDE LA CREDENCIAL LLEGA AL NAVEGADOR, y conviene entender por que
+    se hace asi.
+
+    El front necesita mandar la cabecera `X-Api-Key`, asi que la credencial tiene
+    que estar en el navegador de alguna forma. Hay dos maneras:
+
+      1. Incrustarla al COMPILAR el front (una variable VITE_*). Malo: queda
+         escrita dentro del javascript compilado, asi que el mismo artefacto no
+         sirve para dos entornos y la credencial acaba en el control de versiones
+         o en el registro de imagenes.
+      2. Inyectarla al SERVIR la pagina, que es lo que hace esta funcion. El
+         javascript compilado no contiene ninguna credencial; la lee de
+         `window.__APP_CONFIG__` al arrancar. El mismo artefacto vale para
+         desarrollo, pruebas y produccion, y cambiarla es editar el `.env` y
+         reiniciar.
+
+    LO QUE ESTO NO ARREGLA, y hay que tenerlo claro: quien abra la pagina puede
+    leer la credencial mirando el codigo fuente. Eso es inevitable en cualquier
+    aplicacion de navegador sin login. La apikey aqui sirve para que la API no
+    este abierta a rastreadores automaticos, NO para separar unos usuarios de
+    otros. Si el PoC llega a manejar datos de mas de una persona, hace falta
+    autenticacion de verdad.
+    """
+    environment_reader_raw_repository = EnvironmentReaderRawRepository.get_instance()
+    app_config = json.dumps({FrontendEnum.API_KEY_CONFIG_KEY: environment_reader_raw_repository.get_api_key()})
+    index_html = (_get_frontend_dist_path() / FrontendEnum.INDEX_FILE).read_text(encoding="utf-8")
+    return index_html.replace(
+        FrontendEnum.HEAD_TAG,
+        f"{FrontendEnum.HEAD_TAG}<script>window.__APP_CONFIG__={app_config};</script>",
+        1,
+    )
+
+
+def _register_frontend() -> None:
+    """Sirve el front compilado, si esta presente.
+
+    Se registra EL ULTIMO, despues de las rutas de la API, y el orden es lo que
+    hace que funcione: FastAPI prueba las rutas en el orden en que se dieron de
+    alta, asi que `/api/lists` casa con su endpoint antes de llegar al comodin de
+    aqui abajo.
+
+    Si no hay carpeta compilada no se registra nada, y la aplicacion es solo una
+    API. Eso es justo lo que pasa cuando desarrollas: el front lo sirve Vite en el
+    puerto 5173 con recarga automatica, y su proxy manda `/api` aqui.
+    """
+    if not (_get_frontend_dist_path() / FrontendEnum.INDEX_FILE).exists():
+        return
+
+    app.mount(
+        f"/{FrontendEnum.ASSETS_FOLDER}",
+        StaticFiles(directory=_get_frontend_dist_path() / FrontendEnum.ASSETS_FOLDER),
+        name=FrontendEnum.ASSETS_FOLDER,
+    )
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def serve_frontend(full_path: str) -> Response:
+        # Una ruta de API que no existe tiene que devolver 404, no la pagina del
+        # front: si no, un error de escritura en una URL de la API se veria como
+        # "la aplicacion no hace nada" en vez de como el 404 que es.
+        if f"/{full_path}".startswith(AuthEnum.API_PREFIX.value):
+            return JSONResponse(
+                status_code=int(ResponseCodeEnum.NOT_FOUND),
+                content={ResponseKeyEnum.STATUS: int(ResponseCodeEnum.NOT_FOUND)},
+            )
+        # Cualquier otra ruta devuelve el index: el enrutado de la aplicacion lo
+        # hace el navegador, asi que recargar en /lists/3/tasks tiene que seguir
+        # funcionando.
+        return HTMLResponse(_get_index_html())
+
+
 _register_routes()
+_register_frontend()

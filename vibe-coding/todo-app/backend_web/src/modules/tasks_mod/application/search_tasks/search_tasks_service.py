@@ -45,9 +45,9 @@ class SearchTasksService:
             self._search_tasks_dto.id_list,
             self._search_tasks_dto.is_done,
         )
-        return SearchTasksResultDto.from_primitives({
-            TaskFieldEnum.ITEMS: [self.__get_item(task_row) for task_row in task_rows]
-        })
+        return SearchTasksResultDto.from_primitives(
+            {TaskFieldEnum.ITEMS: [self.__get_item(task_row) for task_row in task_rows]}
+        )
 
     def _fail_if_wrong_input(self) -> None:
         return None

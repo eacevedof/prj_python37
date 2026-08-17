@@ -1,0 +1,36 @@
+# LOCAL - desarrollo.
+#
+# Levanta SOLO la API, con el codigo montado desde tu disco y recarga automatica.
+# El front NO va aqui: en desarrollo se arranca aparte con `make front-dev`
+# (Vite, puerto 5173), que tiene recarga instantanea y mensajes de error mucho
+# mejores. El proxy de `vite.config.ts` manda `/api` a este contenedor.
+#
+#   make up          arranca esto
+#   make front-dev   arranca el front, en otra terminal
+#
+# Si lo que quieres es ver el conjunto tal como se desplegara -un contenedor
+# sirviendo las dos cosas- usa `make up-prod-local`, que usa Dockerfile-build.
+#
+# No hay servicio de base de datos: SQLite es un fichero dentro de storage/.
+services:
+  todo-app:
+    container_name: todo-app-local
+    build:
+      # El contexto es la RAIZ del proyecto (no la carpeta docker/), porque el
+      # Dockerfile necesita ver backend_web/ y frontend_web/.
+      context: ..
+      dockerfile: docker/python/Dockerfile
+    environment:
+      TZ: UTC
+    ports:
+      - "8000:8000"
+    volumes:
+      # Codigo montado: guardar un fichero recarga el servidor.
+      - ../backend_web/src:/app/backend_web/src
+      - ../backend_web/public:/app/backend_web/public
+      - ../backend_web/database:/app/backend_web/database
+      - ../backend_web/.env:/app/backend_web/.env
+      # storage/ ENTERO, no solo los logs: aqui vive la base de datos. Sin esta
+      # linea, los datos se irian con el contenedor cada vez que lo recreases.
+      - ../backend_web/storage:/app/backend_web/storage
+    command: uvicorn public.main:app --host 0.0.0.0 --port 8000 --reload

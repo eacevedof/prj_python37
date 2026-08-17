@@ -69,12 +69,14 @@ class CreateListService:
             self._create_list_dto.position,
         )
 
-        return CreateListResultDto.from_primitives({
-            ListFieldEnum.LIST_ID: new_list_id,
-            ListFieldEnum.NAME: self._create_list_dto.name,
-            ListFieldEnum.COLOR: self._create_list_dto.color,
-            ListFieldEnum.POSITION: self._create_list_dto.position,
-        })
+        return CreateListResultDto.from_primitives(
+            {
+                ListFieldEnum.LIST_ID: new_list_id,
+                ListFieldEnum.NAME: self._create_list_dto.name,
+                ListFieldEnum.COLOR: self._create_list_dto.color,
+                ListFieldEnum.POSITION: self._create_list_dto.position,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         """Valida la ENTRADA: lo que se puede comprobar sin tocar la base de datos.
@@ -86,9 +88,7 @@ class CreateListService:
         if not self._create_list_dto.name:
             ListsException.bad_request_custom("name es obligatorio")
         if len(self._create_list_dto.name) > ListLimitEnum.NAME_MAX_LENGTH:
-            ListsException.bad_request_custom(
-                f"name no puede pasar de {ListLimitEnum.NAME_MAX_LENGTH} caracteres"
-            )
+            ListsException.bad_request_custom(f"name no puede pasar de {ListLimitEnum.NAME_MAX_LENGTH} caracteres")
         if self._create_list_dto.color is not None and not re.match(
             ListLimitEnum.COLOR_PATTERN, self._create_list_dto.color
         ):

@@ -26,6 +26,15 @@ exclude = [".venv", "__pycache__", "storage"]
 # SIM  simplify         - if a: return True / else: return False -> return a
 select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
 
+ignore = [
+    # UP042 pide cambiar `class XEnum(str, Enum)` por `class XEnum(StrEnum)`.
+    # Se rechaza a proposito: `(str, Enum)` es la convencion de los proyectos DDD
+    # de la casa, y mantener la misma forma en todos ellos vale mas que la
+    # sintaxis mas moderna. Ademas obliga a escribir `.value` de forma explicita,
+    # que es justo lo que la normativa ensena.
+    "UP042",
+]
+
 [tool.ruff.lint.isort]
 # Los imports de la app son "first party": van en su propio bloque, despues de
 # los de terceros. Es lo que hace que el orden stdlib -> vendor -> app salga solo.

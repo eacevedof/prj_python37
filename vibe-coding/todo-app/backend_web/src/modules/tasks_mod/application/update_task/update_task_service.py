@@ -1,14 +1,13 @@
 from typing import Self, final
 
 from src.modules.lists_mod.infrastructure.adapters.lists_reader_adapter import ListsReaderAdapter
-
 from src.modules.tasks_mod.application.update_task.update_task_dto import UpdateTaskDto
 from src.modules.tasks_mod.application.update_task.update_task_result_dto import UpdateTaskResultDto
 from src.modules.tasks_mod.domain.enums.task_field_enum import TaskFieldEnum
 from src.modules.tasks_mod.domain.enums.task_limit_enum import TaskLimitEnum
 from src.modules.tasks_mod.domain.exceptions.tasks_exception import TasksException
-from src.modules.tasks_mod.domain.services.due_date import DueDate
 from src.modules.tasks_mod.domain.ports.lists_reader import ListsReader
+from src.modules.tasks_mod.domain.services.due_date import DueDate
 from src.modules.tasks_mod.infrastructure.repositories.tasks_reader_sqlite_repository import (
     TasksReaderSqliteRepository,
 )
@@ -68,11 +67,13 @@ class UpdateTaskService:
         if task_row is None:
             TasksException.not_found_custom(f"no existe la tarea {self._update_task_dto.task_id}")
 
-        return UpdateTaskResultDto.from_primitives({
-            **task_row,
-            TaskFieldEnum.TASK_ID: task_row[TaskFieldEnum.ID],
-            TaskFieldEnum.IS_DONE: int(task_row[TaskFieldEnum.IS_DONE]),
-        })
+        return UpdateTaskResultDto.from_primitives(
+            {
+                **task_row,
+                TaskFieldEnum.TASK_ID: task_row[TaskFieldEnum.ID],
+                TaskFieldEnum.IS_DONE: int(task_row[TaskFieldEnum.IS_DONE]),
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._update_task_dto.task_id <= 0:
@@ -82,18 +83,14 @@ class UpdateTaskService:
         if not self._update_task_dto.title:
             TasksException.bad_request_custom("title es obligatorio")
         if len(self._update_task_dto.title) > TaskLimitEnum.TITLE_MAX_LENGTH:
-            TasksException.bad_request_custom(
-                f"title no puede pasar de {TaskLimitEnum.TITLE_MAX_LENGTH} caracteres"
-            )
+            TasksException.bad_request_custom(f"title no puede pasar de {TaskLimitEnum.TITLE_MAX_LENGTH} caracteres")
         self.__fail_if_wrong_due_date()
 
     def __fail_if_wrong_due_date(self) -> None:
         if self._update_task_dto.due_date is None:
             return
         if not self._due_date.is_valid(self._update_task_dto.due_date):
-            TasksException.bad_request_custom(
-                f"due_date tiene que tener el formato {TaskLimitEnum.DUE_DATE_HINT}"
-            )
+            TasksException.bad_request_custom(f"due_date tiene que tener el formato {TaskLimitEnum.DUE_DATE_HINT}")
 
     def __fail_if_list_not_found(self) -> None:
         # Se comprueba tambien al editar, no solo al crear: este caso de uso puede

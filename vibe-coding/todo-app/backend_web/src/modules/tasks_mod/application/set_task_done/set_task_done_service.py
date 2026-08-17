@@ -49,10 +49,12 @@ class SetTaskDoneService:
         if not is_updated:
             TasksException.not_found_custom(f"no existe la tarea {self._set_task_done_dto.task_id}")
 
-        return SetTaskDoneResultDto.from_primitives({
-            TaskFieldEnum.TASK_ID: self._set_task_done_dto.task_id,
-            TaskFieldEnum.IS_DONE: self._set_task_done_dto.is_done,
-        })
+        return SetTaskDoneResultDto.from_primitives(
+            {
+                TaskFieldEnum.TASK_ID: self._set_task_done_dto.task_id,
+                TaskFieldEnum.IS_DONE: self._set_task_done_dto.is_done,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._set_task_done_dto.task_id <= 0:

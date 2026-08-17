@@ -4,7 +4,6 @@ from src.modules.shared.domain.enums.response_code_enum import ResponseCodeEnum
 from src.modules.shared.domain.enums.response_key_enum import ResponseKeyEnum
 from src.modules.shared.domain.enums.response_message_enum import ResponseMessageEnum
 from src.modules.shared.infrastructure.components.logger.logger import Logger
-
 from src.modules.tasks_mod.application.search_tasks.search_tasks_dto import SearchTasksDto
 from src.modules.tasks_mod.application.search_tasks.search_tasks_service import SearchTasksService
 from src.modules.tasks_mod.domain.exceptions.tasks_exception import TasksException

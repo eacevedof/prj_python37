@@ -56,12 +56,12 @@ class GetListService:
         if list_row is None:
             ListsException.not_found_custom(f"no existe la lista {self._get_list_dto.list_id}")
 
-        return GetListResultDto.from_primitives({
-            **list_row,
-            ListFieldEnum.OPEN_TASKS_COUNT: self._tasks_counter.get_open_tasks_count(
-                self._get_list_dto.list_id
-            ),
-        })
+        return GetListResultDto.from_primitives(
+            {
+                **list_row,
+                ListFieldEnum.OPEN_TASKS_COUNT: self._tasks_counter.get_open_tasks_count(self._get_list_dto.list_id),
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._get_list_dto.list_id <= 0:

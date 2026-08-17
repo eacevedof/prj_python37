@@ -1,0 +1,53 @@
+/* Estilos globales minimos. Sin libreria de CSS a proposito: el ejemplar tiene
+   que poder leerse entero, y una libreria de estilos anade mucho que aprender
+   sin ensenar nada sobre la arquitectura. */
+:root {
+    --text: #1f2328;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --surface: #f3f4f6;
+    --accent: #4f8ef7;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: #fff;
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+}
+
+input,
+button {
+    font: inherit;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text);
+}
+
+input[type="color"] {
+    padding: 0.15rem;
+    width: 2.6rem;
+}
+
+button {
+    cursor: pointer;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+button:hover {
+    filter: brightness(0.95);
+}

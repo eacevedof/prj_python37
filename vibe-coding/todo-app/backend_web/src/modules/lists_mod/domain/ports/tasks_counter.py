@@ -37,5 +37,4 @@ class TasksCounter(Protocol):
          un 500 en vez del error que toca.
     """
 
-    def get_open_tasks_count(self, list_id: int) -> int:
-        ...
+    def get_open_tasks_count(self, list_id: int) -> int: ...

@@ -21,8 +21,8 @@ puerta distinta de la que usa produccion es probar otra cosa.
 
 import sqlite3
 import sys
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 import pytest
 from fastapi.testclient import TestClient
@@ -66,9 +66,7 @@ def sqlite_connection() -> Iterator[sqlite3.Connection]:
 
 
 @pytest.fixture()
-def _app_environment(
-    sqlite_connection: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
-) -> Iterator[None]:
+def _app_environment(sqlite_connection: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     """Deja la app lista para recibir peticiones en un test.
 
     Hace dos cosas:

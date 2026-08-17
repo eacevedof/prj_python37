@@ -44,10 +44,12 @@ class DeleteTaskService:
         if not is_deleted:
             TasksException.not_found_custom(f"no existe la tarea {self._delete_task_dto.task_id}")
 
-        return DeleteTaskResultDto.from_primitives({
-            TaskFieldEnum.TASK_ID: self._delete_task_dto.task_id,
-            TaskFieldEnum.IS_DELETED: True,
-        })
+        return DeleteTaskResultDto.from_primitives(
+            {
+                TaskFieldEnum.TASK_ID: self._delete_task_dto.task_id,
+                TaskFieldEnum.IS_DELETED: True,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._delete_task_dto.task_id <= 0:

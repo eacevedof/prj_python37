@@ -1,0 +1,56 @@
+# DEVELOP - el PoC desplegado para que negocio lo pruebe.
+#
+# Un solo contenedor sirviendo el front compilado y la API.
+#
+# ==========================================================================
+#  ANTES DE USAR ESTE FICHERO, RELLENA LAS VARIABLES
+# ==========================================================================
+# No hay ningun dominio ni ninguna ruta de servidor escritos aqui dentro, y es a
+# proposito: una plantilla con el dominio de otro proyecto cableado se copia tal
+# cual y acaba desplegada con el nombre equivocado.
+#
+# Los valores van en un fichero `.env` JUNTO A ESTE, o en las variables del panel
+# de despliegue:
+#
+#   APP_NAME=mi-poc                                 nombre del contenedor y de la imagen
+#   APP_DOMAIN=develop-mi-poc.ejemplo.com           dominio publico
+#   HOST_STORAGE_PATH=/ruta/absoluta/en/el/servidor/storage
+#
+# HOST_STORAGE_PATH tiene que ser una ruta ABSOLUTA del servidor y tiene que
+# existir antes de arrancar. Ahi viven la base de datos y los logs: es lo unico
+# que sobrevive a un redespliegue.
+#
+# El fichero `.env` de la aplicacion se monta desde ese mismo sitio, y NO se pone
+# en el panel de despliegue: asi la credencial esta en un unico lugar del
+# servidor y no repartida entre una interfaz web y un fichero.
+services:
+  todo-app:
+    image: ${APP_NAME}:develop
+    container_name: cont-dev-${APP_NAME}
+    build:
+      context: ..
+      dockerfile: docker/python/Dockerfile-build
+    restart: unless-stopped
+    environment:
+      TZ: UTC
+    volumes:
+      # Configuracion y estado, desde el host. El codigo NO se monta: va horneado
+      # en la imagen.
+      - ${HOST_STORAGE_PATH}/.env:/app/backend_web/.env
+      - ${HOST_STORAGE_PATH}/storage:/app/backend_web/storage
+    networks: [web]
+    labels:
+      # Enrutado por etiquetas de Traefik. Si tu servidor usa otra cosa (nginx,
+      # Caddy), borra este bloque y publica el puerto 8000.
+      - traefik.enable=true
+      - "traefik.http.routers.${APP_NAME}-develop.rule=Host(`${APP_DOMAIN}`)"
+      - traefik.http.routers.${APP_NAME}-develop.entrypoints=websecure
+      - traefik.http.routers.${APP_NAME}-develop.tls.certresolver=letsencrypt
+      - traefik.http.services.${APP_NAME}-develop.loadbalancer.server.port=8000
+
+networks:
+  # Red del proxy inverso. Tiene que existir ya en el servidor; este compose no
+  # la crea (`external: true`) para no duplicar la red de la infraestructura.
+  web:
+    external: true
+    name: ${PROXY_NETWORK:-web}

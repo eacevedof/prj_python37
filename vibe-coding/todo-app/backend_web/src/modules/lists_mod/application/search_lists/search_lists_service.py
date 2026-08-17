@@ -36,9 +36,9 @@ class SearchListsService:
         self._fail_if_wrong_input()
 
         list_rows = self._lists_reader_sqlite_repository.get_all(self._search_lists_dto.name_contains)
-        return SearchListsResultDto.from_primitives({
-            ListFieldEnum.ITEMS: [self.__get_item_with_counter(list_row) for list_row in list_rows]
-        })
+        return SearchListsResultDto.from_primitives(
+            {ListFieldEnum.ITEMS: [self.__get_item_with_counter(list_row) for list_row in list_rows]}
+        )
 
     def _fail_if_wrong_input(self) -> None:
         # Un listado sin filtros no tiene nada que validar. El metodo se queda
@@ -54,7 +54,5 @@ class SearchListsService:
         # codigo complicado que nadie sabe por que existe.
         return {
             **list_row,
-            ListFieldEnum.OPEN_TASKS_COUNT: self._tasks_counter.get_open_tasks_count(
-                int(list_row[ListFieldEnum.ID])
-            ),
+            ListFieldEnum.OPEN_TASKS_COUNT: self._tasks_counter.get_open_tasks_count(int(list_row[ListFieldEnum.ID])),
         }

@@ -16,5 +16,4 @@ class ListsReader(Protocol):
     Lo cumple `ListsReaderAdapter`, en el modulo de listas.
     """
 
-    def has_list(self, list_id: int) -> bool:
-        ...
+    def has_list(self, list_id: int) -> bool: ...

@@ -45,11 +45,18 @@ db-fresh: ## BORRA la base de datos local. El siguiente arranque la reconstruye 
 	rm -f backend_web/storage/database/*.db backend_web/storage/database/*.db-wal backend_web/storage/database/*.db-shm
 	@echo "base de datos borrada; arranca la app para recrearla"
 
-up: ## arranca la API en un contenedor (compose local)
+up: ## arranca la API en un contenedor (solo API; el front va aparte con front-dev)
 	$(DC) up --build
 
 down: ## para el contenedor
 	$(DC) down
+
+up-prod-local: ## construye y arranca la imagen COMPLETA (front + API en un contenedor) en el 8080
+	docker build -f docker/python/Dockerfile-build -t todo-app:local .
+	docker run --rm -p 8080:8000 \
+		-v "$(PWD)/backend_web/.env:/app/backend_web/.env" \
+		-v "$(PWD)/backend_web/storage:/app/backend_web/storage" \
+		--name todo-app-prod-local todo-app:local
 
 front-install: ## instala las dependencias del front
 	cd frontend_web && npm install

@@ -10,8 +10,9 @@ y no necesitan base de datos.
 """
 
 import ast
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import NamedTuple
 
 
 class SourceFile(NamedTuple):
@@ -69,12 +70,20 @@ def get_expected_class_name(file_stem: str) -> str:
     return "".join(part[:1].upper() + part[1:] for part in file_stem.split("_"))
 
 
-def get_offenders_message(title: str, offenders: list[str], why: str) -> str:
-    """Mensaje de fallo con formato uniforme.
+def assert_no_offenders(title: str, offenders: list[str], why: str) -> None:
+    """Falla con un mensaje uniforme si hay infractores.
 
     Los tests de convencion los va a leer alguien que quiza no sabe programar, asi
-    que el mensaje tiene que decir tres cosas: que regla se ha roto, donde, y por
-    que existe la regla.
+    que el mensaje tiene que decir tres cosas: QUE regla se ha roto, DONDE, y POR
+    QUE existe esa regla.
+
+    `__tracebackhide__` le dice a pytest que no muestre el interior de esta
+    funcion al fallar. Sin ella, antes del mensaje aparecerian veinte lineas del
+    codigo del test, que a quien tiene que arreglar el problema no le sirven de
+    nada y le hacen creer que el error esta ahi.
     """
+    __tracebackhide__ = True
+    if not offenders:
+        return
     listado = "\n".join(f"  - {offender}" for offender in offenders)
-    return f"\n{title}\n\n{listado}\n\nPOR QUE: {why}\n"
+    raise AssertionError(f"\n\n{title}\n\n{listado}\n\nPOR QUE: {why}\n")

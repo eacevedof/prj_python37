@@ -1,15 +1,14 @@
 from typing import Self, final
 
 from src.modules.lists_mod.infrastructure.adapters.lists_reader_adapter import ListsReaderAdapter
-
 from src.modules.tasks_mod.application.create_task.create_task_dto import CreateTaskDto
 from src.modules.tasks_mod.application.create_task.create_task_result_dto import CreateTaskResultDto
 from src.modules.tasks_mod.domain.enums.task_done_enum import TaskDoneEnum
 from src.modules.tasks_mod.domain.enums.task_field_enum import TaskFieldEnum
 from src.modules.tasks_mod.domain.enums.task_limit_enum import TaskLimitEnum
 from src.modules.tasks_mod.domain.exceptions.tasks_exception import TasksException
-from src.modules.tasks_mod.domain.services.due_date import DueDate
 from src.modules.tasks_mod.domain.ports.lists_reader import ListsReader
+from src.modules.tasks_mod.domain.services.due_date import DueDate
 from src.modules.tasks_mod.infrastructure.repositories.tasks_writer_sqlite_repository import (
     TasksWriterSqliteRepository,
 )
@@ -71,15 +70,17 @@ class CreateTaskService:
             self._create_task_dto.position,
         )
 
-        return CreateTaskResultDto.from_primitives({
-            TaskFieldEnum.TASK_ID: new_task_id,
-            TaskFieldEnum.ID_LIST: self._create_task_dto.id_list,
-            TaskFieldEnum.TITLE: self._create_task_dto.title,
-            TaskFieldEnum.DESCRIPTION: self._create_task_dto.description,
-            TaskFieldEnum.IS_DONE: TaskDoneEnum.PENDING,
-            TaskFieldEnum.DUE_DATE: self._create_task_dto.due_date,
-            TaskFieldEnum.POSITION: self._create_task_dto.position,
-        })
+        return CreateTaskResultDto.from_primitives(
+            {
+                TaskFieldEnum.TASK_ID: new_task_id,
+                TaskFieldEnum.ID_LIST: self._create_task_dto.id_list,
+                TaskFieldEnum.TITLE: self._create_task_dto.title,
+                TaskFieldEnum.DESCRIPTION: self._create_task_dto.description,
+                TaskFieldEnum.IS_DONE: TaskDoneEnum.PENDING,
+                TaskFieldEnum.DUE_DATE: self._create_task_dto.due_date,
+                TaskFieldEnum.POSITION: self._create_task_dto.position,
+            }
+        )
 
     def _fail_if_wrong_input(self) -> None:
         if self._create_task_dto.id_list <= 0:
@@ -87,18 +88,14 @@ class CreateTaskService:
         if not self._create_task_dto.title:
             TasksException.bad_request_custom("title es obligatorio")
         if len(self._create_task_dto.title) > TaskLimitEnum.TITLE_MAX_LENGTH:
-            TasksException.bad_request_custom(
-                f"title no puede pasar de {TaskLimitEnum.TITLE_MAX_LENGTH} caracteres"
-            )
+            TasksException.bad_request_custom(f"title no puede pasar de {TaskLimitEnum.TITLE_MAX_LENGTH} caracteres")
         self.__fail_if_wrong_due_date()
 
     def __fail_if_wrong_due_date(self) -> None:
         if self._create_task_dto.due_date is None:
             return
         if not self._due_date.is_valid(self._create_task_dto.due_date):
-            TasksException.bad_request_custom(
-                f"due_date tiene que tener el formato {TaskLimitEnum.DUE_DATE_HINT}"
-            )
+            TasksException.bad_request_custom(f"due_date tiene que tener el formato {TaskLimitEnum.DUE_DATE_HINT}")
 
     def __fail_if_list_not_found(self) -> None:
         if not self._lists_reader.has_list(self._create_task_dto.id_list):

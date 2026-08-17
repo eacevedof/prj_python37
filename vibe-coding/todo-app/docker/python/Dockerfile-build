@@ -1,0 +1,65 @@
+# Imagen COMPLETA: compila el front y lo sirve junto con la API, en un solo
+# contenedor. Se usa en develop y en produccion, y tambien se puede levantar en
+# local (`make up-prod-local`) para ver exactamente lo que se va a desplegar.
+#
+# UN SOLO CONTENEDOR, y no uno para el front y otro para la API, por dos razones:
+#   1. Mismo origen: el navegador pide `/api/...` al mismo sitio del que descargo
+#      la pagina. Sin CORS que configurar y sin dominios que cuadrar.
+#   2. Un PoC se despliega y se tira. Cuantas menos piezas, menos cosas pueden
+#      estar mal cuando alguien de negocio lo esta esperando.
+#
+# El codigo va HORNEADO dentro de la imagen, no montado. Asi la imagen es el
+# artefacto completo: lo que probaste es exactamente lo que se despliega.
+
+# ---------------------------------------------------------------------------
+# ETAPA 1 - compilar el front
+# ---------------------------------------------------------------------------
+# Esta etapa se descarta al terminar: node, node_modules y el codigo fuente de
+# TypeScript NO acaban en la imagen final. Solo viaja la carpeta `dist`, que son
+# tres ficheros estaticos.
+FROM node:22-alpine AS frontend-build
+
+WORKDIR /build
+
+# Primero las dependencias (se guardan en cache), luego el codigo.
+COPY frontend_web/package.json frontend_web/package-lock.json* ./
+RUN npm install --no-audit --no-fund
+
+COPY frontend_web/ ./
+# `npm run build` incluye `vue-tsc --noEmit`: si hay un error de tipos, la
+# imagen NO se construye. Es el guardarrail del front, igual que `make check` lo
+# es del backend.
+RUN npm run build
+
+# ---------------------------------------------------------------------------
+# ETAPA 2 - la imagen que se despliega
+# ---------------------------------------------------------------------------
+FROM python:3.12-slim
+
+# La MISMA carpeta de trabajo que en el Dockerfile de desarrollo, y la misma
+# estructura que el repositorio. No la cambies en uno sin cambiarla en el otro.
+WORKDIR /app
+
+COPY backend_web/requirements.txt ./backend_web/requirements.txt
+RUN pip install --no-cache-dir -r backend_web/requirements.txt
+
+COPY backend_web/ ./backend_web/
+
+# El front compilado, en la misma ruta relativa que tiene en el repositorio
+# (`frontend_web/dist`). Por eso `_get_frontend_dist_path()` de main.py funciona
+# igual en tu maquina y aqui dentro, sin ninguna variable de entorno de por medio.
+COPY --from=frontend-build /build/dist ./frontend_web/dist
+
+# La base de datos y los logs viven aqui. En develop y produccion esta carpeta se
+# monta desde el host: si no, los datos desaparecen al recrear el contenedor.
+RUN mkdir -p /app/backend_web/storage/database /app/backend_web/storage/logs
+
+WORKDIR /app/backend_web
+
+EXPOSE 8000
+
+# UN solo worker, a proposito. SQLite es un fichero: varios procesos escribiendo
+# a la vez funcionan (hay WAL y espera activa configurados), pero es una
+# complicacion que un PoC no necesita. Si algun dia hace falta mas capacidad, lo
+# que toca no es subir workers: es cambiar de motor de base de datos.
+CMD ["uvicorn", "public.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
