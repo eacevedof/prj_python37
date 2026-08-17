@@ -42,8 +42,18 @@ Es lo que más se olvida y lo que peor queda en una demo.
 
 ## 4 · Configuración
 
-- [ ] **`API_KEY` cambiada.** Si en el servidor pone `change-me-local-only`, es
-      como no tener ninguna.
+- [ ] **`API_KEY` cambiada.** La de la plantilla empieza por
+      `changethisinproduction-`: si eso llega a un servidor, es como no tener
+      ninguna. Compruébalo de un vistazo:
+      ```bash
+      grep -l "changethisinproduction" backend_web/.env frontend_web/.env.local 2>/dev/null
+      ```
+      Si no imprime nada, está cambiada. Si imprime un fichero, ahí sigue la de
+      la plantilla.
+      Y para generar una de verdad:
+      ```bash
+      python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+      ```
 - [ ] **Los dos `.env.example` al día**, sin valores reales:
       `backend_web/.env.example` (lo lee la aplicación) y `docker/.env.example`
       (lo lee docker compose en develop y prod).
