@@ -13,6 +13,10 @@ cp backend_web/.env.example backend_web/.env
 make local                              # API en http://127.0.0.1:6001
 ```
 
+> El `.env` **tiene que existir antes** de levantar cualquier contenedor: si no,
+> Docker crea una carpeta con ese nombre y la API responde 401 a todo.
+> `make check-env` lo comprueba y te avisa.
+
 En otra terminal, el front:
 
 ```bash
@@ -44,7 +48,7 @@ make up-deploy-local                    # http://localhost:6003
 make check
 ```
 
-ruff + mypy en modo estricto + 50 tests. **Si está verde, el patrón se respetó.**
+ruff + mypy en modo estricto + **62 tests** (17 de ellos comprobaciones de convención). **Si está verde, el patrón se respetó.**
 Lo que mide cada cosa: `../vibe-specs/50-guardarrailes.md`.
 
 ## Qué hace
@@ -54,7 +58,9 @@ Lo que mide cada cosa: `../vibe-specs/50-guardarrailes.md`.
 | Listas | crear, listar, modificar, borrar. Nombre único entre las vivas |
 | Tareas | crear, listar, modificar, marcar hecha, borrar. Pertenecen a una lista |
 | Reglas | una tarea no puede existir sin lista · no se puede borrar una lista con tareas sin terminar |
-| Auth | `X-Api-Key` contra el `.env`. Sin usuarios |
+| Auth | `X-Api-Key` contra `backend_web/.env`. Sin usuarios |
+| Entornos | `local` · `develop` · `production` · variables con prefijo `APP_` |
+| Puertos | 6001 API · 6002 front · 6003 despliegue local · 6004 efímero |
 | Datos | SQLite en `backend_web/storage/database/`, borrado lógico |
 
 ## Endpoints
@@ -104,6 +110,7 @@ make check             ruff + mypy + tests
 make format            arregla el formato
 make test              solo los tests
 make db-fresh          borra la base de datos local
+make check-env         comprueba que backend_web/.env existe y es un fichero
 make front-local       arranca el front en local
 make front-build       compila el front comprobando tipos
 make up-local          la API en un contenedor
