@@ -207,14 +207,21 @@ Esto hay que leerlo entero.
 que descarga el navegador.** Cualquiera puede abrirlo y leerlo. Una credencial en
 un front **nunca es un secreto**.
 
-Cómo está resuelto aquí:
+Cómo está resuelto aquí: **hay UNA sola credencial, en `backend_web/.env`**, y el
+front la recibe del mismo sitio en los dos entornos (`window.__APP_CONFIG__`):
 
-- **En desarrollo** (`npm run dev`): se usa `VITE_API_KEY` de tu `.env.local`. Es
-  la clave local, no sale de tu máquina, no pasa nada.
-- **En el contenedor**: el backend **inyecta** la credencial al servir la página,
-  en `window.__APP_CONFIG__`. El JavaScript compilado no contiene ninguna
-  credencial, así que el mismo artefacto vale para cualquier entorno y cambiarla es
-  editar el `.env` y reiniciar.
+- **En local**: un plugin de `vite.config.ts` lee `APP_API_KEY` del `.env` del
+  backend y la inyecta en la página. **El front no necesita ningún `.env`.**
+- **En el contenedor**: lo mismo, pero lo inyecta el backend al servir la página.
+
+Ese plugin lleva `apply: "serve"`, así que **no se ejecuta al compilar**: el
+artefacto que se despliega no contiene ninguna credencial.
+
+> **Por qué el front no tiene su propia copia de la clave.** La tenía, y era un
+> error mío: dos ficheros que hay que mantener sincronizados a mano, y el día que
+> no coinciden el síntoma es un `401 Invalid or missing X-Api-Key` que parece un
+> fallo de código y es de configuración. Y para acabar de liarlo, Vite solo lee
+> los `.env` **al arrancar**: cambiarlos con el servidor levantado no hace nada.
 
 **Lo que esto NO arregla:** quien abra la página puede leer la credencial mirando
 el código fuente. Eso es inevitable en cualquier aplicación de navegador sin
@@ -232,11 +239,23 @@ login.
 El navegador pide `/api/...` al mismo sitio del que descargó la página. En los dos
 entornos:
 
-- **desarrollo** — el proxy de `vite.config.ts` manda `/api` al puerto 6001
+- **local** — el proxy de `vite.config.ts` manda `/api` al puerto 6001
 - **contenedor** — la misma aplicación de Python sirve la página y la API
 
 Consecuencia práctica: **el backend no necesita configurar CORS en ningún sitio**,
 y en el código del front no hay ningún dominio escrito.
+
+> ⚠️ **No pongas una URL en `VITE_APP_API_BASE_URL`.** Es el error que rompe esto,
+> y el síntoma despista mucho.
+>
+> Si apuntas el front a `http://localhost:6001` (o a `0.0.0.0`), las peticiones
+> pasan a ser de **otro origen** — otro puerto ya cuenta. Entonces el navegador
+> manda antes una petición `OPTIONS` de comprobación, la API responde **405**
+> porque no tiene CORS, y la llamada real ni llega a enviarse.
+>
+> Lo que ves puede ser un error de CORS en la consola, o un
+> `Invalid or missing X-Api-Key` que parece que la credencial está mal cuando el
+> problema es el origen. **El valor correcto es dejarlo vacío.**
 
 ---
 
