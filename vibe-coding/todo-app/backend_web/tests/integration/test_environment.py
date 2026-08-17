@@ -31,26 +31,44 @@ def test_en_production_nunca_hay_debug_aunque_la_variable_diga_que_si(
     assert _get_reader().is_debug() is False
 
 
-def test_en_local_siempre_hay_debug_aunque_la_variable_diga_que_no(
+def test_en_local_el_debug_viene_encendido_si_no_dices_nada(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # Si estas desarrollando, quieres ver el error entero. No se puede apagar.
+    # Si estas desarrollando, lo normal es querer ver el error entero.
     monkeypatch.setenv("APP_ENV", "local")
-    monkeypatch.setenv("APP_DEBUG", "0")
+    monkeypatch.delenv("APP_DEBUG", raising=False)
 
     assert _get_reader().is_debug() is True
 
 
-def test_en_develop_el_debug_depende_de_la_variable(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_en_local_el_debug_SI_se_puede_apagar(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Se apaga definiendo la variable a 0. Interesa, por ejemplo, para comprobar
+    # que lo que ve un cliente cuando algo revienta es el mensaje generico y no la
+    # traza.
+    monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.setenv("APP_DEBUG", "0")
+
+    assert _get_reader().is_debug() is False
+
+
+def test_en_develop_el_debug_viene_apagado_si_no_dices_nada(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Esta es LA diferencia entre local y develop: el valor por defecto cuando la
+    # variable no esta. Si la defines, los dos hacen lo que digas.
+    monkeypatch.setenv("APP_ENV", "develop")
+    monkeypatch.delenv("APP_DEBUG", raising=False)
+
+    assert _get_reader().is_debug() is False
+
+
+def test_en_develop_el_debug_se_enciende_con_la_variable(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("APP_ENV", "develop")
 
     monkeypatch.setenv("APP_DEBUG", "1")
     assert _get_reader().is_debug() is True
 
     monkeypatch.setenv("APP_DEBUG", "0")
-    assert _get_reader().is_debug() is False
-
-    monkeypatch.delenv("APP_DEBUG", raising=False)
     assert _get_reader().is_debug() is False
 
 

@@ -58,22 +58,30 @@ class EnvironmentReaderRawRepository:
         return self.get_environment() == EnvironmentEnum.PRODUCTION.value
 
     def is_debug(self) -> bool:
-        """El modo depuracion depende del ENTORNO, no solo de la variable.
+        """El modo depuracion depende del ENTORNO y de la variable, en ese orden.
 
             production   NUNCA. Da igual lo que ponga APP_DEBUG.
-            develop      solo si APP_DEBUG viene a 1.
-            local        siempre.
+            develop      apagado por defecto; se enciende con APP_DEBUG=1.
+            local        encendido por defecto; se apaga con APP_DEBUG=0.
 
-        La regla vive aqui, en codigo, y no en la disciplina de rellenar bien un
-        `.env`. Un `APP_DEBUG=1` olvidado en produccion es de las cosas que pasan
-        de verdad, y las consecuencias son trazas y datos internos en respuestas
-        que ve cualquiera. Que no dependa de que alguien se acuerde.
+        Lo que cambia entre local y develop es **el valor por defecto cuando la
+        variable no esta definida**. Si la defines, en los dos se respeta lo que
+        digas. Production es el unico que no la mira.
 
-        En local va siempre encendido y sin poder apagarlo: si estas
-        desarrollando, quieres ver el error entero.
+        Por que production no la mira: un `APP_DEBUG=1` olvidado en un `.env` de
+        produccion es de las cosas que pasan de verdad, y expondria trazas y datos
+        internos a cualquiera. La regla vive aqui, en codigo, para que no dependa
+        de que alguien se acuerde.
+
+        Por que en local viene encendido: si estas desarrollando, lo normal es
+        querer ver el error entero. Pero se puede apagar, y a veces interesa —
+        por ejemplo para comprobar que lo que ve un cliente cuando algo revienta
+        es el mensaje generico y no la traza.
         """
         if self.is_production():
             return False
-        if self.is_local():
-            return True
-        return get(EnvVarEnum.APP_DEBUG, "") in BooleanInputEnum.TRUTHY_VALUES
+        raw_app_debug = get(EnvVarEnum.APP_DEBUG, "")
+        if not raw_app_debug:
+            # Sin definir: cada entorno tiene su valor por defecto.
+            return self.is_local()
+        return raw_app_debug in BooleanInputEnum.TRUTHY_VALUES
