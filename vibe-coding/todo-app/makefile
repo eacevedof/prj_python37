@@ -9,6 +9,11 @@
 PY := .venv/bin/python
 DC := docker compose -f docker/docker-compose-local.yml
 
+# Credencial del contenedor efimero. No es un secreto y no hace falta que lo sea:
+# ese contenedor no guarda nada y muere al pararlo.
+EPHEMERAL_API_KEY := ephemeral-local-key
+EPHEMERAL_PORT := 8081
+
 help: ## muestra esta ayuda
 	@echo "usage: make [target]"
 	@echo
@@ -50,6 +55,24 @@ up-local: ## arranca la API en un contenedor (solo API; el front va aparte con f
 
 down-local: ## para el contenedor local
 	$(DC) down
+
+up-ephemeral: ## levanta el to-do ENTERO en un contenedor EFIMERO: no pide nada y no deja nada (Ctrl-C y desaparece)
+	@echo "construyendo la imagen..."
+	@docker build -q -f docker/Dockerfile-deploy -t todo-app:ephemeral . > /dev/null
+	@echo
+	@echo "  to-do en  ->  http://localhost:$(EPHEMERAL_PORT)"
+	@echo "  apikey    ->  $(EPHEMERAL_API_KEY)"
+	@echo
+	@echo "  curl -H 'X-Api-Key: $(EPHEMERAL_API_KEY)' localhost:$(EPHEMERAL_PORT)/api/lists"
+	@echo
+	@echo "  Ctrl-C para pararlo. No queda contenedor, ni base de datos, ni logs."
+	@echo
+	docker run --rm -it \
+		-p $(EPHEMERAL_PORT):8000 \
+		-e APP_ENV=local \
+		-e API_KEY=$(EPHEMERAL_API_KEY) \
+		--name cont-local-todo-app-ephemeral \
+		todo-app:ephemeral
 
 up-deploy-local: ## construye la imagen de DESPLIEGUE (front + API juntos) y la arranca en local, en el 8080
 	docker build -f docker/Dockerfile-deploy -t todo-app:local .

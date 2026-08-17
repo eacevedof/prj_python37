@@ -1,0 +1,45 @@
+# Qué NO entra en la imagen de Docker.
+#
+# Funciona como `.gitignore` pero para `docker build`, y hace falta aunque tengas
+# el `.gitignore` bien: son dos cosas independientes. `COPY backend_web/ .`
+# copia lo que hay EN TU DISCO, esté o no en git.
+#
+# Sin este fichero, en la imagen acaban:
+#   - tu `.env` CON LA CREDENCIAL, que viajaría a cualquier sitio donde subas la
+#     imagen. Es el motivo principal de que exista este fichero.
+#   - tu base de datos local con tus datos de prueba, que además tapa la que
+#     debería crearse limpia al arrancar
+#   - el entorno virtual y node_modules: cientos de MB, y encima compilados para
+#     TU sistema operativo, no para el de la imagen
+
+# ---- SECRETOS ----
+.env
+**/.env
+**/.env.local
+# Los `.env.example` SÍ entran: son la plantilla, no llevan valores reales.
+!**/.env.example
+
+# ---- ESTADO EN TIEMPO DE EJECUCION ----
+# La base de datos y los logs se crean dentro del contenedor (o llegan por
+# bind-mount desde el servidor). Lo que haya en tu disco no pinta nada ahí.
+backend_web/storage/
+
+# ---- DEPENDENCIAS: se instalan dentro, no se copian ----
+.venv/
+.venv-win/
+**/node_modules/
+frontend_web/dist/
+
+# ---- CACHES Y BYTECODE ----
+**/__pycache__/
+**/*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- COSAS QUE NO SE EJECUTAN EN EL SERVIDOR ----
+.git/
+.gitignore
+.idea/
+.vscode/
+*.md

@@ -141,6 +141,16 @@ estarán cuando se despliegue.
 make up-deploy-local      # http://localhost:8080
 ```
 
+Y si lo que quieres es enseñárselo a alguien sin que tenga que instalar nada:
+
+```bash
+make up-ephemeral         # http://localhost:8081
+```
+
+Ese no pide `.env` ni deja nada en disco: cada arranque empieza de cero. Va bien
+para una demo y para comprobar que el PoC arranca **de verdad** desde cero, sin
+depender de un fichero que solo tienes tú.
+
 Esto construye la imagen de verdad: compila el front y lo sirve junto con la API
 en **un solo contenedor**. Es exactamente lo que se despliega. Si aquí funciona,
 en el servidor funciona.

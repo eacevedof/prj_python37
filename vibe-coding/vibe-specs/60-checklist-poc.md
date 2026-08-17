@@ -24,6 +24,8 @@ que se descubre que falla lo básico.
 - [ ] **Recargar la página en una ruta interna funciona** (F5 estando en
       `/algo/3/detalle`).
 - [ ] Los datos siguen ahí después de `docker stop` y volver a arrancar.
+- [ ] `make up-ephemeral` arranca **desde cero**, sin tu `.env` y sin tus datos.
+      Si eso funciona, el PoC no depende de nada que solo tengas tú.
 
 ## 3 · Los errores se ven
 
@@ -47,6 +49,13 @@ Es lo que más se olvida y lo que peor queda en una demo.
       (lo lee docker compose en develop y prod).
 - [ ] Ningún `.env` está en git: `git status --ignored | grep .env`
 - [ ] Ninguna credencial ni URL de servicio escrita dentro del código.
+- [ ] **Tu `.env` NO está dentro de la imagen.** Compruébalo, no lo supongas:
+      ```bash
+      docker run --rm --entrypoint sh mi-poc:develop -c 'ls -la /app/backend_web/.env'
+      ```
+      Tiene que decir *No such file*. Si aparece, te falta el `.dockerignore` o
+      lo has tocado: esa imagen lleva tu credencial a cualquier sitio donde la
+      subas.
 
 ## 5 · Que alguien más pueda arrancarlo
 

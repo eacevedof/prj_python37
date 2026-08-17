@@ -20,8 +20,19 @@ make front-install                      # una vez
 make front-local                        # http://localhost:5173
 ```
 
-Y para ver el conjunto tal como se despliega — **un solo contenedor sirviendo el
-front y la API**:
+### O sin instalar nada: un contenedor efímero
+
+Si solo quieres **verlo funcionando**, esto no pide `.env`, ni venv, ni npm, y no
+deja nada en tu disco:
+
+```bash
+make up-ephemeral                       # http://localhost:8081
+```
+
+Ctrl-C y desaparece: ni contenedor, ni base de datos, ni logs. Cada arranque
+empieza de cero.
+
+Y para verlo **con tu configuración y tus datos**, tal como se despliega:
 
 ```bash
 make up-deploy-local                    # http://localhost:8080
@@ -96,7 +107,8 @@ make db-fresh          borra la base de datos local
 make front-local       arranca el front en local
 make front-build       compila el front comprobando tipos
 make up-local          la API en un contenedor
-make up-deploy-local   la imagen de despliegue (front + API) en local
+make up-ephemeral      todo junto en un contenedor EFIMERO (no deja nada)
+make up-deploy-local   la imagen de despliegue, con tu .env y tus datos
 ```
 
 ## Avisos
