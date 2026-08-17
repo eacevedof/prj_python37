@@ -70,7 +70,6 @@ class UpdateTaskService:
         return UpdateTaskResultDto.from_primitives(
             {
                 **task_row,
-                TaskFieldEnum.TASK_ID: task_row[TaskFieldEnum.ID],
                 TaskFieldEnum.IS_DONE: int(task_row[TaskFieldEnum.IS_DONE]),
             }
         )

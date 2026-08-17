@@ -102,10 +102,15 @@ def test_los_metodos_que_se_llaman_existen_en_el_colaborador() -> None:
 
                 available = _get_all_methods(collaborator_class, methods_by_class)
                 if called_method not in available:
+                    # Se listan los metodos que SI existen: es el dato que hace
+                    # falta para arreglarlo, y ahorra ir a abrir el otro fichero.
+                    # Casi siempre el correcto esta ahi delante.
+                    public_methods = sorted(name for name in available if not name.startswith("__"))
                     offenders.append(
                         f"{source_file.relative_path}: {class_node.name} llama a "
                         f"self.{collaborator_name}.{called_method}(), que no existe en "
-                        f"{collaborator_class}"
+                        f"{collaborator_class}.\n"
+                        f"      {collaborator_class} tiene: {', '.join(public_methods) or '(ningun metodo)'}"
                     )
 
     assert_no_offenders(

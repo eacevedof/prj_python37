@@ -17,7 +17,7 @@ class UpdateListResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            list_id=int(primitives.get(ListFieldEnum.LIST_ID, 0)),
+            list_id=int(primitives.get(ListFieldEnum.ID, 0)),
             name=str(primitives.get(ListFieldEnum.NAME, "")),
             color=primitives.get(ListFieldEnum.COLOR),
             position=int(primitives.get(ListFieldEnum.POSITION, 0)),

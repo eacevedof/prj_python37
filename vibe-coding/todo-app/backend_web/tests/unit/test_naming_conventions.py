@@ -20,6 +20,7 @@ _REQUIRED_SUFFIX_BY_FOLDER = {
     "infrastructure/runners/": "_runner.py",
     "domain/enums/": "_enum.py",
     "domain/exceptions/": "_exception.py",
+    "domain/entities/": "_entity.py",
 }
 
 # De donde saca los datos un repositorio. El segmento va en el NOMBRE, siempre:

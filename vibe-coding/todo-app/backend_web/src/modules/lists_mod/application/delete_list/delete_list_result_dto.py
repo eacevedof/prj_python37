@@ -20,7 +20,7 @@ class DeleteListResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            list_id=int(primitives.get(ListFieldEnum.LIST_ID, 0)),
+            list_id=int(primitives.get(ListFieldEnum.ID, 0)),
             is_deleted=bool(primitives.get(ListFieldEnum.IS_DELETED, False)),
         )
 

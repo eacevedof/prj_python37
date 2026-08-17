@@ -71,7 +71,7 @@ class CreateListService:
 
         return CreateListResultDto.from_primitives(
             {
-                ListFieldEnum.LIST_ID: new_list_id,
+                ListFieldEnum.ID: new_list_id,
                 ListFieldEnum.NAME: self._create_list_dto.name,
                 ListFieldEnum.COLOR: self._create_list_dto.color,
                 ListFieldEnum.POSITION: self._create_list_dto.position,

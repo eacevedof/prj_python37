@@ -22,8 +22,8 @@ Hace cuatro cosas, en este orden. Si una falla, para.
 
 ## Los tests de convención
 
-Ocho tests que no comprueban qué hace el código, sino **cómo está escrito**.
-Existen porque nadie va a revisar tu diff: son el revisor.
+**5 ficheros, 16 comprobaciones.** No miran qué hace el código, sino **cómo
+está escrito**. Existen porque nadie va a revisar tu diff: son el revisor.
 
 Leen el código sin ejecutarlo, así que tardan milisegundos, y cuando fallan te
 dicen los tres datos que necesitas: **qué regla**, **dónde**, y **por qué existe

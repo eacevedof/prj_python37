@@ -15,7 +15,7 @@ class SetTaskDoneResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            task_id=int(primitives.get(TaskFieldEnum.TASK_ID, 0)),
+            task_id=int(primitives.get(TaskFieldEnum.ID, 0)),
             is_done=bool(primitives.get(TaskFieldEnum.IS_DONE, False)),
         )
 

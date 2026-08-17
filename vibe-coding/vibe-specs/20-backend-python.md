@@ -38,11 +38,44 @@ backend_web/
 | `infrastructure/adapters/` | `*_adapter.py` | `lists_reader_adapter.py` |
 | `domain/enums/` | `*_enum.py` | `task_field_enum.py` |
 | `domain/exceptions/` | `*_exception.py` | `tasks_exception.py` |
+| `domain/entities/` | `*_entity.py` | `task_entity.py` |
 | `domain/ports/` | sin sufijo | `lists_reader.py` |
 | `domain/services/` | sin sufijo | `due_date.py` |
 
 **Un fichero, una clase, y el fichero se llama como la clase** en snake_case:
 `CreateTaskService` → `create_task_service.py`.
+
+### Singular o plural
+
+Es lo que más se equivoca, porque en la tabla de arriba aparecen mezclados. La
+regla, para una entidad `task`:
+
+| Va en **PLURAL** | Va en **SINGULAR** |
+|---|---|
+| el módulo → `tasks_mod` | los enums → `task_field_enum.py`, `TaskFieldEnum` |
+| la excepción → `tasks_exception.py`, `TasksException` | la entidad → `task_entity.py`, `TaskEntity` |
+| los repositorios → `tasks_reader_sqlite_repository.py` | los servicios de dominio → `due_date.py`, `DueDate` |
+| la tabla → `app_tasks` | |
+| el caso de uso de una colección → `search_tasks` | el de un elemento → `get_task`, `create_task` |
+
+La idea de fondo: **plural cuando la pieza gestiona el conjunto** (un repositorio
+consulta la tabla entera, el módulo agrupa todo lo de esa entidad), **singular
+cuando describe uno**.
+
+Cuidado con los plurales irregulares: `category` → `categories`, no `categorys`.
+
+### Carpetas que puede que no necesites
+
+**Crea solo las carpetas que vayas a usar.** No hay que dejar `domain/ports/`
+ni `infrastructure/adapters/` vacías "por si acaso":
+
+- **`ports/` y `adapters/`** solo si tu módulo habla con otro. Un módulo
+  independiente no los tiene.
+- **`entities/`** solo si necesitas una forma de dato con nombre propio. En un
+  CRUD normal no hace falta: los DTO ya describen lo que entra y lo que sale, y
+  el ejemplar no usa ninguna en el backend por eso. Aparece en el árbol porque
+  existe la convención, no porque haya que crearla.
+- **`services/`** solo si una regla la comparten dos casos de uso.
 
 **El nombre de un repositorio dice de dónde salen los datos**:
 `sqlite`, `api`, `file`, `raw`, `memory`, `http`, `cdn`, `s3`, `redis`. Así sabes
@@ -77,6 +110,12 @@ class CreateTaskDto:
   campo nuevo en silencio.
 - `from_primitives` **convierte, no valida**. Validar es decidir, y decidir es del
   service. Aquí solo se pasa de "lo que llegó por HTTP" a "tipos de Python".
+
+  > **Dónde está la frontera**, que no siempre es obvia: si la operación tiene
+  > **una sola respuesta posible** y nunca produce un error, es convertir
+  > (`.strip()`, `int(...)`, cadena vacía → `None`). Si la operación puede
+  > responder *"esto no vale"*, es validar, y va al service. Por eso
+  > `due_date or None` va en el DTO y "¿es una fecha real?" va en el service.
 - El `or 0` cubre que llegue `None` o vacío: `int(None)` reventaría con un error
   que no dice nada.
 - **Solo primitivos.** Un DTO no contiene otro DTO ni una lista de DTOs.
@@ -256,8 +295,23 @@ class TaskDoneEnum(IntEnum):  # valores con identidad: se comparan, se recorren
     DONE = 1
 ```
 
-Con `(str, Enum)` o `IntEnum`, **usa siempre `.value`** al sacar el valor, y
-anota el tipo donde lo guardes.
+**Cuándo hace falta `.value`.** Un `IntEnum` ES un entero y un `(str, Enum)` ES
+una cadena, así que en muchos sitios funciona sin `.value`: pasarlo como parámetro
+de una consulta, o compararlo con `==`, funciona igual.
+
+Hace falta escribirlo cuando el valor **sale del código hacia fuera** o cuando lo
+**guardas en una variable**, y ahí conviene anotar el tipo:
+
+```python
+# Sale hacia fuera: sin .value, en el JSON aparecería "AuthEnum.APIKEY_HEADER"
+request.headers.get(AuthEnum.APIKEY_HEADER.value, "")
+
+# Se guarda: sin la anotación, algunos editores infieren mal el tipo de `.value`
+app_version: str = AppVersionEnum.CURRENT.value
+
+# Aquí NO hace falta: IntEnum ya es int
+cursor.execute(sql, (TaskDoneEnum.PENDING, task_id))
+```
 
 ## Añadir un endpoint
 

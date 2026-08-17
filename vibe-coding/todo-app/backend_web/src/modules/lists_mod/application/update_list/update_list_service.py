@@ -56,7 +56,7 @@ class UpdateListService:
 
         return UpdateListResultDto.from_primitives(
             {
-                ListFieldEnum.LIST_ID: self._update_list_dto.list_id,
+                ListFieldEnum.ID: self._update_list_dto.list_id,
                 ListFieldEnum.NAME: self._update_list_dto.name,
                 ListFieldEnum.COLOR: self._update_list_dto.color,
                 ListFieldEnum.POSITION: self._update_list_dto.position,

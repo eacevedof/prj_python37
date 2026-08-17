@@ -56,7 +56,7 @@ class DeleteListService:
 
         return DeleteListResultDto.from_primitives(
             {
-                ListFieldEnum.LIST_ID: self._delete_list_dto.list_id,
+                ListFieldEnum.ID: self._delete_list_dto.list_id,
                 ListFieldEnum.IS_DELETED: True,
             }
         )

@@ -27,7 +27,7 @@ class UpdateTaskResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            task_id=int(primitives.get(TaskFieldEnum.TASK_ID, 0)),
+            task_id=int(primitives.get(TaskFieldEnum.ID, 0)),
             id_list=int(primitives.get(TaskFieldEnum.ID_LIST, 0)),
             title=str(primitives.get(TaskFieldEnum.TITLE, "")),
             description=primitives.get(TaskFieldEnum.DESCRIPTION),

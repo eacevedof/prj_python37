@@ -81,4 +81,6 @@ class Routes:
         "DELETE /api/tasks/{id}": lambda body: DeleteTaskController.get_instance().invoke(
             {**body, "task_id": body.get("id")},
         ),
+        # Las notas son independientes: no cuelgan de ninguna lista, asi que no hay
+        # ninguna ruta anidada como la de las tareas.
     }

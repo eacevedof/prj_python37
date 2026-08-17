@@ -41,6 +41,13 @@ unidad, el orden alfabético coincide con el cronológico.
 Si dos personas crean una el mismo día, la hora las desempata. Si aun así
 coinciden, cambia un minuto: **nunca dos ficheros con el mismo prefijo**.
 
+> ⚠️ **La marca de tiempo tiene que ordenar DESPUÉS de todas las que ya existen**,
+> aunque para eso tengas que poner una fecha futura. No es la fecha de hoy: es la
+> posición en la cola. Mira el último fichero de la carpeta y pon algo mayor.
+>
+> Si pones una anterior, tu tabla intentaría crearse antes que aquello de lo que
+> depende, y en una base nueva reventaría.
+
 ### Tienen que poder ejecutarse dos veces
 
 Esto es obligatorio, no un consejo. El arranque las recorre siempre, y hay una
@@ -117,9 +124,21 @@ Se usa `INTEGER` con 0 y 1, y un `CHECK` para que no entre otra cosa:
 is_done INTEGER NOT NULL DEFAULT 0 CHECK (is_done IN (0, 1))
 ```
 
-En el código, ese 0 y ese 1 van en un enum (`TaskDoneEnum`), y la conversión a
-`true`/`false` se hace en el DTO de salida. Dentro es un número porque así lo
-guarda la base; hacia fuera es un booleano porque es lo que espera un cliente JSON.
+En el código, ese 0 y ese 1 van en un enum (`TaskDoneEnum`). **Dentro es un
+número** porque así lo guarda la base; **hacia fuera es un booleano** porque es lo
+que espera un cliente JSON.
+
+Dónde se hace la conversión, exactamente:
+
+| Dirección | Dónde | Ejemplo del ejemplar |
+|---|---|---|
+| 0/1 → `true`/`false`, un elemento | en el **ResultDto** | `GetTaskResultDto.from_primitives` |
+| 0/1 → `true`/`false`, una lista | en el **service** | `SearchTasksService.__get_item` |
+| `true`/`false` → 0/1, al escribir | en el **service** | `SetTaskDoneService.__call__` |
+
+La lista y la escritura no pueden hacerlo en el DTO porque el ResultDto de una
+búsqueda transporta `list[dict]`, no campos sueltos. **Nunca lo hace el
+repositorio**: un repositorio devuelve lo que hay en la tabla, sin interpretar.
 
 ### No hay DATE
 

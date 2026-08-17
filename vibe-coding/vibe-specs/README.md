@@ -37,6 +37,7 @@ esta carpeta tiene su ejemplo real ahí, y esta carpeta te dice cuál mirar.
 | Montar un PoC nuevo, ahora | [`00-como-usar-esto.md`](00-como-usar-esto.md) |
 | Entender por qué el código está partido así | [`10-arquitectura.md`](10-arquitectura.md) |
 | Añadir o tocar algo del backend | [`20-backend-python.md`](20-backend-python.md) |
+| Escribir los tests de tu módulo | [`25-tests.md`](25-tests.md) |
 | Añadir o tocar algo del front | [`30-frontend-vue.md`](30-frontend-vue.md) |
 | Añadir una tabla o cambiar la base de datos | [`40-base-de-datos.md`](40-base-de-datos.md) |
 | Entender por qué `make check` está en rojo | [`50-guardarrailes.md`](50-guardarrailes.md) |

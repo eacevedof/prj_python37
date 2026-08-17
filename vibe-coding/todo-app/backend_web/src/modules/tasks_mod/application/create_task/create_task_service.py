@@ -72,7 +72,7 @@ class CreateTaskService:
 
         return CreateTaskResultDto.from_primitives(
             {
-                TaskFieldEnum.TASK_ID: new_task_id,
+                TaskFieldEnum.ID: new_task_id,
                 TaskFieldEnum.ID_LIST: self._create_task_dto.id_list,
                 TaskFieldEnum.TITLE: self._create_task_dto.title,
                 TaskFieldEnum.DESCRIPTION: self._create_task_dto.description,

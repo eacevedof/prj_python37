@@ -51,7 +51,7 @@ class SetTaskDoneService:
 
         return SetTaskDoneResultDto.from_primitives(
             {
-                TaskFieldEnum.TASK_ID: self._set_task_done_dto.task_id,
+                TaskFieldEnum.ID: self._set_task_done_dto.task_id,
                 TaskFieldEnum.IS_DONE: self._set_task_done_dto.is_done,
             }
         )

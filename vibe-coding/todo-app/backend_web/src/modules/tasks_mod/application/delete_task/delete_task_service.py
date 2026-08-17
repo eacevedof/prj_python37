@@ -46,7 +46,7 @@ class DeleteTaskService:
 
         return DeleteTaskResultDto.from_primitives(
             {
-                TaskFieldEnum.TASK_ID: self._delete_task_dto.task_id,
+                TaskFieldEnum.ID: self._delete_task_dto.task_id,
                 TaskFieldEnum.IS_DELETED: True,
             }
         )
