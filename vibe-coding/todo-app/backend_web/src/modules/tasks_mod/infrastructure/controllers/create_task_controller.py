@@ -32,7 +32,7 @@ class CreateTaskController:
         try:
             create_task_result_dto = self._create_task_service(CreateTaskDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.CREATED,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.CREATED.value,
                 ResponseKeyEnum.DATA: create_task_result_dto.to_dict(),
             }
         except TasksException as tasks_exception:
@@ -43,6 +43,6 @@ class CreateTaskController:
         except Exception as exception:
             self._logger.log_exception(exception, "CreateTaskController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

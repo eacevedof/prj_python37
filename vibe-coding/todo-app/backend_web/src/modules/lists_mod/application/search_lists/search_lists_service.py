@@ -14,9 +14,9 @@ from src.modules.tasks_mod.infrastructure.adapters.tasks_counter_adapter import 
 class SearchListsService:
     """Caso de uso: listar las listas, con su contador de tareas abiertas."""
 
-    _search_lists_dto: SearchListsDto
     _tasks_counter: TasksCounter
     _lists_reader_sqlite_repository: ListsReaderSqliteRepository
+    _search_lists_dto: SearchListsDto
 
     def __init__(self) -> None:
         self._tasks_counter = TasksCounterAdapter.get_instance()

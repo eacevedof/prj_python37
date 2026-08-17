@@ -18,8 +18,8 @@ class DeleteTaskService:
     y aun asi tiene exactamente la misma forma que los demas.
     """
 
-    _delete_task_dto: DeleteTaskDto
     _tasks_writer_sqlite_repository: TasksWriterSqliteRepository
+    _delete_task_dto: DeleteTaskDto
 
     def __init__(self) -> None:
         self._tasks_writer_sqlite_repository = TasksWriterSqliteRepository.get_instance()

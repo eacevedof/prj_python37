@@ -12,8 +12,8 @@ from src.modules.tasks_mod.infrastructure.repositories.tasks_reader_sqlite_repos
 class GetTaskService:
     """Caso de uso: obtener una tarea por su id."""
 
-    _get_task_dto: GetTaskDto
     _tasks_reader_sqlite_repository: TasksReaderSqliteRepository
+    _get_task_dto: GetTaskDto
 
     def __init__(self) -> None:
         self._tasks_reader_sqlite_repository = TasksReaderSqliteRepository.get_instance()

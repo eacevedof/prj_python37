@@ -32,7 +32,7 @@ class UpdateListController:
         try:
             update_list_result_dto = self._update_list_service(UpdateListDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: update_list_result_dto.to_dict(),
             }
         except ListsException as lists_exception:
@@ -43,6 +43,6 @@ class UpdateListController:
         except Exception as exception:
             self._logger.log_exception(exception, "UpdateListController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

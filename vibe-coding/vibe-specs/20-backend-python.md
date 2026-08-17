@@ -175,6 +175,12 @@ class CreateTaskService:
 1. **Colaboradores declarados arriba, con su tipo.** No es cosmético: es de donde
    `make check` saca el tipo para comprobar que los métodos que llamas existen.
    Un colaborador sin declarar es un colaborador que nadie verifica.
+
+   **El orden importa**, y va de lo compartido a lo propio: primero lo de
+   `shared` (componentes como `Logger`), luego lo del módulo (servicios de
+   dominio, puertos, repositorios) y **el DTO el último**. El DTO no es un
+   colaborador: es el estado de esta ejecución. Dejarlo al final agrupa arriba
+   todo lo que se construye en `__init__`.
 2. Se construyen con `get_instance()`. **Nunca `Clase()` directo.**
 3. `get_instance()` es la única forma de crear el service.
 4. `__call__` es el **único** método público.
@@ -299,23 +305,28 @@ class TaskDoneEnum(IntEnum):  # valores con identidad: se comparan, se recorren
     DONE = 1
 ```
 
-**Cuándo hace falta `.value`.** Un `IntEnum` ES un entero y un `(str, Enum)` ES
-una cadena, así que en muchos sitios funciona sin `.value`: pasarlo como parámetro
-de una consulta, o compararlo con `==`, funciona igual.
-
-Hace falta escribirlo cuando el valor **sale del código hacia fuera** o cuando lo
-**guardas en una variable**, y ahí conviene anotar el tipo:
+**Usa SIEMPRE `.value` al leer el valor de un enum**, y anota el tipo donde lo
+guardes:
 
 ```python
-# Sale hacia fuera: sin .value, en el JSON aparecería "AuthEnum.APIKEY_HEADER"
+# Sale hacia fuera
 request.headers.get(AuthEnum.APIKEY_HEADER.value, "")
 
-# Se guarda: sin la anotación, algunos editores infieren mal el tipo de `.value`
+# Se guarda: la anotación evita que el editor infiera mal el tipo de `.value`
 app_version: str = AppVersionEnum.CURRENT.value
 
-# Aquí NO hace falta: IntEnum ya es int
-cursor.execute(sql, (TaskDoneEnum.PENDING, task_id))
+# También aquí, aunque IntEnum ya sea un int
+cursor.execute(sql, (TaskDoneEnum.PENDING.value, task_id))
 ```
+
+Con `(str, Enum)` o `IntEnum` el valor y el miembro son intercambiables en tiempo
+de ejecución, así que **omitir `.value` funcionaría**. La regla existe por otra
+cosa: los analizadores de tipos resuelven mal `Enum.value` y lo infieren como una
+función en vez de como el valor. Una sola regla uniforme —siempre `.value`, y el
+tipo anotado donde se guarde— deja el proyecto sin avisos falsos.
+
+La excepción es comparar **miembro con miembro** (`if status == MigrationStatusEnum.APPLIED`)
+o devolver el miembro: ahí no estás leyendo el primitivo.
 
 ## Añadir un endpoint
 

@@ -32,7 +32,7 @@ class SearchTasksController:
         try:
             search_tasks_result_dto = self._search_tasks_service(SearchTasksDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: search_tasks_result_dto.to_dict(),
             }
         except TasksException as tasks_exception:
@@ -43,6 +43,6 @@ class SearchTasksController:
         except Exception as exception:
             self._logger.log_exception(exception, "SearchTasksController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

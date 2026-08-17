@@ -38,9 +38,9 @@ class CreateListService:
     proposito: al leer una linea suelta sabes exactamente que se esta usando.
     """
 
-    _create_list_dto: CreateListDto
     _lists_reader_sqlite_repository: ListsReaderSqliteRepository
     _lists_writer_sqlite_repository: ListsWriterSqliteRepository
+    _create_list_dto: CreateListDto
 
     def __init__(self) -> None:
         self._lists_reader_sqlite_repository = ListsReaderSqliteRepository.get_instance()

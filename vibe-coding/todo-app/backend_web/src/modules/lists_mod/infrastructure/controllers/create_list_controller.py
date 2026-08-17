@@ -56,7 +56,7 @@ class CreateListController:
         try:
             create_list_result_dto = self._create_list_service(CreateListDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.CREATED,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.CREATED.value,
                 ResponseKeyEnum.DATA: create_list_result_dto.to_dict(),
             }
         except ListsException as lists_exception:
@@ -67,6 +67,6 @@ class CreateListController:
         except Exception as exception:
             self._logger.log_exception(exception, "CreateListController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

@@ -30,10 +30,10 @@ class RunMigrationsService:
     un riesgo que no compensa ahorrarse un `rm`.
     """
 
-    _run_migrations_dto: RunMigrationsDto
     _migration_files_reader_file_repository: MigrationFilesReaderFileRepository
     _migrations_reader_sqlite_repository: MigrationsReaderSqliteRepository
     _migration_runner: MigrationRunner
+    _run_migrations_dto: RunMigrationsDto
 
     def __init__(self) -> None:
         self._migration_files_reader_file_repository = MigrationFilesReaderFileRepository.get_instance()

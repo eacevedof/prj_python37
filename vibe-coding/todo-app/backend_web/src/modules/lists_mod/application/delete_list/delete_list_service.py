@@ -25,9 +25,9 @@ class DeleteListService:
     quien decida.
     """
 
-    _delete_list_dto: DeleteListDto
     _tasks_counter: TasksCounter
     _lists_writer_sqlite_repository: ListsWriterSqliteRepository
+    _delete_list_dto: DeleteListDto
 
     def __init__(self) -> None:
         self._tasks_counter = TasksCounterAdapter.get_instance()

@@ -43,4 +43,4 @@ class SearchTasksDto:
             return None
         # Por query string llega "1"/"true"; por JSON llega el booleano de verdad.
         is_done = raw_is_done is True or str(raw_is_done) in BooleanInputEnum.TRUTHY_VALUES
-        return int(TaskDoneEnum.DONE if is_done else TaskDoneEnum.PENDING)
+        return int(TaskDoneEnum.DONE.value if is_done else TaskDoneEnum.PENDING.value)

@@ -32,7 +32,7 @@ class UpdateTaskController:
         try:
             update_task_result_dto = self._update_task_service(UpdateTaskDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: update_task_result_dto.to_dict(),
             }
         except TasksException as tasks_exception:
@@ -43,6 +43,6 @@ class UpdateTaskController:
         except Exception as exception:
             self._logger.log_exception(exception, "UpdateTaskController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

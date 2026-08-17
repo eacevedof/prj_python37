@@ -28,9 +28,9 @@ class GetListService:
     una linea.
     """
 
-    _get_list_dto: GetListDto
     _tasks_counter: TasksCounter
     _lists_reader_sqlite_repository: ListsReaderSqliteRepository
+    _get_list_dto: GetListDto
 
     def __init__(self) -> None:
         self._tasks_counter = TasksCounterAdapter.get_instance()

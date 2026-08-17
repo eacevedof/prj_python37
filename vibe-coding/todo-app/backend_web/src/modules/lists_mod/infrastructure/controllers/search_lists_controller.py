@@ -32,7 +32,7 @@ class SearchListsController:
         try:
             search_lists_result_dto = self._search_lists_service(SearchListsDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: search_lists_result_dto.to_dict(),
             }
         except ListsException as lists_exception:
@@ -43,6 +43,6 @@ class SearchListsController:
         except Exception as exception:
             self._logger.log_exception(exception, "SearchListsController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

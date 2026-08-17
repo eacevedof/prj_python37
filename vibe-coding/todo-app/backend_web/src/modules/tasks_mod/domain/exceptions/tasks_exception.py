@@ -35,7 +35,7 @@ class TasksException(Exception):
     _code: int
     _message: str
 
-    def __init__(self, message: str, code: int = ResponseCodeEnum.BAD_REQUEST) -> None:
+    def __init__(self, message: str, code: int = ResponseCodeEnum.BAD_REQUEST.value) -> None:
         self._message = message
         self._code = code
         super().__init__(self._message)
@@ -50,12 +50,12 @@ class TasksException(Exception):
 
     @classmethod
     def bad_request_custom(cls, message: str) -> NoReturn:
-        raise cls(message, ResponseCodeEnum.BAD_REQUEST)
+        raise cls(message, ResponseCodeEnum.BAD_REQUEST.value)
 
     @classmethod
     def not_found_custom(cls, message: str) -> NoReturn:
-        raise cls(message, ResponseCodeEnum.NOT_FOUND)
+        raise cls(message, ResponseCodeEnum.NOT_FOUND.value)
 
     @classmethod
     def conflict_custom(cls, message: str) -> NoReturn:
-        raise cls(message, ResponseCodeEnum.CONFLICT)
+        raise cls(message, ResponseCodeEnum.CONFLICT.value)

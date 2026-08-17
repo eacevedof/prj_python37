@@ -18,9 +18,9 @@ from src.modules.lists_mod.infrastructure.repositories.lists_writer_sqlite_repos
 class UpdateListService:
     """Caso de uso: modificar una lista."""
 
-    _update_list_dto: UpdateListDto
     _lists_reader_sqlite_repository: ListsReaderSqliteRepository
     _lists_writer_sqlite_repository: ListsWriterSqliteRepository
+    _update_list_dto: UpdateListDto
 
     def __init__(self) -> None:
         self._lists_reader_sqlite_repository = ListsReaderSqliteRepository.get_instance()

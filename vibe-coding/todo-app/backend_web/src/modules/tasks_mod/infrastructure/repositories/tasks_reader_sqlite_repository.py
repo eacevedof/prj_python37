@@ -72,7 +72,7 @@ class TasksReaderSqliteRepository(AbstractSqliteRepository):
               AND is_done = ?
               AND delete_date IS NULL
             """,
-            (list_id, TaskDoneEnum.PENDING),
+            (list_id, TaskDoneEnum.PENDING.value),
         )
         row = cursor.fetchone()
         return int(row["open_count"]) if row else 0

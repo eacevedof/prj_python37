@@ -32,7 +32,7 @@ class GetListController:
         try:
             get_list_result_dto = self._get_list_service(GetListDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: get_list_result_dto.to_dict(),
             }
         except ListsException as lists_exception:
@@ -43,6 +43,6 @@ class GetListController:
         except Exception as exception:
             self._logger.log_exception(exception, "GetListController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

@@ -27,7 +27,7 @@ class GetTaskResultDto:
             id_list=int(primitives.get(TaskFieldEnum.ID_LIST, 0)),
             title=str(primitives.get(TaskFieldEnum.TITLE, "")),
             description=primitives.get(TaskFieldEnum.DESCRIPTION),
-            is_done=int(primitives.get(TaskFieldEnum.IS_DONE, TaskDoneEnum.PENDING)) == TaskDoneEnum.DONE,
+            is_done=int(primitives.get(TaskFieldEnum.IS_DONE, TaskDoneEnum.PENDING.value)) == TaskDoneEnum.DONE.value,
             due_date=primitives.get(TaskFieldEnum.DUE_DATE),
             position=int(primitives.get(TaskFieldEnum.POSITION, 0)),
             insert_date=str(primitives.get(TaskFieldEnum.INSERT_DATE, "")),

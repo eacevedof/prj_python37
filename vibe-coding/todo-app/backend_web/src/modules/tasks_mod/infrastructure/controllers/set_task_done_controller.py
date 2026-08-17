@@ -32,7 +32,7 @@ class SetTaskDoneController:
         try:
             set_task_done_result_dto = self._set_task_done_service(SetTaskDoneDto.from_primitives(request_data))
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.OK.value,
                 ResponseKeyEnum.DATA: set_task_done_result_dto.to_dict(),
             }
         except TasksException as tasks_exception:
@@ -43,6 +43,6 @@ class SetTaskDoneController:
         except Exception as exception:
             self._logger.log_exception(exception, "SetTaskDoneController.invoke")
             return {
-                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR,
+                ResponseKeyEnum.STATUS: ResponseCodeEnum.INTERNAL_SERVER_ERROR.value,
                 ResponseKeyEnum.ERROR: ResponseMessageEnum.UNEXPECTED_ERROR,
             }

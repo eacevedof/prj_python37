@@ -20,11 +20,11 @@ from src.modules.tasks_mod.infrastructure.repositories.tasks_writer_sqlite_repos
 class UpdateTaskService:
     """Caso de uso: modificar una tarea (incluido moverla de lista)."""
 
-    _update_task_dto: UpdateTaskDto
     _due_date: DueDate
     _lists_reader: ListsReader
     _tasks_reader_sqlite_repository: TasksReaderSqliteRepository
     _tasks_writer_sqlite_repository: TasksWriterSqliteRepository
+    _update_task_dto: UpdateTaskDto
 
     def __init__(self) -> None:
         self._due_date = DueDate.get_instance()

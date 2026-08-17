@@ -33,10 +33,10 @@ class CreateTaskService:
     cualquier otro camino de escritura.
     """
 
-    _create_task_dto: CreateTaskDto
     _due_date: DueDate
     _lists_reader: ListsReader
     _tasks_writer_sqlite_repository: TasksWriterSqliteRepository
+    _create_task_dto: CreateTaskDto
 
     def __init__(self) -> None:
         self._due_date = DueDate.get_instance()
@@ -76,7 +76,7 @@ class CreateTaskService:
                 TaskFieldEnum.ID_LIST: self._create_task_dto.id_list,
                 TaskFieldEnum.TITLE: self._create_task_dto.title,
                 TaskFieldEnum.DESCRIPTION: self._create_task_dto.description,
-                TaskFieldEnum.IS_DONE: TaskDoneEnum.PENDING,
+                TaskFieldEnum.IS_DONE: TaskDoneEnum.PENDING.value,
                 TaskFieldEnum.DUE_DATE: self._create_task_dto.due_date,
                 TaskFieldEnum.POSITION: self._create_task_dto.position,
             }

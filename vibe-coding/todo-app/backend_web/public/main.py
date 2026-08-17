@@ -174,7 +174,7 @@ def _is_authorized(request: Request) -> bool:
 
 
 def _get_unauthorized_response() -> JSONResponse:
-    status_code = int(ResponseCodeEnum.UNAUTHORIZED)
+    status_code = ResponseCodeEnum.UNAUTHORIZED.value
     return JSONResponse(
         status_code=status_code,
         content={
@@ -228,8 +228,8 @@ def _get_handler(
 
         # `status` es un ResponseCodeEnum (IntEnum). Se convierte a int para el
         # codigo HTTP y tambien dentro del cuerpo, para que se serialice como
-        # numero y no como "ResponseCodeEnum.OK".
-        status_code = int(result.get(ResponseKeyEnum.STATUS, ResponseCodeEnum.OK))
+        # numero y no como "ResponseCodeEnum.OK.value".
+        status_code = int(result.get(ResponseKeyEnum.STATUS, ResponseCodeEnum.OK.value))
         content = jsonable_encoder({**result, ResponseKeyEnum.STATUS: status_code})
         return JSONResponse(status_code=status_code, content=content)
 
@@ -320,8 +320,8 @@ def _register_frontend() -> None:
         # "la aplicacion no hace nada" en vez de como el 404 que es.
         if f"/{full_path}".startswith(AuthEnum.API_PREFIX.value):
             return JSONResponse(
-                status_code=int(ResponseCodeEnum.NOT_FOUND),
-                content={ResponseKeyEnum.STATUS: int(ResponseCodeEnum.NOT_FOUND)},
+                status_code=ResponseCodeEnum.NOT_FOUND.value,
+                content={ResponseKeyEnum.STATUS: ResponseCodeEnum.NOT_FOUND.value},
             )
         # Cualquier otra ruta devuelve el index: el enrutado de la aplicacion lo
         # hace el navegador, asi que recargar en /lists/3/tasks tiene que seguir

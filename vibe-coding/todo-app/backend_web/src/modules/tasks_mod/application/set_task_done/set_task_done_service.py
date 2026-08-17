@@ -20,8 +20,8 @@ class SetTaskDoneService:
     deberia tener que mandarle el titulo y la descripcion enteros.
     """
 
-    _set_task_done_dto: SetTaskDoneDto
     _tasks_writer_sqlite_repository: TasksWriterSqliteRepository
+    _set_task_done_dto: SetTaskDoneDto
 
     def __init__(self) -> None:
         self._tasks_writer_sqlite_repository = TasksWriterSqliteRepository.get_instance()
@@ -44,7 +44,7 @@ class SetTaskDoneService:
 
         is_updated = self._tasks_writer_sqlite_repository.set_done(
             self._set_task_done_dto.task_id,
-            int(TaskDoneEnum.DONE if self._set_task_done_dto.is_done else TaskDoneEnum.PENDING),
+            int(TaskDoneEnum.DONE.value if self._set_task_done_dto.is_done else TaskDoneEnum.PENDING.value),
         )
         if not is_updated:
             TasksException.not_found_custom(f"no existe la tarea {self._set_task_done_dto.task_id}")

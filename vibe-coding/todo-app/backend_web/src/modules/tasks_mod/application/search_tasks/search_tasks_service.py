@@ -22,8 +22,8 @@ class SearchTasksService:
     diferencia es de forma de la URL, y eso se resuelve en la tabla de rutas.
     """
 
-    _search_tasks_dto: SearchTasksDto
     _tasks_reader_sqlite_repository: TasksReaderSqliteRepository
+    _search_tasks_dto: SearchTasksDto
 
     def __init__(self) -> None:
         self._tasks_reader_sqlite_repository = TasksReaderSqliteRepository.get_instance()
@@ -58,5 +58,5 @@ class SearchTasksService:
         # lo que hay en la tabla, sin interpretar.
         return {
             **task_row,
-            TaskFieldEnum.IS_DONE: int(task_row[TaskFieldEnum.IS_DONE]) == TaskDoneEnum.DONE,
+            TaskFieldEnum.IS_DONE: int(task_row[TaskFieldEnum.IS_DONE]) == TaskDoneEnum.DONE.value,
         }
