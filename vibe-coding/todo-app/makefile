@@ -64,7 +64,41 @@ db-fresh: ## BORRA la base de datos local. El siguiente arranque la reconstruye 
 	rm -f backend_web/storage/database/*.db backend_web/storage/database/*.db-wal backend_web/storage/database/*.db-shm
 	@echo "base de datos borrada; arranca la app para recrearla"
 
-up-local: ## arranca la API en un contenedor (solo API; el front va aparte con front-local)
+# Comprueba que `backend_web/.env` existe Y ES UN FICHERO antes de montarlo.
+#
+# Si no existe, `docker run -v` **crea un directorio vacio** en su lugar, sin
+# avisar. A partir de ahi la aplicacion arranca con la configuracion por defecto
+# (APP_ENV=production, credencial vacia) y responde 401 a todo, y el problema se
+# perpetua: en los siguientes arranques ya hay un directorio ahi.
+#
+# Es de los fallos mas dificiles de ver, asi que se corta antes de empezar.
+check-env:
+	@if [ -d backend_web/.env ]; then \
+		echo ""; \
+		echo "  ERROR: backend_web/.env es un DIRECTORIO, no un fichero."; \
+		echo ""; \
+		echo "  Lo creo Docker en un arranque anterior, cuando el fichero no existia."; \
+		echo "  Arreglalo con:"; \
+		echo ""; \
+		echo "      ls -a backend_web/.env/     # mira si hay algo dentro"; \
+		echo "      rm -rf backend_web/.env"; \
+		echo "      cp backend_web/.env.example backend_web/.env"; \
+		echo ""; \
+		exit 1; \
+	fi
+	@if [ ! -f backend_web/.env ]; then \
+		echo ""; \
+		echo "  ERROR: falta backend_web/.env"; \
+		echo ""; \
+		echo "  Sin el, Docker creara un directorio vacio en su sitio y la API"; \
+		echo "  respondera 401 a todo. Crealo con:"; \
+		echo ""; \
+		echo "      cp backend_web/.env.example backend_web/.env"; \
+		echo ""; \
+		exit 1; \
+	fi
+
+up-local: check-env ## arranca la API en un contenedor (solo API; el front va aparte con front-local)
 	$(DC) up --build
 
 down-local: ## para el contenedor local
@@ -88,7 +122,7 @@ up-ephemeral: ## levanta el to-do ENTERO en un contenedor EFIMERO: no pide nada 
 		--name cont-local-todo-app-ephemeral \
 		todo-app:ephemeral
 
-up-deploy-local: ## construye la imagen de DESPLIEGUE (front + API juntos) y la arranca en local, en el 6003
+up-deploy-local: check-env ## construye la imagen de DESPLIEGUE (front + API juntos) y la arranca en local, en el 6003
 	docker build -f docker/Dockerfile-deploy -t todo-app:local .
 	docker run --rm -p $(DEPLOY_PORT):$(API_PORT) \
 		-v "$(PWD)/backend_web/.env:/app/backend_web/.env" \

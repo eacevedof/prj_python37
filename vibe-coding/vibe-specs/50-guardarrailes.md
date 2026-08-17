@@ -194,6 +194,52 @@ Algo devuelve un tipo que mypy no conoce. Conviértelo explícitamente:
 
 ---
 
+## Un fallo que cuesta una tarde: el `.env` convertido en carpeta
+
+No lo detecta `make check` porque no es un problema de código, pero es el que más
+tiempo se lleva, así que va aquí.
+
+**Síntoma**: la aplicación arranca bien, el front carga, y **todas** las llamadas
+a la API devuelven `401 Invalid or missing X-Api-Key`. Reconstruir la imagen no
+arregla nada.
+
+**Causa**: `docker run -v origen:destino`, cuando **el origen no existe**, crea un
+**directorio vacío** en el host. Sin avisar. Si la primera vez que levantaste el
+contenedor te faltaba `backend_web/.env`, Docker creó una carpeta con ese nombre —
+y a partir de ahí el problema se perpetúa solo, porque en los siguientes arranques
+ya hay algo ahí que montar.
+
+Como no hay `.env`, la aplicación cae a los valores por defecto: `APP_ENV` pasa a
+`production` y la credencial queda vacía, así que rechaza todo.
+
+**Cómo verlo**: la traza que la aplicación escribe en cada arranque, en
+`storage/logs/<fecha>-debug.log`:
+
+```
+  fichero .env    : /app/backend_web/.env
+    existe        : True
+    es un fichero : False      <- AQUI ESTA
+    claves dentro : []
+  APP_ENV         : 'production'
+  APP_API_KEY     : VACIA -> la API respondera 401 a todo
+```
+
+`existe: True` pero `es un fichero: False` = es una carpeta.
+
+**Cómo arreglarlo**:
+
+```bash
+ls -a backend_web/.env/          # mira si tu fichero acabó dentro
+rm -rf backend_web/.env          # borra el DIRECTORIO
+cp backend_web/.env.example backend_web/.env
+```
+
+**Cómo se evita**: `make up-local` y `make up-deploy-local` pasan antes por
+`make check-env`, que se niega a arrancar y te dice esto mismo. Si lanzas
+`docker run` a mano, te lo saltas.
+
+---
+
 ## Cuando el guardarraíl te estorba
 
 A veces vas a estar seguro de que la regla no aplica a tu caso. Tres opciones, en
