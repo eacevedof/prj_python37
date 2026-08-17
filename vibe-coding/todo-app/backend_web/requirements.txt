@@ -1,0 +1,21 @@
+# Dependencias del backend. Se instalan con:
+#   .venv/bin/python -m pip install -r backend_web/requirements.txt
+#
+# Pinado con >= (misma convencion que prj-ocr-documents): un PoC quiere la version
+# mas reciente que funcione, no una foto congelada de hace seis meses.
+#
+# NO aparece ningun driver de base de datos: sqlite3 viene en la libreria estandar
+# de Python. Esa es una de las razones de elegir SQLite para un PoC.
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-dotenv>=1.0.1
+
+# ==== HERRAMIENTAS DE DESARROLLO ====
+# Las tres que ejecuta `make check`. Van aqui y no en un requirements-dev aparte
+# porque en un PoC no hay imagen de produccion que adelgazar: el equipo instala
+# una vez y tiene todo lo que necesita para que `make check` funcione.
+pytest>=8.3.0
+httpx>=0.28.0          # lo necesita fastapi.testclient (TestClient) en los tests
+ruff>=0.8.0
+mypy>=1.13.0

@@ -1,0 +1,54 @@
+# Configuracion de las herramientas que ejecuta `make check`.
+#
+# Este fichero NO declara dependencias (eso es backend_web/requirements.txt) ni
+# empaqueta nada: la app se ejecuta, no se instala. Solo configura ruff y mypy,
+# que son dos de los tres guardarrailes del kit.
+#
+# Los valores salen de la skill de estilo Python del vault (linea 120, comillas
+# dobles, mypy en strict). Si cambias algo aqui, cambia tambien lo que dice
+# vibe-specs/50-guardarrailes.md: la normativa y la herramienta tienen que contar
+# lo mismo.
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+# La app vive en backend_web/. Sin esto, ruff intentaria analizar tambien .venv/.
+src = ["backend_web"]
+exclude = [".venv", "__pycache__", "storage"]
+
+[tool.ruff.lint]
+# E/W  pycodestyle      - espaciado, longitud de linea
+# F    pyflakes         - imports sin usar, variables no definidas
+# I    isort            - orden de los imports (la normativa exige un orden concreto)
+# B    flake8-bugbear   - trampas reales (mutable default arguments, etc.)
+# C4   comprehensions   - list(x for ...) -> [x for ...]
+# UP   pyupgrade        - sintaxis vieja que ya no hace falta en 3.12
+# SIM  simplify         - if a: return True / else: return False -> return a
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
+
+[tool.ruff.lint.isort]
+# Los imports de la app son "first party": van en su propio bloque, despues de
+# los de terceros. Es lo que hace que el orden stdlib -> vendor -> app salga solo.
+known-first-party = ["src", "public"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+files = ["backend_web"]
+exclude = ["^backend_web/storage/", "\\.venv"]
+
+# strict = true enciende de golpe una decena de comprobaciones. Las dos que mas
+# se notan: no puedes dejar una funcion sin anotar, y no puedes devolver Any
+# desde una funcion que promete otro tipo.
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+
+# Los tests tambien se comprueban, pero sin exigir anotacion de retorno en cada
+# test: un `def test_x() -> None:` por fichero es ruido que no atrapa ningun bug.
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false

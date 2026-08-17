@@ -1,0 +1,37 @@
+# Entorno virtual de Python
+.venv/
+.venv-win/
+
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Configuracion con secretos. `.env.example` SI se sube; `.env` NUNCA.
+.env
+backend_web/.env
+frontend_web/.env
+frontend_web/.env.local
+
+# Estado en tiempo de ejecucion: la base de datos y los logs.
+# El patron `*` pilla tambien todo_app.db-wal y todo_app.db-shm, que SQLite crea
+# al lado del fichero principal cuando trabaja en modo WAL.
+backend_web/storage/database/*
+!backend_web/storage/database/.gitkeep
+backend_web/storage/logs/*
+!backend_web/storage/logs/.gitkeep
+backend_web/storage/cache/*
+!backend_web/storage/cache/.gitkeep
+
+# Front
+node_modules/
+frontend_web/dist/
+
+# Cache de herramientas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editores
+.idea/
+.vscode/
+.DS_Store
