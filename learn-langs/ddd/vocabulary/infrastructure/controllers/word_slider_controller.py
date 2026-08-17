@@ -7,10 +7,15 @@ import flet as ft
 
 from ddd.shared.infrastructure.components.audio_player import AudioPlayer
 from ddd.shared.infrastructure.components.logger import Logger
+from ddd.shared.infrastructure.components.system.wake_locker import WakeLocker
 from ddd.shared.infrastructure.controllers import BaseController
 from ddd.vocabulary.application.finish_study_session import (
     FinishStudySessionDto,
     FinishStudySessionService,
+)
+from ddd.vocabulary.application.generate_notice_audio_ai import (
+    GenerateNoticeAudioAiDto,
+    GenerateNoticeAudioAiService,
 )
 from ddd.vocabulary.application.generate_text_audio_ai import (
     GenerateTextAudioAiDto,
@@ -36,6 +41,7 @@ from ddd.vocabulary.application.start_word_slider_session import (
 from ddd.vocabulary.domain.enums import (
     ActivityEnum,
     LanguageCodeEnum,
+    SessionNoticeEnum,
     SliderSequenceEnum,
     StudyModeEnum,
 )
@@ -102,8 +108,10 @@ class WordSliderController(BaseController):
         # Servicios
         self._logger = Logger.get_instance()
         self._audio_player = AudioPlayer.get_instance()
+        self._wake_locker = WakeLocker.get_instance()
         self._start_word_slider_session_service = StartWordSliderSessionService.get_instance()
         self._generate_text_audio_ai_service = GenerateTextAudioAiService.get_instance()
+        self._generate_notice_audio_ai_service = GenerateNoticeAudioAiService.get_instance()
         self._finish_study_session_service = FinishStudySessionService.get_instance()
         self._reset_word_metrics_service = ResetWordMetricsService.get_instance()
         self._save_activity_state_service = SaveActivityStateService.get_instance()
@@ -205,6 +213,9 @@ class WordSliderController(BaseController):
 
         Cada arranque invalida el bucle anterior via _run_token: si por cualquier
         motivo quedara un bucle vivo, se corta solo (evita audios solapados).
+
+        Mientras dura el recorrido se mantiene el wake lock: en Android la CPU
+        se dormiría al apagarse la pantalla y la sesión se cortaría.
         """
         self.__run_token += 1
         run_token = self.__run_token
@@ -212,25 +223,34 @@ class WordSliderController(BaseController):
         index = min(self.__start_index, len(self.__words) - 1) if self.__words else 0
         # Retomar solo aplica a la primera pasada (al volver de editar una palabra)
         self.__start_index = 0
-        while index < len(self.__words):
-            if self._is_run_cancelled(run_token):
-                return
-            self.__current_index = index
-            await self._async_save_activity_state(self.__words[index], index)
-            await self._async_play_word(self.__words[index], run_token)
+        self._keep_cpu_awake()
+        try:
+            while index < len(self.__words):
+                if self._is_run_cancelled(run_token):
+                    return
+                self.__current_index = index
+                await self._async_save_activity_state(self.__words[index], index)
+                await self._async_play_word(self.__words[index], run_token)
 
-            if self._is_run_cancelled(run_token):
-                return
+                if self._is_run_cancelled(run_token):
+                    return
 
-            if self.__navigation_request is not None:
-                # Salto pedido con anterior/siguiente (si supera el final, completa)
-                index = min(self.__navigation_request, len(self.__words))
-                self.__navigation_request = None
-            else:
-                index += 1
+                if self.__navigation_request is not None:
+                    # Salto pedido con anterior/siguiente (si supera el final, completa)
+                    index = min(self.__navigation_request, len(self.__words))
+                    self.__navigation_request = None
+                else:
+                    index += 1
 
-        if not self._is_run_cancelled(run_token):
-            self._show_session_complete()
+            if not self._is_run_cancelled(run_token):
+                await self._async_play_end_notice(run_token)
+            # Se recomprueba: el aviso dura unos segundos y pueden haber salido
+            if not self._is_run_cancelled(run_token):
+                self._show_session_complete()
+        finally:
+            # Si otro bucle ya tomó el relevo (replay), el wake lock es suyo
+            if run_token == self.__run_token:
+                self._release_cpu()
 
     async def _async_play_word(self, word: SliderWordDto, run_token: int) -> None:
         """Reproduce la secuencia temporizada de una palabra (SliderSequenceEnum).
@@ -376,6 +396,39 @@ class WordSliderController(BaseController):
                 "WordSliderController",
                 f"Error reproduciendo audio: {e}",
                 {"text": text, "lang_code": lang_code},
+            )
+
+    async def _async_play_end_notice(self, run_token: int) -> None:
+        """Pronuncia el aviso de fin tras el último audio de la sesión."""
+        try:
+            generate_notice_audio_ai_dto = GenerateNoticeAudioAiDto.from_primitives(
+                {
+                    "notice_key": SessionNoticeEnum.END_OF_SESSION_KEY.value,
+                    "text": SessionNoticeEnum.END_OF_SESSION_TEXT.value,
+                    "lang_code": self._SOURCE_LANG_CODE,
+                }
+            )
+            result = await self._generate_notice_audio_ai_service(
+                generate_notice_audio_ai_dto
+            )
+
+            if not result.success:
+                self._logger.log_error(
+                    "WordSliderController",
+                    f"Error generando el aviso de fin: {result.error_message}",
+                )
+                return
+
+            await self._audio_player.play_until_end(
+                self._ft_container.page,
+                result.audio_path,
+                lambda: self._is_run_cancelled(run_token),
+            )
+
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error reproduciendo el aviso de fin: {e}",
             )
 
     # (audio: pygame reemplazado por AudioPlayer/ft.Audio — ver _audio_player.play_until_end)
@@ -626,3 +679,27 @@ class WordSliderController(BaseController):
     def _stop_audio(self) -> None:
         """Detiene cualquier audio en reproducción (best-effort)."""
         self._ft_container.page.run_task(self._audio_player.stop)
+
+    def _keep_cpu_awake(self) -> None:
+        """Impide que Android duerma la CPU al apagarse la pantalla (best-effort).
+
+        Sin esto la sesión se corta al bloquear la tablet. En escritorio no hace
+        nada (el componente sale solo si no hay Activity de Android).
+        """
+        try:
+            self._wake_locker.acquire()
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"No se pudo mantener la CPU despierta: {e}",
+            )
+
+    def _release_cpu(self) -> None:
+        """Suelta el wake lock al acabar la sesión (best-effort)."""
+        try:
+            self._wake_locker.release()
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"No se pudo soltar el wake lock: {e}",
+            )

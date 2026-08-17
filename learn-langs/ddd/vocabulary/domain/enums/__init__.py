@@ -16,6 +16,7 @@ from ddd.vocabulary.domain.enums.words_pagination_enum import WordsPaginationEnu
 from ddd.vocabulary.domain.enums.tts_accent_enum import TtsAccentEnum
 from ddd.vocabulary.domain.enums.tts_audio_file_enum import TtsAudioFileEnum
 from ddd.vocabulary.domain.enums.word_image_prompt_enum import WordImagePromptEnum
+from ddd.vocabulary.domain.enums.session_notice_enum import SessionNoticeEnum
 
 __all__ = [
     "ActivityEnum",
@@ -36,4 +37,5 @@ __all__ = [
     "TtsAccentEnum",
     "TtsAudioFileEnum",
     "WordImagePromptEnum",
+    "SessionNoticeEnum",
 ]

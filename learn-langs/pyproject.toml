@@ -29,3 +29,16 @@ product = "learn-langs"
 
 [tool.flet.app]
 module = "front_controller"
+
+# Dependencias que SOLO se empaquetan en el APK (flet build las suma a las de
+# [project]). pyjnius da acceso a las APIs Java de Android desde Python; lo usa
+# WakeLocker para pedir el PARTIAL_WAKE_LOCK y que la sesion siga sonando con la
+# pantalla apagada. En escritorio no se instala (necesitaria un JDK).
+[tool.flet.android]
+dependencies = [
+    "pyjnius",
+]
+
+[tool.flet.android.permission]
+# La pide WakeLocker (ddd/shared/infrastructure/components/system/wake_locker.py)
+"android.permission.WAKE_LOCK" = true

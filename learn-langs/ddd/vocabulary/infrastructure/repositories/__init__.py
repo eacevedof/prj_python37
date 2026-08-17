@@ -21,6 +21,8 @@ from ddd.vocabulary.infrastructure.repositories.app_config_reader_raw_repository
 from ddd.vocabulary.infrastructure.repositories.languages_reader_sqlite_repository import LanguagesReaderSqliteRepository
 from ddd.vocabulary.infrastructure.repositories.word_audios_reader_file_repository import WordAudiosReaderFileRepository
 from ddd.vocabulary.infrastructure.repositories.word_audios_writer_file_repository import WordAudiosWriterFileRepository
+from ddd.vocabulary.infrastructure.repositories.notice_audios_reader_file_repository import NoticeAudiosReaderFileRepository
+from ddd.vocabulary.infrastructure.repositories.notice_audios_writer_file_repository import NoticeAudiosWriterFileRepository
 
 __all__ = [
     "ActivityStatesReaderSqliteRepository",
@@ -46,4 +48,6 @@ __all__ = [
     "LanguagesReaderSqliteRepository",
     "WordAudiosReaderFileRepository",
     "WordAudiosWriterFileRepository",
+    "NoticeAudiosReaderFileRepository",
+    "NoticeAudiosWriterFileRepository",
 ]
