@@ -9,8 +9,12 @@
 # proposito: una plantilla con el dominio de otro proyecto cableado se copia tal
 # cual y acaba desplegada con el nombre equivocado.
 #
-# Los valores van en un fichero `.env` JUNTO A ESTE, o en las variables del panel
-# de despliegue:
+# Los valores van en `docker/.env` (JUNTO A ESTE FICHERO), o en las variables del
+# panel de despliegue. La plantilla con todo explicado esta en `docker/.env.example`:
+#
+#     cp docker/.env.example docker/.env
+#
+# Resumen de lo que hay que rellenar:
 #
 #   APP_NAME=mi-poc                                 nombre del contenedor y de la imagen
 #   APP_DOMAIN=develop-mi-poc.ejemplo.com           dominio publico
@@ -26,10 +30,10 @@
 services:
   todo-app:
     image: ${APP_NAME}:develop
-    container_name: cont-dev-${APP_NAME}
+    container_name: cont-develop-${APP_NAME}
     build:
       context: ..
-      dockerfile: docker/python/Dockerfile-build
+      dockerfile: docker/Dockerfile-deploy
     restart: unless-stopped
     environment:
       TZ: UTC

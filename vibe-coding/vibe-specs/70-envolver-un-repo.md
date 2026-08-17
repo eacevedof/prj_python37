@@ -145,7 +145,7 @@ haciendo falta.
 pypdfium2>=5.12.1
 ```
 
-Lo que haga falta del sistema operativo va al `Dockerfile-build`, en la segunda
+Lo que haga falta del sistema operativo va al `Dockerfile-deploy`, en la segunda
 etapa:
 
 ```dockerfile

@@ -4,10 +4,10 @@
 # Si acabas de clonar/copiar esto, el orden es:
 #   make venv-install     (una vez)
 #   cp backend_web/.env.example backend_web/.env
-#   make dev
+#   make local
 
 PY := .venv/bin/python
-DC := docker compose -f docker/docker-compose.yml
+DC := docker compose -f docker/docker-compose-local.yml
 
 help: ## muestra esta ayuda
 	@echo "usage: make [target]"
@@ -20,7 +20,7 @@ venv-install: ## crea el venv e instala las dependencias del backend
 	$(PY) -m pip install --upgrade pip
 	$(PY) -m pip install -r backend_web/requirements.txt
 
-dev: ## arranca la API en el host, con recarga automatica (http://127.0.0.1:8000)
+local: ## arranca la API en el host, con recarga automatica (http://127.0.0.1:8000)
 	cd backend_web && ../$(PY) -m uvicorn public.main:app --host 0.0.0.0 --port 8000 --reload
 
 check: ## ruff + mypy + pytest. SI ESTO ESTA VERDE, EL PATRON SE RESPETO.
@@ -45,24 +45,24 @@ db-fresh: ## BORRA la base de datos local. El siguiente arranque la reconstruye 
 	rm -f backend_web/storage/database/*.db backend_web/storage/database/*.db-wal backend_web/storage/database/*.db-shm
 	@echo "base de datos borrada; arranca la app para recrearla"
 
-up: ## arranca la API en un contenedor (solo API; el front va aparte con front-dev)
+up-local: ## arranca la API en un contenedor (solo API; el front va aparte con front-local)
 	$(DC) up --build
 
-down: ## para el contenedor
+down-local: ## para el contenedor local
 	$(DC) down
 
-up-prod-local: ## construye y arranca la imagen COMPLETA (front + API en un contenedor) en el 8080
-	docker build -f docker/python/Dockerfile-build -t todo-app:local .
+up-deploy-local: ## construye la imagen de DESPLIEGUE (front + API juntos) y la arranca en local, en el 8080
+	docker build -f docker/Dockerfile-deploy -t todo-app:local .
 	docker run --rm -p 8080:8000 \
 		-v "$(PWD)/backend_web/.env:/app/backend_web/.env" \
 		-v "$(PWD)/backend_web/storage:/app/backend_web/storage" \
-		--name todo-app-prod-local todo-app:local
+		--name cont-local-todo-app-deploy todo-app:local
 
 front-install: ## instala las dependencias del front
 	cd frontend_web && npm install
 
-front-dev: ## arranca el front en modo desarrollo (http://localhost:5173)
-	cd frontend_web && npm run dev
+front-local: ## arranca el front en local, con recarga automatica (http://localhost:5173)
+	cd frontend_web && npm run local
 
 front-build: ## compila el front comprobando tipos (falla si hay errores de TypeScript)
 	cd frontend_web && npm run build

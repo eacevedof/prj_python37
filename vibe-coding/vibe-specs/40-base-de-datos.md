@@ -68,7 +68,7 @@ WHERE NOT EXISTS (SELECT 1 FROM app_lists WHERE lower(name) = 'entrada');
 
 ```bash
 make db-fresh      # borra el fichero
-make dev           # el arranque lo reconstruye entero
+make local           # el arranque lo reconstruye entero
 ```
 
 No hay ninguna opción dentro de la aplicación para borrar la base de datos, y es

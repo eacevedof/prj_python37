@@ -10,21 +10,21 @@ Cada regla de `../vibe-specs/` tiene aquí su ejemplo real y comentado.
 ```bash
 make venv-install                       # una vez
 cp backend_web/.env.example backend_web/.env
-make dev                                # API en http://127.0.0.1:8000
+make local                              # API en http://127.0.0.1:8000
 ```
 
 En otra terminal, el front:
 
 ```bash
 make front-install                      # una vez
-make front-dev                          # http://localhost:5173
+make front-local                        # http://localhost:5173
 ```
 
 Y para ver el conjunto tal como se despliega — **un solo contenedor sirviendo el
 front y la API**:
 
 ```bash
-make up-prod-local                      # http://localhost:8080
+make up-deploy-local                    # http://localhost:8080
 ```
 
 ## Comprobar que está bien
@@ -88,14 +88,15 @@ equivalente del controller.
 
 ```
 make help              lista todos los targets
-make dev               API con recarga automática
+make local             arranca la API en local, con recarga
 make check             ruff + mypy + tests
 make format            arregla el formato
 make test              solo los tests
 make db-fresh          borra la base de datos local
-make front-dev         front en modo desarrollo
+make front-local       arranca el front en local
 make front-build       compila el front comprobando tipos
-make up-prod-local     la imagen real: front + API en un contenedor
+make up-local          la API en un contenedor
+make up-deploy-local   la imagen de despliegue (front + API) en local
 ```
 
 ## Avisos

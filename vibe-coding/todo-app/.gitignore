@@ -6,9 +6,12 @@
 __pycache__/
 *.py[cod]
 
-# Configuracion con secretos. `.env.example` SI se sube; `.env` NUNCA.
+# Configuracion con secretos. Los `.env.example` SI se suben; los `.env` NUNCA.
 .env
+# backend_web/.env  lo lee la APLICACION (credencial, ruta de la BD, entorno)
+# docker/.env       lo lee DOCKER COMPOSE (nombre, dominio, ruta del servidor)
 backend_web/.env
+docker/.env
 frontend_web/.env
 frontend_web/.env.local
 

@@ -19,8 +19,12 @@
 # proposito: una plantilla con el dominio de otro proyecto cableado se copia tal
 # cual y acaba desplegada con el nombre equivocado.
 #
-# Los valores van en un fichero `.env` JUNTO A ESTE, o en las variables del panel
-# de despliegue:
+# Los valores van en `docker/.env` (JUNTO A ESTE FICHERO), o en las variables del
+# panel de despliegue. La plantilla con todo explicado esta en `docker/.env.example`:
+#
+#     cp docker/.env.example docker/.env
+#
+# Resumen de lo que hay que rellenar:
 #
 #   APP_NAME=mi-poc                                 nombre del contenedor y de la imagen
 #   APP_DOMAIN=mi-poc.ejemplo.com           dominio publico
@@ -35,11 +39,11 @@
 # servidor y no repartida entre una interfaz web y un fichero.
 services:
   todo-app:
-    image: ${APP_NAME}:prod
-    container_name: cont-pro-${APP_NAME}
+    image: ${APP_NAME}:production
+    container_name: cont-production-${APP_NAME}
     build:
       context: ..
-      dockerfile: docker/python/Dockerfile-build
+      dockerfile: docker/Dockerfile-deploy
     restart: unless-stopped
     environment:
       TZ: UTC
@@ -53,10 +57,10 @@ services:
       # Enrutado por etiquetas de Traefik. Si tu servidor usa otra cosa (nginx,
       # Caddy), borra este bloque y publica el puerto 8000.
       - traefik.enable=true
-      - "traefik.http.routers.${APP_NAME}-prod.rule=Host(`${APP_DOMAIN}`)"
-      - traefik.http.routers.${APP_NAME}-prod.entrypoints=websecure
-      - traefik.http.routers.${APP_NAME}-prod.tls.certresolver=letsencrypt
-      - traefik.http.services.${APP_NAME}-prod.loadbalancer.server.port=8000
+      - "traefik.http.routers.${APP_NAME}-production.rule=Host(`${APP_DOMAIN}`)"
+      - traefik.http.routers.${APP_NAME}-production.entrypoints=websecure
+      - traefik.http.routers.${APP_NAME}-production.tls.certresolver=letsencrypt
+      - traefik.http.services.${APP_NAME}-production.loadbalancer.server.port=8000
 
 networks:
   # Red del proxy inverso. Tiene que existir ya en el servidor; este compose no

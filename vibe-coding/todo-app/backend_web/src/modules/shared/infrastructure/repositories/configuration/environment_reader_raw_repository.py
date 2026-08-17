@@ -58,4 +58,22 @@ class EnvironmentReaderRawRepository:
         return self.get_environment() == EnvironmentEnum.PRODUCTION.value
 
     def is_debug(self) -> bool:
+        """El modo depuracion depende del ENTORNO, no solo de la variable.
+
+            production   NUNCA. Da igual lo que ponga APP_DEBUG.
+            develop      solo si APP_DEBUG viene a 1.
+            local        siempre.
+
+        La regla vive aqui, en codigo, y no en la disciplina de rellenar bien un
+        `.env`. Un `APP_DEBUG=1` olvidado en produccion es de las cosas que pasan
+        de verdad, y las consecuencias son trazas y datos internos en respuestas
+        que ve cualquiera. Que no dependa de que alguien se acuerde.
+
+        En local va siempre encendido y sin poder apagarlo: si estas
+        desarrollando, quieres ver el error entero.
+        """
+        if self.is_production():
+            return False
+        if self.is_local():
+            return True
         return get(EnvVarEnum.APP_DEBUG, "") in BooleanInputEnum.TRUTHY_VALUES

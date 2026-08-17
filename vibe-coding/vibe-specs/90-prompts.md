@@ -95,7 +95,7 @@ Sigue vibe-specs/70-envolver-un-repo.md:
 - sin try/except en el repositorio
 
 Añade la dependencia a backend_web/requirements.txt con un comentario diciendo
-para qué es, y si necesita algo del sistema operativo, al Dockerfile-build.
+para qué es, y si necesita algo del sistema operativo, al Dockerfile-deploy.
 ```
 
 ---

@@ -160,7 +160,7 @@ y en el código del front no hay ningún dominio escrito.
 
 `npm run build` ejecuta `vue-tsc --noEmit` antes de compilar: **si hay un error de
 tipos, no hay build**. Es el guardarraíl del front, igual que `make check` lo es
-del backend. Y el `Dockerfile-build` lo ejecuta también, así que un error de tipos
+del backend. Y el `Dockerfile-deploy` lo ejecuta también, así que un error de tipos
 impide construir la imagen.
 
 Dos opciones del `tsconfig.json` que la gente suele desactivar y que aquí se
@@ -180,6 +180,6 @@ devuelve la API en objetos tuyos.
 
 ```bash
 make front-install     # una vez
-make front-dev         # http://localhost:5173, con make dev en otra terminal
+make front-local         # http://localhost:5173, con make local en otra terminal
 make front-build       # compila comprobando tipos
 ```

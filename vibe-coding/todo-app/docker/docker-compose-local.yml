@@ -1,25 +1,26 @@
 # LOCAL - desarrollo.
 #
 # Levanta SOLO la API, con el codigo montado desde tu disco y recarga automatica.
-# El front NO va aqui: en desarrollo se arranca aparte con `make front-dev`
+# El front NO va aqui: en desarrollo se arranca aparte con `make front-local`
 # (Vite, puerto 5173), que tiene recarga instantanea y mensajes de error mucho
 # mejores. El proxy de `vite.config.ts` manda `/api` a este contenedor.
 #
-#   make up          arranca esto
-#   make front-dev   arranca el front, en otra terminal
+#   make up-local     arranca esto
+#   make front-local  arranca el front, en otra terminal
 #
 # Si lo que quieres es ver el conjunto tal como se desplegara -un contenedor
-# sirviendo las dos cosas- usa `make up-prod-local`, que usa Dockerfile-build.
+# sirviendo las dos cosas- usa `make up-deploy-local`, que usa Dockerfile-deploy.
 #
 # No hay servicio de base de datos: SQLite es un fichero dentro de storage/.
+# Este compose NO usa ninguna variable: no necesita `docker/.env`.
 services:
   todo-app:
-    container_name: todo-app-local
+    container_name: cont-local-todo-app
     build:
       # El contexto es la RAIZ del proyecto (no la carpeta docker/), porque el
       # Dockerfile necesita ver backend_web/ y frontend_web/.
       context: ..
-      dockerfile: docker/python/Dockerfile
+      dockerfile: docker/Dockerfile-local
     environment:
       TZ: UTC
     ports:

@@ -16,7 +16,7 @@ que se descubre que falla lo básico.
 
 ## 2 · Funciona de verdad
 
-- [ ] `make up-prod-local` levanta la imagen **real** y todo funciona en
+- [ ] `make up-deploy-local` levanta la imagen **real** y todo funciona en
       `http://localhost:8080`. Esto es lo que se despliega: si aquí falla, en el
       servidor falla.
 - [ ] El recorrido completo, hecho a mano en el navegador: crear, listar,
@@ -42,9 +42,10 @@ Es lo que más se olvida y lo que peor queda en una demo.
 
 - [ ] **`API_KEY` cambiada.** Si en el servidor pone `change-me-local-only`, es
       como no tener ninguna.
-- [ ] `.env.example` al día: toda variable que use el código está ahí, sin valores
-      reales.
-- [ ] `.env` **no** está en git: `git status --ignored | grep .env`
+- [ ] **Los dos `.env.example` al día**, sin valores reales:
+      `backend_web/.env.example` (lo lee la aplicación) y `docker/.env.example`
+      (lo lee docker compose en develop y prod).
+- [ ] Ningún `.env` está en git: `git status --ignored | grep .env`
 - [ ] Ninguna credencial ni URL de servicio escrita dentro del código.
 
 ## 5 · Que alguien más pueda arrancarlo
@@ -54,14 +55,14 @@ Es lo que más se olvida y lo que peor queda en una demo.
 - [ ] Las dependencias de `requirements.txt` llevan un comentario diciendo para
       qué son.
 - [ ] Lo que haga falta del sistema (`ffmpeg`, fuentes, un modelo) está en el
-      `Dockerfile-build`, no solo instalado en tu máquina.
+      `Dockerfile-deploy`, no solo instalado en tu máquina.
 - [ ] **Pruébalo en limpio**: clona el repo en otra carpeta y arráncalo desde
       cero. Es la única forma de descubrir el paso que solo funciona en tu equipo.
 
 ## 6 · Si se despliega
 
-- [ ] `APP_NAME`, `APP_DOMAIN` y `HOST_STORAGE_PATH` puestos en el compose de
-      `develop`.
+- [ ] `docker/.env` creado a partir de `docker/.env.example`, con `APP_NAME`,
+      `APP_DOMAIN`, `HOST_STORAGE_PATH` y `PROXY_NETWORK` rellenos.
 - [ ] `HOST_STORAGE_PATH` es una ruta **absoluta** y **existe** en el servidor.
 - [ ] `APP_ENV=develop` (o `production`) en el `.env` del servidor.
 - [ ] `curl https://tu-dominio/health-check` responde con la versión y el entorno

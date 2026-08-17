@@ -57,7 +57,7 @@ A día de hoy son:
 ```bash
 make venv-install
 cp backend_web/.env.example backend_web/.env
-make dev
+make local
 ```
 
 En otra terminal:
@@ -128,17 +128,17 @@ minutos; treinta ficheros después, una tarde.
 
 ```bash
 make front-install
-make front-dev      # http://localhost:5173
+make front-local      # http://localhost:5173
 ```
 
-Con `make dev` corriendo en otra terminal. El front habla con la API a través del
+Con `make local` corriendo en otra terminal. El front habla con la API a través del
 proxy de Vite, así que las dos cosas parecen estar en el mismo sitio — igual que
 estarán cuando se despliegue.
 
 ## Paso 8 · Verlo entero como se va a desplegar
 
 ```bash
-make up-prod-local      # http://localhost:8080
+make up-deploy-local      # http://localhost:8080
 ```
 
 Esto construye la imagen de verdad: compila el front y lo sirve junto con la API

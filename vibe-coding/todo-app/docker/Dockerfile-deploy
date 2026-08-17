@@ -1,6 +1,22 @@
-# Imagen COMPLETA: compila el front y lo sirve junto con la API, en un solo
-# contenedor. Se usa en develop y en produccion, y tambien se puede levantar en
-# local (`make up-prod-local`) para ver exactamente lo que se va a desplegar.
+# ===========================================================================
+#  DESPLIEGUE  ·  front + API en un solo contenedor
+# ===========================================================================
+#
+# EN ESTA CARPETA HAY DOS DOCKERFILE, Y NO SON "UNO DE FRONT Y OTRO DE BACK":
+#
+#   Dockerfile-local                Solo la API. Codigo MONTADO desde tu disco.
+#                                  Lo usa docker-compose-local.yml.
+#   Dockerfile-deploy   <-- este.  Front + API juntos. Codigo HORNEADO.
+#                                  Lo usan los composes de develop y production.
+#
+# Este NO lleva nombre de entorno porque sirve a DOS: develop y production. La
+# unica diferencia entre esos dos es el compose, no la imagen.
+#
+# La diferencia es DESARROLLO vs DESPLEGABLE, no front vs back.
+#
+# Este compila el front y lo sirve junto con la API. Se usa en develop y en
+# production, y tambien se puede levantar en local (`make up-deploy-local`) para ver
+# exactamente lo que se va a desplegar.
 #
 # UN SOLO CONTENEDOR, y no uno para el front y otro para la API, por dos razones:
 #   1. Mismo origen: el navegador pide `/api/...` al mismo sitio del que descargo
