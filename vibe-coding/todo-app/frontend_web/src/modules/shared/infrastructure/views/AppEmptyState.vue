@@ -17,9 +17,9 @@ defineProps<{ message: string }>();
 <style scoped>
 .empty {
     margin: 0;
-    padding-block: var(--space-6);
+    padding-block: var(--space-8);
     color: var(--text-subtle);
-    font-size: var(--text-sm);
+    font-size: var(--font-size-200);
     text-align: center;
 }
 </style>

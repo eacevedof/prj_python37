@@ -147,7 +147,7 @@ async function onCreate(): Promise<void> {
     display: inline-block;
     margin-block-end: var(--space-2);
     color: var(--text-subtle);
-    font-size: var(--text-sm);
+    font-size: var(--font-size-200);
     text-decoration: none;
 }
 
@@ -162,7 +162,7 @@ async function onCreate(): Promise<void> {
 .new {
     display: flex;
     gap: var(--space-2);
-    margin-block-end: var(--space-5);
+    margin-block-end: var(--space-6);
 }
 
 .new input[type="text"] {
@@ -174,7 +174,7 @@ async function onCreate(): Promise<void> {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-block-start: 1px solid var(--border);
+    border-block-start: var(--stroke) solid var(--border);
 }
 
 .row {
@@ -183,7 +183,7 @@ async function onCreate(): Promise<void> {
     gap: var(--space-3);
     padding-block: var(--space-3);
     padding-inline: var(--space-2);
-    border-block-end: 1px solid var(--border);
+    border-block-end: var(--stroke) solid var(--border);
     transition: background-color 0.12s;
 }
 
@@ -203,20 +203,20 @@ async function onCreate(): Promise<void> {
 .row--done .row__title {
     color: var(--text-subtle);
     text-decoration: line-through;
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: var(--stroke);
 }
 
 .row__due {
     flex: none;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: var(--font-size-100);
     font-variant-numeric: tabular-nums;
 }
 
 .row__due--overdue {
     color: var(--danger);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
 }
 
 .row--done .row__due {
@@ -229,15 +229,15 @@ async function onCreate(): Promise<void> {
     gap: var(--space-3);
     margin-block: var(--space-4) 0;
     color: var(--text-subtle);
-    font-size: var(--text-xs);
+    font-size: var(--font-size-100);
     font-variant-numeric: tabular-nums;
 }
 
 /* Barra de avance: el mismo dato que el texto, pero legible de un vistazo. */
 .summary__bar {
     flex: 1;
-    max-inline-size: 8rem;
-    block-size: 3px;
+    max-inline-size: var(--space-9);
+    block-size: var(--stroke-mark);
     border-radius: var(--radius-pill);
     background: var(--surface-raised);
     overflow: hidden;

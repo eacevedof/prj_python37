@@ -115,6 +115,90 @@ un campo, solo hay que tocar una clase.
 
 ---
 
+## El sistema de diseño: normalización
+
+Todo el aspecto sale de `src/style.css`. **Ningún tamaño, espacio ni grosor se
+escribe a mano en una vista.**
+
+No es manía de orden: es lo que separa una interfaz que parece un producto de una
+que parece un prototipo. El color se nota enseguida; lo que se nota sin saber
+explicarlo es que **todo cae en la misma rejilla**. Cuando una pantalla usa 13px y
+la de al lado 14px, el ojo lo ve aunque nadie sepa decir qué falla.
+
+### Tamaños de fuente
+
+Seis pasos, y cada uno sale de multiplicar el anterior por una razón (~1,125 a
+1,27). No son números elegidos sueltos:
+
+| Token | | Para qué |
+|---|---|---|
+| `--font-size-100` | 12px | etiquetas, chips, pies |
+| `--font-size-200` | 14px | texto secundario |
+| `--font-size-300` | **16px** | **base**: el texto normal |
+| `--font-size-400` | 18px | texto destacado |
+| `--font-size-500` | 22px | título de sección |
+| `--font-size-600` | 28px | título de página |
+
+Los pasos pequeños van juntos (en una interfaz necesitas 14 **y** 16, y la
+diferencia importa) y se separan al subir (entre 22 y 28 tiene que haber salto).
+
+Se numeran **100, 200, 300…** en vez de `sm`/`md`/`lg` a propósito: si mañana hace
+falta un paso intermedio, entra como `250` sin renombrar nada. Con `sm`/`md`
+acabas inventando `md-plus`.
+
+> **El texto base es 16px, no menos.** Es el tamaño por defecto del navegador.
+> Bajarlo "porque se ve más compacto" es el error clásico: quien tiene la vista
+> cansada ya lo había ajustado en su navegador, y tú se lo reduces.
+
+### Lo que también es tipografía y se suele olvidar
+
+Un tamaño de fuente sin lo demás no está normalizado. Estas tres escalas existen
+por el mismo motivo:
+
+| | Tokens |
+|---|---|
+| **Altura de línea** | `--leading-tight` 1,2 · `--leading-snug` 1,35 · `--leading-normal` 1,55 |
+| **Grosor** | `--weight-regular` 400 · `--weight-medium` 500 · `--weight-semibold` 600 |
+| **Espaciado entre letras** | `--tracking-tight` · `--tracking-normal` · `--tracking-wide` |
+
+La altura de línea va **al revés** que el tamaño: cuanto más grande el texto, más
+junta la línea. Un título de 28px con interlineado de 1,55 se ve desmontado. Por
+eso los `h1`/`h2` no heredan el interlineado del cuerpo.
+
+Tres grosores y no más: con cinco, nadie sabe cuál toca.
+
+### Espaciado y tamaños: una sola escala
+
+Rejilla de 4px, nueve pasos:
+
+```
+1 → 4px     2 → 8px     3 → 12px    4 → 16px    5 → 20px
+6 → 24px    7 → 32px    8 → 48px    9 → 64px
+```
+
+Lineal abajo, donde hace falta precisión; doblando arriba, donde solo importa que
+haya aire.
+
+**La misma escala sirve para espaciar y para dimensionar**, porque las dos cosas
+viven en la misma rejilla: el hueco entre dos filas y el lado de una casilla se
+miden igual. Tener dos escalas distintas es como acaban los márgenes sin cuadrar
+con las alturas.
+
+Y `--stroke` (1px) para todos los filetes: si unos separadores son de 1px y otros
+de 2, la página se ve sucia sin que sepas por qué.
+
+### Cómo saber si lo estás haciendo bien
+
+```bash
+grep -rn "px;\|rem;" --include="*.vue" src/ | grep -v "var(--"
+```
+
+**Si eso devuelve algo, tienes un valor fuera de la escala.** O lo cambias por el
+token que corresponda, o —si de verdad falta un paso— lo añades a `style.css` y
+piensas por qué hacía falta.
+
+---
+
 ## La credencial en el navegador
 
 Esto hay que leerlo entero.

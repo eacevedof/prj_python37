@@ -2,38 +2,144 @@
    SISTEMA DE DISENO
    =============================================================================
 
-   Todo el aspecto de la aplicacion sale de las variables de este fichero. Si
-   quieres cambiar el look de tu PoC, cambia estos valores y no toques nada mas:
-   las vistas no llevan ni un color ni un tamano escrito a mano.
+   Todo el aspecto de la aplicacion sale de las variables de este fichero.
 
-   No hay libreria de CSS (ni Tailwind, ni Bootstrap) a proposito. Son ~200
-   lineas que se leen de una sentada, y asi el ejemplar se puede entender entero
-   sin aprender antes las convenciones de otra herramienta.
+   LA REGLA, Y ES LA IMPORTANTE:
+   ningun tamano, espacio, grosor ni color se escribe a mano en una vista. Si
+   necesitas un valor que no esta en estas escalas, lo que toca es anadirlo aqui
+   (y pensar por que hace falta), no escribir "13px porque queda mejor".
 
-   Lo que si se usa es CSS moderno de verdad: variables, `color-scheme`,
-   propiedades logicas, `clamp()` para tipografia fluida, `:focus-visible` y
-   respeto por `prefers-reduced-motion`.
+   Es lo que separa una interfaz que parece un producto de una que parece un
+   prototipo: no es el color, es que TODO cae en la misma rejilla. Cuando cada
+   pantalla usa un tamano ligeramente distinto, el ojo lo nota aunque no sepa
+   decir por que.
+
+   No hay libreria de CSS (ni Tailwind, ni Bootstrap) a proposito: son ~250
+   lineas que se leen de una sentada.
    ========================================================================== */
 
 :root {
-    /* ---- COLOR ---------------------------------------------------------
+    /* =====================================================================
+       1. TIPOGRAFIA
+       =====================================================================
+
+       ESCALA DE TAMANOS. Cada paso sale de multiplicar el anterior por una
+       razon de ~1,125-1,27, no de elegir numeros sueltos. Los pasos pequenos
+       van mas juntos (en una interfaz necesitas 14 y 16, y la diferencia
+       importa) y se separan al subir (entre un titulo de 22 y uno de 28 tiene
+       que haber salto visible).
+
+       El nombre es un NUMERO y no `sm`/`lg` a proposito: si manana hace falta
+       un paso intermedio, entra como 250 sin renombrar nada. Con `sm`/`md`
+       acabas inventando `md-plus`.
+
+            100   12px   etiquetas, chips, pies
+            200   14px   texto secundario
+            300   16px   BASE, el texto normal
+            400   18px   texto destacado
+            500   22px   titulo de seccion
+            600   28px   titulo de pagina                                  */
+    --font-size-100: 0.75rem;
+    --font-size-200: 0.875rem;
+    --font-size-300: 1rem;
+    --font-size-400: 1.125rem;
+    --font-size-500: 1.375rem;
+    --font-size-600: 1.75rem;
+
+    /* El texto base es 1rem = 16px, que es el tamano por defecto del navegador.
+       Bajar de ahi "porque se ve mas compacto" es el error clasico: quien tenga
+       la vista cansada ya lo habia ajustado en su navegador, y tu se lo
+       reduces. */
+
+    /* ALTURA DE LINEA. Tambien es una escala, y va al reves que el tamano:
+       cuanto mas grande el texto, mas junta la linea. Un titulo de 28px con
+       interlineado de 1,55 se ve desmontado. */
+    --leading-tight: 1.2; /* titulos */
+    --leading-snug: 1.35; /* texto corto, chips */
+    --leading-normal: 1.55; /* texto de lectura */
+
+    /* GROSORES. Tres, y no mas. Con cinco grosores nadie sabe cual toca. */
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+
+    /* ESPACIADO ENTRE LETRAS. Los titulos grandes necesitan cerrarse un poco
+       (a tamano grande las letras se ven separadas); las mayusculas pequenas,
+       abrirse (juntas se leen mal). */
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.04em;
+
+    /* DOS FAMILIAS, y la distincion es funcional:
+         sans -> texto que se lee
+         mono -> datos que se COMPARAN (contadores, fechas)
+       Los numeros en monoespaciada se alinean en columna y se leen de un
+       vistazo, que es justo lo que quieres en una lista.
+
+       Pilas del sistema, sin webfonts: no hay descarga, no hay salto de
+       maquetacion al cargar, y el PoC funciona sin red. */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    /* =====================================================================
+       2. ESPACIADO Y TAMANOS
+       =====================================================================
+
+       UNA sola escala para las dos cosas, porque las dos viven en la misma
+       rejilla de 4px: el hueco entre dos filas y el lado de una casilla se
+       miden igual. Tener dos escalas distintas es como acaban los margenes sin
+       cuadrar con las alturas.
+
+            1    4px      2    8px      3   12px      4   16px
+            5   20px      6   24px      7   32px      8   48px      9   64px
+
+       Lineal abajo (donde se necesita precision) y doblando arriba (donde solo
+       importa que haya aire).                                              */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 2rem;
+    --space-8: 3rem;
+    --space-9: 4rem;
+
+    /* Ancho de la columna de contenido: ~46rem. Mas ancho y el ojo pierde el
+       renglon al saltar de linea; en una lista, deja de relacionar el titulo
+       con su fecha. */
+    --layout-width: 46rem;
+
+    /* Radios. Tres, derivados de la misma rejilla. */
+    --radius-sm: 0.25rem; /* 4px  */
+    --radius-md: 0.5rem; /* 8px  */
+    --radius-pill: 999px;
+
+    /* Grosores de linea. El filete es 1px SIEMPRE: si unos separadores son de
+       1px y otros de 2, la pagina se ve sucia sin que sepas por que. */
+    --stroke: 1px;
+    --stroke-mark: var(--space-1); /* 4px: marcas de color y barras */
+
+    /* =====================================================================
+       3. COLOR
+       =====================================================================
        Los neutros NO son grises puros: llevan un sesgo hacia el verde-azulado
-       del acento. Un gris puro al lado de un acento con color se ve
-       "sin elegir"; este se ve escogido a proposito.                       */
+       del acento. Un gris puro al lado de un acento con color se ve "sin
+       elegir"; este se ve escogido.                                        */
     --surface: #fbfcfc; /* fondo de pagina */
-    --surface-raised: #f0f4f3; /* campos, chips, zonas destacadas */
+    --surface-raised: #f0f4f3; /* campos, chips */
     --surface-hover: #e8eeed;
-    --border: #dde5e4; /* filete fino: separa sin dibujar cajas */
+    --border: #dde5e4;
     --border-strong: #c3d0ce;
 
-    --text: #16201f; /* casi negro, con el mismo sesgo */
+    --text: #16201f;
     --text-muted: #5b6b69; /* secundario: fechas, contadores */
     --text-subtle: #8a9997; /* terciario: pistas, vacios */
 
     /* UN solo acento, y se gasta en lo que se puede pulsar. */
     --accent: #0f6b62;
     --accent-hover: #0b544d;
-    --accent-soft: #e2efed; /* fondo tenue del mismo tono */
+    --accent-soft: #e2efed;
     --on-accent: #ffffff;
 
     /* Color SEMANTICO, separado del acento: solo comunica estado. */
@@ -41,59 +147,22 @@
     --danger-soft: #fbeceb;
 
     --focus: #0f6b62;
-
-    /* ---- TIPOGRAFIA -----------------------------------------------------
-       Dos roles, y la distincion es real:
-         sans -> texto que se lee
-         mono -> datos que se COMPARAN (contadores, fechas)
-       Los numeros en monoespaciada se alinean en columna y se leen de un
-       vistazo, que es justo lo que quieres en una lista.
-
-       Pilas del sistema, sin webfonts: no hay descarga, no hay salto de
-       maquetacion al cargar, y el PoC funciona sin red.                     */
-    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-
-    /* Escala tipografica. El titulo usa clamp() para adaptarse al ancho sin
-       necesidad de media queries. */
-    --text-xs: 0.75rem;
-    --text-sm: 0.8125rem;
-    --text-base: 0.9375rem;
-    --text-lg: 1.0625rem;
-    --text-xl: clamp(1.25rem, 1rem + 1.2vw, 1.6rem);
-
-    /* ---- ESPACIADO ------------------------------------------------------
-       Escala de 4px. Usar SIEMPRE estos valores: en cuanto alguien escribe
-       "13px porque queda mejor", el ritmo vertical se rompe y ya no se
-       recupera.                                                             */
-    --space-1: 0.25rem;
-    --space-2: 0.5rem;
-    --space-3: 0.75rem;
-    --space-4: 1rem;
-    --space-5: 1.5rem;
-    --space-6: 2rem;
-    --space-7: 3rem;
-
-    --radius-sm: 4px;
-    --radius-md: 7px;
-    --radius-pill: 999px;
-
     --ring: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
-    --content-width: 46rem;
 
-    /* Le dice al navegador de que color es el fondo, para que pinte con el
-       tema correcto los controles nativos (checkbox, scrollbar, selector de
-       fecha) sin tener que estilarlos uno a uno. */
+    /* Le dice al navegador de que color es el fondo, para que pinte con el tema
+       correcto los controles nativos (casilla, barra de desplazamiento,
+       selector de fecha) sin estilarlos uno a uno. */
     color-scheme: light;
 }
 
 /* ---- TEMA OSCURO --------------------------------------------------------
-   Solo se redefinen las VARIABLES, nunca los componentes. Esa es la regla que
-   hace que el tema oscuro no se quede a medias: si un color solo existiera
-   dentro de este bloque, en tema claro no tendria valor.
+   Solo se redefinen las VARIABLES DE COLOR, nunca los componentes ni las
+   escalas. Esa es la regla que hace que el tema oscuro no se quede a medias: si
+   un color solo existiera dentro de este bloque, en tema claro no tendria
+   valor.
 
-   No es una inversion automatica: el acento se aclara para que siga
-   contrastando sobre fondo oscuro, cosa que invertir no consigue.           */
+   No es una inversion automatica: el acento se ACLARA para seguir contrastando
+   sobre fondo oscuro, cosa que invertir no consigue.                        */
 @media (prefers-color-scheme: dark) {
     :root {
         --surface: #0e1413;
@@ -134,22 +203,29 @@ body {
     background: var(--surface);
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: var(--text-base);
-    line-height: 1.55;
+    font-size: var(--font-size-300);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-normal);
     -webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2 {
     margin: 0;
-    font-weight: 600;
-    letter-spacing: -0.015em;
+    font-weight: var(--weight-semibold);
+    /* Los titulos NO heredan el interlineado del texto: se cierran. */
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
     /* Reparte las palabras entre lineas para que no quede una suelta. */
     text-wrap: balance;
 }
 
 h1 {
-    font-size: var(--text-xl);
+    font-size: var(--font-size-600);
+}
+
+h2 {
+    font-size: var(--font-size-500);
 }
 
 /* ---- CONTROLES ----------------------------------------------------------
@@ -165,10 +241,12 @@ button {
 input[type="text"],
 input[type="date"],
 input:not([type]) {
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--border);
+    padding-block: var(--space-2);
+    padding-inline: var(--space-3);
+    border: var(--stroke) solid var(--border);
     border-radius: var(--radius-md);
     background: var(--surface-raised);
+    line-height: var(--leading-snug);
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -178,37 +256,39 @@ input::placeholder {
 
 input[type="date"] {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    font-size: var(--font-size-200);
 }
 
-/* Pinta el check nativo con el acento: un control nativo bien coloreado se
+/* Pinta la casilla nativa con el acento: un control nativo bien coloreado se
    comporta mejor que uno reinventado con divs (teclado, lectores de pantalla,
    estados). */
 input[type="checkbox"] {
     accent-color: var(--accent);
-    inline-size: 1.05rem;
-    block-size: 1.05rem;
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
     margin: 0;
     cursor: pointer;
 }
 
 input[type="color"] {
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
-    padding: 2px;
-    border: 1px solid var(--border);
+    inline-size: var(--space-7);
+    block-size: var(--space-7);
+    padding: var(--space-1);
+    border: var(--stroke) solid var(--border);
     border-radius: var(--radius-md);
     background: var(--surface-raised);
     cursor: pointer;
 }
 
 button {
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid transparent;
+    padding-block: var(--space-2);
+    padding-inline: var(--space-4);
+    border: var(--stroke) solid transparent;
     border-radius: var(--radius-md);
     background: var(--accent);
     color: var(--on-accent);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-snug);
     cursor: pointer;
     transition: background-color 0.15s;
 }
@@ -223,12 +303,13 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Boton discreto para acciones secundarias y destructivas. */
+/* Boton discreto, para acciones secundarias y destructivas. */
 button.is-quiet {
-    padding: var(--space-1) var(--space-2);
+    padding-block: var(--space-1);
+    padding-inline: var(--space-2);
     background: none;
     color: var(--text-subtle);
-    font-size: var(--text-lg);
+    font-size: var(--font-size-400);
     line-height: 1;
 }
 
@@ -238,8 +319,8 @@ button.is-quiet:hover {
 }
 
 /* ---- FOCO ---------------------------------------------------------------
-   `:focus-visible` y no `:focus`: el anillo sale al navegar con teclado y no
-   al hacer clic con el raton, que es lo que la gente acaba desactivando (y
+   `:focus-visible` y no `:focus`: el anillo sale al navegar con teclado y no al
+   hacer clic con el raton, que es lo que la gente acaba desactivando (y
    entonces la aplicacion deja de poder usarse sin raton).                    */
 :focus {
     outline: none;

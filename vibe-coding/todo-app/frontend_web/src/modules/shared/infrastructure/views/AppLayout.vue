@@ -23,10 +23,10 @@
 
 <style scoped>
 .layout {
-    max-inline-size: var(--content-width);
+    max-inline-size: var(--layout-width);
     margin-inline: auto;
-    padding-inline: var(--space-5);
-    padding-block: var(--space-6) var(--space-7);
+    padding-inline: var(--space-6);
+    padding-block: var(--space-7) var(--space-9);
 }
 
 .layout__header {
@@ -35,15 +35,15 @@
     justify-content: space-between;
     gap: var(--space-4);
     padding-block-end: var(--space-4);
-    margin-block-end: var(--space-6);
-    border-block-end: 1px solid var(--border);
+    margin-block-end: var(--space-7);
+    border-block-end: var(--stroke) solid var(--border);
 }
 
 .layout__brand {
     color: var(--text);
-    font-weight: 600;
-    font-size: var(--text-lg);
-    letter-spacing: -0.02em;
+    font-weight: var(--weight-semibold);
+    font-size: var(--font-size-400);
+    letter-spacing: var(--tracking-tight);
     text-decoration: none;
 }
 
@@ -52,15 +52,15 @@
 .layout__brand::after {
     content: "";
     display: inline-block;
-    inline-size: 5px;
-    block-size: 5px;
-    margin-inline-start: 3px;
+    inline-size: var(--stroke-mark);
+    block-size: var(--stroke-mark);
+    margin-inline-start: var(--space-1);
     border-radius: var(--radius-pill);
     background: var(--accent);
 }
 
 .layout__note {
     color: var(--text-subtle);
-    font-size: var(--text-xs);
+    font-size: var(--font-size-100);
 }
 </style>

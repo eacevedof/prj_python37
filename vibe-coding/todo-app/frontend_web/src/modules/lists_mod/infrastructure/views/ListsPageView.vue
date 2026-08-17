@@ -104,7 +104,7 @@ async function onCreate(): Promise<void> {
 .new {
     display: flex;
     gap: var(--space-2);
-    margin-block-end: var(--space-5);
+    margin-block-end: var(--space-6);
 }
 
 .new input[type="text"] {
@@ -118,7 +118,7 @@ async function onCreate(): Promise<void> {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-block-start: 1px solid var(--border);
+    border-block-start: var(--stroke) solid var(--border);
 }
 
 .row {
@@ -127,7 +127,7 @@ async function onCreate(): Promise<void> {
     gap: var(--space-3);
     padding-block: var(--space-3);
     padding-inline: var(--space-2);
-    border-block-end: 1px solid var(--border);
+    border-block-end: var(--stroke) solid var(--border);
     transition: background-color 0.12s;
 }
 
@@ -137,8 +137,8 @@ async function onCreate(): Promise<void> {
 
 .row__mark {
     flex: none;
-    inline-size: 3px;
-    block-size: 1.35rem;
+    inline-size: var(--stroke-mark);
+    block-size: var(--space-6);
     border-radius: var(--radius-pill);
 }
 
@@ -156,15 +156,15 @@ async function onCreate(): Promise<void> {
 
 .row__count {
     flex: none;
-    min-inline-size: 1.75rem;
-    padding-block: 1px;
+    min-inline-size: var(--space-7);
     padding-inline: var(--space-2);
     border-radius: var(--radius-pill);
     background: var(--accent-soft);
     color: var(--accent);
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: var(--font-size-100);
     font-variant-numeric: tabular-nums;
+    line-height: var(--leading-snug);
     text-align: center;
 }
 
@@ -177,6 +177,6 @@ async function onCreate(): Promise<void> {
 .summary {
     margin-block: var(--space-4) 0;
     color: var(--text-subtle);
-    font-size: var(--text-xs);
+    font-size: var(--font-size-100);
 }
 </style>

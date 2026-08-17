@@ -24,10 +24,10 @@ defineProps<{ message: string }>();
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     /* Filete lateral en vez de borde completo: senala sin encajonar. */
-    border-inline-start: 3px solid var(--danger);
+    border-inline-start: var(--stroke-mark) solid var(--danger);
     background: var(--danger-soft);
     color: var(--danger);
-    font-size: var(--text-sm);
+    font-size: var(--font-size-200);
     text-wrap: pretty;
 }
 </style>
