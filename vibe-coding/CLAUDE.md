@@ -46,7 +46,9 @@ capas · un contenedor Docker que sirve el front y la API juntos.
 - Base de datos y migraciones: `vibe-specs/40-base-de-datos.md`
 - Qué mide `make check`: `vibe-specs/50-guardarrailes.md`
 - Envolver una librería o repo de terceros: `vibe-specs/70-envolver-un-repo.md`
+- Backend en Node o Go: `vibe-specs/21-backend-otros-lenguajes.md`
 
-> Solo hay normativa para **backend en Python**. Para Node o Go, la arquitectura y
-> los nombres son los mismos, pero las plantillas concretas están por escribir:
-> pregunta antes de improvisar.
+> La normativa detallada es para **Python**. Para **Node o Go** existe
+> `vibe-specs/21-backend-otros-lenguajes.md`: **se replica la misma arquitectura**,
+> solo cambia la sintaxis. Lo que ahí falta son los tests de convención, que en
+> esos lenguajes todavía no existen — dilo si te piden un PoC así.

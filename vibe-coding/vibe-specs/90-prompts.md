@@ -100,6 +100,28 @@ para qué es, y si necesita algo del sistema operativo, al Dockerfile-build.
 
 ---
 
+## 4b · El repo que hay que envolver NO es de Python
+
+```
+El repo que hay que envolver es <URL> y está escrito en <Node / Go / ...>.
+
+Lee vibe-specs/21-backend-otros-lenguajes.md ENTERO antes de proponer nada.
+
+Dime primero cuál de las dos opciones aplica y por qué:
+  (1) levantarlo al lado y hablarle por HTTP desde un backend de Python normal
+  (2) escribir el backend en ese lenguaje
+
+Si es la (2), dime también qué stack concreto propones (servidor, driver de base
+de datos, formateador, linter, tests) y cómo quedaría `make check`. ESPERA a que
+te lo confirme antes de escribir código: esa decisión se queda para todos los PoC
+siguientes.
+```
+
+**Por qué preguntar**: la opción 1 resuelve la mayoría de los casos y te deja el
+kit entero. La 2 es bastante más trabajo y hoy no tiene tests de convención.
+
+---
+
 ## 5 · El front de un módulo
 
 ```

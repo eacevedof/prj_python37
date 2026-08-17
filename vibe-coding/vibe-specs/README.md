@@ -37,6 +37,7 @@ esta carpeta tiene su ejemplo real ahí, y esta carpeta te dice cuál mirar.
 | Montar un PoC nuevo, ahora | [`00-como-usar-esto.md`](00-como-usar-esto.md) |
 | Entender por qué el código está partido así | [`10-arquitectura.md`](10-arquitectura.md) |
 | Añadir o tocar algo del backend | [`20-backend-python.md`](20-backend-python.md) |
+| Añadir o tocar algo del backend, **en Node o Go** | [`21-backend-otros-lenguajes.md`](21-backend-otros-lenguajes.md) |
 | Escribir los tests de tu módulo | [`25-tests.md`](25-tests.md) |
 | Añadir o tocar algo del front | [`30-frontend-vue.md`](30-frontend-vue.md) |
 | Añadir una tabla o cambiar la base de datos | [`40-base-de-datos.md`](40-base-de-datos.md) |
@@ -54,12 +55,17 @@ Que la aplicación funcione y que el código sea mantenible son dos cosas distin
 `make check` mide la segunda, que es la que le cuesta dinero al equipo que venga
 después.
 
-## Qué NO cubre esto (todavía)
+## Si el backend no es Python
 
-Ahora mismo la normativa está escrita para **backend en Python**. La mayoría de
-los PoC lo son, así que es por donde se empieza.
+La normativa detallada está escrita para **Python**, que es lo que son casi todos
+los PoC. Para **Node o Go** hay una spec genérica —
+[`21-backend-otros-lenguajes.md`](21-backend-otros-lenguajes.md) — que dice lo
+único que hay que saber: **se replica la misma arquitectura**, cambia la sintaxis
+y nada más.
 
-Cuando toque envolver algo escrito en **Node** o en **Go**, la arquitectura y los
-nombres serán los mismos (están pensados para no depender del lenguaje), pero
-faltan las plantillas concretas. Se añadirán como `21-backend-node.md` y
-`22-backend-go.md`. Hasta entonces, pregunta antes de improvisar.
+Lo que ahí falta, y hay que tener presente, son los **tests de convención**: en
+Python los trae puestos `make check`, y en Node o Go todavía no existen. Un PoC en
+esos lenguajes hay que revisarlo a mano.
+
+Antes de arrancar uno, léete esa página entera: la primera pregunta que hace es si
+de verdad hace falta cambiar de lenguaje, y muchas veces la respuesta es que no.

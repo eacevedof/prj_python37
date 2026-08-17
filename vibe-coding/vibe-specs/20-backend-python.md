@@ -2,6 +2,10 @@
 
 Cómo se escribe cada pieza. Todo lo de aquí tiene su ejemplo en `todo-app`.
 
+> ¿El backend no es Python? Lee
+> [`21-backend-otros-lenguajes.md`](21-backend-otros-lenguajes.md), pero **lee
+> antes esta página**: es la referencia que allí se replica.
+
 ---
 
 ## Dónde va cada fichero

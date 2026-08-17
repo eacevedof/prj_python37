@@ -168,6 +168,11 @@ forma, y ese servicio es un origen de datos más.
 La dirección URL va al `.env`, con su getter en `EnvironmentReaderRawRepository`.
 Nunca escrita dentro del código.
 
+> **Esta es casi siempre la respuesta correcta cuando el repo no es de Python.**
+> Levantas esa herramienta al lado, le hablas por HTTP, y tu backend sigue
+> siendo Python con el kit entero: guardarraíles, plantillas y ejemplar. Ver
+> [`21-backend-otros-lenguajes.md`](21-backend-otros-lenguajes.md).
+
 ---
 
 ## Resumen
