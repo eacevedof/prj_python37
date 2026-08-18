@@ -7,8 +7,15 @@ import flet as ft
 from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import GroupSourceLinkComp
 from ddd.vocabulary.infrastructure.ui.components.image_flashcard_comp import ImageFlashcardComp
 from ddd.vocabulary.infrastructure.ui.components.input_field_comp import InputFieldComp
+from ddd.vocabulary.infrastructure.ui.components.rules_help_dialog_comp import (
+    RulesHelpDialogComp,
+)
 from ddd.vocabulary.infrastructure.ui.components.timer_comp import TimerComp
-from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_scale, is_portrait
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import (
+    get_page_scale,
+    get_page_size,
+    is_portrait,
+)
 from ddd.vocabulary.infrastructure.ui.views.image_study_view_dto import ImageStudyViewDto
 
 
@@ -61,10 +68,17 @@ class ImageStudyView(ft.Container):
         self._ft_timer: TimerComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
         self._ft_help_btn: ft.IconButton | None = None
+        self._ft_rules_help_dialog = RulesHelpDialogComp(
+            route_on_close=self._on_help_dialog_close
+        )
         self.__is_paused: bool = False
         # True mientras se muestra la corrección (auto-avance): el botón de pausa
         # congela el avance en vez de tocar el temporizador (ya parado).
         self.__in_review: bool = False
+        # La pausa activa la provocó abrir la ayuda (hay que reanudar al cerrar)
+        self.__is_paused_by_help: bool = False
+        # Grupo de la sesión («<id> - <título>»), lo pinta la tarjeta
+        self.__group_label: str = ""
         # Datos para el modal de ayuda (reglas de uso) de la palabra actual
         self.__current_word_text: str = ""
         self.__current_rules_help: str = ""
@@ -118,6 +132,10 @@ class ImageStudyView(ft.Container):
         if self._ft_group_source_link:
             self._ft_group_source_link.render(group_source)
         self.update()
+
+    def render_group_label(self, group_label: str) -> None:
+        """Guarda el grupo de la sesión; lo pinta la tarjeta en su esquina izquierda."""
+        self.__group_label = group_label
 
     # =========================================================================
     # LIFECYCLE HOOKS
@@ -226,7 +244,7 @@ class ImageStudyView(ft.Container):
 
         word = dto.current_word
 
-        # Datos para el modal de ayuda (habilitado solo si la palabra tiene reglas)
+        # Datos para el modal de ayuda (el botón solo se ve si hay reglas)
         self.__current_word_text = word.get("text_es", "")
         self.__current_rules_help = word.get("rules_help", "") or ""
 
@@ -238,6 +256,7 @@ class ImageStudyView(ft.Container):
             text_lang=word.get("text_lang", ""),
             pronunciation=word.get("pronunciation", ""),
             show_translation=False,
+            group_label=self.__group_label,
             word_id=word.get("word_es_id", ""),
             ui_scale=get_page_scale(self),
             is_vertical=is_portrait(self),
@@ -276,9 +295,10 @@ class ImageStudyView(ft.Container):
                     style=ft.ButtonStyle(color=ft.Colors.BLUE_700),
                 )
             )
-        # Botón de ayuda (reglas de uso), igual que en Aprendizaje: habilitado solo
-        # si la palabra tiene reglas; al abrirlo se pausa el examen (temporizador o
-        # auto-avance) y al cerrarlo se reanuda.
+        # Botón de ayuda (reglas de uso), igual que en Aprendizaje: solo se VE si la
+        # palabra tiene reglas (deshabilitado parecía que la ayuda no funcionaba);
+        # al abrirlo se pausa el examen (temporizador o auto-avance) y al cerrarlo
+        # se reanuda.
         buttons_row_controls.append(self._get_built_help_button())
 
         # Espaciados compactos, replicando los del Aprendizaje (mismo modo de
@@ -327,7 +347,7 @@ class ImageStudyView(ft.Container):
             icon_color=ft.Colors.GREEN_700,
             tooltip="Reglas de uso: cuándo y cómo se usa",
             on_click=lambda _: self._on_help_btn_click(),
-            disabled=not self.__current_rules_help,
+            visible=bool(self.__current_rules_help),
         )
         return self._ft_help_btn
 
@@ -340,79 +360,29 @@ class ImageStudyView(ft.Container):
         if not self.__current_rules_help or not self.page:
             return
 
-        paused_by_help = not self.__is_paused
-        if paused_by_help:
+        self.__is_paused_by_help = not self.__is_paused
+        if self.__is_paused_by_help:
             self._on_pause_click()
 
-        def close_dialog(_) -> None:
-            dialog.open = False
-            if paused_by_help and self.__is_paused:
-                self._on_pause_click()
-            self.page.update()
-
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(self.__current_word_text, size=22, weight=ft.FontWeight.BOLD),
-            content=ft.Container(
-                content=ft.Column(
-                    controls=self._get_rules_controls(self.__current_rules_help),
-                    scroll=ft.ScrollMode.AUTO,
-                    spacing=6,
-                ),
-                width=650,
-                height=420,
-            ),
-            actions=[
-                ft.TextButton("Cerrar", on_click=close_dialog),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
+        page_width, page_height = get_page_size(self)
+        self._ft_rules_help_dialog.render(
+            word_text=self.__current_word_text,
+            rules_help=self.__current_rules_help,
+            page_width=page_width,
+            page_height=page_height,
         )
-        self.page.overlay.append(dialog)
-        dialog.open = True
+        if self._ft_rules_help_dialog not in self.page.overlay:
+            self.page.overlay.append(self._ft_rules_help_dialog)
+        self._ft_rules_help_dialog.open = True
         self.page.update()
 
-    @staticmethod
-    def _get_rules_controls(rules_text: str) -> list[ft.Control]:
-        """Convierte las reglas en controles: ítems enumerados y neerlandés en negrita."""
-        controls: list[ft.Control] = []
-        item_number = 0
-        for raw_line in rules_text.splitlines():
-            line = raw_line.strip()
-            if not line:
-                controls.append(ft.Container(height=4))
-                continue
-
-            is_item = line[0] in "•-*"
-            while line and line[0] in "•-*":
-                line = line[1:].strip()
-
-            if not is_item:
-                controls.append(ft.Text(line, size=16, selectable=True))
-                continue
-
-            item_number += 1
-            if "—" in line:
-                text_lang, text_es = line.split("—", 1)
-                spans = [
-                    ft.TextSpan(
-                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
-                    ),
-                    ft.TextSpan(
-                        f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)
-                    ),
-                    ft.TextSpan(
-                        f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)
-                    ),
-                ]
-            else:
-                spans = [
-                    ft.TextSpan(
-                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
-                    ),
-                    ft.TextSpan(line, ft.TextStyle(weight=ft.FontWeight.BOLD)),
-                ]
-            controls.append(ft.Text(spans=spans, size=16, selectable=True))
-        return controls
+    def _on_help_dialog_close(self) -> None:
+        """Cierra la ayuda y reanuda el examen si lo había pausado ella."""
+        self._ft_rules_help_dialog.open = False
+        if self.__is_paused_by_help and self.__is_paused:
+            self._on_pause_click()
+        self.__is_paused_by_help = False
+        self.page.update()
 
     def _render_with_result(self, dto: ImageStudyViewDto) -> None:
         """Renderiza resultado de respuesta."""

@@ -7,8 +7,15 @@ import flet as ft
 from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import (
     GroupSourceLinkComp,
 )
+from ddd.vocabulary.infrastructure.ui.components.rules_help_dialog_comp import (
+    RulesHelpDialogComp,
+)
 from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
-from ddd.vocabulary.infrastructure.ui.components.ui_scale import get_page_scale, is_portrait
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import (
+    get_page_scale,
+    get_page_size,
+    is_portrait,
+)
 from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import (
     WordSliderViewDto,
 )
@@ -55,6 +62,12 @@ class WordSliderView(ft.Container):
         # Hay un diálogo (ayuda/reiniciar) abierto: ignora los atajos de teclado
         self.__is_modal_open: bool = False
 
+        # La pausa activa la provocó abrir la ayuda (hay que reanudar al cerrar)
+        self.__is_paused_by_help: bool = False
+
+        # Grupo de la sesión («<id> - <título>»), lo pinta la tarjeta
+        self.__group_label: str = ""
+
         # Datos de la palabra actual para el modal de ayuda (reglas de uso)
         self.__current_word_text: str = ""
         self.__current_rules_help: str = ""
@@ -68,6 +81,9 @@ class WordSliderView(ft.Container):
         self._ft_slider_card: SliderCardComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
         self._ft_help_btn: ft.IconButton | None = None
+        self._ft_rules_help_dialog = RulesHelpDialogComp(
+            route_on_close=self._on_help_dialog_close
+        )
         self._ft_controls_row: ft.Row | None = None
         self.__is_card_mounted: bool = False
 
@@ -113,6 +129,10 @@ class WordSliderView(ft.Container):
         if self._ft_group_source_link:
             self._ft_group_source_link.render(group_source)
         self.update()
+
+    def render_group_label(self, group_label: str) -> None:
+        """Guarda el grupo de la sesión; lo pinta la tarjeta en su esquina izquierda."""
+        self.__group_label = group_label
 
     # =========================================================================
     # LIFECYCLE HOOKS
@@ -274,11 +294,12 @@ class WordSliderView(ft.Container):
 
         word = dto.current_word
 
-        # Datos para el modal de ayuda (habilitado solo si la palabra tiene reglas)
+        # Datos para el modal de ayuda (el botón solo se ve si hay reglas: un
+        # botón deshabilitado en cada palabra parece que la ayuda no funciona)
         self.__current_word_text = word.get("text_es", "")
         self.__current_rules_help = word.get("rules_help", "") or ""
         if self._ft_help_btn:
-            self._ft_help_btn.disabled = not self.__current_rules_help
+            self._ft_help_btn.visible = bool(self.__current_rules_help)
 
         # Montar la tarjeta persistente una sola vez para preservar la animación
         if not self.__is_card_mounted:
@@ -313,6 +334,7 @@ class WordSliderView(ft.Container):
             word_id=word.get("word_es_id", ""),
             examples=word.get("examples", ""),
             show_examples=dto.show_examples,
+            group_label=self.__group_label,
         )
 
     def _render_no_words(self) -> None:
@@ -406,7 +428,7 @@ class WordSliderView(ft.Container):
             icon_color=ft.Colors.GREEN_700,
             tooltip="Reglas de uso: cuándo y cómo se usa",
             on_click=lambda _: self._on_help_btn_click(),
-            disabled=True,
+            visible=False,
         )
         return self._ft_help_btn
 
@@ -422,84 +444,34 @@ class WordSliderView(ft.Container):
             return
 
         self.__is_modal_open = True
-        was_playing = not self.__is_paused
-        if was_playing and self._route_on_toggle_pause:
+        self.__is_paused_by_help = not self.__is_paused
+        if self.__is_paused_by_help and self._route_on_toggle_pause:
             self.__is_paused = True
             self._apply_pause_icon()
             self._route_on_toggle_pause()
 
-        def close_dialog(_) -> None:
-            self.__is_modal_open = False
-            dialog.open = False
-            if was_playing and self._route_on_toggle_pause:
-                self.__is_paused = False
-                self._apply_pause_icon()
-                self._route_on_toggle_pause()
-            self.page.update()
-
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(self.__current_word_text, size=22, weight=ft.FontWeight.BOLD),
-            content=ft.Container(
-                content=ft.Column(
-                    controls=self._get_rules_controls(self.__current_rules_help),
-                    scroll=ft.ScrollMode.AUTO,
-                    spacing=6,
-                ),
-                width=650,
-                height=420,
-            ),
-            actions=[
-                ft.TextButton("Cerrar", on_click=close_dialog),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
+        page_width, page_height = get_page_size(self)
+        self._ft_rules_help_dialog.render(
+            word_text=self.__current_word_text,
+            rules_help=self.__current_rules_help,
+            page_width=page_width,
+            page_height=page_height,
         )
-        self.page.overlay.append(dialog)
-        dialog.open = True
+        if self._ft_rules_help_dialog not in self.page.overlay:
+            self.page.overlay.append(self._ft_rules_help_dialog)
+        self._ft_rules_help_dialog.open = True
         self.page.update()
 
-    @staticmethod
-    def _get_rules_controls(rules_text: str) -> list[ft.Control]:
-        """Convierte las reglas en controles: ítems enumerados y neerlandés en negrita."""
-        controls: list[ft.Control] = []
-        item_number = 0
-        for raw_line in rules_text.splitlines():
-            line = raw_line.strip()
-            if not line:
-                controls.append(ft.Container(height=4))
-                continue
-
-            is_item = line[0] in "•-*"
-            while line and line[0] in "•-*":
-                line = line[1:].strip()
-
-            if not is_item:
-                controls.append(ft.Text(line, size=16, selectable=True))
-                continue
-
-            item_number += 1
-            if "—" in line:
-                text_lang, text_es = line.split("—", 1)
-                spans = [
-                    ft.TextSpan(
-                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
-                    ),
-                    ft.TextSpan(
-                        f"{text_lang.strip()} ", ft.TextStyle(weight=ft.FontWeight.BOLD)
-                    ),
-                    ft.TextSpan(
-                        f"— {text_es.strip()}", ft.TextStyle(color=ft.Colors.GREY_700)
-                    ),
-                ]
-            else:
-                spans = [
-                    ft.TextSpan(
-                        f"{item_number}. ", ft.TextStyle(color=ft.Colors.GREY_600)
-                    ),
-                    ft.TextSpan(line, ft.TextStyle(weight=ft.FontWeight.BOLD)),
-                ]
-            controls.append(ft.Text(spans=spans, size=16, selectable=True))
-        return controls
+    def _on_help_dialog_close(self) -> None:
+        """Cierra la ayuda y reanuda el slider si lo había pausado ella."""
+        self.__is_modal_open = False
+        self._ft_rules_help_dialog.open = False
+        if self.__is_paused_by_help and self._route_on_toggle_pause:
+            self.__is_paused = False
+            self._apply_pause_icon()
+            self._route_on_toggle_pause()
+        self.__is_paused_by_help = False
+        self.page.update()
 
     def _on_reset_btn_click(self) -> None:
         """Pide confirmación para reiniciar el progreso de la palabra actual.

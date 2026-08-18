@@ -14,3 +14,4 @@ class SliderCardSizeEnum(IntEnum):
     EXAMPLES_TRANSLATION = 15  # solución en neerlandés (gris, pegada debajo)
     EXAMPLES_TAG = 12  # número + tipo de frase (can./inv./perf./vraag/bijzin...)
     IMAGE = 340  # lado de la imagen (cuadrada, fit=CONTAIN)
+    GROUP_LABEL = 18  # «<id> - <título>» del grupo, arriba a la izquierda
