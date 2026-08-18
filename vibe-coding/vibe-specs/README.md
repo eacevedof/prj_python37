@@ -55,6 +55,10 @@ Que la aplicación funcione y que el código sea mantenible son dos cosas distin
 `make check` mide la segunda, que es la que le cuesta dinero al equipo que venga
 después.
 
+Lo que `make check` **no** mide es si el código hace lo que dice y si deja algún
+agujero. Para eso, antes de entregar, se pasan `/code-review` y `/security-review`
+dentro de Claude Code — [paso 9 de `00-como-usar-esto.md`](00-como-usar-esto.md#paso-9--que-claude-te-revise-lo-que-ha-escrito).
+
 ## Si el backend no es Python
 
 La normativa detallada está escrita para **Python**, que es lo que son casi todos

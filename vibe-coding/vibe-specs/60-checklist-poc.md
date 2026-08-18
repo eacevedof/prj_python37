@@ -3,6 +3,10 @@
 Repasa esto antes de mandar el enlace. Son diez minutos y evitan la reunión en la
 que se descubre que falla lo básico.
 
+> Dos de los puntos — `/code-review` y `/security-review` — son comandos que se
+> escriben **dentro de Claude Code**. Están explicados en el
+> [paso 9](00-como-usar-esto.md#paso-9--que-claude-te-revise-lo-que-ha-escrito).
+
 ---
 
 ## 1 · El código
@@ -13,6 +17,9 @@ que se descubre que falla lo básico.
 - [ ] No queda ningún `todo-app` sin renombrar:
       `grep -rn "todo-app\|todo_app" --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=dist .`
 - [ ] No hay código comentado "por si acaso". Bórralo: está en git.
+- [ ] **`/code-review` pasado**, y arreglado lo que fuera un error de
+      comportamiento. Se escribe dentro de Claude, no en la terminal. `make check`
+      mira cómo está escrito el código; esto mira si hace lo que dice.
 
 ## 2 · Funciona de verdad
 
@@ -59,6 +66,8 @@ Es lo que más se olvida y lo que peor queda en una demo.
       (lo lee docker compose en develop y prod).
 - [ ] Ningún `.env` está en git: `git status --ignored | grep .env`
 - [ ] Ninguna credencial ni URL de servicio escrita dentro del código.
+- [ ] **`/security-review` pasado y sus hallazgos arreglados.** Este no es
+      opcional: lo que salga aquí sigue ahí el día que el PoC se despliegue.
 - [ ] **Tu `.env` NO está dentro de la imagen.** Compruébalo, no lo supongas:
       ```bash
       docker run --rm --entrypoint sh mi-poc:develop -c 'ls -la /app/backend_web/.env'

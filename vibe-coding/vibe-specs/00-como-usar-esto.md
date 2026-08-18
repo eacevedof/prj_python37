@@ -155,7 +155,87 @@ Esto construye la imagen de verdad: compila el front y lo sirve junto con la API
 en **un solo contenedor**. Es exactamente lo que se despliega. Si aquí funciona,
 en el servidor funciona.
 
-## Paso 9 · La lista de comprobación
+## Paso 9 · Que Claude te revise lo que ha escrito
+
+`make check` comprueba que el código **está bien puesto**. No comprueba que esté
+bien *hecho*: un caso de uso que borra la fila equivocada, o una consulta que se
+deja el `WHERE delete_date IS NULL`, pasa el `check` en verde.
+
+Para eso hay dos comandos de Claude Code. Se escriben **dentro de Claude**, en el
+chat, no en la terminal:
+
+```
+/code-review
+```
+
+Busca errores de verdad: lógica que no hace lo que dice, casos que se dejan
+fuera, cosas duplicadas que se pueden simplificar.
+
+```
+/security-review
+```
+
+Busca lo otro: credenciales escritas en el código, entradas del usuario que
+llegan sin validar a una consulta o a un comando del sistema, endpoints que se
+han quedado sin la apikey, ficheros que se escriben donde no toca.
+
+**Los dos miran los cambios de la rama.** Si ya lo has commiteado todo y no queda
+diff, no tienen qué revisar; pásales entonces la carpeta de tu módulo:
+
+```
+/code-review backend_web/src/modules/mi_entidad_mod
+```
+
+### ¿Lo arregla Claude solo, o lo arreglas tú?
+
+Lo arregla **Claude**, pero **no en la misma pasada**. Por defecto los dos
+comandos solo **informan**: te dan una lista de hallazgos y no tocan ni un
+fichero.
+
+- `/code-review` admite `--fix`, que aplica los arreglos al código él solo.
+  **En este kit, no lo uses.** El revisor va a por el fallo; la normativa no es
+  su trabajo, y sus arreglos pueden salir con la forma equivocada.
+- `/security-review` no arregla: sus hallazgos se corrigen pidiéndolo.
+
+Lo que se hace es leer la lista, decidir qué entra, y pedirlo **en el chat
+normal** — ahí Claude sí tiene delante `vibe-specs/` y el ejemplar:
+
+```
+Arregla los puntos 1 y 3 de la revisión.
+
+Sigue vibe-specs/ (20-backend-python.md) y copia la forma de todo-app. No
+cambies la estructura de capas, ni los nombres de fichero, ni metas lógica en
+el controller para resolverlo. Si un arreglo te obliga a saltarte la normativa,
+para y dímelo antes de tocar nada.
+
+Al terminar, lanza make check.
+```
+
+Está también en [`90-prompts.md`](90-prompts.md), como prompt 8.
+
+**Por qué tanto cuidado:** un arreglo correcto puede llegar con la forma
+equivocada — una función suelta en un controller, un `try/except` donde no va,
+una constante a nivel de módulo. Eso es exactamente lo que caza `make check`, y
+por eso es obligatorio **volver a lanzarlo después de cada arreglo**. La medida no
+se toca para que un arreglo pase: si un hallazgo solo se puede arreglar saltándose
+la normativa, es que está mal planteado — pregunta.
+
+### Qué hacer con lo que salga
+
+No todo lo que salga hay que arreglarlo — es un PoC, no producción. La regla es:
+
+- **Lo que diga `/security-review`, se arregla.** Es lo que no se puede entregar
+  con un "ya lo miraremos": una credencial en el código o un endpoint abierto
+  siguen ahí el día que aquello se despliegue.
+- **De `/code-review`, lo que sea un error de comportamiento.** Lo demás
+  (simplificaciones, gustos) solo si es rápido.
+- Si Claude te propone arreglar algo, que **vuelva a lanzar `make check`**
+  después. Los arreglos también rompen convenciones.
+
+> Si no entiendes un hallazgo, pídeselo en cristiano: *"explícame ese punto 3 y
+> enséñame la línea"*. No apliques un cambio que no entiendes.
+
+## Paso 10 · La lista de comprobación
 
 Antes de enseñárselo a nadie: [`60-checklist-poc.md`](60-checklist-poc.md).
 

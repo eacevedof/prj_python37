@@ -32,10 +32,13 @@ capas · un contenedor Docker que sirve el front y la API juntos.
    correcta casi siempre.
 2. **Después de escribir código, ejecuta `make check`** y arregla lo que salga.
    Verde no es opcional: es la definición de terminado.
-3. **No desactives un test de convención ni añadas excepciones** sin decirlo
+3. **Antes de dar un PoC por entregable**, recuérdale al usuario que pase
+   `/code-review` y `/security-review`: `make check` no ve ni los errores de
+   comportamiento ni los agujeros de seguridad.
+4. **No desactives un test de convención ni añadas excepciones** sin decirlo
    explícitamente y explicar por qué.
-4. **Antes de crear un fichero `.md` nuevo**, pregunta.
-5. **Git lo gestiona el usuario.** Nunca hagas `commit` ni `push` por iniciativa
+5. **Antes de crear un fichero `.md` nuevo**, pregunta.
+6. **Git lo gestiona el usuario.** Nunca hagas `commit` ni `push` por iniciativa
    propia. Al terminar un bloque, ofrece `make gitpush m="..."`.
 
 ## Dónde está cada cosa de la normativa

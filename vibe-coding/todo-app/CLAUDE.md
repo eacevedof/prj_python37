@@ -16,9 +16,12 @@ forma de algo (nombres, capas, estructura), pregunta.
 ## Reglas
 
 1. `make check` tiene que quedar en verde. Es la definición de terminado.
-2. No desactives un test de convención sin decirlo y explicar por qué.
-3. Antes de crear un fichero `.md`, pregunta.
-4. Git lo gestiona el usuario: nunca `commit` ni `push` por iniciativa propia. Al
+2. Antes de dar un bloque por cerrado, recuérdale al usuario que pase
+   `/code-review` y `/security-review`: `make check` no ve errores de
+   comportamiento ni agujeros de seguridad.
+3. No desactives un test de convención sin decirlo y explicar por qué.
+4. Antes de crear un fichero `.md`, pregunta.
+5. Git lo gestiona el usuario: nunca `commit` ni `push` por iniciativa propia. Al
    cerrar un bloque, ofrece `make gitpush m="..."`.
 
 ## Documentación del proyecto (Obsidian)

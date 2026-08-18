@@ -165,6 +165,35 @@ qué cumple y qué no. No arregles nada todavía: primero la lista.
 
 ---
 
+## 8 · Arreglar lo que ha salido en una revisión
+
+Después de `/code-review` o `/security-review`. **No uses `/code-review --fix`**:
+arregla sin tener delante la normativa. Pídelo aquí, en el chat normal.
+
+```
+Arregla los puntos <1 y 3> de la revisión.
+
+Sigue vibe-specs/ y copia la forma de todo-app. No cambies la estructura de
+capas, ni los nombres de fichero, ni metas lógica en el controller para
+resolverlo. Si algún arreglo te obliga a saltarte la normativa, para y dímelo
+antes de tocar nada.
+
+Al terminar, lanza make check.
+```
+
+**Los puntos que NO vas a arreglar, dilos también** ("el 2 y el 4 los dejamos:
+es un PoC"). Si no, la siguiente revisión te los vuelve a sacar y no sabrás si ya
+los habías descartado.
+
+Y si un hallazgo no lo entiendes:
+
+```
+Explícame el punto <2> de la revisión sin tecnicismos: qué puede pasar de verdad
+si lo dejo así, y enséñame la línea exacta. No arregles nada todavía.
+```
+
+---
+
 ## Cosas que conviene decirle siempre
 
 - **"y ejecuta `make check`"** al final de cualquier petición de código. Si no se
