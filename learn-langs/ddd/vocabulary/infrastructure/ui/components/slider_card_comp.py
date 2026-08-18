@@ -52,6 +52,18 @@ class SliderCardComp(ft.Container):
             text_align=ft.TextAlign.CENTER,
         )
 
+        # Grupo que se está repasando, a la izquierda (espejo del id, que va a
+        # la derecha): «<id> - <título>». Una línea, con puntos suspensivos.
+        self._ft_group_label = ft.Text(
+            "",
+            size=SliderCardSizeEnum.GROUP_LABEL.value,
+            color=ft.Colors.GREY_600,
+            weight=ft.FontWeight.W_500,
+            max_lines=1,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            expand=True,
+        )
+
         # Id de la palabra (pequeño, para depurar qué audio no se generó/suena)
         self._ft_word_id = ft.Text(
             "",
@@ -147,8 +159,10 @@ class SliderCardComp(ft.Container):
         self.content = ft.Column(
             controls=[
                 ft.Row(
-                    controls=[ft.Container(expand=True), self._ft_word_id],
-                    alignment=ft.MainAxisAlignment.END,
+                    controls=[self._ft_group_label, self._ft_word_id],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=12,
                 ),
                 self._ft_phase_label,
                 ft.Container(height=8),
@@ -179,6 +193,7 @@ class SliderCardComp(ft.Container):
         word_id: int | str = "",
         examples: str = "",
         show_examples: bool = False,
+        group_label: str = "",
     ) -> None:
         """Actualiza la tarjeta. Anima/actualiza la imagen solo al cambiar de palabra."""
         self._apply_responsive_sizes()
@@ -186,6 +201,7 @@ class SliderCardComp(ft.Container):
 
         self._ft_phase_label.value = phase_label
         self._ft_word_id.value = f"#{word_id}" if word_id != "" else ""
+        self._ft_group_label.value = group_label
 
         # Animar la palabra ES y refrescar imagen solo cuando cambia la palabra
         if word_key != self.__current_key:

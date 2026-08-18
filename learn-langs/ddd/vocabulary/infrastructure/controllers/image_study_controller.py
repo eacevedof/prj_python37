@@ -194,8 +194,11 @@ class ImageStudyController(BaseController):
             )
             self._start_word_id = 0
 
-            # Mostrar la fuente del grupo en la cabecera (si no es de migración)
-            self._ft_container.render_group_source(await self._get_group_source())
+            # Cabecera: etiqueta del grupo («<id> - <título>», en la tarjeta) y su
+            # fuente (si no es de migración). Una sola lectura del grupo.
+            word_group = await self._get_word_group()
+            self._ft_container.render_group_label(self._get_group_label(word_group))
+            self._ft_container.render_group_source(self._get_group_source(word_group))
 
             self._show_current_word()
 
@@ -655,16 +658,27 @@ class ImageStudyController(BaseController):
         """True si el texto tiene más de dos palabras (frase)."""
         return len(text.split()) > 2
 
-    async def _get_group_source(self) -> str:
-        """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
+    async def _get_word_group(self) -> dict:
+        """Grupo de la sesión; diccionario vacío si la sesión no va por grupo."""
         if self._group_id is None:
-            return ""
+            return {}
         word_group = (
             await self._word_groups_reader_sqlite_repository.get_word_group_by_group_id(
                 self._group_id
             )
         )
-        group_source = ((word_group or {}).get("source") or "").strip()
+        return word_group or {}
+
+    def _get_group_label(self, word_group: dict) -> str:
+        """Etiqueta del grupo que se está repasando: «<id> - <título>»."""
+        group_title = (word_group.get("title") or "").strip()
+        if not group_title:
+            return ""
+        return f"{word_group.get('id', '')} - {group_title}"
+
+    def _get_group_source(self, word_group: dict) -> str:
+        """Fuente del grupo de la sesión; vacía si no hay o si es de migración."""
+        group_source = (word_group.get("source") or "").strip()
         if group_source.lower() in ("migracion", "migration", "mig"):
             return ""
         return group_source

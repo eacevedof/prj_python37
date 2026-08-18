@@ -31,6 +31,7 @@ class ImageFlashcardComp(ft.Container):
         pronunciation: str = "",
         show_translation: bool = False,
         word_id: int | str = "",
+        group_label: str = "",
         ui_scale: float = 1.0,
         is_vertical: bool = False,
     ):
@@ -41,6 +42,7 @@ class ImageFlashcardComp(ft.Container):
         self.pronunciation = pronunciation
         self.show_translation = show_translation
         self.word_id = word_id
+        self.group_label = group_label
         # Escala/orientación las pasa la vista (ya montada); el comp se crea
         # ANTES de montarse y aquí self.page aún no es accesible (flet 0.86 lanza)
         self.__scale = ui_scale
@@ -128,7 +130,25 @@ class ImageFlashcardComp(ft.Container):
             padding=ft.Padding(top=max(18, round(24 * scale)), left=0, right=0, bottom=0),
         )
 
-        self.content = ft.Stack(controls=[body_with_margin, word_id_badge])
+        # Grupo que se está examinando, arriba a la izquierda (espejo del id).
+        # right deja hueco al badge del id para que no se pisen.
+        group_label_badge = ft.Container(
+            content=ft.Text(
+                self.group_label,
+                size=SliderCardSizeEnum.GROUP_LABEL.value,
+                color=ft.Colors.GREY_600,
+                weight=ft.FontWeight.W_500,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            top=2,
+            left=4,
+            right=64,
+        )
+
+        self.content = ft.Stack(
+            controls=[body_with_margin, group_label_badge, word_id_badge]
+        )
         self.bgcolor = ft.Colors.BLUE_50
         self.border_radius = 20
         # Vertical reducido: el alto es el recurso escaso (sobre todo en tablet)
