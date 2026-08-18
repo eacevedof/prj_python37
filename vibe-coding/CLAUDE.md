@@ -7,7 +7,7 @@ cuando alguno pase a producción.
 ## LEE ESTO ANTES DE ESCRIBIR CÓDIGO
 
 **`vibe-specs/` es la normativa de este repositorio, y es de obligado
-cumplimiento.** Empieza por `vibe-specs/README.md`.
+cumplimiento.** Empieza por `vibe-specs/vibe-specs.md`, que es el índice.
 
 No propongas otra arquitectura, otra forma de nombrar los ficheros ni otra
 organización de carpetas: ya están decididas y hay tests que las comprueban.

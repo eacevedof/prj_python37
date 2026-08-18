@@ -24,7 +24,7 @@ Datos que hay que guardar:
 - <entidad 2>: <campos>
 
 Antes de escribir nada:
-1. Lee vibe-specs/ entero (empieza por README.md).
+1. Lee vibe-specs/ entero (empieza por vibe-specs.md, el índice).
 2. Lee el ejemplar todo-app: create_task_service.py, create_list_controller.py,
    los dos puertos y sus adaptadores.
 3. Dime qué módulos y qué casos de uso propones, y ESPERA a que te confirme.
@@ -190,6 +190,82 @@ Y si un hallazgo no lo entiendes:
 ```
 Explícame el punto <2> de la revisión sin tecnicismos: qué puede pasar de verdad
 si lo dejo así, y enséñame la línea exacta. No arregles nada todavía.
+```
+
+---
+
+## 9 · Auditar la seguridad de un repo ajeno
+
+Con Claude abierto **en la carpeta del repo a analizar** (no en la del kit).
+Contexto: [`80-analizar-seguridad.md`](80-analizar-seguridad.md).
+
+```
+Analiza la seguridad de este repositorio. Busca, por este orden:
+
+1. Credenciales, tokens o claves escritos en el código o commiteados.
+2. Inyección: SQL construido con concatenación, entrada del usuario que llega
+   a comandos del sistema o a rutas de fichero.
+3. Endpoints o rutas sin autenticación, y configuración CORS.
+4. Entrada sin validar: tamaños, tipos, rutas con ../.
+5. Errores que exponen trazas, SQL o rutas internas al cliente.
+
+Devuélveme un informe en markdown con: resumen de qué has analizado, hallazgos
+ordenados por gravedad (cada uno con fichero:línea, qué puede pasar y cómo
+arreglarlo) y una sección final "Lo que NO he mirado".
+
+No modifiques ningún fichero: solo el informe.
+```
+
+Las dependencias van aparte, con `pip-audit` o `npm audit` — Claude no tiene la
+base de datos de vulnerabilidades al día.
+
+---
+
+## 10 · Montar un mockup (front sin backend)
+
+Después de copiar el ejemplar y renombrar. Contexto:
+[`85-mockups.md`](85-mockups.md).
+
+```
+Esto es un MOCKUP: solo front, sin backend. No toques backend_web ni docker.
+
+Pantallas que hay que enseñar:
+- <pantalla 1: qué se ve y qué se puede hacer>
+- <pantalla 2: ...>
+
+Monta los módulos en frontend_web siguiendo vibe-specs/30-frontend-vue.md y
+copiando la forma de todo-app. Los datos falsos van en un fixtures.ts en
+infrastructure/ de cada módulo, y el store lee de ahí en vez de llamar a la API.
+
+Datos falsos realistas y en cantidad realista: del dominio de <negocio>, unas
+<30> filas, incluyendo los casos feos (lista vacía, textos muy largos, campos
+sin rellenar).
+
+Al terminar, lanza make front-build.
+```
+
+---
+
+## 11 · Clonar la funcionalidad de un producto (sin repo)
+
+Antes de esto, escribe en el `README.md` el comportamiento observado — lo dice
+la [sección de clonado de `70-envolver-un-repo.md`](70-envolver-un-repo.md#cuando-no-hay-repo-clonar-la-funcionalidad-de-otro-fabricante).
+
+```
+Voy a montar un PoC que replica una funcionalidad de otro producto. NO hay
+repo que envolver: el comportamiento está descrito en el README.md — léelo.
+
+Restricciones que no se negocian:
+- Nada de código, assets, textos ni marca del producto original.
+- Nada de llamar a su API ni hacerle scraping.
+- La interfaz, con nuestro sistema de diseño (30-frontend-vue.md), no
+  imitando la suya.
+
+Antes de escribir nada:
+1. Lee vibe-specs/ entero y el ejemplar todo-app.
+2. Proponme módulos y casos de uso a partir del comportamiento del README, y
+   dime qué partes del comportamiento NO cubrirías en un PoC.
+3. ESPERA a que te confirme.
 ```
 
 ---

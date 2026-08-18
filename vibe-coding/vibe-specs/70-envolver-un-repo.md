@@ -175,6 +175,45 @@ Nunca escrita dentro del código.
 
 ---
 
+## Cuando NO hay repo: clonar la funcionalidad de otro fabricante
+
+A veces el encargo no trae enlace: *"queremos algo como lo que hace <producto de
+otro fabricante>"*. No hay nada que envolver — hay un **comportamiento que
+replicar** — así que esto no es un caso de este fichero: es un **PoC normal**
+([`00-como-usar-esto.md`](00-como-usar-esto.md)) en el que el paso 0 cuesta más.
+
+### El trabajo de verdad: especificar lo observado
+
+Nadie te va a dar los casos de uso; hay que sacarlos mirando el producto.
+Escríbelo en el `README.md` de tu PoC **antes** de pedir nada a Claude:
+
+- **Qué hace, pantalla a pantalla**: qué mete la persona, qué sale, en qué orden.
+- **Los casos límite que se ven usándolo**: qué pasa con el campo vacío, con el
+  fichero enorme, con dos elementos con el mismo nombre.
+- **Qué parte NO se clona.** Un producto lleva años de funciones; el PoC
+  demuestra la que importa. Decir cuál es la mitad de la especificación.
+
+Con eso, el prompt 11 de [`90-prompts.md`](90-prompts.md): Claude propone
+módulos y casos de uso a partir del comportamiento, y se sigue el flujo normal.
+
+### Lo que NO se hace (y no por cortesía: por legal)
+
+Se replica la **funcionalidad** — la idea de qué hace no es de nadie. Lo demás sí
+tiene dueño:
+
+| No se hace | Porque |
+|---|---|
+| Copiar su código, descompilarlo o sacarlo de su JavaScript | el código es suyo, da igual que se pueda leer |
+| Copiar sus iconos, textos, capturas o diseño pixel a pixel | los assets también; el mockup se hace con nuestro sistema de diseño |
+| Usar su API privada o hacerle scraping para alimentar el PoC | sus condiciones de uso casi siempre lo prohíben |
+| Usar su marca o nombre en el PoC | ni en el título "de broma": las demos se enseñan |
+
+> Si el fabricante publica una librería o API **con licencia que lo permita**,
+> deja de ser este caso: es el caso normal de este fichero — se envuelve, y a las
+> cinco preguntas de la licencia de [más arriba](#antes-de-meter-la-dependencia).
+
+---
+
 ## Resumen
 
 ```

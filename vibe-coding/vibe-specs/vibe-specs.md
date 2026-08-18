@@ -1,6 +1,7 @@
-# vibe-specs — normativa para montar un PoC
+# vibe-specs — el índice: qué encargo tienes y dónde está su normativa
 
-Esto es lo que hay que leer **antes** de escribir código en un PoC nuevo.
+Esto es lo que hay que leer **antes** de ponerse con cualquier encargo de esta
+carpeta. Este fichero es el índice: di qué te han encargado y te dice qué leer.
 
 ## Por qué existe
 
@@ -30,6 +31,18 @@ vibe-coding/
 El ejemplar no es documentación de adorno: es de donde se copia. Cada regla de
 esta carpeta tiene su ejemplo real ahí, y esta carpeta te dice cuál mirar.
 
+## Los cuatro encargos que cubre este kit
+
+No todo lo que llega es un PoC. Estos son los encargos previstos y por dónde se
+entra a cada uno:
+
+| Te encargan... | Entras por | Sale |
+|---|---|---|
+| **Un PoC rápido** de una herramienta o idea | [`00-como-usar-esto.md`](00-como-usar-esto.md) | una aplicación que funciona |
+| **Analizar la seguridad** de un código | [`80-analizar-seguridad.md`](80-analizar-seguridad.md) | un informe |
+| **Un mockup** para enseñar antes de construir | [`85-mockups.md`](85-mockups.md) | una interfaz navegable con datos falsos |
+| **Clonar una función** de otro fabricante | [`70-envolver-un-repo.md`](70-envolver-un-repo.md#cuando-no-hay-repo-clonar-la-funcionalidad-de-otro-fabricante) | un PoC (con sus límites legales) |
+
 ## Por dónde empezar
 
 | Si vas a... | Lee |
@@ -43,6 +56,8 @@ esta carpeta tiene su ejemplo real ahí, y esta carpeta te dice cuál mirar.
 | Añadir una tabla o cambiar la base de datos | [`40-base-de-datos.md`](40-base-de-datos.md) |
 | Entender por qué `make check` está en rojo | [`50-guardarrailes.md`](50-guardarrailes.md) |
 | Envolver una herramienta o librería de GitHub | [`70-envolver-un-repo.md`](70-envolver-un-repo.md) |
+| Auditar la seguridad de un repo ajeno | [`80-analizar-seguridad.md`](80-analizar-seguridad.md) |
+| Montar un mockup sin backend | [`85-mockups.md`](85-mockups.md) |
 | Saber si el PoC está listo para enseñarlo | [`60-checklist-poc.md`](60-checklist-poc.md) |
 | Pedirle algo a Claude sin quedarte corto | [`90-prompts.md`](90-prompts.md) |
 

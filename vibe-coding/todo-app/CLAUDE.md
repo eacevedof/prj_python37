@@ -7,7 +7,7 @@ cumple la normativa al pie de la letra. **Python 3.12 + FastAPI + SQLite** ·
 ## Antes de tocar nada
 
 **La normativa está en `../vibe-specs/`** y es de obligado cumplimiento. Empieza
-por `../vibe-specs/README.md`.
+por `../vibe-specs/vibe-specs.md`, que es el índice.
 
 Este repositorio es el ejemplar del que se copia, así que **cualquier cambio aquí
 cambia el patrón de todos los PoC que vengan después**. Antes de modificar la
