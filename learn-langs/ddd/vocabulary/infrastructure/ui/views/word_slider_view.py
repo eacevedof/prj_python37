@@ -11,6 +11,9 @@ from ddd.vocabulary.infrastructure.ui.components.rules_help_dialog_comp import (
     RulesHelpDialogComp,
 )
 from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
+from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import (
+    SliderCardSizeEnum,
+)
 from ddd.vocabulary.infrastructure.ui.components.ui_scale import (
     get_page_scale,
     get_page_size,
@@ -367,6 +370,16 @@ class WordSliderView(ft.Container):
             ]
         )
 
+    def _get_built_group_label_text(self) -> ft.Text:
+        """Etiqueta del grupo para la pantalla de resultados (oculta si no hay grupo)."""
+        return ft.Text(
+            self.__group_label,
+            size=SliderCardSizeEnum.GROUP_LABEL.value,
+            color=ft.Colors.GREY_600,
+            text_align=ft.TextAlign.CENTER,
+            visible=bool(self.__group_label),
+        )
+
     def _render_session_complete(self, dto: WordSliderViewDto) -> None:
         """Renderiza sesión completada."""
         if not self._ft_content_area:
@@ -409,6 +422,7 @@ class WordSliderView(ft.Container):
                 ft.Icon(ft.Icons.CELEBRATION, size=50, color=ft.Colors.AMBER_500),
                 ft.Container(height=10),
                 ft.Text("¡Slider completado!", size=24, weight=ft.FontWeight.BOLD),
+                self._get_built_group_label_text(),
                 ft.Container(height=10),
                 ft.Text(f"Palabras reproducidas: {dto.total_words}", size=18),
                 ft.Container(height=40),

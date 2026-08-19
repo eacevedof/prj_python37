@@ -171,8 +171,16 @@ class RulesHelpMarkdownFormatter:
         return bool(line) and unicodedata.category(line[0]) == self._EMOJI_CATEGORY
 
     def _is_subsection_line(self, line: str) -> bool:
-        """True si la línea es un rótulo que presenta lo que viene después («...:»)."""
-        return line.endswith(":") and len(line) <= self._HEADING_MAX_LENGTH
+        """True si la línea es un rótulo que presenta lo que viene después («...:»).
+
+        Un rótulo es un sintagma corto, no una frase: si trae un punto dentro ya
+        es prosa que acaba en dos puntos y se queda como párrafo.
+        """
+        return (
+            line.endswith(":")
+            and len(line) <= self._HEADING_MAX_LENGTH
+            and "." not in line[:-1]
+        )
 
     def _get_list_item(self, line: str) -> str:
         """Convierte un ítem (`•`, `-`) en ítem markdown con el término en negrita."""
