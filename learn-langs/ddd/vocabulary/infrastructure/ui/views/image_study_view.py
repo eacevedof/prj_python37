@@ -84,6 +84,8 @@ class ImageStudyView(ft.Container):
         self.__group_label: str = ""
         # Datos para el modal de ayuda (reglas de uso) de la palabra actual
         self.__current_word_text: str = ""
+        self.__current_word_lang_text: str = ""
+        self.__current_word_id: int | str = ""
         self.__current_rules_help: str = ""
 
         self._build_initial_ui()
@@ -249,6 +251,8 @@ class ImageStudyView(ft.Container):
 
         # Datos para el modal de ayuda (el botón solo se ve si hay reglas)
         self.__current_word_text = word.get("text_es", "")
+        self.__current_word_lang_text = word.get("text_lang", "")
+        self.__current_word_id = word.get("word_es_id", "")
         self.__current_rules_help = word.get("rules_help", "") or ""
 
         # Crear componentes dinámicos. Escala/orientación se calculan aquí (la
@@ -370,6 +374,8 @@ class ImageStudyView(ft.Container):
         page_width, page_height = get_page_size(self)
         self._ft_rules_help_dialog.render(
             word_text=self.__current_word_text,
+            word_lang_text=self.__current_word_lang_text,
+            word_id=self.__current_word_id,
             rules_help=self.__current_rules_help,
             page_width=page_width,
             page_height=page_height,

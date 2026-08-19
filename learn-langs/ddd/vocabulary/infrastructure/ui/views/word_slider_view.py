@@ -73,6 +73,8 @@ class WordSliderView(ft.Container):
 
         # Datos de la palabra actual para el modal de ayuda (reglas de uso)
         self.__current_word_text: str = ""
+        self.__current_word_lang_text: str = ""
+        self.__current_word_id: int | str = ""
         self.__current_rules_help: str = ""
 
         # Componentes UI - Header
@@ -300,6 +302,8 @@ class WordSliderView(ft.Container):
         # Datos para el modal de ayuda (el botón solo se ve si hay reglas: un
         # botón deshabilitado en cada palabra parece que la ayuda no funciona)
         self.__current_word_text = word.get("text_es", "")
+        self.__current_word_lang_text = word.get("text_lang", "")
+        self.__current_word_id = word.get("word_es_id", "")
         self.__current_rules_help = word.get("rules_help", "") or ""
         if self._ft_help_btn:
             self._ft_help_btn.visible = bool(self.__current_rules_help)
@@ -467,6 +471,8 @@ class WordSliderView(ft.Container):
         page_width, page_height = get_page_size(self)
         self._ft_rules_help_dialog.render(
             word_text=self.__current_word_text,
+            word_lang_text=self.__current_word_lang_text,
+            word_id=self.__current_word_id,
             rules_help=self.__current_rules_help,
             page_width=page_width,
             page_height=page_height,

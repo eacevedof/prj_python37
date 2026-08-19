@@ -19,7 +19,9 @@ class RulesHelpSizeEnum(IntEnum):
     MIN_HEIGHT = 240
 
     CLOSE_ICON = 28  # aspa de cerrar, arriba a la derecha
-    TITLE = 22
+    TITLE = 22  # la palabra en español
+    LANG_TEXT = 17  # la traducción («NL: ...»), en negrita y algo menor
+    WORD_ID = 18  # «#598», para saber en qué tarjeta estás
     SUBTITLE = 13
     TEXT = 17
     HEADING = 21

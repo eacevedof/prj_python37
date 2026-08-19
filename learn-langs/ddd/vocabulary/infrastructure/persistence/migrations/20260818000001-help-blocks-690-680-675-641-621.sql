@@ -3,6 +3,7 @@
 --                        + singular de medida tras numero (627)
 --                        + haast je vs schiet op y particulas del imperativo (601)
 --                        + niet lekker vs niet goed y el mapa de lekker (598)
+--                        + er...mee partido y preposicion fija (610)
 -- Migration: 20260818000001-help-blocks-690-680-675-641-621.sql
 -- Description: Eduardo (690 "Ik werd vroeg wakker" = me desperte temprano) pregunta si no
 --   podria ser "Ik ben vroeg wakker geworden". Si: las dos son correctas. Bloque 🗓️ con el
@@ -195,3 +196,58 @@ Es una de las palabras más neerlandesas que hay: significa agradable, cómodo, 
 Cómo decir que estás malo, de menos a más: Ik voel me niet lekker (pachucho) · Ik ben ziek (estoy enfermo) · Ik voel me beroerd / rot (fatal). Síntomas sueltos: misselijk (con náuseas), duizelig (mareado), koorts hebben (tener fiebre), verkouden zijn (estar resfriado), grieperig (con algo de gripe). Lo que te contestarán: Beterschap! (¡que te mejores!).
 Regla de bolsillo: cuerpo pachucho → niet lekker · algo no cuadra o presentimiento → niet goed · sin reflexivo → tocar (voelen) o insulto (niet lekker zijn).'
 WHERE id = 598 AND COALESCE(rules_help,'') NOT LIKE '%🤒%';
+
+-- 610 · «er ... mee»: preposición fija del verbo y el pronombre adverbial partido
+UPDATE words_es SET rules_help = rules_help || '
+
+🧩 ¿Por qué «er … mee» y no «Bemoei je er niet» a secas?
+Porque el verbo NO es bemoeien a secas, es zich bemoeien MET. Esa preposición es fija: forma parte del verbo, como en español entrometerse EN. Si la quitas, la frase queda coja: falta decir en qué no te metes.
+🧭 Y entonces, ¿por qué «mee» y no «met»?
+Porque cuando eso en lo que te metes es una COSA (no una persona), el neerlandés no dice met het / met dat: fusiona la preposición con er/daar/waar y forma una sola palabra, el llamado pronombre adverbial:
+• met + het → ermee · met + dat → daarmee · met + wat → waarmee.
+• Ojo a la forma: dentro de esos compuestos met se convierte en MEE y tot en TOE. Por eso es ermee, nunca «ermet». Igual: ertoe, daartoe.
+⚠️ Aquí está tu segunda pregunta: «Bemoei je ermee niet» está MAL por el ORDEN. En cuanto hay algo en medio (niet, nooit, un adverbio), el compuesto SE PARTE: er va delante, pegado al reflexivo, y la preposición se marcha al final, detrás de la negación.
+• Sin nada en medio, va junto: Hij bemoeit zich ermee (él se mete en eso).
+• Con negación, partido: Ik bemoei me er niet mee · Bemoei je er niet mee! ← la de la tarjeta.
+Este partido no es de este verbo, es de TODOS los que rigen preposición. Fíjate en el patrón er … [niet] … PREPOSICIÓN:
+• denken aan → Hij denkt er niet aan (ni se le pasa por la cabeza).
+• zin hebben in → We hebben er geen zin in (no nos apetece).
+• uitkijken naar → Ze kijkt er niet naar uit (ella no lo espera con ganas).
+• blij zijn met → Jullie zijn er heel blij mee (estáis muy contentos con eso).
+• bang zijn voor → Het kind is er niet bang voor (el niño no le tiene miedo).
+Con PERSONAS no se usa er: ahí sí va la preposición normal + pronombre → Bemoei je niet met hem · Zij denkt aan haar broer.
+Frases hechas del verbo que oirás tal cual: Waar bemoei je je mee?! (¿tú qué te metes?) · Bemoei je met je eigen zaken (métete en tus asuntos) · Hij is een bemoeial (es un metomentodo).
+Regla de bolsillo: cosa → er + … + preposición al final (y met se vuelve mee) · persona → preposición normal + hem/haar.
+📋 Ejemplos con distintos pronombres y preposiciones fijas
+Fíjate en lo mismo siempre: si NO hay nada en medio va junto (eraan, erop, ermee), y si hay algo (niet, nooit, altijd) se parte.
+• ik · zich ergeren aan (irritarse por): Ik erger me eraan · perfectum: Ik heb me eraan geërgerd.
+• jij · denken aan (pensar en): Denk je er nog aan? · perfectum: Heb je eraan gedacht?
+• hij · klagen over (quejarse de): Hij klaagt er altijd over · perfectum: Hij heeft er nooit over geklaagd.
+• wij · zich verheugen op (hacer ilusión): We verheugen ons erop · perfectum: We hebben ons erop verheugd.
+• jullie · zin hebben in (apetecer): Hebben jullie er zin in? · imperfectum: Ze hadden er geen zin in.
+• zij (pl) · houden van (gustar): Ze houden er niet van · perfectum: Ze hebben er nooit van gehouden.
+• u · rekenen op (contar con): U kunt erop rekenen (puede contar con ello).
+⏳ El mismo caso en todos los tiempos (wachten op = esperar algo)
+La preposición acaba SIEMPRE pegada al verbo del final; er se queda delante y la negación en medio:
+• Presente: Hij wacht er niet op.
+• Imperfectum: Zij wachtte er niet op.
+• Perfectum: We hebben er niet op gewacht. (la preposición va justo ANTES del participio)
+• Con modal: Jullie willen er niet op wachten.
+• Separable (uitkijken naar): Ze hebben er niet naar uitgekeken (ellos no lo esperaban con ganas).
+• Subordinada: Hij zegt dat ze er niet op wacht.
+• Adelantado con daar (énfasis, muy usado): Daar wacht hij niet op · Daar bemoeit zij zich niet mee.
+• Pregunta con waar: Waar wachten jullie op? · Waar bemoeit hij zich mee?
+🔁 El reflexivo cambia con la persona (zich bemoeien met, la de esta tarjeta)
+• ik: Ik bemoei me ermee · jij: Bemoei je er niet mee! · u: U bemoeit zich ermee.
+• hij / zij (ella): Hij bemoeit zich er niet mee · Ze heeft zich er nooit mee bemoeid.
+• wij: We bemoeien ons ermee · perfectum: We hebben ons er niet mee bemoeid.
+• jullie: Jullie bemoeien je ermee · zij (ellos): Ze bemoeien zich er nooit mee.
+🌀 Con «het» hay fórmulas fijas que conviene reconocer de un vistazo
+• Het hangt ervan af (afhangen van) = depende.
+• Het gaat erom dat je het probeert (gaan om) = de lo que se trata es de que lo intentes.
+• Het komt er niet van (komen van) = al final no se hace, no llega a pasar.
+• Het zit er niet in = no es posible, no da para eso.
+👥 Y con personas, sin er, la preposición vuelve a su sitio
+• Hij denkt aan haar · perfectum: Hij heeft aan haar gedacht.
+• Zij wacht op hem · We zijn blij met jullie · Ze bemoeien zich niet met ons.'
+WHERE id = 610 AND COALESCE(rules_help,'') NOT LIKE '%🧩%';
