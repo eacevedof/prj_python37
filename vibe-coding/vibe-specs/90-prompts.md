@@ -270,6 +270,32 @@ Antes de escribir nada:
 
 ---
 
+## 12 · Añadir un servicio al lado de la app (índole B)
+
+Contexto: [`65-despliegue.md`](65-despliegue.md). Sirve igual para un worker
+periódico: es el mismo patrón con la imagen de la app y otro `command`.
+
+```
+Mi PoC necesita <valkey / un worker que sincroniza cada 15 min / ...> corriendo
+al lado de la app. Sigue vibe-specs/65-despliegue.md, índole B:
+
+- Añádelo a los TRES compose de docker/ (local, develop, production).
+- Sin ports ni labels salvo lo que la spec permite en local.
+- Sus datos bajo APP_HOST_STORAGE_PATH/<servicio>.
+- La URL interna, al .env y a los dos .env.example, con su getter en
+  EnvironmentReaderRawRepository.
+- Si es un worker: misma imagen que la app, y el bucle en un fichero de
+  devops_mod/application/ que llame a un caso de uso — la lógica no va en el
+  bucle.
+
+Enséñame el diff de los tres compose antes de darlo por hecho, y explica qué
+tendrá dentro el servicio la primera vez que arranque en un servidor limpio.
+
+Al terminar, lanza make check.
+```
+
+---
+
 ## Cosas que conviene decirle siempre
 
 - **"y ejecuta `make check`"** al final de cualquier petición de código. Si no se
