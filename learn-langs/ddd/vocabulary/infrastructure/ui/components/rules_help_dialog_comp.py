@@ -37,6 +37,20 @@ class RulesHelpDialogComp(ft.AlertDialog):
             max_lines=2,
             overflow=ft.TextOverflow.ELLIPSIS,
         )
+        self._ft_lang_text = ft.Text(
+            "",
+            size=RulesHelpSizeEnum.LANG_TEXT.value,
+            weight=ft.FontWeight.BOLD,
+            color=ft.Colors.INDIGO_900,
+            max_lines=2,
+            overflow=ft.TextOverflow.ELLIPSIS,
+        )
+        self._ft_word_id_text = ft.Text(
+            "",
+            size=RulesHelpSizeEnum.WORD_ID.value,
+            weight=ft.FontWeight.BOLD,
+            color=ft.Colors.GREY_600,
+        )
         self._ft_markdown = ft.Markdown(
             value="",
             selectable=True,
@@ -59,15 +73,12 @@ class RulesHelpDialogComp(ft.AlertDialog):
                 ft.Column(
                     controls=[
                         self._ft_title_text,
-                        ft.Text(
-                            "Reglas de uso",
-                            size=RulesHelpSizeEnum.SUBTITLE.value,
-                            color=ft.Colors.GREY_600,
-                        ),
+                        self._ft_lang_text,
                     ],
                     spacing=0,
                     expand=True,
                 ),
+                self._ft_word_id_text,
                 self._get_built_close_button(),
             ],
             spacing=10,
@@ -101,10 +112,18 @@ class RulesHelpDialogComp(ft.AlertDialog):
         self._route_on_close()
 
     def render(
-        self, word_text: str, rules_help: str, page_width: float | None, page_height: float | None
+        self,
+        word_text: str,
+        word_lang_text: str,
+        word_id: int | str,
+        rules_help: str,
+        page_width: float | None,
+        page_height: float | None,
     ) -> None:
         """Vuelca la ayuda de la palabra y ajusta el modal al tamaño de pantalla."""
         self._ft_title_text.value = word_text
+        self._ft_lang_text.value = f"NL: {word_lang_text}" if word_lang_text else ""
+        self._ft_word_id_text.value = f"#{word_id}" if word_id != "" else ""
         self._ft_markdown.value = (
             self._rules_help_markdown_formatter.get_rules_help_as_markdown(rules_help)
         )
