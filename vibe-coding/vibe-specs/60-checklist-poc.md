@@ -98,6 +98,18 @@ Es lo que más se olvida y lo que peor queda en una demo.
 - [ ] Sabes **dónde está el fichero de la base de datos** en el servidor. Si nadie
       lo sabe, no hay copia de seguridad posible.
 
+Y si tu PoC es de índole **B o C** ([`65-despliegue.md`](65-despliegue.md)):
+
+- [ ] **Solo tu app publica puerto o lleva labels.** Ningún sidecar se asoma:
+      `grep -n "ports:\|labels:" docker/docker-compose-production.yml` solo
+      debería señalar al servicio de la app.
+- [ ] Los datos de cada sidecar viven bajo `APP_HOST_STORAGE_PATH/<servicio>` —
+      la respuesta a "qué hay que copiar" sigue siendo una sola carpeta.
+- [ ] El compose **entero** arranca desde cero en limpio, y sabes qué se ve en
+      una demo con los sidecars recién nacidos (vacíos).
+- [ ] (Índole C) Con el servicio de terceros **parado**, tu app arranca y sus
+      pantallas dicen algo comprensible, no una traza.
+
 ---
 
 ## Lo que hay que decir en voz alta al entregar

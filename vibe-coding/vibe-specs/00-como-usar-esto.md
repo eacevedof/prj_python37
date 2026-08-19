@@ -15,6 +15,7 @@ pregúntala: es más barato preguntar ahora que rehacerlo luego.
 | ¿Qué tiene que poder hacer una persona con esto? | Son los casos de uso, y de ahí sale la estructura |
 | ¿Qué datos hay que guardar? | Son las tablas |
 | ¿Quién lo va a probar y desde dónde? | Decide si hace falta desplegarlo o basta con local |
+| ¿Qué necesita estar corriendo, además de tu app? | Decide la **índole** del despliegue: A, B o C ([`65-despliegue.md`](65-despliegue.md)). Cambiarla a mitad es rehacer los compose |
 
 Escribe las respuestas en el `README.md` de tu PoC. Te las va a preguntar
 cualquiera que lo mire, incluido tú dentro de dos semanas.
@@ -154,6 +155,11 @@ depender de un fichero que solo tienes tú.
 Esto construye la imagen de verdad: compila el front y lo sirve junto con la API
 en **un solo contenedor**. Es exactamente lo que se despliega. Si aquí funciona,
 en el servidor funciona.
+
+> Esto es la índole **A**. Si tu PoC lleva servicios al lado (índole B) o habla
+> con una aplicación de terceros desplegada aparte (índole C), lo que cambia —
+> y lo que significa "verlo entero" en cada caso — está en
+> [`65-despliegue.md`](65-despliegue.md).
 
 ## Paso 9 · Que Claude te revise lo que ha escrito
 

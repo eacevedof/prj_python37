@@ -48,6 +48,7 @@ capas · un contenedor Docker que sirve el front y la API juntos.
 - Frontend: `vibe-specs/30-frontend-vue.md`
 - Base de datos y migraciones: `vibe-specs/40-base-de-datos.md`
 - Qué mide `make check`: `vibe-specs/50-guardarrailes.md`
+- Despliegue y contenedores al lado de la app (índoles A/B/C): `vibe-specs/65-despliegue.md`
 - Envolver una librería o repo de terceros: `vibe-specs/70-envolver-un-repo.md`
 - Backend en Node o Go: `vibe-specs/21-backend-otros-lenguajes.md`
 
