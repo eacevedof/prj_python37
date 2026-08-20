@@ -1,1 +1,0 @@
-# IA Memory domain layer

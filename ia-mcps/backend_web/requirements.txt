@@ -1,0 +1,54 @@
+# ── núcleo ────────────────────────────────────────────────────────────────────
+# Front-controller (public/main.py) y transporte HTTP de los servidores MCP.
+fastapi>=0.141.1
+uvicorn[standard]>=0.52.1
+
+# SDK de MCP, en su versión más reciente (2.0.0). El salto 1.x -> 2.0 retiró los
+# decoradores @server.list_tools()/@server.call_tool() del Server de bajo nivel;
+# `AbstractMcpController` registra los handlers con
+# `add_request_handler(method, params_type, handler)`, igual que ocr-documents.
+# El tope <3 es deliberado: ese salto ya rompió una vez y no queremos que un
+# `pip install` se lleve por delante el arranque de la app.
+mcp>=2.0.0,<3.0.0
+
+# Valida el payload de cada tool contra el inputSchema que publica su xxx_mcp.
+# Llega como dep transitiva de `mcp`, pero se declara explícita porque se usa
+# directamente (SchemaValidator).
+jsonschema>=4.20.0
+
+python-dotenv>=1.2.2
+
+# ── por módulo ────────────────────────────────────────────────────────────────
+# emt_mod (API de mobilitylabs) y video_mod (descarga)
+aiohttp~=3.14.0
+
+# media_mod (imagen + TTS)
+openai~=2.41.0
+
+# memory_mod (memoria semántica)
+chromadb~=1.5.9
+sentence-transformers~=5.5.1
+
+# pdf_mod (Markdown -> PDF). weasyprint necesita librerías nativas
+# (cairo/pango) en el sistema; se importa de forma perezosa para que su ausencia
+# no tumbe el arranque de los demás servidores.
+Markdown~=3.10.2
+weasyprint~=69.0
+
+# ── extras opcionales de memory_mod ───────────────────────────────────────────
+# Solo hacen falta para `memory_store_file` según el tipo de fichero. Se importan
+# dentro del método y, si faltan, el error se le cuenta al agente en vez de
+# reventar el arranque. Se dejan declarados para que un entorno completo los tenga.
+PyMuPDF>=1.27.2.3      # pdf
+python-docx~=1.2.0     # word
+openpyxl~=3.1.5        # excel
+Pillow~=12.2.0         # imagen
+transformers~=5.10.2   # descripción de imagen (BLIP)
+openai-whisper==20250625  # transcripción de audio
+
+# ── desarrollo ────────────────────────────────────────────────────────────────
+ruff~=0.15.16
+mypy~=2.1.0
+pytest>=9.1.1
+pytest-asyncio~=1.4.0
+pytest-cov~=7.1.0

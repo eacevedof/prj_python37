@@ -1,0 +1,25 @@
+# LOCAL (dev) — este repo NO tiene BD: los servidores MCP solo hablan con APIs
+# de terceros (EMT/OpenAI) y con el disco. Alternativa sin docker: `make dev`
+# (uvicorn en el host leyendo backend_web/.env).
+#
+# ⚠️ memory y file-checker operan sobre el disco de la máquina donde corre el
+# proceso: dentro del contenedor solo verían su propio sistema de ficheros. Para
+# usarlos desde Claude Code, `make dev` en el host.
+services:
+  py-ia-mcps-be:
+    hostname: app
+    container_name: py-ia-mcps-be
+    build:
+      context: ..
+      dockerfile: docker/python/Dockerfile
+    environment:
+      TZ: UTC
+    ports:
+      # 8000 y 8001 ya los ocupan ocr-documents y mcp-tools en local.
+      - 8011:8000
+    volumes:
+      - ../backend_web/src:/appdata/www/src
+      - ../backend_web/public:/appdata/www/public
+      - ../backend_web/storage:/appdata/www/storage
+      - ../backend_web/.env:/appdata/www/.env
+    command: uvicorn public.main:app --host 0.0.0.0 --port 8000 --reload
