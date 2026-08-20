@@ -3,6 +3,7 @@ from contextlib import AbstractAsyncContextManager
 from typing import Any
 
 from mcp.server import Server, ServerRequestContext
+from mcp.server.stdio import stdio_server
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from mcp.types import (
     CallToolRequestParams,
@@ -46,6 +47,7 @@ class AbstractMcpController(ABC):
         self._mcp_server = Server(mcp_server_name)
         self._streamable_http_session_manager = None
         self.__register_services_as_handlers()
+        self._logger.log_info(type(self).__name__, f"mcp server ready: {mcp_server_name}")
 
     @abstractmethod
     def get_tool_schemas(self) -> list[dict[str, Any]]:
@@ -97,7 +99,34 @@ class AbstractMcpController(ABC):
             json_response=True,
             stateless=True,
         )
+        self._logger.log_info(type(self).__name__, "http session manager started")
         return self._streamable_http_session_manager.run()
+
+    async def run_stdio(self) -> None:
+        """Sirve este servidor MCP por stdin/stdout, hasta que el cliente cierre la tubería.
+
+        Transporte alternativo al par `get_asgi_app()` / `get_session_runner()`:
+        el mismo `Server` y los mismos handlers, otro tubo. Aquí no hay borde de
+        apikey, y no es un olvido: en stdio el cliente ES quien arranca el
+        proceso, así que ya está dentro. La apikey protege un puerto TCP, y en
+        stdio no hay puerto.
+
+        Un proceso sirve UN solo servidor: el par de tuberías no se multiplexa,
+        al contrario que en HTTP, donde los cinco conviven en el mismo puerto.
+
+        ⚠️ Mientras sirve, stdout ES el protocolo. El SDK lo protege dejando el
+        fd 1 apuntando a stderr y atendiendo la tubería por un duplicado
+        privado, así que un `print()` perdido acaba en stderr en vez de
+        corromper la sesión. Eso vale desde que se entra aquí: lo que se imprima
+        ANTES (imports, construcción del controller) sí rompería el handshake.
+        """
+        self._logger.log_info(type(self).__name__, "stdio transport started")
+        async with stdio_server() as (read_stream, write_stream):
+            await self._mcp_server.run(
+                read_stream,
+                write_stream,
+                self._mcp_server.create_initialization_options(),
+            )
 
     def __register_services_as_handlers(self) -> None:
         self._mcp_server.add_request_handler(
@@ -132,6 +161,7 @@ class AbstractMcpController(ABC):
         server_request_context: ServerRequestContext,
         call_tool_request_params: CallToolRequestParams,
     ) -> CallToolResult:
+        self._logger.log_info(type(self).__name__, f"call_tool: {call_tool_request_params.name}")
         try:
             text = await self.get_tool_text(
                 call_tool_request_params.name,
@@ -139,9 +169,18 @@ class AbstractMcpController(ABC):
             )
         except self.get_domain_exception_types() as domain_exception:
             # Error controlado: el agente lo lee y reacciona (corrige el id de
-            # parada, cambia de tool...). No se loguea como incidencia. Va con
-            # isError para que el cliente MCP lo distinga de una respuesta buena.
-            return self.__get_error_result(domain_exception.message)
+            # parada, cambia de tool...). Va con isError para que el cliente MCP
+            # lo distinga de una respuesta buena.
+            #
+            # Se loguea como ERROR, no como excepción: sin traza (no es un fallo
+            # del código) pero dejando rastro. Sin esta línea el log quedaba
+            # vacío justo en los fallos que más se ven.
+            domain_exception_message = domain_exception.message
+            self._logger.log_error(
+                type(self).__name__,
+                f"call_tool: {call_tool_request_params.name}: {domain_exception_message}",
+            )
+            return self.__get_error_result(domain_exception_message)
         except Exception as exc:
             self._logger.log_exception(
                 exc, f"{type(self).__name__}.call_tool: {call_tool_request_params.name}"

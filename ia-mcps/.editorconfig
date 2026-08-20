@@ -1,0 +1,29 @@
+# EditorConfig - https://editorconfig.org
+# Mismo estilo que el repo hermano `learn-langs` del monorepo prj_python37.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.py]
+indent_size = 4
+
+[*.{json,yaml,yml,toml}]
+indent_size = 2
+
+# Los saltos de linea con dos espacios al final son sintaxis en Markdown.
+[*.md]
+trim_trailing_whitespace = false
+
+# make EXIGE tab en las recetas: con espacios falla con "missing separator".
+# El fichero de este repo va en minuscula, de ahi las dos formas.
+[{makefile,Makefile,*.mk}]
+indent_style = tab
+
+[Dockerfile*]
+indent_size = 4

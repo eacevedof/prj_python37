@@ -7,6 +7,8 @@ pila entera (ASGI -> borde de auth -> controller -> service -> puerto) sin salir
 a internet.
 """
 import os
+import tempfile
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -17,6 +19,12 @@ TEST_APIKEY = "test-mcp-api-key"
 # importar nada de la app para que no dependa del .env de la máquina.
 os.environ["MCP_API_KEY"] = TEST_APIKEY
 os.environ["APP_ENV"] = "test"
+
+# Los logs de la suite van a un temporal, NUNCA a `backend_web/storage/logs`:
+# cada test levanta la app entera y el controller traza el alta de los cinco
+# servers, así que un `make test` metía ~550 lineas de ruido en el log real y
+# enterraba los errores de verdad.
+os.environ["APP_LOG_PATH"] = str(Path(tempfile.gettempdir()) / "ia-mcps-tests-logs")
 
 
 class FakeEmtQueryAdapter:
