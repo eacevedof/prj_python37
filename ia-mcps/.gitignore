@@ -1,22 +1,50 @@
-.idea
-.vscode
-.dev
-.prod
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.venv-wsl/
+.venv-win/
+*.egg-info/
+dist/
+build/
+
+.pytest_cache/
+
+# Entorno
 .env
 .env-prod
-.venv-wsl
-.venv-win
-.venv
+.dev
+.prod
+*.local.json
 
-# Logs (except .gitkeep)
-logs/*
-!logs/.gitkeep
-.claude/*.png
+# IDE
+.idea/
+.vscode/
+*.iml
 
-# ChromaDB data (sensitive project memory - auto-generated, user-specific)
+# Docker
+docker/data/
+
+# Logs y cache (conservar el dir, ignorar el contenido runtime)
+backend_web/storage/logs/*
+!backend_web/storage/logs/.gitkeep
+backend_web/storage/cache/*
+!backend_web/storage/cache/.gitkeep
+
+# Base de datos SQLite: son DATOS, nunca se versionan
+backend_web/storage/sqlite/*
+!backend_web/storage/sqlite/.gitkeep
+
+# ChromaDB data (memoria de proyecto, auto-generada y sensible)
 data/
 chroma/
 .chroma/
 *.db
 memory.json
 **/*.sqlite
+
+# Claude Code
+.claude/*.png
+graphify-out/

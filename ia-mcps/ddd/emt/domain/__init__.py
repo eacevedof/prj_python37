@@ -1,1 +1,0 @@
-# EMT domain layer
