@@ -105,7 +105,7 @@ Cosas: de-woord → hem · het-woord → het · plural → ze', 'Pronombres de o
 | los (directo, cuidado) | **hen** | Ik zie **hen** morgen. |
 | les (indirecto) | **hun** | Ik heb **hun** geschreven. |
 
-Para COSAS manda el artículo: de-woord → **hem** · het-woord → **het** · plural → **ze**')
+Para COSAS manda el artículo: de-woord → hem · het-woord → het · plural → ze')
 WHERE instr(COALESCE(rules_help, ''), 'Pronombres de objeto (lo, la, le, los, las, les...):
 • me/mij — me · je/jou — te · u — le/lo (usted)
 • hem — lo/le (él, y COSAS de-woord) · haar — la/le (ella) · het — lo (cosas het-woord)
