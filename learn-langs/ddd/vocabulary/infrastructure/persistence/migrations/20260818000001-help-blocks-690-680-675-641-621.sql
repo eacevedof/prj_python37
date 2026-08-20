@@ -4,6 +4,7 @@
 --                        + haast je vs schiet op y particulas del imperativo (601)
 --                        + niet lekker vs niet goed y el mapa de lekker (598)
 --                        + er...mee partido y preposicion fija (610)
+--                        + mapa de "hacer": doen/maken/aandoen/uitvoeren (207)
 -- Migration: 20260818000001-help-blocks-690-680-675-641-621.sql
 -- Description: Eduardo (690 "Ik werd vroeg wakker" = me desperte temprano) pregunta si no
 --   podria ser "Ik ben vroeg wakker geworden". Si: las dos son correctas. Bloque 🗓️ con el
@@ -251,3 +252,27 @@ La preposición acaba SIEMPRE pegada al verbo del final; er se queda delante y l
 • Hij denkt aan haar · perfectum: Hij heeft aan haar gedacht.
 • Zij wacht op hem · We zijn blij met jullie · Ze bemoeien zich niet met ons.'
 WHERE id = 610 AND COALESCE(rules_help,'') NOT LIKE '%🧩%';
+
+-- 207 · el mapa de «hacer»: doen vs maken vs aandoen vs uitvoeren
+UPDATE words_es SET rules_help = rules_help || '
+
+🛠️ El mapa de «hacer» — doen, maken, aandoen y uitvoeren
+El español tiene un «hacer» comodín; el neerlandés reparte por QUÉ tipo de hacer es. Los cuatro llevan hebben en perfectum: gedaan · gemaakt · aangedaan · uitgevoerd.
+• doen = hacer una ACTIVIDAD o tarea, sin producto que quede. Es el comodín y el de esta tarjeta: Wat doe je? · Ik zal het morgen doen · de afwas doen (fregar) · boodschappen doen (la compra) · de was doen (la colada) · zijn best doen (esforzarse) · examen doen (examinarse) · aan sport doen (hacer deporte).
+• maken = hacer algo que RESULTA en un objeto o un producto, y también arreglar: een taart maken · een foto maken · huiswerk maken (¡los deberes se maken, no doen!) · een afspraak maken (concertar una cita) · een fout maken (cometer un error) · ruzie maken (pelearse) · Kun je het maken? (¿puedes arreglarlo?).
+• aandoen = NO significa hacer. Es separable y vale para tres cosas: encender (Doe het licht aan), ponerse ropa o calzado (Doe je jas aan) y causarle algo a alguien (iemand pijn aandoen = hacer daño a alguien). Su contrario es uitdoen: Doe het licht uit · Doe je jas uit.
+• uitvoeren = EJECUTAR, llevar a cabo. Registro formal, de planes y encargos: een plan uitvoeren · een opdracht uitvoeren · werkzaamheden uitvoeren · een operatie uitvoeren. También interpretar una obra o pieza (uitvoering = actuación, representación). Nadie dice «de afwas uitvoeren».
+🧭 La frontera doen / maken en una línea
+¿Queda un producto al terminar (tarta, foto, error, cita, deberes)? → maken. ¿Es una actividad que haces y se acaba (fregar, la compra, deporte, un examen)? → doen.
+⚠️ Trampas donde el español dice «hacer» y el neerlandés NO usa ni doen ni maken:
+• hacer una pregunta → een vraag STELLEN (nunca doen/maken).
+• hacer la cama → het bed OPMAKEN · hacer la comida → eten KOKEN of KLAARMAKEN.
+• hacer una foto → een foto maken o NEMEN, las dos valen.
+• hacer daño → pijn DOEN si duele (Het doet pijn, Doet het pijn?) pero iemand pijn AANDOEN si se lo haces a alguien.
+• hacer como si → doen ALSOF (Hij doet alsof hij slaapt).
+🌀 Dos usos de doen que no son «hacer» y te van a salir mucho
+• Echar o meter algo, coloquial: Doe wat melk in de thee · Doe het in de koelkast.
+• Con er...aan, la fórmula de la impotencia: Ik kan er niets aan doen (no puedo hacer nada, no es culpa mía) · Daar kan hij niets aan doen.
+🔀 Ojo al falso amigo de uitvoeren: uitvoer significa EXPORTACIÓN (lo contrario de invoer, importación). Y en coloquial, Wat voer je uit? = ¿qué andas haciendo?, con puntito de curioseo.
+Regla de bolsillo: actividad → doen · producto o arreglo → maken · encender, ponerse o causar → aandoen · ejecutar un plan (formal) → uitvoeren.'
+WHERE id = 207 AND COALESCE(rules_help,'') NOT LIKE '%🛠️%';
