@@ -15,3 +15,4 @@ class RulesHelpBlockEnum(str, Enum):
     ITEM = "item"
     PARAGRAPH = "paragraph"
     QUOTE = "quote"
+    TABLE = "table"

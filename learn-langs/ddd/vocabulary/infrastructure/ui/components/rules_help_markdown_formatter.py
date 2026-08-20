@@ -44,8 +44,15 @@ class RulesHelpMarkdownFormatter:
     # huecos («Ik ___ wakker»), así que se escapan antes de nada.
     _ESCAPE_PATTERN = re.compile(r"([_*])")
 
-    # La ayuda ya viene en markdown: encabezado ATX o tabla al inicio de línea
-    _MARKDOWN_PATTERN = re.compile(r"^\s*(#{1,4}\s|\|)", re.MULTILINE)
+    # La ayuda ya viene escrita en markdown de arriba abajo: encabezado ATX al
+    # inicio de línea. Las TABLAS no cuentan aquí a propósito: aparecen sueltas
+    # dentro de ayudas en texto plano (paradigmas de pronombres), y cortocircuitar
+    # por ellas dejaría el resto de la tarjeta sin convertir. Se copian tal cual
+    # línea a línea (ver _TABLE_PATTERN).
+    _MARKDOWN_PATTERN = re.compile(r"^\s*#{1,4}\s", re.MULTILINE)
+
+    # Fila de tabla markdown: se respeta literal, escaparla la rompería
+    _TABLE_PATTERN = re.compile(r"^\|")
 
     _BULLET_PATTERN = re.compile(r"^[•‣▪·]+\s*|^[-*]\s+")
     _ORDERED_PATTERN = re.compile(r"^(\d{1,2})[)\.]\s+(.*)$")
@@ -85,12 +92,20 @@ class RulesHelpMarkdownFormatter:
         blocks: list[_Block] = []
         is_first_block = True
         for raw_line in rules_text.splitlines():
-            line = self._get_escaped(raw_line.strip())
-            if not line:
+            stripped_line = raw_line.strip()
+            if not stripped_line:
                 blocks.append((RulesHelpBlockEnum.BLANK, ""))
                 continue
 
-            blocks.extend(self._get_line_blocks(line, is_first_block))
+            if self._TABLE_PATTERN.match(stripped_line):
+                # Literal: escapar `_`/`*` rompería negritas y separadores
+                blocks.append((RulesHelpBlockEnum.TABLE, stripped_line))
+                is_first_block = False
+                continue
+
+            blocks.extend(
+                self._get_line_blocks(self._get_escaped(stripped_line), is_first_block)
+            )
             is_first_block = False
 
         return self._get_joined(blocks)
