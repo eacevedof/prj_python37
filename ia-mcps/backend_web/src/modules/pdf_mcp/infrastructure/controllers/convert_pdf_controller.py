@@ -6,8 +6,8 @@ from src.modules.pdf_mod.domain.exceptions.to_pdf_exception import ToPdfExceptio
 
 from src.modules.pdf_mcp.domain.enums.mcp_server_name_enum import McpServerNameEnum
 from src.modules.pdf_mcp.domain.exceptions.pdf_mcp_exception import PdfMcpException
-from src.modules.pdf_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
-    ToolsReaderInMemoryRepository,
+from src.modules.pdf_mcp.application.get_tool_schemas.get_tool_schemas_service import (
+    GetToolSchemasService,
 )
 from src.modules.pdf_mcp.application.convert_pdf.convert_pdf_dto import ConvertPdfDto
 from src.modules.pdf_mcp.application.convert_pdf.convert_pdf_service import ConvertPdfService
@@ -20,12 +20,12 @@ class ConvertPdfController(AbstractMcpController):
     _instance: "ConvertPdfController | None" = None
 
     _convert_pdf_service: ConvertPdfService
-    _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
+    _get_tool_schemas_service: GetToolSchemasService
 
     def __init__(self) -> None:
         super().__init__(McpServerNameEnum.PDF.value)
         self._convert_pdf_service = ConvertPdfService.get_instance()
-        self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
+        self._get_tool_schemas_service = GetToolSchemasService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -34,7 +34,7 @@ class ConvertPdfController(AbstractMcpController):
         return cls._instance
 
     def get_tool_schemas(self) -> list[dict[str, Any]]:
-        return self._tools_reader_in_memory_repository.get_all()
+        return self._get_tool_schemas_service().tool_schemas
 
     async def get_tool_text(self, tool_name: str, payload_dict: dict[str, Any]) -> str:
         convert_pdf_result_dto = await self._convert_pdf_service(

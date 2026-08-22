@@ -113,7 +113,10 @@ class QueryEmtService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, query_emt_dto: QueryEmtDto) -> QueryEmtResultDto:
+    async def __call__(
+        self,
+        query_emt_dto: QueryEmtDto
+    ) -> QueryEmtResultDto:
         """Caso de uso: QueryEmt.
 
         Returns:
@@ -129,6 +132,7 @@ class QueryEmtService:
         self._query_emt_dto = query_emt_dto
         self._fail_if_wrong_input()
 
+        text = ""
         if self._query_emt_dto.tool_name == ToolNameEnum.GET_STOP_ARRIVALS.value:
             text = await self.__get_stop_arrivals_text()
         elif self._query_emt_dto.tool_name == ToolNameEnum.GET_LINES_INFO.value:

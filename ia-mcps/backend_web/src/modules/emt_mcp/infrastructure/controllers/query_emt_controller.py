@@ -7,8 +7,8 @@ from src.modules.users_mod.domain.exceptions.users_exception import UsersExcepti
 
 from src.modules.emt_mcp.domain.enums.mcp_server_name_enum import McpServerNameEnum
 from src.modules.emt_mcp.domain.exceptions.emt_mcp_exception import EmtMcpException
-from src.modules.emt_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
-    ToolsReaderInMemoryRepository,
+from src.modules.emt_mcp.application.get_tool_schemas.get_tool_schemas_service import (
+    GetToolSchemasService,
 )
 from src.modules.emt_mcp.application.query_emt.query_emt_dto import QueryEmtDto
 from src.modules.emt_mcp.application.query_emt.query_emt_service import QueryEmtService
@@ -21,12 +21,12 @@ class QueryEmtController(AbstractMcpController):
     _instance: "QueryEmtController | None" = None
 
     _query_emt_service: QueryEmtService
-    _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
+    _get_tool_schemas_service: GetToolSchemasService
 
     def __init__(self) -> None:
         super().__init__(McpServerNameEnum.EMT.value)
         self._query_emt_service = QueryEmtService.get_instance()
-        self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
+        self._get_tool_schemas_service = GetToolSchemasService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -35,7 +35,7 @@ class QueryEmtController(AbstractMcpController):
         return cls._instance
 
     def get_tool_schemas(self) -> list[dict[str, Any]]:
-        return self._tools_reader_in_memory_repository.get_all()
+        return self._get_tool_schemas_service().tool_schemas
 
     async def get_tool_text(self, tool_name: str, payload_dict: dict[str, Any]) -> str:
         query_emt_result_dto = await self._query_emt_service(
