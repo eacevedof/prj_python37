@@ -8,8 +8,8 @@ from src.modules.filechecker_mcp.domain.enums.mcp_server_name_enum import McpSer
 from src.modules.filechecker_mcp.domain.exceptions.filechecker_mcp_exception import (
     FilecheckerMcpException,
 )
-from src.modules.filechecker_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
-    ToolsReaderInMemoryRepository,
+from src.modules.filechecker_mcp.application.get_tool_schemas.get_tool_schemas_service import (
+    GetToolSchemasService,
 )
 from src.modules.filechecker_mcp.application.verify_file.verify_file_dto import VerifyFileDto
 from src.modules.filechecker_mcp.application.verify_file.verify_file_service import VerifyFileService
@@ -22,12 +22,12 @@ class VerifyFileController(AbstractMcpController):
     _instance: "VerifyFileController | None" = None
 
     _verify_file_service: VerifyFileService
-    _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
+    _get_tool_schemas_service: GetToolSchemasService
 
     def __init__(self) -> None:
         super().__init__(McpServerNameEnum.FILE_CHECKER.value)
         self._verify_file_service = VerifyFileService.get_instance()
-        self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
+        self._get_tool_schemas_service = GetToolSchemasService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -36,7 +36,7 @@ class VerifyFileController(AbstractMcpController):
         return cls._instance
 
     def get_tool_schemas(self) -> list[dict[str, Any]]:
-        return self._tools_reader_in_memory_repository.get_all()
+        return self._get_tool_schemas_service().tool_schemas
 
     async def get_tool_text(self, tool_name: str, payload_dict: dict[str, Any]) -> str:
         verify_file_result_dto = await self._verify_file_service(
