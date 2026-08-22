@@ -1,16 +1,20 @@
+import asyncio
 from typing import Self, final
 
 from src.modules.shared.domain.enums.validation_message_enum import ValidationMessageEnum
 from src.modules.shared.infrastructure.components.schema_validator.schema_validator import SchemaValidator
 
-from src.modules.media_mod.domain.enums.media_result_key_enum import MediaResultKeyEnum
-from src.modules.media_mod.infrastructure.adapters.media_generation_adapter import (
-    MediaGenerationAdapter,
+from src.modules.media_mod.application.generate_audio.generate_audio_dto import GenerateAudioDto
+from src.modules.media_mod.application.generate_audio.generate_audio_service import (
+    GenerateAudioService,
+)
+from src.modules.media_mod.application.generate_image.generate_image_dto import GenerateImageDto
+from src.modules.media_mod.application.generate_image.generate_image_service import (
+    GenerateImageService,
 )
 
 from src.modules.media_mcp.domain.enums.tool_name_enum import ToolNameEnum
 from src.modules.media_mcp.domain.exceptions.media_mcp_exception import MediaMcpException
-from src.modules.media_mcp.domain.ports.media_generation import MediaGeneration
 from src.modules.media_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
     ToolsReaderInMemoryRepository,
 )
@@ -25,20 +29,23 @@ class CreateMediaService:
     """Caso de uso de la fachada MCP: ejecutar una tool del servidor de media.
 
     NO tiene lógica de negocio: valida el payload contra el schema publicado,
-    enruta al caso de uso de `media_mod` a través del puerto y redacta el
-    resultado como texto para el agente.
+    llama al caso de uso de `media_mod` y redacta el resultado como texto para
+    el agente. Importa los services y sus DTOs directamente: la dependencia va
+    de la boca al core, que es la dirección natural.
     """
 
     _schema_validator: SchemaValidator
     _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
-    _media_generation: MediaGeneration
+    _generate_image_service: GenerateImageService
+    _generate_audio_service: GenerateAudioService
 
     _create_media_dto: CreateMediaDto
 
     def __init__(self) -> None:
         self._schema_validator = SchemaValidator.get_instance()
         self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
-        self._media_generation: MediaGeneration = MediaGenerationAdapter.get_instance()
+        self._generate_image_service = GenerateImageService.get_instance()
+        self._generate_audio_service = GenerateAudioService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -88,26 +95,35 @@ class CreateMediaService:
             MediaMcpException.bad_request(first_error_message)
 
     async def __get_created_image_text(self) -> str:
-        result = await self._media_generation.generate_image(self._create_media_dto.payload_dict)
-        file_paths = result[MediaResultKeyEnum.FILES]
+        # `to_thread` porque los casos de uso son SÍNCRONOS (el cliente de OpenAI
+        # lo es) y generar una imagen tarda segundos: en el bucle de eventos
+        # dejaría muertos los demás endpoints mientras tanto.
+        generate_image_result_dto = await asyncio.to_thread(
+            self._generate_image_service,
+            GenerateImageDto.from_primitives(self._create_media_dto.payload_dict),
+        )
+        file_paths = generate_image_result_dto.file_paths
         files_text = "\n".join(f"- {file_path}" for file_path in file_paths)
         return (
             f"generadas {len(file_paths)} imagen(es):\n"
             f"{files_text}\n\n"
-            f"modelo: {result[MediaResultKeyEnum.MODEL]}\n"
-            f"tamaño: {result[MediaResultKeyEnum.SIZE]}\n"
-            f"calidad: {result[MediaResultKeyEnum.QUALITY]}"
+            f"modelo: {generate_image_result_dto.model}\n"
+            f"tamaño: {generate_image_result_dto.size}\n"
+            f"calidad: {generate_image_result_dto.quality}"
         )
 
     async def __get_created_audio_text(self) -> str:
-        result = await self._media_generation.generate_audio(self._create_media_dto.payload_dict)
-        file_paths = result[MediaResultKeyEnum.FILES]
+        generate_audio_result_dto = await asyncio.to_thread(
+            self._generate_audio_service,
+            GenerateAudioDto.from_primitives(self._create_media_dto.payload_dict),
+        )
+        file_paths = generate_audio_result_dto.file_paths
         files_text = "\n".join(f"- {file_path}" for file_path in file_paths)
         return (
             f"generado el audio:\n"
             f"{files_text}\n\n"
-            f"modelo: {result[MediaResultKeyEnum.MODEL]}\n"
-            f"voz: {result[MediaResultKeyEnum.VOICE]}\n"
-            f"velocidad: {result[MediaResultKeyEnum.SPEED]}\n"
-            f"formato: {result[MediaResultKeyEnum.FORMAT]}"
+            f"modelo: {generate_audio_result_dto.model}\n"
+            f"voz: {generate_audio_result_dto.voice}\n"
+            f"velocidad: {generate_audio_result_dto.speed}\n"
+            f"formato: {generate_audio_result_dto.audio_format}"
         )

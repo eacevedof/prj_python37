@@ -1,6 +1,6 @@
 """Endpoint MCP de media — formato agente.
 
-Con el puerto `MediaGeneration` falseado: ni OpenAI ni escritura en disco.
+Con el puerto `MediaGenerationPort` falseado: ni OpenAI ni escritura en disco.
 """
 from fastapi.testclient import TestClient
 

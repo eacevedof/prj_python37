@@ -3,12 +3,59 @@ from typing import Any, Self, final
 from src.modules.shared.domain.enums.validation_message_enum import ValidationMessageEnum
 from src.modules.shared.infrastructure.components.schema_validator.schema_validator import SchemaValidator
 
-from src.modules.emt_mod.domain.enums.emt_result_key_enum import EmtResultKeyEnum
-from src.modules.emt_mod.infrastructure.adapters.emt_query_adapter import EmtQueryAdapter
+# Las paradas de un listado viajan como dicts dentro del ResultDto (regla de
+# DTOs planos), así que sus claves se siguen leyendo del enum del módulo.
+from src.modules.emt_mod.domain.enums.favorite_stop_key_enum import FavoriteStopKeyEnum
+from src.modules.emt_mod.application.add_favorite_stop.add_favorite_stop_dto import (
+    AddFavoriteStopDto,
+)
+from src.modules.emt_mod.application.add_favorite_stop.add_favorite_stop_service import (
+    AddFavoriteStopService,
+)
+from src.modules.emt_mod.application.delete_favorite_stop.delete_favorite_stop_dto import (
+    DeleteFavoriteStopDto,
+)
+from src.modules.emt_mod.application.delete_favorite_stop.delete_favorite_stop_service import (
+    DeleteFavoriteStopService,
+)
+from src.modules.emt_mod.application.get_favorite_stops.get_favorite_stops_dto import (
+    GetFavoriteStopsDto,
+)
+from src.modules.emt_mod.application.get_favorite_stops.get_favorite_stops_service import (
+    GetFavoriteStopsService,
+)
+from src.modules.emt_mod.application.get_lines_info.get_lines_info_dto import GetLinesInfoDto
+from src.modules.emt_mod.application.get_lines_info.get_lines_info_service import GetLinesInfoService
+from src.modules.emt_mod.application.get_stop_arrivals.get_stop_arrivals_dto import (
+    GetStopArrivalsDto,
+)
+from src.modules.emt_mod.application.get_stop_arrivals.get_stop_arrivals_service import (
+    GetStopArrivalsService,
+)
+from src.modules.emt_mod.application.get_stop_detail.get_stop_detail_dto import GetStopDetailDto
+from src.modules.emt_mod.application.get_stop_detail.get_stop_detail_service import (
+    GetStopDetailService,
+)
+from src.modules.emt_mod.application.get_stops_around.get_stops_around_dto import GetStopsAroundDto
+from src.modules.emt_mod.application.get_stops_around.get_stops_around_service import (
+    GetStopsAroundService,
+)
+from src.modules.emt_mod.application.update_favorite_stop.update_favorite_stop_dto import (
+    UpdateFavoriteStopDto,
+)
+from src.modules.emt_mod.application.update_favorite_stop.update_favorite_stop_service import (
+    UpdateFavoriteStopService,
+)
+
+from src.modules.users_mod.domain.enums.user_key_enum import UserKeyEnum
+from src.modules.users_mod.domain.enums.user_role_enum import UserRoleEnum
+from src.modules.users_mod.infrastructure.adapters.user_directory_adapter import (
+    UserDirectoryAdapter,
+)
 
 from src.modules.emt_mcp.domain.enums.tool_name_enum import ToolNameEnum
 from src.modules.emt_mcp.domain.exceptions.emt_mcp_exception import EmtMcpException
-from src.modules.emt_mcp.domain.ports.emt_query import EmtQuery
+from src.modules.emt_mcp.domain.ports.user_directory_port import UserDirectoryPort
 from src.modules.emt_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
     ToolsReaderInMemoryRepository,
 )
@@ -25,22 +72,42 @@ class QueryEmtService:
     """Caso de uso de la fachada MCP: ejecutar una tool del servidor de EMT.
 
     NO tiene lógica de negocio: valida el payload contra el schema publicado,
-    enruta al caso de uso de `emt_mod` a través del puerto y redacta el
-    resultado como texto para el agente.
+    llama al caso de uso de `emt_mod` y redacta el resultado como texto para el
+    agente. Importa los services y sus DTOs directamente: la dependencia va de
+    la boca al core, que es la dirección natural.
+
+    El único puerto que queda es `UserDirectoryPort`, y ese sí invierte algo: lo
+    cumple `users_mod`, que es otro bounded context.
     """
 
     _schema_validator: SchemaValidator
     _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
-    _emt_query: EmtQuery
+    _get_stop_arrivals_service: GetStopArrivalsService
+    _get_lines_info_service: GetLinesInfoService
+    _get_stops_around_service: GetStopsAroundService
+    _get_stop_detail_service: GetStopDetailService
+    _add_favorite_stop_service: AddFavoriteStopService
+    _get_favorite_stops_service: GetFavoriteStopsService
+    _update_favorite_stop_service: UpdateFavoriteStopService
+    _delete_favorite_stop_service: DeleteFavoriteStopService
+    _user_directory_port: UserDirectoryPort
 
     _query_emt_dto: QueryEmtDto
 
     def __init__(self) -> None:
         self._schema_validator = SchemaValidator.get_instance()
         self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
-        # Puerto EmtQuery (dominio): la fachada sabe QUÉ se le puede preguntar a
-        # EMT; la API de mobilitylabs se queda en emt_mod.
-        self._emt_query: EmtQuery = EmtQueryAdapter.get_instance()
+        self._get_stop_arrivals_service = GetStopArrivalsService.get_instance()
+        self._get_lines_info_service = GetLinesInfoService.get_instance()
+        self._get_stops_around_service = GetStopsAroundService.get_instance()
+        self._get_stop_detail_service = GetStopDetailService.get_instance()
+        self._add_favorite_stop_service = AddFavoriteStopService.get_instance()
+        self._get_favorite_stops_service = GetFavoriteStopsService.get_instance()
+        self._update_favorite_stop_service = UpdateFavoriteStopService.get_instance()
+        self._delete_favorite_stop_service = DeleteFavoriteStopService.get_instance()
+        # Puerto `UserDirectoryPort`: lo cumple users_mod. La fachada no comprueba
+        # roles; si quien pregunta no es admin, lo que llega es una excepción.
+        self._user_directory_port: UserDirectoryPort = UserDirectoryAdapter.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -56,6 +123,8 @@ class QueryEmtService:
             EmtMcpException: si la tool no existe o el payload no cumple el
                 inputSchema publicado.
             EmtException: la que propague el caso de uso de emt_mod.
+            UsersException: la que propague el guardarraíl de users_mod cuando
+                quien llama no puede hacer lo que pide.
         """
         self._query_emt_dto = query_emt_dto
         self._fail_if_wrong_input()
@@ -68,6 +137,16 @@ class QueryEmtService:
             text = await self.__get_stops_around_text()
         elif self._query_emt_dto.tool_name == ToolNameEnum.GET_STOP_DETAIL.value:
             text = await self.__get_stop_detail_text()
+        elif self._query_emt_dto.tool_name == ToolNameEnum.ADD_FAVORITE_STOP.value:
+            text = await self.__get_added_favorite_stop_text()
+        elif self._query_emt_dto.tool_name == ToolNameEnum.GET_FAVORITE_STOPS.value:
+            text = await self.__get_favorite_stops_text()
+        elif self._query_emt_dto.tool_name == ToolNameEnum.UPDATE_FAVORITE_STOP.value:
+            text = await self.__get_updated_favorite_stop_text()
+        elif self._query_emt_dto.tool_name == ToolNameEnum.DELETE_FAVORITE_STOP.value:
+            text = await self.__get_deleted_favorite_stop_text()
+        elif self._query_emt_dto.tool_name == ToolNameEnum.GET_USERS.value:
+            text = await self.__get_users_text()
         else:
             EmtMcpException.bad_request(f"unknown tool: {self._query_emt_dto.tool_name}")
 
@@ -97,80 +176,186 @@ class QueryEmtService:
             EmtMcpException.bad_request(first_error_message)
 
     async def __get_stop_arrivals_text(self) -> str:
-        result = await self._emt_query.get_stop_arrivals(self._query_emt_dto.payload_dict)
-        stop_id = result[EmtResultKeyEnum.STOP_ID]
-        stop_name = result[EmtResultKeyEnum.STOP_NAME]
-        arrivals: list[dict[str, Any]] = result[EmtResultKeyEnum.ARRIVALS]
+        get_stop_arrivals_result_dto = await self._get_stop_arrivals_service(
+            GetStopArrivalsDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        arrivals = get_stop_arrivals_result_dto.arrivals
+        stop_id = get_stop_arrivals_result_dto.stop_id
+        stop_name = get_stop_arrivals_result_dto.stop_name
 
         if not arrivals:
             return f"no hay llegadas para la parada {stop_id} ({stop_name})"
 
         text_lines = [
-            f"llegadas en la parada {stop_id} - {stop_name} ({result[EmtResultKeyEnum.TOTAL]} buses):\n"
+            f"llegadas en la parada {stop_id} - {stop_name}"
+            f" ({get_stop_arrivals_result_dto.total} buses):\n"
         ]
-        for arrival in arrivals:
-            head_marker = " [en cabecera]" if arrival[EmtResultKeyEnum.IS_HEAD] else ""
+        for arrival_item_dto in arrivals:
+            head_marker = " [en cabecera]" if arrival_item_dto.is_head else ""
             text_lines.append(
-                f"- línea {arrival[EmtResultKeyEnum.LINE]} -> {arrival[EmtResultKeyEnum.DESTINATION]}{head_marker}\n"
-                f"  llega en: {arrival[EmtResultKeyEnum.TIME_LEFT_MINUTES]} min"
-                f" ({arrival[EmtResultKeyEnum.TIME_LEFT_SECONDS]}s)\n"
-                f"  distancia: {arrival[EmtResultKeyEnum.DISTANCE_METERS]}m"
+                f"- línea {arrival_item_dto.line} -> {arrival_item_dto.destination}{head_marker}\n"
+                f"  llega en: {arrival_item_dto.time_left_minutes} min"
+                f" ({arrival_item_dto.time_left_seconds}s)\n"
+                f"  distancia: {arrival_item_dto.distance_meters}m"
             )
         return "\n".join(text_lines)
 
     async def __get_lines_info_text(self) -> str:
-        result = await self._emt_query.get_lines_info(self._query_emt_dto.payload_dict)
-        lines: list[dict[str, Any]] = result[EmtResultKeyEnum.LINES]
-        total = result[EmtResultKeyEnum.TOTAL]
+        get_lines_info_result_dto = await self._get_lines_info_service(
+            GetLinesInfoDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        lines = get_lines_info_result_dto.lines
+        total = get_lines_info_result_dto.total
 
         if not lines:
             return "no se han encontrado líneas"
 
         text_lines = [f"líneas de la EMT de Madrid ({total} líneas):\n"]
-        for line in lines[:_MAX_LISTED_LINES]:
+        for line_item_dto in lines[:_MAX_LISTED_LINES]:
             text_lines.append(
-                f"- {line[EmtResultKeyEnum.LABEL]}: {line[EmtResultKeyEnum.NAME_A]}"
-                f" <-> {line[EmtResultKeyEnum.NAME_B]} (grupo: {line[EmtResultKeyEnum.GROUP]})"
+                f"- {line_item_dto.label}: {line_item_dto.name_a}"
+                f" <-> {line_item_dto.name_b} (grupo: {line_item_dto.group})"
             )
         if total > _MAX_LISTED_LINES:
             text_lines.append(f"\n... y {total - _MAX_LISTED_LINES} líneas más")
         return "\n".join(text_lines)
 
     async def __get_stops_around_text(self) -> str:
-        result = await self._emt_query.get_stops_around(self._query_emt_dto.payload_dict)
-        stops: list[dict[str, Any]] = result[EmtResultKeyEnum.STOPS]
-        latitude = result[EmtResultKeyEnum.LATITUDE]
-        longitude = result[EmtResultKeyEnum.LONGITUDE]
-        radius = result[EmtResultKeyEnum.RADIUS]
+        get_stops_around_result_dto = await self._get_stops_around_service(
+            GetStopsAroundDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        stops = get_stops_around_result_dto.stops
+        latitude = get_stops_around_result_dto.latitude
+        longitude = get_stops_around_result_dto.longitude
+        radius = get_stops_around_result_dto.radius
 
         if not stops:
             return f"no hay paradas a menos de {radius}m de ({latitude}, {longitude})"
 
         text_lines = [
             f"paradas a menos de {radius}m de ({latitude}, {longitude})"
-            f" ({result[EmtResultKeyEnum.TOTAL]} paradas):\n"
+            f" ({get_stops_around_result_dto.total} paradas):\n"
         ]
-        for stop in stops:
-            stop_lines = ", ".join(stop[EmtResultKeyEnum.LINES]) or "sin líneas"
+        for stop_item_dto in stops:
+            stop_lines = ", ".join(stop_item_dto.lines) or "sin líneas"
             text_lines.append(
-                f"- [{stop[EmtResultKeyEnum.STOP_ID]}] {stop[EmtResultKeyEnum.STOP_NAME]}\n"
-                f"  dirección: {stop[EmtResultKeyEnum.ADDRESS]}\n"
+                f"- [{stop_item_dto.stop_id}] {stop_item_dto.stop_name}\n"
+                f"  dirección: {stop_item_dto.address}\n"
                 f"  líneas: {stop_lines}"
             )
         return "\n".join(text_lines)
 
     async def __get_stop_detail_text(self) -> str:
-        result = await self._emt_query.get_stop_detail(self._query_emt_dto.payload_dict)
-        stop_lines = ", ".join(result[EmtResultKeyEnum.LINES]) or "sin líneas"
-        wifi_status = "sí" if result[EmtResultKeyEnum.WIFI] else "no"
+        get_stop_detail_result_dto = await self._get_stop_detail_service(
+            GetStopDetailDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        stop_lines = ", ".join(get_stop_detail_result_dto.lines) or "sin líneas"
+        wifi_status = "sí" if get_stop_detail_result_dto.wifi else "no"
 
         return (
-            "detalle de la parada:\n"
-            f"- id: {result[EmtResultKeyEnum.STOP_ID]}\n"
-            f"- nombre: {result[EmtResultKeyEnum.STOP_NAME]}\n"
-            f"- dirección: {result[EmtResultKeyEnum.ADDRESS]}\n"
-            f"- código postal: {result[EmtResultKeyEnum.POSTAL_CODE]}\n"
-            f"- coordenadas: ({result[EmtResultKeyEnum.LATITUDE]}, {result[EmtResultKeyEnum.LONGITUDE]})\n"
+            f"detalle de la parada:\n"
+            f"- id: {get_stop_detail_result_dto.stop_id}\n"
+            f"- nombre: {get_stop_detail_result_dto.stop_name}\n"
+            f"- dirección: {get_stop_detail_result_dto.address}\n"
+            f"- código postal: {get_stop_detail_result_dto.postal_code}\n"
+            f"- coordenadas: ({get_stop_detail_result_dto.latitude},"
+            f" {get_stop_detail_result_dto.longitude})\n"
             f"- líneas: {stop_lines}\n"
             f"- wifi: {wifi_status}"
         )
+
+    def __get_owner_text_suffix(self, owner_user_tg_id: str, is_other_user: bool) -> str:
+        """Coletilla que deja claro de QUIÉN son las paradas.
+
+        Solo aparece cuando un admin está operando sobre otro: en el caso normal
+        no se nombra a nadie, para que el texto no dé pistas de qué usuarios hay.
+        """
+        if not is_other_user:
+            return ""
+        return f" de {owner_user_tg_id}"
+
+    async def __get_added_favorite_stop_text(self) -> str:
+        add_favorite_stop_result_dto = await self._add_favorite_stop_service(
+            AddFavoriteStopDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        stop_description = add_favorite_stop_result_dto.stop_description
+        description_text = f" como '{stop_description}'" if stop_description else ""
+        owner_text_suffix = self.__get_owner_text_suffix(
+            add_favorite_stop_result_dto.owner_user_tg_id,
+            add_favorite_stop_result_dto.is_other_user,
+        )
+        return (
+            f"parada {add_favorite_stop_result_dto.stop_nr} guardada en favoritos"
+            f"{owner_text_suffix}{description_text}"
+        )
+
+    async def __get_favorite_stops_text(self) -> str:
+        get_favorite_stops_result_dto = await self._get_favorite_stops_service(
+            GetFavoriteStopsDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        favorite_stops: list[dict[str, Any]] = get_favorite_stops_result_dto.favorite_stops
+        owner_text_suffix = self.__get_owner_text_suffix(
+            get_favorite_stops_result_dto.owner_user_tg_id,
+            get_favorite_stops_result_dto.is_other_user,
+        )
+
+        if not favorite_stops:
+            return f"no hay paradas favoritas guardadas{owner_text_suffix}"
+
+        text_lines = [
+            f"paradas favoritas{owner_text_suffix}"
+            f" ({get_favorite_stops_result_dto.total}):\n"
+        ]
+        for favorite_stop in favorite_stops:
+            stop_description = (
+                favorite_stop[FavoriteStopKeyEnum.STOP_DESCRIPTION] or "sin descripción"
+            )
+            text_lines.append(f"- [{favorite_stop[FavoriteStopKeyEnum.STOP_NR]}] {stop_description}")
+        return "\n".join(text_lines)
+
+    async def __get_updated_favorite_stop_text(self) -> str:
+        update_favorite_stop_result_dto = await self._update_favorite_stop_service(
+            UpdateFavoriteStopDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        owner_text_suffix = self.__get_owner_text_suffix(
+            update_favorite_stop_result_dto.owner_user_tg_id,
+            update_favorite_stop_result_dto.is_other_user,
+        )
+        return (
+            f"parada {update_favorite_stop_result_dto.stop_nr} actualizada{owner_text_suffix}:"
+            f" '{update_favorite_stop_result_dto.stop_description}'"
+        )
+
+    async def __get_deleted_favorite_stop_text(self) -> str:
+        delete_favorite_stop_result_dto = await self._delete_favorite_stop_service(
+            DeleteFavoriteStopDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        owner_text_suffix = self.__get_owner_text_suffix(
+            delete_favorite_stop_result_dto.owner_user_tg_id,
+            delete_favorite_stop_result_dto.is_other_user,
+        )
+        return (
+            f"parada {delete_favorite_stop_result_dto.stop_nr} quitada de favoritos"
+            f"{owner_text_suffix}"
+        )
+
+    async def __get_users_text(self) -> str:
+        result = await self._user_directory_port.get_users(self._query_emt_dto.payload_dict)
+        users: list[dict[str, Any]] = result[UserKeyEnum.USERS]
+
+        if not users:
+            return "no hay usuarios dados de alta"
+
+        text_lines = [f"usuarios dados de alta ({result[UserKeyEnum.TOTAL]}):\n"]
+        for user in users:
+            role_text = (
+                "admin"
+                if int(user[UserKeyEnum.USER_ROLE_ID]) == UserRoleEnum.ADMIN
+                else "usuario"
+            )
+            status_text = "activo" if int(user[UserKeyEnum.IS_ENABLED]) else "deshabilitado"
+            text_lines.append(
+                f"- {user[UserKeyEnum.USER_NAME]} [telegram: {user[UserKeyEnum.USER_TG_ID]}]"
+                f" - {role_text}, {status_text}"
+            )
+        return "\n".join(text_lines)

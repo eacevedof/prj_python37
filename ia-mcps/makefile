@@ -18,6 +18,9 @@ up: ## arranca la app en CONTENEDOR (compose local, host:8011)
 down: ## para el contenedor de la app
 	$(DC) down
 
+user-add: ## alta de usuario MCP: make user-add tg=<id-telegram> name=<nombre> [admin=1] [disabled=1]
+	cd backend_web && python public/main_user_add.py "$(tg)" "$(name)" $(if $(admin),--admin,) $(if $(disabled),--disabled,)
+
 test: ## run tests (pytest) desde backend_web
 	cd backend_web && python -m pytest
 

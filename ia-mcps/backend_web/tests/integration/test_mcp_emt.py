@@ -1,7 +1,7 @@
 """Endpoint MCP de emt — formato agente.
 
 Se entra en el lifespan (allí arranca el session manager del SDK) con el puerto
-`EmtQuery` falseado, así que no se toca la API de EMT.
+`EmtQueryPort` falseado, así que no se toca la API de EMT.
 """
 from fastapi.testclient import TestClient
 
@@ -70,6 +70,14 @@ def test_emt_publishes_its_tool_catalog(mcp_app) -> None:
         "emt_get_lines_info",
         "emt_get_stops_around",
         "emt_get_stop_detail",
+        # Las de abajo no consultan a EMT: son los favoritos del usuario y el
+        # listado de admin. Su comportamiento se prueba en
+        # `test_mcp_emt_favorites.py`, contra una base de datos de verdad.
+        "emt_add_favorite_stop",
+        "emt_get_favorite_stops",
+        "emt_update_favorite_stop",
+        "emt_delete_favorite_stop",
+        "emt_get_users",
     }
 
 

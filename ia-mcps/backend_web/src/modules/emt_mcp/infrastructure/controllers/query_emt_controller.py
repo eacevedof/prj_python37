@@ -3,6 +3,7 @@ from typing import Any, Self, final
 from src.modules.shared.infrastructure.controllers.abstract_mcp_controller import AbstractMcpController
 
 from src.modules.emt_mod.domain.exceptions.emt_exception import EmtException
+from src.modules.users_mod.domain.exceptions.users_exception import UsersException
 
 from src.modules.emt_mcp.domain.enums.mcp_server_name_enum import McpServerNameEnum
 from src.modules.emt_mcp.domain.exceptions.emt_mcp_exception import EmtMcpException
@@ -46,4 +47,8 @@ class QueryEmtController(AbstractMcpController):
         return query_emt_result_dto.text
 
     def get_domain_exception_types(self) -> tuple[type[Exception], ...]:
-        return (EmtMcpException, EmtException)
+        # `UsersException` viene de OTRO bounded context (users_mod), pero llega
+        # hasta aquí por las tools de favoritos: si no se declarara, un "no
+        # autorizado" saldría como error inesperado 500 en vez de contárselo al
+        # agente.
+        return (EmtMcpException, EmtException, UsersException)

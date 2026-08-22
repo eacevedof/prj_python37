@@ -1,14 +1,16 @@
+import asyncio
 from typing import Self, final
 
 from src.modules.shared.domain.enums.validation_message_enum import ValidationMessageEnum
 from src.modules.shared.infrastructure.components.schema_validator.schema_validator import SchemaValidator
 
-from src.modules.pdf_mod.domain.enums.pdf_result_key_enum import PdfResultKeyEnum
-from src.modules.pdf_mod.infrastructure.adapters.pdf_conversion_adapter import PdfConversionAdapter
+from src.modules.pdf_mod.application.convert_md_to_pdf.convert_md_to_pdf_dto import ConvertMdToPdfDto
+from src.modules.pdf_mod.application.convert_md_to_pdf.convert_md_to_pdf_service import (
+    ConvertMdToPdfService,
+)
 
 from src.modules.pdf_mcp.domain.enums.tool_name_enum import ToolNameEnum
 from src.modules.pdf_mcp.domain.exceptions.pdf_mcp_exception import PdfMcpException
-from src.modules.pdf_mcp.domain.ports.pdf_conversion import PdfConversion
 from src.modules.pdf_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
     ToolsReaderInMemoryRepository,
 )
@@ -21,20 +23,21 @@ class ConvertPdfService:
     """Caso de uso de la fachada MCP: ejecutar una tool del servidor de pdf.
 
     NO tiene lógica de negocio: valida el payload contra el schema publicado,
-    enruta al caso de uso de `pdf_mod` a través del puerto y redacta el
-    resultado como texto para el agente.
+    llama al caso de uso de `pdf_mod` y redacta el resultado como texto para el
+    agente. Importa el service y su DTO directamente: la dependencia va de la
+    boca al core, que es la dirección natural, así que no hay nada que invertir.
     """
 
     _schema_validator: SchemaValidator
     _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
-    _pdf_conversion: PdfConversion
+    _convert_md_to_pdf_service: ConvertMdToPdfService
 
     _convert_pdf_dto: ConvertPdfDto
 
     def __init__(self) -> None:
         self._schema_validator = SchemaValidator.get_instance()
         self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
-        self._pdf_conversion: PdfConversion = PdfConversionAdapter.get_instance()
+        self._convert_md_to_pdf_service = ConvertMdToPdfService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -82,9 +85,15 @@ class ConvertPdfService:
             PdfMcpException.bad_request(first_error_message)
 
     async def __get_converted_pdf_text(self) -> str:
-        result = await self._pdf_conversion.convert_md_to_pdf(self._convert_pdf_dto.payload_dict)
+        # `to_thread` porque el caso de uso es SÍNCRONO y renderizar un PDF es CPU
+        # y disco: en el bucle de eventos dejaría muertos los otros endpoints
+        # mientras tanto. Lo hacía el adaptador; al quitarlo se queda aquí.
+        convert_md_to_pdf_result_dto = await asyncio.to_thread(
+            self._convert_md_to_pdf_service,
+            ConvertMdToPdfDto.from_primitives(self._convert_pdf_dto.payload_dict),
+        )
         return (
             "PDF generado:\n"
-            f"- ruta: {result[PdfResultKeyEnum.PDF_FILE_PATH]}\n"
-            f"- tamaño: {result[PdfResultKeyEnum.PDF_SIZE_BYTES]} bytes"
+            f"- ruta: {convert_md_to_pdf_result_dto.pdf_file_path}\n"
+            f"- tamaño: {convert_md_to_pdf_result_dto.pdf_size_bytes} bytes"
         )

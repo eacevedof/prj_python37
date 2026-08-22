@@ -18,19 +18,32 @@ backend_web/
   public/main.py          front controller: /health-check + endpoints /mcp/*
   src/core/               boot (.env) y tabla de rutas MCP
   src/modules/
-    shared/               kernel: enums, logger, apikey, AbstractMcpController
-    <x>_mod/              NEGOCIO puro (+ infrastructure/adapters = cumple el puerto del _mcp)
-    <x>_mcp/              FACHADA MCP: puerto, catálogo de tools, validación y respuesta
+    shared/               kernel: enums, logger, apikey, Hasher, AbstractMcpController
+    <x>_mod/              CORE: casos de uso (service + DTOs), dominio y repositorios
+    <x>_mcp/              BOCA para agentes: catálogo de tools, validación y respuesta
+    users_mod/            identidad y acceso (app_users), SIN fachada propia: lo consumen
+                          emt_mod y emt_mcp por puerto + adaptador
   storage/logs|cache|sqlite/   cache/chroma = memory_mod (la memoria semántica NO se borra)
+                               sqlite/db_ia_mcps.sqlite = app_users + app_mcp_stops
 docker/                   Dockerfile + compose local (host:8011)
 ```
 
-Regla: **`<x>_mcp` depende de `<x>_mod`, nunca al revés**. El `_mcp` declara un **puerto**
-(`domain/ports/`, un `Protocol` async) y el `_mod` lo cumple con un **adaptador**
-(`infrastructure/adapters/`); cruzan primitivos, no DTOs. La fachada no tiene lógica de negocio.
+Regla: **`<x>_mod` es el core y `<x>_mcp` una boca más**. La flecha va siempre de la boca al core:
+el `_mcp` **importa el service y el DTO** del caso de uso, igual que haría un `api_controller` o un
+`command`. Primero se hace el CRUD en `_mod` con sus tests; después se le pone la boca. La fachada
+no tiene lógica de negocio: valida el payload, llama al caso de uso y redacta el texto.
+
+Solo hay **puerto + adaptador** cuando hay que invertir una dependencia hacia otro bounded context
+(hoy: `emt_mod`/`emt_mcp` -> `users_mod`). Entre boca y core no hay puertos.
 
 Endpoints (todos con `X-Api-Key`; alta en `src/core/routes/mcp_routes.py`):
 `/mcp/emt` · `/mcp/media` · `/mcp/pdf` · `/mcp/memory` · `/mcp/file-checker`
+
+`/mcp/emt` publica además el CRUD de **paradas favoritas** y `emt_get_users` (admin). Toda tool con
+dueño lleva `user_tg_id` (+ `password` si toca, + `target_user_tg_id` solo admin) y pasa por el
+guardarraíl de `users_mod`: `is_enabled`, rol y contraseña con ventana de **7 días**. El alta de
+usuarios NO es una tool: `make user-add tg=<id> name=<nombre> [admin=1]`. Contratos y reglas en
+`ia-mcps-schema.md`.
 
 ⚠️ El proceso es **local**: `memory` y `file-checker` operan sobre el disco de la máquina donde
 corre, así que se usan con `make dev` (host), no dentro del contenedor. Sus operaciones de lectura
@@ -50,6 +63,6 @@ alcanzan son los tuyos.
 - Tareas Lazarus (el "cerebro" NO está aquí): `...\projects\automation\workitem-analysis-skill.md`
 
 **Comandos**: `make help` · `make dev` (host, 127.0.0.1:8010) · `make up` (contenedor, host:8011)
-· `make test` · `make lint` · `make venv`
+· `make test` · `make lint` · `make venv` · `make user-add`
 
 **Reglas**: git lo gestiona Eduardo; nunca `commit`/`push` desde Claude.
