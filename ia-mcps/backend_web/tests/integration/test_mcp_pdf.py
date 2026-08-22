@@ -1,6 +1,6 @@
 """Endpoint MCP de pdf — formato agente.
 
-Con el puerto `PdfConversion` falseado: ni weasyprint ni disco.
+Con el puerto `PdfConversionPort` falseado: ni weasyprint ni disco.
 """
 from fastapi.testclient import TestClient
 

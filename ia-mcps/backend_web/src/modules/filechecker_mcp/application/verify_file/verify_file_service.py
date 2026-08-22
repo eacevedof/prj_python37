@@ -1,20 +1,20 @@
+import asyncio
 from typing import Any, Self, final
 
 from src.modules.shared.domain.enums.validation_message_enum import ValidationMessageEnum
 from src.modules.shared.infrastructure.components.schema_validator.schema_validator import SchemaValidator
 
-from src.modules.filechecker_mod.domain.enums.response.file_checker_response_key_enum import (
-    FileCheckerResponseKeyEnum,
+from src.modules.filechecker_mod.application.verify_file_signature.verify_file_signature_dto import (
+    VerifyFileSignatureDto,
 )
-from src.modules.filechecker_mod.infrastructure.adapters.file_verification_adapter import (
-    FileVerificationAdapter,
+from src.modules.filechecker_mod.application.verify_file_signature.verify_file_signature_service import (
+    VerifyFileSignatureService,
 )
 
 from src.modules.filechecker_mcp.domain.enums.tool_name_enum import ToolNameEnum
 from src.modules.filechecker_mcp.domain.exceptions.filechecker_mcp_exception import (
     FilecheckerMcpException,
 )
-from src.modules.filechecker_mcp.domain.ports.file_verification import FileVerification
 from src.modules.filechecker_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
     ToolsReaderInMemoryRepository,
 )
@@ -37,14 +37,14 @@ class VerifyFileService:
 
     _schema_validator: SchemaValidator
     _tools_reader_in_memory_repository: ToolsReaderInMemoryRepository
-    _file_verification: FileVerification
+    _verify_file_signature_service: VerifyFileSignatureService
 
     _verify_file_dto: VerifyFileDto
 
     def __init__(self) -> None:
         self._schema_validator = SchemaValidator.get_instance()
         self._tools_reader_in_memory_repository = ToolsReaderInMemoryRepository.get_instance()
-        self._file_verification: FileVerification = FileVerificationAdapter.get_instance()
+        self._verify_file_signature_service = VerifyFileSignatureService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -92,36 +92,40 @@ class VerifyFileService:
             FilecheckerMcpException.bad_request(first_error_message)
 
     async def __get_verified_file_text(self) -> str:
-        result = await self._file_verification.verify_file_signature(
-            self._verify_file_dto.payload_dict
+        # `to_thread` porque el caso de uso lee disco (y puede descargar una URL)
+        # de forma síncrona: en el bucle de eventos bloquearía a los demás
+        # endpoints. Lo hacía el adaptador; al quitarlo se queda aquí.
+        verify_file_signature_result_dto = await asyncio.to_thread(
+            self._verify_file_signature_service,
+            VerifyFileSignatureDto.from_primitives(self._verify_file_dto.payload_dict),
         )
         return "\n".join([
             "=== informe de verificación ===",
             "",
             "fichero:",
-            f"  ruta: {self.__get_value(result, FileCheckerResponseKeyEnum.FILE_PATH)}",
-            f"  origen: {self.__get_value(result, FileCheckerResponseKeyEnum.SOURCE)}",
-            f"  tamaño: {self.__get_value(result, FileCheckerResponseKeyEnum.FILE_SIZE)} bytes",
-            f"  modificado: {self.__get_value(result, FileCheckerResponseKeyEnum.LAST_MODIFIED)}",
+            f"  ruta: {self.__get_text(verify_file_signature_result_dto.file_path)}",
+            f"  origen: {self.__get_text(verify_file_signature_result_dto.source)}",
+            f"  tamaño: {self.__get_text(verify_file_signature_result_dto.file_size)} bytes",
+            f"  modificado: {self.__get_text(verify_file_signature_result_dto.last_modified)}",
             "",
             "hash:",
-            f"  algoritmo: {self.__get_value(result, FileCheckerResponseKeyEnum.ALGORITHM)}",
-            f"  valor: {self.__get_value(result, FileCheckerResponseKeyEnum.HASH_VALUE)}",
+            f"  algoritmo: {self.__get_text(verify_file_signature_result_dto.algorithm)}",
+            f"  valor: {self.__get_text(verify_file_signature_result_dto.hash_value)}",
             "",
             "ejecutable:",
-            f"  formato: {self.__get_value(result, FileCheckerResponseKeyEnum.EXECUTABLE_FORMAT, 'no es un ejecutable')}",
-            f"  versión: {self.__get_value(result, FileCheckerResponseKeyEnum.EXECUTABLE_VERSION)}",
-            f"  descripción: {self.__get_value(result, FileCheckerResponseKeyEnum.EXECUTABLE_DESCRIPTION)}",
-            f"  producto: {self.__get_value(result, FileCheckerResponseKeyEnum.EXECUTABLE_PRODUCT_NAME)}",
-            f"  empresa: {self.__get_value(result, FileCheckerResponseKeyEnum.EXECUTABLE_COMPANY)}",
+            f"  formato: {self.__get_text(verify_file_signature_result_dto.executable_format, 'no es un ejecutable')}",
+            f"  versión: {self.__get_text(verify_file_signature_result_dto.executable_version)}",
+            f"  descripción: {self.__get_text(verify_file_signature_result_dto.executable_description)}",
+            f"  producto: {self.__get_text(verify_file_signature_result_dto.executable_product_name)}",
+            f"  empresa: {self.__get_text(verify_file_signature_result_dto.executable_company)}",
             "",
             "firma digital:",
-            f"  método: {self.__get_value(result, FileCheckerResponseKeyEnum.SIGNATURE_METHOD, 'no verificada')}",
-            f"  estado: {self.__get_value(result, FileCheckerResponseKeyEnum.SIGNATURE_STATUS)}",
-            f"  firmante: {self.__get_value(result, FileCheckerResponseKeyEnum.SIGNATURE_SIGNER, 'no disponible')}",
+            f"  método: {self.__get_text(verify_file_signature_result_dto.signature_method, 'no verificada')}",
+            f"  estado: {self.__get_text(verify_file_signature_result_dto.signature_status)}",
+            f"  firmante: {self.__get_text(verify_file_signature_result_dto.signature_signer, 'no disponible')}",
         ])
 
-    def __get_value(self, result: dict[str, Any], key: str, empty_text: str = _NOT_AVAILABLE) -> str:
+    def __get_text(self, value: Any, empty_text: str = _NOT_AVAILABLE) -> str:
         """Un campo vacío se cuenta con palabras: al agente le dice más "no es un
         ejecutable" que una cadena en blanco que parece un fallo."""
-        return str(result.get(key) or empty_text)
+        return str(value or empty_text)
