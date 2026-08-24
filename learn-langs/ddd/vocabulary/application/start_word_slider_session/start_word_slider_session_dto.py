@@ -12,7 +12,9 @@ class StartWordSliderSessionDto:
     tags: list[str] = field(default_factory=list)
     group_id: int | None = None
     limit: int = 20
-    is_random_order: bool = False  # baraja las palabras (ignora la priorización SM-2)
+    # Baraja las palabras; si es False el Aprendizaje va secuencial por id
+    # (el orden lógico con el que se creó el grupo).
+    is_random_order: bool = False
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
