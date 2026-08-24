@@ -77,13 +77,20 @@ class StartWordSliderSessionService:
             )
 
         # Bloques palabra madre + sus frases de ejemplo (relación EXAMPLE):
-        # la madre conserva su posición (SM-2) y sus frases van justo detrás.
+        # cada frase va justo detrás de su palabra madre.
         word_blocks = self._build_word_blocks(words_data)
 
-        # Orden aleatorio: baraja bloques enteros (ignora la priorización SM-2
-        # pero mantiene cada frase detrás de su palabra madre)
+        # El Aprendizaje reproduce SIEMPRE el grupo entero (limit alto), así que
+        # la priorización SM-2 de la consulta solo decidía el orden, y su último
+        # criterio de desempate es RANDOM(): el diálogo salía descolocado. Aquí
+        # se fija el orden de presentación, y el azar queda donde se pide:
+        # - switch «Orden aleatorio»: baraja bloques enteros
+        # - por defecto: secuencial por id, el orden lógico con el que se creó
+        #   el grupo (el diálogo del pasaporte va del 716 al 739)
         if start_word_slider_session_dto.is_random_order:
             random.shuffle(word_blocks)
+        else:
+            word_blocks.sort(key=lambda word_block: int(word_block[0]["word_es_id"]))
 
         words_data = [word for block in word_blocks for word in block]
 
@@ -121,7 +128,8 @@ class StartWordSliderSessionService:
         Una fila con parent_word_es_id es una frase de ejemplo: se cuelga de su
         palabra madre si está en el resultado; si no (filtro de tags, límite),
         forma bloque propio en su posición. Las frases se ordenan por id
-        (orden de creación en la migración).
+        (orden de creación en la migración), igual que los bloques entre sí
+        cuando no se pide orden aleatorio.
         """
         fetched_ids = {word["word_es_id"] for word in words_data}
         sentences_by_parent: dict[int, list[dict]] = {}
