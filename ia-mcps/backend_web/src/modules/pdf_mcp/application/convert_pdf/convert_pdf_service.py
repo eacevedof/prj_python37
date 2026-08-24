@@ -87,7 +87,7 @@ class ConvertPdfService:
     async def __get_converted_pdf_text(self) -> str:
         # `to_thread` porque el caso de uso es SÍNCRONO y renderizar un PDF es CPU
         # y disco: en el bucle de eventos dejaría muertos los otros endpoints
-        # mientras tanto. Lo hacía el adaptador; al quitarlo se queda aquí.
+        # mientras tanto. Sacarlo del bucle es cosa de la fachada.
         convert_md_to_pdf_result_dto = await asyncio.to_thread(
             self._convert_md_to_pdf_service,
             ConvertMdToPdfDto.from_primitives(self._convert_pdf_dto.payload_dict),

@@ -1,6 +1,6 @@
 """Endpoint MCP de media — formato agente.
 
-Con el puerto `MediaGenerationPort` falseado: ni OpenAI ni escritura en disco.
+Con los casos de uso de `media_mod` falseados: ni OpenAI ni escritura en disco.
 """
 from fastapi.testclient import TestClient
 
@@ -100,7 +100,7 @@ def test_the_app_starts_without_openai_key_and_only_media_fails(monkeypatch) -> 
     `AbstractOpenAIApiRepository` exigía la clave en `__init__`, y como el
     lifespan materializa TODOS los controllers MCP, un `.env` sin
     `OPENAI_API_KEY` tumbaba la app entera en bucle de reinicio. Aquí se usa el
-    adaptador REAL de media (no el doble) para comprobar que la app levanta y que
+    caso de uso REAL de media (no el doble) para comprobar que la app levanta y que
     el fallo se queda dentro de su tool.
     """
     import public.main as main_module

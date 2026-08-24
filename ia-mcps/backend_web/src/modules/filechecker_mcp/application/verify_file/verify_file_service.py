@@ -31,7 +31,7 @@ class VerifyFileService:
     """Caso de uso de la fachada MCP: ejecutar una tool del servidor de file_checker.
 
     NO tiene lógica de negocio: valida el payload contra el schema publicado,
-    enruta al caso de uso de `filechecker_mod` a través del puerto y redacta el
+    llama al caso de uso de `filechecker_mod` y redacta el
     informe como texto para el agente.
     """
 
@@ -50,7 +50,10 @@ class VerifyFileService:
     def get_instance(cls) -> Self:
         return cls()
 
-    async def __call__(self, verify_file_dto: VerifyFileDto) -> VerifyFileResultDto:
+    async def __call__(
+        self,
+        verify_file_dto: VerifyFileDto
+    ) -> VerifyFileResultDto:
         """Caso de uso: VerifyFile.
 
         Returns:
@@ -94,7 +97,7 @@ class VerifyFileService:
     async def __get_verified_file_text(self) -> str:
         # `to_thread` porque el caso de uso lee disco (y puede descargar una URL)
         # de forma síncrona: en el bucle de eventos bloquearía a los demás
-        # endpoints. Lo hacía el adaptador; al quitarlo se queda aquí.
+        # endpoints. Sacarlo del bucle es cosa de la fachada.
         verify_file_signature_result_dto = await asyncio.to_thread(
             self._verify_file_signature_service,
             VerifyFileSignatureDto.from_primitives(self._verify_file_dto.payload_dict),

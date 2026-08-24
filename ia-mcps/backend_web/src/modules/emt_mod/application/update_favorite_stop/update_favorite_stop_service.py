@@ -9,13 +9,12 @@ from src.modules.emt_mod.application.update_favorite_stop.update_favorite_stop_r
 from src.modules.emt_mod.domain.enums.favorite_stop_key_enum import FavoriteStopKeyEnum
 from src.modules.emt_mod.domain.enums.favorite_stop_message_enum import FavoriteStopMessageEnum
 from src.modules.emt_mod.domain.exceptions.emt_exception import EmtException
-from src.modules.emt_mod.domain.ports.user_authorizer_port import UserAuthorizerPort
 from src.modules.emt_mod.infrastructure.repositories.favorite_stops_writer_sqlite_repository import (
     FavoriteStopsWriterSqliteRepository,
 )
-from src.modules.users_mod.domain.enums.user_key_enum import UserKeyEnum
-from src.modules.users_mod.infrastructure.adapters.user_authorizer_adapter import (
-    UserAuthorizerAdapter,
+from src.modules.users_mod.application.authorize_user.authorize_user_dto import AuthorizeUserDto
+from src.modules.users_mod.application.authorize_user.authorize_user_service import (
+    AuthorizeUserService,
 )
 
 _MAX_STOP_DESCRIPTION_LENGTH = 120
@@ -31,13 +30,13 @@ class UpdateFavoriteStopService:
     no confirmar que la parada existe en la lista de otro.
     """
 
-    _user_authorizer_port: UserAuthorizerPort
+    _authorize_user_service: AuthorizeUserService
     _favorite_stops_writer_sqlite_repository: FavoriteStopsWriterSqliteRepository
 
     _update_favorite_stop_dto: UpdateFavoriteStopDto
 
     def __init__(self) -> None:
-        self._user_authorizer_port: UserAuthorizerPort = UserAuthorizerAdapter.get_instance()
+        self._authorize_user_service = AuthorizeUserService.get_instance()
         self._favorite_stops_writer_sqlite_repository = (
             FavoriteStopsWriterSqliteRepository.get_instance()
         )
@@ -62,27 +61,29 @@ class UpdateFavoriteStopService:
         self._update_favorite_stop_dto = update_favorite_stop_dto
         self._fail_if_wrong_input()
 
-        authorized_user = await self._user_authorizer_port.get_authorized_user({
-            UserKeyEnum.USER_TG_ID: self._update_favorite_stop_dto.user_tg_id,
-            UserKeyEnum.PASSWORD: self._update_favorite_stop_dto.password,
-            UserKeyEnum.TARGET_USER_TG_ID: self._update_favorite_stop_dto.target_user_tg_id,
-        })
+        authorize_user_result_dto = await self._authorize_user_service(
+            AuthorizeUserDto(
+                user_tg_id=self._update_favorite_stop_dto.user_tg_id,
+                password=self._update_favorite_stop_dto.password,
+                target_user_tg_id=self._update_favorite_stop_dto.target_user_tg_id,
+            )
+        )
 
         updated_rows = self._favorite_stops_writer_sqlite_repository.update_favorite_stop(
-            int(authorized_user[UserKeyEnum.OWNER_USER_ID]),
+            authorize_user_result_dto.owner_user_id,
             self._update_favorite_stop_dto.stop_nr,
             self._update_favorite_stop_dto.stop_description,
         )
         if not updated_rows:
             EmtException.not_found_custom(FavoriteStopMessageEnum.STOP_NOT_IN_FAVORITES)
 
-        owner_user_tg_id = str(authorized_user[UserKeyEnum.OWNER_USER_TG_ID])
+        owner_user_tg_id = authorize_user_result_dto.owner_user_tg_id
         return UpdateFavoriteStopResultDto.from_primitives({
             FavoriteStopKeyEnum.STOP_NR: self._update_favorite_stop_dto.stop_nr,
             FavoriteStopKeyEnum.STOP_DESCRIPTION: self._update_favorite_stop_dto.stop_description,
             FavoriteStopKeyEnum.OWNER_USER_TG_ID: owner_user_tg_id,
             FavoriteStopKeyEnum.IS_OTHER_USER: (
-                owner_user_tg_id != str(authorized_user[UserKeyEnum.USER_TG_ID])
+                owner_user_tg_id != authorize_user_result_dto.user_tg_id
             ),
         })
 

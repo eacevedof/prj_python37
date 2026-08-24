@@ -54,6 +54,37 @@ class UsersWriterSqliteRepository(AbstractSqliteRepository):
                 )
         return int(cursor.lastrowid or 0)
 
+    def update_user(self, primitives: dict[str, Any]) -> None:
+        """Escribe la fila entera con los valores que ya trae el caso de uso.
+
+        No hay SET dinámico a propósito: el service lee, fusiona y manda todo,
+        así que aquí no hay que decidir qué columnas entran ni concatenar SQL.
+        `user_pwd` llega YA hasheado (o vacío, si se le quita la contraseña).
+        """
+        sql = """
+            UPDATE app_users
+            SET user_name = ?,
+                user_role_id = ?,
+                is_enabled = ?,
+                user_pwd = ?,
+                authenticated_at = ?,
+                updated_at = datetime('now')
+            WHERE id = ?
+        """
+        with closing(self._get_connection()) as connection:
+            with connection:
+                connection.execute(
+                    sql,
+                    [
+                        primitives[UserKeyEnum.USER_NAME],
+                        primitives[UserKeyEnum.USER_ROLE_ID],
+                        primitives[UserKeyEnum.IS_ENABLED],
+                        primitives[UserKeyEnum.USER_PWD],
+                        primitives[UserKeyEnum.AUTHENTICATED_AT],
+                        primitives[UserKeyEnum.USER_ID],
+                    ],
+                )
+
     def update_authenticated_at(self, user_id: int) -> None:
         """Reabre la ventana de 7 días: se llama solo cuando la contraseña que
         acaba de llegar es correcta."""

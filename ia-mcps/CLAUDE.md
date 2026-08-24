@@ -21,8 +21,8 @@ backend_web/
     shared/               kernel: enums, logger, apikey, Hasher, AbstractMcpController
     <x>_mod/              CORE: casos de uso (service + DTOs), dominio y repositorios
     <x>_mcp/              BOCA para agentes: catálogo de tools, validación y respuesta
-    users_mod/            identidad y acceso (app_users), SIN fachada propia: lo consumen
-                          emt_mod y emt_mcp por puerto + adaptador
+    users_mod/            identidad y acceso (app_users), SIN fachada propia: emt_mod y
+                          emt_mcp importan sus casos de uso
   storage/logs|cache|sqlite/   cache/chroma = memory_mod (la memoria semántica NO se borra)
                                sqlite/db_ia_mcps.sqlite = app_users + app_mcp_stops
 docker/                   Dockerfile + compose local (host:8011)
@@ -33,8 +33,8 @@ el `_mcp` **importa el service y el DTO** del caso de uso, igual que haría un `
 `command`. Primero se hace el CRUD en `_mod` con sus tests; después se le pone la boca. La fachada
 no tiene lógica de negocio: valida el payload, llama al caso de uso y redacta el texto.
 
-Solo hay **puerto + adaptador** cuando hay que invertir una dependencia hacia otro bounded context
-(hoy: `emt_mod`/`emt_mcp` -> `users_mod`). Entre boca y core no hay puertos.
+**Sin capas en medio**: quien necesita un caso de uso importa su service y su DTO, sea del mismo
+módulo o de otro (`emt_mod` -> `users_mod`).
 
 Endpoints (todos con `X-Api-Key`; alta en `src/core/routes/mcp_routes.py`):
 `/mcp/emt` · `/mcp/media` · `/mcp/pdf` · `/mcp/memory` · `/mcp/file-checker`
@@ -42,7 +42,7 @@ Endpoints (todos con `X-Api-Key`; alta en `src/core/routes/mcp_routes.py`):
 `/mcp/emt` publica además el CRUD de **paradas favoritas** y `emt_get_users` (admin). Toda tool con
 dueño lleva `user_tg_id` (+ `password` si toca, + `target_user_tg_id` solo admin) y pasa por el
 guardarraíl de `users_mod`: `is_enabled`, rol y contraseña con ventana de **7 días**. El alta de
-usuarios NO es una tool: `make user-add tg=<id> name=<nombre> [admin=1]`. Contratos y reglas en
+usuarios NO es una tool (ni el alta ni la edición): `make user-add` · `make user-update`. Contratos y reglas en
 `ia-mcps-schema.md`.
 
 ⚠️ El proceso es **local**: `memory` y `file-checker` operan sobre el disco de la máquina donde
@@ -63,6 +63,6 @@ alcanzan son los tuyos.
 - Tareas Lazarus (el "cerebro" NO está aquí): `...\projects\automation\workitem-analysis-skill.md`
 
 **Comandos**: `make help` · `make dev` (host, 127.0.0.1:8010) · `make up` (contenedor, host:8011)
-· `make test` · `make lint` · `make venv` · `make user-add`
+· `make test` · `make lint` · `make venv` · `make user-add` · `make user-update`
 
 **Reglas**: git lo gestiona Eduardo; nunca `commit`/`push` desde Claude.

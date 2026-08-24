@@ -59,7 +59,6 @@ class FakeGetStopArrivalsService:
         return cls()
 
     async def __call__(self, get_stop_arrivals_dto: Any) -> Any:
-        from src.modules.emt_mod.application.get_stop_arrivals.arrival_item_dto import ArrivalItemDto
         from src.modules.emt_mod.application.get_stop_arrivals.get_stop_arrivals_result_dto import (
             GetStopArrivalsResultDto,
         )
@@ -68,15 +67,15 @@ class FakeGetStopArrivalsService:
             stop_id=get_stop_arrivals_dto.stop_id,
             stop_name="Cibeles",
             arrivals=[
-                ArrivalItemDto(
-                    line="001",
-                    destination="PLAZA CASTILLA",
-                    time_left_seconds=120,
-                    time_left_minutes=2,
-                    distance_meters=350,
-                    is_head=False,
-                    deviation=0,
-                )
+                {
+                    "line": "001",
+                    "destination": "PLAZA CASTILLA",
+                    "time_left_seconds": 120,
+                    "time_left_minutes": 2,
+                    "distance_meters": 350,
+                    "is_head": False,
+                    "deviation": 0,
+                }
             ],
             total=1,
         )
@@ -93,19 +92,18 @@ class FakeGetLinesInfoService:
         from src.modules.emt_mod.application.get_lines_info.get_lines_info_result_dto import (
             GetLinesInfoResultDto,
         )
-        from src.modules.emt_mod.application.get_lines_info.line_item_dto import LineItemDto
 
         return GetLinesInfoResultDto(
             lines=[
-                LineItemDto(
-                    line="105",
-                    label="105",
-                    name_a="MANUEL BECERRA",
-                    name_b="CIUDAD LINEAL",
-                    group="1",
-                    start_date="",
-                    end_date="",
-                )
+                {
+                    "line": "105",
+                    "label": "105",
+                    "name_a": "MANUEL BECERRA",
+                    "name_b": "CIUDAD LINEAL",
+                    "group": "1",
+                    "start_date": "",
+                    "end_date": "",
+                }
             ],
             total=1,
         )
@@ -122,18 +120,17 @@ class FakeGetStopsAroundService:
         from src.modules.emt_mod.application.get_stops_around.get_stops_around_result_dto import (
             GetStopsAroundResultDto,
         )
-        from src.modules.emt_mod.application.get_stops_around.stop_item_dto import StopItemDto
 
         return GetStopsAroundResultDto(
             stops=[
-                StopItemDto(
-                    stop_id="72",
-                    stop_name="Cibeles",
-                    latitude=40.4168,
-                    longitude=-3.7038,
-                    address="Plaza de Cibeles",
-                    lines=["001", "002"],
-                )
+                {
+                    "stop_id": "72",
+                    "stop_name": "Cibeles",
+                    "latitude": 40.4168,
+                    "longitude": -3.7038,
+                    "address": "Plaza de Cibeles",
+                    "lines": ["001", "002"],
+                }
             ],
             total=1,
             latitude=get_stops_around_dto.latitude,
@@ -292,9 +289,9 @@ def get_fake_memory_use_case(get_primitives: Callable[[Any], dict[str, Any]]) ->
 
 @pytest.fixture()
 def mcp_app(monkeypatch):
-    """La app con TODOS los puertos falseados.
+    """La app con TODOS los casos de uso falseados.
 
-    Cada service resuelve su adaptador en el `__init__`, y los controllers se
+    Cada fachada resuelve su caso de uso en el `__init__`, y los controllers se
     cachean en `get_instance()`, así que se limpian los singletons para que los
     dobles entren de verdad en cada test.
     """

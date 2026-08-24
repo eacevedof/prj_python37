@@ -16,6 +16,7 @@ class UserMessageEnum:
     USER_TG_ID_REQUIRED = "user_tg_id es obligatorio"
     USER_NAME_REQUIRED = "user_name es obligatorio"
     UNKNOWN_ROLE = "rol desconocido"
+    NOTHING_TO_UPDATE = "no llega ningún cambio que aplicar"
 
     PASSWORD_REQUIRED = (
         "se requiere la contraseña: han pasado más de 7 días desde la última validación"
@@ -23,7 +24,8 @@ class UserMessageEnum:
     PASSWORD_WRONG = "contraseña incorrecta"
 
     ADMIN_ONLY = "solo un administrador puede hacer eso"
-    # Solo la ve un admin (nadie más llega a esa rama), así que aquí sí se puede
-    # ser concreto sin convertir el error en un oráculo.
-    TARGET_USER_NOT_FOUND = "no hay ningún usuario con ese identificador de telegram"
+    # Solo la ven un admin (al nombrar a otro usuario) y la consola de alta y
+    # edición, así que aquí sí se puede ser concreto sin convertir el error en un
+    # oráculo de qué usuarios existen.
+    USER_NOT_FOUND = "no hay ningún usuario con ese identificador de telegram"
     USER_ALREADY_EXISTS = "ya hay un usuario con ese identificador de telegram"

@@ -5,9 +5,9 @@ from typing import final
 class FavoriteStopKeyEnum:
     """Claves de los primitivos de las paradas favoritas.
 
-    Contrato que cruza el puerto `FavoriteStopsPort` hacia `emt_mcp` (y, en la
-    entrada, las claves que publica el `inputSchema` de cada tool). Se escriben
-    una sola vez y a los dos lados se leen de aquí.
+    Las claves del `to_dict()` y las que publica el `inputSchema` de cada tool.
+    La fachada las sigue necesitando para las paradas de un listado, que viajan
+    como dicts dentro del ResultDto (regla de DTOs planos).
     """
 
     # entrada
