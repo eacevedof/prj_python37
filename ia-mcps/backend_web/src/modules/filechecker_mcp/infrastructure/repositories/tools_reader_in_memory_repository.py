@@ -27,7 +27,7 @@ class ToolsReaderInMemoryRepository(AbstractToolsReaderInMemoryRepository):
             JsonSchemaKeyEnum.DESCRIPTION: (
                 "verifica un fichero LOCAL: calcula su hash, extrae metadatos, detecta el formato"
                 " ejecutable y comprueba la firma digital. La descarga desde URL está desactivada"
-                " (FILE_CHECKER_ALLOW_URL_DOWNLOAD): hay que pasar una ruta local"
+                " (APP_FILE_CHECKER_ALLOW_URL_DOWNLOAD): hay que pasar una ruta local"
             ),
             JsonSchemaKeyEnum.INPUT_SCHEMA: {
                 JsonSchemaKeyEnum.TYPE: JsonSchemaTypeEnum.OBJECT,

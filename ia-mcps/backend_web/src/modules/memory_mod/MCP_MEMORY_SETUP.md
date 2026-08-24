@@ -11,10 +11,10 @@ Con `make dev` corriendo en la raíz del repo (`http://127.0.0.1:8010`):
 
 ```bash
 claude mcp add --transport http --scope user memory \
-  http://127.0.0.1:8010/mcp/memory --header "X-Api-Key: <MCP_API_KEY>"
+  http://127.0.0.1:8010/mcp/memory --header "X-Api-Key: <APP_MCP_API_KEY>"
 ```
 
-`<MCP_API_KEY>` es la del `backend_web/.env`. El nombre del server (`memory`) es el que compone el
+`<APP_MCP_API_KEY>` es la del `backend_web/.env`. El nombre del server (`memory`) es el que compone el
 nombre de la tool en Claude: `mcp__memory__memory_search`.
 
 ⚠️ El proceso **no lo levanta Claude Code**: si `make dev` no está corriendo, las tools fallan.

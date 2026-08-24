@@ -188,7 +188,7 @@ class ToolsReaderInMemoryRepository(AbstractToolsReaderInMemoryRepository):
             JsonSchemaKeyEnum.NAME: ToolNameEnum.STORE_FILE.value,
             JsonSchemaKeyEnum.DESCRIPTION: (
                 "procesa y guarda un fichero (PDF, imagen, audio, Word, Excel) en la memoria."
-                " DESACTIVADA por defecto (MEMORY_ALLOW_STORE_FILE): usa memory_store pasando el"
+                " DESACTIVADA por defecto (APP_MEMORY_ALLOW_STORE_FILE): usa memory_store pasando el"
                 " contenido en vez de una ruta"
             ),
             JsonSchemaKeyEnum.INPUT_SCHEMA: {

@@ -97,7 +97,7 @@ def test_store_file_is_disabled_by_default(mcp_app, monkeypatch) -> None:
     from src.modules.memory_mod.domain.enums import MemoryTypeEnum
     from src.modules.memory_mod.domain.exceptions import MemoryException
 
-    monkeypatch.delenv("MEMORY_ALLOW_STORE_FILE", raising=False)
+    monkeypatch.delenv("APP_MEMORY_ALLOW_STORE_FILE", raising=False)
     with pytest.raises(MemoryException) as exception_info:
         import asyncio
 

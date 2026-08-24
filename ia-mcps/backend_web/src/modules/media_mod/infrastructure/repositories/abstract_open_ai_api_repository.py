@@ -24,7 +24,7 @@ class AbstractOpenAIApiRepository(ABC):
     ⚠️ La clave se exige en el PRIMER USO, no al construir el repositorio. Antes
     se validaba en `__init__`, y como el lifespan de la app materializa todos los
     controllers MCP para arrancar sus session managers, un `.env` sin
-    `OPENAI_API_KEY` tumbaba el arranque ENTERO (emt, pdf y memory incluidos) con
+    `APP_OPENAI_API_KEY` tumbaba el arranque ENTERO (emt, pdf y memory incluidos) con
     un "No open-ai api key provided". Ahora la falta de clave solo rompe las
     tools de media, que es lo único que la necesita.
     """
@@ -41,7 +41,7 @@ class AbstractOpenAIApiRepository(ABC):
         """Cliente de OpenAI, construido en la primera llamada y cacheado.
 
         Raises:
-            OpenAIException: si no hay `OPENAI_API_KEY` configurada.
+            OpenAIException: si no hay `APP_OPENAI_API_KEY` configurada.
         """
         if self._open_ai_client_instance is None:
             open_ai_api_key = self._environment_reader_raw_repository.get_openai_api_key()

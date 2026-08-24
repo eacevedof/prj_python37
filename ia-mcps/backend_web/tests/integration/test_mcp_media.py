@@ -99,7 +99,7 @@ def test_the_app_starts_without_openai_key_and_only_media_fails(monkeypatch) -> 
 
     `AbstractOpenAIApiRepository` exigía la clave en `__init__`, y como el
     lifespan materializa TODOS los controllers MCP, un `.env` sin
-    `OPENAI_API_KEY` tumbaba la app entera en bucle de reinicio. Aquí se usa el
+    `APP_OPENAI_API_KEY` tumbaba la app entera en bucle de reinicio. Aquí se usa el
     caso de uso REAL de media (no el doble) para comprobar que la app levanta y que
     el fallo se queda dentro de su tool.
     """
@@ -108,7 +108,7 @@ def test_the_app_starts_without_openai_key_and_only_media_fails(monkeypatch) -> 
         CreateMediaController,
     )
 
-    monkeypatch.setenv("OPENAI_API_KEY", "")
+    monkeypatch.setenv("APP_OPENAI_API_KEY", "")
     monkeypatch.setattr(CreateMediaController, "_instance", None)
 
     with TestClient(main_module.app, headers=_AUTH_HEADERS) as test_client:

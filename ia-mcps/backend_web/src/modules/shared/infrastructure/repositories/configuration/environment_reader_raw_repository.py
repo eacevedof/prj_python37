@@ -34,39 +34,39 @@ class EnvironmentReaderRawRepository:
         return get(EnvVarEnum.APP_LOG_PATH, default)
 
     def get_mcp_api_key(self) -> str:
-        return get(EnvVarEnum.MCP_API_KEY)
+        return get(EnvVarEnum.APP_MCP_API_KEY)
 
     def get_emt_client_id(self) -> str:
-        return get(EnvVarEnum.EMT_CLIENT_ID)
+        return get(EnvVarEnum.APP_EMT_CLIENT_ID)
 
     def get_emt_passkey(self) -> str:
-        return get(EnvVarEnum.EMT_PASSKEY)
+        return get(EnvVarEnum.APP_EMT_PASSKEY)
 
     def get_sqlite_db_path(self, default: str = "") -> str:
-        return get(EnvVarEnum.SQLITE_DB_PATH, default)
+        return get(EnvVarEnum.APP_SQLITE_DB_PATH, default)
 
     def get_openai_api_key(self) -> str:
-        return get(EnvVarEnum.OPENAI_API_KEY)
+        return get(EnvVarEnum.APP_OPENAI_API_KEY)
 
     def get_media_output_dir(self) -> str:
-        return get(EnvVarEnum.MEDIA_OUTPUT_DIR)
+        return get(EnvVarEnum.APP_MEDIA_OUTPUT_DIR)
 
     def is_file_checker_url_download_allowed(self) -> bool:
         """Apagado salvo que se active explícitamente: descargar una URL que
         elige un modelo es la puerta a SSRF contra la red que alcance el proceso."""
-        return get(EnvVarEnum.FILE_CHECKER_ALLOW_URL_DOWNLOAD, "") in BooleanInputEnum.TRUTHY_VALUES
+        return get(EnvVarEnum.APP_FILE_CHECKER_ALLOW_URL_DOWNLOAD, "") in BooleanInputEnum.TRUTHY_VALUES
 
     def is_memory_store_file_allowed(self) -> bool:
         """Apagado salvo que se active explícitamente: `memory_store_file` lee la
         ruta que elige un modelo y deja el contenido recuperable con
         `memory_search`, así que es lectura arbitraria + exfiltración en dos pasos."""
-        return get(EnvVarEnum.MEMORY_ALLOW_STORE_FILE, "") in BooleanInputEnum.TRUTHY_VALUES
+        return get(EnvVarEnum.APP_MEMORY_ALLOW_STORE_FILE, "") in BooleanInputEnum.TRUTHY_VALUES
 
     def get_memory_chroma_path(self, default: str = "") -> str:
-        return get(EnvVarEnum.MEMORY_CHROMA_PATH, default)
+        return get(EnvVarEnum.APP_MEMORY_CHROMA_PATH, default)
 
     def get_memory_embedding_model(self) -> str:
-        return get(EnvVarEnum.MEMORY_EMBEDDING_MODEL, _DEFAULT_EMBEDDING_MODEL)
+        return get(EnvVarEnum.APP_MEMORY_EMBEDDING_MODEL, _DEFAULT_EMBEDDING_MODEL)
 
     def is_local(self) -> bool:
         return self.get_environment() == EnvironmentEnum.LOCAL.value
