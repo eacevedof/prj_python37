@@ -139,7 +139,7 @@ class AuthorizeUserService:
             target_user_tg_id
         )
         if not target_user_id:
-            UsersException.bad_request_custom(UserMessageEnum.TARGET_USER_NOT_FOUND)
+            UsersException.bad_request_custom(UserMessageEnum.USER_NOT_FOUND)
         return target_user_id
 
     def __get_owner_user_tg_id(self, user_row: dict[str, Any]) -> str:

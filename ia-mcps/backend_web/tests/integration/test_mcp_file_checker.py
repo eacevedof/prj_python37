@@ -1,6 +1,6 @@
 """Endpoint MCP de file_checker — formato agente.
 
-Con el puerto `FileVerificationPort` falseado: ni disco ni descargas.
+Con el caso de uso `VerifyFileSignature` falseado: ni disco ni descargas.
 """
 from fastapi.testclient import TestClient
 

@@ -1,18 +1,15 @@
 from src.modules.emt_mod.application.get_stop_arrivals import (
     GetStopArrivalsDto,
-    ArrivalItemDto,
     GetStopArrivalsResultDto,
     GetStopArrivalsService,
 )
 from src.modules.emt_mod.application.get_lines_info import (
     GetLinesInfoDto,
-    LineItemDto,
     GetLinesInfoResultDto,
     GetLinesInfoService,
 )
 from src.modules.emt_mod.application.get_stops_around import (
     GetStopsAroundDto,
-    StopItemDto,
     GetStopsAroundResultDto,
     GetStopsAroundService,
 )
@@ -24,15 +21,12 @@ from src.modules.emt_mod.application.get_stop_detail import (
 
 __all__ = [
     "GetStopArrivalsDto",
-    "ArrivalItemDto",
     "GetStopArrivalsResultDto",
     "GetStopArrivalsService",
     "GetLinesInfoDto",
-    "LineItemDto",
     "GetLinesInfoResultDto",
     "GetLinesInfoService",
     "GetStopsAroundDto",
-    "StopItemDto",
     "GetStopsAroundResultDto",
     "GetStopsAroundService",
     "GetStopDetailDto",

@@ -21,6 +21,9 @@ down: ## para el contenedor de la app
 user-add: ## alta de usuario MCP: make user-add tg=<id-telegram> name=<nombre> [admin=1] [disabled=1]
 	cd backend_web && python public/main_user_add.py "$(tg)" "$(name)" $(if $(admin),--admin,) $(if $(disabled),--disabled,)
 
+user-update: ## edita un usuario: make user-update tg=<id> [name=<nombre>] [role=<1|2>] [enable=1] [disable=1] [password=1] [nopassword=1]
+	cd backend_web && python public/main_user_update.py "$(tg)" $(if $(name),--name "$(name)",) $(if $(role),--role $(role),) $(if $(enable),--enable,) $(if $(disable),--disable,) $(if $(password),--password,) $(if $(nopassword),--no-password,)
+
 test: ## run tests (pytest) desde backend_web
 	cd backend_web && python -m pytest
 

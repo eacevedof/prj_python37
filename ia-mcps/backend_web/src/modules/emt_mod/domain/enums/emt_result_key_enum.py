@@ -5,9 +5,9 @@ from typing import final
 class EmtResultKeyEnum:
     """Claves de los `to_dict()` que devuelven los casos de uso de emt_mod.
 
-    Son el contrato que cruza el puerto `EmtQueryPort` hacia `emt_mcp`: si aquí se
-    renombra algo, la fachada deja de encontrarlo. Por eso el nombre se escribe
-    una sola vez, y a los dos lados se lee de aquí.
+    Las claves del `to_dict()`, que es lo que serializaría un `api_controller`.
+    La fachada MCP ya no las usa: desde que llama al caso de uso directamente,
+    lee los campos del ResultDto.
     """
 
     STOP_ID = "stop_id"
@@ -27,11 +27,14 @@ class EmtResultKeyEnum:
     TIME_LEFT_SECONDS = "time_left_seconds"
     DISTANCE_METERS = "distance_meters"
     IS_HEAD = "is_head"
+    DEVIATION = "deviation"
 
     LINES = "lines"
     LABEL = "label"
     NAME_A = "name_a"
     NAME_B = "name_b"
     GROUP = "group"
+    START_DATE = "start_date"
+    END_DATE = "end_date"
 
     STOPS = "stops"

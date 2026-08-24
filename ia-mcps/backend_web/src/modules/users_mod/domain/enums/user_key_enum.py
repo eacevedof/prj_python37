@@ -5,10 +5,9 @@ from typing import final
 class UserKeyEnum:
     """Vocabulario de los primitivos de `users_mod`.
 
-    Es el contrato con quien consume el módulo (hoy `emt_mod` y `emt_mcp`): si
-    aquí se renombra algo, el otro lado deja de encontrarlo. Los repositorios
-    renombran las columnas a estas claves (`SELECT id AS user_id`), así que el
-    nombre de la columna no se escapa del repositorio.
+    Los repositorios renombran las columnas a estas claves
+    (`SELECT id AS user_id`), así que el nombre de la columna no se escapa del
+    repositorio, y los casos de uso las usan para armar sus ResultDto.
     """
 
     USER_ID = "user_id"
@@ -22,7 +21,8 @@ class UserKeyEnum:
     CREATED_AT = "created_at"
     UPDATED_AT = "updated_at"
 
-    # Entrada de los casos de uso.
+    # Entrada y salida de los casos de uso.
+    IS_PASSWORD_CHANGED = "is_password_changed"
     PASSWORD = "password"
     TARGET_USER_TG_ID = "target_user_tg_id"
 
@@ -35,7 +35,7 @@ class UserKeyEnum:
     USERS = "users"
     TOTAL = "total"
 
-    # ⚠️ Estas dos NUNCA cruzan un puerto: solo circulan entre el repositorio de
+    # ⚠️ Estas dos NUNCA salen del módulo: solo circulan entre el repositorio de
     # lectura y `AuthenticateUserService`, dentro del módulo. Ningún ResultDto
     # las lleva, y por eso el hash de la contraseña no puede acabar en un texto
     # para el agente.

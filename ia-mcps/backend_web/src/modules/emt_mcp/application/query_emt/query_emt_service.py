@@ -3,8 +3,10 @@ from typing import Any, Self, final
 from src.modules.shared.domain.enums.validation_message_enum import ValidationMessageEnum
 from src.modules.shared.infrastructure.components.schema_validator.schema_validator import SchemaValidator
 
-# Las paradas de un listado viajan como dicts dentro del ResultDto (regla de
-# DTOs planos), así que sus claves se siguen leyendo del enum del módulo.
+# Los listados (llegadas, líneas, paradas, favoritos) viajan como dicts dentro
+# de su ResultDto, por la regla de DTOs planos: sus claves se leen del enum del
+# módulo que las produce.
+from src.modules.emt_mod.domain.enums.emt_result_key_enum import EmtResultKeyEnum
 from src.modules.emt_mod.domain.enums.favorite_stop_key_enum import FavoriteStopKeyEnum
 from src.modules.emt_mod.application.add_favorite_stop.add_favorite_stop_dto import (
     AddFavoriteStopDto,
@@ -47,15 +49,13 @@ from src.modules.emt_mod.application.update_favorite_stop.update_favorite_stop_s
     UpdateFavoriteStopService,
 )
 
+from src.modules.users_mod.application.get_users.get_users_dto import GetUsersDto
+from src.modules.users_mod.application.get_users.get_users_service import GetUsersService
 from src.modules.users_mod.domain.enums.user_key_enum import UserKeyEnum
 from src.modules.users_mod.domain.enums.user_role_enum import UserRoleEnum
-from src.modules.users_mod.infrastructure.adapters.user_directory_adapter import (
-    UserDirectoryAdapter,
-)
 
 from src.modules.emt_mcp.domain.enums.tool_name_enum import ToolNameEnum
 from src.modules.emt_mcp.domain.exceptions.emt_mcp_exception import EmtMcpException
-from src.modules.emt_mcp.domain.ports.user_directory_port import UserDirectoryPort
 from src.modules.emt_mcp.infrastructure.repositories.tools_reader_in_memory_repository import (
     ToolsReaderInMemoryRepository,
 )
@@ -76,8 +76,8 @@ class QueryEmtService:
     agente. Importa los services y sus DTOs directamente: la dependencia va de
     la boca al core, que es la dirección natural.
 
-    El único puerto que queda es `UserDirectoryPort`, y ese sí invierte algo: lo
-    cumple `users_mod`, que es otro bounded context.
+    Con `users_mod` (otro bounded context) pasa lo mismo: se importa su caso de
+    uso, no un puerto.
     """
 
     _schema_validator: SchemaValidator
@@ -90,7 +90,7 @@ class QueryEmtService:
     _get_favorite_stops_service: GetFavoriteStopsService
     _update_favorite_stop_service: UpdateFavoriteStopService
     _delete_favorite_stop_service: DeleteFavoriteStopService
-    _user_directory_port: UserDirectoryPort
+    _get_users_service: GetUsersService
 
     _query_emt_dto: QueryEmtDto
 
@@ -105,9 +105,9 @@ class QueryEmtService:
         self._get_favorite_stops_service = GetFavoriteStopsService.get_instance()
         self._update_favorite_stop_service = UpdateFavoriteStopService.get_instance()
         self._delete_favorite_stop_service = DeleteFavoriteStopService.get_instance()
-        # Puerto `UserDirectoryPort`: lo cumple users_mod. La fachada no comprueba
-        # roles; si quien pregunta no es admin, lo que llega es una excepción.
-        self._user_directory_port: UserDirectoryPort = UserDirectoryAdapter.get_instance()
+        # La fachada no comprueba roles: eso lo hace `GetUsersService`, así que si
+        # quien pregunta no es admin lo que llega aquí es una excepción.
+        self._get_users_service = GetUsersService.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -183,7 +183,7 @@ class QueryEmtService:
         get_stop_arrivals_result_dto = await self._get_stop_arrivals_service(
             GetStopArrivalsDto.from_primitives(self._query_emt_dto.payload_dict)
         )
-        arrivals = get_stop_arrivals_result_dto.arrivals
+        arrivals: list[dict[str, Any]] = get_stop_arrivals_result_dto.arrivals
         stop_id = get_stop_arrivals_result_dto.stop_id
         stop_name = get_stop_arrivals_result_dto.stop_name
 
@@ -194,13 +194,14 @@ class QueryEmtService:
             f"llegadas en la parada {stop_id} - {stop_name}"
             f" ({get_stop_arrivals_result_dto.total} buses):\n"
         ]
-        for arrival_item_dto in arrivals:
-            head_marker = " [en cabecera]" if arrival_item_dto.is_head else ""
+        for arrival in arrivals:
+            head_marker = " [en cabecera]" if arrival[EmtResultKeyEnum.IS_HEAD] else ""
             text_lines.append(
-                f"- línea {arrival_item_dto.line} -> {arrival_item_dto.destination}{head_marker}\n"
-                f"  llega en: {arrival_item_dto.time_left_minutes} min"
-                f" ({arrival_item_dto.time_left_seconds}s)\n"
-                f"  distancia: {arrival_item_dto.distance_meters}m"
+                f"- línea {arrival[EmtResultKeyEnum.LINE]}"
+                f" -> {arrival[EmtResultKeyEnum.DESTINATION]}{head_marker}\n"
+                f"  llega en: {arrival[EmtResultKeyEnum.TIME_LEFT_MINUTES]} min"
+                f" ({arrival[EmtResultKeyEnum.TIME_LEFT_SECONDS]}s)\n"
+                f"  distancia: {arrival[EmtResultKeyEnum.DISTANCE_METERS]}m"
             )
         return "\n".join(text_lines)
 
@@ -208,17 +209,17 @@ class QueryEmtService:
         get_lines_info_result_dto = await self._get_lines_info_service(
             GetLinesInfoDto.from_primitives(self._query_emt_dto.payload_dict)
         )
-        lines = get_lines_info_result_dto.lines
+        lines: list[dict[str, Any]] = get_lines_info_result_dto.lines
         total = get_lines_info_result_dto.total
 
         if not lines:
             return "no se han encontrado líneas"
 
         text_lines = [f"líneas de la EMT de Madrid ({total} líneas):\n"]
-        for line_item_dto in lines[:_MAX_LISTED_LINES]:
+        for line in lines[:_MAX_LISTED_LINES]:
             text_lines.append(
-                f"- {line_item_dto.label}: {line_item_dto.name_a}"
-                f" <-> {line_item_dto.name_b} (grupo: {line_item_dto.group})"
+                f"- {line[EmtResultKeyEnum.LABEL]}: {line[EmtResultKeyEnum.NAME_A]}"
+                f" <-> {line[EmtResultKeyEnum.NAME_B]} (grupo: {line[EmtResultKeyEnum.GROUP]})"
             )
         if total > _MAX_LISTED_LINES:
             text_lines.append(f"\n... y {total - _MAX_LISTED_LINES} líneas más")
@@ -228,7 +229,7 @@ class QueryEmtService:
         get_stops_around_result_dto = await self._get_stops_around_service(
             GetStopsAroundDto.from_primitives(self._query_emt_dto.payload_dict)
         )
-        stops = get_stops_around_result_dto.stops
+        stops: list[dict[str, Any]] = get_stops_around_result_dto.stops
         latitude = get_stops_around_result_dto.latitude
         longitude = get_stops_around_result_dto.longitude
         radius = get_stops_around_result_dto.radius
@@ -240,11 +241,11 @@ class QueryEmtService:
             f"paradas a menos de {radius}m de ({latitude}, {longitude})"
             f" ({get_stops_around_result_dto.total} paradas):\n"
         ]
-        for stop_item_dto in stops:
-            stop_lines = ", ".join(stop_item_dto.lines) or "sin líneas"
+        for stop in stops:
+            stop_lines = ", ".join(stop[EmtResultKeyEnum.LINES]) or "sin líneas"
             text_lines.append(
-                f"- [{stop_item_dto.stop_id}] {stop_item_dto.stop_name}\n"
-                f"  dirección: {stop_item_dto.address}\n"
+                f"- [{stop[EmtResultKeyEnum.STOP_ID]}] {stop[EmtResultKeyEnum.STOP_NAME]}\n"
+                f"  dirección: {stop[EmtResultKeyEnum.ADDRESS]}\n"
                 f"  líneas: {stop_lines}"
             )
         return "\n".join(text_lines)
@@ -344,13 +345,15 @@ class QueryEmtService:
         )
 
     async def __get_users_text(self) -> str:
-        result = await self._user_directory_port.get_users(self._query_emt_dto.payload_dict)
-        users: list[dict[str, Any]] = result[UserKeyEnum.USERS]
+        get_users_result_dto = await self._get_users_service(
+            GetUsersDto.from_primitives(self._query_emt_dto.payload_dict)
+        )
+        users: list[dict[str, Any]] = get_users_result_dto.users
 
         if not users:
             return "no hay usuarios dados de alta"
 
-        text_lines = [f"usuarios dados de alta ({result[UserKeyEnum.TOTAL]}):\n"]
+        text_lines = [f"usuarios dados de alta ({get_users_result_dto.total}):\n"]
         for user in users:
             role_text = (
                 "admin"

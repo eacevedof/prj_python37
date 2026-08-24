@@ -1,6 +1,6 @@
 """Endpoint MCP de memory — formato agente.
 
-Con el puerto `MemoryStorePort` falseado: ni ChromaDB ni modelo de embeddings.
+Con los casos de uso de `memory_mod` falseados: ni ChromaDB ni embeddings.
 """
 import json
 

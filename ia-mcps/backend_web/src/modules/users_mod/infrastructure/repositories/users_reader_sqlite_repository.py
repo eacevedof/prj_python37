@@ -56,6 +56,32 @@ class UsersReaderSqliteRepository(AbstractSqliteRepository):
             row = connection.execute(sql, [password_ttl_days, user_tg_id]).fetchone()
         return dict(row) if row else {}
 
+    def get_user_profile_by_tg_id(self, user_tg_id: str) -> dict[str, Any]:
+        """La fila entera de un usuario, o {} si ese id de telegram no existe.
+
+        Hermana de `get_user_by_tg_id`, sin la cuenta de días: quien edita un
+        usuario no necesita saber si su contraseña está fresca, y pedirle un
+        plazo que no va a usar solo para reutilizar la consulta enturbiaría las
+        dos.
+        """
+        sql = """
+            SELECT
+                id AS user_id,
+                user_uuid,
+                user_tg_id,
+                user_name,
+                user_role_id,
+                user_pwd,
+                is_enabled,
+                authenticated_at
+            FROM app_users
+            WHERE user_tg_id = ?
+            LIMIT 1
+        """
+        with closing(self._get_connection()) as connection:
+            row = connection.execute(sql, [user_tg_id]).fetchone()
+        return dict(row) if row else {}
+
     def get_user_id_by_tg_id(self, user_tg_id: str) -> int:
         """El id interno de un usuario, o 0 si ese id de telegram no existe."""
         sql = "SELECT id FROM app_users WHERE user_tg_id = ? LIMIT 1"

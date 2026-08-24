@@ -5,7 +5,7 @@ from typing import final
 class PdfResultKeyEnum:
     """Claves del `to_dict()` del caso de uso de pdf_mod.
 
-    Contrato que cruza el puerto `PdfConversionPort` hacia `pdf_mcp`.
+    Las claves del `to_dict()`, que es lo que serializaría un `api_controller`.
     """
 
     PDF_FILE_PATH = "pdf_file_path"

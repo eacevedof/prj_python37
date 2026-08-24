@@ -16,7 +16,7 @@ class MediaFileWriterRepository:
 
     Antes esto vivía dentro del servidor MCP: decodificaba el base64 y escribía
     el fichero. Guardar es infraestructura del dominio, no cosa de la fachada,
-    así que se queda de este lado del puerto.
+    así que se queda en el módulo de negocio.
 
     La carpeta destino sale de `MEDIA_OUTPUT_DIR`; sin ella no se puede escribir
     y se falla explícito en vez de dejar el fichero en un sitio inesperado.

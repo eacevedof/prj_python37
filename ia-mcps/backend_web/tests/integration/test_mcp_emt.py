@@ -1,7 +1,7 @@
 """Endpoint MCP de emt — formato agente.
 
-Se entra en el lifespan (allí arranca el session manager del SDK) con el puerto
-`EmtQueryPort` falseado, así que no se toca la API de EMT.
+Se entra en el lifespan (allí arranca el session manager del SDK) con los casos
+de uso de `emt_mod` falseados, así que no se toca la API de EMT.
 """
 from fastapi.testclient import TestClient
 
