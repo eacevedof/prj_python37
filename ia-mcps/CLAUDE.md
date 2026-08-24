@@ -47,7 +47,7 @@ usuarios NO es una tool (ni el alta ni la edición): `make user-add` · `make us
 
 ⚠️ El proceso es **local**: `memory` y `file-checker` operan sobre el disco de la máquina donde
 corre, así que se usan con `make dev` (host), no dentro del contenedor. Sus operaciones de lectura
-arbitraria (`MEMORY_ALLOW_STORE_FILE`, `FILE_CHECKER_ALLOW_URL_DOWNLOAD`) vienen **encendidas** en
+arbitraria (`APP_MEMORY_ALLOW_STORE_FILE`, `APP_FILE_CHECKER_ALLOW_URL_DOWNLOAD`) vienen **encendidas** en
 el `.env.example` de este repo —al contrario que en mcp-tools— porque el disco y la red que
 alcanzan son los tuyos.
 
@@ -65,4 +65,6 @@ alcanzan son los tuyos.
 **Comandos**: `make help` · `make dev` (host, 127.0.0.1:8010) · `make up` (contenedor, host:8011)
 · `make test` · `make lint` · `make venv` · `make user-add` · `make user-update`
 
-**Reglas**: git lo gestiona Eduardo; nunca `commit`/`push` desde Claude.
+**Reglas**: git lo gestiona Eduardo; nunca `commit`/`push` desde Claude. Toda clave del `.env`
+lleva prefijo `APP_` (inventario en `EnvVarEnum`). Toda clave que sale en un JSON —respuesta,
+`inputSchema` de una tool, payload de log— va en **inglés**; el texto para el agente, en español.

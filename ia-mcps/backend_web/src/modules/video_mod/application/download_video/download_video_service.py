@@ -104,7 +104,7 @@ class DownloadVideoService:
     def _get_output_path(self, video_type: str) -> str:
         """Generate output file path."""
 
-        output_dir = Path(os.getenv("MEDIA_OUTPUT_DIR", "./downloads"))
+        output_dir = Path(os.getenv("APP_MEDIA_OUTPUT_DIR", "./downloads"))
         if self._download_video_dto.output_dir:
             output_dir = Path(self._download_video_dto.output_dir)
 

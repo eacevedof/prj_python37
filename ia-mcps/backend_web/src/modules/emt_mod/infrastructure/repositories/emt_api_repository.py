@@ -25,7 +25,9 @@ class EmtApiRepository:
         self._client_id = env_reader.get_emt_client_id()
         self._passkey = env_reader.get_emt_passkey()
         if not self._client_id or not self._passkey:
-            EmtException.unexpected_custom("EMT credentials not configured (EMT_CLIENT_ID, EMT_PASSKEY)")
+            EmtException.unexpected_custom(
+                "EMT credentials not configured (APP_EMT_CLIENT_ID, APP_EMT_PASSKEY)"
+            )
 
     @classmethod
     def get_instance(cls) -> Self:

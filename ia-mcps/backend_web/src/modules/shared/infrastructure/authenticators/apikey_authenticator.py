@@ -11,10 +11,10 @@ class ApikeyAuthenticator:
     """Borde de auth de /mcp/*: ¿puede este cliente consumir el servicio?
 
     A diferencia de ocr-documents (apikeys en BD, una por integración), aquí la
-    clave es una sola y vive en `MCP_API_KEY` del `.env`: este repo no tiene BD
+    clave es una sola y vive en `APP_MCP_API_KEY` del `.env`: este repo no tiene BD
     ni usuarios, y la apikey autoriza, no identifica.
 
-    Con `MCP_API_KEY` vacía NADIE pasa: un despliegue al que se le olvidó la
+    Con `APP_MCP_API_KEY` vacía NADIE pasa: un despliegue al que se le olvidó la
     variable tiene que quedarse cerrado, no abierto.
     """
 

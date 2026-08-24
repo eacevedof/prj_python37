@@ -25,7 +25,7 @@ class AbstractSqliteRepository(ABC):
     ya tenga filas.
 
     La ruta se resuelve **en cada llamada**, no en el `__init__`: así un cambio
-    de `SQLITE_DB_PATH` (los tests lo mueven a un temporal) surte efecto sin
+    de `APP_SQLITE_DB_PATH` (los tests lo mueven a un temporal) surte efecto sin
     depender de cuándo se construyó el repositorio.
     """
 

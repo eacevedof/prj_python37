@@ -84,7 +84,7 @@ def test_url_download_is_disabled_by_default(mcp_app, monkeypatch) -> None:
     )
     import pytest
 
-    monkeypatch.delenv("FILE_CHECKER_ALLOW_URL_DOWNLOAD", raising=False)
+    monkeypatch.delenv("APP_FILE_CHECKER_ALLOW_URL_DOWNLOAD", raising=False)
     with pytest.raises(FileCheckerException) as exception_info:
         VerifyFileSignatureService.get_instance()(
             VerifyFileSignatureDto.from_primitives(

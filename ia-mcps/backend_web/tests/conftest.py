@@ -23,7 +23,7 @@ TEST_APIKEY = "test-mcp-api-key"
 
 # El borde de auth lee la clave del entorno en cada petición: se fija ANTES de
 # importar nada de la app para que no dependa del .env de la máquina.
-os.environ["MCP_API_KEY"] = TEST_APIKEY
+os.environ["APP_MCP_API_KEY"] = TEST_APIKEY
 os.environ["APP_ENV"] = "test"
 
 # Los logs de la suite van a un temporal, NUNCA a `backend_web/storage/logs`:
@@ -36,7 +36,7 @@ os.environ["APP_LOG_PATH"] = str(Path(tempfile.gettempdir()) / "ia-mcps-tests-lo
 # tercero), pero contra una base temporal: `backend_web/storage/sqlite` no se
 # toca en ningún test.
 TEST_SQLITE_DB_PATH = str(Path(tempfile.gettempdir()) / "ia-mcps-tests-db_ia_mcps.sqlite")
-os.environ["SQLITE_DB_PATH"] = TEST_SQLITE_DB_PATH
+os.environ["APP_SQLITE_DB_PATH"] = TEST_SQLITE_DB_PATH
 
 ADMIN_TG_ID = "tg-admin"
 USER_TG_ID = "tg-user"

@@ -18,7 +18,7 @@ class MediaFileWriterRepository:
     el fichero. Guardar es infraestructura del dominio, no cosa de la fachada,
     así que se queda en el módulo de negocio.
 
-    La carpeta destino sale de `MEDIA_OUTPUT_DIR`; sin ella no se puede escribir
+    La carpeta destino sale de `APP_MEDIA_OUTPUT_DIR`; sin ella no se puede escribir
     y se falla explícito en vez de dejar el fichero en un sitio inesperado.
     """
 
@@ -42,6 +42,6 @@ class MediaFileWriterRepository:
     def __get_output_dir_path(self) -> str:
         output_dir = self._environment_reader_raw_repository.get_media_output_dir()
         if not output_dir:
-            OpenAIException.unexpected_custom("MEDIA_OUTPUT_DIR is not configured")
+            OpenAIException.unexpected_custom("APP_MEDIA_OUTPUT_DIR is not configured")
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         return output_dir

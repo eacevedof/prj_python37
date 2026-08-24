@@ -27,7 +27,7 @@ class FileDownloaderReaderUrlRepository:
         pass
 
     def download(self, url: str) -> str:
-        """Download file from URL to MEDIA_OUTPUT_DIR.
+        """Download file from URL to APP_MEDIA_OUTPUT_DIR.
 
         Args:
             url: HTTP/HTTPS URL to download.
