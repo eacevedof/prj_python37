@@ -13,7 +13,7 @@ class EnvironmentReaderRawRepository:
     #  - LOTE de migraciones de contenido pendientes → sube el dígito MEDIO dejando patch .1
     #    (1.0.1 → 1.1.1 → 1.2.1); un bump por lote, se mantiene hasta que entra en `migrations`.
     #  - FEATURE de código nueva → bump MINOR normal con patch 0 (x.(y+1).0), p.ej. 1.1.1 → 1.2.0.
-    APP_VERSION: str = "1.6.0"
+    APP_VERSION: str = "1.7.0"
 
     __instance: "EnvironmentReaderRawRepository | None" = None
 
