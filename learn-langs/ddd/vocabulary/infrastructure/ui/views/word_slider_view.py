@@ -46,6 +46,8 @@ class WordSliderView(ft.Container):
         route_on_prev: Callable[[], None] | None = None,
         route_on_next: Callable[[], None] | None = None,
         route_on_toggle_pause: Callable[[], None] | None = None,
+        route_on_toggle_loop: Callable[[], None] | None = None,
+        route_on_loop_replay: Callable[[], None] | None = None,
         route_on_edit_word: Callable[[], None] | None = None,
         route_on_reset_word: Callable[[], None] | None = None,
     ):
@@ -57,11 +59,15 @@ class WordSliderView(ft.Container):
         self._route_on_prev = route_on_prev
         self._route_on_next = route_on_next
         self._route_on_toggle_pause = route_on_toggle_pause
+        self._route_on_toggle_loop = route_on_toggle_loop
+        self._route_on_loop_replay = route_on_loop_replay
         self._route_on_edit_word = route_on_edit_word
         self._route_on_reset_word = route_on_reset_word
 
         # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
         self.__is_paused: bool = False
+        # Estado local del botón de bucle infinito (el real vive en el controller)
+        self.__is_loop_enabled: bool = False
         # Hay un diálogo (ayuda/reiniciar) abierto: ignora los atajos de teclado
         self.__is_modal_open: bool = False
 
@@ -85,6 +91,7 @@ class WordSliderView(ft.Container):
         self._ft_content_area: ft.Column | None = None
         self._ft_slider_card: SliderCardComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_loop_btn: ft.IconButton | None = None
         self._ft_help_btn: ft.IconButton | None = None
         self._ft_rules_help_dialog = RulesHelpDialogComp(
             route_on_close=self._on_help_dialog_close
@@ -104,6 +111,8 @@ class WordSliderView(ft.Container):
             route_on_prev=primitives.get("on_prev"),
             route_on_next=primitives.get("on_next"),
             route_on_toggle_pause=primitives.get("on_toggle_pause"),
+            route_on_toggle_loop=primitives.get("on_toggle_loop"),
+            route_on_loop_replay=primitives.get("on_loop_replay"),
             route_on_edit_word=primitives.get("on_edit_word"),
             route_on_reset_word=primitives.get("on_reset_word"),
         )
@@ -156,7 +165,7 @@ class WordSliderView(ft.Container):
 
     def _on_keyboard(self, event: ft.KeyboardEvent) -> None:
         """Atajos del slider: ← anterior · → siguiente · espacio (o Ctrl+Espacio)
-        pausa/reanuda.
+        pausa/reanuda · L bucle infinito.
 
         Pausa: espacio suelto o Ctrl+Espacio (este último es el atajo unificado con
         el Examen, donde el espacio suelto se reserva para teclear). Navegación con
@@ -173,6 +182,8 @@ class WordSliderView(ft.Container):
             self._on_prev_btn_click()
         elif event.key == "Arrow Right":
             self._on_next_btn_click()
+        elif event.key.upper() == "L":
+            self._on_loop_btn_click()
 
     # =========================================================================
     # CONSTRUCCIÓN DE UI
@@ -183,7 +194,8 @@ class WordSliderView(ft.Container):
         self._ft_group_source_link = GroupSourceLinkComp()
         self._ft_slider_card = SliderCardComp()
 
-        # Controles de reproducción: anterior | pausa | siguiente | ayuda | editar | reiniciar
+        # Controles de reproducción: anterior | pausa | siguiente | bucle | ayuda |
+        # editar | reiniciar
         self._ft_pause_btn = ft.IconButton(
             icon=ft.Icons.PAUSE_CIRCLE,
             icon_size=42,
@@ -205,6 +217,7 @@ class WordSliderView(ft.Container):
                     tooltip="Palabra siguiente",
                     on_click=lambda _: self._on_next_btn_click(),
                 ),
+                self._get_built_loop_button(),
                 self._get_built_help_button(),
                 ft.IconButton(
                     icon=ft.Icons.EDIT,
@@ -392,6 +405,20 @@ class WordSliderView(ft.Container):
         self.__is_card_mounted = False
         action_buttons = []
 
+        if self._route_on_loop_replay:
+            loop_btn = ft.ElevatedButton(
+                content=ft.Row(
+                    [ft.Icon(ft.Icons.ALL_INCLUSIVE), ft.Text("Seguir en bucle")],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                on_click=lambda _: self._on_loop_replay_click(),
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.INDIGO_600,
+                    color=ft.Colors.WHITE,
+                ),
+            )
+            action_buttons.append(loop_btn)
+
         if self._route_on_replay:
             replay_btn = ft.ElevatedButton(
                 content=ft.Row(
@@ -437,6 +464,17 @@ class WordSliderView(ft.Container):
                 ),
             ]
         )
+
+    def _get_built_loop_button(self) -> ft.IconButton:
+        """Construye el botón de bucle infinito (repite el grupo sin parar)."""
+        self._ft_loop_btn = ft.IconButton(
+            icon=ft.Icons.REPEAT,
+            icon_size=36,
+            icon_color=ft.Colors.GREY_600,
+            tooltip="Bucle infinito: al acabar vuelve a empezar (L)",
+            on_click=lambda _: self._on_loop_btn_click(),
+        )
+        return self._ft_loop_btn
 
     def _get_built_help_button(self) -> ft.IconButton:
         """Construye el botón de ayuda (reglas de uso) de la botonera."""
@@ -567,6 +605,36 @@ class WordSliderView(ft.Container):
         if self._route_on_toggle_pause:
             self._route_on_toggle_pause()
         self.update()
+
+    def _on_loop_btn_click(self) -> None:
+        """Alterna el bucle infinito y notifica al controller."""
+        if not self._route_on_toggle_loop:
+            return
+        self.__is_loop_enabled = not self.__is_loop_enabled
+        self._apply_loop_icon()
+        self._route_on_toggle_loop()
+        self.update()
+
+    def _on_loop_replay_click(self) -> None:
+        """Pide seguir en bucle desde la pantalla de fin (el icono queda activo)."""
+        if not self._route_on_loop_replay:
+            return
+        self.__is_loop_enabled = True
+        self._apply_loop_icon()
+        self._route_on_loop_replay()
+
+    def _apply_loop_icon(self) -> None:
+        """Sincroniza icono y tooltip del botón con el estado del bucle."""
+        if not self._ft_loop_btn:
+            return
+        if self.__is_loop_enabled:
+            self._ft_loop_btn.icon = ft.Icons.ALL_INCLUSIVE
+            self._ft_loop_btn.icon_color = ft.Colors.INDIGO_600
+            self._ft_loop_btn.tooltip = "Bucle infinito ACTIVO: pulsa para desactivar (L)"
+        else:
+            self._ft_loop_btn.icon = ft.Icons.REPEAT
+            self._ft_loop_btn.icon_color = ft.Colors.GREY_600
+            self._ft_loop_btn.tooltip = "Bucle infinito: al acabar vuelve a empezar (L)"
 
     def _reset_pause_button(self) -> None:
         """Restaura el botón de pausa al estado reproduciendo."""

@@ -98,6 +98,7 @@ class WordSliderController(BaseController):
         self.__current_index: int = 0
         self.__is_stopped: bool = False
         self.__is_paused: bool = False
+        self.__is_loop_enabled: bool = False  # al acabar, vuelve a empezar
         self.__navigation_request: int | None = (
             None  # índice pedido con anterior/siguiente
         )
@@ -130,6 +131,8 @@ class WordSliderController(BaseController):
                 "on_prev": self._on_prev_btn_click,
                 "on_next": self._on_next_btn_click,
                 "on_toggle_pause": self._on_toggle_pause_click,
+                "on_toggle_loop": self._on_toggle_loop_click,
+                "on_loop_replay": self._on_loop_replay_click,
                 "on_edit_word": self._on_edit_word_click,
                 "on_reset_word": self._on_reset_word_click,
             }
@@ -214,6 +217,9 @@ class WordSliderController(BaseController):
     async def _async_run_slider(self) -> None:
         """Recorre las palabras reproduciendo cada secuencia; admite saltos prev/next.
 
+        Con el bucle infinito activo, al llegar al final se oye igualmente el
+        aviso de fin y se vuelve a la primera palabra sin cerrar la sesión.
+
         Cada arranque invalida el bucle anterior via _run_token: si por cualquier
         motivo quedara un bucle vivo, se corta solo (evita audios solapados).
 
@@ -228,32 +234,52 @@ class WordSliderController(BaseController):
         self.__start_index = 0
         self._keep_cpu_awake()
         try:
-            while index < len(self.__words):
-                if self._is_run_cancelled(run_token):
-                    return
-                self.__current_index = index
-                await self._async_save_activity_state(self.__words[index], index)
-                await self._async_play_word(self.__words[index], run_token)
-
+            while True:
+                await self._async_play_words_from(index, run_token)
                 if self._is_run_cancelled(run_token):
                     return
 
-                if self.__navigation_request is not None:
-                    # Salto pedido con anterior/siguiente (si supera el final, completa)
-                    index = min(self.__navigation_request, len(self.__words))
-                    self.__navigation_request = None
-                else:
-                    index += 1
-
-            if not self._is_run_cancelled(run_token):
                 await self._async_play_end_notice(run_token)
-            # Se recomprueba: el aviso dura unos segundos y pueden haber salido
-            if not self._is_run_cancelled(run_token):
-                self._show_session_complete()
+                # Se recomprueba: el aviso dura unos segundos y pueden haber salido
+                if self._is_run_cancelled(run_token):
+                    return
+
+                if not self.__is_loop_enabled:
+                    self._show_session_complete()
+                    return
+
+                # Bucle infinito: el aviso de fin suena igual, pero la sesión no
+                # se cierra: se vuelve a la primera palabra y sigue sonando
+                self.__navigation_request = None
+                index = 0
         finally:
             # Si otro bucle ya tomó el relevo (replay), el wake lock es suyo
             if run_token == self.__run_token:
                 self._release_cpu()
+
+    async def _async_play_words_from(self, start_index: int, run_token: int) -> None:
+        """Reproduce las palabras desde start_index hasta la última.
+
+        Termina al pasar la última palabra o al cancelarse el recorrido; quien
+        llama distingue ambos casos con _is_run_cancelled.
+        """
+        index = start_index
+        while index < len(self.__words):
+            if self._is_run_cancelled(run_token):
+                return
+            self.__current_index = index
+            await self._async_save_activity_state(self.__words[index], index)
+            await self._async_play_word(self.__words[index], run_token)
+
+            if self._is_run_cancelled(run_token):
+                return
+
+            if self.__navigation_request is not None:
+                # Salto pedido con anterior/siguiente (si supera el final, completa)
+                index = min(self.__navigation_request, len(self.__words))
+                self.__navigation_request = None
+            else:
+                index += 1
 
     async def _async_play_word(self, word: SliderWordDto, run_token: int) -> None:
         """Reproduce la secuencia temporizada de una palabra (SliderSequenceEnum).
@@ -476,6 +502,15 @@ class WordSliderController(BaseController):
             self._ft_container.page.run_task(self._audio_player.pause)
         else:
             self._ft_container.page.run_task(self._audio_player.resume)
+
+    def _on_toggle_loop_click(self) -> None:
+        """Activa/desactiva el bucle infinito (se aplica al llegar al final)."""
+        self.__is_loop_enabled = not self.__is_loop_enabled
+
+    def _on_loop_replay_click(self) -> None:
+        """Desde la pantalla de fin: activa el bucle y relanza el slider."""
+        self.__is_loop_enabled = True
+        self._on_replay_click()
 
     def _on_edit_word_click(self) -> None:
         """Detiene el slider y navega a editar la palabra actual.
