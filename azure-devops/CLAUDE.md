@@ -8,7 +8,7 @@ Coleccion de MCP Servers (Python 3.12+, arquitectura DDD) para integrar Claude C
 
 **Ficha completa del proyecto** (estructura, MCPs + registro, env vars, auth Outlook, comandos):
 ```
-C:\projects\temper\ai\obsidian\projects\azure-devops\azure-devops.md
+C:\projects\temper\ai\obsidian\projects\azure-devops\azure-devops-index.md
 ```
 
 **Patrones de código** (DDD, DTOs, services, handlers MCP, componentes shared, reglas de calidad):
@@ -23,7 +23,7 @@ C:\projects\temper\ai\obsidian\projects\azure-devops\azure-devops-to-do.md
 
 **Pipeline de automatización** (contexto de negocio, estado, roadmap):
 ```
-C:\projects\temper\ai\obsidian\projects\automation\automation.md
+C:\projects\temper\ai\obsidian\projects\automation\automation-index.md
 ```
 
 **Skill de análisis de solicitudes** (el "cerebro" de la pipeline):
