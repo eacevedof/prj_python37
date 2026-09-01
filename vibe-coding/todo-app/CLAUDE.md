@@ -26,6 +26,6 @@ forma de algo (nombres, capas, estructura), pregunta.
 
 ## Documentación del proyecto (Obsidian)
 
-Estado y evolución del kit: `projects/vibe-coding/vibe-coding.md` en el vault.
+Estado y evolución del kit: `projects/vibe-coding/vibe-coding-index.md` en el vault.
 Ahí va **qué se ha decidido y por qué**; la normativa ejecutable va en
 `vibe-specs/`, que es lo que viaja con cada copia.

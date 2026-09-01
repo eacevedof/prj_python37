@@ -51,7 +51,7 @@ arbitraria (`APP_MEMORY_ALLOW_STORE_FILE`, `APP_FILE_CHECKER_ALLOW_URL_DOWNLOAD`
 el `.env.example` de este repo —al contrario que en mcp-tools— porque el disco y la red que
 alcanzan son los tuyos.
 
-**Documentación completa (Obsidian)**: `C:\projects\temper\ai\obsidian\projects\ia-mcps\ia-mcps.md`
+**Documentación completa (Obsidian)**: `C:\projects\temper\ai\obsidian\projects\ia-mcps\ia-mcps-index.md`
 
 - Índice + ficha rápida: `ia-mcps.md`
 - Contratos (tools MCP + DTOs): `ia-mcps-schema.md` · Arquitectura DDD: `ia-mcps-code.md`
