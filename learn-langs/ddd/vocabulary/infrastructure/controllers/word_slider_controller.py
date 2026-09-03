@@ -130,6 +130,7 @@ class WordSliderController(BaseController):
                 "on_replay": self._on_replay_click,
                 "on_prev": self._on_prev_btn_click,
                 "on_next": self._on_next_btn_click,
+                "on_replay_audio": self._on_replay_audio_click,
                 "on_toggle_pause": self._on_toggle_pause_click,
                 "on_toggle_loop": self._on_toggle_loop_click,
                 "on_loop_replay": self._on_loop_replay_click,
@@ -495,6 +496,52 @@ class WordSliderController(BaseController):
         self._resume_if_paused()
         self._stop_audio()
 
+    def _on_replay_audio_click(self) -> None:
+        """Vuelve a oír la palabra actual en el idioma destino (audio a demanda)."""
+        if not self.__words:
+            return
+        word = self.__words[self.__current_index]
+        self._ft_container.page.run_task(self._async_replay_audio, word)
+
+    async def _async_replay_audio(self, word: SliderWordDto) -> None:
+        """Reproduce a demanda el audio del idioma destino de la palabra actual.
+
+        Ignora la pausa a propósito (el sentido del botón es oír la palabra justo
+        cuando la reproducción está parada) y comparte reproductor con la
+        secuencia: el audio en curso se corta y la secuencia sigue con su
+        temporización en cuanto este termina.
+        """
+        if not word.text_lang:
+            return
+        try:
+            audio_dto = GenerateTextAudioAiDto.from_primitives(
+                {
+                    "text": word.text_lang,
+                    "lang_code": self._lang_code,
+                    "word_id": word.word_es_id,
+                }
+            )
+            result = await self._generate_text_audio_ai_service(audio_dto)
+
+            if not result.success:
+                self._logger.log_error(
+                    "WordSliderController",
+                    f"Error generando audio a demanda: {result.error_message}",
+                )
+                return
+
+            await self._audio_player.play_until_end(
+                self._ft_container.page,
+                result.audio_path,
+                lambda: self.__is_stopped,
+            )
+        except Exception as e:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error reproduciendo audio a demanda: {e}",
+                {"text": word.text_lang, "lang_code": self._lang_code},
+            )
+
     def _on_toggle_pause_click(self) -> None:
         """Pausa/reanuda la reproducción (audio y temporizadores)."""
         self.__is_paused = not self.__is_paused
@@ -530,12 +577,25 @@ class WordSliderController(BaseController):
     def _on_reset_word_click(self) -> None:
         """Reinicia el progreso de estudio (SM-2) de la palabra actual.
 
-        La vista ya pidió confirmación; el slider sigue reproduciendo.
+        Sin confirmación (la vista ya no la pide) y con efecto visible: la
+        secuencia vuelve al inicio de esta misma palabra, para que se vea y se
+        oiga que el reinicio ha ocurrido de verdad.
         """
         if not self.__words:
             return
         word = self.__words[self.__current_index]
         self._ft_container.page.run_task(self._async_reset_word, word)
+        self._restart_current_word()
+
+    def _restart_current_word(self) -> None:
+        """Corta la secuencia en curso y la relanza desde el inicio de la palabra.
+
+        Mismo mecanismo que anterior/siguiente (_navigation_request), pero
+        apuntando al índice actual en vez de al vecino.
+        """
+        self.__navigation_request = self.__current_index
+        self._resume_if_paused()
+        self._stop_audio()
 
     async def _async_reset_word(self, word: SliderWordDto) -> None:
         """Ejecuta el reinicio via servicio y avisa del resultado en un snackbar."""

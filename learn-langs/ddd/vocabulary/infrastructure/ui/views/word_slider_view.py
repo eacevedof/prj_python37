@@ -45,6 +45,7 @@ class WordSliderView(ft.Container):
         route_on_replay: Callable[[], None] | None = None,
         route_on_prev: Callable[[], None] | None = None,
         route_on_next: Callable[[], None] | None = None,
+        route_on_replay_audio: Callable[[], None] | None = None,
         route_on_toggle_pause: Callable[[], None] | None = None,
         route_on_toggle_loop: Callable[[], None] | None = None,
         route_on_loop_replay: Callable[[], None] | None = None,
@@ -58,6 +59,7 @@ class WordSliderView(ft.Container):
         self._route_on_replay = route_on_replay
         self._route_on_prev = route_on_prev
         self._route_on_next = route_on_next
+        self._route_on_replay_audio = route_on_replay_audio
         self._route_on_toggle_pause = route_on_toggle_pause
         self._route_on_toggle_loop = route_on_toggle_loop
         self._route_on_loop_replay = route_on_loop_replay
@@ -68,7 +70,7 @@ class WordSliderView(ft.Container):
         self.__is_paused: bool = False
         # Estado local del botón de bucle infinito (el real vive en el controller)
         self.__is_loop_enabled: bool = False
-        # Hay un diálogo (ayuda/reiniciar) abierto: ignora los atajos de teclado
+        # Hay un diálogo (ayuda) abierto: ignora los atajos de teclado
         self.__is_modal_open: bool = False
 
         # La pausa activa la provocó abrir la ayuda (hay que reanudar al cerrar)
@@ -91,6 +93,7 @@ class WordSliderView(ft.Container):
         self._ft_content_area: ft.Column | None = None
         self._ft_slider_card: SliderCardComp | None = None
         self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_replay_audio_btn: ft.IconButton | None = None
         self._ft_loop_btn: ft.IconButton | None = None
         self._ft_help_btn: ft.IconButton | None = None
         self._ft_rules_help_dialog = RulesHelpDialogComp(
@@ -110,6 +113,7 @@ class WordSliderView(ft.Container):
             route_on_replay=primitives.get("on_replay"),
             route_on_prev=primitives.get("on_prev"),
             route_on_next=primitives.get("on_next"),
+            route_on_replay_audio=primitives.get("on_replay_audio"),
             route_on_toggle_pause=primitives.get("on_toggle_pause"),
             route_on_toggle_loop=primitives.get("on_toggle_loop"),
             route_on_loop_replay=primitives.get("on_loop_replay"),
@@ -194,8 +198,8 @@ class WordSliderView(ft.Container):
         self._ft_group_source_link = GroupSourceLinkComp()
         self._ft_slider_card = SliderCardComp()
 
-        # Controles de reproducción: anterior | pausa | siguiente | bucle | ayuda |
-        # editar | reiniciar
+        # Controles de reproducción: anterior | pausa | siguiente | audio | bucle |
+        # ayuda | editar | reiniciar
         self._ft_pause_btn = ft.IconButton(
             icon=ft.Icons.PAUSE_CIRCLE,
             icon_size=42,
@@ -217,6 +221,7 @@ class WordSliderView(ft.Container):
                     tooltip="Palabra siguiente",
                     on_click=lambda _: self._on_next_btn_click(),
                 ),
+                self._get_built_replay_audio_button(),
                 self._get_built_loop_button(),
                 self._get_built_help_button(),
                 ft.IconButton(
@@ -232,7 +237,10 @@ class WordSliderView(ft.Container):
                     icon=ft.Icons.RESTART_ALT,
                     icon_size=36,
                     icon_color=ft.Colors.RED_700,
-                    tooltip="Reiniciar palabra: su progreso de estudio vuelve a cero",
+                    tooltip=(
+                        "Reiniciar palabra: su progreso de estudio vuelve a cero "
+                        "y vuelve a empezar desde el principio"
+                    ),
                     on_click=lambda _: self._on_reset_btn_click(),
                 ),
             ],
@@ -465,6 +473,22 @@ class WordSliderView(ft.Container):
             ]
         )
 
+    def _get_built_replay_audio_button(self) -> ft.IconButton:
+        """Construye el botón de volver a oír la palabra (mismo gesto que el Examen).
+
+        Solo se VE si el controller da el callback: un botón que no suena parece
+        que el audio está roto.
+        """
+        self._ft_replay_audio_btn = ft.IconButton(
+            icon=ft.Icons.VOLUME_UP,
+            icon_size=36,
+            icon_color=ft.Colors.BLUE_700,
+            tooltip="Escuchar la palabra otra vez (funciona en pausa)",
+            on_click=lambda _: self._on_replay_audio_btn_click(),
+            visible=bool(self._route_on_replay_audio),
+        )
+        return self._ft_replay_audio_btn
+
     def _get_built_loop_button(self) -> ft.IconButton:
         """Construye el botón de bucle infinito (repite el grupo sin parar)."""
         self._ft_loop_btn = ft.IconButton(
@@ -531,58 +555,24 @@ class WordSliderView(ft.Container):
         self.__is_paused_by_help = False
         self.page.update()
 
+    def _on_replay_audio_btn_click(self) -> None:
+        """Vuelve a reproducir el audio de la palabra actual (no toca la pausa)."""
+        if self._route_on_replay_audio:
+            self._route_on_replay_audio()
+
     def _on_reset_btn_click(self) -> None:
-        """Pide confirmación para reiniciar el progreso de la palabra actual.
+        """Reinicia el progreso de la palabra actual, SIN pedir confirmación.
 
-        Pausa el slider mientras el diálogo está abierto; al cerrar, reanuda
-        solo si la pausa la provocó el propio diálogo.
+        No hay diálogo a propósito: reiniciar es reversible (basta con volver a
+        estudiar la palabra) y el gesto se hace en mitad de la reproducción. El
+        controller pone el progreso a cero y vuelve al inicio de la palabra, así
+        que el efecto se ve y se oye; el resultado se avisa con un snackbar.
         """
-        if not self.page or not self._route_on_reset_word:
+        if not self._route_on_reset_word:
             return
-
-        self.__is_modal_open = True
-        was_playing = not self.__is_paused
-        if was_playing and self._route_on_toggle_pause:
-            self.__is_paused = True
-            self._apply_pause_icon()
-            self._route_on_toggle_pause()
-
-        def close_dialog(_) -> None:
-            self.__is_modal_open = False
-            dialog.open = False
-            if was_playing and self._route_on_toggle_pause:
-                self.__is_paused = False
-                self._apply_pause_icon()
-                self._route_on_toggle_pause()
-            self.page.update()
-
-        def confirm_reset(event) -> None:
-            if self._route_on_reset_word:
-                self._route_on_reset_word()
-            close_dialog(event)
-
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Reiniciar palabra", size=22, weight=ft.FontWeight.BOLD),
-            content=ft.Text(
-                f"El progreso de estudio de «{self.__current_word_text}» volverá a cero "
-                "y entrará al entrenamiento como palabra nueva. La palabra, sus "
-                "traducciones, audios e imágenes no se tocan.",
-                size=16,
-            ),
-            actions=[
-                ft.TextButton("Cancelar", on_click=close_dialog),
-                ft.TextButton(
-                    "Reiniciar",
-                    on_click=confirm_reset,
-                    style=ft.ButtonStyle(color=ft.Colors.RED_700),
-                ),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
-        )
-        self.page.overlay.append(dialog)
-        dialog.open = True
-        self.page.update()
+        self._reset_pause_button()
+        self._route_on_reset_word()
+        self.update()
 
     def _on_prev_btn_click(self) -> None:
         """Navega a la palabra anterior (la navegación reanuda la reproducción)."""
