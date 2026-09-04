@@ -139,4 +139,5 @@ front-build: ## compila el front comprobando tipos (falla si hay errores de Type
 	cd frontend_web && npm run build
 
 gitpush: ## git add + commit + push. Uso: make gitpush m="feat: lo que sea"
+	git pull;
 	git add . ; git commit -m "todo-app: $(m)" ; git push

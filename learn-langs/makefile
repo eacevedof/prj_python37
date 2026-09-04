@@ -11,6 +11,7 @@ help: ## Show this help message
 
 gitpush: ## git push m=any message
 	clear;
+	git pull;
 	git add .; git commit -m "learn-lang $(m)"; git push;
 
 gp-def: ## git push with default message

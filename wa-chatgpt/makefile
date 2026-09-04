@@ -10,6 +10,7 @@ help: ## Show this help message
 
 gitpush: ## git push m=any message
 	clear;
+	git pull;
 	git add .; git commit -m "$(m)"; git push;
 
 uvicorn: ## lines to start uvicorn server

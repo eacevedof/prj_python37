@@ -32,6 +32,7 @@ lint: ## ruff + mypy sobre backend_web
 
 gitpush: ## git push m=any message
 	clear;
+	git pull;
 	git add .; git commit -m "ia-mcps: $(m)"; git push;
 
 gp-def: ## git push with default ia-mcps message
