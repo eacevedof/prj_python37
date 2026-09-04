@@ -3,9 +3,10 @@ from typing import final, List
 import numpy as np
 from torch import Tensor
 from sentence_transformers import SentenceTransformer
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS, Pinecone
+from langchain_community.vectorstores import FAISS
+from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
 
 from config.config import PINECONE_INDEX_NAME
@@ -20,8 +21,8 @@ class EmbeddingsRepository:
         return EmbeddingsRepository()
 
 
-    def get_vector_storage_from_pdf_index(self, hf_embeddings: HuggingFaceEmbeddings) -> Pinecone:
-        return Pinecone.from_existing_index(
+    def get_vector_storage_from_pdf_index(self, hf_embeddings: HuggingFaceEmbeddings) -> PineconeVectorStore:
+        return PineconeVectorStore.from_existing_index(
             index_name=PINECONE_INDEX_NAME,
             embedding=hf_embeddings
         )
@@ -77,7 +78,7 @@ class EmbeddingsRepository:
 
     def get_documents_by_user_question(self, user_question: str) -> list[Document]:
         embeddings = self.get_embeddings_obj_by_mpnet_base_v2()
-        vector_store = Pinecone.from_existing_index(PINECONE_INDEX_NAME, embeddings)
+        vector_store = PineconeVectorStore.from_existing_index(PINECONE_INDEX_NAME, embeddings)
 
         number_of_paragraphs = 10
         return vector_store.similarity_search(
@@ -86,7 +87,7 @@ class EmbeddingsRepository:
         )
 
     def insert_chunks_in_pinecone(self, chunks: list[Document], embeddings) -> None:
-        result = Pinecone.from_documents(chunks, embeddings, index_name = PINECONE_INDEX_NAME)
+        result = PineconeVectorStore.from_documents(chunks, embeddings, index_name = PINECONE_INDEX_NAME)
 
 
 

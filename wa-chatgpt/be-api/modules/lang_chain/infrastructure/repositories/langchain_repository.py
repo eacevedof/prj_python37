@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from typing import List, final
 
 from langchain_core.documents import Document
-from langchain.chains.question_answering import load_qa_chain
+from langchain_classic.chains.question_answering import load_qa_chain
 
 from modules.shared.infrastructure.enums.langchain_type_enum import LangchainTypeEnum
 from modules.lang_chain.infrastructure.repositories.abstract_langchain_repository import AbstractLangchainRepository
 
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
 @final

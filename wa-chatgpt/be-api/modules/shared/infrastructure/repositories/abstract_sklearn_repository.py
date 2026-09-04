@@ -8,8 +8,8 @@ from langchain_openai import (
 )
 from langchain_community.vectorstores import SKLearnVectorStore
 
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import LLMChainExtractor
+from langchain_classic.retrievers import ContextualCompressionRetriever
+from langchain_classic.retrievers.document_compressors import LLMChainExtractor
 
 from config.config import OPENAI_API_KEY
 from modules.shared.infrastructure.components.log import Log

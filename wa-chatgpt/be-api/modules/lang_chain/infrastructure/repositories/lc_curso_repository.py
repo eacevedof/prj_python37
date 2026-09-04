@@ -1,48 +1,48 @@
 from dataclasses import dataclass
 from typing import List, final
 
-from langchain.chains.conversation.base import ConversationChain
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import LLMChainExtractor
+from langchain_classic.chains.conversation.base import ConversationChain
+from langchain_classic.retrievers import ContextualCompressionRetriever
+from langchain_classic.retrievers.document_compressors import LLMChainExtractor
 from langchain_core.prompts import (
     BasePromptTemplate,
     PromptTemplate,
 )
-from langchain.schema import SystemMessage, HumanMessage
-from langchain.prompts import (
+from langchain_classic.schema import SystemMessage, HumanMessage
+from langchain_classic.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
     load_prompt,
 )
-from langchain.output_parsers import (
+from langchain_classic.output_parsers import (
     CommaSeparatedListOutputParser,
     DatetimeOutputParser,
     OutputFixingParser,
 )
-from langchain.document_loaders import (
+from langchain_classic.document_loaders import (
     CSVLoader,
     BSHTMLLoader,
     PyPDFLoader,
     WikipediaLoader,
     TextLoader,
 )
-from langchain.text_splitter import (
+from langchain_classic.text_splitter import (
     CharacterTextSplitter,
 )
-from langchain.chains.llm import LLMChain
-from langchain.chains.sequential import (SequentialChain, SimpleSequentialChain)
-from langchain.chains.transform import TransformChain
+from langchain_classic.chains.llm import LLMChain
+from langchain_classic.chains.sequential import (SequentialChain, SimpleSequentialChain)
+from langchain_classic.chains.transform import TransformChain
 
-from langchain.chains.router.multi_prompt_prompt import MULTI_PROMPT_ROUTER_TEMPLATE
-from langchain.chains.router.llm_router import (
+from langchain_classic.chains.router.multi_prompt_prompt import MULTI_PROMPT_ROUTER_TEMPLATE
+from langchain_classic.chains.router.llm_router import (
     LLMRouterChain,
     RouterOutputParser
 )
-from langchain.chains.router import MultiPromptChain
-from langchain.chains.question_answering import load_qa_chain
+from langchain_classic.chains.router import MultiPromptChain
+from langchain_classic.chains.question_answering import load_qa_chain
 
-from langchain.memory import (
+from langchain_classic.memory import (
     ChatMessageHistory,
     ConversationBufferMemory,
     ConversationBufferWindowMemory,
@@ -50,7 +50,7 @@ from langchain.memory import (
 )
 import pickle
 
-from langchain.agents import (
+from langchain_classic.agents import (
     load_tools, # https://python.langchain.com/api_reference/community/tools.html#module-langchain_community.tools
     initialize_agent,
     AgentType,
@@ -66,9 +66,9 @@ from modules.shared.infrastructure.components.files.filer import get_file_conten
 
 import pandas as pd
 
-from langchain.agents import tool
+from langchain_classic.agents import tool
 from langchain_community.agent_toolkits import create_sql_agent
-from langchain.sql_database import SQLDatabase
+from langchain_classic.sql_database import SQLDatabase
 
 
 from modules.lang_chain.infrastructure.repositories.ejemplos_sklearn_repository import EjemplosSklearnRepository
