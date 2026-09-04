@@ -1,4 +1,4 @@
-requests==2.32.3
+requests==2.33.0
 openai==1.45.0
 jsonfy==0.4
 asgiref==3.8.1

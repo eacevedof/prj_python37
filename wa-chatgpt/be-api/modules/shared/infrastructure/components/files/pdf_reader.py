@@ -1,5 +1,5 @@
 import os
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 
 def get_text_from_pdf_file(path_file: str) -> str:
