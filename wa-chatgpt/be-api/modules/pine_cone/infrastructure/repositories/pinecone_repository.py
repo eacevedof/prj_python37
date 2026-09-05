@@ -3,7 +3,10 @@ from typing import List, final, Dict
 
 from config.config import PINECONE_INDEX_NAME
 
-from modules.pine_cone.infrastructure.repositories.abstract_pinecone_repository import AbstractPineconeRepository
+from modules.pine_cone.infrastructure.repositories.abstract_pinecone_repository import (
+    AbstractPineconeRepository,
+    METADATA_TEXT_KEY
+)
 
 @final
 @dataclass(frozen=True)
@@ -12,6 +15,20 @@ class PineconeRepository(AbstractPineconeRepository):
     @staticmethod
     def get_instance() -> "PineconeRepository":
         return PineconeRepository()
+
+
+    def search_by_vector(self, vector: List[float], top_k: int) -> List[str]:
+        pdf_index = self._get_index_obj_by_name(PINECONE_INDEX_NAME)
+        response = pdf_index.query(
+            vector=vector,
+            top_k=top_k,
+            include_metadata=True
+        )
+        return [
+            match["metadata"][METADATA_TEXT_KEY]
+            for match in response["matches"]
+            if match.get("metadata") and METADATA_TEXT_KEY in match["metadata"]
+        ]
 
 
     def upsert_pdf_index(self, vectors: List[Dict]) -> None:

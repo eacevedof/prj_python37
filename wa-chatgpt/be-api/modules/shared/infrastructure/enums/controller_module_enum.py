@@ -13,5 +13,4 @@ class ControllerModuleEnum(Enum):
     HEALTH_CHECK = "modules.health_check.infrastructure.controllers.get_health_check_controller"
     DOCUMENTATION = "modules.api_doc.infrastructure.controllers.get_documentation_controller"
 
-    LANG_CHAIN_ASK_QUESTION = "modules.lang_chain.infrastructure.controllers.lc_ask_question_controller"
     TALK_DB_ASK_PLATFORM = "modules.talk_db.infrastructure.controllers.ask_platform_controller"

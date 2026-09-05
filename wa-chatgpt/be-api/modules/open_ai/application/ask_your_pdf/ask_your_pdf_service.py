@@ -1,5 +1,4 @@
 from typing import final
-from langchain_community.vectorstores import FAISS
 
 from config.paths import PATH_UPLOAD_FOLDER
 from modules.shared.infrastructure.components.log import Log
@@ -11,16 +10,14 @@ from modules.open_ai.application.ask_your_pdf.ask_your_pdf_dto import AskYourPdf
 from modules.open_ai.application.ask_your_pdf.asked_to_pdf_dto import AskedYourPdfDto
 
 from modules.shared.infrastructure.components.files.pdf_reader import get_text_from_pdf_file
-from modules.lang_chain.infrastructure.repositories.langchain_repository import LangchainRepository
-from modules.lang_chain.infrastructure.repositories.embeddings_repository import EmbeddingsRepository
+from modules.rag.infrastructure.repositories.rag_repository import RagRepository
+from modules.rag.infrastructure.repositories.embeddings_repository import EmbeddingsRepository
 from modules.pine_cone.infrastructure.repositories.pinecone_repository import PineconeRepository
 
 @final
 class AskYourPdfService:
 
     _ask_your_pdf_dto: AskYourPdfDto
-    __fb_ai_search: FAISS
-    __pdf_chunks: list[str]
 
     @staticmethod
     def get_instance() -> "AskYourPdfService":
@@ -48,46 +45,25 @@ class AskYourPdfService:
         if not is_file(path_pdf_file):
             raise FileNotFoundError(f"the file {path_pdf_file} does not exist.")
 
-        #
+        # Reindexar el PDF (se deja comentado: solo hace falta al cambiar de documento)
         # pdf_text = get_text_from_pdf_file(path_pdf_file)
-        # pdf_chunks_documents = EmbeddingsRepository.get_instance().get_chunks_as_documents(pdf_text)
-        # cardinality = len(pdf_chunks_documents)
-        # Log.log_debug(f"pdf_embeddings cardinality: {cardinality}", "__load_knowledge_database")
-        # hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
-        # EmbeddingsRepository.get_instance().insert_chunks_in_pinecone(pdf_chunks_documents, hf_embeddings)
+        # chunks = EmbeddingsRepository.get_instance().get_chunks_from_text(pdf_text)
+        # Log.log_debug(f"pdf chunks: {len(chunks)}", "__load_knowledge_database")
+        # vectors = EmbeddingsRepository.get_instance().get_chunks_as_pinecone_vectors(chunks)
+        # PineconeRepository.get_instance().upsert_pdf_index(vectors)
 
 
     def __get_response_from_chatgpt(self) -> str:
-        hf_embeddings = EmbeddingsRepository.get_instance().get_embeddings_obj_by_mpnet_base_v2()
+        question = self._ask_your_pdf_dto.question
+        question_vector = EmbeddingsRepository.get_instance().embed_query(question)
 
-        vstorage = EmbeddingsRepository.get_instance().get_vector_storage_from_pdf_index(
-            hf_embeddings=hf_embeddings
-        )
         number_of_paragraphs = 20
-        search_result = vstorage.similarity_search(
-            query=self._ask_your_pdf_dto.question,
-            k=number_of_paragraphs
+        context_chunks = PineconeRepository.get_instance().search_by_vector(
+            vector=question_vector,
+            top_k=number_of_paragraphs
         )
 
-
-        #prompt_vectors = KnowledgeRepository.get_instance().get_prompt_as_vectors(
-        #    self._ask_your_pdf_dto.question
-        #)
-        #prompt_size = len(prompt_vectors)
-        #Log.log_debug(f"prompt_size: {prompt_size}", "__get_response_from_chatgpt")
-
-        # number_of_paragraphs = 50
-        # documents = self.__fb_ai_search.similarity_search(
-        #     query = self._ask_your_pdf_dto.question,
-        #     k = number_of_paragraphs
-        # )
-        # documents = EmbeddingsRepository.get_instance().get_documents_by_user_question(
-        #     user_question = self._ask_your_pdf_dto.question
-        # )
-
-        # para las respuestas raras hay q revisar:
-        # https://api.python.langchain.com/en/latest/chains/langchain.chains.combine_documents.stuff.create_stuff_documents_chain.html
-        return LangchainRepository.get_instance().get_response_using_chain(
-            docs_context = search_result,
-            question = self._ask_your_pdf_dto.question
+        return RagRepository.get_instance().get_response_from_context(
+            context_chunks=context_chunks,
+            question=question
         )
