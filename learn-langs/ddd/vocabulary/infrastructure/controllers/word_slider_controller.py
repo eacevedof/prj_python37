@@ -381,20 +381,8 @@ class WordSliderController(BaseController):
             return
 
         try:
-            audio_dto = GenerateTextAudioAiDto.from_primitives(
-                {
-                    "text": text,
-                    "lang_code": lang_code,
-                    "word_id": word_id,
-                }
-            )
-            result = await self._generate_text_audio_ai_service(audio_dto)
-
-            if not result.success:
-                self._logger.log_error(
-                    "WordSliderController",
-                    f"Error generando audio: {result.error_message}",
-                )
+            audio_path = await self._get_text_audio_path(text, lang_code, word_id)
+            if not audio_path:
                 return
 
             # Puerta de pausa: no arrancar un audio nuevo mientras esté en pausa
@@ -414,7 +402,7 @@ class WordSliderController(BaseController):
 
             await self._audio_player.play_until_end(
                 self._ft_container.page,
-                result.audio_path,
+                audio_path,
                 lambda: (
                     self._is_run_cancelled(run_token)
                     or self.__navigation_request is not None
@@ -427,6 +415,35 @@ class WordSliderController(BaseController):
                 f"Error reproduciendo audio: {e}",
                 {"text": text, "lang_code": lang_code},
             )
+
+    async def _get_text_audio_path(
+        self, text: str, lang_code: str, word_id: int
+    ) -> str:
+        """Ruta del mp3 del texto (lo genera con IA la primera vez y lo cachea).
+
+        Devuelve cadena vacía si no se pudo generar; el motivo queda en el log.
+        Lo comparten la secuencia automática y el botón de audio a demanda.
+        """
+        generate_text_audio_ai_result_dto = await self._generate_text_audio_ai_service(
+            GenerateTextAudioAiDto.from_primitives(
+                {
+                    "text": text,
+                    "lang_code": lang_code,
+                    "word_id": word_id,
+                }
+            )
+        )
+
+        if not generate_text_audio_ai_result_dto.success:
+            self._logger.log_error(
+                "WordSliderController",
+                f"Error generando audio: "
+                f"{generate_text_audio_ai_result_dto.error_message}",
+                {"text": text, "lang_code": lang_code},
+            )
+            return ""
+
+        return generate_text_audio_ai_result_dto.audio_path
 
     async def _async_play_end_notice(self, run_token: int) -> None:
         """Pronuncia el aviso de fin tras el último audio de la sesión."""
@@ -514,25 +531,15 @@ class WordSliderController(BaseController):
         if not word.text_lang:
             return
         try:
-            audio_dto = GenerateTextAudioAiDto.from_primitives(
-                {
-                    "text": word.text_lang,
-                    "lang_code": self._lang_code,
-                    "word_id": word.word_es_id,
-                }
+            audio_path = await self._get_text_audio_path(
+                word.text_lang, self._lang_code, word.word_es_id
             )
-            result = await self._generate_text_audio_ai_service(audio_dto)
-
-            if not result.success:
-                self._logger.log_error(
-                    "WordSliderController",
-                    f"Error generando audio a demanda: {result.error_message}",
-                )
+            if not audio_path:
                 return
 
             await self._audio_player.play_until_end(
                 self._ft_container.page,
-                result.audio_path,
+                audio_path,
                 lambda: self.__is_stopped,
             )
         except Exception as e:
