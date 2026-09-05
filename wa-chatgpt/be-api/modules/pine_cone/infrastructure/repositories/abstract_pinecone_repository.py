@@ -4,6 +4,10 @@ from ast import Index
 from config.config import PINECONE_API_KEY, PINECONE_SERVER
 from pinecone import Pinecone
 
+# Clave de metadato donde vive el texto de cada chunk dentro del indice. Es la
+# que uso el wrapper de langchain al construirlo y se respeta para no reindexar.
+METADATA_TEXT_KEY = "text"
+
 class AbstractPineconeRepository(ABC):
 
     def _get_pinecone(self) -> Pinecone:
