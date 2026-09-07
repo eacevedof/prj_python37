@@ -9,7 +9,7 @@
 
 # python-dotenv - Load environment variables from .env file
 # Supports: OPENAI_API_KEY, APP_LOG_PATH
-python-dotenv~=1.2.2
+python-dotenv~=1.2.3
 
 # ============================================================================
 # UI FRAMEWORK
@@ -37,14 +37,14 @@ aiosqlite~=0.22.1
 
 # pydantic - Data validation using Python type annotations
 # Used in: DTOs across the application
-pydantic~=2.13.4
+pydantic~=2.13.5
 
 # ============================================================================
 # AI/ML
 # ============================================================================
 
 # openai - https://developers.openai.com/api/reference/python/resources/images/methods/generate
-openai~=2.41.0
+openai~=3.8.0
 
 # ============================================================================
 # UTILITIES
@@ -56,7 +56,7 @@ pyperclip~=1.11.0
 
 # pycaw - Windows master volume control (Core Audio)
 # Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
-pycaw~=20251023
+pycaw==20251023
 
 # ============================================================================
 # DEVELOPMENT TOOLS
@@ -64,15 +64,15 @@ pycaw~=20251023
 
 # ruff - Fast Python linter and formatter
 # Usage: ruff check .
-ruff~=0.15.16
+ruff~=0.16.6
 
 # mypy - Static type checker
 # Usage: mypy .
-mypy~=2.1.0
+mypy~=2.3.1
 
 # pytest - Testing framework
 # Usage: pytest
-pytest~=9.0.3
+pytest~=9.1.1
 
 # pytest-asyncio - Async test support for pytest
 # Required for: Testing async functions
