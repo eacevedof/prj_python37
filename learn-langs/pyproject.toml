@@ -18,7 +18,7 @@ dependencies = [
     "flet-audio==0.86.5",
     "aiosqlite>=0.19.0",
     "pydantic>=2.5.0",
-    "python-dotenv>=1.0.0",
+    "python-dotenv>=1.2.2",
     "openai>=1.0.0",
     "pyperclip>=1.8.0",
 ]
