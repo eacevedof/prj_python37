@@ -7,15 +7,15 @@
 # NO aparece ningun driver de base de datos: sqlite3 viene en la libreria estandar
 # de Python. Esa es una de las razones de elegir SQLite para un PoC.
 
-fastapi>=0.115.0
-uvicorn[standard]>=0.32.0
-python-dotenv>=1.0.1
+fastapi>=0.141.1
+uvicorn[standard]>=0.52.4
+python-dotenv>=1.2.3
 
 # ==== HERRAMIENTAS DE DESARROLLO ====
 # Las tres que ejecuta `make check`. Van aqui y no en un requirements-dev aparte
 # porque en un PoC no hay imagen de produccion que adelgazar: el equipo instala
 # una vez y tiene todo lo que necesita para que `make check` funcione.
-pytest>=8.3.0
-httpx>=0.28.0          # lo necesita fastapi.testclient (TestClient) en los tests
-ruff>=0.8.0
-mypy>=1.13.0
+pytest>=9.1.1
+httpx>=0.28.1          # lo necesita fastapi.testclient (TestClient) en los tests
+ruff>=0.16.6
+mypy>=2.3.1

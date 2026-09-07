@@ -16,11 +16,11 @@ dependencies = [
     # flet-desktop en el venv + subir estos pins A LA VEZ + pm clear en el dispositivo.
     "flet==0.86.5",
     "flet-audio==0.86.5",
-    "aiosqlite>=0.19.0",
+    "aiosqlite>=0.22.1",
     "pydantic>=2.5.0",
-    "python-dotenv>=1.2.2",
-    "openai>=1.0.0",
-    "pyperclip>=1.8.0",
+    "python-dotenv>=1.2.3",
+    "openai>=3.8.0",
+    "pyperclip>=1.11.0",
 ]
 
 [tool.flet]

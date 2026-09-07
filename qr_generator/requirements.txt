@@ -1,2 +1,2 @@
-qrcode[pil]==7.4.2
+qrcode[pil]==8.2
 pillow==12.3.0
