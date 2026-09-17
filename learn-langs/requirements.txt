@@ -1,35 +1,86 @@
-# Learn Languages App - Production Dependencies (APK / runtime)
-# Mismas libs y versiones que requirements.txt (dev). Se excluyen SOLO:
-#   - herramientas de dev: ruff, mypy, pytest, pytest-asyncio
-#   - pycaw: control de volumen de Windows (Core Audio); no aplica en Android
-#           (Volumer hace no-op fuera de Windows)
-#
-# UNICA divergencia permitida con el dev: el limite INFERIOR de las libs con parte
-# nativa (pydantic-core, jiter), porque en Android solo existe el wheel que haya
-# horneado pypi.flet.dev y ese indice va por detras de PyPI. Aqui se deja la banda
-# ~=X.Y.Z mas baja que cubra el wheel movil disponible; quien resuelve de verdad las
-# deps del APK es pyproject.toml [project].dependencies, no este fichero.
+# Learn Languages App 2026-06-07
+# packages got from: https://pypi.org/<package-name>
+# Uses compatible releases (~=) for security patches without breaking changes
+# Installation: pip install -r requirements.txt
 
+# ============================================================================
 # CORE
+# ============================================================================
+
+# python-dotenv - Load environment variables from .env file
+# Supports: OPENAI_API_KEY, APP_LOG_PATH
 python-dotenv~=1.2.3
 
+# ============================================================================
 # UI FRAMEWORK
+# ============================================================================
+
+# flet - Cross-platform UI framework (Windows, Mac, Linux, Web, Mobile)
+# Used in: main.py, ddd/vocabulary/infrastructure/ui/
 flet==1.0.0
+
+# flet-audio - reproductor de audio multiplataforma (Windows/Android); sustituye a pygame
+# Used in: ddd/shared/infrastructure/components/audio_player.py
 flet-audio==1.0.0
 
+# ============================================================================
 # DATABASE
+# ============================================================================
+
+# aiosqlite - Async SQLite database adapter
+# Used in: ddd/shared/infrastructure/repositories/sqlite_connection.py
 aiosqlite~=0.22.1
 
+# ============================================================================
 # VALIDATION
-# ~=2.13.4 (no 2.13.5) a proposito: la 2.13.5 pide pydantic-core==2.46.5 y en
-# pypi.flet.dev el wheel Android mas nuevo es 2.46.4 -> en el APK se monta 2.13.4.
-pydantic~=2.13.4
+# ============================================================================
 
+# pydantic - Data validation using Python type annotations
+# Used in: DTOs across the application
+pydantic~=2.13.5
+
+# ============================================================================
 # AI/ML
-# TOPADO a 2.x (ultima: 2.54.0): la 3.x exige jiter>=0.16 y el wheel Android mas
-# nuevo es 0.15.0. La 2.54.0 pide jiter>=0.10 y por eso si entra en el APK.
-# El porque completo, en requirements.txt.
+# ============================================================================
+
+# openai - https://developers.openai.com/api/reference/python/resources/images/methods/generate
+# TOPADO a 2.x (ultima de la serie: 2.54.0) y NO a la 3.x: la 3.x exige jiter>=0.16
+# y en pypi.flet.dev -- el unico indice con wheels Android, PyPI no publica ninguno --
+# el jiter mas nuevo es 0.15.0, asi que el APK no compila con openai 3.x. openai se usa
+# EN el movil (genera la locucion la primera vez que suena una tarjeta), por lo que no
+# se puede excluir del empaquetado. La 2.54.0 pide jiter>=0.10 (cabe) y no tiene
+# avisos de seguridad (OSV, 2026-09-17).
+# Revisar cuando flet publique jiter>=0.16 -> entonces subir aqui y en pyproject.toml.
 openai~=2.54.0
 
+# ============================================================================
 # UTILITIES
+# ============================================================================
+
+# pyperclip - Cross-platform clipboard access
+# Used in: Clipboard operations for text/images
 pyperclip~=1.11.0
+
+# pycaw - Windows master volume control (Core Audio)
+# Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
+pycaw==20251023
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# ruff - Fast Python linter and formatter
+# Usage: ruff check .
+ruff~=0.16.8
+
+# mypy - Static type checker
+# Usage: mypy .
+mypy~=2.3.1
+
+# pytest - Testing framework
+# Usage: pytest
+pytest~=9.1.1
+
+# pytest-asyncio - Async test support for pytest
+# Required for: Testing async functions
+pytest-asyncio~=1.4.0
