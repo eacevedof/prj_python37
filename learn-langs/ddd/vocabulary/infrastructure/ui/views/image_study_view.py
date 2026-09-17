@@ -142,6 +142,19 @@ class ImageStudyView(ft.Container):
         """Guarda el grupo de la sesión; lo pinta la tarjeta en su esquina izquierda."""
         self.__group_label = group_label
 
+    def start_answer_timer(self) -> None:
+        """Arranca el temporizador de respuesta.
+
+        Lo llama el controller CUANDO TERMINA la locución en español del enunciado:
+        hasta entonces el contador no corre (antes arrancaba al pintar la tarjeta y
+        la pronunciación se comía parte del tiempo de respuesta). No arranca si ya
+        se contestó (fase de revisión) ni si el examen está en pausa: en ese caso lo
+        arrancará el botón de reanudar.
+        """
+        if self.__in_review or self.__is_paused or not self._ft_timer:
+            return
+        self._ft_timer.start()
+
     # =========================================================================
     # LIFECYCLE HOOKS
     # =========================================================================
@@ -275,10 +288,12 @@ class ImageStudyView(ft.Container):
             on_skip=self._route_on_skip,
         )
 
+        # auto_start=False a propósito: el contador NO arranca al pintar, sino cuando
+        # el controller avisa con start_answer_timer() al acabar la locución española.
         self._ft_timer = TimerComp(
             seconds=dto.timer_seconds,
             on_timeout=self._route_on_timeout,
-            auto_start=True,
+            auto_start=False,
         )
 
         # Botonera: pausa/reanudar (+ audio pista si está disponible)

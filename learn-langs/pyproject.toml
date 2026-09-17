@@ -1,6 +1,6 @@
 [project]
 name = "learn-langs"
-version = "1.9.0"
+version = "1.10.0"
 description = "Learn Languages App with Spaced Repetition"
 requires-python = ">=3.12"
 # flet 0.85 empaqueta las deps (y detecta extensiones como flet-audio) desde AQUI,
@@ -19,7 +19,10 @@ dependencies = [
     "aiosqlite>=0.22.1",
     "pydantic>=2.5.0",
     "python-dotenv>=1.2.3",
-    "openai>=3.8.0",
+    # openai TOPADO a <3: la 3.x pide jiter>=0.16 y en pypi.flet.dev el wheel Android
+    # mas nuevo de jiter es 0.15.0 -> el build del APK muere con ResolutionImpossible.
+    # Alineado con requirements-prod.txt (~=2.41.0) y con el .venv-win (2.41.0).
+    "openai>=2.41.0,<3",
     "pyperclip>=1.11.0",
 ]
 

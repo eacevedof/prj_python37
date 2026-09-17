@@ -447,6 +447,27 @@ class ImageStudyController(BaseController):
             word.word_es_id,
         )
 
+    async def _async_prompt_and_start_timer(self) -> None:
+        """Locuta el enunciado en español y arranca el timer al terminar.
+
+        En el examen se muestra el texto español y hay que teclear su traducción:
+        el tiempo de respuesta empieza a contar CUANDO ACABA la pronunciación, no
+        cuando aparece la tarjeta. Antes el temporizador arrancaba al pintar
+        (`auto_start=True`) y la locución —que la primera vez además hay que
+        generarla— se comía parte del tiempo y del `response_time_ms` guardado.
+        """
+        index = self.__current_index
+        await self._async_play_source_audio()
+        # Si mientras sonaba se saltó de palabra (o se salió), esta locución ya no
+        # manda: el timer lo arrancará la tarea de la palabra que esté en pantalla
+        if self.__is_exited or index != self.__current_index:
+            return
+        if self.__current_index >= len(self.__words):
+            return
+        # El cronómetro de la respuesta arranca aquí, igual que el temporizador
+        self.__start_time = time.time()
+        self._ft_container.start_answer_timer()
+
     async def _async_play_source_audio(self) -> None:
         """Reproduce el audio en español de la palabra actual (al aparecer)."""
         if self.__current_index >= len(self.__words):
@@ -553,6 +574,8 @@ class ImageStudyController(BaseController):
             self._show_session_complete()
             return
 
+        # Provisional: el cronómetro real arranca en _async_prompt_and_start_timer,
+        # cuando termina la locución española (aquí solo para no dejarlo a cero)
         self.__start_time = time.time()
         self.__is_paused = False  # cada pregunta arranca sin pausa
         word = self.__words[self.__current_index]
@@ -572,8 +595,8 @@ class ImageStudyController(BaseController):
         # Guardar el punto actual para poder retomarlo desde el Home
         self._ft_container.page.run_task(self._async_save_activity_state)
 
-        # Reproducir el audio en español en cuanto aparece la palabra
-        self._ft_container.page.run_task(self._async_play_source_audio)
+        # Locutar el enunciado en español y, SOLO al acabar, arrancar el temporizador
+        self._ft_container.page.run_task(self._async_prompt_and_start_timer)
 
     def _show_session_complete(self) -> None:
         """Completa el examen: persiste TODO lo acumulado y finaliza la sesión."""
