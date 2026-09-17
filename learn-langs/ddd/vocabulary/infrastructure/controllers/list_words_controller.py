@@ -432,15 +432,15 @@ class ListWordsController(BaseController):
                         ft.Text("Agregar imagen:", weight=ft.FontWeight.BOLD, size=14),
                         ft.Row(
                             controls=[
-                                ft.ElevatedButton(
+                                ft.Button(
                                     content=ft.Row([ft.Icon(ft.Icons.FOLDER_OPEN), ft.Text("Archivo")]),
                                     on_click=self.handle_pick_files,
                                 ),
-                                ft.ElevatedButton(
+                                ft.Button(
                                     content=ft.Row([ft.Icon(ft.Icons.LINK), ft.Text("URL")]),
                                     on_click=lambda e: url_field.focus(),
                                 ),
-                                ft.ElevatedButton(
+                                ft.Button(
                                     content=ft.Row([ft.Icon(ft.Icons.AUTO_AWESOME), ft.Text("IA Image")]),
                                     on_click=lambda e: self._on_add_ia_image_click(word.id),
                                     style=ft.ButtonStyle(
@@ -452,7 +452,7 @@ class ListWordsController(BaseController):
                             spacing=10,
                         ),
                         url_field,
-                        ft.ElevatedButton(
+                        ft.Button(
                             content=ft.Text("Agregar desde URL"),
                             on_click=add_from_url,
                         ),

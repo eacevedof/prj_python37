@@ -86,6 +86,8 @@ class ImageStudyController(BaseController):
         self.__session_id: int = 0
         self.__words: list[ImageStudyWordDto] = []
         self.__current_index: int = 0
+        # Reloj MONOTONO (no time.time()): mide duracion, y NTP o el cambio de hora
+        # no pueden moverlo hacia atras y falsear el response_time_ms de la respuesta.
         self.__start_time: float = 0
         self.__total_score: float = 0
         self.__answers_count: int = 0
@@ -220,7 +222,7 @@ class ImageStudyController(BaseController):
         self.__is_paused = False
 
         word = self.__words[self.__current_index]
-        response_time = int((time.time() - self.__start_time) * 1000)
+        response_time = int((time.monotonic() - self.__start_time) * 1000)
 
         try:
             # Evaluar SIN persistir; la respuesta se acumula y se persiste al completar
@@ -447,8 +449,8 @@ class ImageStudyController(BaseController):
             word.word_es_id,
         )
 
-    async def _async_prompt_and_start_timer(self) -> None:
-        """Locuta el enunciado en español y arranca el timer al terminar.
+    async def __start_timer_after_prompt(self) -> None:
+        """Arranca el temporizador de respuesta cuando acaba la locución española.
 
         En el examen se muestra el texto español y hay que teclear su traducción:
         el tiempo de respuesta empieza a contar CUANDO ACABA la pronunciación, no
@@ -456,16 +458,16 @@ class ImageStudyController(BaseController):
         (`auto_start=True`) y la locución —que la primera vez además hay que
         generarla— se comía parte del tiempo y del `response_time_ms` guardado.
         """
-        index = self.__current_index
+        word_index_when_prompt_started = self.__current_index
         await self._async_play_source_audio()
         # Si mientras sonaba se saltó de palabra (o se salió), esta locución ya no
         # manda: el timer lo arrancará la tarea de la palabra que esté en pantalla
-        if self.__is_exited or index != self.__current_index:
+        if self.__is_exited or word_index_when_prompt_started != self.__current_index:
             return
         if self.__current_index >= len(self.__words):
             return
         # El cronómetro de la respuesta arranca aquí, igual que el temporizador
-        self.__start_time = time.time()
+        self.__start_time = time.monotonic()
         self._ft_container.start_answer_timer()
 
     async def _async_play_source_audio(self) -> None:
@@ -574,9 +576,9 @@ class ImageStudyController(BaseController):
             self._show_session_complete()
             return
 
-        # Provisional: el cronómetro real arranca en _async_prompt_and_start_timer,
+        # Provisional: el cronómetro real arranca en __start_timer_after_prompt,
         # cuando termina la locución española (aquí solo para no dejarlo a cero)
-        self.__start_time = time.time()
+        self.__start_time = time.monotonic()
         self.__is_paused = False  # cada pregunta arranca sin pausa
         word = self.__words[self.__current_index]
 
@@ -596,7 +598,7 @@ class ImageStudyController(BaseController):
         self._ft_container.page.run_task(self._async_save_activity_state)
 
         # Locutar el enunciado en español y, SOLO al acabar, arrancar el temporizador
-        self._ft_container.page.run_task(self._async_prompt_and_start_timer)
+        self._ft_container.page.run_task(self.__start_timer_after_prompt)
 
     def _show_session_complete(self) -> None:
         """Completa el examen: persiste TODO lo acumulado y finaliza la sesión."""

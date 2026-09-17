@@ -86,7 +86,7 @@ class ManageWordGroupsView(ft.Container):
         self._ft_new_description = ft.TextField(label="Descripción", width=400, multiline=True, max_lines=3)
         self._ft_new_source = ft.TextField(label="Fuente (URL o archivo)", width=400, hint_text="Ej: https://..., video.mp4, articulo.pdf")
 
-        create_btn = ft.ElevatedButton(
+        create_btn = ft.Button(
             "Crear Grupo",
             icon=ft.Icons.ADD,
             on_click=self._on_create_click,
@@ -94,7 +94,7 @@ class ManageWordGroupsView(ft.Container):
             color=ft.Colors.WHITE,
         )
 
-        back_btn = ft.ElevatedButton(
+        back_btn = ft.Button(
             "Volver al Home",
             icon=ft.Icons.ARROW_BACK,
             on_click=lambda _: self._route_on_back(),

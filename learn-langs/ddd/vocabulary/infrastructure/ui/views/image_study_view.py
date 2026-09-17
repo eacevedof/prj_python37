@@ -464,7 +464,7 @@ class ImageStudyView(ft.Container):
                 color=ft.Colors.GREY_600,
             ),
             ft.Container(height=30),
-            ft.ElevatedButton(
+            ft.Button(
                 content=ft.Text("Volver"),
                 on_click=lambda _: self._route_on_back(),
             ),
@@ -601,7 +601,7 @@ class ImageStudyView(ft.Container):
 
         # Botón de repetir errores (solo si hay palabras falladas)
         if dto.failed_words:
-            retry_btn = ft.ElevatedButton(
+            retry_btn = ft.Button(
                 content=ft.Row(
                     [ft.Icon(ft.Icons.REFRESH), ft.Text("Repetir errores")],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -615,7 +615,7 @@ class ImageStudyView(ft.Container):
             action_buttons.append(retry_btn)
 
         # Botón de volver al inicio
-        home_btn = ft.ElevatedButton(
+        home_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -662,7 +662,7 @@ class ImageStudyView(ft.Container):
             ),
             ft.Text(message, size=14, color=ft.Colors.GREY_600),
             ft.Container(height=30),
-            ft.ElevatedButton(
+            ft.Button(
                 content=ft.Text("Volver"),
                 on_click=lambda _: self._route_on_back(),
             ),

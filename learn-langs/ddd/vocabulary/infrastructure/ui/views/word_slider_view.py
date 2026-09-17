@@ -388,7 +388,7 @@ class WordSliderView(ft.Container):
                     color=ft.Colors.GREY_600,
                 ),
                 ft.Container(height=30),
-                ft.ElevatedButton(
+                ft.Button(
                     content=ft.Text("Volver"),
                     on_click=lambda _: self._route_on_back(),
                 ),
@@ -414,7 +414,7 @@ class WordSliderView(ft.Container):
         action_buttons = []
 
         if self._route_on_loop_replay:
-            loop_btn = ft.ElevatedButton(
+            loop_btn = ft.Button(
                 content=ft.Row(
                     [ft.Icon(ft.Icons.ALL_INCLUSIVE), ft.Text("Seguir en bucle")],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -428,7 +428,7 @@ class WordSliderView(ft.Container):
             action_buttons.append(loop_btn)
 
         if self._route_on_replay:
-            replay_btn = ft.ElevatedButton(
+            replay_btn = ft.Button(
                 content=ft.Row(
                     [ft.Icon(ft.Icons.REPLAY), ft.Text("Repetir slider")],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -441,7 +441,7 @@ class WordSliderView(ft.Container):
             )
             action_buttons.append(replay_btn)
 
-        home_btn = ft.ElevatedButton(
+        home_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -657,7 +657,7 @@ class WordSliderView(ft.Container):
                 ft.Text("Error", size=20, weight=ft.FontWeight.BOLD),
                 ft.Text(message, size=14, color=ft.Colors.GREY_600),
                 ft.Container(height=30),
-                ft.ElevatedButton(
+                ft.Button(
                     content=ft.Text("Volver"),
                     on_click=lambda _: self._route_on_back(),
                 ),

@@ -205,7 +205,7 @@ class ListWordsView(ft.Container):
         )
 
         # Add button
-        add_btn = ft.ElevatedButton(
+        add_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.ADD), ft.Text("Nueva palabra")],
                 alignment=ft.MainAxisAlignment.CENTER,

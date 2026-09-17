@@ -85,7 +85,7 @@ class UpdateWordView(ft.Container):
         # Componentes UI - Images
         self._ft_last_image_container: ft.Container | None = None
         self._ft_images_grid: ft.Row | None = None
-        self._ft_generate_image_btn: ft.ElevatedButton | None = None
+        self._ft_generate_image_btn: ft.Button | None = None
         self._ft_image_progress: ft.ProgressRing | None = None
 
         # Componentes UI - Audios
@@ -326,7 +326,7 @@ class UpdateWordView(ft.Container):
 
         # Botón para generar imagen IA (sobrescribe la última imagen)
         self._ft_image_progress = ft.ProgressRing(width=16, height=16, stroke_width=2, visible=False)
-        self._ft_generate_image_btn = ft.ElevatedButton(
+        self._ft_generate_image_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.AUTO_AWESOME, size=16), ft.Text("Imagen IA")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -359,7 +359,7 @@ class UpdateWordView(ft.Container):
         )
 
         # Buttons
-        save_btn = ft.ElevatedButton(
+        save_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
                 alignment=ft.MainAxisAlignment.CENTER,

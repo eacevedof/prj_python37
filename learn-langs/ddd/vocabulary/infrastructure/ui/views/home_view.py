@@ -66,7 +66,7 @@ class HomeView(ft.Container):
         self._ft_stats_column: ft.Column | None = None
         self._ft_loading_indicator: ft.ProgressRing | None = None
         self._ft_content_column: ft.Column | None = None
-        self._ft_resume_btn: ft.ElevatedButton | None = None
+        self._ft_resume_btn: ft.Button | None = None
         self._ft_resume_text: ft.Text | None = None
 
         self._build_initial_ui()
@@ -186,7 +186,7 @@ class HomeView(ft.Container):
         # Botones de acción
         # "Continuar": retoma la última actividad guardada (visible solo si hay estado)
         self._ft_resume_text = ft.Text("Continuar")
-        self._ft_resume_btn = ft.ElevatedButton(
+        self._ft_resume_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.PLAY_CIRCLE), self._ft_resume_text],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -200,7 +200,7 @@ class HomeView(ft.Container):
             visible=False,
         )
 
-        slider_btn = ft.ElevatedButton(
+        slider_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.SLIDESHOW), ft.Text("Aprendizaje")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -213,7 +213,7 @@ class HomeView(ft.Container):
             ),
         )
 
-        image_study_btn = ft.ElevatedButton(
+        image_study_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.QUIZ), ft.Text("Examen")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -226,7 +226,7 @@ class HomeView(ft.Container):
             ),
         )
 
-        manage_btn = ft.ElevatedButton(
+        manage_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.EDIT), ft.Text("Palabras")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -236,7 +236,7 @@ class HomeView(ft.Container):
             color=ft.Colors.BLACK,
         )
 
-        manage_groups_btn = ft.ElevatedButton(
+        manage_groups_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.FOLDER), ft.Text("Grupos")],
                 alignment=ft.MainAxisAlignment.CENTER,

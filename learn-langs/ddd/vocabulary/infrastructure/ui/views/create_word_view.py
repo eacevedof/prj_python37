@@ -183,7 +183,7 @@ class CreateWordView(ft.Container):
             height=20,
         )
 
-        save_btn = ft.ElevatedButton(
+        save_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.SAVE), ft.Text("Guardar")],
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -442,7 +442,7 @@ class CreateWordView(ft.Container):
             ),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda _: on_cancel()),
-                ft.ElevatedButton(
+                ft.Button(
                     "Crear",
                     on_click=lambda _: on_save(),
                     style=ft.ButtonStyle(

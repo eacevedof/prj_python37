@@ -1,6 +1,6 @@
 [project]
 name = "learn-langs"
-version = "1.10.0"
+version = "1.11.0"
 description = "Learn Languages App with Spaced Repetition"
 requires-python = ">=3.12"
 # flet 0.85 empaqueta las deps (y detecta extensiones como flet-audio) desde AQUI,
@@ -14,15 +14,15 @@ dependencies = [
     # CLI) y el handshake entre versiones distintas muere en silencio -> pantalla en
     # blanco. Para subir de version: pip install -U flet flet-cli flet-audio
     # flet-desktop en el venv + subir estos pins A LA VEZ + pm clear en el dispositivo.
-    "flet==0.86.5",
-    "flet-audio==0.86.5",
+    "flet==1.0.0",
+    "flet-audio==1.0.0",
     "aiosqlite>=0.22.1",
     "pydantic>=2.5.0",
     "python-dotenv>=1.2.3",
-    # openai TOPADO a <3: la 3.x pide jiter>=0.16 y en pypi.flet.dev el wheel Android
-    # mas nuevo de jiter es 0.15.0 -> el build del APK muere con ResolutionImpossible.
-    # Alineado con requirements-prod.txt (~=2.41.0) y con el .venv-win (2.41.0).
-    "openai>=2.41.0,<3",
+    # openai TOPADO a <3 (ultima 2.x: 2.54.0): la 3.x pide jiter>=0.16 y en
+    # pypi.flet.dev -- unico indice con wheels Android -- el jiter mas nuevo es 0.15.0,
+    # asi que el APK no compila con openai 3.x. La 2.54.0 pide jiter>=0.10, que si cabe.
+    "openai>=2.54.0,<3",
     "pyperclip>=1.11.0",
 ]
 

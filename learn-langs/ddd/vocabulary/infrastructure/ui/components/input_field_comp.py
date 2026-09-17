@@ -20,7 +20,7 @@ class InputFieldComp(ft.Container):
         self._route_on_skip = on_skip
         self.disabled = disabled
         self._text_field: ft.TextField | None = None
-        self._submit_btn: ft.ElevatedButton | None = None
+        self._submit_btn: ft.Button | None = None
         # Área de corrección (al fallar): cómo se escribe + lo que escribió el usuario en rojo
         self._result_area: ft.Column | None = None
 
@@ -38,7 +38,7 @@ class InputFieldComp(ft.Container):
             autofocus=True,
         )
 
-        self._submit_btn = ft.ElevatedButton(
+        self._submit_btn = ft.Button(
             content=ft.Row(
                 [ft.Icon(ft.Icons.CHECK), ft.Text("Verificar")],
                 alignment=ft.MainAxisAlignment.CENTER,
