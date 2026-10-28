@@ -68,6 +68,15 @@ class EnvironmentReaderRawRepository:
     def get_memory_embedding_model(self) -> str:
         return get(EnvVarEnum.APP_MEMORY_EMBEDDING_MODEL, _DEFAULT_EMBEDDING_MODEL)
 
+    def get_voice_fish_api_key(self) -> str:
+        return get(EnvVarEnum.APP_VOICE_FISH_API_KEY)
+
+    def get_voice_fish_model(self, default: str = "") -> str:
+        return get(EnvVarEnum.APP_VOICE_FISH_MODEL, default)
+
+    def get_voice_fish_reference_id(self) -> str:
+        return get(EnvVarEnum.APP_VOICE_FISH_REFERENCE_ID, "")
+
     def is_local(self) -> bool:
         return self.get_environment() == EnvironmentEnum.LOCAL.value
 

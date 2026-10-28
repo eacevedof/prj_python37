@@ -2,7 +2,8 @@
 
 Colección de **servidores MCP** (Python 3.12+, DDD modular) expuestos por **HTTP** con FastAPI:
 EMT Madrid (buses), Media (imagen/audio OpenAI), Memory (memoria semántica ChromaDB), File Checker
-(hash/firma de ficheros) y PDF (Markdown→PDF); + `video_mod` (librería, sin fachada MCP). NO
+(hash/firma de ficheros) y PDF (Markdown→PDF); + `video_mod` (librería, sin fachada MCP) y
+`voice_mod` (Claude Code por voz: hook `Stop` + Fish Audio, sin fachada aún). NO
 contiene el "cerebro" de análisis de workitems LZR.
 
 Repo dentro del monorepo **público** `eacevedof/prj_python37`. Comparte arquitectura, versiones y
