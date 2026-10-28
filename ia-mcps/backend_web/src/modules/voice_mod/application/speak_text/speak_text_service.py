@@ -3,7 +3,16 @@ from typing import Self, final
 from src.modules.shared.infrastructure.repositories.configuration.environment_reader_raw_repository import (
     EnvironmentReaderRawRepository,
 )
-
+from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto import (
+    GetSpeechTextDto,
+)
+from src.modules.voice_mod.application.get_speech_text.get_speech_text_service import (
+    GetSpeechTextService,
+)
+from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTextDto
+from src.modules.voice_mod.application.speak_text.speak_text_result_dto import (
+    SpeakTextResultDto,
+)
 from src.modules.voice_mod.domain.enums import FishAudioModelEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
@@ -12,12 +21,6 @@ from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_rep
 from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_api_repository import (
     FishAudioTtsApiRepository,
 )
-from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto import GetSpeechTextDto
-from src.modules.voice_mod.application.get_speech_text.get_speech_text_service import (
-    GetSpeechTextService,
-)
-from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTextDto
-from src.modules.voice_mod.application.speak_text.speak_text_result_dto import SpeakTextResultDto
 
 
 @final

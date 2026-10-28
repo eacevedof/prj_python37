@@ -1,7 +1,9 @@
 import re
 from typing import Self, final
 
-from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto import GetSpeechTextDto
+from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto import (
+    GetSpeechTextDto,
+)
 from src.modules.voice_mod.application.get_speech_text.get_speech_text_result_dto import (
     GetSpeechTextResultDto,
 )

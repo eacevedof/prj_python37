@@ -1,6 +1,8 @@
 from typing import Self, final
 
-from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import GetLastReplyDto
+from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import (
+    GetLastReplyDto,
+)
 from src.modules.voice_mod.application.get_last_reply.get_last_reply_service import (
     GetLastReplyService,
 )
@@ -8,8 +10,12 @@ from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_dto imp
     SpeakLastReplyDto,
 )
 from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTextDto
-from src.modules.voice_mod.application.speak_text.speak_text_result_dto import SpeakTextResultDto
-from src.modules.voice_mod.application.speak_text.speak_text_service import SpeakTextService
+from src.modules.voice_mod.application.speak_text.speak_text_result_dto import (
+    SpeakTextResultDto,
+)
+from src.modules.voice_mod.application.speak_text.speak_text_service import (
+    SpeakTextService,
+)
 
 
 @final

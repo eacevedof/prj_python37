@@ -1,12 +1,14 @@
 from typing import Any, Self, final
 
+from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import (
+    GetLastReplyDto,
+)
+from src.modules.voice_mod.application.get_last_reply.get_last_reply_result_dto import (
+    GetLastReplyResultDto,
+)
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 from src.modules.voice_mod.infrastructure.repositories.transcript_reader_jsonl_repository import (
     TranscriptReaderJsonlRepository,
-)
-from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import GetLastReplyDto
-from src.modules.voice_mod.application.get_last_reply.get_last_reply_result_dto import (
-    GetLastReplyResultDto,
 )
 
 _ROLE_USER = "user"

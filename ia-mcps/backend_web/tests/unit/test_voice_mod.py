@@ -30,7 +30,9 @@ def _write_transcript(tmp_path: Path, transcript_entries: list[dict]) -> str:
 
 
 def _get_last_reply(transcript_path: str) -> str:
-    from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import GetLastReplyDto
+    from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import (
+        GetLastReplyDto,
+    )
     from src.modules.voice_mod.application.get_last_reply.get_last_reply_service import (
         GetLastReplyService,
     )
@@ -152,7 +154,9 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
 
 def test_a_reply_with_only_code_is_not_spoken() -> None:
     from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTextDto
-    from src.modules.voice_mod.application.speak_text.speak_text_service import SpeakTextService
+    from src.modules.voice_mod.application.speak_text.speak_text_service import (
+        SpeakTextService,
+    )
     from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 
     with pytest.raises(VoiceException, match="no text to speak"):

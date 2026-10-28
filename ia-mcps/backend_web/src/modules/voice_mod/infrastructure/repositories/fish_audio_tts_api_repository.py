@@ -6,7 +6,6 @@ from urllib.request import Request, urlopen
 from src.modules.shared.infrastructure.repositories.configuration.environment_reader_raw_repository import (
     EnvironmentReaderRawRepository,
 )
-
 from src.modules.voice_mod.domain.enums import VoiceConstraintsEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 

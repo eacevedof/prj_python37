@@ -25,23 +25,30 @@ from pathlib import Path
 from typing import Any
 
 # Igual que en `main_stdio.py`: este fichero se lanza suelto y con un cwd que no
-# controlamos, así que `src.*` no estaría en el path. De ahí los E402.
+# controlamos, así que `src.*` no estaría en el path: los imports de `src.*` van
+# después de esto a propósito.
 _BACKEND_WEB_PATH = str(Path(__file__).resolve().parents[1])
 if _BACKEND_WEB_PATH not in sys.path:
     sys.path.insert(0, _BACKEND_WEB_PATH)
 
-from src.modules.shared.infrastructure.components.logger.logger import Logger  # noqa: E402
-from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_dto import (  # noqa: E402
+from src.modules.shared.infrastructure.components.logger.logger import (
+    Logger,
+)
+from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_dto import (
     SpeakLastReplyDto,
 )
-from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_service import (  # noqa: E402
+from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_service import (
     SpeakLastReplyService,
 )
-from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTextDto  # noqa: E402
-from src.modules.voice_mod.application.speak_text.speak_text_service import (  # noqa: E402
+from src.modules.voice_mod.application.speak_text.speak_text_dto import (
+    SpeakTextDto,
+)
+from src.modules.voice_mod.application.speak_text.speak_text_service import (
     SpeakTextService,
 )
-from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException  # noqa: E402
+from src.modules.voice_mod.domain.exceptions.voice_exception import (
+    VoiceException,
+)
 
 _EXIT_OK = 0
 _EXIT_BAD_USAGE = 2
