@@ -1,0 +1,5 @@
+.venv/
+.env
+out/
+__pycache__/
+CLAUDE.md

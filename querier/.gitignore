@@ -1,0 +1,7 @@
+.dev
+.prod
+.env
+.env-prod
+.venv-wsl
+.venv-win
+.venv

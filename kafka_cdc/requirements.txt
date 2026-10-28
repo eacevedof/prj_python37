@@ -1,0 +1,3 @@
+pymysql==1.2.0
+mysql-replication==1.0.17
+kafka-python==3.0.11

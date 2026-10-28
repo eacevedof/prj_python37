@@ -1,0 +1,6 @@
+# Mismo tope que learn-langs (openai <3 por jiter en pypi.flet.dev).
+# [realtime] añade 'websockets' (pure Python: no debería romper el APK).
+openai[realtime]>=2.54.0,<3
+python-dotenv>=1.2.3
+# mp3 sin ffmpeg. Pendiente comprobar si hay wheel Android en pypi.flet.dev.
+lameenc>=1.8.1

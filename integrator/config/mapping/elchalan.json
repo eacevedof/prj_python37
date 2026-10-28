@@ -1,0 +1,142 @@
+[
+  {
+    "id":"gsheet-to-imp-products",
+    
+    "source":{
+      "format": "api",
+      "context":{
+        "file": "gsheets.json",
+        "id": "temp-chalan"
+      }
+    },
+
+    "destiny":{
+      "format": "database",      
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "syscode":"code",
+            "description1":"description",
+            "description2":"description_full",
+            "price1":"price",
+            "price2":"price2",
+            "display":"display"
+          }
+        }
+      ]
+    }
+  },
+
+  {
+    "id":"json-to-imp-products",
+    
+    "source":{
+      "format": "json",
+      "context":{
+        "file": "files.json",
+        "id": "json1"
+      }
+    },
+
+    "destiny":{
+      "format": "database",      
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "syscode":"code",
+            "description1":"description",
+            "description2":"description_full",
+            "price1":"price",
+            "price2":"price2",
+            "display":"display"
+          }
+        }
+      ]      
+    }
+  },
+
+  {
+    "id":"transfer-imp-to-app",
+    "source":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "table":"imp_product",
+      "conditions": [
+        "coalesce(error,'') != '1'"
+      ]
+    },
+    "destiny":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "app_product",
+          "fields":{
+            "code":"code_erp",
+            "description":"description",
+            "description_full":"description_full",
+            "price":"price_sale",
+            "price2":"price_sale1",
+            "display":"display",
+            "url_image":"url_image"
+          },
+          "constants":{
+            "id_user":1,
+            "insert_user":"etl",
+            "update_user":"etl"
+          }
+        }
+      ] 
+    }
+  },
+
+  {
+    "id":"products-pictures-to-db",
+    "source":{
+      "format": "folder",
+      "context":{
+        "file": "folders.json",
+        "id": "ech-prod-pictures"
+      }
+    }, 
+
+    "destiny":{
+      "format": "database",
+      "context":{
+        "file": "mysql.json",
+        "id": "mysql1",
+        "database": "db_tinymarket"
+      },
+      "tables":[
+        {
+          "name": "imp_product",
+          "fields":{
+            "%code%.jpg|%code%.png":"url_image"
+          }
+        }
+      ]  
+    }
+
+  }
+
+]

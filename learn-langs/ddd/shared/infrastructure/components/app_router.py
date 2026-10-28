@@ -1,0 +1,180 @@
+"""Router de la aplicacion."""
+
+import flet as ft
+from typing import Any
+
+from ddd.shared.domain.enums import ControllerRouteEnum
+from ddd.vocabulary.domain.enums import ActivityEnum, LanguageCodeEnum
+from ddd.vocabulary.infrastructure.controllers import (
+    HomeController,
+    CreateWordController,
+    UpdateWordController,
+    ListWordsController,
+    ImageStudyController,
+    WordSliderController,
+    ManageWordGroupsController,
+)
+
+
+class AppRouter:
+    """Maneja la navegacion entre vistas."""
+
+    # Idioma destino por defecto cuando la navegacion no especifica uno
+    _DEFAULT_LANG_CODE: str = LanguageCodeEnum.NL_NL.value
+
+    def __init__(self, ft_page: ft.Page, ft_container: ft.Container):
+        self._ft_page = ft_page
+        self._ft_container = ft_container
+        self._route_name_enum: ControllerRouteEnum = ControllerRouteEnum.HOME
+
+    @property
+    def current_route(self) -> ControllerRouteEnum:
+        """Ruta actual."""
+        return self._route_name_enum
+
+    def navigate_to(
+        self,
+        route_name_enum: ControllerRouteEnum | str,
+        **kwargs: Any,
+    ) -> None:
+        """Navega a una vista especifica."""
+        # Convertir string a enum si es necesario
+        if isinstance(route_name_enum, str):
+            route_name_enum = ControllerRouteEnum(route_name_enum)
+
+        self._route_name_enum = route_name_enum
+        self._ft_container.content = self._get_ft_control_by_route_name(
+            route_name_enum, **kwargs
+        )
+        self._ft_page.update()
+
+    def _get_ft_control_by_route_name(
+        self,
+        route_name: ControllerRouteEnum,
+        **kwargs: Any,
+    ) -> ft.Control:
+        """Construye la vista correspondiente a la ruta."""
+        if route_name == ControllerRouteEnum.HOME:
+            controller = HomeController(
+                route_on_resume=self._navigate_to_resume,
+                route_on_start_image_study=lambda lang, tags, group_id: (
+                    self.navigate_to(
+                        ControllerRouteEnum.IMAGE_STUDY,
+                        lang_code=lang,
+                        tags=tags,
+                        group_id=group_id,
+                    )
+                ),
+                route_on_start_slider=lambda lang, tags, group_id, is_random_order: (
+                    self.navigate_to(
+                        ControllerRouteEnum.WORD_SLIDER,
+                        lang_code=lang,
+                        tags=tags,
+                        group_id=group_id,
+                        is_random_order=is_random_order,
+                    )
+                ),
+                route_on_manage_words=lambda: self.navigate_to(
+                    ControllerRouteEnum.WORDS,
+                ),
+                route_on_manage_groups=lambda: self.navigate_to(
+                    ControllerRouteEnum.WORD_GROUPS,
+                ),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.IMAGE_STUDY:
+            controller = ImageStudyController(
+                lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
+                tags=kwargs.get("tags", []),
+                group_id=kwargs.get("group_id"),
+                start_word_id=kwargs.get("start_word_id", 0),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.WORD_SLIDER:
+            # Al editar desde el slider, la vuelta retoma el slider en la misma
+            # palabra (por word_id: robusto también con orden aleatorio)
+            slider_resume_kwargs = {
+                "lang_code": kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
+                "tags": kwargs.get("tags", []),
+                "group_id": kwargs.get("group_id"),
+                "is_random_order": kwargs.get("is_random_order", False),
+            }
+            controller = WordSliderController(
+                lang_code=kwargs.get("lang_code", self._DEFAULT_LANG_CODE),
+                tags=kwargs.get("tags", []),
+                group_id=kwargs.get("group_id"),
+                start_word_id=kwargs.get("start_word_id", 0),
+                is_random_order=kwargs.get("is_random_order", False),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+                route_on_edit_word=lambda word_id: self.navigate_to(
+                    ControllerRouteEnum.UPDATE_WORD,
+                    word_id=word_id,
+                    back_route=ControllerRouteEnum.WORD_SLIDER,
+                    back_route_kwargs={
+                        **slider_resume_kwargs,
+                        "start_word_id": word_id,
+                    },
+                ),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.WORDS:
+            controller = ListWordsController(
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+                route_on_create=lambda: self.navigate_to(
+                    ControllerRouteEnum.CREATE_WORD
+                ),
+                route_on_edit=lambda word_id: self.navigate_to(
+                    ControllerRouteEnum.UPDATE_WORD,
+                    word_id=word_id,
+                ),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.CREATE_WORD:
+            controller = CreateWordController(
+                route_on_success=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.WORDS),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.UPDATE_WORD:
+            # Ruta de vuelta: WORDS por defecto; el slider inyecta la suya para retomarse
+            back_route = kwargs.get("back_route", ControllerRouteEnum.WORDS)
+            back_route_kwargs = kwargs.get("back_route_kwargs", {})
+            controller = UpdateWordController(
+                word_id=kwargs.get("word_id", 0),
+                on_success=lambda: self.navigate_to(back_route, **back_route_kwargs),
+                on_back=lambda: self.navigate_to(back_route, **back_route_kwargs),
+            )
+            return controller.ft_container
+
+        if route_name == ControllerRouteEnum.WORD_GROUPS:
+            controller = ManageWordGroupsController(
+                route_on_back=lambda: self.navigate_to(ControllerRouteEnum.HOME),
+            )
+            return controller.ft_container
+
+        # recursivo
+        return self._get_ft_control_by_route_name(ControllerRouteEnum.HOME)
+
+    def _navigate_to_resume(self, resume_state: dict) -> None:
+        """Retoma la última actividad guardada (Aprendizaje o Examen con imágenes)."""
+        resume_kwargs = {
+            "lang_code": resume_state.get("lang_code", self._DEFAULT_LANG_CODE),
+            "tags": resume_state.get("tags", []),
+            "group_id": resume_state.get("group_id"),
+            "start_word_id": resume_state.get("word_es_id", 0),
+        }
+
+        if resume_state.get("activity") == ActivityEnum.WORD_SLIDER.value:
+            resume_kwargs["is_random_order"] = resume_state.get(
+                "is_random_order", False
+            )
+            self.navigate_to(ControllerRouteEnum.WORD_SLIDER, **resume_kwargs)
+            return
+
+        self.navigate_to(ControllerRouteEnum.IMAGE_STUDY, **resume_kwargs)

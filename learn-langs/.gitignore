@@ -1,0 +1,35 @@
+.idea
+.vscode
+.dev
+.prod
+.env
+.env-prod
+.venv-wsl
+.venv-win
+.venv
+
+# Logs (except .gitkeep)
+logs/*
+!logs/.gitkeep
+.claude/*.png
+/data/images/
+.claude
+graphify-out
+
+# Flet build artifacts
+build/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.dmg
+*.app
+flet.yaml
+
+# Temporary build files
+requirements-dev.txt
+requirements-prod.txt
+/data/audio/
+/data/_tmp_migrations_check.db
+/data/learn_lang.backup-20260706.db
+/data/transcripts/

@@ -1,0 +1,665 @@
+"""Vista de sesión de slider - Solo renderizado."""
+
+from typing import Any, Callable, Self
+
+import flet as ft
+
+from ddd.vocabulary.infrastructure.ui.components.group_source_link_comp import (
+    GroupSourceLinkComp,
+)
+from ddd.vocabulary.infrastructure.ui.components.rules_help_dialog_comp import (
+    RulesHelpDialogComp,
+)
+from ddd.vocabulary.infrastructure.ui.components.slider_card_comp import SliderCardComp
+from ddd.vocabulary.infrastructure.ui.enums.slider_card_size_enum import (
+    SliderCardSizeEnum,
+)
+from ddd.vocabulary.infrastructure.ui.components.ui_scale import (
+    get_page_scale,
+    get_page_size,
+    is_portrait,
+)
+from ddd.vocabulary.infrastructure.ui.views.word_slider_view_dto import (
+    WordSliderViewDto,
+)
+
+
+class WordSliderView(ft.Container):
+    """
+    Vista de sesión de slider (presentación auto-reproducida).
+
+    Responsabilidades:
+    - Renderizar UI basada en WordSliderViewDto
+    - Mostrar la palabra ES animada y revelar la traducción según la fase
+    - Emitir eventos al Controller via callbacks
+    - NO tiene lógica de negocio
+    """
+
+    # =========================================================================
+    # CONSTRUCCIÓN
+    # =========================================================================
+    def __init__(
+        self,
+        route_on_mount: Callable[[], None] | None,
+        route_on_back: Callable[[], None],
+        route_on_replay: Callable[[], None] | None = None,
+        route_on_prev: Callable[[], None] | None = None,
+        route_on_next: Callable[[], None] | None = None,
+        route_on_replay_audio: Callable[[], None] | None = None,
+        route_on_toggle_pause: Callable[[], None] | None = None,
+        route_on_toggle_loop: Callable[[], None] | None = None,
+        route_on_loop_replay: Callable[[], None] | None = None,
+        route_on_edit_word: Callable[[], None] | None = None,
+        route_on_reset_word: Callable[[], None] | None = None,
+    ):
+        super().__init__()
+
+        self._route_on_mount = route_on_mount
+        self._route_on_back = route_on_back
+        self._route_on_replay = route_on_replay
+        self._route_on_prev = route_on_prev
+        self._route_on_next = route_on_next
+        self._route_on_replay_audio = route_on_replay_audio
+        self._route_on_toggle_pause = route_on_toggle_pause
+        self._route_on_toggle_loop = route_on_toggle_loop
+        self._route_on_loop_replay = route_on_loop_replay
+        self._route_on_edit_word = route_on_edit_word
+        self._route_on_reset_word = route_on_reset_word
+
+        # Estado local del botón de pausa (solo icono; el estado real vive en el controller)
+        self.__is_paused: bool = False
+        # Estado local del botón de bucle infinito (el real vive en el controller)
+        self.__is_loop_enabled: bool = False
+        # Hay un diálogo (ayuda) abierto: ignora los atajos de teclado
+        self.__is_modal_open: bool = False
+
+        # La pausa activa la provocó abrir la ayuda (hay que reanudar al cerrar)
+        self.__is_paused_by_help: bool = False
+
+        # Grupo de la sesión («<id> - <título>»), lo pinta la tarjeta
+        self.__group_label: str = ""
+
+        # Datos de la palabra actual para el modal de ayuda (reglas de uso)
+        self.__current_word_text: str = ""
+        self.__current_word_lang_text: str = ""
+        self.__current_word_id: int | str = ""
+        self.__current_rules_help: str = ""
+
+        # Componentes UI - Header
+        self._ft_progress_text: ft.Text | None = None
+        self._ft_group_source_link: GroupSourceLinkComp | None = None
+
+        # Componentes UI - Content Area
+        self._ft_content_area: ft.Column | None = None
+        self._ft_slider_card: SliderCardComp | None = None
+        self._ft_pause_btn: ft.IconButton | None = None
+        self._ft_replay_audio_btn: ft.IconButton | None = None
+        self._ft_loop_btn: ft.IconButton | None = None
+        self._ft_help_btn: ft.IconButton | None = None
+        self._ft_rules_help_dialog = RulesHelpDialogComp(
+            route_on_close=self._on_help_dialog_close
+        )
+        self._ft_controls_row: ft.Row | None = None
+        self.__is_card_mounted: bool = False
+
+        self._build_initial_ui()
+
+    @classmethod
+    def from_primitives(cls, primitives: dict[str, Any]) -> Self:
+        """Crea la vista desde un diccionario de callbacks."""
+        return cls(
+            route_on_mount=primitives.get("on_mount"),
+            route_on_back=primitives.get("on_back", lambda: None),
+            route_on_replay=primitives.get("on_replay"),
+            route_on_prev=primitives.get("on_prev"),
+            route_on_next=primitives.get("on_next"),
+            route_on_replay_audio=primitives.get("on_replay_audio"),
+            route_on_toggle_pause=primitives.get("on_toggle_pause"),
+            route_on_toggle_loop=primitives.get("on_toggle_loop"),
+            route_on_loop_replay=primitives.get("on_loop_replay"),
+            route_on_edit_word=primitives.get("on_edit_word"),
+            route_on_reset_word=primitives.get("on_reset_word"),
+        )
+
+    # =========================================================================
+    # API PÚBLICA - RENDERIZADO
+    # =========================================================================
+    def render(self, dto: WordSliderViewDto) -> None:
+        """Renderiza la vista basado en el DTO."""
+        if self._ft_progress_text:
+            self._ft_progress_text.value = dto.progress_text
+
+        if dto.is_loading:
+            self._render_loading()
+        elif dto.error_message:
+            self._render_error(dto.error_message)
+        elif dto.has_no_words:
+            self._render_no_words()
+        elif dto.is_session_complete:
+            self._render_session_complete(dto)
+        elif dto.current_word:
+            self._render_sliding(dto)
+
+        self.update()
+
+    def render_group_source(self, group_source: str) -> None:
+        """Muestra la fuente del grupo en la cabecera (clicable si es enlace)."""
+        if self._ft_group_source_link:
+            self._ft_group_source_link.render(group_source)
+        self.update()
+
+    def render_group_label(self, group_label: str) -> None:
+        """Guarda el grupo de la sesión; lo pinta la tarjeta en su esquina izquierda."""
+        self.__group_label = group_label
+
+    # =========================================================================
+    # LIFECYCLE HOOKS
+    # =========================================================================
+    def did_mount(self) -> None:
+        """Flet llama esto al montar: engancha los atajos de teclado del slider."""
+        if self.page:
+            self.page.on_keyboard_event = self._on_keyboard
+        if self._route_on_mount:
+            self._route_on_mount()
+
+    def will_unmount(self) -> None:
+        """Flet llama esto al desmontar: suelta el atajo para no afectar a otras vistas."""
+        if self.page and self.page.on_keyboard_event is self._on_keyboard:
+            self.page.on_keyboard_event = None
+
+    def _on_keyboard(self, event: ft.KeyboardEvent) -> None:
+        """Atajos del slider: ← anterior · → siguiente · espacio (o Ctrl+Espacio)
+        pausa/reanuda · L bucle infinito.
+
+        Pausa: espacio suelto o Ctrl+Espacio (este último es el atajo unificado con
+        el Examen, donde el espacio suelto se reserva para teclear). Navegación con
+        flechas sin modificador. Se ignoran si hay un diálogo abierto o con alt/meta.
+        """
+        if self.__is_modal_open or event.alt or event.meta:
+            return
+        if event.key == " ":
+            # espacio suelto o Ctrl+Espacio → pausa/play (aquí no hay campo de texto)
+            self._on_pause_btn_click()
+        elif event.ctrl:
+            return
+        elif event.key == "Arrow Left":
+            self._on_prev_btn_click()
+        elif event.key == "Arrow Right":
+            self._on_next_btn_click()
+        elif event.key.upper() == "L":
+            self._on_loop_btn_click()
+
+    # =========================================================================
+    # CONSTRUCCIÓN DE UI
+    # =========================================================================
+    def _build_initial_ui(self) -> None:
+        """Construye la estructura inicial de la UI."""
+        self._ft_progress_text = ft.Text("Cargando...", size=14)
+        self._ft_group_source_link = GroupSourceLinkComp()
+        self._ft_slider_card = SliderCardComp()
+
+        # Controles de reproducción: anterior | pausa | siguiente | audio | bucle |
+        # ayuda | editar | reiniciar
+        self._ft_pause_btn = ft.IconButton(
+            icon=ft.Icons.PAUSE_CIRCLE,
+            icon_size=42,
+            tooltip="Pausar",
+            on_click=lambda _: self._on_pause_btn_click(),
+        )
+        self._ft_controls_row = ft.Row(
+            controls=[
+                ft.IconButton(
+                    icon=ft.Icons.SKIP_PREVIOUS,
+                    icon_size=42,
+                    tooltip="Palabra anterior",
+                    on_click=lambda _: self._on_prev_btn_click(),
+                ),
+                self._ft_pause_btn,
+                ft.IconButton(
+                    icon=ft.Icons.SKIP_NEXT,
+                    icon_size=42,
+                    tooltip="Palabra siguiente",
+                    on_click=lambda _: self._on_next_btn_click(),
+                ),
+                self._get_built_replay_audio_button(),
+                self._get_built_loop_button(),
+                self._get_built_help_button(),
+                ft.IconButton(
+                    icon=ft.Icons.EDIT,
+                    icon_size=36,
+                    icon_color=ft.Colors.AMBER_800,
+                    tooltip="Editar palabra (audio, contexto, traducción...)",
+                    on_click=lambda _: (
+                        self._route_on_edit_word() if self._route_on_edit_word else None
+                    ),
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.RESTART_ALT,
+                    icon_size=36,
+                    icon_color=ft.Colors.RED_700,
+                    tooltip=(
+                        "Reiniciar palabra: su progreso de estudio vuelve a cero "
+                        "y vuelve a empezar desde el principio"
+                    ),
+                    on_click=lambda _: self._on_reset_btn_click(),
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=16,
+        )
+
+        self._ft_content_area = ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.ProgressRing(),
+                    alignment=ft.Alignment.CENTER,
+                    expand=True,
+                ),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+        )
+
+        back_btn = ft.IconButton(
+            icon=ft.Icons.ARROW_BACK,
+            on_click=lambda _: self._route_on_back(),
+            tooltip="Volver",
+        )
+
+        self.content = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        back_btn,
+                        self._ft_progress_text,
+                        ft.Container(expand=True),
+                        self._ft_group_source_link,
+                        ft.Icon(ft.Icons.SLIDESHOW, color=ft.Colors.BLUE_700),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                ),
+                ft.Divider(height=1),
+                self._ft_content_area,
+            ],
+            expand=True,
+            # spacing por defecto de Column = 10: apretar los márgenes del
+            # separador (cabecera → hr → contenido)
+            spacing=4,
+        )
+        self.expand = True
+        self.padding = 20
+
+    # =========================================================================
+    # RENDERIZADO PARCIAL
+    # =========================================================================
+    def _render_loading(self) -> None:
+        """Renderiza estado de carga."""
+        if not self._ft_content_area:
+            return
+
+        self.__is_card_mounted = False
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.append(
+            ft.Container(
+                content=ft.ProgressRing(),
+                alignment=ft.Alignment.CENTER,
+                expand=True,
+            )
+        )
+
+    def _render_sliding(self, dto: WordSliderViewDto) -> None:
+        """Renderiza la palabra actual en su fase de reproducción."""
+        if (
+            not self._ft_content_area
+            or not dto.current_word
+            or not self._ft_slider_card
+        ):
+            return
+
+        word = dto.current_word
+
+        # Datos para el modal de ayuda (el botón solo se ve si hay reglas: un
+        # botón deshabilitado en cada palabra parece que la ayuda no funciona)
+        self.__current_word_text = word.get("text_es", "")
+        self.__current_word_lang_text = word.get("text_lang", "")
+        self.__current_word_id = word.get("word_es_id", "")
+        self.__current_rules_help = word.get("rules_help", "") or ""
+        if self._ft_help_btn:
+            self._ft_help_btn.visible = bool(self.__current_rules_help)
+
+        # Montar la tarjeta persistente una sola vez para preservar la animación
+        if not self.__is_card_mounted:
+            self._reset_pause_button()
+            self._ft_content_area.controls.clear()
+            self._ft_content_area.controls.extend(
+                [
+                    ft.Container(height=8),
+                    # Container (NO Row): un Row da ancho ILIMITADO a sus hijos
+                    # y las frases largas se salían por la derecha sin envolver
+                    ft.Container(
+                        content=self._ft_slider_card,
+                        alignment=ft.Alignment.CENTER,
+                    ),
+                    ft.Container(height=4),
+                    self._ft_controls_row,
+                ]
+            )
+            self.__is_card_mounted = True
+
+        # Escala/orientación reales: las lee la vista (montada) y se las pasa
+        # al comp, que no puede leer self.page (mismo patrón que el examen)
+        self._ft_slider_card.set_page_context(get_page_scale(self), is_portrait(self))
+        self._ft_slider_card.render(
+            text_es=word.get("text_es", ""),
+            text_lang=word.get("text_lang", ""),
+            pronunciation=word.get("pronunciation", ""),
+            show_translation=dto.show_translation,
+            phase_label=dto.phase_label,
+            word_key=str(dto.current_index),
+            image_file_path=word.get("image_file_path", ""),
+            word_id=word.get("word_es_id", ""),
+            examples=word.get("examples", ""),
+            show_examples=dto.show_examples,
+            group_label=self.__group_label,
+        )
+
+    def _render_no_words(self) -> None:
+        """Renderiza mensaje cuando no hay palabras."""
+        if not self._ft_content_area:
+            return
+
+        self.__is_card_mounted = False
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=40),
+                ft.Icon(ft.Icons.INBOX_OUTLINED, size=60, color=ft.Colors.ORANGE_400),
+                ft.Container(height=20),
+                ft.Text(
+                    "No hay palabras para reproducir",
+                    size=20,
+                    weight=ft.FontWeight.BOLD,
+                ),
+                ft.Text(
+                    "Selecciona otro grupo o idioma con traducciones disponibles",
+                    size=14,
+                    color=ft.Colors.GREY_600,
+                ),
+                ft.Container(height=30),
+                ft.Button(
+                    content=ft.Text("Volver"),
+                    on_click=lambda _: self._route_on_back(),
+                ),
+            ]
+        )
+
+    def _get_built_group_label_text(self) -> ft.Text:
+        """Etiqueta del grupo para la pantalla de resultados (oculta si no hay grupo)."""
+        return ft.Text(
+            self.__group_label,
+            size=SliderCardSizeEnum.GROUP_LABEL.value,
+            color=ft.Colors.GREY_600,
+            text_align=ft.TextAlign.CENTER,
+            visible=bool(self.__group_label),
+        )
+
+    def _render_session_complete(self, dto: WordSliderViewDto) -> None:
+        """Renderiza sesión completada."""
+        if not self._ft_content_area:
+            return
+
+        self.__is_card_mounted = False
+        action_buttons = []
+
+        if self._route_on_loop_replay:
+            loop_btn = ft.Button(
+                content=ft.Row(
+                    [ft.Icon(ft.Icons.ALL_INCLUSIVE), ft.Text("Seguir en bucle")],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                on_click=lambda _: self._on_loop_replay_click(),
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.INDIGO_600,
+                    color=ft.Colors.WHITE,
+                ),
+            )
+            action_buttons.append(loop_btn)
+
+        if self._route_on_replay:
+            replay_btn = ft.Button(
+                content=ft.Row(
+                    [ft.Icon(ft.Icons.REPLAY), ft.Text("Repetir slider")],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                on_click=lambda _: self._route_on_replay(),
+                style=ft.ButtonStyle(
+                    bgcolor=ft.Colors.TEAL_600,
+                    color=ft.Colors.WHITE,
+                ),
+            )
+            action_buttons.append(replay_btn)
+
+        home_btn = ft.Button(
+            content=ft.Row(
+                [ft.Icon(ft.Icons.HOME), ft.Text("Volver al inicio")],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            on_click=lambda _: self._route_on_back(),
+            style=ft.ButtonStyle(
+                bgcolor=ft.Colors.BLUE_700,
+                color=ft.Colors.WHITE,
+            ),
+        )
+        action_buttons.append(home_btn)
+
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=20),
+                ft.Icon(ft.Icons.CELEBRATION, size=50, color=ft.Colors.AMBER_500),
+                ft.Container(height=10),
+                ft.Text("¡Slider completado!", size=24, weight=ft.FontWeight.BOLD),
+                self._get_built_group_label_text(),
+                ft.Container(height=10),
+                ft.Text(f"Palabras reproducidas: {dto.total_words}", size=18),
+                ft.Container(height=40),
+                ft.Row(
+                    controls=action_buttons,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                ),
+            ]
+        )
+
+    def _get_built_replay_audio_button(self) -> ft.IconButton:
+        """Construye el botón de volver a oír la palabra (mismo gesto que el Examen).
+
+        Solo se VE si el controller da el callback: un botón que no suena parece
+        que el audio está roto.
+        """
+        self._ft_replay_audio_btn = ft.IconButton(
+            icon=ft.Icons.VOLUME_UP,
+            icon_size=36,
+            icon_color=ft.Colors.BLUE_700,
+            tooltip="Escuchar la palabra otra vez (funciona en pausa)",
+            on_click=lambda _: self._on_replay_audio_btn_click(),
+            visible=bool(self._route_on_replay_audio),
+        )
+        return self._ft_replay_audio_btn
+
+    def _get_built_loop_button(self) -> ft.IconButton:
+        """Construye el botón de bucle infinito (repite el grupo sin parar)."""
+        self._ft_loop_btn = ft.IconButton(
+            icon=ft.Icons.REPEAT,
+            icon_size=36,
+            icon_color=ft.Colors.GREY_600,
+            tooltip="Bucle infinito: al acabar vuelve a empezar (L)",
+            on_click=lambda _: self._on_loop_btn_click(),
+        )
+        return self._ft_loop_btn
+
+    def _get_built_help_button(self) -> ft.IconButton:
+        """Construye el botón de ayuda (reglas de uso) de la botonera."""
+        self._ft_help_btn = ft.IconButton(
+            icon=ft.Icons.HELP_OUTLINE,
+            icon_size=32,
+            icon_color=ft.Colors.GREEN_700,
+            tooltip="Reglas de uso: cuándo y cómo se usa",
+            on_click=lambda _: self._on_help_btn_click(),
+            visible=False,
+        )
+        return self._ft_help_btn
+
+    # =========================================================================
+    # EVENT HANDLERS (Callbacks de UI)
+    # =========================================================================
+    def _on_help_btn_click(self) -> None:
+        """Muestra el modal de reglas de uso pausando el slider automáticamente.
+
+        Al cerrar, reanuda solo si la pausa la provocó la propia ayuda.
+        """
+        if not self.__current_rules_help or not self.page:
+            return
+
+        self.__is_modal_open = True
+        self.__is_paused_by_help = not self.__is_paused
+        if self.__is_paused_by_help and self._route_on_toggle_pause:
+            self.__is_paused = True
+            self._apply_pause_icon()
+            self._route_on_toggle_pause()
+
+        page_width, page_height = get_page_size(self)
+        self._ft_rules_help_dialog.render(
+            word_text=self.__current_word_text,
+            word_lang_text=self.__current_word_lang_text,
+            word_id=self.__current_word_id,
+            rules_help=self.__current_rules_help,
+            page_width=page_width,
+            page_height=page_height,
+        )
+        if self._ft_rules_help_dialog not in self.page.overlay:
+            self.page.overlay.append(self._ft_rules_help_dialog)
+        self._ft_rules_help_dialog.open = True
+        self.page.update()
+
+    def _on_help_dialog_close(self) -> None:
+        """Cierra la ayuda y reanuda el slider si lo había pausado ella."""
+        self.__is_modal_open = False
+        self._ft_rules_help_dialog.open = False
+        if self.__is_paused_by_help and self._route_on_toggle_pause:
+            self.__is_paused = False
+            self._apply_pause_icon()
+            self._route_on_toggle_pause()
+        self.__is_paused_by_help = False
+        self.page.update()
+
+    def _on_replay_audio_btn_click(self) -> None:
+        """Vuelve a reproducir el audio de la palabra actual (no toca la pausa)."""
+        if self._route_on_replay_audio:
+            self._route_on_replay_audio()
+
+    def _on_reset_btn_click(self) -> None:
+        """Reinicia el progreso de la palabra actual, SIN pedir confirmación.
+
+        No hay diálogo a propósito: reiniciar es reversible (basta con volver a
+        estudiar la palabra) y el gesto se hace en mitad de la reproducción. El
+        controller pone el progreso a cero y vuelve al inicio de la palabra, así
+        que el efecto se ve y se oye; el resultado se avisa con un snackbar.
+        """
+        if not self._route_on_reset_word:
+            return
+        self._reset_pause_button()
+        self._route_on_reset_word()
+        self.update()
+
+    def _on_prev_btn_click(self) -> None:
+        """Navega a la palabra anterior (la navegación reanuda la reproducción)."""
+        self._reset_pause_button()
+        if self._route_on_prev:
+            self._route_on_prev()
+        self.update()
+
+    def _on_next_btn_click(self) -> None:
+        """Navega a la palabra siguiente (la navegación reanuda la reproducción)."""
+        self._reset_pause_button()
+        if self._route_on_next:
+            self._route_on_next()
+        self.update()
+
+    def _on_pause_btn_click(self) -> None:
+        """Alterna el icono pausa/reanudar y notifica al controller."""
+        self.__is_paused = not self.__is_paused
+        self._apply_pause_icon()
+        if self._route_on_toggle_pause:
+            self._route_on_toggle_pause()
+        self.update()
+
+    def _on_loop_btn_click(self) -> None:
+        """Alterna el bucle infinito y notifica al controller."""
+        if not self._route_on_toggle_loop:
+            return
+        self.__is_loop_enabled = not self.__is_loop_enabled
+        self._apply_loop_icon()
+        self._route_on_toggle_loop()
+        self.update()
+
+    def _on_loop_replay_click(self) -> None:
+        """Pide seguir en bucle desde la pantalla de fin (el icono queda activo)."""
+        if not self._route_on_loop_replay:
+            return
+        self.__is_loop_enabled = True
+        self._apply_loop_icon()
+        self._route_on_loop_replay()
+
+    def _apply_loop_icon(self) -> None:
+        """Sincroniza icono y tooltip del botón con el estado del bucle."""
+        if not self._ft_loop_btn:
+            return
+        if self.__is_loop_enabled:
+            self._ft_loop_btn.icon = ft.Icons.ALL_INCLUSIVE
+            self._ft_loop_btn.icon_color = ft.Colors.INDIGO_600
+            self._ft_loop_btn.tooltip = "Bucle infinito ACTIVO: pulsa para desactivar (L)"
+        else:
+            self._ft_loop_btn.icon = ft.Icons.REPEAT
+            self._ft_loop_btn.icon_color = ft.Colors.GREY_600
+            self._ft_loop_btn.tooltip = "Bucle infinito: al acabar vuelve a empezar (L)"
+
+    def _reset_pause_button(self) -> None:
+        """Restaura el botón de pausa al estado reproduciendo."""
+        self.__is_paused = False
+        self._apply_pause_icon()
+
+    def _apply_pause_icon(self) -> None:
+        """Sincroniza icono y tooltip del botón con el estado de pausa."""
+        if not self._ft_pause_btn:
+            return
+        if self.__is_paused:
+            self._ft_pause_btn.icon = ft.Icons.PLAY_CIRCLE
+            self._ft_pause_btn.tooltip = "Reanudar"
+        else:
+            self._ft_pause_btn.icon = ft.Icons.PAUSE_CIRCLE
+            self._ft_pause_btn.tooltip = "Pausar"
+
+    def _render_error(self, message: str) -> None:
+        """Renderiza mensaje de error."""
+        if not self._ft_content_area:
+            return
+
+        self.__is_card_mounted = False
+        self._ft_content_area.controls.clear()
+        self._ft_content_area.controls.extend(
+            [
+                ft.Container(height=40),
+                ft.Icon(ft.Icons.ERROR_OUTLINE, size=60, color=ft.Colors.RED_400),
+                ft.Container(height=20),
+                ft.Text("Error", size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(message, size=14, color=ft.Colors.GREY_600),
+                ft.Container(height=30),
+                ft.Button(
+                    content=ft.Text("Volver"),
+                    on_click=lambda _: self._route_on_back(),
+                ),
+            ]
+        )

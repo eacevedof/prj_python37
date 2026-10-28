@@ -1,0 +1,1 @@
+"""Video fetcher domain layer."""

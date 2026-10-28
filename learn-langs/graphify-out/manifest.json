@@ -1,0 +1,662 @@
+{
+  "C:\\projects\\prj_python37\\learn-langs\\front_controller.py": {
+    "mtime": 1777641814.150919,
+    "hash": "cefc9f2c7642c1958320dc25622e1212"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\makefile": {
+    "mtime": 1776376889.5777712,
+    "hash": "92325f24774ace46f949ee96fc51ded5"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\test_setup.py": {
+    "mtime": 1776793836.5994296,
+    "hash": "8a9dd863ec45929c4783288529427c27"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\__init__.py": {
+    "mtime": 1776376889.1937714,
+    "hash": "f5d05a33e95a6ecb6cc2b9972f71bbea"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\__init__.py": {
+    "mtime": 1776376890.3622665,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\application\\__init__.py": {
+    "mtime": 1776376890.4588687,
+    "hash": "c7cf71ec766942d07f54874c3c5571b6"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\application\\run_migrations\\run_migrations_dto.py": {
+    "mtime": 1776789740.0812476,
+    "hash": "ddc6ce2d706d81406cc5a4877a5a0e00"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\application\\run_migrations\\run_migrations_result_dto.py": {
+    "mtime": 1776376890.4620018,
+    "hash": "00bfc68aec9800616d287c714507fd7d"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\application\\run_migrations\\run_migrations_service.py": {
+    "mtime": 1776791728.9267619,
+    "hash": "698d5b70ea31f28dff1ee2c96e89b3a1"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\application\\run_migrations\\__init__.py": {
+    "mtime": 1776376890.4598799,
+    "hash": "590003e03b3d4742206b2ca290e19d10"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\domain\\__init__.py": {
+    "mtime": 1776376890.364225,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\devops\\infrastructure\\__init__.py": {
+    "mtime": 1776376890.3652253,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\__init__.py": {
+    "mtime": 1776376889.1937714,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\domain\\__init__.py": {
+    "mtime": 1776376889.1937714,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\domain\\enums\\envvars_keys_enum.py": {
+    "mtime": 1776376889.1947703,
+    "hash": "a601e227c93e7558b21fc8324798d0ab"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\domain\\enums\\response_code_enum.py": {
+    "mtime": 1776376889.1957693,
+    "hash": "65ec29814401faccfc7e20d79cca5922"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\domain\\enums\\view_route_enum.py": {
+    "mtime": 1776376890.9944563,
+    "hash": "1b3aa1e61e4fb5e2a63c1a2ba580aec4"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\domain\\enums\\__init__.py": {
+    "mtime": 1776376890.9934635,
+    "hash": "0710c1d951fd5fbe9917c8e114bdd476"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\__init__.py": {
+    "mtime": 1776376889.1957693,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\abstract_input_dto.py": {
+    "mtime": 1776376889.1977692,
+    "hash": "d6513adcfaa8f1d628528c4c8b826d4b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\app_router.py": {
+    "mtime": 1777491375.6556785,
+    "hash": "596b5c50e4c1e383d073f2b5f4690878"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\curler.py": {
+    "mtime": 1776376889.1977692,
+    "hash": "d0a28155c2f4effc7e2cd3d7c2aa00bd"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\date_timer.py": {
+    "mtime": 1776376889.1987696,
+    "hash": "9eb4b29418656f5e0ad54727f0f1ec48"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\encoder.py": {
+    "mtime": 1776376889.1987696,
+    "hash": "6096091bfa5603a272c715811bc0d1dc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\hasher.py": {
+    "mtime": 1776376889.1997714,
+    "hash": "29e0e30652cbfa3baa79f6fc2b5e86fa"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\logger.py": {
+    "mtime": 1777655954.3679893,
+    "hash": "c03b04c95193bd9e00ca5cc469aec8f7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\printer.py": {
+    "mtime": 1776376889.2007701,
+    "hash": "f94ed6fbfd0fa0347c5e94b7e242b356"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\response_dto.py": {
+    "mtime": 1776376889.2007701,
+    "hash": "5f6e9761e960c00cea90c7c05e24b0b6"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\slugger.py": {
+    "mtime": 1776376889.201769,
+    "hash": "d293323c25c19005a170e6bc9d28d2d5"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\sqlite_connector.py": {
+    "mtime": 1776789776.7211862,
+    "hash": "21da6019dee7feecf51fb68ded1e781b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\texter.py": {
+    "mtime": 1776376889.201769,
+    "hash": "761d62d72d978ef94e67be3b5c3d6df5"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\tokenizer.py": {
+    "mtime": 1776376889.202769,
+    "hash": "5e98eb569ac4553620986790cb700dd7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\components\\__init__.py": {
+    "mtime": 1776794258.9395852,
+    "hash": "b7f3fb11e120f4c0ba221b0bb7069902"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\repositories\\abstract_sqlite_repository.py": {
+    "mtime": 1776376891.0004568,
+    "hash": "7f4b969a59c5e65eb12a6ae4badc6e33"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\repositories\\environment_reader_raw_repository.py": {
+    "mtime": 1776376889.203769,
+    "hash": "c83064d45453208d3820cbfdde3d69f1"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\shared\\infrastructure\\repositories\\__init__.py": {
+    "mtime": 1776376890.9984624,
+    "hash": "45e389939286dd8439942c8658eceeec"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\__init__.py": {
+    "mtime": 1776376889.384495,
+    "hash": "832c8f1d8c2fb164159c1fe8812f5a92"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\__init__.py": {
+    "mtime": 1776376889.385503,
+    "hash": "bcb9619abed107e4d1172d96fca576c5"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\add_word_image\\add_word_image_dto.py": {
+    "mtime": 1776803445.1747856,
+    "hash": "9a29fe047cff17b658decba4e43a2126"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\add_word_image\\add_word_image_result_dto.py": {
+    "mtime": 1776803449.421067,
+    "hash": "af5f76c548a6fe43cf36cb0b4b87f27a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\add_word_image\\add_word_image_service.py": {
+    "mtime": 1776803462.374233,
+    "hash": "05f4429aba9e2e6145c3bc02be52030b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\add_word_image\\__init__.py": {
+    "mtime": 1776803463.6408904,
+    "hash": "9824b0d04065dd5f6d2d92137af78979"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\create_word\\create_word_dto.py": {
+    "mtime": 1776376889.31143,
+    "hash": "a391be0b3ae85cd177d05efd5e7fb52b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\create_word\\create_word_result_dto.py": {
+    "mtime": 1776376889.3124487,
+    "hash": "ab44095b8f102dee6fa2569aadf02f43"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\create_word\\create_word_service.py": {
+    "mtime": 1776376890.158242,
+    "hash": "6c1a186932de1a52b6ccf8ac989b5ed2"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\create_word\\__init__.py": {
+    "mtime": 1776376889.3104298,
+    "hash": "fc90ff5c87f2866499100175da76eb39"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word\\delete_word_dto.py": {
+    "mtime": 1776376890.6081345,
+    "hash": "fd2ef1f43c691c6d4c1310cad3773bd1"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word\\delete_word_result_dto.py": {
+    "mtime": 1776376890.609134,
+    "hash": "7cf530903e520b26ac150e0c36afba69"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word\\delete_word_service.py": {
+    "mtime": 1776623582.941501,
+    "hash": "527922db64155a749318028feb83c770"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word\\__init__.py": {
+    "mtime": 1776376890.6071434,
+    "hash": "5ddd0c216fcfa383b8a0727adcddcf90"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word_image\\delete_word_image_dto.py": {
+    "mtime": 1776803474.3238757,
+    "hash": "6c16405798e19ded808433d7a6b1b25f"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word_image\\delete_word_image_result_dto.py": {
+    "mtime": 1776803479.1808822,
+    "hash": "62d0ffef55cd0cf910be67318a676b75"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word_image\\delete_word_image_service.py": {
+    "mtime": 1776803484.0156746,
+    "hash": "f5c78beaa27e0381886e5a2583ed35da"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\delete_word_image\\__init__.py": {
+    "mtime": 1776803485.4435313,
+    "hash": "ad6ef2c2dfbce13dd333a73efd5cb36d"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\finish_study_session\\finish_study_session_dto.py": {
+    "mtime": 1776803499.6107845,
+    "hash": "2c9e520d1ca9197d93e8af89c6f3ecfd"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\finish_study_session\\finish_study_session_result_dto.py": {
+    "mtime": 1776803504.7874744,
+    "hash": "4bf618e6505fa4fd99effe3c32333bea"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\finish_study_session\\finish_study_session_service.py": {
+    "mtime": 1776803507.5018427,
+    "hash": "f43e533f8d92bdbe073c3581e0001443"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\finish_study_session\\__init__.py": {
+    "mtime": 1776803508.8198814,
+    "hash": "964db89564a888b7a015e41129b52154"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_app_config\\get_app_config_result_dto.py": {
+    "mtime": 1777403636.834278,
+    "hash": "0ed70934f3859ae553c2f235cf03a245"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_app_config\\get_app_config_service.py": {
+    "mtime": 1777496399.625589,
+    "hash": "3b92052b52046e89408ec967db962f95"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_app_config\\__init__.py": {
+    "mtime": 1776790803.8709335,
+    "hash": "206643ac312311440dab06bb15e5a07a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_tags\\get_tags_result_dto.py": {
+    "mtime": 1776803400.231127,
+    "hash": "f906d9c8ded32a52cdb51d645b4abd60"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_tags\\get_tags_service.py": {
+    "mtime": 1776803404.514994,
+    "hash": "0d0c3e1e6dd8477602283213eac1f001"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_tags\\__init__.py": {
+    "mtime": 1776803405.684712,
+    "hash": "b9bb00a029e6e5add9a5fe6313ce13f9"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_for_edit\\get_word_for_edit_dto.py": {
+    "mtime": 1776803415.0499103,
+    "hash": "883fd3f43bf890fa924ce03012cb5401"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_for_edit\\get_word_for_edit_result_dto.py": {
+    "mtime": 1776803423.4608164,
+    "hash": "bc17a29547bee4ba622da871fdbe2dfa"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_for_edit\\get_word_for_edit_service.py": {
+    "mtime": 1776803431.0974548,
+    "hash": "0c9771c80ab230e70361dc1e300f2ec3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_for_edit\\__init__.py": {
+    "mtime": 1776803432.5271013,
+    "hash": "9a5628175b32f3be59c53624af1482af"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_images\\get_word_images_dto.py": {
+    "mtime": 1776803545.7366693,
+    "hash": "f78945d1e942a6bd79a18399721ae018"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_images\\get_word_images_result_dto.py": {
+    "mtime": 1776803553.3274958,
+    "hash": "3e80bd411a35abe1720faae86c693ed4"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_images\\get_word_images_service.py": {
+    "mtime": 1776803558.872696,
+    "hash": "0e2c8372ef7417ab601d10c0fe5065c9"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\get_word_images\\__init__.py": {
+    "mtime": 1776803560.5560174,
+    "hash": "cd5050db0566f010f4cd53db90e13ff3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\list_words\\list_words_dto.py": {
+    "mtime": 1776376890.5464506,
+    "hash": "60e7afa4677d857c702aa6dc8d0953b3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\list_words\\list_words_result_dto.py": {
+    "mtime": 1776376890.5475771,
+    "hash": "a909fd78afd4d3c70310a107656c0db4"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\list_words\\list_words_service.py": {
+    "mtime": 1776623553.8696253,
+    "hash": "31ca53094a4969e9f5ef558fa608ef8c"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\list_words\\__init__.py": {
+    "mtime": 1776376890.5464506,
+    "hash": "e1f4cf85bff30f2bc6f55c7fd6ee151e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\load_home\\load_home_dto.py": {
+    "mtime": 1776621568.0081062,
+    "hash": "030ac59d3fb92ddee48506dcdb6921fc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\load_home\\load_home_result_dto.py": {
+    "mtime": 1776621573.9850068,
+    "hash": "673450dc0295dd70e7ab5d53bde51f3b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\load_home\\load_home_service.py": {
+    "mtime": 1776623528.1583397,
+    "hash": "139e49a912bd91e7649c9209dadfb262"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\load_home\\__init__.py": {
+    "mtime": 1776621582.7248368,
+    "hash": "1283b53c039c1022cdac2be159953ce4"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\record_answer\\record_answer_dto.py": {
+    "mtime": 1776376889.672487,
+    "hash": "a59ae0b4610db3387049f488d9cda024"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\record_answer\\record_answer_result_dto.py": {
+    "mtime": 1776376889.6734436,
+    "hash": "3da0963dfa706c876fbfa327b2fc23ad"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\record_answer\\record_answer_service.py": {
+    "mtime": 1776376890.159253,
+    "hash": "da6fd9db6db926957be39fa98032c825"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\record_answer\\__init__.py": {
+    "mtime": 1776376889.67148,
+    "hash": "a07ae3c0dd356903a8bb363b6a474694"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\start_study_session\\start_study_session_dto.py": {
+    "mtime": 1776376889.675476,
+    "hash": "60945bd445fcb2fcde9e0bef3193b5fc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\start_study_session\\start_study_session_result_dto.py": {
+    "mtime": 1776376889.6764429,
+    "hash": "d54fb0e66e1720073cac985c357c42c7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\start_study_session\\start_study_session_service.py": {
+    "mtime": 1776623610.088714,
+    "hash": "4eee386ee18846ba7b9df24a0ec7c7c7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\start_study_session\\__init__.py": {
+    "mtime": 1776376889.734521,
+    "hash": "dafa9306f13d41295c4b0240961e87be"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\update_word\\update_word_dto.py": {
+    "mtime": 1776376890.550731,
+    "hash": "72d3af886d768613554e46314208f9bd"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\update_word\\update_word_result_dto.py": {
+    "mtime": 1776376890.551734,
+    "hash": "1701b7649d226eb1e484366af41dabb6"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\update_word\\update_word_service.py": {
+    "mtime": 1776376890.5522394,
+    "hash": "f16ca6fdc0e3a9daf32a82e1a516208d"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\application\\update_word\\__init__.py": {
+    "mtime": 1776376890.5497267,
+    "hash": "1d7b25468f86f0ceeef6c61d82f85d28"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\__init__.py": {
+    "mtime": 1776376889.3875024,
+    "hash": "28e5340d5ecfe7e60af68d9ad9c329de"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\language_entity.py": {
+    "mtime": 1776376889.3133972,
+    "hash": "9a50d8869fd3d9fc4583d3ea4adf3b1e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\session_answer_entity.py": {
+    "mtime": 1776376889.3144097,
+    "hash": "bb02261af4d9f78ae40b43b2212af072"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\study_session_entity.py": {
+    "mtime": 1776376889.3154073,
+    "hash": "ab72a10c4a014d6c1e6ed6cd53c36cb3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\tag_entity.py": {
+    "mtime": 1776376889.3163948,
+    "hash": "13d6beb7a06cd0dcbeaa5770e377dbbb"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\word_es_entity.py": {
+    "mtime": 1776376889.3163948,
+    "hash": "1bb8df3b7d5d37ebf9409cbc0fb39267"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\word_image_entity.py": {
+    "mtime": 1776376889.948035,
+    "hash": "c3898083f60b8a11c7627cc43652e502"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\word_lang_entity.py": {
+    "mtime": 1776376889.317395,
+    "hash": "dbd1ddda771257e2dfb6e86afff90f85"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\word_metric_entity.py": {
+    "mtime": 1776376889.3184032,
+    "hash": "bc6af37d784d89709aa2e433c6733f17"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\entities\\__init__.py": {
+    "mtime": 1776376890.162248,
+    "hash": "9a9549cf2c95efd063f370caea87737f"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\image_source_enum.py": {
+    "mtime": 1776376889.9495556,
+    "hash": "0119aeccf645ea05592b5c9d3f2f184c"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\language_code_enum.py": {
+    "mtime": 1776625998.2363408,
+    "hash": "c633ec6a726ab32af34a8898edecc73d"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\relation_type_enum.py": {
+    "mtime": 1776376889.3193946,
+    "hash": "3d9f026b59c546b9d7883787ec363564"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\study_mode_enum.py": {
+    "mtime": 1776376889.3204024,
+    "hash": "fbe9c28128fac3c2cd702a8f526e19af"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\word_type_enum.py": {
+    "mtime": 1776376889.3204024,
+    "hash": "fd0629bd96443879249f950d34ec330b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\enums\\__init__.py": {
+    "mtime": 1776376891.001455,
+    "hash": "565e0f4a5223d3ad550af1bddeaf20a9"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\exceptions\\vocabulary_exception.py": {
+    "mtime": 1776376890.6121333,
+    "hash": "a69097d572fc5a2298921bac16405132"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\exceptions\\__init__.py": {
+    "mtime": 1776376889.3213954,
+    "hash": "b99ab8c99abf40f175f9fbf68f1ce548"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\services\\score_calculator_service.py": {
+    "mtime": 1776376889.3233945,
+    "hash": "bbe4e41ca953e5f05e3068d49a0acebe"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\services\\spaced_repetition_service.py": {
+    "mtime": 1776376889.3243942,
+    "hash": "ff921986f974581f60b0738fff9ffd9a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\domain\\services\\__init__.py": {
+    "mtime": 1776376889.3224022,
+    "hash": "c49793a4e12bae670bc94cfa0936a0c4"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\__init__.py": {
+    "mtime": 1776376889.3875024,
+    "hash": "f2653580873646dbaa62b69138381d1e"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\create_word_controller.py": {
+    "mtime": 1777407108.702658,
+    "hash": "1e5a9dc5281721b0e997e75fdcb73014"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\delete_word_controller.py": {
+    "mtime": 1776802875.6410544,
+    "hash": "7ab0e319216b37f2a40de9874fd887c7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\home_controller.py": {
+    "mtime": 1777405075.8159974,
+    "hash": "4bc46bac30d76e2d101343f342ec8fed"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\list_words_controller.py": {
+    "mtime": 1777636337.2654364,
+    "hash": "ed09017dcda52d4617a8b1294bc22bff"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\study_controller.py": {
+    "mtime": 1777407526.6428165,
+    "hash": "6cbfdc6a2601db3b7ab87d60d43d3a94"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\update_word_controller.py": {
+    "mtime": 1777407423.657333,
+    "hash": "584b691bdbb64ebcb201125e5b6e29c0"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\controllers\\__init__.py": {
+    "mtime": 1776802994.3747444,
+    "hash": "beacdab409e2f93ef287d95a82297a1c"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\persistence\\migrations\\001_initial_schema.sql": {
+    "mtime": 1776376889.3253946,
+    "hash": "60dc5fca8c38eca8f53a85176264a5b7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\persistence\\migrations\\002_word_images.sql": {
+    "mtime": 1776376889.9505682,
+    "hash": "9767596512394574ed7c72c2c680b26c"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\answers_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0677552,
+    "hash": "385e3077296c2dcd505123eb4d3d027c"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\answers_writer_sqlite_repository.py": {
+    "mtime": 1776376891.068748,
+    "hash": "a3679b229c3781787be8f4a250f7b0dc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\app_config_reader_raw_repository.py": {
+    "mtime": 1777496351.2291603,
+    "hash": "1e59517292afbec40feb8de27664bcb7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\images_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0697453,
+    "hash": "5d8a96c42cd1b86e927717cd30c4f171"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\images_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0707448,
+    "hash": "2685a7fe95f43f08e3eeadd590e4c750"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\languages_reader_sqlite_repository.py": {
+    "mtime": 1776793796.1094851,
+    "hash": "89393aec1d8f5b2e9241fd80439f3b1a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\metrics_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0717456,
+    "hash": "909622b66d5e770c70fddecc0849c47b"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\metrics_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0727444,
+    "hash": "18609f72c0a5be7491ca855ee1f4cb52"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\sessions_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0737443,
+    "hash": "9f69a4822c1cedce1a20164feda0c226"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\sessions_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0747445,
+    "hash": "ef5cfb421275386052799f3f1d2d612a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\tags_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0757444,
+    "hash": "12489b1db7636a46b4eff400481a06bc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\tags_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0767446,
+    "hash": "3ee336c9519e63e4b7db45dfdc1715fa"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\words_es_reader_sqlite_repository.py": {
+    "mtime": 1777655571.3810434,
+    "hash": "dcee656cc4f3cb81ea088dee36457c22"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\words_es_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0787537,
+    "hash": "adc8ec3e1229d222c1cee98d476726c7"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\words_lang_reader_sqlite_repository.py": {
+    "mtime": 1776376891.0797448,
+    "hash": "3c1ebbfd1e443c78d2b57a294132c1e3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\words_lang_writer_sqlite_repository.py": {
+    "mtime": 1776376891.0797448,
+    "hash": "336a261c0ca709247d2d88c97d967f82"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\repositories\\__init__.py": {
+    "mtime": 1776793815.8005126,
+    "hash": "88b87fad436b2bb679be971fa659bf89"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\__init__.py": {
+    "mtime": 1776376889.7355282,
+    "hash": "9b05e395930dc1a487d7851a99927972"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\components\\flashcard_comp.py": {
+    "mtime": 1776376889.7979555,
+    "hash": "c314f856b4145a924c90bcea067b6f95"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\components\\input_field_comp.py": {
+    "mtime": 1777408982.0501301,
+    "hash": "e1259923bdb43897a6ae91d5d22379db"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\components\\timer_comp.py": {
+    "mtime": 1776376889.799955,
+    "hash": "56ab8a22daddce433510565b47117ebd"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\components\\__init__.py": {
+    "mtime": 1776376889.7355282,
+    "hash": "f01fd4988b37070fc34dfe51c9e32756"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\create_word_view.py": {
+    "mtime": 1777407796.0040307,
+    "hash": "ca6ecf3293959097a78f4220f3d79b19"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\create_word_view_dto.py": {
+    "mtime": 1776798876.848432,
+    "hash": "702efbf69c390edff046db1dca7af134"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\delete_word_view_dto.py": {
+    "mtime": 1776802639.7230275,
+    "hash": "1ca1f7599caeb0e68068d60aae8c373a"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\home_view.py": {
+    "mtime": 1777407571.8894718,
+    "hash": "57d085a218cee5161bcaa334d4a9dce3"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\home_view_dto.py": {
+    "mtime": 1776799665.4014974,
+    "hash": "2f32207ad3854b7944242afb729a7423"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\list_words_view.py": {
+    "mtime": 1777494189.3989477,
+    "hash": "80e574f16bf948a6bbe1c36520934383"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\list_words_view_dto.py": {
+    "mtime": 1776802621.026939,
+    "hash": "552299a64d7682cada328b0a6641b5a1"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\study_view.py": {
+    "mtime": 1777402767.4736836,
+    "hash": "4ac255e108331b2407367e4d8f92b1fa"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\study_view_dto.py": {
+    "mtime": 1776802650.3169038,
+    "hash": "070d7d4bc4c6b9d0380e5250468d3e75"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\update_word_view.py": {
+    "mtime": 1777407421.0553062,
+    "hash": "7f3fe91d9d2e91a8af33c78c5ad11d79"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\update_word_view_dto.py": {
+    "mtime": 1776802679.2307866,
+    "hash": "4408c16badde0985e396b25e7580bf21"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\ddd\\vocabulary\\infrastructure\\ui\\views\\__init__.py": {
+    "mtime": 1776803004.5024211,
+    "hash": "0d4a4b432588a22fc7c8c7552a5cba35"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\CLAUDE.md": {
+    "mtime": 1776376890.9899473,
+    "hash": "12db7fd218e2b71092317571f927decc"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\install.md": {
+    "mtime": 1776376889.5767698,
+    "hash": "8ffa25d2d5d4be469fc330db2bc7ccbe"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\requirements.txt": {
+    "mtime": 1776376889.5777712,
+    "hash": "addd48d47c359f1ca22f4a1ab2a2f4a0"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\data\\images\\word_4_20260429_1028b6a2.png": {
+    "mtime": 1777493630.9050765,
+    "hash": "3b2637082ab9bf0f3629f2c9e9d12a16"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\data\\images\\word_4_20260429_1d3f37d0.gif": {
+    "mtime": 1777494888.6190743,
+    "hash": "68711cf34bc022f0eb29c8d16c325d40"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\data\\images\\word_4_20260429_b68c3c03.png": {
+    "mtime": 1777495634.1342058,
+    "hash": "87fa647c91a9ecfa233e3ffe261bba06"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\data\\images\\word_4_20260429_c563a2c5.png": {
+    "mtime": 1777494579.3358781,
+    "hash": "3b2637082ab9bf0f3629f2c9e9d12a16"
+  },
+  "C:\\projects\\prj_python37\\learn-langs\\data\\images\\word_4_20260501_9f59717c.gif": {
+    "mtime": 1777642656.542659,
+    "hash": "22f605686b03fc68a9eee0f028a259fa"
+  }
+}

@@ -1,0 +1,7 @@
+setup.py
+pycmd.egg-info/PKG-INFO
+pycmd.egg-info/SOURCES.txt
+pycmd.egg-info/dependency_links.txt
+pycmd.egg-info/entry_points.txt
+pycmd.egg-info/requires.txt
+pycmd.egg-info/top_level.txt

@@ -1,0 +1,9 @@
+[
+  {
+    "id":"ech-prod-pictures",
+    "alias":"elchalan products", 
+    "description":"Products images",
+    "type":"folder",
+    "path":"/Users/ioedu/projects/prj_tinymarket/backend_web/public/pictures/products"
+  }
+]

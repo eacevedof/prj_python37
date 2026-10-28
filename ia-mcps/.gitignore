@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.venv-wsl/
+.venv-win/
+*.egg-info/
+dist/
+build/
+
+.pytest_cache/
+
+# Entorno
+backend_web/.env
+.env-prod
+.dev
+.prod
+*.local.json
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Docker
+docker/data/
+
+# Logs y cache (conservar el dir, ignorar el contenido runtime)
+backend_web/storage/logs/*
+!backend_web/storage/logs/.gitkeep
+backend_web/storage/cache/*
+!backend_web/storage/cache/.gitkeep
+
+# Base de datos SQLite: son DATOS, nunca se versionan
+backend_web/storage/sqlite/*
+!backend_web/storage/sqlite/.gitkeep
+
+# ChromaDB data (memoria de proyecto, auto-generada y sensible)
+data/
+chroma/
+.chroma/
+*.db
+memory.json
+**/*.sqlite
+
+# Claude Code
+.claude/*.png
+graphify-out/

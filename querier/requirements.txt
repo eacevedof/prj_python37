@@ -1,0 +1,5 @@
+requests~=2.34.2
+python-dotenv~=1.2.3
+tabulate~=0.10.0
+pytz~=2026.3
+pynacl~=1.6.2

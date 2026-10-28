@@ -1,0 +1,8 @@
+[
+  {
+    "id":"api1",
+    "alias":"json.theframework.es products", 
+    "description":"json.theframework.es products",
+    "path":"http://json.theframework.es/index.php?getfile=app_product.json"
+  }
+]
