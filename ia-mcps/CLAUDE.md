@@ -3,7 +3,7 @@
 Colección de **servidores MCP** (Python 3.12+, DDD modular) expuestos por **HTTP** con FastAPI:
 EMT Madrid (buses), Media (imagen/audio OpenAI), Memory (memoria semántica ChromaDB), File Checker
 (hash/firma de ficheros) y PDF (Markdown→PDF); + `video_mod` (librería, sin fachada MCP). NO
-contiene el "cerebro" de análisis de workitems Lazarus.
+contiene el "cerebro" de análisis de workitems LZR.
 
 Repo dentro del monorepo **público** `eacevedof/prj_python37`. Comparte arquitectura, versiones y
 estructura con el repo privado `eacevedof/prj-mcp-tools` (patrón `ocr-documents`) **a propósito**:
@@ -60,7 +60,7 @@ alcanzan son los tuyos.
 - Deuda: `ia-mcps-tech-debt.md` · En curso: `ia-mcps-doing.md` · Backlog: `ia-mcps-to-do.md`
 - Repo gemelo: `...\projects\mcp-tools\mcp-tools-code.md` · Patrón base:
   `...\projects\ocr-documents\ocr-documents-code.md`
-- Tareas Lazarus (el "cerebro" NO está aquí): `...\projects\automation\workitem-analysis-skill.md`
+- Tareas LZR (el "cerebro" NO está aquí): `...\projects\automation\workitem-analysis-skill.md`
 
 **Comandos**: `make help` · `make dev` (host, 127.0.0.1:8010) · `make up` (contenedor, host:8011)
 · `make test` · `make lint` · `make venv` · `make user-add` · `make user-update`

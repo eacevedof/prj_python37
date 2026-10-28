@@ -213,7 +213,7 @@ Key differences:
 
 ## 📝 License
 
-This project is part of the Lazarus Tech APH infrastructure.
+This project is part of the LZR APH infrastructure.
 
 ---
 

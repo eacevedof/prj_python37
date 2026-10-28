@@ -16,8 +16,7 @@ class AbstractView(ABC):
     <!DOCTYPE html>
     <html>
     <head>
-    <title>Lazarus Anti Phishing API</title>
-    <link rel="alternate icon" type="image/png" href="https://lazarus.es/assets/imgs/template/favicon.png">
+    <title>LZR Anti Phishing API</title>
     <link rel="stylesheet" href="/assets/Modules/Documentation/Css/documentation.css">
     </head>
     """

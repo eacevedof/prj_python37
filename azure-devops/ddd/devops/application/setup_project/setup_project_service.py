@@ -168,12 +168,14 @@ class SetupProjectService:
     ) -> str:
         www_path = self._env_reader_raw_repository.get_local_www_path()
         base_env_file = self._env_reader_raw_repository.get_local_base_env_file()
+        env_prefix = self._env_reader_raw_repository.get_local_app_env_prefix()
         env_path = await self._local_project_writer_file_repository.create_env_file(
             www_path,
             base_env_file,
             setup_project_dto.project_name,
             port,
             setup_project_dto.db_name,
+            env_prefix,
         )
         steps_completed.append("env_file_created")
         return env_path

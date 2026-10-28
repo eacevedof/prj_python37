@@ -1,6 +1,6 @@
 # Azure DevOps MCP Server
 
-Coleccion de MCP Servers (Python 3.12+, arquitectura DDD) para integrar Claude Code con Azure DevOps, Outlook (Microsoft Graph), Git, SharePoint, Calendar, MySQL local y herramientas de desarrollo local. Infraestructura de la pipeline de automatizacion Lazarus↔Enova.
+Coleccion de MCP Servers (Python 3.12+, arquitectura DDD) para integrar Claude Code con Azure DevOps, Outlook (Microsoft Graph), Git, SharePoint, Calendar, MySQL local y herramientas de desarrollo local. Infraestructura de la pipeline de automatizacion LZR↔Enova.
 
 ---
 
@@ -38,7 +38,7 @@ C:\projects\temper\ai\obsidian\projects\_catalog.md
 
 ## 🛠️ Skills
 
-- **Centralizadas** (base + python): `C:/projects/temper/ai/obsidian/dev-ops/skills`
+- **Centralizadas** (base + python): `C:/projects/temper/ai/obsidian/dev-ops`
 - **Locales del repo**: `.claude/skills/workitems-conventions-skill.md` · `.claude/agents/azure-devops-workitems-ag.md`
 
 ## ⚡ Arranque rápido

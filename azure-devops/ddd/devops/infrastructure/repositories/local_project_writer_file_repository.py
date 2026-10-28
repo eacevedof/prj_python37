@@ -144,8 +144,12 @@ TimeOut 900
         project_name: str,
         port: int,
         db_name: str,
+        env_prefix: str,
     ) -> str:
-        """Create .env file based on plataformabase template."""
+        """Create .env file based on plataformabase template.
+
+        env_prefix: prefix of the app keys in the template (e.g. LZR_).
+        """
         app_folder = f"{LocalProjectConst.APP_NAME_PREFIX}{project_name}"
         server_name = f"{LocalProjectConst.SERVER_NAME_PREFIX}{port}"
         env_dest_path = Path(www_path) / app_folder / "html" / ".env"
@@ -163,11 +167,11 @@ TimeOut 900
         cookie_name = project_name.replace("-", "")
 
         replacements = {
-            r"LAZARUS_BASE_URL=.*": f"LAZARUS_BASE_URL=http://{server_name}:{port}/",
-            r"LAZARUS_DOMAIN=.*": f"LAZARUS_DOMAIN={server_name}",
-            r"LAZARUS_COOKIE_NAME=.*": f"LAZARUS_COOKIE_NAME={cookie_name}",
-            r"LAZARUS_DB_NAME=.*": f"LAZARUS_DB_NAME={db_name}",
-            r"LAZARUS_LOG_PATH=.*": f"LAZARUS_LOG_PATH=/var/www/{app_folder}/logs/",
+            rf"{env_prefix}BASE_URL=.*": f"{env_prefix}BASE_URL=http://{server_name}:{port}/",
+            rf"{env_prefix}DOMAIN=.*": f"{env_prefix}DOMAIN={server_name}",
+            rf"{env_prefix}COOKIE_NAME=.*": f"{env_prefix}COOKIE_NAME={cookie_name}",
+            rf"{env_prefix}DB_NAME=.*": f"{env_prefix}DB_NAME={db_name}",
+            rf"{env_prefix}LOG_PATH=.*": f"{env_prefix}LOG_PATH=/var/www/{app_folder}/logs/",
         }
 
         for pattern, replacement in replacements.items():

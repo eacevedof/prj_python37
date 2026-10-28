@@ -66,6 +66,9 @@ class EnvironmentReaderEnvRepository:
     def get_local_base_env_file(self) -> str:
         return self.__get_required(EnvvarsKeysEnum.LOCAL_BASE_ENV_FILE)
 
+    def get_local_app_env_prefix(self) -> str:
+        return self.__get_required(EnvvarsKeysEnum.LOCAL_APP_ENV_PREFIX)
+
     def __get_required(self, key: EnvvarsKeysEnum) -> str:
         value = os.getenv(key)
         if value is None:

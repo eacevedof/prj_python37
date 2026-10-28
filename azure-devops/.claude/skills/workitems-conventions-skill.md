@@ -53,7 +53,7 @@ Para que los enlaces a work items se muestren correctamente en Azure DevOps, **N
 ### Ejemplo real
 
 ```html
-<a href="https://dev.azure.com/lazarustechnology/caser-helvetia-telemetria/_workitems/edit/1991/" data-vss-mention="version:1.0">#1991</a>
+<a href="https://dev.azure.com/<org>/<project>/_workitems/edit/1991/" data-vss-mention="version:1.0">#1991</a>
 ```
 
 ## Estructura de Descripciones

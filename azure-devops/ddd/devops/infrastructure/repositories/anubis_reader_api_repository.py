@@ -21,8 +21,6 @@ class AnubisReaderApiRepository:
     - Hash: Argon2id (sodium_crypto_pwhash_str compatible)
     """
 
-    _ENDPOINT_PATH = "lazarus"
-
     def __init__(self) -> None:
         self._curler = Curler.get_instance()
         self._logger = Logger.get_instance()
@@ -34,6 +32,7 @@ class AnubisReaderApiRepository:
         self._domain_development = self._require_env("PROVISION_DOMAIN_DEVELOPMENT")
         self._domain_local = self._require_env("PROVISION_DOMAIN_LOCAL")
         self._environment = self._require_env("PROVISION_ENVIRONMENT")
+        self._endpoint_path = self._require_env("PROVISION_ENDPOINT_PATH")
 
     @staticmethod
     def _require_env(name: str) -> str:
@@ -90,7 +89,7 @@ class AnubisReaderApiRepository:
             raise DevOpsException.anubis_empty_query()
 
         domain = self._get_domain()
-        endpoint = f"{domain}{self._ENDPOINT_PATH}"
+        endpoint = f"{domain}{self._endpoint_path}"
         auth_token = self._generate_auth_token()
 
         headers = {

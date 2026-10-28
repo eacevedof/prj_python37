@@ -3,7 +3,7 @@
 
 ### Introducción
 - **`<APP-AUTH-TOKEN>`** Este token identifica directamente al proyecto e indirectamente al cliente que es el propietario.
-- para solicitar un token de acceso puede contactar con **info@lazarus.es**
+- para solicitar un token de acceso puede contactar con el equipo de **LZR**
 
 ### 1- Configuración global del proyecto.
 - Devuelve la configuración a nivel de proyecto. Como los limites del scoring de los dominios.
