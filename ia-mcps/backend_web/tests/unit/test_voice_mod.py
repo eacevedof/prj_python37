@@ -118,6 +118,7 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
     from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_service import (
         SpeakLastReplyService,
     )
+    from src.modules.voice_mod.domain.enums import FishAudioVoiceEnum
     from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
         AudioPlayerWinsoundRepository,
     )
@@ -136,8 +137,6 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
     monkeypatch.setattr(
         AudioPlayerWinsoundRepository, "play_wav_bytes", lambda _self, wav_bytes: played_audios.append(wav_bytes)
     )
-    monkeypatch.delenv("APP_VOICE_FISH_MODEL", raising=False)
-    monkeypatch.setenv("APP_VOICE_FISH_REFERENCE_ID", "voice-123")
 
     transcript_path = _write_transcript(tmp_path, [
         _user_prompt("¿qué tal?"),
@@ -147,7 +146,7 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
         SpeakLastReplyDto.from_primitives({"transcript_path": transcript_path})
     )
 
-    assert tts_calls == [("Todo bien, mira x.", "s2.1-pro-free", "voice-123")]
+    assert tts_calls == [("Todo bien, mira x.", "s2.1-pro-free", FishAudioVoiceEnum.SARAH_EN)]
     assert played_audios == [b"RIFF-fake-wav"]
     assert speak_text_result_dto.spoken_chars == len("Todo bien, mira x.")
 

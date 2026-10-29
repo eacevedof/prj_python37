@@ -42,5 +42,3 @@ class EnvVarEnum:
 
     # voice_mod — TTS de Fish Audio (Claude Code por voz)
     APP_VOICE_FISH_API_KEY = "APP_VOICE_FISH_API_KEY"
-    APP_VOICE_FISH_MODEL = "APP_VOICE_FISH_MODEL"
-    APP_VOICE_FISH_REFERENCE_ID = "APP_VOICE_FISH_REFERENCE_ID"

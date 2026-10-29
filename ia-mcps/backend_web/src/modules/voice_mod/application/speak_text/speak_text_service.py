@@ -1,8 +1,5 @@
 from typing import Self, final
 
-from src.modules.shared.infrastructure.repositories.configuration.environment_reader_raw_repository import (
-    EnvironmentReaderRawRepository,
-)
 from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto import (
     GetSpeechTextDto,
 )
@@ -13,7 +10,7 @@ from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTex
 from src.modules.voice_mod.application.speak_text.speak_text_result_dto import (
     SpeakTextResultDto,
 )
-from src.modules.voice_mod.domain.enums import FishAudioModelEnum
+from src.modules.voice_mod.domain.enums import FishAudioModelEnum, FishAudioVoiceEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
     AudioPlayerWinsoundRepository,
@@ -31,13 +28,11 @@ class SpeakTextService:
     vuelve cuando el audio ha terminado de sonar.
     """
 
-    _environment_reader_raw_repository: EnvironmentReaderRawRepository
     _get_speech_text_service: GetSpeechTextService
     _fish_audio_tts_api_repository: FishAudioTtsApiRepository
     _audio_player_winsound_repository: AudioPlayerWinsoundRepository
 
     def __init__(self) -> None:
-        self._environment_reader_raw_repository = EnvironmentReaderRawRepository.get_instance()
         self._get_speech_text_service = GetSpeechTextService.get_instance()
         self._fish_audio_tts_api_repository = FishAudioTtsApiRepository.get_instance()
         self._audio_player_winsound_repository = AudioPlayerWinsoundRepository.get_instance()
@@ -62,13 +57,8 @@ class SpeakTextService:
         if not speech_text:
             VoiceException.bad_request_custom("there is no text to speak")
 
-        model = speak_text_dto.model or self._environment_reader_raw_repository.get_voice_fish_model(
-            FishAudioModelEnum.S2_1_PRO_FREE
-        )
-        reference_id = (
-            speak_text_dto.reference_id
-            or self._environment_reader_raw_repository.get_voice_fish_reference_id()
-        )
+        model = speak_text_dto.model or FishAudioModelEnum.S2_1_PRO_FREE
+        reference_id = speak_text_dto.reference_id or FishAudioVoiceEnum.SARAH_EN
 
         wav_bytes = self._fish_audio_tts_api_repository.get_wav_bytes_from_text(
             speech_text, model, reference_id
