@@ -29,3 +29,12 @@ class AudioPlayerWinsoundRepository:
         import winsound
 
         winsound.PlaySound(wav_bytes, winsound.SND_MEMORY)
+
+    def play_beep(self, frequency_hz: int, duration_ms: int) -> None:
+        """Aviso corto («ya te escucho», «recibido»). Fuera de Windows no suena."""
+        if sys.platform != "win32":
+            return
+
+        import winsound
+
+        winsound.Beep(frequency_hz, duration_ms)

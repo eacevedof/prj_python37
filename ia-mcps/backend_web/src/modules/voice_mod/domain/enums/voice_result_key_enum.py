@@ -9,3 +9,5 @@ class VoiceResultKeyEnum:
     REFERENCE_ID = "reference_id"
     SPEECH_TEXT = "speech_text"
     SPOKEN_CHARS = "spoken_chars"
+    PROMPT_TEXT = "prompt_text"
+    RECORDED_SECONDS = "recorded_seconds"

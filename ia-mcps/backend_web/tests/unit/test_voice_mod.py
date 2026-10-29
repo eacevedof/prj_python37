@@ -161,3 +161,75 @@ def test_a_reply_with_only_code_is_not_spoken() -> None:
 
     with pytest.raises(VoiceException, match="no text to speak"):
         SpeakTextService.get_instance()(SpeakTextDto.from_primitives({"text": "```\nls\n```"}))
+
+
+def _patch_listen_repositories(
+    monkeypatch: pytest.MonkeyPatch, recorded_seconds: float, transcription: str
+) -> list[int]:
+    import numpy as np
+
+    from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
+        AudioPlayerWinsoundRepository,
+    )
+    from src.modules.voice_mod.infrastructure.repositories.push_to_talk_recorder_win32_repository import (
+        PushToTalkRecorderWin32Repository,
+    )
+    from src.modules.voice_mod.infrastructure.repositories.speech_to_text_faster_whisper_repository import (
+        SpeechToTextFasterWhisperRepository,
+    )
+
+    beeps: list[int] = []
+    monkeypatch.setattr(SpeechToTextFasterWhisperRepository, "load_model", lambda _self: None)
+    monkeypatch.setattr(
+        SpeechToTextFasterWhisperRepository, "get_text_from_samples", lambda _self, _samples: transcription
+    )
+    monkeypatch.setattr(
+        PushToTalkRecorderWin32Repository,
+        "get_samples_while_key_held",
+        lambda _self, _wait, _max, sample_rate: np.zeros(int(recorded_seconds * sample_rate), dtype=np.float32),
+    )
+    monkeypatch.setattr(
+        AudioPlayerWinsoundRepository, "play_beep", lambda _self, frequency_hz, _ms: beeps.append(frequency_hz)
+    )
+    return beeps
+
+
+def _listen_user_prompt():
+    from src.modules.voice_mod.application.listen_user_prompt.listen_user_prompt_dto import (
+        ListenUserPromptDto,
+    )
+    from src.modules.voice_mod.application.listen_user_prompt.listen_user_prompt_service import (
+        ListenUserPromptService,
+    )
+
+    return ListenUserPromptService.get_instance()(ListenUserPromptDto.from_primitives({}))
+
+
+def test_listen_user_prompt_returns_what_was_said(monkeypatch: pytest.MonkeyPatch) -> None:
+    beeps = _patch_listen_repositories(monkeypatch, 2.5, "revisa los tests")
+
+    listen_user_prompt_result_dto = _listen_user_prompt()
+
+    assert listen_user_prompt_result_dto.prompt_text == "revisa los tests"
+    assert listen_user_prompt_result_dto.recorded_seconds == 2.5
+    assert len(beeps) == 2
+
+
+def test_a_key_tap_is_not_transcribed(monkeypatch: pytest.MonkeyPatch) -> None:
+    beeps = _patch_listen_repositories(monkeypatch, 0.1, "no debería llegar")
+
+    assert _listen_user_prompt().prompt_text == ""
+    assert len(beeps) == 1
+
+
+def test_voice_mode_is_turned_on_and_off(tmp_path: Path) -> None:
+    from src.modules.voice_mod.infrastructure.repositories.voice_mode_file_repository import (
+        VoiceModeFileRepository,
+    )
+
+    voice_mode_file_repository = VoiceModeFileRepository(tmp_path / "voice" / "voice-mode.on")
+    assert not voice_mode_file_repository.is_voice_mode_on()
+    voice_mode_file_repository.turn_voice_mode_on()
+    assert voice_mode_file_repository.is_voice_mode_on()
+    voice_mode_file_repository.turn_voice_mode_off()
+    assert not voice_mode_file_repository.is_voice_mode_on()

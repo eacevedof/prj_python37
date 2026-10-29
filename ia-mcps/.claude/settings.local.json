@@ -49,5 +49,18 @@
       "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m pip show weasyprint)",
       "Bash(\".venv-win\\\\Scripts\\\\python.exe\" -m pip show pydyf)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/projects/prj_python37/ia-mcps/.venv-win/Scripts/python.exe C:/projects/prj_python37/ia-mcps/backend_web/public/main_voice_hook.py",
+            "timeout": 360
+          }
+        ]
+      }
+    ]
   }
 }
