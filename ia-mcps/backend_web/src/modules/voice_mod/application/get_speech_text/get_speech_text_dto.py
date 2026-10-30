@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Self, final
 
-from src.modules.voice_mod.domain.enums import VoiceConstraintsEnum
+from src.modules.voice_mod.domain.enums import VoiceConstraintsEnum, VoiceResultKeyEnum
 
 
 @final
@@ -15,6 +15,6 @@ class GetSpeechTextDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            text=str(primitives.get("text", "")),
-            max_chars=int(primitives.get("max_chars", VoiceConstraintsEnum.MAX_SPEECH_CHARS)),
+            text=str(primitives.get(VoiceResultKeyEnum.TEXT, "")).strip(),
+            max_chars=int(primitives.get(VoiceResultKeyEnum.MAX_CHARS, VoiceConstraintsEnum.MAX_SPEECH_CHARS)),
         )

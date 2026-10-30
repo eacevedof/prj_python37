@@ -7,6 +7,7 @@ from src.modules.voice_mod.application.get_speech_text.get_speech_text_dto impor
 from src.modules.voice_mod.application.get_speech_text.get_speech_text_result_dto import (
     GetSpeechTextResultDto,
 )
+from src.modules.voice_mod.domain.enums import VoiceResultKeyEnum
 
 # Los patrones de línea usan `[ \t]*` y no `\s*`: con MULTILINE, `\s*` se come
 # también los saltos de línea de antes y pega párrafos que iban separados.
@@ -40,7 +41,7 @@ class GetSpeechTextService:
     def __call__(self, get_speech_text_dto: GetSpeechTextDto) -> GetSpeechTextResultDto:
         speech_text = self.__get_plain_text(get_speech_text_dto.text)
         speech_text = self.__get_truncated_text(speech_text, get_speech_text_dto.max_chars)
-        return GetSpeechTextResultDto.from_primitives({"speech_text": speech_text})
+        return GetSpeechTextResultDto.from_primitives({VoiceResultKeyEnum.SPEECH_TEXT: speech_text})
 
     def __get_plain_text(self, markdown_text: str) -> str:
         plain_text = _FENCED_CODE_PATTERN.sub("", markdown_text)

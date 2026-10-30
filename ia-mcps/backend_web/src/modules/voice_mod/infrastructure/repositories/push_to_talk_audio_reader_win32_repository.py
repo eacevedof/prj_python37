@@ -7,7 +7,7 @@ from typing import Any, Self, final
 import numpy as np
 from numpy.typing import NDArray
 
-from src.modules.voice_mod.domain.enums import PushToTalkKeyEnum
+from src.modules.voice_mod.domain.enums import PushToTalkKeyEnum, VoiceMessageEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 
 _WH_KEYBOARD_LL = 13
@@ -32,7 +32,7 @@ class _KeyboardEventStruct(ctypes.Structure):
 
 
 @final
-class PushToTalkRecorderWin32Repository:
+class PushToTalkAudioReaderWin32Repository:
     """Graba el micro mientras se mantiene pulsada la tecla de *push-to-talk*.
 
     Datasources: un hook de teclado de bajo nivel de Win32 (`WH_KEYBOARD_LL`, por
@@ -53,10 +53,11 @@ class PushToTalkRecorderWin32Repository:
         Devuelve un array vacío si nadie pulsa la tecla en `wait_seconds`.
 
         Raises:
-            VoiceException: si la máquina no es Windows o no hay micro.
+            VoiceException: si la máquina no es Windows o no se instala el hook.
+            sounddevice.PortAudioError: si no hay micro.
         """
         if sys.platform != "win32":
-            VoiceException.unexpected_custom("push-to-talk is only supported on Windows for now")
+            VoiceException.unexpected_custom(VoiceMessageEnum.PUSH_TO_TALK_WINDOWS_ONLY)
 
         import sounddevice  # type: ignore[import-untyped]
 
@@ -107,7 +108,7 @@ class PushToTalkRecorderWin32Repository:
         )
         if not hook_handle:
             VoiceException.unexpected_custom(
-                f"cannot install the keyboard hook (win32 error {ctypes.get_last_error()})"
+                f"{VoiceMessageEnum.KEYBOARD_HOOK_FAILED}: {ctypes.get_last_error()}"
             )
 
         def on_audio_chunk(chunk: NDArray[np.float32], _frames: int, _time: Any, _status: Any) -> None:
@@ -118,14 +119,12 @@ class PushToTalkRecorderWin32Repository:
             if not key_state["pressed"]:
                 return np.zeros(0, dtype=np.float32)
             self._send_mask_key(user32)
-            try:
-                with sounddevice.InputStream(
-                    samplerate=sample_rate, channels=1, dtype="float32", callback=on_audio_chunk
-                ):
-                    self._pump_until(user32, lambda: key_state["released"], max_record_seconds)
-            except sounddevice.PortAudioError as port_audio_error:
-                VoiceException.unexpected_custom(f"cannot open the microphone: {port_audio_error}")
+            with sounddevice.InputStream(
+                samplerate=sample_rate, channels=1, dtype="float32", callback=on_audio_chunk
+            ):
+                self._pump_until(user32, lambda: key_state["released"], max_record_seconds)
         finally:
+            # Sin except: solo se garantiza soltar el hook de teclado pase lo que pase.
             user32.UnhookWindowsHookEx(hook_handle)
 
         if not recorded_chunks:

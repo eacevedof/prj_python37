@@ -1,3 +1,4 @@
+import json
 from typing import Any, Self, final
 
 from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import (
@@ -6,6 +7,7 @@ from src.modules.voice_mod.application.get_last_reply.get_last_reply_dto import 
 from src.modules.voice_mod.application.get_last_reply.get_last_reply_result_dto import (
     GetLastReplyResultDto,
 )
+from src.modules.voice_mod.domain.enums import VoiceMessageEnum, VoiceResultKeyEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 from src.modules.voice_mod.infrastructure.repositories.transcript_reader_jsonl_repository import (
     TranscriptReaderJsonlRepository,
@@ -24,7 +26,8 @@ class GetLastReplyService:
     más texto) y entre medias hay líneas `user` que solo llevan `tool_result`. El
     turno empieza en la última línea `user` que trae texto escrito por la
     persona; desde ahí se juntan los bloques de texto del asistente. Las líneas
-    de subagentes (`isSidechain`) no cuentan.
+    de subagentes (`isSidechain`) no cuentan, y la última línea se descarta si
+    aún no tiene su `\n`: Claude Code la está escribiendo mientras se lee.
     """
 
     _transcript_reader_jsonl_repository: TranscriptReaderJsonlRepository
@@ -42,13 +45,11 @@ class GetLastReplyService:
             VoiceException: si no llega ruta de transcript o el fichero no existe.
         """
         if not get_last_reply_dto.transcript_path:
-            VoiceException.bad_request_custom("transcript_path is required")
+            VoiceException.bad_request_custom(VoiceMessageEnum.TRANSCRIPT_PATH_REQUIRED)
 
         transcript_entries = [
             transcript_entry
-            for transcript_entry in self._transcript_reader_jsonl_repository.get_entries(
-                get_last_reply_dto.transcript_path
-            )
+            for transcript_entry in self.__get_transcript_entries(get_last_reply_dto.transcript_path)
             if not transcript_entry.get("isSidechain")
         ]
 
@@ -60,7 +61,17 @@ class GetLastReplyService:
             if transcript_entry.get("type") == _ROLE_ASSISTANT:
                 reply_texts.extend(self.__get_text_blocks(transcript_entry))
 
-        return GetLastReplyResultDto.from_primitives({"reply_text": "\n\n".join(reply_texts)})
+        return GetLastReplyResultDto.from_primitives({VoiceResultKeyEnum.REPLY_TEXT: "\n\n".join(reply_texts)})
+
+    def __get_transcript_entries(self, transcript_path: str) -> list[dict[str, Any]]:
+        transcript_entries: list[dict[str, Any]] = []
+        for transcript_line in self._transcript_reader_jsonl_repository.get_lines(transcript_path):
+            if not transcript_line.endswith("\n") or not transcript_line.strip():
+                continue
+            transcript_entry = json.loads(transcript_line)
+            if isinstance(transcript_entry, dict):
+                transcript_entries.append(transcript_entry)
+        return transcript_entries
 
     def __is_user_prompt(self, transcript_entry: dict[str, Any]) -> bool:
         if transcript_entry.get("type") != _ROLE_USER:

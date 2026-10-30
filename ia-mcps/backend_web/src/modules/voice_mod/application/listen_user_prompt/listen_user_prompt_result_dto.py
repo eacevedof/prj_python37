@@ -15,7 +15,7 @@ class ListenUserPromptResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            prompt_text=str(primitives.get(VoiceResultKeyEnum.PROMPT_TEXT, "")),
+            prompt_text=str(primitives.get(VoiceResultKeyEnum.PROMPT_TEXT, "")).strip(),
             recorded_seconds=float(primitives.get(VoiceResultKeyEnum.RECORDED_SECONDS, 0.0)),
         )
 

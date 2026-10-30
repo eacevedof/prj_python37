@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Self, final
 
-from src.modules.voice_mod.domain.enums import VoiceConstraintsEnum
+from src.modules.voice_mod.domain.enums import VoiceConstraintsEnum, VoiceResultKeyEnum
 
 
 @final
@@ -15,8 +15,8 @@ class ListenUserPromptDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            wait_seconds=int(primitives.get("wait_seconds", VoiceConstraintsEnum.LISTEN_WAIT_SECONDS)),
+            wait_seconds=int(primitives.get(VoiceResultKeyEnum.WAIT_SECONDS, VoiceConstraintsEnum.LISTEN_WAIT_SECONDS)),
             max_record_seconds=int(
-                primitives.get("max_record_seconds", VoiceConstraintsEnum.MAX_RECORD_SECONDS)
+                primitives.get(VoiceResultKeyEnum.MAX_RECORD_SECONDS, VoiceConstraintsEnum.MAX_RECORD_SECONDS)
             ),
         )

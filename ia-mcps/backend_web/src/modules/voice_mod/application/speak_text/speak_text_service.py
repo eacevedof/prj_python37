@@ -10,13 +10,18 @@ from src.modules.voice_mod.application.speak_text.speak_text_dto import SpeakTex
 from src.modules.voice_mod.application.speak_text.speak_text_result_dto import (
     SpeakTextResultDto,
 )
-from src.modules.voice_mod.domain.enums import FishAudioModelEnum, FishAudioVoiceEnum
-from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
-from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
-    AudioPlayerWinsoundRepository,
+from src.modules.voice_mod.domain.enums import (
+    FishAudioModelEnum,
+    FishAudioVoiceEnum,
+    VoiceMessageEnum,
+    VoiceResultKeyEnum,
 )
-from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_api_repository import (
-    FishAudioTtsApiRepository,
+from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
+from src.modules.voice_mod.infrastructure.repositories.audio_writer_winsound_repository import (
+    AudioWriterWinsoundRepository,
+)
+from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_reader_api_repository import (
+    FishAudioTtsReaderApiRepository,
 )
 
 
@@ -29,13 +34,13 @@ class SpeakTextService:
     """
 
     _get_speech_text_service: GetSpeechTextService
-    _fish_audio_tts_api_repository: FishAudioTtsApiRepository
-    _audio_player_winsound_repository: AudioPlayerWinsoundRepository
+    _fish_audio_tts_reader_api_repository: FishAudioTtsReaderApiRepository
+    _audio_writer_winsound_repository: AudioWriterWinsoundRepository
 
     def __init__(self) -> None:
         self._get_speech_text_service = GetSpeechTextService.get_instance()
-        self._fish_audio_tts_api_repository = FishAudioTtsApiRepository.get_instance()
-        self._audio_player_winsound_repository = AudioPlayerWinsoundRepository.get_instance()
+        self._fish_audio_tts_reader_api_repository = FishAudioTtsReaderApiRepository.get_instance()
+        self._audio_writer_winsound_repository = AudioWriterWinsoundRepository.get_instance()
 
     @classmethod
     def get_instance(cls) -> Self:
@@ -45,29 +50,30 @@ class SpeakTextService:
         """
         Raises:
             VoiceException: si no queda texto que leer, falta la API key, Fish
-                Audio falla o la máquina no puede reproducir audio.
+                Audio no devuelve audio o la máquina no puede reproducirlo.
+            HTTPError, URLError: si Fish Audio responde con error o no se alcanza.
         """
         get_speech_text_result_dto = self._get_speech_text_service(
             GetSpeechTextDto.from_primitives({
-                "text": speak_text_dto.text,
-                "max_chars": speak_text_dto.max_chars,
+                VoiceResultKeyEnum.TEXT: speak_text_dto.text,
+                VoiceResultKeyEnum.MAX_CHARS: speak_text_dto.max_chars,
             })
         )
         speech_text = get_speech_text_result_dto.speech_text
         if not speech_text:
-            VoiceException.bad_request_custom("there is no text to speak")
+            VoiceException.bad_request_custom(VoiceMessageEnum.NO_TEXT_TO_SPEAK)
 
         model = speak_text_dto.model or FishAudioModelEnum.S2_1_PRO_FREE
         reference_id = speak_text_dto.reference_id or FishAudioVoiceEnum.SARAH_EN
 
-        wav_bytes = self._fish_audio_tts_api_repository.get_wav_bytes_from_text(
+        wav_bytes = self._fish_audio_tts_reader_api_repository.get_wav_bytes_from_text(
             speech_text, model, reference_id
         )
-        self._audio_player_winsound_repository.play_wav_bytes(wav_bytes)
+        self._audio_writer_winsound_repository.play_wav_bytes(wav_bytes)
 
         return SpeakTextResultDto.from_primitives({
-            "model": model,
-            "reference_id": reference_id,
-            "speech_text": speech_text,
-            "spoken_chars": len(speech_text),
+            VoiceResultKeyEnum.MODEL: model,
+            VoiceResultKeyEnum.REFERENCE_ID: reference_id,
+            VoiceResultKeyEnum.SPEECH_TEXT: speech_text,
+            VoiceResultKeyEnum.SPOKEN_CHARS: len(speech_text),
         })

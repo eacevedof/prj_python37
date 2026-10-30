@@ -5,6 +5,7 @@ hermética (cero red, cero credenciales) y corre igual en Windows que en Linux.
 """
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -119,11 +120,11 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
         SpeakLastReplyService,
     )
     from src.modules.voice_mod.domain.enums import FishAudioVoiceEnum
-    from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
-        AudioPlayerWinsoundRepository,
+    from src.modules.voice_mod.infrastructure.repositories.audio_writer_winsound_repository import (
+        AudioWriterWinsoundRepository,
     )
-    from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_api_repository import (
-        FishAudioTtsApiRepository,
+    from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_reader_api_repository import (
+        FishAudioTtsReaderApiRepository,
     )
 
     tts_calls: list[tuple[str, str, str]] = []
@@ -133,9 +134,9 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
         tts_calls.append((speech_text, model, reference_id))
         return b"RIFF-fake-wav"
 
-    monkeypatch.setattr(FishAudioTtsApiRepository, "get_wav_bytes_from_text", fake_get_wav_bytes_from_text)
+    monkeypatch.setattr(FishAudioTtsReaderApiRepository, "get_wav_bytes_from_text", fake_get_wav_bytes_from_text)
     monkeypatch.setattr(
-        AudioPlayerWinsoundRepository, "play_wav_bytes", lambda _self, wav_bytes: played_audios.append(wav_bytes)
+        AudioWriterWinsoundRepository, "play_wav_bytes", lambda _self, wav_bytes: played_audios.append(wav_bytes)
     )
 
     transcript_path = _write_transcript(tmp_path, [
@@ -167,28 +168,28 @@ def _patch_listen_repositories(
 ) -> list[int]:
     import numpy as np
 
-    from src.modules.voice_mod.infrastructure.repositories.audio_player_winsound_repository import (
-        AudioPlayerWinsoundRepository,
+    from src.modules.voice_mod.infrastructure.repositories.audio_writer_winsound_repository import (
+        AudioWriterWinsoundRepository,
     )
-    from src.modules.voice_mod.infrastructure.repositories.push_to_talk_recorder_win32_repository import (
-        PushToTalkRecorderWin32Repository,
+    from src.modules.voice_mod.infrastructure.repositories.push_to_talk_audio_reader_win32_repository import (
+        PushToTalkAudioReaderWin32Repository,
     )
-    from src.modules.voice_mod.infrastructure.repositories.speech_to_text_faster_whisper_repository import (
-        SpeechToTextFasterWhisperRepository,
+    from src.modules.voice_mod.infrastructure.repositories.speech_to_text_reader_faster_whisper_repository import (
+        SpeechToTextReaderFasterWhisperRepository,
     )
 
     beeps: list[int] = []
-    monkeypatch.setattr(SpeechToTextFasterWhisperRepository, "load_model", lambda _self: None)
+    monkeypatch.setattr(SpeechToTextReaderFasterWhisperRepository, "load_model", lambda _self: None)
     monkeypatch.setattr(
-        SpeechToTextFasterWhisperRepository, "get_text_from_samples", lambda _self, _samples: transcription
+        SpeechToTextReaderFasterWhisperRepository, "get_text_from_samples", lambda _self, _samples: transcription
     )
     monkeypatch.setattr(
-        PushToTalkRecorderWin32Repository,
+        PushToTalkAudioReaderWin32Repository,
         "get_samples_while_key_held",
         lambda _self, _wait, _max, sample_rate: np.zeros(int(recorded_seconds * sample_rate), dtype=np.float32),
     )
     monkeypatch.setattr(
-        AudioPlayerWinsoundRepository, "play_beep", lambda _self, frequency_hz, _ms: beeps.append(frequency_hz)
+        AudioWriterWinsoundRepository, "play_beep", lambda _self, frequency_hz, _ms: beeps.append(frequency_hz)
     )
     return beeps
 
@@ -222,23 +223,63 @@ def test_a_key_tap_is_not_transcribed(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_voice_mode_is_turned_on_and_off(tmp_path: Path) -> None:
-    from src.modules.voice_mod.infrastructure.repositories.voice_mode_file_repository import (
-        VoiceModeFileRepository,
+    from src.modules.voice_mod.infrastructure.repositories.voice_mode_reader_file_repository import (
+        VoiceModeReaderFileRepository,
+    )
+    from src.modules.voice_mod.infrastructure.repositories.voice_mode_writer_file_repository import (
+        VoiceModeWriterFileRepository,
     )
 
-    voice_mode_file_repository = VoiceModeFileRepository(tmp_path / "voice" / "voice-mode.on")
-    assert not voice_mode_file_repository.is_voice_mode_on()
-    voice_mode_file_repository.turn_voice_mode_on()
-    assert voice_mode_file_repository.is_voice_mode_on()
-    voice_mode_file_repository.turn_voice_mode_off()
-    assert not voice_mode_file_repository.is_voice_mode_on()
+    flag_file_path = tmp_path / "voice" / "voice-mode.on"
+    voice_mode_reader_file_repository = VoiceModeReaderFileRepository(flag_file_path)
+    voice_mode_writer_file_repository = VoiceModeWriterFileRepository(flag_file_path)
+    assert not voice_mode_reader_file_repository.is_voice_mode_on()
+    voice_mode_writer_file_repository.turn_voice_mode_on()
+    assert voice_mode_reader_file_repository.is_voice_mode_on()
+    voice_mode_writer_file_repository.turn_voice_mode_off()
+    assert not voice_mode_reader_file_repository.is_voice_mode_on()
+
+
+def _run_voice_turn(monkeypatch: pytest.MonkeyPatch, transcription: str) -> tuple[Any, list[bool]]:
+    from src.modules.voice_mod.application.run_voice_turn.run_voice_turn_dto import (
+        RunVoiceTurnDto,
+    )
+    from src.modules.voice_mod.application.run_voice_turn.run_voice_turn_service import (
+        RunVoiceTurnService,
+    )
+    from src.modules.voice_mod.infrastructure.repositories.voice_mode_writer_file_repository import (
+        VoiceModeWriterFileRepository,
+    )
+
+    _patch_listen_repositories(monkeypatch, 2.0, transcription)
+    turned_off: list[bool] = []
+    monkeypatch.setattr(VoiceModeWriterFileRepository, "turn_voice_mode_off", lambda _self: turned_off.append(True))
+
+    return RunVoiceTurnService.get_instance()(RunVoiceTurnDto.from_primitives({})), turned_off
+
+
+def test_a_voice_turn_returns_the_next_prompt(monkeypatch: pytest.MonkeyPatch) -> None:
+    run_voice_turn_result_dto, turned_off = _run_voice_turn(monkeypatch, "revisa los tests")
+
+    assert run_voice_turn_result_dto.prompt_text == "revisa los tests"
+    assert not run_voice_turn_result_dto.is_voice_mode_stopped
+    assert not turned_off
+
+
+@pytest.mark.parametrize("transcription", ["fin voz", "Fin de voz.", "¡fin, voz!"])
+def test_saying_fin_voz_turns_voice_mode_off(monkeypatch: pytest.MonkeyPatch, transcription: str) -> None:
+    run_voice_turn_result_dto, turned_off = _run_voice_turn(monkeypatch, transcription)
+
+    assert run_voice_turn_result_dto.prompt_text == ""
+    assert run_voice_turn_result_dto.is_voice_mode_stopped
+    assert turned_off == [True]
 
 
 def test_fish_streaming_wav_header_gets_real_sizes() -> None:
     import struct
 
-    from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_api_repository import (
-        FishAudioTtsApiRepository,
+    from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_reader_api_repository import (
+        FishAudioTtsReaderApiRepository,
     )
 
     pcm_bytes = b"" * 50
@@ -248,7 +289,7 @@ def test_fish_streaming_wav_header_gets_real_sizes() -> None:
         + b"data" + struct.pack("<I", 0xFFFFFF00) + pcm_bytes
     )
 
-    fixed_wav = FishAudioTtsApiRepository.get_instance()._get_wav_with_real_sizes(streaming_wav)
+    fixed_wav = FishAudioTtsReaderApiRepository.get_instance()._get_wav_with_real_sizes(streaming_wav)
 
     assert struct.unpack("<I", fixed_wav[4:8])[0] == len(streaming_wav) - 8
     assert struct.unpack("<I", fixed_wav[40:44])[0] == len(pcm_bytes)

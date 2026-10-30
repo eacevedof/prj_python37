@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Self, final
 
+from src.modules.voice_mod.domain.enums import VoiceResultKeyEnum
+
 
 @final
 @dataclass(frozen=True, slots=True)
@@ -11,4 +13,4 @@ class GetLastReplyResultDto:
 
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
-        return cls(reply_text=str(primitives.get("reply_text", "")))
+        return cls(reply_text=str(primitives.get(VoiceResultKeyEnum.REPLY_TEXT, "")).strip())

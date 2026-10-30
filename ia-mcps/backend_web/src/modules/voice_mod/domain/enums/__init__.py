@@ -5,6 +5,7 @@ from src.modules.voice_mod.domain.enums.speech_to_text_enum import SpeechToTextE
 from src.modules.voice_mod.domain.enums.voice_constraints_enum import (
     VoiceConstraintsEnum,
 )
+from src.modules.voice_mod.domain.enums.voice_message_enum import VoiceMessageEnum
 from src.modules.voice_mod.domain.enums.voice_result_key_enum import VoiceResultKeyEnum
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "PushToTalkKeyEnum",
     "SpeechToTextEnum",
     "VoiceConstraintsEnum",
+    "VoiceMessageEnum",
     "VoiceResultKeyEnum",
 ]

@@ -17,9 +17,9 @@ class SpeakTextResultDto:
     @classmethod
     def from_primitives(cls, primitives: dict[str, Any]) -> Self:
         return cls(
-            model=str(primitives.get(VoiceResultKeyEnum.MODEL, "")),
-            reference_id=str(primitives.get(VoiceResultKeyEnum.REFERENCE_ID, "")),
-            speech_text=str(primitives.get(VoiceResultKeyEnum.SPEECH_TEXT, "")),
+            model=str(primitives.get(VoiceResultKeyEnum.MODEL, "")).strip(),
+            reference_id=str(primitives.get(VoiceResultKeyEnum.REFERENCE_ID, "")).strip(),
+            speech_text=str(primitives.get(VoiceResultKeyEnum.SPEECH_TEXT, "")).strip(),
             spoken_chars=int(primitives.get(VoiceResultKeyEnum.SPOKEN_CHARS, 0)),
         )
 

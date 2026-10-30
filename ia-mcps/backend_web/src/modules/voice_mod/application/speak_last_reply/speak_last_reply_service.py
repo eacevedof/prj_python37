@@ -16,6 +16,7 @@ from src.modules.voice_mod.application.speak_text.speak_text_result_dto import (
 from src.modules.voice_mod.application.speak_text.speak_text_service import (
     SpeakTextService,
 )
+from src.modules.voice_mod.domain.enums import VoiceResultKeyEnum
 
 
 @final
@@ -40,8 +41,8 @@ class SpeakLastReplyService:
                 falla la lectura en alto.
         """
         get_last_reply_result_dto = self._get_last_reply_service(
-            GetLastReplyDto.from_primitives({"transcript_path": speak_last_reply_dto.transcript_path})
+            GetLastReplyDto.from_primitives({VoiceResultKeyEnum.TRANSCRIPT_PATH: speak_last_reply_dto.transcript_path})
         )
         return self._speak_text_service(
-            SpeakTextDto.from_primitives({"text": get_last_reply_result_dto.reply_text})
+            SpeakTextDto.from_primitives({VoiceResultKeyEnum.TEXT: get_last_reply_result_dto.reply_text})
         )

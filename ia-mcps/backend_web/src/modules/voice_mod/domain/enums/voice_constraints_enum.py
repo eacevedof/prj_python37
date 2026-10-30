@@ -16,3 +16,9 @@ class VoiceConstraintsEnum(IntEnum):
     LISTEN_WAIT_SECONDS = 240
     MAX_RECORD_SECONDS = 60
     RECORD_SAMPLE_RATE = 16000
+    # Menos que esto es un toque de tecla sin querer, no una frase.
+    MIN_RECORDED_MS = 400
+    # Pitidos: «ya te escucho» (agudo) y «recibido» (grave).
+    READY_BEEP_HZ = 880
+    DONE_BEEP_HZ = 520
+    BEEP_MS = 120

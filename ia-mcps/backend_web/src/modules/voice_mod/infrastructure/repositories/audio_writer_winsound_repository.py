@@ -1,11 +1,12 @@
 import sys
 from typing import Self, final
 
+from src.modules.voice_mod.domain.enums import VoiceMessageEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceException
 
 
 @final
-class AudioPlayerWinsoundRepository:
+class AudioWriterWinsoundRepository:
     """Reproducción de audio por los altavoces de esta máquina (datasource: winsound).
 
     `winsound` es de la librería estándar y reproduce un WAV desde memoria sin
@@ -24,7 +25,7 @@ class AudioPlayerWinsoundRepository:
             VoiceException: si la máquina no es Windows.
         """
         if sys.platform != "win32":
-            VoiceException.unexpected_custom("audio playback is only supported on Windows for now")
+            VoiceException.unexpected_custom(VoiceMessageEnum.AUDIO_PLAYBACK_WINDOWS_ONLY)
 
         import winsound
 

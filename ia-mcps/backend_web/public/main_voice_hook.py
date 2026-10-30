@@ -25,7 +25,6 @@ Alta y `timeout` en `.claude/settings.local.json` del proyecto (ver ia-mcps-depl
 """
 
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -50,6 +49,12 @@ from src.modules.voice_mod.application.listen_user_prompt.listen_user_prompt_dto
 from src.modules.voice_mod.application.listen_user_prompt.listen_user_prompt_service import (
     ListenUserPromptService,
 )
+from src.modules.voice_mod.application.run_voice_turn.run_voice_turn_dto import (
+    RunVoiceTurnDto,
+)
+from src.modules.voice_mod.application.run_voice_turn.run_voice_turn_service import (
+    RunVoiceTurnService,
+)
 from src.modules.voice_mod.application.speak_last_reply.speak_last_reply_dto import (
     SpeakLastReplyDto,
 )
@@ -62,11 +67,15 @@ from src.modules.voice_mod.application.speak_text.speak_text_dto import (
 from src.modules.voice_mod.application.speak_text.speak_text_service import (
     SpeakTextService,
 )
+from src.modules.voice_mod.domain.enums import VoiceResultKeyEnum
 from src.modules.voice_mod.domain.exceptions.voice_exception import (
     VoiceException,
 )
-from src.modules.voice_mod.infrastructure.repositories.voice_mode_file_repository import (
-    VoiceModeFileRepository,
+from src.modules.voice_mod.infrastructure.repositories.voice_mode_reader_file_repository import (
+    VoiceModeReaderFileRepository,
+)
+from src.modules.voice_mod.infrastructure.repositories.voice_mode_writer_file_repository import (
+    VoiceModeWriterFileRepository,
 )
 
 _EXIT_OK = 0
@@ -78,7 +87,7 @@ _LISTEN_FLAG = "--listen"
 _ON_FLAG = "--on"
 _OFF_FLAG = "--off"
 _LOG_MODULE = "voice_hook"
-_STOP_VOICE_PATTERN = re.compile(r"^\W*fin\W+(de\W+)?voz\W*$", re.IGNORECASE)
+_LISTEN_TEST_WAIT_SECONDS = 30
 _VOICE_PROMPT_PREFIX = "Instrucción del usuario por voz (transcrita, puede tener errores): "
 
 
@@ -122,10 +131,21 @@ def _has_fish_api_key() -> bool:
 
 
 def _run_as_hook() -> int:
-    hook_payload = _get_hook_payload()
-    transcript_path = str(hook_payload.get("transcript_path", "")).strip()
+    """Único punto que captura todo: pase lo que pase, sale con 0 y lo apunta."""
+    try:
+        return _run_hook_turn()
+    except VoiceException as voice_exception:
+        Logger.get_instance().log_error(_LOG_MODULE, voice_exception.message)
+    except Exception as exception:  # noqa: BLE001 - el controlador es el único que captura todo
+        Logger.get_instance().log_exception(exception, _LOG_MODULE)
+    return _EXIT_OK
 
-    if VoiceModeFileRepository.get_instance().is_voice_mode_on():
+
+def _run_hook_turn() -> int:
+    hook_payload = _get_hook_payload()
+    transcript_path = str(hook_payload.get(VoiceResultKeyEnum.TRANSCRIPT_PATH, "")).strip()
+
+    if VoiceModeReaderFileRepository.get_instance().is_voice_mode_on():
         return _run_voice_turn(transcript_path)
 
     # `stop_hook_active` = Claude Code ya está continuando por otro hook Stop:
@@ -147,39 +167,35 @@ def _run_as_hook() -> int:
 
 def _run_voice_turn(transcript_path: str) -> int:
     """Aquí no se mira `stop_hook_active`: en el bucle de voz todos los turnos
-    después del primero llegan con él a true, porque los continúa este hook."""
+    después del primero llegan con él a true, porque los continúa este hook.
+
+    Se lee en alto ANTES y por separado: si falla la voz, se escucha igual."""
     if transcript_path and _has_fish_api_key():
         _speak_transcript(transcript_path)
 
-    try:
-        listen_user_prompt_result_dto = ListenUserPromptService.get_instance()(
-            ListenUserPromptDto.from_primitives({})
-        )
-    except VoiceException as voice_exception:
-        Logger.get_instance().log_error(_LOG_MODULE, voice_exception.message)
+    run_voice_turn_result_dto = RunVoiceTurnService.get_instance()(RunVoiceTurnDto.from_primitives({}))
+    if not run_voice_turn_result_dto.prompt_text:
         return _EXIT_OK
 
-    prompt_text = listen_user_prompt_result_dto.prompt_text
-    if not prompt_text:
-        return _EXIT_OK
-
-    if _STOP_VOICE_PATTERN.match(prompt_text):
-        VoiceModeFileRepository.get_instance().turn_voice_mode_off()
-        return _EXIT_OK
-
-    print(json.dumps({"decision": "block", "reason": _VOICE_PROMPT_PREFIX + prompt_text}))
+    print(json.dumps({
+        "decision": "block",
+        "reason": _VOICE_PROMPT_PREFIX + run_voice_turn_result_dto.prompt_text,
+    }))
     return _EXIT_OK
 
 
 def _speak_transcript(transcript_path: str) -> int:
     try:
         SpeakLastReplyService.get_instance()(
-            SpeakLastReplyDto.from_primitives({"transcript_path": transcript_path})
+            SpeakLastReplyDto.from_primitives({VoiceResultKeyEnum.TRANSCRIPT_PATH: transcript_path})
         )
     except VoiceException as voice_exception:
         Logger.get_instance().log_error(
-            _LOG_MODULE, voice_exception.message, {"transcript_path": transcript_path}
+            _LOG_MODULE, voice_exception.message, {VoiceResultKeyEnum.TRANSCRIPT_PATH: transcript_path}
         )
+        return _EXIT_REFUSED
+    except Exception as exception:  # noqa: BLE001 - el controlador es el único que captura todo
+        Logger.get_instance().log_exception(exception, _LOG_MODULE)
         return _EXIT_REFUSED
     return _EXIT_OK
 
@@ -187,10 +203,13 @@ def _speak_transcript(transcript_path: str) -> int:
 def _say_text(speech_text: str) -> int:
     try:
         speak_text_result_dto = SpeakTextService.get_instance()(
-            SpeakTextDto.from_primitives({"text": speech_text})
+            SpeakTextDto.from_primitives({VoiceResultKeyEnum.TEXT: speech_text})
         )
     except VoiceException as voice_exception:
         print(f"error: {voice_exception.message}", file=sys.stderr)
+        return _EXIT_REFUSED
+    except Exception as exception:  # noqa: BLE001 - el controlador es el único que captura todo
+        print(f"error: {type(exception).__name__}: {exception}", file=sys.stderr)
         return _EXIT_REFUSED
     print(
         f"leído: {speak_text_result_dto.spoken_chars} caracteres"
@@ -203,10 +222,13 @@ def _listen_once() -> int:
     print("cargando el modelo… cuando pite, mantén pulsado Ctrl+Alt+Espacio y habla")
     try:
         listen_user_prompt_result_dto = ListenUserPromptService.get_instance()(
-            ListenUserPromptDto.from_primitives({"wait_seconds": 30})
+            ListenUserPromptDto.from_primitives({VoiceResultKeyEnum.WAIT_SECONDS: _LISTEN_TEST_WAIT_SECONDS})
         )
     except VoiceException as voice_exception:
         print(f"error: {voice_exception.message}", file=sys.stderr)
+        return _EXIT_REFUSED
+    except Exception as exception:  # noqa: BLE001 - el controlador es el único que captura todo
+        print(f"error: {type(exception).__name__}: {exception}", file=sys.stderr)
         return _EXIT_REFUSED
     print(f"grabado: {listen_user_prompt_result_dto.recorded_seconds} s")
     print(f"> {listen_user_prompt_result_dto.prompt_text or '(nada)'}")
@@ -214,12 +236,12 @@ def _listen_once() -> int:
 
 
 def _set_voice_mode(is_on: bool) -> int:
-    voice_mode_file_repository = VoiceModeFileRepository.get_instance()
+    voice_mode_writer_file_repository = VoiceModeWriterFileRepository.get_instance()
     if is_on:
-        voice_mode_file_repository.turn_voice_mode_on()
+        voice_mode_writer_file_repository.turn_voice_mode_on()
         print("modo voz: activo (Ctrl+Alt+Espacio para hablar, «fin voz» para salir)")
         return _EXIT_OK
-    voice_mode_file_repository.turn_voice_mode_off()
+    voice_mode_writer_file_repository.turn_voice_mode_off()
     print("modo voz: apagado")
     return _EXIT_OK
 
