@@ -232,3 +232,24 @@ def test_voice_mode_is_turned_on_and_off(tmp_path: Path) -> None:
     assert voice_mode_file_repository.is_voice_mode_on()
     voice_mode_file_repository.turn_voice_mode_off()
     assert not voice_mode_file_repository.is_voice_mode_on()
+
+
+def test_fish_streaming_wav_header_gets_real_sizes() -> None:
+    import struct
+
+    from src.modules.voice_mod.infrastructure.repositories.fish_audio_tts_api_repository import (
+        FishAudioTtsApiRepository,
+    )
+
+    pcm_bytes = b"" * 50
+    fmt_chunk = b"fmt " + struct.pack("<IHHIIHH", 16, 1, 1, 44100, 88200, 2, 16)
+    streaming_wav = (
+        b"RIFF" + struct.pack("<I", 0xFFFFFF24) + b"WAVE" + fmt_chunk
+        + b"data" + struct.pack("<I", 0xFFFFFF00) + pcm_bytes
+    )
+
+    fixed_wav = FishAudioTtsApiRepository.get_instance()._get_wav_with_real_sizes(streaming_wav)
+
+    assert struct.unpack("<I", fixed_wav[4:8])[0] == len(streaming_wav) - 8
+    assert struct.unpack("<I", fixed_wav[40:44])[0] == len(pcm_bytes)
+    assert fixed_wav[44:] == pcm_bytes

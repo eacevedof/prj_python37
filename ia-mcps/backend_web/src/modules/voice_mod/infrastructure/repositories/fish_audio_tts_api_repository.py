@@ -1,4 +1,5 @@
 import json
+import struct
 from typing import Any, Self, final
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -12,6 +13,8 @@ from src.modules.voice_mod.domain.exceptions.voice_exception import VoiceExcepti
 _FISH_AUDIO_TTS_URL = "https://api.fish.audio/v1/tts"
 _WAV_FORMAT = "wav"
 _ERROR_BODY_MAX_CHARS = 300
+_RIFF_HEADER_BYTES = 12
+_CHUNK_HEADER_BYTES = 8
 
 # https://www.youtube.com/shorts/5CRrrmbQQ7Q
 # https://docs.fish.audio/developer-guide/core-features/text-to-speech
@@ -74,4 +77,24 @@ class FishAudioTtsApiRepository:
 
         if not wav_bytes:
             VoiceException.unexpected_custom("fish audio returned no audio")
-        return wav_bytes
+        return self._get_wav_with_real_sizes(wav_bytes)
+
+    def _get_wav_with_real_sizes(self, wav_bytes: bytes) -> bytes:
+        """Fish manda el WAV en streaming: los tamaños RIFF y `data` de la cabecera
+        van a ~4 GB porque no sabe cuánto ocupará. `winsound.PlaySound` se fía de
+        ellos, lee fuera del buffer y tumba el proceso (access violation). Aquí se
+        reescriben con los tamaños reales."""
+        if wav_bytes[:4] != b"RIFF" or wav_bytes[8:12] != b"WAVE":
+            return wav_bytes
+        fixed_wav = bytearray(wav_bytes)
+        fixed_wav[4:8] = struct.pack("<I", len(wav_bytes) - _CHUNK_HEADER_BYTES)
+        chunk_offset = _RIFF_HEADER_BYTES
+        while chunk_offset + _CHUNK_HEADER_BYTES <= len(wav_bytes):
+            chunk_id = wav_bytes[chunk_offset:chunk_offset + 4]
+            data_offset = chunk_offset + _CHUNK_HEADER_BYTES
+            if chunk_id == b"data":
+                fixed_wav[chunk_offset + 4:data_offset] = struct.pack("<I", len(wav_bytes) - data_offset)
+                return bytes(fixed_wav)
+            chunk_size = struct.unpack("<I", wav_bytes[chunk_offset + 4:data_offset])[0]
+            chunk_offset = data_offset + chunk_size + chunk_size % 2
+        return bytes(fixed_wav)
