@@ -64,7 +64,7 @@ class SpeakTextService:
             VoiceException.bad_request_custom(VoiceMessageEnum.NO_TEXT_TO_SPEAK)
 
         model = speak_text_dto.model or FishAudioModelEnum.S2_1_PRO_FREE
-        reference_id = speak_text_dto.reference_id or FishAudioVoiceEnum.SARAH_EN
+        reference_id = speak_text_dto.reference_id or FishAudioVoiceEnum.CHICA_ES
 
         wav_bytes = self._fish_audio_tts_reader_api_repository.get_wav_bytes_from_text(
             speech_text, model, reference_id

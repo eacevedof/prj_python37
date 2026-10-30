@@ -147,7 +147,7 @@ def test_speak_last_reply_sends_the_clean_text_to_fish_audio_and_plays_it(
         SpeakLastReplyDto.from_primitives({"transcript_path": transcript_path})
     )
 
-    assert tts_calls == [("Todo bien, mira x.", "s2.1-pro-free", FishAudioVoiceEnum.SARAH_EN)]
+    assert tts_calls == [("Todo bien, mira x.", "s2.1-pro-free", FishAudioVoiceEnum.CHICA_ES)]
     assert played_audios == [b"RIFF-fake-wav"]
     assert speak_text_result_dto.spoken_chars == len("Todo bien, mira x.")
 
