@@ -7,7 +7,7 @@ bloquear a Claude Code; se apunta en el log.
 - **Modo normal** (fase 1): leer en alto tarda lo que dure el audio, y un hook
   que no vuelve deja a Claude Code esperando, así que el hook NO habla: lanza
   este mismo fichero en segundo plano (`--speak`) y sale al momento.
-- **Modo voz** (fase 2a, lo enciende `/voz` con `--on`): el hook espera. Lee la
+- **Modo voz** (fase 2a, lo enciende `/c-voice` con `--on`): el hook espera. Lee la
   respuesta si hay API key de Fish Audio, pita, graba mientras mantienes pulsado
   Ctrl+Alt+Espacio, transcribe con faster-whisper y devuelve
   `{"decision": "block", "reason": <tu frase>}`: Claude no se para y la toma

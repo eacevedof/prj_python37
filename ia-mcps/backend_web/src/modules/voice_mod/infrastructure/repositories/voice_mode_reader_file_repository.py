@@ -12,7 +12,7 @@ VOICE_MODE_FLAG_FILE_PATH = (
 class VoiceModeReaderFileRepository:
     """Si el modo voz está activo (datasource: un fichero bandera).
 
-    Lo enciende `/voz` y lo apaga decir «fin voz» (`VoiceModeWriterFileRepository`).
+    Lo enciende `/c-voice` y lo apaga decir «fin voz» (`VoiceModeWriterFileRepository`).
     Es uno para todas las sesiones: con dos Claude Code abiertos en el proyecto,
     los dos escucharían.
     """
