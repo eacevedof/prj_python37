@@ -16,7 +16,7 @@ cryptography==50.0.1
 pynacl==1.6.2
 
 # PDF
-pypdf==6.17.0
+pypdf==6.21.4
 
 # Dev
 ruff==0.16.6
