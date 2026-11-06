@@ -48,7 +48,14 @@ class AudioPlayer:
         self._detach_current()
         self._completed.clear()
 
-        audio = fta.Audio(src=src, autoplay=True, on_state_change=self._on_state_change)
+        # flet-audio 1.1 mezcla por defecto con el audio de otras apps en Android; GAIN
+        # recupera el comportamiento de 1.0: la tarjeta suena y pausa la musica de fondo.
+        audio = fta.Audio(
+            src=src,
+            autoplay=True,
+            context=fta.AudioContext(focus=fta.AudioFocus.GAIN),
+            on_state_change=self._on_state_change,
+        )
         self._current_audio = audio
         page.services.append(audio)
         page.update()  # autoplay arranca al anadirse (el src ya viene en el constructor)

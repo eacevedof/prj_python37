@@ -17,11 +17,11 @@ python-dotenv~=1.2.3
 
 # flet - Cross-platform UI framework (Windows, Mac, Linux, Web, Mobile)
 # Used in: main.py, ddd/vocabulary/infrastructure/ui/
-flet==1.0.0
+flet==1.1.1
 
 # flet-audio - reproductor de audio multiplataforma (Windows/Android); sustituye a pygame
 # Used in: ddd/shared/infrastructure/components/audio_player.py
-flet-audio==1.0.0
+flet-audio==1.1.1
 
 # ============================================================================
 # DATABASE
@@ -63,7 +63,7 @@ pyperclip~=1.11.0
 
 # pycaw - Windows master volume control (Core Audio)
 # Used in: ddd/shared/infrastructure/components/system/volumer.py (slider audio)
-pycaw==20251023
+pycaw==20260927
 
 # ============================================================================
 # DEVELOPMENT TOOLS
@@ -71,15 +71,15 @@ pycaw==20251023
 
 # ruff - Fast Python linter and formatter
 # Usage: ruff check .
-ruff~=0.16.8
+ruff~=0.17.4
 
 # mypy - Static type checker
 # Usage: mypy .
-mypy~=2.3.1
+mypy~=2.4.1
 
 # pytest - Testing framework
 # Usage: pytest
-pytest~=9.1.1
+pytest~=9.2.0
 
 # pytest-asyncio - Async test support for pytest
 # Required for: Testing async functions
