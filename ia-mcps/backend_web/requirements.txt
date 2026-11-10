@@ -53,7 +53,7 @@ nvidia-cudnn-cu12==9.10.2.21; sys_platform != "darwin"
 # Solo hacen falta para `memory_store_file` según el tipo de fichero. Se importan
 # dentro del método y, si faltan, el error se le cuenta al agente en vez de
 # reventar el arranque. Se dejan declarados para que un entorno completo los tenga.
-PyMuPDF>=1.28.2        # pdf
+PyMuPDF>=1.28.2,<2     # pdf · la 2.x es mayor: subir aparte y probando memory_store_file
 python-docx~=1.2.0     # word
 openpyxl~=3.1.5        # excel
 Pillow~=13.0.0         # imagen
@@ -63,12 +63,12 @@ openai-whisper==20250625  # transcripción de audio
 # ── suelos de seguridad (dependencias transitivas) ───────────────────────────
 # No los usa el código directamente: los arrastran mcp, chromadb, kubernetes,
 # huggingface_hub, torch... Se fijan aquí con `>=` para que pip no deje una
-# versión con CVE conocido. Auditoría del 2026-10-28 (pip-audit), ver
-# ia-mcps-tech-debt.md §10. Repetir antes de subir cualquiera.
+# versión con CVE conocido. Auditorías 2026-10-28 y 2026-11-07 (pip-audit), ver
+# mcp-tools-tech-debt.md p.34. Repetir antes de subir cualquiera.
 PyJWT>=2.15.0             # 15 CVE (mcp)
 urllib3>=2.8.0            # 3 CVE (requests, kubernetes)
 multidict>=6.9.1,<7       # aiohttp · la 7 (2026-10-25) es mayor y recién salida
-oauthlib>=4.0.0           # requests-oauthlib <- kubernetes <- chromadb
+oauthlib>=4.0.1           # CVE-2026-49272 · requests-oauthlib <- kubernetes <- chromadb
 opentelemetry-api>=1.45.1 # chromadb, mcp
 filelock>=4.2.1           # huggingface_hub, torch
 Brotli>=1.2.1             # 2 CVE, decodificador (escritura fuera de límites)
