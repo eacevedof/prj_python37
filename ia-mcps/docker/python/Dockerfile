@@ -1,5 +1,5 @@
 #docker/python/Dockerfile — LOCAL (código por bind-mount, uvicorn --reload)
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

@@ -54,7 +54,7 @@ venv: ## cómo crear/activar el venv de backend_web (make NO puede activarlo: se
 	@echo "pip install --upgrade pip && pip install -r backend_web/requirements.txt"
 	@echo ""
 	@echo "# windows"
-	@echo "py -3.13 -m venv .venv-win && .venv-win\\Scripts\\activate"
+	@echo "py -3.14 -m venv .venv-win && .venv-win\\Scripts\\activate"
 	@echo ".venv-win\\Scripts\\python.exe -m pip install -r backend_web/requirements.txt"
 	@echo ""
 	@echo "# weasyprint (pdf_mod) necesita librerias nativas del sistema:"

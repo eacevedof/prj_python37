@@ -1,7 +1,7 @@
 # ia-mcps
 
 Servidores MCP por HTTP (EMT, Media, PDF, Memory, File Checker) + `voice_mod` (Claude Code por voz).
-Python 3.13 · FastAPI · DDD modular `<x>_mod` (core) + `<x>_mcp` (fachada) · solo local. Gemelo
+Python 3.14 · FastAPI · DDD modular `<x>_mod` (core) + `<x>_mcp` (fachada) · solo local. Gemelo
 público del repo privado `prj-mcp-tools`: los cambios se copian a mano, por módulo.
 
 **Documentación completa (Obsidian)**: `C:\projects\temper\ai\obsidian\projects\mcp-tools\mcp-tools-index.md`
