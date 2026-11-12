@@ -1,7 +1,8 @@
+import json
 import os
 import subprocess
 import sys
-from typing import Self, final
+from typing import ClassVar, Self, final
 
 from src.modules.filechecker_mod.domain.enums import FileCheckerResponseKeyEnum
 
@@ -44,34 +45,53 @@ class FileSignatureReaderFileRepository:
                 FileCheckerResponseKeyEnum.SIGNATURE_SIGNER: None,
             }
 
-    @staticmethod
-    def _verify_authenticode(file_path: str) -> dict:
+    # La ruta NUNCA se interpola en el script: llega por variable de entorno y
+    # PowerShell la lee como dato (-LiteralPath, sin comodines ni comillas que
+    # cerrar). Interpolarla permitía `C:\x';Start-Process calc;'\..\a.exe` → RCE.
+    _AUTHENTICODE_PATH_ENV = "FILECHECKER_SIGNATURE_PATH"
+    _AUTHENTICODE_SCRIPT = (
+        "$s = Get-AuthenticodeSignature -LiteralPath $env:FILECHECKER_SIGNATURE_PATH; "
+        "[pscustomobject]@{ status = [string]$s.Status; "
+        "signer = $(if ($s.SignerCertificate) { $s.SignerCertificate.Subject } else { $null }) } "
+        "| ConvertTo-Json -Compress"
+    )
+    _AUTHENTICODE_STATUS_MAP: ClassVar[dict[str, str]] = {
+        "Valid": "valid",
+        "NotSigned": "unsigned",
+        "HashMismatch": "bad_signature",
+        "NotTrusted": "bad_signature",
+        "UnknownError": "unknown",
+        "Incompatible": "unknown",
+        "NotSupportedFileFormat": "unknown",
+    }
+
+    @classmethod
+    def get_authenticode_command(cls, file_path: str) -> tuple[list[str], dict[str, str]]:
+        """Command and environment for the Authenticode check; the path only travels in the env."""
+        cmd = [
+            "powershell",
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            cls._AUTHENTICODE_SCRIPT,
+        ]
+        env = {**os.environ, cls._AUTHENTICODE_PATH_ENV: file_path}
+        return cmd, env
+
+    @classmethod
+    def _verify_authenticode(cls, file_path: str) -> dict:
         """Verify Windows Authenticode signature via PowerShell."""
         try:
-            cmd = [
-                "powershell",
-                "-Command",
-                f"Get-AuthenticodeSignature -FilePath '{file_path}' | Select-Object -Property Status,SignerCertificate",
-            ]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            cmd, env = cls.get_authenticode_command(file_path)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10, env=env, check=False)
 
-            status = "unsigned"
+            status = "unknown"
             signer = None
 
-            if result.returncode == 0:
-                output = result.stdout.lower()
-                if "validsignature" in output or "valid" in output:
-                    status = "valid"
-                elif "unknownerror" in output or "error" in output:
-                    status = "unknown"
-                elif "badsignature" in output:
-                    status = "bad_signature"
-
-                if "cn=" in output:
-                    for line in result.stdout.split("\n"):
-                        if "CN=" in line or "Subject=" in line:
-                            signer = line.strip()
-                            break
+            if result.returncode == 0 and result.stdout.strip():
+                parsed = json.loads(result.stdout)
+                status = cls._AUTHENTICODE_STATUS_MAP.get(str(parsed.get("status")), "unknown")
+                signer = parsed.get("signer") or None
 
             return {
                 FileCheckerResponseKeyEnum.SIGNATURE_STATUS: status,
